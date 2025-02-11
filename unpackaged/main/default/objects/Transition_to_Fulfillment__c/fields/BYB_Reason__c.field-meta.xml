@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BYB_Reason__c</fullName>
+    <description>Used by BYB sales to indicate why group is choosing BYB if their medical coverage is eligible for BoR</description>
+    <label>BYB Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Broker Loyalty</fullName>
+                <default>false</default>
+                <label>Broker Loyalty</label>
+            </value>
+            <value>
+                <fullName>Unsupported ancillary carrier</fullName>
+                <default>false</default>
+                <label>Unsupported ancillary carrier</label>
+            </value>
+            <value>
+                <fullName>Blocked line of coverage (vol lidi, supplemental)</fullName>
+                <default>false</default>
+                <label>Blocked line of coverage (vol lidi, supplemental)</label>
+            </value>
+            <value>
+                <fullName>Poor Gusto experience</fullName>
+                <default>false</default>
+                <label>Poor Gusto experience</label>
+            </value>
+            <value>
+                <fullName>Premium tier</fullName>
+                <default>false</default>
+                <label>Premium tier</label>
+            </value>
+            <value>
+                <fullName>Outgrowing SGHI soon</fullName>
+                <default>false</default>
+                <label>Outgrowing SGHI soon</label>
+            </value>
+            <value>
+                <fullName>Blackout window</fullName>
+                <default>false</default>
+                <label>Blackout window</label>
+            </value>
+            <value>
+                <fullName>Unsupported CS</fullName>
+                <default>false</default>
+                <label>Unsupported CS</label>
+            </value>
+            <value>
+                <fullName>Broker referral (broker already on BYB)</fullName>
+                <default>false</default>
+                <label>Broker referral (broker already on BYB)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

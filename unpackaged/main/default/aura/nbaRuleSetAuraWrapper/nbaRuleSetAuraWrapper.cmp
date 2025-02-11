@@ -1,0 +1,6 @@
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,force:hasRecordId,force:hasSObjectName">
+	<lightning:workspaceAPI aura:id="workspace" />
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<lightning:navigation aura:id="navService" />
+	<c:nbaRuleSetConfig onopenrecord="{!c.handleOpenRecord}" onopensubtab="{!c.handleOpenSubTab}" ></c:nbaRuleSetConfig>
+</aura:component>

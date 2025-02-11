@@ -1,0 +1,158 @@
+<apex:page Controller="AttachmentRelatedAccountCasesController" doctype="html-5.0">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/> 
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    
+    
+    <script type="text/javascript">
+       //=======open FRs in sub tab=========
+       var selectedattId;
+        function openSubTab(frid) {
+            selectedattId = frid;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openCaseSubtab);
+        }
+        
+        var openCaseSubtab = function openCaseSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openPrimaryTab(null , '/'+selectedattId, true);
+        };
+    	
+    	function downloadSubTab(frid) {
+            selectedattId = frid;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(downloadCaseSubtab);
+        }
+        
+        var downloadCaseSubtab = function downloadCaseSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , selectedattId, true, 
+                '', null, null, 'Tax Ops Failed Record');
+        };
+    </script>
+    <div class="gusto">
+    <apex:form id="frmId">
+        <!--status="fetchStatus"-->
+        <apex:actionFunction action="{!init}" name="sortTable" reRender="frmId" status="fetchStatus">
+            <apex:param name="sortField" value=""/>
+        </apex:actionFunction>
+        <div class="slds-scrollable" style="height: 500px;width: 100%;overflow: scroll;">           
+            <apex:actionStatus id="fetchStatus" >
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                                                                        height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span> 
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:outputLabel value="Name:" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputText value="{!strSearch}" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="Scope:" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:selectList value="{!filter}" size="1">
+                <apex:selectOptions value="{!items}"/>
+                <apex:actionSupport event="onchange" action="{!init}" status="fetchStatus"/>
+            </apex:selectList>
+            <br/><br/>
+            <apex:outputLabel value="From Date:" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField Value="{!objCase.Created_At_Date__c}"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="To Date:" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:inputField Value="{!objCase.Anticipated_Effective_Date__c}"/><br/><br/>
+            <apex:commandButton value="Search" styleclass="btn slds-button slds-button--neutral" action="{!init}" reRender="frmId" status="fetchStatus"/>
+            &nbsp;&nbsp;
+            <apex:outputPanel id="editPanel" rendered="{!IF(allEmailMessageList != null && allEmailMessageList.size > 0 , true, false)}">
+                <table class="slds-table slds-table--bordered slds-table_cell-buffer slds-table_fixed-layout" id="frtable" style="width: 100%"> 
+                    <thead>
+                        <tr class="slds-text-title">
+                            <th>
+                                Case
+                            </th>
+                            <th>
+                                Attachment Name
+                            </th>
+                            <th>
+                                <a onclick="sortTable('Parent.Account.Name');" class="slds-truncate" style="color:#54698d;">Company</a>
+                            </th>
+                            <th> 
+                                <a onclick="sortTable('Parent.Contact.Name');" class="slds-truncate" style="color:#54698d;">Contact</a>
+                            </th>
+                            <th> 
+                                Is Incoming
+                            </th>
+                            <th> 
+                                Created Date
+                            </th>
+                        </tr>
+                    </thead>
+                    <apex:repeat var="email" value="{!allEmailMessageList}" id="emailTable">
+                        
+                            <apex:repeat var="att" value="{!email.Attachments}">
+                                <tr class="slds-text-title detailRow" style="display: {!IF(email.Attachments != null && email.Attachments.size > 0, 'table-row', 'none')};">
+                                    <td style="color:#54698d;cursor: pointer;">
+                                        <a  onclick="openSubTab('{!email.parentId}');">{!email.Parent.CaseNumber}</a>
+                                        <!-- <apex:inputField value="{!email.Parent.CaseNumber}" onclick="openSubTab('{!email.parentId}');"/> -->
+                                    </td>
+                                    <td style="cursor: pointer;">
+                                        <a  onclick="downloadSubTab('{!URLFOR($Action.Attachment.Download, att.id)}');">{!att.Name}</a><!-- openSubTab('{!att.id}'); -->
+                                    </td>
+                                    <td>
+                                        {!email.Parent.Account.Name}
+                                    </td>
+                                    <td >
+                                        {!email.Parent.Contact.Name}
+                                    </td>
+                                    <td>
+                                        <apex:inputCheckbox value="{!email.Incoming}" disabled="true"/>
+                                    </td>
+                                    <td>
+                                        <!-- <a onclick="downloadSubTab('{!URLFOR($Action.Attachment.Download, att.id)}');" class="slds-truncate" style="color:#54698d;">Download</a> -->
+                                        <apex:outputText value="{0,date,short}">
+                                            <apex:param value="{!email.CreatedDate}"/>
+                                        </apex:outputText>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        
+                    </apex:repeat> 
+                </table> 
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(allEmailMessageList.size != null && allEmailMessageList.size > 0, true, false)}">   
+            <table style="width: 100%">
+                <tr>
+                    <td>
+                        <apex:outputText value=" Page {!IF(CEILING(setcon.ResultSize/setcon.PageSize)==0,0,setcon.PageNumber)} of {!CEILING(setcon.ResultSize/setcon.PageSize)}"/>
+                    </td>
+                    <td style="text-align: center !important;">
+                        <apex:commandLink action="{!previous}" value="« Previous" rendered="{!setcon.HasPrevious}"/>
+                        <apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(setcon.HasPrevious)}"/>&nbsp;&nbsp;  
+                        <apex:commandLink action="{!next}" value="Next »" rendered="{!setcon.HasNext}"/>
+                        <apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(setcon.HasNext)}"/>
+                    </td>
+                    <td style="text-align: right !important;">
+                            <apex:selectList value="{!setcon.PageSize}" size="1">
+                                <apex:selectOption itemValue="20" itemLabel="20"/>
+                                <apex:selectOption itemValue="50" itemLabel="50"/>
+                                <apex:selectOption itemValue="100" itemLabel="100"/>
+                                <apex:actionSupport event="onchange" reRender="frmId" status="status"/>
+                            </apex:selectList>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel id="editPanel1" rendered="{!IF(allEmailMessageList.size == 0 , true, false)}">
+                No Records Found!
+            </apex:outputPanel>
+        </div>
+    </apex:form>
+</div>
+</apex:page>

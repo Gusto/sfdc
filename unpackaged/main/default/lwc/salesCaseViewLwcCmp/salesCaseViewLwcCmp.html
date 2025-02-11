@@ -1,0 +1,19 @@
+<template>
+    <div>
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+            </lightning-spinner>
+        </template>
+    </div>
+    <lightning-card title="Routing" variant="narrow" icon-name="standard:chart">
+        <div class="slds-p-around_small">
+            <lightning-combobox name="route" label="Route To" data-name="route" placeholder="Select a Queue"
+                options={list_CaseTypeOptions} onchange={handleCaseTypeChange}>
+            </lightning-combobox>
+        </div>
+        <div class="slds-p-around_small slds-align_absolute-center">
+            <lightning-button variant="brand" label="Route" title="Route" onclick={handleCaseRouting}
+                class="slds-m-left_x-small" disabled={blnDisabled}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

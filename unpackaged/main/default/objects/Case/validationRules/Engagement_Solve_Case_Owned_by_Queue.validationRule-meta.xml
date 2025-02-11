@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Engagement_Solve_Case_Owned_by_Queue</fullName>
+    <active>true</active>
+    <description>This validation rule will restrict all internal users from solving/ closing a case owned by an engagement queue.</description>
+    <errorConditionFormula>ISCHANGED( Status ) &amp;&amp;
+( ISPICKVAL( Status, &apos;Solved&apos; ) || ISPICKVAL( Status, &apos;Closed&apos; ) ) &amp;&amp; ((NOT(ISBLANK(Owner:Queue.Name)) &amp;&amp;
+Contains( $Label.Engagement_Solve_Case_Queues , Owner:Queue.Name)))</errorConditionFormula>
+    <errorMessage>Cases can not be solved when they are owned by this Queue. Please take ownership of the case before you solve a case.</errorMessage>
+</ValidationRule>

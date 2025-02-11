@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Classification_Type__c</fullName>
+    <description>Classification Type</description>
+    <label>Classification Type</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>System Defect</fullName>
+                <default>false</default>
+                <label>System Defect</label>
+            </value>
+            <value>
+                <fullName>Enhancement</fullName>
+                <default>false</default>
+                <label>Enhancement</label>
+            </value>
+            <value>
+                <fullName>Compliance Requirement</fullName>
+                <default>false</default>
+                <label>Compliance Requirement</label>
+            </value>
+            <value>
+                <fullName>Product Gap</fullName>
+                <default>false</default>
+                <label>Product Gap</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

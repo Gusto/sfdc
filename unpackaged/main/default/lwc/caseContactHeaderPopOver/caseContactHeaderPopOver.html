@@ -1,0 +1,210 @@
+<template>
+    <template if:true={blnShowSpinner}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <section
+        class="slds-popover slds-popover_medium testHover uiPanel--default uiPanel forceHoverPanel positioned west open active"
+        data-aura-class="uiPanel--default uiPanel forceHoverPanel"  role="dialog">
+        <div class="slds-popover__body">         
+            <dl id="moreDetails" class={strMoreDetails}>
+                <template if:true={blnShowMoreDetails}>
+                    <div class="slds-page-header">
+                        <div class="slds-page-header__row">
+                            <div class="slds-page-header__col-title">
+                                <div class="slds-media slds-media_center">
+                                    <div class="slds-media__figure">
+                                        <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <div class="slds-page-header__name">
+                                            <div class="slds-page-header__name-title">
+                                                <h3 slot="title" class="slds-text-heading_small">
+                                                    <b>More Details</b>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <c-admin-permissions recordid={recordId} onshowmoredetails={handleShowMoreDetails}></c-admin-permissions>
+                <c-user-roles recordid={recordId} onshowmoredetails={handleShowMoreDetails}></c-user-roles>
+            </dl>
+            <dl class="slds-popover__body-list">
+                <div class="slds-page-header">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media slds-media_center">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                                </div>
+                                    <div class="slds-media__body">
+                                        <div class="slds-page-header__name">
+                                            <div class="slds-page-header__name-title">
+                                                <h3 slot="title" class="slds-text-heading_small">
+                                                    <b>Related Accounts</b>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <template if:true={blnUserInfoFirmHasValue}>
+                    <div class="userInfoTable slds-scrollable_y">
+                        <div class="slds-form-element__label"> Accounting Firms</div> 
+                        <table class="slds-table slds-table_cell-buffer">
+                            <tbody>
+                                <template for:each={map_UserInfoFirmuser} for:item="item">
+                                    <tr key={item.key}>                                        
+                                        <td style="width: 85%;" class="slds-cell-wrap">
+                                            <div style="display: inline-block;">
+                                                <a data-conciergegroupid={item.value.strConciergeGroupId}
+                                                    data-tier={item.value.strTier}
+                                                    data-permissionstr={item.value.strPermission}
+                                                    data-contactrecid={item.value.strFirmId}
+                                                    data-strpandaurl={item.value.strPandaURL}
+                                                    data-blockname="firm"
+                                                    style="font-size: 14px;" onclick={handleOpenCompany}
+                                                    class="moveOverlink" onmouseover={showData} onmouseout={hideData}
+                                                    href="javascript:void(0)" data-zpcompanyid={item.value.strZpFirmId}
+                                                    value={item.value.strZpFirmId}>
+                                                    {item.value.strFirmName}
+                                                </a>
+                                            </div>
+                                            <template if:true={item.uniqueHoverId}>
+                                                <section class="slds-popover slds-popover_tooltip slds-nubbin_top-left" role="tooltip"
+                                                            style="position:absolute;top:40px;left: 12px;">
+                                                </div>
+                                                <div class="slds-popover__body" data-id="mouseOverText">
+                                                    <lightning-formatted-rich-text value={item.value.strConciergeGroupId}></lightning-formatted-rich-text>
+                                                    <lightning-formatted-rich-text value={item.value.strTier}></lightning-formatted-rich-text>
+                                                    <lightning-formatted-rich-text value={item.value.strPermission}></lightning-formatted-rich-text>
+                                                </div>
+                                            </section>
+                                        </template>
+                                        </td>
+                                        <td>
+                                            <template if:true={item.value.blnAccountant}>
+                                                <div
+                                                    style="background-color:#ffe94f;;width:20px;display: inline-block;text-align: center;">
+                                                    <b>A</b>
+                                                </div>
+                                            </template>
+                                            <template if:true={item.value.blnPayrollAdmin}>
+                                                <div
+                                                    style="background-color:#b6ccef;width:20px;display: inline-block;text-align: center;">
+                                                    <b>P</b>
+                                                </div>
+                                            </template>
+                                            <template if:true={item.value.blnEmployee}>
+                                                <div
+                                                    style="background-color:#7cddbb;;width:20px;display: inline-block;text-align: center;">
+                                                    <b>E</b>
+                                                </div>
+                                            </template>
+                                            <template if:true={item.value.blnSignatory}>
+                                                <div
+                                                    style="background-color:#f9f9a4;;width:20px;display: inline-block;text-align: center;">
+                                                    <b>S</b>
+                                                </div>
+                                            </template>
+                                            
+                                        </td>
+                                        <td>
+                                            <lightning-button-menu slot="action" menu-alignment="right" icon-name="utility:down"
+                                                icon-size="x-small" alternative-text="down" variant="border-filled">
+                                                <lightning-menu-item value={item.value.strFirmId} label="Update Account" onclick={handleUpdate}>
+                                                </lightning-menu-item>
+                                                <lightning-menu-item value={item.value.strFirmId} label="Update Account and Route" onclick={handleUpdate}>
+                                                </lightning-menu-item>
+                                            </lightning-button-menu>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+                <template if:true={blnUserInfoCompanyHasValue}>
+                    <div class="userInfoTable slds-scrollable_y">
+                        <div class="slds-form-element__label"> Companies</div> 
+                        <table class="slds-table slds-table_cell-buffer">
+                            <tbody>
+                                <template for:each={map_UserInfoCompanyUserRole} for:item="item" for:index="index">
+                                    <Tr key={item.key}>                                        
+                                        <td style="width: 85%;" class="slds-cell-wrap">
+                                            <div style="display: inline-block;">
+
+                                                <a data-conciergegroupid={item.value.strConciergeGroupId} data-tier={item.value.strTier}
+                                                    data-permissionstr={item.value.strPermission}
+                                                    data-blockname="company"
+                                                    data-contactrecid={item.value.strCompanyId}
+                                                    data-strpandaurl={item.value.strPandaURL}
+                                                    style="font-size: 14px;" onclick={handleOpenCompany}
+                                                    class="moveOverlink" onmouseover={showData} onmouseout={hideData}
+                                                    href="javascript:void(0)" data-zpcompanyid={item.value.strZPCompanyId}
+                                                    value={item.value.strZPCompanyId}>
+                                                    {item.value.strCompanyName}
+                                                </a>
+                                            </div>
+
+                                            <template if:true={item.uniqueHoverId}>
+                                                <section class="slds-popover slds-popover_tooltip slds-nubbin_top-left" role="tooltip"
+                                                    style="position:absolute;top:40px;left: 12px;">
+                                                    <div class="slds-popover__body" data-id="mouseOverText">
+                                                        <lightning-formatted-rich-text value={item.value.strConciergeGroupId}>
+                                                        </lightning-formatted-rich-text>
+                                                        <lightning-formatted-rich-text value={item.value.strTier}>
+                                                        </lightning-formatted-rich-text>
+                                                        <lightning-formatted-rich-text value={item.value.strPermission}>
+                                                        </lightning-formatted-rich-text>
+                                                    </div>
+                                                </section>
+                                            </template>
+                                        </td>
+                                        <td>
+                                            <template if:true={item.value.blnAccountant}>
+                                                <div style="background-color:#ffe94f;;width:20px;display: inline-block;text-align: center;">
+                                                    <b>A</b>
+                                                </div>
+                                            </template>
+                                            <template if:true={item.value.blnPayrollAdmin}>
+                                                <div style="background-color:#b6ccef;width:20px;display: inline-block;text-align: center;">
+                                                    <b>P</b>
+                                                </div>
+                                            </template>
+                                            <template if:true={item.value.blnEmployee}>
+                                                <div style="background-color:#7cddbb;;width:20px;display: inline-block;text-align: center;">
+                                                    <b>E</b>
+                                                </div>
+                                            </template>
+                                            <template if:true={item.value.blnSignatory}>
+                                                <div style="background-color:#f9f9a4;;width:20px;display: inline-block;text-align: center;">
+                                                    <b>S</b>
+                                                </div>
+                                            </template>
+                                            
+                                        </td>
+                                        <td>
+                                            <lightning-button-menu slot="action" menu-alignment="right" icon-name="utility:down"
+                                                icon-size="x-small" alternative-text="down" variant="border-filled">
+                                                <lightning-menu-item value={item.value.strCompanyId} label="Update Account"
+                                                    onclick={handleUpdate}></lightning-menu-item>
+                                                <lightning-menu-item value={item.value.strCompanyId} label="Update Account and Route"
+                                                    onclick={handleUpdate}></lightning-menu-item>
+                                            </lightning-button-menu>
+                                        </td>
+                                    </Tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+            </dl>
+        </div>
+    </section>
+</template>

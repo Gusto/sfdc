@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Outbound_Message</name>
+        <label>Outbound Message</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <actionName>04k8Y000000TU2RNotFound</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>61.0</apiVersion>
+    <decisions>
+        <name>Check_Survey_Status</name>
+        <label>Check Survey Status</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Error</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Survey_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_NPS_Survey_Sent_Status</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Is Error</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Record Trigger: Lead After Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Customer Survey Response After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_NPS_Survey_Sent_Status</name>
+        <label>Update NPS Survey Sent Status</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Outbound_Message</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Survey_Status__c</field>
+            <value>
+                <stringValue>Sent</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Survey_Status</targetReference>
+        </connector>
+        <object>Customer_Survey_Response__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

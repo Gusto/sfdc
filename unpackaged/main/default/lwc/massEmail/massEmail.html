@@ -1,0 +1,131 @@
+<template>
+    <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+        <lightning-accordion-section name="Case Filters" label="Case Filters">
+            <lightning-layout>
+                <lightning-layout-item onkeyup={handleKeyUp} padding="horizontal-medium">
+                    <c-custom-lookup objectlabel="Queue" boolrecordfound={blnIsQueueFound}
+                        onfilterselected={handleQueueFilterSelected} onselectrecord={handleRecordSelected}
+                        onfilterrecord={handleFilterRecords} listrecords={list_FilteredQueues}
+                        lookupicon="standard:case"></c-custom-lookup>
+                </lightning-layout-item>
+                <lightning-layout-item padding="horizontal-medium">
+                    <c-auto-complete-cmp autocompletelist={list_allCaseReasons} label="Case Reason"
+                        onfilterlist={handleFilteredCaseReasonList} onfilterselected={handleFilterCaseReasonSelected}
+                        icon="" selectedvalue={strSelectedCaseReason}></c-auto-complete-cmp>
+                </lightning-layout-item>
+                <lightning-layout-item padding="horizontal-medium">
+                    <lightning-input type="number" name="Confidence" label="Confidence %"></lightning-input>
+                </lightning-layout-item>
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-button label="Search" title="Search" onclick={handleSearch}
+                    class="slds-p-top_medium slds-p-left_medium" disabled={enableSearch}></lightning-button>
+            </lightning-layout>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="Template Preview" label="Template Preview">
+            <!-- <lightning-layout>
+                <lightning-layout-item padding="horizontal-medium" style="width: 288px">
+                    <c-auto-complete-cmp autocompletelist={list_emailOptions} label="Search Email Template"
+                        onfilterlist={handleFilterList} onfilterselected={handleFilterSelected} icon="standard:email"
+                        selectedvalue={strSelectedField}></c-auto-complete-cmp>
+                </lightning-layout-item>
+            </lightning-layout> -->
+            <lightning-layout>
+                <lightning-layout-item padding="horizontal-medium" style="width: 288px">
+                    <lightning-combobox name="Email Template Folder" label="Email Template Folder" value={value}
+                        placeholder="None" options={list_emailOptions} onchange={handleEmailChange}></lightning-combobox>
+                </lightning-layout-item>
+                <template if:true={blnShowEmailTemplate}>
+                    <c-auto-complete-cmp autocompletelist={lst_emailTemplateLabel} label="Search Email Template"
+                        onfilterlist={handleFilterList} onfilterselected={handleFilterSelected} icon="standard:email"
+                        selectedvalue={strSelectedField}></c-auto-complete-cmp>
+                    <!-- <lightning-layout-item padding="horizontal-medium" style="width: 291px">
+                        <lightning-combobox name="Email Template" label="Email Template" value={value}
+                            placeholder="None" class="templateCombobox" options={list_emailTemplateoptions}
+                            onchange={handleTemplateChange}></lightning-combobox>
+                    </lightning-layout-item> -->
+                </template>
+            </lightning-layout>
+            <div class="slds-m-top_x-small slds-m-left_medium">
+                <template if:false={blnModifying}>
+                    <lightning-button variant="brand" label="Send Email" onclick={sendEmail} class="button">
+                    </lightning-button>
+                </template>
+            </div>
+            <template if:true={boolTemplateSelected}>
+                <lightning-button-group class="slds-m-top_x-small slds-m-left_medium">
+                    <template if:false={blnModifying}>
+                        <lightning-button label="Modify" onclick={handleModifyTemplate}></lightning-button>
+                    </template>
+                    <template if:true={blnModifying}>
+                        <lightning-button variant="brand" label="Confirm Changes" onclick={handleSaveTemplate}>
+                        </lightning-button>
+                        <lightning-button label="Cancel" onclick={handleCancelModify}></lightning-button>
+                    </template>
+                </lightning-button-group>
+                <template if:false={blnShowTemplateBody}>
+                    <div class="slds-m-top_x-small slds-m-left_medium">
+                        <lightning-formatted-rich-text value={strBodyToSend}></lightning-formatted-rich-text>
+                    </div>
+                </template>
+            </template>
+
+            <template if:true={blnShowTemplateBody}>
+                <lightning-layout>
+                    <lightning-layout-item padding="around-medium">
+                        <lightning-input-rich-text value={strBody} class="richTextAreaClass" onchange={handleBodyChange}
+                            formats={list_Formats}></lightning-input-rich-text>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="Cases" label="Cases">
+            <div class="slds-m-top_x-small slds-m-left_medium slds-p-bottom_x-small">
+                <lightning-button label="Ignore" onclick={handleToggelModal} disabled={blnIsIgnoreButtonDisabled}></lightning-button>
+            </div>
+            <template if:true={blnShowConfirmDialog}>
+                <!--Modal Box Start-->
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                    aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div role="dialog" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <!--Modal Box Header Start-->
+                            <header class="slds-modal__header">
+                                <div class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                    onclick={handleToggelModal} title="Close">
+                                    <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse"
+                                        title="Close"></lightning-button-icon>
+                                </div>
+                                <h1 class="slds-text-heading--medium">Confirmation</h1>
+                            </header>
+                            <!--Modal Box Header End-->
+            
+                            <!--Modal Box Content Start-->
+                            <div class="slds-modal__content slds-p-around--medium">
+                                <p>Ignoring the Case(s) will hide them the next time you load this page. Are you sure?</p>
+                            </div>
+                            <!--Modal Box Content End-->
+            
+                            <!--Modal Box Button Start-->
+                            <footer class="slds-modal__footer">
+                                <lightning-button name="No" label="No" class="slds-p-around_xx-small" onclick={handleToggelModal}>
+                                </lightning-button>
+                                <lightning-button name="Yes" variant="brand" class="slds-p-around_xx-small" label="Yes"
+                                    onclick={handleIgnoreCases}></lightning-button>
+                            </footer>
+                            <!--Modal Box Button End-->
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+            <lightning-input type="checkbox" label="Click here to keep these cases open and in their current queue" onchange={handleOpenCases}> </lightning-input>
+            <lightning-datatable key-field="id" data={data} columns={columns} min-column-width="200px"
+                max-column-width="1000px" column-widths-mode="auto" onrowselection={getSelectedName} onrowaction={handleRowAction}>
+            </lightning-datatable>
+        </lightning-accordion-section>
+    </lightning-accordion>
+    <template if:true={blnSpin}>
+        <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+    </template>
+</template>

@@ -1,0 +1,41 @@
+<template>
+	<template if:true={blnDisplayBannerOne}>
+		<template if:true={blnBannerOne}>
+			<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning banner-spacing" role="alert">
+				<span class="slds-icon_container slds-icon-utility-warning" title="Warning">
+					<lightning-icon icon-name="utility:warning" size="small" alternative-text="Warning"></lightning-icon>
+				</span>
+				<span class="slds-text-heading_small"> &nbsp; {label.PT_No_available_capacity} </span>
+			</div>
+		</template>
+	</template>
+
+	<template if:true={blnDisplayBannerOthers}>
+		<template if:true={blnBannerTwo}>
+			<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning banner-spacing" role="alert">
+				<span class="slds-icon_container slds-icon-utility-warning" title="Warning">
+					<lightning-icon icon-name="utility:warning" size="small" alternative-text="Warning"></lightning-icon>
+				</span>
+				<span class="slds-text-heading_small"> &nbsp; {label.PT_No_Reps_with_enough_Capacity} </span>
+			</div>
+		</template>
+
+		<template if:true={blnBannerThree}>
+			<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning banner-spacing" role="alert">
+				<span class="slds-icon_container slds-icon-utility-warning" title="Warning">
+					<lightning-icon icon-name="utility:warning" size="small" alternative-text="Warning"></lightning-icon>
+				</span>
+				<span class="slds-text-heading_small"> &nbsp; {label.PT_No_Reps_with_the_right_skills_have_capacity} </span>
+			</div>
+		</template>
+
+		<template if:true={blnBannerFour}>
+			<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning banner-spacing" role="alert">
+				<span class="slds-icon_container slds-icon-utility-warning" title="Warning">
+					<lightning-icon icon-name="utility:warning" size="small" alternative-text="Warning"></lightning-icon>
+				</span>
+				<span class="slds-text-heading_small"> &nbsp; {label.PT_Team_is_at_capacity} </span>
+			</div>
+		</template>
+	</template>
+</template>

@@ -1,0 +1,219 @@
+<template>
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <div class="slds-theme_default">
+        <br />
+
+        <div class="slds-text-heading_medium slds-align_absolute-center">
+            Ticket Configuration
+        </div>
+        
+
+        <lightning-layout multiple-rows>
+
+            <lightning-layout-item size="12" padding="around-small">
+
+                <template if:true={blnIsConfigFound}>
+                    <div class="slds-float_right">
+                        <lightning-button variant="neutral" onclick={handleCloneConfig} label="Clone this Config"></lightning-button>
+                    </div>
+                </template>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" padding="around-small">
+                <div class="slds-text-align_center">
+                    <lightning-combobox required label="Select Ticket Reason" value={strTicketReason}
+                        placeholder="Select Ticket Reason" options={list_TicketReasons}
+                        onchange={handleTicketReasonSelected}></lightning-combobox>
+                </div>
+            </lightning-layout-item>
+
+
+            <template if:true={blnShowWarningMessage}>
+                <div class=" slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                    <h2>No active ticket config found for <b>{strTicketReason}</b> and for ticket sub reason <b>{strTicketSubReason}</b> .
+                    </h2>
+                </div>
+            </template>
+
+            <template if:true={blnIsConfigFound}>
+                <template if:false={objTicketConfig.Ticket_Sub_Reason__c}>
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="slds-text-align_center">
+                            <lightning-dual-listbox source-label="Available Sub Reasons"
+                            selected-label="Selected Sub Reasons" label="Select Ticket Sub Reason List" value={list_SubReasons} data-api="Ticket_Sub_Reason_List__c" onchange={handleDataChange}
+                                options={list_TicketSubReasons}></lightning-dual-listbox>
+                        </div>
+                    </lightning-layout-item>
+                </template>
+
+
+                <lightning-layout-item size="6" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <lightning-combobox label="Select Ticket Sub Reason" value={objTicketConfig.Ticket_Sub_Reason__c}
+                            placeholder="Select Ticket Sub Reason" options={list_TicketSubReasons}
+                            data-api="Ticket_Sub_Reason__c" onchange={handleTicketSubReasonSelected} ></lightning-combobox>
+                    </div>
+                    <template if:true={objTicketConfig.Ticket_Sub_Reason__c}>
+                        &nbsp; 
+                        <div class="slds-text-align_center">
+                            <a onclick={handleTicketSubReasonReset}> Reset </a>
+                        </div>
+                    </template>
+                </lightning-layout-item>
+
+
+                <lightning-layout-item size="12" padding="around-small">
+                    <lightning-input-rich-text label="Definition" label-visible data-api="Description__c" value={objTicketConfig.Description__c} onchange={handleDataChange}></lightning-input-rich-text>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="12" padding="around-small">
+                    <lightning-input-rich-text label="Talking Points" label-visible data-api="Talking_Points__c" value={objTicketConfig.Talking_Points__c} onchange={handleDataChange} ></lightning-input-rich-text>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="6" padding="around-small">
+
+                    <c-auto-complete-cmp autocompletelist={list_TicketFields} label="Search Ticket fields"
+                        onfilterlist={handleTicketFieldFilterList} onfilterselected={handleTicketFieldSelected} icon="custom:custom45"
+                        selectedvalue={strSelectedTicketField}></c-auto-complete-cmp>
+
+                </lightning-layout-item>
+
+                <lightning-layout-item size="12" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <lightning-dual-listbox source-label="Available Fields"
+                        selected-label="Selected Fields" label="Configure Fields" options={list_Fields} value={list_SelectedValues}
+                            onchange={handleFieldChange}></lightning-dual-listbox>
+                    </div>
+                </lightning-layout-item>
+
+
+                <template if:true={blnFieldSelected}>
+
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="slds-align_absolute-center">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" style="text-align: center;" title="Field Name">
+                                                Field Name</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" style="text-align: center;"
+                                                title="Override Label">Override Label</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Visibility">Required</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" style="text-align: center;" title="Visibility">
+                                                Size</div>
+                                        </th>
+                                    </tr>
+                                    <template for:each={list_SelectedFields} for:item="selectedField">
+                                        <tr key={selectedField.label} class="slds-hint-parent">
+                                            <td data-label="Field Name">
+                                                <div class="slds-truncate" title={selectedField.label}>
+                                                    {selectedField.label}
+                                                </div>
+                                            </td>
+
+                                            <td data-label="Override Label">
+                                                <div class="slds-truncate" title={selectedField.label}>
+                                                    <lightning-input variant="label-hidden" type="text"
+                                                        value={selectedField.overrideLabel}
+                                                        placeholder={selectedField.label} label=""
+                                                        data-label={selectedField.label} onchange={handleOverrideLabelChange}></lightning-input>
+                                                </div>
+                                            </td>
+
+                                            <td data-label="Required Toggle">
+                                                <div class="slds-truncate" title={selectedField.label}>
+                                                    <template if:true={selectedField.isRequired}>
+                                                        <lightning-input type="toggle" label=""
+                                                            data-label={selectedField.label}
+                                                            message-toggle-active="Required" checked
+                                                            message-toggle-inactive="Not Required"
+                                                            onchange={handleRequiredChange}>
+                                                        </lightning-input>
+                                                    </template>
+
+                                                    <template if:false={selectedField.isRequired}>
+                                                        <lightning-input type="toggle" label=""
+                                                            data-label={selectedField.label}
+                                                            message-toggle-active="Required"
+                                                            message-toggle-inactive="Not Required"
+                                                            onchange={handleRequiredChange}>
+                                                        </lightning-input>
+                                                    </template>
+                                                </div>
+                                            </td>
+                                            <td data-label="Size">
+                                                <div title={selectedField.label}>
+                                                    <!-- <lightning-slider label=""  data-label={selectedField.label} variant="label-hidden" min="3" max="12" value={selectedField.size} step="3" onchange={handleSizeChange} ></lightning-slider> -->
+
+                                                    <lightning-combobox data-label={selectedField.label} label=""
+                                                        variant="label-hidden" placeholder="Size" options={sizeOptions}
+                                                        value={selectedField.size} onchange={handleSizeChange}>
+                                                    </lightning-combobox>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </thead>
+                            </table>
+                        </div>
+                    </lightning-layout-item>
+                </template>
+
+                <lightning-layout-item size="12" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <lightning-combobox required label="Select Ticket Record Type to assign" placeholder="Select Ticket Record Type"
+                            options={list_TicketRecordTypes} onchange={handleDataChange} data-api="Ticket_Record_Type__c" value={objTicketConfig.Ticket_Record_Type__c} ></lightning-combobox>
+                    </div>
+                </lightning-layout-item>
+
+
+                <lightning-layout-item size="6" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <lightning-combobox required label="Select Owner Type" placeholder="Select Owner Type"
+                            options={list_Ownerships} onchange={handleOwnershipChange} data-api="Owner_Type__c" value={objTicketConfig.Owner_Type__c}></lightning-combobox>
+                    </div>
+                </lightning-layout-item>
+
+                <!-- <template if:true={isOwnerQueue}> -->
+                    <lightning-layout-item size="6" padding="around-small">
+                        <div class="slds-text-align_center">
+                            <c-auto-complete-cmp autocompletelist={list_OwnerQueues} label={strQueueLabel} onfilterlist={handleFilterList} onfilterselected={handleFilterSelected} icon="standard:queue" selectedvalue={objTicketConfig.Queue_Id__c} ></c-auto-complete-cmp>
+                        </div>
+                    </lightning-layout-item>
+                <!-- </template> -->
+
+
+                <lightning-layout-item size="6" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <template if:true={objTicketConfig.Stamp_Ticket_Reason__c}>
+                            <lightning-input type="checkbox" checked label="Stamp Ticket Reason" data-api="Stamp_Ticket_Reason__c" onchange={handleDataChange} ></lightning-input>
+                        </template>
+                        <template if:false={objTicketConfig.Stamp_Ticket_Reason__c}>
+                            <lightning-input type="checkbox" label="Stamp Ticket Reason" data-api="Stamp_Ticket_Reason__c" onchange={handleDataChange} ></lightning-input>
+                        </template>
+                    </div>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="12">
+                    <div class="slds-align_absolute-center slds-p-top_medium slds-p-bottom_medium">
+                        <lightning-button variant="brand" label="Save Ticket Config" onclick={handleSave} ></lightning-button>
+                    </div>
+                </lightning-layout-item>
+                
+            </template>
+
+        </lightning-layout>
+
+    </div>
+
+</template>

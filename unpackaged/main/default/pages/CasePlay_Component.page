@@ -1,0 +1,213 @@
+<apex:page controller="PlayModeCaseListController" id="mainPage">
+    <apex:includeScript value="/support/console/42.0/integration.js"/>    
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    
+     <script type="text/javascript">
+        
+        var jq = jQuery.noConflict();
+        
+        var eventHandler = function (result) {
+            getEnclosingPrimaryTabId();
+        };
+        // using this to show/hide next ticket link
+        sforce.console.onFocusedPrimaryTab(eventHandler);
+        
+        jq(window).on('load', function() { 
+            getEnclosingPrimaryTabId();           
+            setCaseId();
+        });
+        
+        //========================================
+        var getEnclosingPrimaryTabId = function getEnclosingPrimaryTabId() {
+            sforce.console.getFocusedPrimaryTabId(getTabLink);
+        };
+        
+        var getTabLink = function getTabLink(result) {
+            sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLink);
+        };
+        
+        var showTabLink = function showTabLink(result) {
+            var urll = result.tabLink; 
+            //alert(' Success '+result.success+" URL: "+urll);
+            if(urll == null || !(urll.length >0) || (urll.indexOf("isplay") == -1)){
+                //alert(urll);
+                jq(".linkCss").hide();  
+                //$("p").css("color", "red");
+                //sforce.console.setCustomConsoleComponentVisible(false,refreshSuccess);               
+            }
+            else{
+                jq(".linkCss").show();  
+            }
+        };
+        
+        //---------------------------------------
+        //=================================
+        //using below two methods to refresh the tab after 'status update'
+        function refreshFocusedTab(){
+            sforce.console.getFocusedPrimaryTabId(refreshTab);            
+        }
+        
+        var refreshTab = function refreshTab(result){
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(result.id, true);
+        };
+        //----------------------------
+        //============================
+        
+        function setCaseId() {
+            sforce.console.getFocusedSubtabObjectId(showObjectId);
+        }
+        var showObjectId = function showObjectId(result) {        
+            jq("#caseId").val(result.id);            
+            setCaseStatusField();
+        };
+        
+        function setCaseStatusField() {
+            
+            var caseid = jq("#caseId").val();
+            //alert(caseid);
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PlayModeCaseListController.getCaseStatus}',
+                caseid,
+                function(result, event){
+                    if (event.status) {
+                        //alert("result"+result);
+                        if(result != null && result.length>0){ 
+                            if(result.indexOf('#')>-1){
+                                refreshFocusedTab();
+                            }
+                            else{
+                                //jq(".caseStatus").val(result);
+                                //alert('Status '+jq(".caseStatus").val());
+                            }                   
+                            
+                            //console.log("@@ "+jq(".caseStatus").val());
+                        }  
+                    }                                          
+                }, 
+                {escape: true}
+            );
+        };
+        //====================================
+        //using below three methods to 'udpate the case status'
+        function updateCaseStatus() {
+            sforce.console.getFocusedSubtabObjectId(updateCase);
+        }
+        var updateCase = function updateCase(result) {
+                // Display the object ID
+            //alert ('Object ID: ' + result.id);
+            updatecase(result.id);
+        };
+        
+        function updatecase(caseid) {
+            var casestatus = jq(".caseStatus").val();
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PlayModeCaseListController.updateCaseStatus}',
+                caseid,
+                casestatus,
+                function(result, event){
+                    if (event.status) {                                    
+                        refreshFocusedTab();
+                    }                         
+                }, 
+                {escape: true}
+            );
+        };
+        //----------------------------
+        
+        //================================================
+        
+        function nextCase() {
+            sforce.console.setCustomConsoleComponentVisible(false);
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PlayModeCaseListController.getNextCase}',
+                function(result, event){
+                    if (event.status) { 
+                        if(result != null && result.length>0){
+                            jq("#caseId").val(result);
+                            getnextCaseRec();
+                        }
+                        else{
+                            jq(".linkCss").hide();
+                            alert("No record found.");
+                            //jq(".linkCss").hide();
+                            closePrimaryTab();
+                        }
+                    }                         
+                }, 
+                {escape: true}
+            );
+        };
+        
+        function getnextCaseRec(){
+            sforce.console.getFocusedPrimaryTabId(nextCaseId);
+            // use getFocusedPrimaryTabObjectId to get primary tab record id
+        }
+        
+        var nextCaseId = function nextCaseId(result) 
+        {
+            var tabId = result.id;
+            var caseid = jq("#caseId").val();
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            //alert();
+            sforce.console.openPrimaryTab(tabId, "/"+caseid+"?isplay=1", true);
+            sforce.console.refreshPrimaryTabById(tabId , true);
+        };
+        
+        //==================================================
+        //--------------------------------------------------
+        
+        function closePrimaryTab(){          
+            sforce.console.getFocusedPrimaryTabId(closeSubtab);
+        }
+          
+        var closeSubtab = function closeSubtab(result){
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        }
+        
+        //=======================================================
+                   
+        var refreshSuccess = function refreshSuccess(result) 
+        {
+            //Report whether refreshing the primary tab was successful
+            if (result.success == true) 
+            {
+               // alert('Primary tab refreshed successfully');
+            } 
+            else 
+            {
+               // alert('Primary did not refresh');
+            }
+        };
+       
+    </script>
+    <style>
+        .caseStatus{
+            float:right;
+            margin-top: 1%;
+            display:inline-block;
+            font-size:inherit;
+        }
+        
+        .linkCss{
+            font-size:12px;
+            font-weight: 800;
+            /*margin-left:30%;
+            margin-top: 10%;*/
+            display:inline-block;
+            padding-top:4px;
+        }
+    </style>
+    <apex:form id="mainfrm">
+         <A HREF="#" onClick="nextCase();return false" class="linkCss">Next Ticket</A>
+         
+         <!-- <apex:selectList styleclass="caseStatus" value="{!currentCaseStatus}" size="1" onchange="updateCaseStatus();return null">
+             <apex:selectOptions value="{!caseStatusPicklist}"/>
+         </apex:selectList> -->
+         <input id="caseId" type="hidden"/>  
+    </apex:form>
+</apex:page>

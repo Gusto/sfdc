@@ -1,0 +1,633 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 05-10-2023
+  @last modified by  : Nigam Goyal
+-->
+<apex:page controller="AddSkillsForUserRoleCtrl" tabStyle="User_Role__c" title="Add Skills" docType="HTML-5.0">
+    <apex:slds />
+    <style>
+        .pbSubheader h3 {
+            display: inline;
+        }
+
+        .custom-checkbox {
+            position: relative;
+            top: 1px;
+            box-shadow: 0px 0px 0px 1px #fff;
+        }
+
+        .head-bar {
+            background-color: #927b7c63;
+            color: Black;
+            padding: 4px 3px;
+            font-size: 91%;
+        }
+
+        .content-area {
+            padding: 10px 20px;
+            border: 1px solid #927b7c63;
+            display: none;
+        }
+    </style>
+    <apex:includeScript value="/support/console/45.0/integration.js" />
+    <apex:includeScript value="//code.jquery.com/jquery-2.1.1.min.js" />
+    <script type="text/javascript">
+        function SetTabTitle() {
+            sforce.console.setTabTitle('User Skills');
+        }
+        var pageLoad = window.onload;
+        window.onload = function () {
+            if (pageLoad) {
+                pageLoad();
+            }
+            SetTabTitle();
+        }
+        function onclickCheckBox(obj) {
+            var inputValue = obj;
+            $("." + inputValue).toggle();
+            var isAdvisorVisible = $(".Advisor").is(":visible");
+            var isRSVisible = $(".Renewal_Specialist").is(":visible");
+            if (inputValue == "Advisor" && isAdvisorVisible == false && isRSVisible == true) {
+                $(".Renewal_Specialistcheckbox").prop("checked", false);
+                $(".Renewal_Specialist").toggle(function () { $("." + inputValue).toggle(); });
+            }
+            else if (inputValue == "Renewal_Specialist" && isAdvisorVisible == true && isRSVisible == false) {
+                $(".Advisorcheckbox").prop("checked", false);
+                $(".Advisor").toggle(function () { $("." + inputValue).toggle(); });
+            }
+        }
+        function openPage(pagename, typeOfPage) {
+            var redirectUrl;
+            if (typeOfPage == 'VF') {
+                redirectUrl = 'apex/' + pagename;
+            }
+            else {
+                redirectUrl = pagename;
+                pagename = typeOfPage;
+            }
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function (enclosingResult) {
+                    sforce.console.getEnclosingPrimaryTabId(function (primaryResult) {
+                        sforce.console.openPrimaryTab(undefined, redirectUrl, false, pagename);
+                    });
+                })
+            } else {
+                // for inline Vf
+                window.open(redirectUrl, '_blank');
+            }
+        }
+
+    </script>
+    <div class="slds-scope">
+        <apex:sectionHeader title="User Role" subtitle="Add Skills for {!objUserRole.User__r.Name}" />
+        <div>
+            <a href="/{!objUserRole.Id}">{!strBacktoUserRole}</a>
+        </div>
+
+        <apex:form id="frmId">
+
+            <c:GustoActionStatus />
+            <apex:actionFunction name="getPODDetails" action="{!getPODDetails}" oncomplete="displayPopup();" reRender="podDetail" status="actStatusId">
+                <apex:param name="strRecId" value="" />
+            </apex:actionFunction>
+            <apex:pageblock id="pageBlock1">
+                <apex:pageBlockSection title="Skills" columns="1" id="pageBlockSec1">
+                    <apex:pageBlockSectionItem id="pageBlockItem1">
+                        <apex:outputLabel value="Select Role"></apex:outputLabel>
+                        <apex:actionRegion >
+                            <apex:selectList id="role" value="{!strRoleData}" size="1">
+                                <apex:selectOptions value="{!list_RoleType}"></apex:selectOptions>
+                                <apex:actionSupport action="{!ShowTeamSkillType}" event="onchange" reRender="frmId" status="actStatusId" />
+                            </apex:selectList>
+                        </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!strRoleData!=null && (strRoleData =='Implementation Advocate' || strRoleData == 'Carrier IO' || strRoleData == 'BYB Advocate')}">
+                        <apex:outputLabel value="Select Skill Type" />
+                        <apex:outputPanel >
+                            <apex:selectList value="{!strSkillType}" size="1">
+                                <apex:selectOptions value="{!list_SkillType}"></apex:selectOptions>
+                                <apex:actionSupport action="{!DisplayCriteriaSection}" event="onchange" reRender="frmId" status="actStatusId" />
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageMessages id="showmsg" escape="false"/>
+        
+                <apex:pageBlockSection columns="1" title="Assign Skills " id="selectionBlock" rendered="{!strSkillType != null && strRoleData== 'Implementation Advocate'}">
+            
+                    <apex:pageBlockSectionItem rendered="{!blnShowRegionSection}">
+                        <apex:outputlabel >Select Region </apex:outputlabel>
+                        <apex:pageBlockTable value="{!list_RegionPODWrapper}" var="rp" cellpadding="5">
+                            <apex:column headerValue="Select" width="10%">
+                                <apex:inputCheckbox value="{!rp.blnIsChecked}">
+                                    <apex:actionSupport event="onchange" action="{!populateStates}" reRender="selectionBlock" status="actStatusId" />
+                                </apex:inputCheckbox>
+                            </apex:column>
+                            <apex:column headerValue="Name" width="90%">
+                                <div style="cursor:pointer; color:blue;" onclick="getPODDetails('{!rp.idRegionPOD}');">{!rp.strRegionPODName}</div>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnShowStateSection || blnShowRegionSection}">
+                        <apex:outputlabel >Select State </apex:outputlabel>
+                        <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnSelectedState}" rightLabel="" rightOption="{!list_SelectedState}"
+                            size="5" width="300px" showUpDownButtons="false" />
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem rendered="{!blnShowOrderTypeSection}">
+                        <apex:outputlabel >Select Order Type </apex:outputlabel>
+                        <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnSelectedOrderType}" rightLabel="" rightOption="{!list_SelectedOrderType}"
+                            size="5" width="300px" showUpDownButtons="false" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnShowSPartnerSection}">
+                        <apex:outputlabel >Select Partner Tier </apex:outputlabel>
+                        <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnSelectedPartner}" rightLabel="" rightOption="{!list_SelectedPartner}"
+                            size="5" width="300px" showUpDownButtons="false" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnShowBenefitsBigDesk}" helpText="If an OA has the Big Desk skill assigned they will only receive orders where 'Big Desk BenOps' is marked as true (also matching their other skills such as order type) up to their capacity.">
+                        <apex:outputlabel >Benefits Big Desk </apex:outputlabel>
+                        <apex:inputCheckbox value="{!blnSelectedBigDesk}" />
+                    </apex:pageBlockSectionItem>
+                     <apex:pageBlockSectionItem rendered="{!blnShowMaestro}" helpText="If an OA has the Maestro skill assigned they will only receive Maestro orders (also matching their other skills such as order type) up to their capacity.">
+                        <apex:outputlabel >Maestro</apex:outputlabel>
+                        <apex:inputCheckbox value="{!blnSelectedMaestro}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnShowTADASection && !blnShowTADARadioBox}">
+                        <apex:outputlabel >Select the TAdA </apex:outputlabel>
+                        <apex:inputCheckbox value="{!blnTADA}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnShowTADASection && blnShowTADARadioBox}">
+                        <apex:outputlabel >Select the TAdA </apex:outputlabel>
+                        <apex:selectRadio value="{!strSelectedTAdA}">
+                            <apex:selectOptions value="{!list_UnSelectedTAdA}">
+                            </apex:selectOptions>
+                        </apex:selectRadio>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageblockSection id="ManageBOAllocation" columns="1" collapsible="false" title="Manage Benefit Order Allocation" rendered="{!if(strRoleData=='Implementation Advocate' && strSkillType=='Core',true,false)}">
+                    <apex:pageblockTable value="{!list_ManageBOWrappers}" var="mbo">
+                        <apex:column value="{!mbo.objBO.User__c}" headerValue="User" />
+                        <apex:column headerValue="Month">
+                            <apex:selectlist value="{!mbo.objBO.Month__c}" size="1">
+                                <apex:selectOptions value="{!list_MonthsPicklist}" />
+                            </apex:selectlist>
+                        </apex:column>
+                        <apex:column headerValue="Year">
+                            <apex:selectlist value="{!mbo.objBO.Year__c}" size="1">
+                                <apex:selectOptions value="{!list_YearsPicklist}" />
+                            </apex:selectlist>
+                        </apex:column>
+                        <apex:column headerValue="Max BO">
+                            <apex:inputField value="{!mbo.objBO.Max_BO__c}" />
+                        </apex:column>
+                        <apex:column >
+                            <apex:commandButton action="{!deleteBOAllocation}" reRender="ManageBOAllocation" status="actStatusId" value="Delete">
+                                <apex:param name="Deleteindex" value="{!mbo.intRecordIndex}" assignTo="{!intDeleteIndx}" />
+                            </apex:commandButton>
+                        </apex:column>
+                    </apex:pageblockTable>
+                    <apex:commandButton action="{!AddMore}" value="Add More" rerender="ManageBOAllocation" />
+                </apex:pageblockSection>
+                <apex:pageBlockSection columns="1" title="Assign Skills " id="benefitsAdvising" rendered="{!strRoleData == 'Benefits Advising'}">
+                    <!--Start Advising-->
+                    <apex:repeat value="{!map_UserSkillWrapper}" var="roleName">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel >
+                                <div class="head-bar">
+                                    <apex:actionRegion >
+                                        <apex:inputCheckbox styleClass="{!map_UserSkillWrapper[roleName].strStyleClassName}checkbox" value="{!map_UserSkillWrapper[roleName].blnSelected}"
+                                            onclick="onclickCheckBox('{!map_UserSkillWrapper[roleName].strStyleClassName}')">
+                                            <apex:actionSupport reRender="ButtonSection, benefitsAdvising" event="onchange" action="{!onRoleSelect}" status="actStatusId">
+                                                <apex:param name="selectedRole" assignTo="{!strOrderAllocRoleType}" value="{!roleName}" />
+                                            </apex:actionSupport>
+                                        </apex:inputCheckbox>
+                                        <apex:outputLabel >
+                                            <strong>{!roleName}</strong>
+                                        </apex:outputLabel>
+                                    </apex:actionRegion>
+                                </div>
+                                <div class="content-area {!map_UserSkillWrapper[roleName].strStyleClassName}" style="text-align:center;{!if(map_UserSkillWrapper[roleName].blnSelected,'display:block;','display:none;')}">
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:pageBlockSectionItem rendered="{!IF(map_UserSkillWrapper[roleName].blnShowBigDesk == true, true, false)}">
+                                            <apex:outputlabel >Benefits Big Desk </apex:outputlabel>
+                                            <apex:inputCheckbox value="{!map_UserSkillWrapper[roleName].blnBenefitsBigDesk}"></apex:inputCheckbox>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:pageBlockSectionItem rendered="{!IF(map_UserSkillWrapper[roleName].blnShowRegion == true, true, false)}">
+                                            <apex:outputlabel >Select Region </apex:outputlabel>
+                                            <apex:pageBlockTable value="{!map_UserSkillWrapper[roleName].list_RegionPODWrapper}" var="regionPOD" cellpadding="5">
+                                                <apex:column headerValue="Select" width="10%">
+                                                    <apex:inputCheckbox value="{!regionPOD.blnIsChecked}">
+                                                        <apex:actionSupport event="onchange" action="{!populateRegionAndStates}" reRender="benefitsAdvising" status="actStatusId">
+                                                            <apex:param assignTo="{!strSelectedSkillRoleName}" value="{!roleName}" name="userSkillRoleName" />
+                                                        </apex:actionSupport>
+                                                    </apex:inputCheckbox>
+                                                </apex:column>
+                                                <apex:column headerValue="Name" width="90%">
+                                                    <div style="cursor:pointer; color:blue;" onclick="getPODDetails('{!regionPOD.idRegionPOD}');">{!regionPOD.strRegionPODName}</div>
+                                                </apex:column>
+                                            </apex:pageBlockTable>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                    <apex:pageBlockSection columns="1" collapsible="false">
+                                        <apex:pageBlockSectionItem rendered="{!IF(map_UserSkillWrapper[roleName].blnShowState == true, true, false)}">
+                                            <apex:outputlabel >Select State </apex:outputlabel>
+                                            <c:MultiselectPicklist leftLabel="" leftOption="{!map_UserSkillWrapper[roleName].list_UnSelectedState}" rightLabel="" rightOption="{!map_UserSkillWrapper[roleName].list_SelectedState}"
+                                                size="5" width="300px" showUpDownButtons="false" />
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                    <apex:pageBlockSection columns="1" collapsible="false">
+                                        <apex:pageBlockSectionItem rendered="{!IF(map_UserSkillWrapper[roleName].blnShowCoverageType == true, true, false)}">
+                                            <apex:outputlabel >Select Coverage Type </apex:outputlabel>
+                                            <c:MultiselectPicklist leftLabel="" leftOption="{!map_UserSkillWrapper[roleName].list_UnSelectedCoverageType}" rightLabel=""
+                                                rightOption="{!map_UserSkillWrapper[roleName].list_SelectedCoverageType}" size="5"
+                                                width="300px" showUpDownButtons="false" />
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                    <apex:pageblockSection rendered="{!IF(map_UserSkillWrapper[roleName].list_AllocationWrapper != NULL && map_UserSkillWrapper[roleName].blnShowAllocation == true,true,false)}"
+                                        id="orderAllocation" columns="1" collapsible="false" title="Manage Opportunity Allocation">
+                                        <apex:pageblockTable value="{!map_UserSkillWrapper[roleName].list_AllocationWrapper}" var="orderAlloc">
+                                            <apex:column value="{!orderAlloc.objBO.User__c}" headerValue="User" />
+                                            <apex:column headerValue="Month">
+                                                <apex:selectlist value="{!orderAlloc.objBO.Month__c}" size="1">
+                                                    <apex:selectOptions value="{!list_MonthsPicklist}" />
+                                                </apex:selectlist>
+                                            </apex:column>
+                                            <apex:column headerValue="Year">
+                                                <apex:selectlist value="{!orderAlloc.objBO.Year__c}" size="1">
+                                                    <apex:selectOptions value="{!list_YearsPicklist}" />
+                                                </apex:selectlist>
+                                            </apex:column>
+                                            <apex:column headerValue="Max Opportunity">
+                                                <apex:inputField value="{!orderAlloc.objBO.Max_BO__c}" />
+                                            </apex:column>
+                                            <apex:column >
+                                                <apex:commandButton action="{!deleteBOAllocation}" reRender="orderAllocation" status="actStatusId" value="Delete">
+                                                    <apex:param name="Deleteindex" value="{!orderAlloc.intRecordIndex}" assignTo="{!intDeleteIndxOP}" />
+                                                </apex:commandButton>
+                                            </apex:column>
+                                        </apex:pageblockTable>
+                                        <apex:commandButton action="{!addBlankRowToOrderAllocation}" value="Add More" rerender="orderAllocation">
+                                            <apex:param value="1" name="rowCount" assignTo="{!intOrderAllocRowCount}" />
+                                            <apex:param value="{!roleName}" name="roleName" assignTo="{!strOrderAllocRoleType}" />
+                                        </apex:commandButton>
+                                    </apex:pageblockSection>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                    <!--End Advising-->
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1" title="Assign Skills " rendered="{!strRoleData == 'Benefit Transfer'}">
+                    <!--Start Qualifier-->
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <div class="head-bar">
+                                <apex:inputCheckbox value="{!map_BTDefineSkills['Qualifier']}" onclick="onclickCheckBox('Qualifier')">
+                                    <apex:actionSupport reRender="ButtonSection, pageBlock1" event="onchange" status="actStatusId" />
+                                </apex:inputCheckbox>
+                                <apex:outputLabel >
+                                    <strong>Benefit Transfer Qualifier</strong>
+                                </apex:outputLabel>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <!--End Qualifier-->
+
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <div class="head-bar">
+                                <apex:actionRegion >
+                                    <apex:inputCheckbox value="{!map_BTDefineSkills['Advocate']}" onclick="onclickCheckBox('advocate')">
+                                        <apex:actionSupport reRender="ButtonSection, pageBlock1" event="onchange" action="{!ManageBOAllocation}" status="actStatusId"
+                                        />
+                                    </apex:inputCheckbox>
+                                    <apex:outputLabel >
+                                        <strong>Benefit Transfer Advocate</strong>
+                                    </apex:outputLabel>
+                                </apex:actionRegion>
+                            </div>
+                            <div class="content-area advocate" style="text-align:center;{!if(map_BTDefineSkills['Advocate'],'display:block;','display:none;')}">
+                                <apex:pageBlockSection columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputlabel >Check Tada box, if Advocate can work on transferring TADA’s </apex:outputlabel>
+                                        <apex:inputCheckbox value="{!blnIsTada}"></apex:inputCheckbox>
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                                <apex:pageblockSection id="ManageBOAllocation" columns="1" collapsible="false" title="Manage Benefit Order Allocation">
+                                    <apex:pageblockTable value="{!list_ManageBOWrappers}" var="mbo">
+                                        <apex:column value="{!mbo.objBO.User__c}" headerValue="User" />
+                                        <apex:column headerValue="Month">
+                                            <apex:selectlist value="{!mbo.objBO.Month__c}" size="1">
+                                                <apex:selectOptions value="{!list_MonthsPicklist}" />
+                                            </apex:selectlist>
+                                        </apex:column>
+                                        <apex:column headerValue="Year">
+                                            <apex:selectlist value="{!mbo.objBO.Year__c}" size="1">
+                                                <apex:selectOptions value="{!list_YearsPicklist}" />
+                                            </apex:selectlist>
+                                        </apex:column>
+                                        <apex:column headerValue="Max BO">
+                                            <apex:inputField value="{!mbo.objBO.Max_BO__c}" />
+                                        </apex:column>
+                                        <apex:column >
+                                            <apex:commandButton action="{!deleteBOAllocation}" reRender="ManageBOAllocation" status="actStatusId" value="Delete">
+                                                <apex:param name="Deleteindex" value="{!mbo.intRecordIndex}" assignTo="{!intDeleteIndx}" />
+                                            </apex:commandButton>
+                                        </apex:column>
+                                    </apex:pageblockTable>
+                                    <apex:commandButton action="{!AddMore}" value="Add More" rerender="ManageBOAllocation" />
+                                </apex:pageblockSection>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <div class="head-bar" style="margin-top: 15px;">
+                                <apex:inputCheckbox value="{!map_BTDefineSkills['Facilitator 1']}" onclick="onclickCheckBox('facilitator1')">
+                                    <apex:actionSupport reRender="ButtonSection, pageBlock1" event="onchange" status="actStatusId" />
+                                </apex:inputCheckbox>
+                                <apex:outputLabel >
+                                    <strong>Benefit Transfer Facilitator 1</strong>
+                                </apex:outputLabel>
+                            </div>
+                            <div class="content-area facilitator1" style="text-align:center;{!if(map_BTDefineSkills['Facilitator 1'],'display:block;','display:none;')}">
+                                <apex:pageBlockSection columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputlabel >Select Facilitator Carrier Pod </apex:outputlabel>
+                                        <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnselectedPODsValues}" rightLabel="" rightOption="{!list_SelectedPODsValues}"
+                                            size="5" width="300px" showUpDownButtons="false" />
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <div class="head-bar" style="margin-top: 15px;">
+                                <apex:inputCheckbox value="{!map_BTDefineSkills['Facilitator 2']}" onclick="onclickCheckBox('facilitator2')">
+                                    <apex:actionSupport reRender="ButtonSection, pageBlock1" event="onchange" status="actStatusId" />
+                                </apex:inputCheckbox>
+                                <apex:outputLabel >
+                                    <strong>Benefit Transfer Facilitator 2</strong>
+                                </apex:outputLabel>
+                            </div>
+                            <div class="content-area facilitator2" style="text-align:center;{!if(map_BTDefineSkills['Facilitator 2'],'display:block;','display:none;')}">
+                                <apex:pageBlockSection columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputlabel >Check Build Plan, if Facilitator 2 can build Plans </apex:outputlabel>
+                                        <apex:inputCheckbox value="{!blnIsBuildPlan}"></apex:inputCheckbox>
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="BTNotes" rendered="{!(strRoleData=='Benefit Transfer' && (map_BTDefineSkills['Advocate'] || map_BTDefineSkills['Facilitator 2'] || map_BTDefineSkills['Facilitator 1']))}">
+                        <apex:outputLabel value="BT Notes"></apex:outputLabel>
+                        <apex:inputTextarea title="Character limit :10000" html-maxLength="10000" value="{!strBTNotes}" cols="160" rows="{!map_RowCountTextArea['BT_Notes__c']}"></apex:inputTextarea>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="PTSkills" title="Payroll Transfer Skills" Columns="1" rendered="{!if(OR(strRoleData=='Payroll Transfer Advocate',strRoleData=='Payroll Transfer Facilitator'),true,false)}">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel >Payroll Transfer Skill</apex:outputlabel>
+                        <apex:outputPanel >
+                            <c:MultiselectPicklist leftLabel="" leftOption="{!list_unselectedPTSkillValues}" rightLabel="" rightOption="{!list_selectedPTSkillValues}"
+                                size="5" width="300px" showUpDownButtons="false" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >	
+                        <apex:outputlabel >Partner Tier </apex:outputlabel> 
+                        <c:MultiselectPicklist leftLabel="" leftOption="{!list_unselectedPTPartnerTierValues}" rightLabel="" rightOption="{!list_selectedPTPartnerTierValues}"	
+                            size="5" width="300px" showUpDownButtons="false" /> 
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!if(strRoleData=='Payroll Transfer Facilitator',true,false)}">
+                        <apex:outputlabel >Complexity Score</apex:outputlabel>
+                        <apex:outputPanel >
+                            <apex:selectRadio value="{!strPTCompScore}" style="width:40%;margin-left: 9%" layout="pageDirection">
+                                <apex:selectOptions value="{!list_unselectedPTCompScore}" />
+                            </apex:selectRadio>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem rendered="{!if(strRoleData=='Payroll Transfer Facilitator',true,false)}">
+                        <apex:outputlabel >Previous Payroll Provider Type</apex:outputlabel>
+                        <apex:outputPanel >
+                            <c:MultiselectPicklist leftLabel="" leftOption="{!list_unselectedPTPrevProvider}" rightLabel="" rightOption="{!list_selectedPTPrevProvider}"
+                                size="5" width="300px" showUpDownButtons="false" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!if(strRoleData=='Payroll Transfer Facilitator',true,false)}">
+                        <apex:outputlabel >Payroll Sales Team</apex:outputlabel>
+                        <apex:outputPanel >
+                            <c:MultiselectPicklist leftLabel="" leftOption="{!list_unselectedPTSalesTeam}" rightLabel="" rightOption="{!list_selectedPTSalesTeam}"
+                                size="5" width="300px" showUpDownButtons="false" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!if(strRoleData=='Payroll Transfer Facilitator',true,false)}">
+                        <apex:outputlabel >Exception Request</apex:outputlabel>
+                        <apex:outputPanel style="margin-left:15%">
+                            <apex:inputCheckbox value="{!blnPTExceptionRequest}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="PTFacilitatorSkills" title="Payroll Transfer Facilitator Skill Complexity" Columns="1" rendered="{!if(strRoleData=='Payroll Transfer Facilitator',true,false)}">
+                    <apex:pageBlockSectionItem id="complexityLevel">
+                        <apex:outputLabel value="Complexity Level"></apex:outputLabel>
+                        <apex:actionRegion >
+                            <apex:selectList id="level" value="{!strSelectedPTFacilitatorComplexityLevel}" size="1">
+                                <apex:selectOptions value="{!list_ptFacilitatorComplexityLevelOptions}"></apex:selectOptions>
+                                <apex:actionSupport action="{!handleComplexityLevelChange}" event="onchange" reRender="complexityDetails" status="actStatusId" />
+                            </apex:selectList>
+                        </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:outputPanel id="complexityDetails">
+                    <apex:pageBlockSection collapsible="true" title="Details" Columns="1" rendered="{!if(strSelectedPTFacilitatorComplexityLevel != '',true,false)}">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputlabel >State Count</apex:outputlabel>
+                            <apex:outputField label=" " value="{!objSkill.States_Count__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputlabel >States</apex:outputlabel>
+                            <apex:outputField label=" " value="{!objSkill.States__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputlabel >Previous Payroll Provider</apex:outputlabel>
+                            <apex:outputField label=" " value="{!objSkill.Previous_Payroll_Providers__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputlabel >Benefits Count</apex:outputlabel>
+                            <apex:outputField label=" " value="{!objSkill.Benefits_Count__c}"/>
+                        </apex:pageBlockSectionItem>                    
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+                <!--Account Specialist Section Start-->
+                <apex:pageBlockSection id="NASkill" title="{!strRoleData} Skills" Columns="1" rendered="{!if(strRoleData=='Account Specialist',true,false)}">
+                    <apex:pageBlockSectionItem rendered="{!if(list_TaxResRegionsPOD.size>0, true, false)}">
+                        <apex:outputlabel >Select Agency POD to Assign</apex:outputlabel>
+                        <apex:pageBlockTable value="{!list_TaxResRegionsPOD}" var="rp" cellpadding="5">
+                            <apex:column headerValue="Select" width="5%">
+                                <apex:inputCheckbox value="{!rp.blnSelected}" />
+                            </apex:column>
+                            <apex:column headerValue="Name" width="95%">
+                                <div style="cursor:pointer; color:blue;" onclick="getPODDetails('{!rp.idRegionPOD}');">{!rp.strRegionPODName}</div>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSectionItem>                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel >POD Captain </apex:outputlabel>
+                        <apex:inputField value="{!objUserRole.POD_Captain__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!if(strRoleData=='Account Specialist',true,false)}">
+                        <apex:outputlabel >
+                            Remove From Assignment
+                        </apex:outputlabel>
+                        <apex:inputField value="{!objUserRole.Remove_From_Assignment__c}" />
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <!--NAccount Specialist Section End-->
+               
+                <apex:pageblockSection id="ButtonSection" columns="1">
+                    <apex:pageBlockSectionItem dataStyle="text-align:center">
+                        <apex:outputPanel >
+                            <apex:commandButton style="margin-right: 10px;" action="{!SaveSkill}" value="Save Skills" status="actStatusId" rendered="{! (strRoleData!= NULL &&  (((strRoleData != 'Benefit Transfer') && strSkillType != NULL) || (strRoleData == 'Benefit Transfer' && (map_BTDefineSkills['Qualifier'] || map_BTDefineSkills['Advocate'] || map_BTDefineSkills['Facilitator 2'] || map_BTDefineSkills['Facilitator 1']))))}"
+                                reRender="frmId" />
+                            <apex:commandButton style="margin-right: 10px;" action="{!redirectToFBOS}" value="Save Skills and Assign Cap" status="actStatusId"
+                                rendered="{!if(OR(strRoleData=='Payroll Transfer Advocate',strRoleData=='Payroll Transfer Facilitator'),true,false)}"
+                                reRender="frmId" />
+                            <apex:commandButton style="margin-right: 10px;" action="{!Cancel}" value="Cancel" status="actStatusId" reRender="frmId" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageblockSection>
+            </apex:pageblock>
+
+            <apex:outputPanel id="podDetail" style="display:{!if(objViewRegionPOD.Id!=null,'','none;')}">
+                <!--Popup start -->
+                <div style="display: none;" class="carrier-pod-modal" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
+                        class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container" style="max-width: 600px;">
+                            <div class="slds-modal__header">
+                                <a href="javascript:closeModal();" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                        <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Close</span>
+                                </a>
+                                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!objViewRegionPOD.Name}</h2>
+                                <h4>{!if(intTaxResPODCount>0,'Selected Agencies','')} {!if(int_carrierPODCount>0,'Selected Carriers','')}
+                                    {!if(int_StateCount>0,'Selected States','')}</h4>
+                            </div>
+
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                <apex:variable var="rowNum" value="{!0}" />
+                                <!--Carrier List Strat -->
+                                <div style="display:{!if(int_carrierPODCount>0,'','none;')}">
+                                    <ul class="slds-accordion">
+                                        <apex:repeat value="{!map_CarrierPODWithState}" var="carrierObj">
+                                            <apex:variable var="rowNum" value="{!rowNum + 1}" />
+                                            <li class="slds-accordion__list-item">
+                                                <section id="tab_{!rowNum}" class="slds-accordion__section">
+                                                    <div class="slds-accordion__summary">
+                                                        <h3 class="slds-accordion__summary-heading">
+                                                            <a href="javascript:void(0)" id="tab" onclick="opentab('tab_{!rowNum}');" aria-controls="accordion-details-01" aria-expanded="true"
+                                                                class="slds-button slds-button_reset slds-accordion__summary-action">
+                                                                <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                                                    <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#switch')}"></use>
+                                                                </svg>
+                                                                <span class="slds-accordion__summary-content">{!carrierObj}</span>
+                                                            </a>
+                                                        </h3>
+                                                    </div>
+                                                    <div style="margin-left:20px; font-weight:bold; background-color:lightgrey;" class="slds-accordion__content" id="accordion-details-01">&nbsp; &nbsp; Assigned State</div>
+                                                    <div style="max-height:100px; overflow-y:scroll; margin-left:20px; background-color: #efecec" class="slds-accordion__content"
+                                                        id="accordion-details-02">
+                                                        <apex:repeat value="{!map_CarrierPODWithState[carrierObj]}" var="state">
+                                                            &nbsp; &nbsp; {!state}
+                                                            <br/>
+                                                        </apex:repeat>
+                                                    </div>
+                                                </section>
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                </div>
+                                <!--Carrier List end -->
+
+                                <!--Region state Start -->
+                                <div style="display:{!if(int_StateCount>0,'','none;')}">
+                                    <ul class="slds-accordion">
+                                        <apex:repeat value="{!set_RegionState}" var="state">
+                                            <li class="slds-accordion__list-item">
+                                                <section class="slds-accordion__section">
+                                                    <div class="slds-accordion__summary">
+                                                        <h3 class="slds-accordion__summary-heading">
+                                                            <span class="slds-accordion__summary-content">{!state}</span>
+                                                        </h3>
+                                                    </div>
+                                                </section>
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                </div>
+                                <!--Region state end -->
+
+                                <!--TaxRes Agency Start -->
+                                <div style="display:{!if(intTaxResPODCount>0,'','none;')}">
+                                    <ul class="slds-accordion">
+                                        <apex:repeat value="{!list_TaxResAgenciesPODMapping}" var="objPM">
+                                            <li class="slds-accordion__list-item">
+                                                <section class="slds-accordion__section">
+                                                    <div class="slds-accordion__summary">
+                                                        <h3 class="slds-accordion__summary-heading">
+                                                            <span class="slds-accordion__summary-content">
+                                                                <a href="/{!objPM.Agency__c}" target="_blank">{!objPM.Agency__r.Name}</a>
+                                                            </span>
+                                                        </h3>
+                                                    </div>
+                                                </section>
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                </div>
+                                <!--TaxRes Agency  end -->
+                            </div>
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </div>
+                <!--Popup End -->
+            </apex:outputPanel>
+        </apex:form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        function selectAllCheckboxes(obj, receivedInputID) {
+            var inputCheckBox = document.getElementsByTagName("input");
+            for (var i = 0; i < inputCheckBox.length; i++) {
+                if (inputCheckBox[i].id.indexOf(receivedInputID) != -1) {
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+
+        function displayPopup() {
+            $('.carrier-pod-modal').fadeIn();
+        }
+
+        function closeModal() {
+            $('.carrier-pod-modal').fadeOut();
+        }
+        function opentab(objId) {
+            var element = document.getElementsByClassName('slds-accordion__section');
+            for (var i = 0; i < element.length; i++) {
+                element[i].classList.remove('slds-is-open');
+            }
+            document.getElementById(objId).classList.add('slds-is-open');
+            return false;
+        }
+    </script>
+</apex:page>

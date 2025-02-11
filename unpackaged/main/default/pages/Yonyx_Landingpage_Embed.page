@@ -1,0 +1,332 @@
+<apex:page standardController="Case" sidebar="true">
+    <apex:includeScript value="/support/console/38.0/integration.js"/>
+    <apex:includeScript value="/soap/ajax/21.0/connection.js"/>
+    <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <style type="text/css">
+        .error {
+            background-color:  #f2dede; color: #333;
+        }
+        .info {
+            background-color:  #d9edf7; color: #333;
+        }
+
+    </style>
+    <div id="message" style="width: 95%; padding: 15px; " class="" ></div>
+    <apex:iframe src="" id="yonyxFrame" frameborder="false" height="650px" scrolling="true" width="100%" />
+
+    <script>
+        var domainApproval = window.location.protocol + "//" + window.location.hostname ;
+        console.log("Email this URL to Yonyx for domain whitelisting: " + domainApproval);
+
+        var iframeName = "yonyxFrame";
+        $("#" + iframeName).hide();
+        var subdomain = "gusto";
+        var lobId = "f5501df4-aa43-11e9-bcd1-4201c0a80104";
+        var lang = "en";
+
+
+        var caseNumber = "{!Case.CaseNumber}";
+        /*
+        Create a case field with name Yonyx Bookmark of type text with 255 chars length 
+        Make it visible to all relevant profiles else case update will fail 
+        */
+        var yonyxBookmarkId = "{!Case.Yonyx_Bookmark__c}";
+        var includeTranscriptUrl = true;
+        var includeTranscriptSummary = true;
+        var tagSearchFieldsConfig = "";
+        
+        console.log("Yonyx Bookmark Id: " + yonyxBookmarkId);
+
+
+        var constOrigin = "https://{subdomain}.yonyx.com";
+        var yIframeStaticUrl = "https://{subdomain}.yonyx.com/y/portal/?id={lobId}&h=0&st=1&rid={caseNumber}";
+        var yIframeStaticUrlBookmark = "https://{subdomain}.yonyx.com/y/conversation/?id={stepId}&h=0&st=1&rid={caseNumber}"
+        var incidentUrlFrag = "https://{subdomain}.yonyx.com/y/incident/?did=";
+        var transcriptIds = [];
+        var yBrowse = "&at=browse";
+        var ySearch = "&at=search";
+
+        $("#message").hide(); 
+        
+        var allFine = true;
+
+        if(subdomain === null || subdomain === "") {
+            showMessage("Yonyx subdomain cannot be empty.  Please visit configuration page of this Yonyx package.", "error");
+            allFine = false;            
+        }
+
+        if(allFine && (lobId === null || lobId === "")) {
+            showMessage("Yonyx LOB Id (Landing Page ID) cannot be empty.  Please visit configuration page of this Yonyx package.", "error");
+            allFine = false;
+        }
+        
+        constOrigin = constOrigin.replace("{subdomain}", subdomain);
+        yIframeStaticUrl = yIframeStaticUrl.replace("{subdomain}", subdomain).replace("{lobId}", lobId).replace("{caseNumber}", caseNumber);
+        yIframeStaticUrlBookmark = yIframeStaticUrlBookmark.replace("{subdomain}", subdomain).replace("{stepId}", yonyxBookmarkId).replace("{caseNumber}", caseNumber);
+        if(lang !== null && lang !== "") {
+            yIframeStaticUrl = yIframeStaticUrl + "&lang=" + lang;
+            yIframeStaticUrlBookmark = yIframeStaticUrlBookmark + "&lang=" + lang;
+        }
+        
+        incidentUrlFrag = incidentUrlFrag.replace("{subdomain}", subdomain);
+
+        /*==============================================
+            BEGIN SET TAG SEARCH FIELDS
+        ==============================================*/
+        var tagSearchFields = []; 
+        var tmp2 = tagSearchFieldsConfig.replace(/ /g, ""); 
+        if(tmp2 !== "") {
+            tagSearchFields = tmp2.split(",");
+        }
+
+        var tags = [];
+        var minTagsLength = 0;
+
+        if(allFine && tagSearchFields.length > 0) {
+
+            sforce.connection.sessionId = "{!$Api.Session_ID}"; //sometimes session Id is not set automatically, so set it manually       
+            var query = "SELECT " + tagSearchFieldsConfig + " FROM Case where CaseNumber='{!Case.CaseNumber}'";
+            //alert("query is: " + query);
+            var caseRecords =  sforce.connection.query(query);
+            var records = caseRecords.getArray("records");
+
+            //alert(records);
+            for (var i=0; i<records.length; i++) {
+                var rec = records[i];
+                // console.log(rec);
+
+                for(var j = 0; j < tagSearchFields.length; j++) {
+                    //tags.push( cleanUpTag( rec[tagSearchFields[j]]  ) );
+                    var tmpTag = cleanUpTag( rec[tagSearchFields[j]]  );
+                    if(tmpTag.length > 0) {
+                        tags.push( tmpTag );
+                    }
+
+                }           
+            }
+
+        }
+
+        /*==============================================
+            END SET TAG SEARCH FIELDS
+        ==============================================*/
+
+
+        
+        function sender(data) {
+            var origin = constOrigin;
+
+            var message = "Message sent to " + origin + ":  " + JSON.stringify(data);
+            console.log(message);
+
+            var iframeWin = document.getElementById(iframeName).contentWindow;
+            iframeWin.postMessage(JSON.stringify(data), origin);
+        }
+
+        function enableUserResponses() {
+            var data = new Object();
+            data.messageName = "enable-user-responses";
+
+            sender(data);
+            return false;
+        }
+        function disableUserResponses() {
+            var data = new Object();
+            data.messageName = "disable-user-responses";
+
+            sender(data);
+            return false;
+        }
+        function selectUserResponse(userResponseId) {
+            var data = new Object();
+            data.messageName = "select-user-response";
+            data.userResponseId = userResponseId;
+
+            sender(data);
+            return false;
+        } 
+
+        function listener (event) {
+            
+            if(event.origin != constOrigin) {return;}
+
+            console.log(event);
+            var message;
+            var data; 
+
+            try {
+                data = $.parseJSON(event.data);
+            }
+            catch(e) {}
+
+            if (event.origin !== constOrigin) {
+                message = "Not Authorized.";
+            }
+            else {
+                message = "Message received from " + event.origin + ":  " + JSON.stringify(data);
+            } 
+
+            /**
+             * Process incoming messages
+             **/
+            if(data.messageName === "guidance-step-loaded") {
+
+                if(data.transcriptId) {
+                    setTranscriptId(data.transcriptId);
+                    yonyxBookmarkId = data.id;
+                }
+
+            }
+            else if(data.messageName === "traversal-completed") {
+
+                if(data.transcriptId && data.transcript) {
+                    
+                    var transcriptSummary = "";
+                    if(includeTranscriptUrl) {
+                        transcriptSummary = transcriptSummary + getPrevTranscriptUrls();
+                    }
+
+                    if (includeTranscriptSummary) {
+                        transcriptSummary = transcriptSummary + data.transcript;
+                    }
+                    
+                    sforce.connection.sessionId = "{!$Api.Session_ID}"; 
+
+                    var cc = new sforce.SObject('CaseComment');
+                    cc.ParentId = '{!Case.Id}';
+                    cc.CommentBody = transcriptSummary;                    
+                    var result = sforce.connection.create([cc]);
+                    console.log("cc is: " + cc);
+                    console.log("result is: " + result);
+
+                    var c = new sforce.SObject('Case');
+                    c.Id = '{!Case.Id}';
+                    c.Yonyx_Bookmark__c = yonyxBookmarkId;
+                    result = sforce.connection.update([c]); 
+                    console.log("c is: " + c);
+                    console.log("result is: " + result);
+
+
+                    transcriptIds = [];
+                    yonyxBookmarkId = "";
+                    
+                }
+            }
+            else if(data.messageName === "dimension") {
+              if(data.height) {
+                document.getElementById(iframeName).height = data.height;
+                // $("#yonyxAppFrame").attr("height", data.height);
+              }
+              
+            }
+
+        }
+
+
+
+        if (window.addEventListener) {
+            // For standards-compliant web browsers
+            window.addEventListener("message", listener, false);
+        }
+        else {
+            window.attachEvent("onmessage", listener);
+        }
+
+        function setTranscriptId( value ) {
+
+            if(transcriptIds.indexOf( value ) < 0) {
+                transcriptIds.push(value);
+            }
+        }
+        function getPrevTranscriptUrls() {
+            
+            var result = "";
+            for(var i = 0; i < transcriptIds.length; i++) {
+                result = result + incidentUrlFrag + transcriptIds[i] + "\n";
+            }
+            return result;
+        }
+        function cleanUpTag(tag) {
+            tag = tag || "";
+            //to lower case 
+            tag = tag.toLowerCase();
+            //replace all chars except alphabets, numbers and hyphen
+            tag = tag.replace(/[^0-9a-z\-]/g, "-")
+            //replace multiple instances of hyphens with single instance
+            tag = tag.replace(/--+/g, '-');
+
+            return tag;
+        }
+        function uniquify(array) {
+            var visited = {};
+            var result = [];
+            var len = array.length;
+            var j = 0;
+            for(var i = 0; i < len; i++) {
+                var item = array[i];
+                if(visited[item] !== 1) {
+                    visited[item] = 1;
+                    result[j++] = item;
+                }
+            }
+            return result;
+        }
+
+        function tagSearch () {
+
+            //uniquify tags 
+            tags = uniquify(tags);
+
+            //check is tags exist
+            var tagsFragment = "";
+
+            //only perform tag search if there are at least minTagsLength
+            if(tags.length > minTagsLength) {
+                tagsFragment = "&qt=TAG&q=" + tags.join(" ");
+
+                var iframe = document.getElementById(iframeName);
+
+                if(iframe) {    
+                    iframe.src = yIframeStaticUrl + ySearch + tagsFragment;
+                }
+
+            }
+
+        }
+
+        function showMessage(msg, type) {
+            $("#message").hide();
+            if(type === "error") {
+                $("#message" ).removeClass(" info ");    
+                $("#message" ).addClass(" error ");    
+            }
+            else if(type === "error") {
+                $("#message" ).removeClass(" error ");    
+                $("#message" ).addClass(" info ");    
+            } 
+            $("#message" ).html( msg );
+            $("#message" ).show();
+        }
+
+        if(allFine) {
+            if(yonyxBookmarkId.length > 0) {
+                //show bookmarked guidance step 
+                document.getElementById(iframeName).src = yIframeStaticUrlBookmark;  
+            }
+            else {
+                if(tags.length > minTagsLength) {
+                    //show tag search page
+                    tagSearch();  
+                }
+                else {
+                    //show browse page
+                    document.getElementById(iframeName).src = yIframeStaticUrl;                              
+                }
+            }
+            
+            $("#" + iframeName).show();            
+        }
+
+
+    </script>
+</apex:page>

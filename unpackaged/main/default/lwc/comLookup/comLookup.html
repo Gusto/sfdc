@@ -1,0 +1,189 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 07-27-2022
+  @last modified by  : Nigam Goyal
+-->
+<template>
+  <div class="slds-is-relative">
+    <template if:true={isShowSpinner}>
+      <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+    </template>
+    <div>
+      <div class={setCssOnMultipleSelectTrue}>
+        <template if:false={labelHidden}>
+          <label class="slds-form-element__label slds-no-flex">
+            <template if:true={required}>
+              <abbr title="required" class="slds-required">*</abbr>
+            </template> {labelFor} </label>
+          <lightning-helptext if:true={fieldLevelHelpText} content={fieldLevelHelpText}></lightning-helptext>
+        </template>
+        <div>
+          <div class=" ">
+            <div class=" showSelected slds-grid slds-wrap">
+              <template if:false={isDisabled}>
+                <template for:each={selectedSObjectList} for:item="selectedSObject">
+                  <span key={selectedSObject.Id}
+                    class="slds-m-bottom_xxx-small slds-show_inline-block slds-p-left_xxx-small multipleSelect"
+                    data-multiple-select={multipleSelect}>
+                    <lightning-pill size="12" name={selectedSObject.Id} tabindex="-1" label={selectedSObject.Name}
+                      onclick={handleOnClickSelectedRec} onremove={handleRemoveSelectedRec}
+                      onblur={handleOnBlurPillAction} class={setCssOnPills}>
+                      <template if:true={lookupIcon}>
+                        <img src={lookupIcon} class="slctRcrdImgStyle " style={bgColor} /> &nbsp; </template>
+                    </lightning-pill>
+                  </span>
+                </template>
+              </template>
+              <template if:true={isDisabled}>
+                <template if:true={isSlctdSobjLst}>
+                  <span style="white-space:pre-wrap;">
+                    <div class="">
+                      <lightning-formatted-rich-text class="fontColor cursorPointer" title={readOnlyValue}
+                        value={readOnlyValue}></lightning-formatted-rich-text>
+                    </div>
+                  </span>
+                </template>
+                <template if:false={isSlctdSobjLst}>
+                  <div class={setCssOnMultipleSelectTrue} style="width: 100%;">
+                    <lightning-input name="" label="" variant="label-hidden" class="disabled" data-is-view={isView}
+                      disabled></lightning-input>
+                  </div>
+                </template>
+              </template>
+            </div>
+            <div>
+              <template if:false={isDisabled}>
+                <template if:true={showSearchInputBox}>
+                  <div class="slds-combobox-group" data-field-wrap-list={dropDownOptions.length}
+                    onmouseenter={handleMouseEnter} onmouseleave={handleMouseleave}>
+                    <div class="slds-combobox_object-switcher slds-combobox-addon_start">
+                      <div class="slds-combobox_container slds-has-icon-only">
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                          <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_left-right"
+                            role="none">
+                            <img if:true={lookupIcon} src={lookupIcon}
+                              class="slctdImgStyle slds-icon_container slds-icon-utility-apex slds-input__icon slds-input__icon_left"
+                              style={bgColor} />
+                            <lightning-icon if:false={lookupIcon} icon-name="standard:record" size="small"
+                              class="slctdImgStyle slds-icon-utility-apex slds-input__icon slds-input__icon_left"
+                              alternative-text="Record"></lightning-icon> &nbsp; <input type="text"
+                              class="slds-input slds-combobox__input slds-combobox__input-value" autocomplete="off"
+                              onclick={openDropDownList} onblur={handleBlur} style="padding-left:1.65rem;" />
+                            <lightning-icon icon-name="utility:down" size="xx-small"
+                              class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                            </lightning-icon>
+                          </div>
+                          <div
+                            class="slds-dropdown slds-dropdown_left slds-dropdown_x-small slds-dropdown_length-with-icon-7">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation"
+                              onmouseenter={handleMouseEnter} onmouseleave={handleMouseleave}>
+                              <template for:each={dropDownOptions} for:item="item">
+                                <li role="presentation" class="slds-listbox__item" key={item.Id}
+                                  onclick={handleSelection} data-value={item.value}>
+                                  <div aria-checked="true"
+                                    class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected">
+                                    <span class="slds-truncate">
+                                      <span
+                                        class="slds-icon slds-icon_xx-small slds-icon-text-default slds-m-right_x-small"
+                                        aria-hidden="true">
+                                        <img if:true={item.url} src={item.url} class="imgStyle"
+                                          style={item.bgColor} />&nbsp; <lightning-icon if:false={item.url}
+                                          icon-name="standard:record" size="small" class="" alternative-text="Record">
+                                        </lightning-icon> &nbsp; </span> {item.label} </span>
+                                  </div>
+                                </li>
+                              </template>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="slds-combobox_container slds-combobox-addon_end ">
+                      <div class={setCssOnMultipleSelectTrue}>
+                        <div
+                          class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right inputContainer"
+                          role="none">
+                          <!-- value={searchText} -->
+                          <input type="text" data-search-box="searchBox" autocomplete="off" role="textbox"
+                            placeholder={placeholderText} onkeyup={handleSearchTextChangeAction}
+                            onkeydown={handleHidePicklistOnKeyDown} onfocus={handleSearchTextChangeAction}
+                            onclick={handleOnClickSelectedRec} onblur={handleHidePicklistOnBlur} required={required}
+                            class={setCssOnInputSearchBox} />
+                          <lightning-icon size="x-small"
+                            class="slds-icon slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right slds-icon-text-default"
+                            icon-name="utility:search"></lightning-icon>
+                        </div>
+                        <div class={setCssOnShowListDiv} data-show-list="showList"
+                          style="z-index:9999; left: 0px; right:0px; top: 32px; min-width:130px;">
+                          <template if:true={sObjectList.length}>
+                            <div class="slds-box_border " style="border-radius:4px;">
+                              <template if:true={showRecents}>
+                                <div class="bg-white bg-skyBlue-onHover">
+                                  <div class="slds-p-horizontal_small
+                                                                                             slds-p-vertical_xx-small">
+                                    <div class="slds-grid">
+                                      <div></div>
+                                      <div class="slds-col"> Recent Records </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </template>
+                              <template for:each={sObjectList} for:item='sObjectRec'>
+                                <div class="bg-white
+                                                                                      bg-skyBlue-onHover"
+                                  key={sObjectRec.Id} data-id={sObjectRec.Id} data-name={sObjectRec.Name}
+                                  onclick={handleOnSelectRecordAction}>
+                                  <div class="slds-p-horizontal_small
+                                                                                         slds-p-vertical_xx-small">
+                                    <div class="slds-grid">
+                                      <div>
+                                        <lightning-icon if:true={sObjectRec.isNew} icon-name="utility:add" size="small"
+                                          class="lightningIcon" alternative-text="Add"></lightning-icon>
+                                        <template if:false={sObjectRec.isNew}>
+                                          <template if:true={lookupIcon}>
+                                            <img src={lookupIcon} class="imgStyle" style={bgColor} />
+                                          </template>
+                                          <template if:false={lookupIcon}>
+                                            <lightning-icon icon-name="standard:record" size="small" class=""
+                                              alternative-text="Record"></lightning-icon>
+                                          </template>
+                                        </template>
+                                      </div>
+                                      <div class="slds-col slds-truncate slds-p-left_xxx-small">
+                                        <template if:true={sObjectRec.AccName}>
+                                          <div style="font-size:12px;">
+                                            <lightning-formatted-text value={sObjectRec.Name}>
+                                            </lightning-formatted-text>
+                                          </div>
+                                          <div style="font-size:12px;">
+                                            <lightning-formatted-text value={sObjectRec.AccName}>
+                                            </lightning-formatted-text>
+                                          </div>
+                                        </template>
+                                        <template if:false={sObjectRec.AccName}>
+                                          <lightning-formatted-text value={sObjectRec.Name}></lightning-formatted-text>
+                                        </template>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </template>
+                            </div>
+                          </template>
+                        </div>
+                        <!--</div>-->
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>

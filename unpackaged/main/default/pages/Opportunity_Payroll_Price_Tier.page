@@ -1,0 +1,30 @@
+<apex:page standardController="Opportunity">
+    <div align="center">
+        <span style="font-size:30px; color:black; font-weight:bold">
+            <apex:outputtext value="{!IF(Opportunity.ZP_Experimental_Pricing__c != NULL,"Experimental Pricing:&nbsp;", NULL)}" escape="false"></apex:outputtext>
+            <apex:outputField value="{!Opportunity.ZP_Experimental_Pricing__c}"></apex:outputField>
+        </span>     
+        <br>
+            <apex:image id="PricingTier"
+                        value="{!IF(Opportunity.ZP_Experimental_Pricing__c == "A",
+                                    "http://mirror.unl.edu/ctan/macros/latex/contrib/mwe/example-image-a.png", 
+                                     IF(Opportunity.ZP_Experimental_Pricing__c == "B", 
+                                        "http://mirror.unl.edu/ctan/macros/latex/contrib/mwe/example-image-b.png", 
+                                         IF(Opportunity.ZP_Experimental_Pricing__c == "C", 
+                                            "http://mirror.unl.edu/ctan/macros/latex/contrib/mwe/example-image-c.png",
+                                            ""
+                                         )
+                                     )
+                                )
+                        }" 
+                        width="200" 
+                        height="200"
+            />
+        </br>           
+        <br>
+            <span style="font-size:12px; color:blue; font-weight:bold">
+            <apex:outputLink value="https://gusto.com/product/pricing" id="PayrollPricingLink" target="_blank">More Info</apex:outputLink>
+            </span>
+        </br>
+    </div>         
+</apex:page>

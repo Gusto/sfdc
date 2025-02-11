@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>61.0</apiVersion>
+    <assignments>
+        <name>Assign_Time_Commitments</name>
+        <label>Assign Time Commitments</label>
+        <locationX>176</locationX>
+        <locationY>542</locationY>
+        <assignmentItems>
+            <assignToReference>Record.Payrolls_Time_Commitment__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>PayrollsTimeCommitment</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Record.Benefits_Time_Commitment__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>BenefitsTimeCommitment</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Record.Employee_Time_Commitment__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>EmployeeTimeCommitment</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Record.PTO_Time_Commitment__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>PTOTimeCommitment</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Record.States_Time_Commitment__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>StatesTimeCommitment</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Record.Communications_Time_Commitment__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CommunicationsTimeCommitment</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Order</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Collect_Eligible_Previous_Payroll_Providers</name>
+        <label>Collect Eligible Previous Payroll Providers</label>
+        <locationX>264</locationX>
+        <locationY>350</locationY>
+        <assignmentItems>
+            <assignToReference>EligiblePreviousPayrollProviders</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Prev_Payroll_Providers.Payroll_Provider__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Prev_Payroll_Providers</targetReference>
+        </connector>
+    </assignments>
+    <environments>Default</environments>
+    <formulas>
+        <name>BenefitsTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>({!Record.of_Benefits__c} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_1__c})) + (VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_4__c}) * {!Record.Total_Active_Inactive_Contract_Count__c} * {!Record.of_Benefits__c})</expression>
+        <scale>4</scale>
+    </formulas>
+    <formulas>
+        <name>CommunicationsTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>IF( {!Record.Total_Active_Inactive_Contract_Count__c} &lt; {!$Setup.Order_Time_Commitment_Config__c.Low_Count__c} , {!$Setup.Order_Time_Commitment_Config__c.Employee_Size_0_9__c},  IF({!Record.Total_Active_Inactive_Contract_Count__c} &lt;  {!$Setup.Order_Time_Commitment_Config__c.High_Count__c} , {!$Setup.Order_Time_Commitment_Config__c.Employee_Size_10_24__c}, {!$Setup.Order_Time_Commitment_Config__c.Employee_Size_25__c})  )</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>EmployeeTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>{!Record.Total_Active_Inactive_Contract_Count__c} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_2__c}) * IF( AND({!IsUiPathEligible} , {!Record.Total_Active_Inactive_Contract_Count__c} &gt; 5),0.5,1)</expression>
+        <scale>4</scale>
+    </formulas>
+    <formulas>
+        <name>FirstCheckDateMonthValue</name>
+        <dataType>Number</dataType>
+        <expression>CASE(
+MONTH( {!Record.First_Check_Date__c}) ,
+1, 1,
+2, 2,
+3, 3,
+4, 1,
+5, 2,
+6, 3,
+7, 2,
+8, 3,
+9, 4,
+10, 2,
+11, 3,
+12, 4,
+0)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>IsUiPathEligible</name>
+        <dataType>Boolean</dataType>
+        <expression>IF( AND(NOT(ISBLANK(TEXT({!Record.Previous_Payroll_Provider__c}))), CONTAINS({!EligiblePreviousPayrollProviders}, TEXT({!Record.Previous_Payroll_Provider__c})) ) ,true , false)</expression>
+    </formulas>
+    <formulas>
+        <name>PayrollsTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>{!PayScheduleValue} * {!FirstCheckDateMonthValue} * {!Record.Total_Active_Inactive_Contract_Count__c} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_1__c}) * IF( AND({!IsUiPathEligible} , {!Record.Total_Active_Inactive_Contract_Count__c} &gt; 5),0.5,1)</expression>
+        <scale>4</scale>
+    </formulas>
+    <formulas>
+        <name>PayScheduleValue</name>
+        <dataType>Number</dataType>
+        <expression>CASE( LOWER(TEXT({!Record.Pay_Schedules__c})), 
+LOWER(&quot;Every week&quot;), {!$Setup.Order_Time_Commitment_Config__c.Weekly__c}, 
+LOWER(&quot;Every other week&quot;),{!$Setup.Order_Time_Commitment_Config__c.Bi_Weekly__c},
+LOWER(&quot;Twice per month&quot;),{!$Setup.Order_Time_Commitment_Config__c.Semi_Monthly__c},
+LOWER(&quot;Monthly&quot;),{!$Setup.Order_Time_Commitment_Config__c.Monthly__c},
+LOWER(&quot;Quarterly&quot;),{!$Setup.Order_Time_Commitment_Config__c.Quarterly__c},
+LOWER(&quot;Semiannually&quot;),{!$Setup.Order_Time_Commitment_Config__c.Semi_Annually__c},
+{!$Setup.Order_Time_Commitment_Config__c.Annually__c})</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>PTOTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>IF(({!PTOValue} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_3__c}) ) &gt;0, 
+
+({!PTOValue} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_3__c}) ) + ({!Record.Total_Active_Inactive_Contract_Count__c} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_4__c})),0)</expression>
+        <scale>4</scale>
+    </formulas>
+    <formulas>
+        <name>PTOValue</name>
+        <dataType>Number</dataType>
+        <expression>IF(  TEXT({!Record.Track_PTO_Policies__c}) = &apos;Yes&apos; , {!$Setup.Order_Time_Commitment_Config__c.PTO_Value__c}  , 0)</expression>
+        <scale>4</scale>
+    </formulas>
+    <formulas>
+        <name>StatesTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>{!Record.of_States__c} * VALUE({!$Setup.Order_Time_Commitment_Config__c.Time_Commitment_Multiplier_3__c})</expression>
+        <scale>4</scale>
+    </formulas>
+    <formulas>
+        <name>TotalTimeCommitment</name>
+        <dataType>Number</dataType>
+        <expression>{!BenefitsTimeCommitment} + {!CommunicationsTimeCommitment} + {!EmployeeTimeCommitment} +{!PayrollsTimeCommitment} + {!PTOTimeCommitment} + {!StatesTimeCommitment}</expression>
+        <scale>4</scale>
+    </formulas>
+    <interviewLabel>Subflow-Order Total Time Commitment {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>SubFlow-Order Total Time Commitment</label>
+    <loops>
+        <name>Loop_Prev_Payroll_Providers</name>
+        <label>Loop Prev Payroll Providers</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <collectionReference>PreviousPayrollProviderList</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Collect_Eligible_Previous_Payroll_Providers</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Assign_Time_Commitments</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Fault_Log</name>
+        <label>Fault Log</label>
+        <locationX>440</locationX>
+        <locationY>758</locationY>
+        <inputAssignments>
+            <field>Class_Name__c</field>
+            <value>
+                <stringValue>SubFlow-Order Total Time Commitment (Flow)</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Message__c</field>
+            <value>
+                <elementReference>$Flow.FaultMessage</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Method_Name__c</field>
+            <value>
+                <stringValue>Update Order</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type__c</field>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>User__c</field>
+            <value>
+                <elementReference>$User.Username</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Exception_Log__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_Order_UiPath_Eligibility_Config</name>
+        <label>Get Order UiPath Eligibility Config</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Prev_Payroll_Providers</targetReference>
+        </connector>
+        <object>Order_UiPath_Eligibility_Config__c</object>
+        <outputReference>PreviousPayrollProviderList</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Payroll_Provider__c</queriedFields>
+        <sortField>Payroll_Provider__c</sortField>
+        <sortOrder>Asc</sortOrder>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Order</name>
+        <label>Update Order</label>
+        <locationX>176</locationX>
+        <locationY>650</locationY>
+        <faultConnector>
+            <targetReference>Fault_Log</targetReference>
+        </faultConnector>
+        <inputReference>Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Order_UiPath_Eligibility_Config</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>EligiblePreviousPayrollProviders</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>PreviousPayrollProviderList</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Order_UiPath_Eligibility_Config__c</objectType>
+    </variables>
+    <variables>
+        <name>Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Order</objectType>
+    </variables>
+    <variables>
+        <name>TestBoolean</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

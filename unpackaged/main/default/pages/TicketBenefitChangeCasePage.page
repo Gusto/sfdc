@@ -1,0 +1,10 @@
+<apex:page standardController="Ticket__c" extensions="TicketBenefitChangeCasePageCtrl" action="{!initMethod}">
+    <apex:pageMessages /> 
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!Cancel}" value="Back"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,41 @@
+<apex:page standardController="Benefit_Order__c" extensions="QAButtonOnBODetailExt" showHeader="false" sidebar="false" >
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+
+    <script type="text/javascript">         
+        
+    function openSubTab(recId){
+            var redirectUrl = '/'+recId;
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openSubtab(primaryResult.id, redirectUrl, true, '', null);
+                    });
+                });
+            } else {
+                // for inline Vf
+                window.open('/'+redirectUrl, '_blank');
+            }
+        } 
+               
+    </script>
+    <apex:form >
+        <apex:pageMessages ></apex:pageMessages>
+        
+        <apex:pageBlock >
+            <div style="margin-right: 175px;" align='center'>
+                <button onclick="openSubTab('{!QAObj.id}');return false;">Launch QA Sheet</button>
+                 <!--<a href="#" onclick="openSubTab('{!QAObj.id}');return false;">Launch QA Sheet</a>
+               <apex:commandlink action="{!DisplayQARecord}" target="_blank">
+                <apex:commandButton value="QA Sheet"/>
+                </apex:commandlink>  -->
+        </div>
+            <apex:pageBlockSection >
+                <apex:outputField value="{!QAObj.name}"/>
+                <apex:outputField value="{!QAObj.Benefits_Point_of_Contact_Name_SFDC__c}"/>
+                <apex:outputField value="{!QAObj.Mailing_Address__c}"/>
+                <apex:outputField value="{!QAObj.Effective_Date__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

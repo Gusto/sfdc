@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Zone_Area_Code__c</fullName>
+    <externalId>false</externalId>
+    <formula>if( ISBLANK(Phone),&quot;--&quot;,
+
+if(CONTAINS($Label.PST_Area_Code_Numbers, left(SUBSTITUTE( Phone , &quot;(&quot;, &quot;&quot;),3)),&quot;PST&quot;,
+
+
+if(CONTAINS($Label.MST_Area_Code_Numbers, left(SUBSTITUTE( Phone , &quot;(&quot;, &quot;&quot;),3)),&quot;MST&quot;,
+
+
+if(CONTAINS($Label.CST_Area_Code_Numbers, left(SUBSTITUTE( Phone , &quot;(&quot;, &quot;&quot;),3)),&quot;CST&quot;,
+
+
+if(CONTAINS($Label.EST_Area_Code_Numbers, left(SUBSTITUTE( Phone , &quot;(&quot;, &quot;&quot;),3)),&quot;EST&quot;,
+
+if(CONTAINS($Label.Atlantic_Phone_Numbers,LEFT(SUBSTITUTE(Phone,&quot;(&quot;,&quot;&quot;),3)),&quot;Atlantic&quot;,
+
+if(CONTAINS(&quot;684&quot;,LEFT(SUBSTITUTE(Phone,&quot;(&quot;,&quot;&quot;),3)),$Label.American_Samoa,
+
+if(CONTAINS(&quot;808&quot;,LEFT(SUBSTITUTE(Phone,&quot;(&quot;,&quot;&quot;),3)),&quot;HST&quot;,
+
+if(CONTAINS($Label.Guam_Numbers,LEFT(SUBSTITUTE(Phone,&quot;(&quot;,&quot;&quot;),3)),&quot;Guam&quot;,
+
+if(CONTAINS($Label.Toll_Free_Number,LEFT(SUBSTITUTE(Phone,&quot;(&quot;,&quot;&quot;),3)),&quot;Toll Free&quot;,&quot;Other&quot;
+
+))))))))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Time Zone (Area Code)</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

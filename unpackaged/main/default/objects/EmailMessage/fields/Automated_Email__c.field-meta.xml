@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Automated_Email__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>This field will help in reporting Automated emails</description>
+    <formula>IF
+(
+AND(
+NOT(ISBLANK(Email_Template_Name__c)),
+OR(
+Email_Template_Name__c = &apos;OE_Incomplete_Email&apos;,
+Email_Template_Name__c = &apos;OE_Reminder_Email&apos;,
+Email_Template_Name__c = &apos;Partial_Approval_Email&apos;,
+Email_Template_Name__c = &apos;OE_Confirmation_Email_Default&apos;,
+Email_Template_Name__c = &apos;OE_Final_Extension_Email_Default&apos;,
+Email_Template_Name__c = &apos;OE_Final_Extension_Email_Renewal_Same_Carrier&apos;,
+Email_Template_Name__c = &apos;Advising_Intro_Email&apos;,
+Email_Template_Name__c = &apos;Advising_Intro_Email_Tadas&apos;,
+Email_Template_Name__c = &apos;Advising_Intro_Email_Scorp&apos;,
+Email_Template_Name__c = &apos;Advising_Intro_Email_Scorp_Tadas&apos;,
+Email_Template_Name__c = &apos;Advising_Followup_Email&apos;,
+Email_Template_Name__c = &apos;Advising_Final_Reminder_Email&apos;,
+Email_Template_Name__c = &apos;Advising_Auto_Renewal_Email&apos;,
+Email_Template_Name__c = &apos;OA_Intro_Email&apos;,
+Email_Template_Name__c = &apos;QLE_RFI_First_Automated_Email&apos;,
+Email_Template_Name__c = &apos;QLE_RFI_Second_Automated_Email&apos;,
+Email_Template_Name__c = &apos;QLE_RFI_Third_Automated_Email&apos;,
+Email_Template_Name__c = &apos;QLE_RFI_Fourth_Automated_Email&apos;,
+Email_Template_Name__c = &apos;X3b_Post_OE_Subprep_Renewal&apos;
+)
+),
+true,
+false
+)</formula>
+    <label>Automated Email</label>
+    <securityClassification>Public</securityClassification>
+    <type>Checkbox</type>
+</CustomField>

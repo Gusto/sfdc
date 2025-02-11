@@ -1,0 +1,236 @@
+<template>
+    <section
+        aria-labelledby="panel-heading-id"
+        class="slds-popover slds-popover_panel slds-nubbin_top-left"
+        role="dialog"
+    >
+        <button
+            class="slds-button slds-float_right slds-popover__close"
+            title="Close dialog"
+            onclick={togglePopover}
+        >
+            <lightning-icon
+                icon-name="utility:close"
+                size="x-small"
+            ></lightning-icon>
+        </button>
+        <div class="slds-popover__header">
+            <header
+                class="slds-media slds-media_center slds-m-bottom_small"
+            >
+                <span
+                    class="slds-icon_container slds-icon-standard-account slds-media__figure"
+                >
+                    <svg
+                        class="slds-icon slds-icon_small"
+                        aria-hidden="true"
+                    >
+                        <use
+                            xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"
+                        ></use>
+                    </svg>
+                </span>
+                <div
+                    class="slds-media__body"
+                >
+                    <h2
+                        class="slds-text-heading_medium slds-hyphenate"
+                        id="panel-heading-id"
+                    >
+                        <a
+                            onclick={handleOpenContact}
+                            >{strContactName}</a
+                        >
+                    </h2>
+                </div>
+            </header>
+            <footer
+                class="slds-grid slds-wrap slds-grid_pull-padded"
+            >
+                <div
+                    class="slds-p-horizontal_small slds-size_1-of-2 slds-p-bottom_x-small"
+                >
+                    <dl>
+                        <dt>
+                            <p
+                                class="slds-popover_panel__label slds-truncate"
+                                title="Phone"
+                            >
+                                Phone
+                            </p>
+                        </dt>
+                        <dd>
+                            <a
+                                href="javascript:void(0);"
+                                >{strContactPhone}</a
+                            >
+                        </dd>
+                    </dl>
+                </div>
+                <div
+                    class="slds-p-horizontal_small slds-size_1-of-2 slds-p-bottom_x-small"
+                >
+                    <dl>
+                        <dt>
+                            <p
+                                class="slds-popover_panel__label slds-truncate"
+                                title="Website"
+                            >
+                                Website
+                            </p>
+                        </dt>
+                        <dd>
+                            <a
+                                href="javascript:void(0);"
+                                >teslamotors.com</a
+                            >
+                        </dd>
+                    </dl>
+                </div>
+                <div
+                    class="slds-p-horizontal_small slds-size_1-of-2 slds-p-bottom_x-small"
+                >
+                    <dl>
+                        <dt>
+                            <p
+                                class="slds-popover_panel__label slds-truncate"
+                                title="Account Owner"
+                            >
+                                Account
+                                Owner
+                            </p>
+                        </dt>
+                        <dd>
+                            <a
+                                href="javascript:void(0);"
+                                >Jeff
+                                Maguire</a
+                            >
+                        </dd>
+                    </dl>
+                </div>
+            </footer>
+        </div>
+        <div class="slds-popover__body">
+            <dl
+                class="slds-popover__body-list"
+            >
+                <dt
+                    class="slds-m-bottom_small"
+                >
+                    <div
+                        class="slds-media slds-media_center"
+                    >
+                        <div
+                            class="slds-media__figure"
+                        ></div>
+                        <div
+                            class="slds-media__body"
+                        >
+                            <p
+                                class="slds-text-heading_small slds-hyphenate"
+                            >
+                                Opportunities
+                                (2+)
+                            </p>
+                        </div>
+                    </div>
+                </dt>
+                <dd
+                    class="slds-m-top_x-small"
+                >
+                    <p
+                        class="slds-truncate"
+                        title="Tesla - Mule ESB"
+                    >
+                        <a
+                            href="javascript:void(0);"
+                            >Tesla - Mule
+                            ESB</a
+                        >
+                    </p>
+                    <dl
+                        class="slds-list_horizontal slds-wrap slds-text-body_small"
+                    >
+                        <dt
+                            class="slds-item_label slds-text-color_weak slds-truncate"
+                            title="Value"
+                        >
+                            Value
+                        </dt>
+                        <dd
+                            class="slds-item_detail slds-text-color_weak slds-truncate"
+                            title="$500,000"
+                        >
+                            $500,000
+                        </dd>
+                        <dt
+                            class="slds-item_label slds-text-color_weak slds-truncate"
+                            title="Close Date"
+                        >
+                            Close Date
+                        </dt>
+                        <dd
+                            class="slds-item_detail slds-text-color_weak slds-truncate"
+                            title="Dec 15, 2015"
+                        >
+                            Dec 15, 2015
+                        </dd>
+                    </dl>
+                </dd>
+                <dd
+                    class="slds-m-top_x-small"
+                >
+                    <p
+                        class="slds-truncate"
+                        title="Tesla - Anypoint Studios"
+                    >
+                        <a
+                            href="javascript:void(0);"
+                            >Tesla -
+                            Anypoint
+                            Studios</a
+                        >
+                    </p>
+                    <dl
+                        class="slds-list_horizontal slds-wrap slds-text-body_small"
+                    >
+                        <dt
+                            class="slds-item_label slds-text-color_weak slds-truncate"
+                            title="Value"
+                        >
+                            Value
+                        </dt>
+                        <dd
+                            class="slds-item_detail slds-text-color_weak slds-truncate"
+                            title="$60,000"
+                        >
+                            $60,000
+                        </dd>
+                        <dt
+                            class="slds-item_label slds-text-color_weak slds-truncate"
+                            title="Close Date"
+                        >
+                            Close Date
+                        </dt>
+                        <dd
+                            class="slds-item_detail slds-text-color_weak slds-truncate"
+                            title="Jan 15, 2016"
+                        >
+                            Jan 15, 2016
+                        </dd>
+                    </dl>
+                </dd>
+                <dd
+                    class="slds-m-top_x-small slds-text-align_right"
+                >
+                    <a
+                        href="javascript:void(0);"
+                        title="View all Opportunities"
+                        >View All</a
+                    >
+                </dd>
+            </dl>
+        </div>
+    </section>
+</template>

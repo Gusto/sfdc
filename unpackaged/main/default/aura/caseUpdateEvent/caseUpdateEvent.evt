@@ -1,0 +1,9 @@
+<!--
+    Purpose: Aura Event that is used to fire when case is updated. It is used to refresh the UI when same cases are opened in multiple tabs
+    Written by : Praveen Sethu
+    Date: 09/15/2020
+-->
+<aura:event type="APPLICATION" description="Case Update Event">
+    <aura:attribute type="Id" name="idCase" />
+    <aura:attribute type="Object" name="objTrackedFieldChanges" />
+</aura:event>

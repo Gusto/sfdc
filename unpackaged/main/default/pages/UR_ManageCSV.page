@@ -1,0 +1,1091 @@
+<apex:page StandardController="Research_Project_Master__c" applyBodyTag="false" sidebar="false" action="{!init}" extensions="UR_ManageCSVCtrl" id="pm">
+ <apex:form id="frm">
+ <head>
+     <script>
+        function setFocusOnLoad() {}
+      </script> 
+      <style>
+        .result-count {
+          display: inline-block;
+          width: 50px;
+          margin-right: 10px;
+        }
+        .result-count:before {
+          content: "Results";
+          position: absolute;
+          right: 100%;
+          font-size: 14px;
+          line-height: 32px;
+          padding: 0 5px;
+          white-space: nowrap;
+        }
+      </style>
+   
+    <title>Gusto</title>
+   
+    
+    <style>
+        .noSidebarCell{
+        max-width: 1000px;
+        }
+        .slds-scope .slds-form-element {
+            clear: both;
+        }
+        .upload-csv {
+            display: block;
+        }
+        
+        .blacklist-optout td, .blacklist-optout:hover td, .blacklist-optout:focus td{
+            background-color: #f8d7da !important;
+        }
+        .custom-tooltip .custom-tooltip-box {
+            display: none;
+        }
+        .custom-tooltip a:hover + .custom-tooltip-box {
+            display: block;
+        }
+        .page-disable {
+            position: relative;
+            opacity:.6;
+        }
+        .page-disable:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+        }
+
+    </style>
+
+  </head>
+
+  <body class="slds-scope">
+    <apex:outputPanel id="frmTableBody">
+    <apex:actionRegion > 
+    <c:UR_SortingTable />
+    <c:UR_ActionStatus />
+     <c:UR_MenuHeaderComponent tabName="Participants" subTabName="MP-CSV" prjId="{!ProjectMasterObj.Id}"/>
+    <!--body start here-->  
+    <div class="slds-p-around_small"> 
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">
+        <apex:pageMessages />
+          
+        <!--
+          <div class="slds-text-heading_small slds-m-vertical_small">
+              <apex:commandLink styleclass="sh-filter-btn" action="{!BackToProjectVF}">Add Participants</apex:commandLink> > <strong>Upload a CSV</strong>
+          </div>
+        -->
+        
+        <div class="{!if(csvUploadRecordCount>0 || isUploadInprogress==true || ProjectMasterObj.CSV_Delete_In_Progress__c==true,'page-disable','')}">
+        
+          <div class="slds-text-align_right bg-grey slds-p-around_small" style="border-radius: .25rem; display:{!if(isEditable,'','none;')}">
+            <apex:actionFunction name="viewMoreFields" action="{!viewMoreFields}" status="statusSave" oncomplete="showMoreFields();" reRender="viewMore">
+                 <apex:param name="viewObjId" value="" assignTo="{!viewObjId}"/>
+                 <apex:param name="viewRowIndex" value="" assignTo="{!viewRowIndex}"/>
+            </apex:actionFunction>
+            <apex:actionFunction name="searchwithinCSV" action="{!showAll}" rerender="frmTableBody" status="statusSave"/>
+            
+           <!-- <apex:commandButton value="Back" action="{!BackToProjectVf}" rerender="frmTableBody" status="statusSave"  styleclass="slds-button slds-button_outline-brand slds-float_left"/> -->
+            
+            <apex:commandLink styleclass="slds-button slds-button_text-destructive slds-float_left" status="statusSave" reRender="frmTableBody" action="{!resetAll}">Reset filters</apex:commandLink>&nbsp;&nbsp;&nbsp;
+           
+            <div class="slds-form-element__control result-count">
+              <apex:selectlist disabled="{!if(researchUploadInfoList.size==0,true,false)}" id="search-result-count" onchange="resetSearchContactList(this.value);"  styleclass="slds-select search-result-count" value="{!selPageResultStr}" size="1">
+                  <apex:selectOptions value="{!selPageResultList}"/>
+               </apex:selectlist>
+            </div>
+              
+             <apex:outputPanel styleClass="slds-float_left" id="csvUploadStatus">
+                    <span class="slds-badge badge-custom slds-badge_inverse" style="top: 0px; margin-left: 10px; margin-top: 5px; display:{!if(csvUploadRecordCount>0 || isUploadInprogress==true,'','none;')} ">
+                        <strong>CSV upload in progress</strong>
+                     </span>
+                    <apex:image style="margin-left: 10px; display:{!if(csvUploadRecordCount>0 || isUploadInprogress==true,'','none;')}" url="{!URLFOR($Resource.ux_svg, 'ajax-loader.gif')}"/>  
+              </apex:outputPanel>
+              <apex:outputPanel styleClass="slds-float_left" id="csvDeleteStatus">
+                    <span class="slds-badge badge-custom slds-badge_inverse" style="top: 0px; margin-left: 10px; margin-top: 5px; background-color: #c23934; display:{!if(ProjectMasterObj.CSV_Delete_In_Progress__c==true,'','none;')} ">
+                        <strong>CSV delete in progress</strong>
+                     </span>
+                    <apex:image style="margin-left: 10px; display:{!if(ProjectMasterObj.CSV_Delete_In_Progress__c==true,'','none;')}" url="{!URLFOR($Resource.ux_svg, 'ajax-loader-red.gif')}"/>    
+              </apex:outputPanel>
+              <apex:actionPoller id="actionPollerId" rendered="{!if(csvUploadRecordCount>0 || isUploadInprogress==true || ProjectMasterObj.CSV_Delete_In_Progress__c==true,true,false)}" action="{!checkUploadInprogress}" reRender="frm" interval="10"/>
+              
+            <apex:commandButton style="display:{!if(isEditable,'','none;')}" value="Search" action="{!showAll}" rerender="frmTableBody" status="statusSave" styleClass="slds-button slds-button_brand"/>
+            
+            <apex:actionFunction rerender="frm" status="statusSave" name="sortParticipantList" action="{!sortManageContactList}">
+                <apex:param name="sortby" value="" assignTo="{!sortbyFieldAPIName}"/>
+            </apex:actionFunction> 
+            
+            <apex:actionFunction rerender="frm" status="statusSave" name="selSortParticipantList" action="{!selSortManageContactList}">
+                <apex:param name="selsortby" value="" assignTo="{!selSortbyFieldAPIName}"/>
+            </apex:actionFunction>
+            
+            <apex:actionFunction rerender="frm" status="statusSave" name="resetSearchContactList" action="{!resetSearchContactList}">
+                <apex:param name="searchPageSize" value="" assignTo="{!selPageResultStr}"/>                
+            </apex:actionFunction> 
+          </div>
+         
+          
+          <div class="slds-m-vertical_x-small" style="display:{!if(filterLabel=='<< Hide Filters','none;', 'block;')}">
+            <apex:commandLink styleclass="sh-filter-btn" oncomplete="showhideAction();" status="statusSave" reRender="frmTableBody" action="{!HideFilter}">{!filterLabel}</apex:commandLink>
+          </div>
+          
+          <div class="slds-m-top_small">
+            <div class="slds-form slds-form_horizontal">
+              <div class="slds-grid slds-wrap slds-gutters">
+              
+              <apex:outputPanel styleclass="slds-col slds-size_1-of-1 slds-large-size_4-of-12 side-filter" layout="block" id="searchPanel" rendered="{!showHide}"> 
+                  <div class="slds-card" style="border: 1px solid #dddbda;">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                      <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                        
+                        <div class="slds-media__body">
+                          <apex:commandLink styleclass="sh-filter-btn slds-float_right" status="statusSave" rerender="frmTableBody" action="{!HideFilter}">{!filterLabel}</apex:commandLink>
+                          <h2 class="slds-card__header-title">
+                            <span>1. Search Uploaded CSV Data</span>
+                          </h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="slds-card__body slds-m-top_none">
+                      <div class="side-filter-content">
+                        <div class="bg-grey slds-p-around_small">
+
+                          <div class="slds-m-bottom_x-small">Date uploaded: &nbsp;<apex:outputText value="{0,date,MM'/'dd'/'yyyy}"><apex:param value="{!lastUploadedDate}" /></apex:outputText></div>
+                          
+                          <div class="slds-m-bottom_x-small">
+                          		<a href="javascript:void(0);" class="fail-csv-record">Failed CSV records: {!totalFailCSVRecord}</a>                                    
+                          </div>
+                          <div class="slds-m-bottom_x-small">
+                          		<a href="javascript:void(0);" style="font-weight:bold;" class="success-csv-record">Successful upload: {!totalContact}</a>                                    
+                          </div>                            
+                          <div style="color:#CC3333;" class="slds-m-bottom_x-small">
+                              <a href="javascript:void(0);" style="color:#CC3333;" class="exclude-csv-record"># of contacts excluded: {!totalContacttoExclude}</a>
+                          </div>
+                        
+                          <apex:outputpanel rendered="{!isEditable}">
+                              <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                                <div class="slds-col slds-m-top_small">
+                                  <a href="javascript:void(0);" class="slds-button slds-button_outline-brand upload-list-btn">Upload CSV*</a> 
+                                  <!--<span style="position: relative;">
+                                    <i class="fas fa-info-circle info-tooltip"></i>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                      <p class="slds-popover__body">Click here to upload file.</p>
+                                    </span>
+                                  </span>-->
+                                </div>
+                                <div class="slds-col slds-text-align_right slds-m-top_small">
+                                  <a href="javascript:void(0);" class="slds-button slds-button_text-destructive delete-csv-btn">Delete uploaded list</a>  
+                                </div>
+                              </div> 
+                          </apex:outputpanel>
+                          <div class="slds-m-top_small text-grey">
+                              *You’ll need to create a file in &nbsp;<a href="{!$Label.UR_SampleCSV_URL}" target="_blank">this format</a>
+                          </div>
+                        </div>
+                        <div class="slds-p-around_small">
+                          <div class="slds-text-title_caps slds-m-bottom_large"><u>APPLY FILTERS TO UPLOADED PARTICIPANT DATA</u></div>
+                         <div class="slds-form-element">
+                          <label class="slds-form-element__label slds-p-bottom_small" for="" style="max-width: 100%;">Search ALL CSV uploads
+                              <span class="info-tooltip" style="position: relative;">
+                                      <i class="fas fa-info-circle info-tooltip"></i>
+                                      <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 27px; left: -20px;">
+                                        <p class="slds-popover__body">If it is unchecked then will search only recent uploaded data.</p>
+                                      </span>
+                              </span>
+                              <div class="slds-checkbox slds-checkbox_standalone" style="position: relative; top: 6px; left: 10px;">
+                                 <apex:inputCheckbox value="{!includeAll}" id="checkbox-1"/>
+                                  <span class="slds-checkbox_faux"></span>
+                                </div>
+                          </label>
+                          
+                        </div>
+                        
+                        
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">First Name</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!FirstName}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Last Name</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!LastName}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Email</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!Email}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Company Id</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!CompanyId}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">User Id</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!UserId}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Employee Id</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!EmployeeId}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Accountant Firm Id</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputText onkeypress="checkEnterKey(event);" value="{!AccountFirmId}" styleClass="slds-input"/>
+                          </div>
+                        </div>
+                        
+                        <apex:repeat value="{!fieldLabelObj}" var="lbl1">
+                            <div class="slds-form-element">
+                              <label class="slds-form-element__label" for="">{!lbl1.fieldLabel}</label>
+                              <div class="slds-form-element__control">
+                                <apex:inputText onkeypress="checkEnterKey(event);" value="{!lbl1.flagValue}" styleClass="slds-input"/>
+                              </div>
+                            </div>
+                        </apex:repeat>
+                          <div class="slds-text-align_right">
+                            <apex:commandLink rendered="{!isEditable}" styleclass="slds-button slds-button_text-destructive" status="statusSave" reRender="frmTableBody" action="{!resetAll}">Reset filters</apex:commandLink>&nbsp;&nbsp;&nbsp;
+                            <apex:commandButton rendered="{!isEditable}" value="Search" action="{!showAll}" rerender="frmTableBody" status="statusSave" styleClass="slds-button slds-button_brand"/>
+                          </div>  
+                        </div>
+                      </div>  
+                    </div>
+                    
+                  </div>
+                  
+                </apex:outputPanel>
+                <div class="slds-col slds-size_1-of-1 {!rightPanelStyle} right-panel">
+                  <div class="slds-card bg-grey" style="border: 1px solid #dddbda;" data-panel="choose-participants">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                       <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                        
+                        <div class="slds-media__body">
+                          <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                            <span>2. Choose Participants<br/></span>
+                          </h2>
+                          <div class="note">Which of these contacts would you like to reserve for your project?</div>
+                        </div>
+                         <div class="card__header-count" style="display:{!if(researchUploadInfoList.size>0, 'block', 'none')}">Showing <span class="count" id="count-results">{!researchUploadInfoList.size}</span> out of <span class="count">{!totalAvaillableCSVRecord}</span> Search Results</div>
+                      </div>
+                    </div>
+                    <div class="slds-card__body slds-m-bottom_large">
+                      <div class="slds-scrollable" style="max-height: 305px; width: 100%;">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header">
+                          <thead>
+                            <tr class="slds-line-height_reset">
+                              <th class="slds-text-title_caps sorter-false" scope="col"  style="padding-left: 18px !important;">
+                                <div class="slds-checkbox slds-checkbox_standalone">
+                                  <apex:inputcheckbox styleClass="slds-checkbox" id="selectAllRecord" html-data-select="all" onclick="selectAllCheckboxes(this,'selContact'); countSelectedRecord(); selecteSeachContact();"/>
+                                <span class="slds-checkbox_faux"></span>
+                                </div>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('First_Name__c');">  
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Name</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='First_Name__c' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='First_Name__c' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Email__c');">  
+                                   <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Email</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Email__c' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Email__c' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Company_Id__c');">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Company Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Company_Id__c' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Company_Id__c' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('User_Id__c');">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">User Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='User_Id__c' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='User_Id__c' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Employee_Id__c');">    
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Employee Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Employee_Id__c' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Employee_Id__c' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Accountant_Firm_Id__c');">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Accountant Firm Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Accountant_Firm_Id__c' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Accountant_Firm_Id__c' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <apex:repeat value="{!fieldLabelSet}" var="lbl">
+                                <th class="slds-text-title_caps sorter-false" scope="col">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">{!lbl}</li>
+                                      <li>
+                                      </li>                      
+                                   </ul>
+                                </th>
+                              </apex:repeat>
+                              
+                            </tr>
+                          </thead>
+                          <tbody>
+                          <apex:repeat value="{!researchUploadInfoList}" var="cnt">
+                          <tr>                
+                            <td style="padding-left: 18px !important;">
+                            
+                              <div class="slds-checkbox slds-checkbox_standalone">
+                                <apex:inputCheckbox id="selContact" value="{!cnt.flag}" styleClass="upload-csv-cb-1 add-chk-box chk-box ux-checkbox "/>
+                                <span class="slds-checkbox_faux"></span>
+                              </div>
+                             <!--
+                              <div style="display:{!if(cnt.UploadInfo.Blacklist__c==true || cnt.UploadInfo.Opt_Out__c==true || (cnt.UploadInfo.Email__c!='' && contains(reservedEmailId,cnt.UploadInfo.Email__c) ) ,'block;','none;')} position: relative;" class="custom-tooltip">
+                                    <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:#c23934"></i></a>
+                                    <div style="position: absolute; bottom: 32px; left: -17px; white-space: nowrap;" class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left custom-tooltip-box" role="tooltip"  >
+                                        
+                                       <div class="slds-popover__body">
+                                            {!if(cnt.UploadInfo.Blacklist__c==true,'Black List', 
+                                                    if(cnt.UploadInfo.Opt_Out__c==true,'Opt Out', 
+                                                        if(cnt.UploadInfo.Email__c!='' && contains(reservedEmailId,cnt.UploadInfo.Email__c),
+                                                                'Used in other project or available after '+ strDaySinceCont +' day','' )))}
+                                       </div>
+                                    </div>
+                               </div>
+                                -->
+                            </td>
+                            <td>
+                                <a href="/{!cnt.UploadInfo.Id}" target="_blank">
+                                <apex:outputText value="{!cnt.UploadInfo.First_Name__c&' '&cnt.UploadInfo.Last_Name__c}"/>
+                                </a>
+                            </td>
+                            <td>{!cnt.UploadInfo.Email__c}</td>
+                            <td>{!cnt.UploadInfo.Company_Id__c} </td>
+                            <td>{!cnt.UploadInfo.User_Id__c}</td>
+                            <td>{!cnt.UploadInfo.Employee_Id__c}</td>
+                            <td>{!cnt.UploadInfo.Accountant_Firm_Id__c}</td>
+                            <apex:repeat value="{!fieldLabelSet}" var="lbl">   
+                                <td>
+                                    <apex:variable var="key" value="{!cnt.UploadInfo.Id}{!lbl}" /> 
+                                    {!questionAnsMap[key]}
+                                </td>
+                            </apex:repeat>   
+                          </tr>  
+                          </apex:repeat>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    
+                      <apex:outputPanel layout="block" rendered="{!isEditable}" style="min-height: 57px;" styleclass="slds-card__footer slds-text-align_right slds-p-around_small slds-m-top_none">
+                          <div class="slds-float_left" style="display:{!if(researchUploadInfoList.size>0,'block;','none;')}">
+                              <apex:commandButton value="<<" action="{!first}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>
+                              <apex:commandButton value="<" action="{!previous}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                              <apex:commandButton value=">" action="{!next}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                              <apex:commandButton value=">>" action="{!last}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                          </div>
+                          <div class="slds-float_right">
+                          	<apex:commandButton onclick="return false;" disabled="{!researchUploadInfoList.size==0}" html-data-reserve="all" styleClass="slds-button slds-button_brand add-participant-btn add-contact-all-btn" title="Add all participants to your project" value="Reserve Participants" />
+                          </div>
+                     </apex:outputPanel>
+                      
+                    
+                  </div>
+                    
+                  <div class="slds-card bg-grey" style="border: 1px solid #dddbda;">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                        <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                            <div class="slds-media__body">
+                              <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                                 <span>3. Review Participants</span>
+                                 <span class="info-tooltip" style="position: relative;">
+                                      <i class="fas fa-info-circle info-tooltip"></i>
+                                      <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                        <p class="slds-popover__body">If you need to remove anyone, check next to their name and "Remove selected contacts"</p>
+                                      </span>
+                                  </span>
+                              </h2>
+                              <div class="note">
+                                Maximum Number of Participants Allowed: <strong>{!ProjectMasterObj.Number_of_Allowed_Participant__c}</strong>.
+                                <a href="#" class="approval-request-btn">Request more</a>
+                              </div>
+                            </div>
+                            <div class="card__header-count"><span class="count">{!resParticipantCount}</span> Participants Reserved</div>
+                          </div>
+                    </div>
+                      
+                    <div class="slds-card__body slds-m-bottom_large">
+                      <div class="slds-scrollable" style="max-height: 305px; width: 100%;">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header">
+                          <thead>
+                            <tr class="slds-line-height_reset">
+                              <th class="slds-text-title_caps sorter-false" scope="col" style="padding-left: 18px !important;">
+                                  <div class="slds-checkbox slds-checkbox_standalone">
+								  <apex:inputcheckbox id="selectAllRecord1" styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'InputId'); selecteSeachContactSecondTable();"  html-data-select1="all"/>
+                                    <span class="slds-checkbox_faux"></span>
+                                    </div>
+                               </th>
+                              <!--  <th class="slds-text-title_caps sorter-false" scope="col">
+                                     <div class="slds-checkbox slds-checkbox_standalone">
+                                        <input type="checkbox" name="default" id="checkbox-2" value="checkbox-2" class="upload-csv-cb-2-all"/>
+                                        <span class="slds-checkbox_faux"></span>
+                                    </div>
+                              </th> -->
+                              <th class="slds-text-title_caps sorter-false" scope="col" onclick="selSortParticipantList('Contact__r.Name');">                                
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Name</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Name' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Name' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>                             
+                              <th class="slds-text-title_caps sorter-false" scope="col" onclick="selSortParticipantList('Contact__r.Email');">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Email</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Email' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Email' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Comment</li>
+                                      <li>
+                                         
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col" onclick="selSortParticipantList('Research_Participant_Status_Number__c');">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Participant Status</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Research_Participant_Status_Number__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Research_Participant_Status_Number__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col" onclick="selSortParticipantList('Contact__r.Account.ZP_Company_ID__c');">                              
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Company Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Account.ZP_Company_ID__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Account.ZP_Company_ID__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps slds-cell-wrap sorter-false" scope="col" onclick="selSortParticipantList('Contact__r.ZP_User_Id__c');">
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">User Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.ZP_User_Id__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.ZP_User_Id__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps slds-cell-wrap sorter-false" scope="col" onclick="selSortParticipantList('Contact__r.Employee_Id__c');">
+                                
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Employee Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Employee_Id__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Employee_Id__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps slds-cell-wrap sorter-false" scope="col" onclick="selSortParticipantList('Contact__r.Account.ZP_Firm_ID__c');">
+                                
+                                    <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Accountant Firm Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Account.ZP_Firm_ID__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Account.ZP_Firm_ID__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                   </ul>
+                              </th>
+                              <th class="slds-text-title_caps slds-cell-wrap sorter-false" scope="col">
+                              		More...
+                              </th>
+                              <!--
+                              <apex:repeat value="{!fieldLabelSet}" var="lbl">
+                                  <th class="slds-text-title_caps slds-cell-wrap" scope="col">
+                                    {!lbl}
+                                  </th>
+                              </apex:repeat>
+                              -->
+                            </tr>
+                          </thead>
+                          <tbody>
+                             <apex:variable var="rowIndex" value="{!0}"/>
+                             <apex:repeat value="{!lstSelectedContactWrapper}" var="cnt">
+                                <tr>                
+                                  <td style="padding-left: 18px !important;">
+                                      <!--<div class="slds-checkbox slds-checkbox_standalone">
+                                        <input type="checkbox" name="label" disabled="disabled" value="option" />
+                                        <span class="slds-checkbox_faux"></span>
+                                      </div>-->
+                                      <div class="slds-checkbox slds-checkbox_standalone">  
+                                          <apex:inputCheckbox id="InputId" disabled="{!cnt.chkDisabled}" value="{!cnt.selContact}" styleClass="upload-csv-cb-2 add-chk-box1 release-chk-box  {!if(cnt.chkDisabled,'','ux-checkbox1')}"/>
+                                           <span class="slds-checkbox_faux"></span> 
+                                      </div>
+                                  </td>
+                                  <td>
+                                     <a href="/{!cnt.objCon.Id}" target="_blank">
+                                        <apex:outputText value="{!cnt.objContactName}"/>
+                                     </a>
+                            
+                                  </td>
+                                  <td>{!cnt.objCon.Email}</td>
+                                  <td><apex:inputText value="{!cnt.strComment}" styleClass="slds-input" style="min-width:200px;" /></td>
+                                  <td>{!cnt.strPartStatus}</td>
+                                  <td>{!cnt.objAcountZPCompanyId} </td>
+                                  <td>{!cnt.objCon.ZP_User_Id__c}</td>
+                                  <td>{!cnt.objCon.Employee_Id__c}</td>
+                                  <td>{!cnt.objAcountZPFirmId}</td>
+                                  <td><a href="javascript:;" onclick="viewMoreFields('{!cnt.projectPartId}','{!rowIndex}')">view</a></td>
+                                </tr>
+                                <apex:variable var="rowIndex" value="{!rowIndex+1}"/>
+                            </apex:repeat>
+
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+            
+                      <apex:outputPanel layout="block" rendered="{!isEditable}" style="min-height: 57px; display:{!if(lstSelectedContactWrapper.size>0 ,'block;','none;')}" styleclass="slds-card__footer slds-text-align_right slds-p-around_small slds-m-top_none">
+                          <div class="slds-float_left">
+                              <apex:commandButton value="<<" action="{!firstParticipant}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasPreviousParticipant)}" styleClass="slds-button slds-button_outline-brand"/>
+                              <apex:commandButton value="<" action="{!previousParticipant}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasPreviousParticipant)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!pageNumberParticipant} of {!totalPagesParticipant}&nbsp;
+                              <apex:commandButton value=">" action="{!nextParticipant}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasNextParticipant)}" styleClass="slds-button slds-button_outline-brand"/>
+                              <apex:commandButton value=">>" action="{!lastParticipant}" rerender="frmTableBody" status="statusSave"  disabled="{!NOT(hasNextParticipant)}" styleClass="slds-button slds-button_outline-brand"/>
+                          </div>
+						  
+                          <div class="slds-float_right">							
+							<apex:commandButton onclick="return false;" html-data-reserve1="all" styleClass="slds-button slds-button_text-destructive remove-participant-btn" title="Remove all participants to your project" value="Remove Participants" />							
+                          </div>
+						  
+                      </apex:outputPanel>
+                    
+
+                  </div>
+
+                  <div class="slds-text-align_right slds-m-vertical_medium">
+                    <apex:commandButton rendered="{!isEditable}" style="display:{!if(lstSelectedContactWrapper.size>0 ,'inline;','none;')}" value="Save & Continue" action="{!saveContact}" title="Add selected participants to your project" rerender="frmTableBody" status="statusSave"  styleClass="slds-button slds-button_brand"/>
+                                          
+                  </div>
+                
+                </div>
+
+               
+
+
+              </div>
+            </div>
+          </div>
+         </div> 
+        </div>
+        
+          
+
+      </div>
+    
+
+    </div>
+    <!--body end here--> 
+
+        <div class="modal-window add-participant-modal" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+             <div class="slds-modal__container" style="max-width: 500px;">
+               <div class="slds-modal__header">
+                 
+                 <h2 id="modal-heading-101" class="slds-text-heading_medium slds-hyphenate">Add a comment (optional)</h2>
+               </div>
+               <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                 <p class="slds-m-bottom_medium">
+                     <!--Tip: this will be visible throughout the project, so you can identify participants (Not required, but helpful if adding different user types). You can update comments later as well.-->
+                    This can help you identify participants throughout the project
+                 </p>
+                 <apex:inputText style="resize: none;" styleClass="slds-input clear-textbox" value="{!participantComments}" html-placeholder="optional"/>
+                 <br/>
+               </div>
+               <div class="slds-modal__footer">
+                 <button class="slds-button slds-button_neutral close-modal" rerender="frmTableBody" status="statusSave"  onclick="return false;">Cancel</button>
+                 <!--<button class="slds-button slds-button_brand">Proceed</button>--> 
+                 <apex:commandButton styleClass="slds-button slds-button_brand" rerender="frmTableBody" status="statusReserveParticipant" value="Reserve" action="{!addContact}"/>
+
+               </div>
+             </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+         </div>
+         
+         
+         <div class="modal-window remove-participant-modal" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+             <div class="slds-modal__container" style="max-width: 500px;">
+               <div class="slds-modal__header">
+                 
+                 <h2 id="modal-heading-102" class="slds-text-heading_medium slds-hyphenate">Remove Project Participants</h2>
+               </div>
+               <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    Are you sure want to remove selected participants?
+               </div>
+               <div class="slds-modal__footer">
+                 <button class="slds-button slds-button_neutral close-modal" onclick="return false;">No</button>
+                 <!--<button class="slds-button slds-button_brand">Proceed</button>-->
+                 <apex:commandButton styleClass="slds-button slds-button_brand" rerender="frmTableBody" status="statusSave"  value="Yes" action="{!removeContact}"/>
+                 
+               </div>
+             </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+         </div>
+         
+         
+         <div class="modal-window delete-csv-modal" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+             <div class="slds-modal__container" style="max-width: 500px;">
+               <div class="slds-modal__header">
+                 
+                 <h2 id="modal-heading-103" class="slds-text-heading_medium slds-hyphenate">Delete CSV Data</h2>
+               </div>
+               <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    Are you sure want to delete csv data?
+               </div>
+               <div class="slds-modal__footer">
+                 <button class="slds-button slds-button_neutral close-modal" onclick="return false;">No</button>
+                 <!--<button class="slds-button slds-button_brand">Proceed</button> rerender="frmTableBody" status="statusSave" -->
+                 <apex:commandButton styleClass="slds-button slds-button_brand" value="Yes" action="{!deleteResearchUploadInfo}" rerender="frmTableBody" status="statusSave"  />
+               </div>
+             </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+         </div>
+         
+         
+         <div class="modal-window add-blank-participant-modal" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+             <div class="slds-modal__container" style="max-width: 500px;">
+               <div class="slds-modal__header"> 
+                 <h2 id="msg-content" class="slds-text-heading_medium slds-hyphenate">Please select at least one record.</h2>
+               </div>
+               <div class="slds-modal__footer">
+                 <button class="slds-button slds-button_neutral close-modal" onclick="return false;">Close</button>
+               </div>
+             </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+         </div> 
+    
+         <!-- Third -->
+          <div class="modal-window approval-request-modal" style="display: none;">
+            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+              <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                  
+                  <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Approval Request</h2>
+                </div>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p class="slds-m-bottom_medium">You are currently able to reserve up to <b>{!projectMasterObj.Number_of_Allowed_Participant__c}</b> participants in your project. Submit a request for approval to increase this maximum.<br/>
+                  		<!--<i style="font-size: 12px;"><strong>Note</strong>: Once submitted, the participants you've reserved will be locked until your request has been reviewed.</i>-->
+                    </p>
+                  <div class="slds-form slds-form_horizontal">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for="">How many MORE participants do you need?</label>
+                      <div class="slds-form-element__control">
+                        <apex:inputtext value="{!extraNOP}" styleClass="slds-input clear-textbox" maxlength="4"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-modal__footer">
+                  <button class="slds-button slds-button_neutral close-modal" onclick="return false;">Cancel</button>
+                  <apex:commandButton value="Proceed" status="statusSave" rerender="frm"  action="{!SendApprovalRequest}" styleClass="slds-button slds-button_brand"/>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+          </div>
+
+     </apex:actionRegion> 
+
+        
+        <div class="modal-window upload-list-modal" style="display: none;">
+            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+              <div class="slds-modal__container slds-text-align_center" style="max-width: 600px;">
+                <div class="slds-modal__header">
+                  <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <i onclick="return false;" class="fas fa-times" style="font-size: 24px;"></i>
+                    <span class="slds-assistive-text">Close</span>
+                  </button>
+                  <h2 id="modal-heading-104" class="slds-text-heading_medium slds-hyphenate">Upload a CSV file in the required format</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium">
+                  <p>
+                    <apex:actionRegion > 
+                    Please make sure your file’s initial columns match those shown in this &nbsp;<a href="{!$Label.UR_SampleCSV_URL}" target="_blank">example CSV file</a>
+                    </apex:actionRegion> 
+                  </p>
+                  <div class="slds-m-vertical_large">
+                    <apex:inputFile value="{!csvFileBody}" filename="{!csvFileName}"/>
+                  </div>
+                </div>
+                <div class="slds-modal__footer">
+                  <button onclick="return false;" class="slds-button slds-button_neutral close-modal">Cancel</button>
+                  <apex:commandButton value="Upload & Continue" style="border: 1px solid #dddbda" action="{!importCSVFile}" styleClass="slds-button slds-button_brand"/> 
+                </div>
+              </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+      </div>
+
+        <!--modal start here--> 
+        <apex:outputPanel id="viewMore" >
+            <apex:outputPanel rendered="{!if(viewObjId!=null,true, false)}">
+            <div class="modal-window view-more-modal" style="display: none;">
+                <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="return false;">
+                                <i class="fas fa-times" style="font-size: 24px;" onclick="closeMoreFields();"></i>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="font-size: 14px;" >
+                                <strong> 
+                                    Contact Name : <a href="/{!viewContactWrapperObj.objCon.Id}" target="_blank"><apex:outputText value="{!viewContactWrapperObj.objContactName}"/></a> <br/>
+                                	Company Name : <a href="/{!viewContactWrapperObj.objAcountId}" target="_blank"><apex:outputText value="{!viewContactWrapperObj.objAcountName}"/></a> <br/>
+                                </strong>              
+                            </h2>
+                        </div>
+                        <div class="slds-modal__content slds-p-around_medium">       
+                            <div class="slds-card bg-grey" style="border-left: 1px solid #dddbda; border-right: 1px solid #dddbda;">
+                                
+                                <div class="slds-card__body slds-m-bottom_none">
+                                    <div class="slds-scrollable" style="width: 100%; height:300px;">
+                                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                            <thead>
+                                              <tr class="slds-line-height_reset">
+                                                <th class="slds-text-title_caps" scope="col">Label</th>
+                                                <th class="slds-text-title_caps" scope="col">Value</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>                                                    
+                                                    <td scope="col">Email</td>
+                                                    <td scope="col">{!viewContactWrapperObj.objCon.Email}</td>
+                                                </tr> 
+                                                <tr>                                                    
+                                                    <td scope="col">Comment</td>
+                                                    <td scope="col">{!viewContactWrapperObj.strComment}</td>
+                                                </tr> 
+                                                <tr>                                                    
+                                                    <td scope="col">Participant Status</td>
+                                                    <td scope="col">{!viewContactWrapperObj.strPartStatus}</td>
+                                                </tr>
+                                                <tr>                                                    
+                                                    <td scope="col">Company Id</td>
+                                                    <td scope="col">{!viewContactWrapperObj.objAcountZPCompanyId}</td>
+                                                </tr> 
+                                                <tr>                                                    
+                                                    <td scope="col">User Id</td>
+                                                    <td scope="col">{!viewContactWrapperObj.objCon.ZP_User_Id__c}</td>
+                                                </tr> 
+                                                <tr>                                                    
+                                                    <td scope="col">Employee Id</td>
+                                                    <td scope="col">{!viewContactWrapperObj.objCon.Employee_Id__c}</td>
+                                                </tr> 
+                                                <tr>                                                    
+                                                    <td scope="col">Accountant Firm Id</td>
+                                                    <td scope="col">{!viewContactWrapperObj.objAcountZPFirmId}</td>
+                                                </tr> 
+                                                
+                                                <apex:repeat value="{!fieldLabelSet}" var="lbl">
+                                                    <tr>                                                    
+                                                          <td scope="col">
+                                                            {!lbl}
+                                                          </td>
+                                                          <td scope="col">
+                                                            {!viewMoreMap[lbl]}
+                                                          </td>
+                                                    </tr> 
+                                                </apex:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop_open"></div><br/><br/>
+            </div>
+            <script>
+            function closeMoreFields(){
+                $('.view-more-modal').fadeOut();
+            }
+            function showMoreFields(){
+                $('.view-more-modal').fadeIn();
+            }
+            </script>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <!--modal end here--> 
+   
+        
+     <!--<script type='text/javascript' src="{!URLFOR($Resource.UR_Assets, '/js/tableHeadFixer.js')}"></script>-->
+     <script type="text/javascript">
+       $('.approval-request-btn').click(function() {
+        $('.approval-request-modal').fadeIn();
+        $('.clear-textbox').val('');
+         return false;
+      });
+        
+      $('.add-info-btn').click(function() {
+        $('.add-info').slideToggle();
+        $('.add-info-btn i').toggleClass('fa-angle-right');        
+      });
+      $('.add-info-btn-01').click(function() {
+        $('.add-info-01').slideToggle();
+        $('.add-info-btn-01 i').toggleClass('fa-angle-right');        
+      });
+      $('.other-permissions-btn').click(function() {
+        $('.other-permissions').slideToggle();
+        $('.other-permissions-btn i').toggleClass('fa-angle-right');        
+      });
+      $('.close-modal, .slds-modal__close').click(function() {
+        $('.modal-window').fadeOut();
+      });
+      $('.upload-list-btn').click(function() {
+        $('.upload-list-modal').fadeIn();
+      });
+
+     /* $('.remove-participant-btn').click(function() {
+	        console.log('=======11====');
+            if(!checkIfReleased()){
+                $('#msg-content').html('Please select at least one record.');
+                $('.add-blank-participant-modal').fadeIn(); 
+            }else{
+                $('.remove-participant-modal').fadeIn(); 
+            }
+            
+      });*/
+      
+      $('.delete-csv-btn').click(function() {
+            var csvSize = {!totalContact};
+            if(csvSize!='' && csvSize > 0){
+                $('.delete-csv-modal').fadeIn(); 
+            }else{
+                $('#msg-content').html('No record found.');
+                $('.add-blank-participant-modal').fadeIn();
+            }
+            
+      });
+      
+	 /*
+      $('.add-participant-btn').click(function() {
+           if(!checkIfSelected()){
+                $('#msg-content').html('Please select at least one record.');
+                $('.add-blank-participant-modal').fadeIn(); 
+            }else{
+                $('.clear-textbox').val('');
+                $('.add-participant-modal').fadeIn(); 
+           }
+      });*/
+      
+      function checkIfSelected(){
+        return $('.add-chk-box:checked').length > 0 ? true : false;
+      }
+      
+      function checkIfReleased(){
+        return $('.release-chk-box:checked').length > 0 ? true : false;
+      }
+      
+      $('.upload-list-btn').click(function() {
+        $('.upload-list-modal').fadeIn();
+      });
+      
+        
+      $('.send-survey-btn').click(function(e) {
+          blankSendSurvey();
+      });
+      $('.invite-to-interview-btn').click(function(e) {
+          blankInviteToInterview();
+      });
+      $('.send-follow-up-btn').click(function(e) {
+          blankSendFollowUp();
+      });
+      
+      function checkEnterKey(e){
+        if('{!isEditable}'=='true'){
+            var keyCode = e.which ? e.which : e.keyCode
+            if(keyCode==13){
+                searchwithinCSV();
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+            }
+        }
+     }
+     
+     $('.fail-csv-record').click(function(e) {
+        window.open('/apex/UR_ManageCSVRecord?projectId='+'{!ProjectMasterObj.Id}&flag=Fail');
+     });
+	 
+     $('.success-csv-record').click(function(e) {
+        window.open('/apex/UR_ManageCSVRecord?projectId='+'{!ProjectMasterObj.Id}&flag=Success');
+     });
+  	  	
+     $('.exclude-csv-record').click(function(e) {
+        var isEditable = '{!isEditable}'; 
+        if('true'==isEditable){ 
+        	window.open('/apex/UR_ExcludedCSV?projectId='+'{!ProjectMasterObj.Id}');
+        }
+     });
+	
+    
+      function countSelectedRecord(){
+           var selectedIteam = parseInt($('.ux-checkbox:checked').length);
+           totoalSelectedRecord(selectedIteam)        
+      }
+      function countSelectedRecord1(){
+           var selectedIteam = parseInt($('.ux-checkbox1:checked').length);
+           totoalSelectedRecord1(selectedIteam)        
+      }
+
+
+	   function getSelectedRecord(){
+        	var count = parseInt($('.ux-checkbox:checked').length);
+            if(count==0){
+                count = parseInt($('.ux-checkbox').length);
+            }
+            if(count>0){
+                $('.add-participant-btn').val('Reserve ' + count + ' Participants');
+            }
+        }
+		function selecteSeachContact(){
+          	getSelectedRecord();
+        }
+		getSelectedRecord();
+
+		$(document).ready(function() {
+            var $chkboxes = $('.ux-checkbox');
+            $chkboxes.click(function(e) {getSelectedRecord();});
+        });
+
+     function onReserveParticipants() {
+        if(!checkIfSelected()){
+            if(this.getAttribute('data-reserve')==='all') {
+              var $cbAll = $(this).closest('.slds-card').find('[data-select="all"]'); 
+                //Reset select All checkbox
+                document.getElementById("pm:frm:selectAllRecord").checked = false;
+                if(!$cbAll.is(':checked')) {
+                	$cbAll.click();
+                }
+            }
+        }
+        $('.add-participant-modal').fadeIn();
+        return false;
+      }
+
+      $('[data-reserve]:not(disabled)').click(onReserveParticipants);
+      
+      function checkIfSelected(){
+        return $('.add-chk-box:checked').length > 0 ? true : false;
+      }
+
+//-------------------------
+	   function getSelectedRecordSecondTable(){
+        	var count = parseInt($('.ux-checkbox1:checked').length);
+            if(count==0){
+                count = parseInt($('.ux-checkbox1').length);
+            }
+            if(count>0){
+                $('.remove-participant-btn').val('Remove ' + count + ' Participants');
+            }
+        }
+		function selecteSeachContactSecondTable(){
+          	getSelectedRecordSecondTable();
+        }
+		getSelectedRecordSecondTable();
+
+		$(document).ready(function() {
+            var $chkboxes = $('.ux-checkbox1');
+            $chkboxes.click(function(e) {getSelectedRecordSecondTable();});
+        });
+
+     function onReserveParticipantsSecondTable() {
+		console.log('11=====> ' + checkIfSelected1());
+        if(!checkIfSelected1()){
+			console.log('22=====> ' + this.getAttribute('data-reserve1'));
+            if(this.getAttribute('data-reserve1')==='all') {
+              var $cbAll = $(this).closest('.slds-card').find('[data-select1="all"]'); 
+				 console.log('33=====> ' +$cbAll.is(':checked'));
+                //Reset select All checkbox
+                document.getElementById("pm:frm:selectAllRecord1").checked = false;
+                if(!$cbAll.is(':checked')) {
+                	$cbAll.click();
+                }
+            }
+        }
+		
+		var count = parseInt($('.ux-checkbox1:checked').length);
+		if(count==0){
+			$('#msg-content').html('Please select at least one record.');
+			$('.add-blank-participant-modal').fadeIn(); 
+		}else{
+			$('.remove-participant-modal').fadeIn(); 
+		}
+			
+        return false;
+      }
+
+      $('[data-reserve1]:not(disabled)').click(onReserveParticipantsSecondTable);
+      
+      function checkIfSelected1(){
+        return $('.add-chk-box1:checked').length > 0 ? true : false;
+      }
+	  
+	  $(document).ready(function() {
+		  if('ProjectMasterObj.CSV_Error__c'==''){
+          	$('.close-csverror-panel').hide();
+          }
+      });
+     </script> 
+    </apex:outputPanel>
+  </body>
+ </apex:form>   
+
+</apex:page>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <decisions>
+        <name>Phone_case_or_Chat_Case</name>
+        <label>Phone case or Chat Case</label>
+        <locationX>314</locationX>
+        <locationY>134</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Phone_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Case.Customer_Intent__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+            </conditions>
+            <conditions>
+                <leftValueReference>Case.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Phone</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Case.Channel__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Phone</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Customer_Intent_for_Phone_Case</targetReference>
+            </connector>
+            <label>Phone Case</label>
+        </rules>
+        <rules>
+            <name>Chat_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Case.Customer_Intent__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+            </conditions>
+            <conditions>
+                <leftValueReference>Case.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Gusto</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Case.Channel__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Chat</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Customer_Intent_for_Chat_Case</targetReference>
+            </connector>
+            <label>Chat Case</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Show Customer Intent Conidtionally {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Show Customer Intent Field Conditionally</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>Customer_Intent_for_Chat_Case</name>
+        <label>Customer Intent for Chat Case</label>
+        <locationX>314</locationX>
+        <locationY>242</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>Chat_Customer_Intent</name>
+            <fieldText>&lt;p&gt;&lt;strong&gt;Customer Intent&lt;/strong&gt; &lt;/p&gt;&lt;p&gt;{!Case.Customer_Intent__c}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>false</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
+        <name>Customer_Intent_for_Phone_Case</name>
+        <label>Customer Intent for Phone Case</label>
+        <locationX>50</locationX>
+        <locationY>242</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>Phone_Customer_Intent</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Customer Intent&lt;/strong&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;p&gt;{!Case.Customer_Intent__c}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>false</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Phone_case_or_Chat_Case</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>Case</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

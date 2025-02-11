@@ -1,0 +1,1494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <description>Add the updated record to collection</description>
+        <name>Add_Chat_User_Tracker_to_records_to_update</name>
+        <label>Add Chat User Tracker to records to update</label>
+        <locationX>479</locationX>
+        <locationY>3036</locationY>
+        <assignmentItems>
+            <assignToReference>var_SF_TrackingRecords_To_Update</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_Chat_User_Tracking_Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_CXOne_Managed_Package_Data</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add the updated record to collection</description>
+        <name>Add_CXOne_Managed_Package_Tracker_to_records_to_update</name>
+        <label>Add CXOne Managed Package Tracker to records to update</label>
+        <locationX>50</locationX>
+        <locationY>3972</locationY>
+        <assignmentItems>
+            <assignToReference>var_SF_TrackingRecords_To_Update</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_Tracker</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Do_Records_need_to_be_updated</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add the updated record to collection</description>
+        <name>Add_CXOne_Managed_Package_Tracker_to_records_to_update_without_Last_Updated_fiel</name>
+        <label>Add CXOne Managed Package Tracker to records to update without Last Updated field</label>
+        <locationX>578</locationX>
+        <locationY>3852</locationY>
+        <assignmentItems>
+            <assignToReference>var_SF_TrackingRecords_To_Update</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_Tracker</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Do_Records_need_to_be_updated</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add the updated record to collection</description>
+        <name>Add_Sales_Console_Tracker_to_records_to_update</name>
+        <label>Add Sales Console Tracker to records to update</label>
+        <locationX>479</locationX>
+        <locationY>2460</locationY>
+        <assignmentItems>
+            <assignToReference>var_SF_TrackingRecords_To_Update</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_Sales_Console_Tracking_Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Chat_User_Licenses</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add the updated record to collection</description>
+        <name>Add_Service_Cloud_Tracker_to_records_to_update</name>
+        <label>Add Service Cloud Tracker to records to update</label>
+        <locationX>479</locationX>
+        <locationY>1884</locationY>
+        <assignmentItems>
+            <assignToReference>var_SF_TrackingRecords_To_Update</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Tracking_Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Sales_Console_Licenses</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add the updated record to collection</description>
+        <name>Add_SF_Tracker_to_records_to_update</name>
+        <label>Add SF Tracker to records to update</label>
+        <locationX>479</locationX>
+        <locationY>1308</locationY>
+        <assignmentItems>
+            <assignToReference>var_SF_TrackingRecords_To_Update</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_Salesforce_Tracking_Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Service_Cloud_Licenses</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_Chat_User_field_values_for_Creation</name>
+        <label>Assign Chat User field values for Creation</label>
+        <locationX>743</locationX>
+        <locationY>2916</locationY>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Chat_User_Data.TotalLicenseCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Chat_User_Data.AssignedUserCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Chat_User_Data.MetricsDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Threshold__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Default_Threshold</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_Total_Chat_User_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Chat User</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Chat_User_License_Tracker</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_CXOne_Managed_Packager_field_values_for_Creation</name>
+        <label>Assign CXOne Managed Packager field values for Creation</label>
+        <locationX>314</locationX>
+        <locationY>3852</locationY>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.AllowedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Last_CXOne_License_Assignment_Data.CreatedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_Total_CXOne_Managed_Package_License_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Threshold__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Default_Threshold</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>CXOne Managed Package</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_CXOne_Managed_Package_License_Tracker</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_field_values_for_creation</name>
+        <label>Assign field values for creation</label>
+        <locationX>743</locationX>
+        <locationY>1188</locationY>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Salesforce_User_Licenses.TotalLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Salesforce_User_Licenses.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Salesforce_User_Licenses.UsedLicensesLastUpdated</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Threshold__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Default_Threshold</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Total_Salesforce_Lic_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Salesforce</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Salesforce_License_Tracker</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_Sales_Console_field_values_for_creation</name>
+        <label>Assign Sales Console field values for creation</label>
+        <locationX>743</locationX>
+        <locationY>2340</locationY>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Sales_Console_License_Data.TotalLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Sales_Console_License_Data.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Sales_Console_License_Data.LastModifiedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Threshold__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Default_Threshold</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Total_Sales_Console_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Sales Console</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Sales_Console_License_Tracker</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_Service_Cloud_field_values_for_creation</name>
+        <label>Assign Service Cloud field values for creation</label>
+        <locationX>743</locationX>
+        <locationY>1764</locationY>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Data.TotalLicenseCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Data.AssignedUserCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Data.MetricsDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Threshold__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Default_Threshold</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Total_Service_Cloud_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Service Cloud</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Service_Cloud_License_Tracker</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign to variable for flow logic and updating</description>
+        <name>Assign_to_Chat_User_Tracker_Variable</name>
+        <label>Assign to Chat User Tracker Variable</label>
+        <locationX>1491</locationX>
+        <locationY>756</locationY>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Through_Trackers</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign to variable for flow logic and updating</description>
+        <name>Assign_to_CXOne_Managed_Package_Tracker_Variable</name>
+        <label>Assign to CXOne Managed Package  Tracker Variable</label>
+        <locationX>1755</locationX>
+        <locationY>756</locationY>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Through_Trackers</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign to variable for flow logic and updating</description>
+        <name>Assign_to_Sales_Console_Tracker_Variable</name>
+        <label>Assign to Sales Console Tracker Variable</label>
+        <locationX>1227</locationX>
+        <locationY>756</locationY>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Through_Trackers</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign to variable for flow logic and updating</description>
+        <name>Assign_to_Salesforce_Tracer_Variable</name>
+        <label>Assign to Salesforce Tracer Variable</label>
+        <locationX>699</locationX>
+        <locationY>756</locationY>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Through_Trackers</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign to variable for flow logic and updating</description>
+        <name>Assign_to_Service_Cloud_Tracker_Variable</name>
+        <label>Assign to Service Cloud Tracker Variable</label>
+        <locationX>963</locationX>
+        <locationY>756</locationY>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Through_Trackers</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_updated_Chat_User_field_values</name>
+        <label>Assign updated Chat User field values</label>
+        <locationX>479</locationX>
+        <locationY>2916</locationY>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Chat_User_Data.TotalLicenseCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Chat_User_Data.AssignedUserCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Chat_User_Data.MetricsDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Threshold_Breached__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Chat_User_Breached_Status</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Chat_User_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_Total_Chat_User_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_Chat_User_Tracker_to_records_to_update</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_updated_CXOne_Managed_Packager_field_values</name>
+        <label>Assign updated CXOne Managed Packager field values</label>
+        <locationX>50</locationX>
+        <locationY>3852</locationY>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.AllowedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Last_CXOne_License_Assignment_Data.CreatedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Threshold_Breached__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_CXOne_License_Breached_Status</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_Total_CXOne_Managed_Package_License_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_CXOne_Managed_Package_Tracker_to_records_to_update</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_updated_CXOne_Managed_Packager_field_values_without_Last_Updated_Field</name>
+        <label>Assign updated CXOne Managed Packager field values without Last Updated Field</label>
+        <locationX>578</locationX>
+        <locationY>3732</locationY>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.AllowedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Threshold_Breached__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_CXOne_License_Breached_Status</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_CXOne_Managed_Package_Tracker.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_Total_CXOne_Managed_Package_License_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_CXOne_Managed_Package_Tracker_to_records_to_update_without_Last_Updated_fiel</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_updated_field_values</name>
+        <label>Assign updated field values</label>
+        <locationX>479</locationX>
+        <locationY>1188</locationY>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Salesforce_User_Licenses.TotalLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Salesforce_User_Licenses.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Salesforce_User_Licenses.UsedLicensesLastUpdated</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Threshold_Breached__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Salesforce_Breached_Status</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Salesforce_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Total_Salesforce_Lic_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_SF_Tracker_to_records_to_update</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_updated_Sales_Console_field_values2</name>
+        <label>Assign updated Sales Console field values</label>
+        <locationX>479</locationX>
+        <locationY>2340</locationY>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Sales_Console_License_Data.TotalLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Sales_Console_License_Data.UsedLicenses</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Sales_Console_License_Data.LastModifiedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Total_Sales_Console_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Sales_Console_Tracking_Record.Threshold_Breached__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Sales_Console_Breached_Status</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_Sales_Console_Tracker_to_records_to_update</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the SF License Checker with the Updated Fields</description>
+        <name>Assign_updated_Service_Cloud_field_values</name>
+        <label>Assign updated Service Cloud field values</label>
+        <locationX>479</locationX>
+        <locationY>1764</locationY>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Total_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Data.TotalLicenseCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Used_Licenses__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Data.AssignedUserCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Used_License_Last_Updated__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Service_Cloud_Data.MetricsDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Threshold_Breached__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>frm_Service_Cloud_Breached_Status</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_Service_Cloud_Tracking_Record.Licenses_Remaining__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Frm_Total_Service_Cloud_Available</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_Service_Cloud_Tracker_to_records_to_update</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Only Update if records are available to be updated</description>
+        <name>Do_Records_need_to_be_updated</name>
+        <label>Do Records need to be updated</label>
+        <locationX>611</locationX>
+        <locationY>4380</locationY>
+        <defaultConnectorLabel>None to Update</defaultConnectorLabel>
+        <rules>
+            <name>Update_Records</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_SF_TrackingRecords_To_Update</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Records_to_update</targetReference>
+            </connector>
+            <label>Update Records</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Tracker_Type_Sorting</name>
+        <label>Tracker Type Sorting</label>
+        <locationX>1359</locationX>
+        <locationY>636</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Salesforce_Tracker</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Through_Trackers.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Salesforce</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_Salesforce_Tracer_Variable</targetReference>
+            </connector>
+            <label>Salesforce Tracker</label>
+        </rules>
+        <rules>
+            <name>Service_Cloud_Tracker</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Through_Trackers.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Service Cloud</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_Service_Cloud_Tracker_Variable</targetReference>
+            </connector>
+            <label>Service Cloud Tracker</label>
+        </rules>
+        <rules>
+            <name>Sales_Console_Tracker</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Through_Trackers.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Console</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_Sales_Console_Tracker_Variable</targetReference>
+            </connector>
+            <label>Sales Console Tracker</label>
+        </rules>
+        <rules>
+            <name>Chat_User_Tracker</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Through_Trackers.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Chat User</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_Chat_User_Tracker_Variable</targetReference>
+            </connector>
+            <label>Chat User Tracker</label>
+        </rules>
+        <rules>
+            <name>CXOne_Managed_Package_Tracker</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Through_Trackers.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>CXOne Managed Package</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_CXOne_Managed_Package_Tracker_Variable</targetReference>
+            </connector>
+            <label>CXOne Managed Package Tracker</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Account for null values</description>
+        <name>Was_an_assignment_found</name>
+        <label>Was an assignment found</label>
+        <locationX>380</locationX>
+        <locationY>3612</locationY>
+        <defaultConnector>
+            <targetReference>Assign_updated_CXOne_Managed_Packager_field_values_without_Last_Updated_Field</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Assignment Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Assignment_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Last_CXOne_License_Assignment_Data.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Was_CXOne_Managed_Package_Tracker_Found</targetReference>
+            </connector>
+            <label>Assignment Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If record not found, create it</description>
+        <name>Was_Chat_User_Tracker_Found</name>
+        <label>Was Chat User Tracker Found</label>
+        <locationX>611</locationX>
+        <locationY>2796</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Chat_User_field_values_for_Creation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Chat User Tracker Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Chat_User_Tracker_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Chat_User_Tracking_Record.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_updated_Chat_User_field_values</targetReference>
+            </connector>
+            <label>Chat User Tracker Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If record not found, create it</description>
+        <name>Was_CXOne_Managed_Package_Tracker_Found</name>
+        <label>Was CXOne Managed Package Tracker Found</label>
+        <locationX>182</locationX>
+        <locationY>3732</locationY>
+        <defaultConnector>
+            <targetReference>Assign_CXOne_Managed_Packager_field_values_for_Creation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>CXOne Managed Package Tracker Not Found</defaultConnectorLabel>
+        <rules>
+            <name>CXOne_Managed_Package_Tracker_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_CXOne_Managed_Package_Tracker.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_updated_CXOne_Managed_Packager_field_values</targetReference>
+            </connector>
+            <label>CXOne Managed Package Tracker Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If record not found, create it</description>
+        <name>Was_Sales_Console_Tracker_Found</name>
+        <label>Was Sales Console Tracker Found</label>
+        <locationX>611</locationX>
+        <locationY>2220</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Sales_Console_field_values_for_creation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Sales Console Tracker Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Sales_Console_Tracker_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Sales_Console_Tracking_Record</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_updated_Sales_Console_field_values2</targetReference>
+            </connector>
+            <label>Sales Console Tracker Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If record not found, create it</description>
+        <name>Was_Salesforce_Tracker_Found</name>
+        <label>Was Salesforce Tracker Found</label>
+        <locationX>611</locationX>
+        <locationY>1068</locationY>
+        <defaultConnector>
+            <targetReference>Assign_field_values_for_creation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Salesforce Tracker Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Salesforce_Tracker_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Salesforce_Tracking_Record.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_updated_field_values</targetReference>
+            </connector>
+            <label>Salesforce Tracker Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If record not found, create it</description>
+        <name>Was_Service_Cloud_Tracker_Found</name>
+        <label>Was Service Cloud Tracker Found</label>
+        <locationX>611</locationX>
+        <locationY>1644</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Service_Cloud_field_values_for_creation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Service Cloud Tracker Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Service_Cloud_Tracker_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Service_Cloud_Tracking_Record.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_updated_Service_Cloud_field_values</targetReference>
+            </connector>
+            <label>Service Cloud Tracker Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check to see if license was found.  This is to avoid issues in case the package is ever removed</description>
+        <name>Was_the_CXOne_Data_Found</name>
+        <label>Was the CXOne Data Found</label>
+        <locationX>611</locationX>
+        <locationY>3372</locationY>
+        <defaultConnector>
+            <targetReference>Do_Records_need_to_be_updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>CXOne Data Not Found</defaultConnectorLabel>
+        <rules>
+            <name>CXOne_Data_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_CXOne_Managed_Package_License_Data.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_data_from_the_last_CXOne_Managed_Package_Assignement</targetReference>
+            </connector>
+            <label>CXOne Data Found</label>
+        </rules>
+    </decisions>
+    <description>Flow used to query and update the SF License Tracker Custom MetaData Records to be used for dashboards and alerts</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Store if the threshold has been breached</description>
+        <name>Frm_Chat_User_Breached_Status</name>
+        <dataType>Boolean</dataType>
+        <expression>IF({!var_Chat_User_Data.TotalLicenseCount} - {!var_Chat_User_Data.AssignedUserCount} &lt;= {!var_Chat_User_Tracking_Record.Threshold__c}, TRUE, FALSE)</expression>
+    </formulas>
+    <formulas>
+        <description>Store if the threshold has been breached</description>
+        <name>frm_CXOne_License_Breached_Status</name>
+        <dataType>Boolean</dataType>
+        <expression>IF({!var_CXOne_Managed_Package_License_Data.AllowedLicenses} - {!var_CXOne_Managed_Package_License_Data.UsedLicenses} &lt;= {!var_CXOne_Managed_Package_Tracker.Threshold__c}, TRUE, FALSE)</expression>
+    </formulas>
+    <formulas>
+        <description>Set the Default Threshhold</description>
+        <name>Frm_Default_Threshold</name>
+        <dataType>Number</dataType>
+        <expression>10</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Store if the threshold has been breached</description>
+        <name>Frm_Sales_Console_Breached_Status</name>
+        <dataType>Boolean</dataType>
+        <expression>IF({!var_Sales_Console_License_Data.TotalLicenses} - {!var_Sales_Console_License_Data.UsedLicenses} &lt;=  {!var_Sales_Console_Tracking_Record.Threshold__c},  TRUE, FALSE)</expression>
+    </formulas>
+    <formulas>
+        <description>Store if threshold has been breached.</description>
+        <name>Frm_Salesforce_Breached_Status</name>
+        <dataType>Boolean</dataType>
+        <expression>IF({!Get_Salesforce_User_Licenses.TotalLicenses} - {!Get_Salesforce_User_Licenses.UsedLicenses} &lt;= {!var_Salesforce_Tracking_Record.Threshold__c}, TRUE, FALSE)</expression>
+    </formulas>
+    <formulas>
+        <description>Store if threshold has been breached.</description>
+        <name>frm_Service_Cloud_Breached_Status</name>
+        <dataType>Boolean</dataType>
+        <expression>IF( {!var_Service_Cloud_Data.TotalLicenseCount} - {!var_Service_Cloud_Data.AssignedUserCount} &lt;= {!var_Service_Cloud_Tracking_Record.Threshold__c},TRUE, FALSE )</expression>
+    </formulas>
+    <formulas>
+        <description>Calculate the total licenses available</description>
+        <name>frm_Total_Chat_User_Available</name>
+        <dataType>Number</dataType>
+        <expression>{!var_Chat_User_Data.TotalLicenseCount} - {!var_Chat_User_Data.AssignedUserCount}</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Calculate the total licenses available</description>
+        <name>frm_Total_CXOne_Managed_Package_License_Available</name>
+        <dataType>Number</dataType>
+        <expression>{!var_CXOne_Managed_Package_License_Data.AllowedLicenses} - {!var_CXOne_Managed_Package_License_Data.UsedLicenses}</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <description>Calculate the total licenses available</description>
+        <name>Frm_Total_Sales_Console_Available</name>
+        <dataType>Number</dataType>
+        <expression>{!var_Sales_Console_License_Data.TotalLicenses} - {!var_Sales_Console_License_Data.UsedLicenses}</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Calculate the total SF Licenses Available</description>
+        <name>Frm_Total_Salesforce_Lic_Available</name>
+        <dataType>Number</dataType>
+        <expression>{!Get_Salesforce_User_Licenses.TotalLicenses} - {!Get_Salesforce_User_Licenses.UsedLicenses}</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Calculate the total Licenses Available</description>
+        <name>Frm_Total_Service_Cloud_Available</name>
+        <dataType>Number</dataType>
+        <expression>{!var_Service_Cloud_Data.TotalLicenseCount} - {!var_Service_Cloud_Data.AssignedUserCount}</expression>
+        <scale>0</scale>
+    </formulas>
+    <interviewLabel>SF License Tracker Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>SF License Tracker Flow</label>
+    <loops>
+        <description>Loop through trackers to assign to specific variables</description>
+        <name>Loop_Through_Trackers</name>
+        <label>Loop Through Trackers</label>
+        <locationX>611</locationX>
+        <locationY>516</locationY>
+        <collectionReference>var_All_SF_License_Trackers</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Tracker_Type_Sorting</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Was_Salesforce_Tracker_Found</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create the record and set the default threshold to 10</description>
+        <name>Create_Chat_User_License_Tracker</name>
+        <label>Create Chat User License Tracker</label>
+        <locationX>743</locationX>
+        <locationY>3036</locationY>
+        <connector>
+            <targetReference>Get_CXOne_Managed_Package_Data</targetReference>
+        </connector>
+        <inputReference>var_Chat_User_Tracking_Record</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Create the record and set the default threshold to 10</description>
+        <name>Create_CXOne_Managed_Package_License_Tracker</name>
+        <label>Create CXOne Managed Package License Tracker</label>
+        <locationX>314</locationX>
+        <locationY>3972</locationY>
+        <connector>
+            <targetReference>Do_Records_need_to_be_updated</targetReference>
+        </connector>
+        <inputReference>var_CXOne_Managed_Package_Tracker</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Create the record and set the default threshold to 10</description>
+        <name>Create_Sales_Console_License_Tracker</name>
+        <label>Create Sales Console License Tracker</label>
+        <locationX>743</locationX>
+        <locationY>2460</locationY>
+        <connector>
+            <targetReference>Get_Chat_User_Licenses</targetReference>
+        </connector>
+        <inputReference>var_Sales_Console_Tracking_Record</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Create the record and set the default threshold to 10</description>
+        <name>Create_Salesforce_License_Tracker</name>
+        <label>Create Salesforce License Tracker</label>
+        <locationX>743</locationX>
+        <locationY>1308</locationY>
+        <connector>
+            <targetReference>Get_Service_Cloud_Licenses</targetReference>
+        </connector>
+        <inputReference>var_Salesforce_Tracking_Record</inputReference>
+    </recordCreates>
+    <recordCreates>
+        <description>Create the record and set the default threshold to 10</description>
+        <name>Create_Service_Cloud_License_Tracker</name>
+        <label>Create Service Cloud License Tracker</label>
+        <locationX>743</locationX>
+        <locationY>1884</locationY>
+        <connector>
+            <targetReference>Get_Sales_Console_Licenses</targetReference>
+        </connector>
+        <inputReference>var_Service_Cloud_Tracking_Record</inputReference>
+    </recordCreates>
+    <recordLookups>
+        <description>SELECT Featuretype, Activeusercount, AssignedUserCount, TotalLicenseCount FROM ActiveFeatureLicenseMetric  WHERE  Featuretype = &apos;LiveAgentUser&apos; Order By Metricsdate DESC</description>
+        <name>Get_Chat_User_Licenses</name>
+        <label>Get Chat User Licenses</label>
+        <locationX>611</locationX>
+        <locationY>2676</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Chat_User_Tracker_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>FeatureType</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>LiveAgentUser</stringValue>
+            </value>
+        </filters>
+        <object>ActiveFeatureLicenseMetric</object>
+        <outputReference>var_Chat_User_Data</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>AssignedUserCount</queriedFields>
+        <queriedFields>FeatureType</queriedFields>
+        <queriedFields>MetricsDate</queriedFields>
+        <queriedFields>TotalLicenseCount</queriedFields>
+        <sortField>MetricsDate</sortField>
+        <sortOrder>Desc</sortOrder>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the data on the managed package</description>
+        <name>Get_CXOne_Managed_Package_Data</name>
+        <label>Get CXOne Managed Package Data</label>
+        <locationX>611</locationX>
+        <locationY>3252</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_the_CXOne_Data_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>NamespacePrefix</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>icAgentConsole</stringValue>
+            </value>
+        </filters>
+        <object>PackageLicense</object>
+        <outputReference>var_CXOne_Managed_Package_License_Data</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>AllowedLicenses</queriedFields>
+        <queriedFields>UsedLicenses</queriedFields>
+        <queriedFields>NamespacePrefix</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>Get data from the last package license assignment so it can be used to report on the last time the package was assigned to a user.   This is because the Packagelicense object does not track the last time a license was assigned or unassigned.  So, this is better than nothing!       :-)</description>
+        <name>Get_data_from_the_last_CXOne_Managed_Package_Assignement</name>
+        <label>Get data from the last CXOne Managed Package Assignement</label>
+        <locationX>380</locationX>
+        <locationY>3492</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_an_assignment_found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>PackageLicenseId__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>var_CXOne_Managed_Package_License_Data.Id</elementReference>
+            </value>
+        </filters>
+        <object>UserPackageLicense</object>
+        <outputReference>var_Last_CXOne_License_Assignment_Data</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>CreatedDate</queriedFields>
+        <queriedFields>UserId__NotFound</queriedFields>
+        <queriedFields>PackageLicenseId__NotFound</queriedFields>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+    </recordLookups>
+    <recordLookups>
+        <description>Get SF License Tracker</description>
+        <name>Get_License_Tracker_Record</name>
+        <label>Get License Tracker Record</label>
+        <locationX>611</locationX>
+        <locationY>396</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Through_Trackers</targetReference>
+        </connector>
+        <object>SF_License_Trackers__c</object>
+        <outputReference>var_All_SF_License_Trackers</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>Threshold__c</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the number of licenses
+
+SELECT developername, ID, Totallicenses, MasterLabel, UsedLicenses from Permissionsetlicense Where developername = &apos;SalesConsoleUser&apos;</description>
+        <name>Get_Sales_Console_Licenses</name>
+        <label>Get Sales Console Licenses</label>
+        <locationX>611</locationX>
+        <locationY>2100</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Sales_Console_Tracker_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>SalesConsoleUser</stringValue>
+            </value>
+        </filters>
+        <object>PermissionSetLicense</object>
+        <outputReference>var_Sales_Console_License_Data</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>DeveloperName</queriedFields>
+        <queriedFields>MasterLabel</queriedFields>
+        <queriedFields>LastModifiedDate</queriedFields>
+        <queriedFields>TotalLicenses</queriedFields>
+        <queriedFields>UsedLicenses</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>Get all the licenses records for the flow
+
+SELECT TotalLicenses, UsedLicensesLastUpdated, Name, UsedLicenses From Userlicense WHERE Name = &apos;Salesforce&apos;</description>
+        <name>Get_Salesforce_User_Licenses</name>
+        <label>Get Salesforce User Licenses</label>
+        <locationX>611</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_License_Tracker_Record</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Salesforce</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>UserLicense</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>SELECT Featuretype, Activeusercount, AssignedUserCount, TotalLicenseCount FROM ActiveFeatureLicenseMetric  WHERE  Featuretype = &apos;SupportUser&apos; Order By Metricsdate DESC</description>
+        <name>Get_Service_Cloud_Licenses</name>
+        <label>Get Service Cloud Licenses</label>
+        <locationX>611</locationX>
+        <locationY>1524</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Service_Cloud_Tracker_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>FeatureType</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>SupportUser</stringValue>
+            </value>
+        </filters>
+        <object>ActiveFeatureLicenseMetric</object>
+        <outputReference>var_Service_Cloud_Data</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>ActiveUserCount</queriedFields>
+        <queriedFields>AssignedUserCount</queriedFields>
+        <queriedFields>MetricsDate</queriedFields>
+        <queriedFields>TotalLicenseCount</queriedFields>
+        <queriedFields>FeatureType</queriedFields>
+        <sortField>MetricsDate</sortField>
+        <sortOrder>Desc</sortOrder>
+    </recordLookups>
+    <recordUpdates>
+        <description>Update all Tracking Records</description>
+        <name>Update_Records_to_update</name>
+        <label>Update Records to update</label>
+        <locationX>479</locationX>
+        <locationY>4500</locationY>
+        <inputReference>var_SF_TrackingRecords_To_Update</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>485</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Salesforce_User_Licenses</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Salesforce</stringValue>
+            </value>
+        </filters>
+        <object>UserLicense</object>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2023-02-04</startDate>
+            <startTime>03:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>currentItem_Filter_Out_Salesforce_License_Tracker</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>All the SF License Trackers</description>
+        <name>var_All_SF_License_Trackers</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>Stores the user license information</description>
+        <name>var_Chat_User_Data</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>ActiveFeatureLicenseMetric</objectType>
+    </variables>
+    <variables>
+        <description>The record to be created or updated</description>
+        <name>var_Chat_User_Tracking_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>Data on the managed Package</description>
+        <name>var_CXOne_Managed_Package_License_Data</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PackageLicense</objectType>
+    </variables>
+    <variables>
+        <description>Used to update or create the tracking record</description>
+        <name>var_CXOne_Managed_Package_Tracker</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>data on the last time the license was assigned</description>
+        <name>var_Last_CXOne_License_Assignment_Data</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <description>Stores the license information</description>
+        <name>var_Sales_Console_License_Data</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetLicense</objectType>
+    </variables>
+    <variables>
+        <description>Stores the record to be created or updated</description>
+        <name>var_Sales_Console_Tracking_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>Record that tracks Salesforce Licenses,  If not found, one will be created</description>
+        <name>var_Salesforce_Tracking_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>All the details for the service cloud license</description>
+        <name>var_Service_Cloud_Data</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>ActiveFeatureLicenseMetric</objectType>
+    </variables>
+    <variables>
+        <description>Stores the SF Tracking record to be created or updated</description>
+        <name>var_Service_Cloud_Tracking_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+    <variables>
+        <description>Tracking Records that need to be updated</description>
+        <name>var_SF_TrackingRecords_To_Update</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>SF_License_Trackers__c</objectType>
+    </variables>
+</Flow>

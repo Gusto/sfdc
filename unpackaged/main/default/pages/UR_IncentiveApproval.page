@@ -1,0 +1,332 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ProjectCloserCtrl" id="pageId" applyBodyTag="false" sidebar="false">
+ <apex:form id="frm" >
+  <head> 
+    <title>Gusto</title>
+       <style>
+         .blacklist-optout td, .blacklist-optout:hover td, .blacklist-optout:focus td{
+            background-color: #f8d7da !important;
+         }
+         .custom-tooltip .custom-tooltip-box {
+            display: none;
+         }
+         .custom-tooltip a:hover + .custom-tooltip-box {
+            display: block;
+         }
+        
+         .chevrondownImage{
+            width: 15px; 
+         }
+         .arrowdownImage{
+            width: 15px;
+         }
+         .arrowupImage{
+            width: 15px;
+         }
+           
+         .tablesorter thead .sorter-false {
+            padding: .25rem 10px !important;
+          }
+           
+          .scout-notify--scheduled{
+          	  display:none !important;
+          }
+           
+          @media (min-width: 768px){
+            .mt-items {
+                margin-top: -30px;
+            }
+          }
+          
+           
+       </style>
+       <script>
+        function setFocusOnLoad() {}
+      </script>
+    <c:UR_SortingTable />
+    <style>
+        .tooltip-bottom {
+            position: absolute !important; 
+            top: 25px; 
+            right: -15px; 
+            text-transform: capitalize; 
+            white-space: normal; 
+            width: 180px !important; 
+            font-weight: normal;
+        }
+    </style>
+  </head>
+
+  <body class="slds-scope">
+     <c:UR_ActionStatus />
+     <c:UR_MenuHeaderComponent tabName="Incentive Approval" subTabName="RA" prjId="{!objProject.Id}"/>
+  	 <apex:actionFunction rerender="frm" status="statusSave" name="updateIncentiveStatusAmount" action="{!updateIncentiveStatus}">
+        <apex:param name="strPartId" value=""/>
+     </apex:actionFunction> 	
+ <!--body start here-->  
+    <div class="slds-p-around_small"> 
+      <apex:pageMessages id="msg"/>
+       
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">
+            
+			<!-- Approval Section Start -->
+            <div class="slds-box slds-m-bottom_medium bg-grey" style="background: rgb(194, 57, 52, .1); padding-bottom: 0; display:{!if(isApprover==true && objProject.Incentive_Approval_Status__c=='In progress', 'block;' , 'none;')}">
+                <strong class="slds-text-heading_small">Incentive Approval Section: </strong>Max Incentive Allowed : {!INT_MAX_INCENTIVE}
+              <hr class="slds-m-vertical_small" style="margin-right: -16px; margin-left: -16px;" />
+              <ul>
+				 <li style="display: inline-block; margin-bottom: 1rem;" class="slds-m-right_xx-large">
+				 {!totalParticipant} participants
+                </li>
+                <li style="display: inline-block; margin-bottom: 1rem;" class="slds-m-right_medium">
+                  <apex:commandButton action="{!approveRequest}" status="statusSave" rerender="frm" styleClass="slds-button slds-button_brand slds-m-bottom_small slds-m-bottom_none" value="Approve" />
+                  <apex:commandButton action="{!rejectRequest}" status="statusSave" rerender="frm" styleClass="slds-button slds-button_neutral slds-m-bottom_small slds-m-bottom_none" value="Reject" />
+                </li>
+              </ul>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="horizontal-input-id-02" style="font-size: 13px;">Comments :</label>
+                <div class="slds-form-element__control">
+                  <apex:inputTextarea value="{!approverComment}" styleclass="slds-textarea slds-m-bottom_medium" />
+                </div>
+              </div>
+            </div>
+		  <!-- Approval Section End -->		
+		 
+          <!-- Approval Section Start -->
+            <div class="slds-box slds-m-bottom_medium bg-grey" style="background: rgb(194, 57, 52, .1); padding-bottom: 0; display:{!if(objProject.Incentive_Approval_Status__c=='Approved' || objProject.Incentive_Approval_Status__c=='Rejected', 'block;' , 'none;')}">
+              <strong class="slds-text-heading_small">Incentive Approval Section: </strong>Max Incentive Allowed : {!INT_MAX_INCENTIVE}
+              <hr class="slds-m-vertical_small" style="margin-right: -16px; margin-left: -16px;" />
+              <ul>
+				 <li style="display: inline-block; margin-bottom: 1rem;" class="slds-m-right_xx-large">
+				 {!totalParticipant} participants
+                </li>
+              </ul>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="horizontal-input-id-02" style="font-size: 13px;">Comments :</label>
+                <div class="slds-form-element__control">
+                  <apex:inputTextarea disabled="true" value="{!objProject.Incentive_Approval_Comment__c}" styleclass="slds-textarea slds-m-bottom_medium" />
+                </div>
+              </div>
+            </div>
+		  <!-- Approval Section End -->	
+          
+        <apex:outputPanel id="notePanel">
+          <div class="slds-text-align_left bg-grey slds-p-around_small" style="border-radius: .25rem;">
+            <div class="slds-grid slds-wrap wd-100">
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12">
+                <div class="slds-m-top_xx-small">
+                  <div class="slds-text-heading_medium"><strong>Notes</strong></div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12">
+                <apex:outputpanel layout="block" rendered="{!if(objNote.id!=null,true,false)}" styleclass="slds-m-top_x-small text-grey">Last updated at &nbsp;<apex:outputField value="{!objNote.LastModifiedDate}"/> by &nbsp;<apex:outputField value="{!objNote.LastModifiedBy.Name}"/></apex:outputpanel>
+              </div>
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12 slds-text-align_right">
+                  <apex:outputpanel rendered="{!isEditable}">
+	                  <apex:commandLink rendered="{!addNote}" rerender="notePanel" status="statusSave" value="Cancel" action="{!CancelNote}" styleclass="slds-button slds-button_outline-brand"/>&nbsp;&nbsp;&nbsp;&nbsp;
+	        		  <apex:commandButton rendered="{!addNote}" rerender="notePanel" status="statusSave" value="Save notes" action="{!SaveNotes}" styleclass="slds-button slds-button_brand"/>
+	                  <apex:commandButton rendered="{!!addNote}" rerender="notePanel" status="statusSave" value="Add notes" action="{!AddNote}" styleclass="slds-button slds-button_brand"/>
+                   </apex:outputpanel>
+             </div>
+            </div>
+          </div>
+               
+          <apex:outputpanel rendered="{!!addNote}" layout="block" styleclass="slds-p-around_small slds-m-bottom_medium slds-scrollable_y" style="max-height: 150px;">
+              <em><apex:outputField value="{!objNote.Body}"/></em>
+          </apex:outputpanel>
+          <apex:outputpanel rendered="{!addNote}" layout="block" styleclass="slds-m-bottom_medium">
+              <apex:inputField value="{!objNote.Body}" styleClass="slds-textarea" style="height: 80px;width: 100%"/>
+          </apex:outputpanel>  
+      </apex:outputPanel> 
+  
+            
+          <apex:outputpanel >
+          <div class="slds-p-vertical_small">
+               <div class="slds-scrollable" style="max-height:500px; min-height:200px; width: 100%;">
+                  <table class="slds-table slds-table_cell-buffer slds-table_bordered  fix-header">
+                    <thead>
+                      <tr class="slds-line-height_reset"> 
+                        <th style="width:60px; height: 40px;" class="slds-text-title_caps sorter-false" scope="col"></th>
+						<th class="slds-text-title_caps sorter-false" scope="col">
+							Name						 
+                        </th>
+                        <th class="slds-text-title_caps sorter-false" scope="col">
+							Email
+						</th>
+                        <th class="slds-text-title_caps sorter-false" scope="col">
+							Current Year Incentive
+						</th>  
+                        <th style="min-width:200px;" class="slds-text-title_caps sorter-false" scope="col" width="200" >
+							Needs incentive?
+						</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+        
+                          <apex:repeat value="{!lstResearchProjectDetailWrapper}" var="pd" id="table">
+                            <tr> 
+                              <td>
+                                 <!-- <div style="display:{!if(INT_MAX_INCENTIVE!=0 && (pd.intCurrentYearIncentive + pd.prjDetail.Proposed_Incentive__c) >  INT_MAX_INCENTIVE,'block;','none;')} position: relative;" class="custom-tooltip slds-float_right">
+                                      <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:#c23934"></i></a>
+                                      <div style="position: absolute; bottom: 20px; left: -17px; white-space: nowrap;" class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left custom-tooltip-box" role="tooltip"  >
+                                          
+                                          <div class="slds-popover__body">
+                                             Participant has received over $({!INT_MAX_INCENTIVE}) in this calendar year. Please send them a <a href="https://www.irs.gov/pub/irs-pdf/f1099msc.pdf" target="_blank">1099-MISC form</a> by January. 
+                                          </div>
+                                      </div>
+                                  </div>  -->
+                                  <span style="display:{!if(INT_MAX_INCENTIVE!=0 && (pd.intCurrentYearIncentive + pd.prjDetail.Proposed_Incentive__c) >  INT_MAX_INCENTIVE,'block;','none;')} position: relative;" class="info-tooltip" >
+                                      <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:yellow; margin-left: 10px;"></i></a>              
+                                      <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 20px; left: -5px; width: 350px;">    
+                                          <p class="slds-popover__body">
+                                              Participant has received over $({!INT_MAX_INCENTIVE}) in this calendar year. Please send them a <a href="https://www.irs.gov/pub/irs-pdf/f1099msc.pdf" target="_blank">1099-MISC form</a> by January. 
+                                          </p>
+                                      </span>
+                                  </span>
+                              </td>
+                              <td>
+								<a href="/{!pd.prjDetail.Contact__r.Id}" target="_blank">{!pd.prjDetail.Contact__r.Name}</a>
+							  </td>
+                              <td><apex:outputText value="{!pd.prjDetail.Contact__r.Email}"/></td>	
+  							  <td>            
+                                    <ul class="slds-list_horizontal">
+                                        <li> 
+                                            <div style="margin-top: 3px; margin-right: 2px; margin-left: 10px;">
+                                                <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li style="width: 100%">
+                                            <div>
+                                                <apex:outputText value="{!pd.intCurrentYearIncentive}" /> 
+                                            </div>
+                                        </li>
+                                    </ul>       
+                               </td>	
+                             <!-- <td>            
+                                    <ul class="slds-list_horizontal">
+                                        <li>
+                                            <div  style="margin-top: 5px; margin-left: 10px;">
+                                                <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li style="width: 100%">
+                                            <div class="inline-edit" id="incentive-{!pd.prjDetail.Id}">
+                                                <apex:outputText style="{!if(pd.isEditIncentive,'color:#ff6a00; font-weight: bold;', '')}" id="outputIncentiveId1" value="{!pd.strIncentive}" /> 
+                                            </div>
+                                        </li>
+                                    </ul>       
+                               </td>-->
+                                
+                                
+                                <td>                            
+                                    <ul class="slds-list_horizontal">
+                                        <li>
+                                            <div  style="margin-top: 5px; margin-left: 10px;">
+                                                <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li style="width: 100%">
+                                            <span class="{!if(isApprovedOrRejected==false && pd.prjDetail.Research_Participant_Status__c=='Attended' &&  pd.incentiveStatus==true && pd.strIncentive!='' && VALUE(pd.strIncentive)>0 , 'info-tooltip','')} " style="position: relative;">
+                                                <div class="inline-edit" id="incentive-{!pd.prjDetail.Id}">
+                                                    <apex:outputText style="{!if(isApprovedOrRejected==false && pd.incentiveStatus==true && VALUE(pd.strIncentive)>0,'background-color: yellow; cursor: default;', '')} {!if(pd.isEditIncentive,'color:#ff6a00 !important; font-weight: bold !important;', '')}" id="outputIncentiveId" value="{!pd.strIncentive}" /> 
+                                                    <a href="javascript:void(0);" style="display:{!if(isApprovedOrRejected==false && pd.prjDetail.Research_Participant_Status__c=='Attended' && isEditable==true,'','none;')}" class="link-grey edit-icon" id="editSingleBtn" onclick="editIncentive('{!$Component.outputIncentiveId}', 'edit{!pd.prjDetail.Id}', '{!pd.prjDetail.Id}');" ><i class="fas fa-pencil-alt"></i></a>
+                                                </div>
+                                                <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 0px; left: -20px; width: 170px;">
+                                                   <p class="slds-popover__body">
+													   {!if(isApprovedOrRejected==false && pd.strIncentive!='' && VALUE(pd.strIncentive)>0 , 'Incentive Pending', '' )}
+                                                       
+                                                    </p>
+                                                </span>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div id="editIncentiveSingle{!pd.prjDetail.Id}" class="slds-popover slds-popover slds-popover_edit editSingle" role="dialog" style="position: absolute; top: 0px; left: 0; display: none;">
+                                     
+                                        <div class="slds-popover__body" id="dialog-body-id-1">
+                                          <div class="slds-form-element slds-grid slds-wrap">
+                                            <label class="slds-form-element__label slds-form-element__label_edit">
+                                            </label>
+                                            <div class="slds-form-element__control slds-grow">
+                                              <apex:inputText onkeypress="return IsNumeric(event);" style="max-width:180px;" onblur="updateIncentiveValue('{!$Component.outputIncentiveId}', '{!pd.prjDetail.Id}', '{!pd.strIncentive}');" styleClass="slds-input" id="inputIncentiveId" value="{!pd.strIncentive}" />
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                  
+                               </td>
+                                
+                          </tr>
+                          
+                          </apex:repeat> 
+                    </tbody>
+                  </table>
+                </div>  
+
+              
+
+           
+            <apex:outputpanel rendered="{!if(lstResearchProjectDetailWrapper.size>0 && isEditable==true,true,false)}" id="actionBtn">
+                 <div class="slds-m-top_medium slds-text-align_right">
+                      <apex:commandButton value="First" action="{!first}" rerender="frm" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>
+                      <apex:commandButton value="Previous" action="{!previous}" rerender="frm" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                      <apex:commandButton value="Next" action="{!next}" rerender="frm" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                      <apex:commandButton value="Last" action="{!last}" rerender="frm" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                </div> 
+            </apex:outputpanel>
+            
+              
+          </div>
+         </apex:outputpanel> 
+        </div>
+      </div>
+    </div>
+      
+      <script>
+      	   function editIncentive(checkObj , elementId, objId){
+                $('.editSingle').hide(); 
+                var inlineTextId = document.getElementById(checkObj);
+                var inputTextBox = document.getElementById(checkObj.replace('outputIncentiveId','inputIncentiveId'));
+                inputTextBox.value = inlineTextId.innerHTML;
+                var editSingle = document.getElementById('editIncentiveSingle'+objId);
+                $(editSingle).css('display','');
+            }
+            function updateIncentiveValue(checkObj, objId, prevValue){
+				var incentiveBorderId = document.getElementById('incentive-'+objId);
+                var inlineTextId = document.getElementById(checkObj);
+                var inputTextBox = document.getElementById(checkObj.replace('outputIncentiveId','inputIncentiveId'));
+                inlineTextId.innerHTML = inputTextBox.value;
+				var editComment = document.getElementById(checkObj.replace('outputIncentiveId','editIncentiveAmount'));
+                $(editComment).prop('checked', true);
+				if(prevValue!='' && inputTextBox.value==''){
+					$(incentiveBorderId).attr('title','Deleted');
+				}else if(prevValue!=inputTextBox.value){
+					$(inlineTextId).css('color','#ff6a00');
+					$(inlineTextId).css('font-weight','bold');
+					$(incentiveBorderId).attr('title','unsaved data');
+				}else{
+					$(inlineTextId).css('color','');
+					$(inlineTextId).css('font-weight','');
+					$(incentiveBorderId).attr('title','');
+				}
+                
+                updateIncentiveStatusAmount(objId);
+            }
+            
+            $(".edit-icon, .slds-popover_edit").click(function(e){
+              e.stopPropagation();
+            });
+            $(document).click(function(){
+              $('.editSingle').hide();
+              $('.editMultiple').hide();
+            });
+      
+      </script>
+  </body>
+    </apex:form>
+</apex:page>

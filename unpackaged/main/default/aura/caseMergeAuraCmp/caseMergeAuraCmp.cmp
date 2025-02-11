@@ -1,0 +1,26 @@
+<!-- 
+    Purpose: Aura Wrapper component for Case Merge Aura . 
+            It creates a new case for the 'phone and chat' case.
+    Written by : Dhir Kumar
+    Date: 09/15/2020
+-->
+<aura:component implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes">
+    <!-- Workspace API -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+
+    <!-- Attribute -->
+    <aura:attribute name="blnOpenModal" type="Boolean" default="false" />
+    <aura:attribute name="strRecordId" type="String" default=" " />
+    <aura:attribute name="strCaseReasonsToSkip" type="String" access="public" />
+    
+    <!-- registerEvent -->
+    <aura:registerEvent name="newEvent" type="c:closeModalHandler"/>
+
+    <c:caseMergeLwcCmp recordId="{!v.strRecordId}" 
+                            openModal="{!v.blnOpenModal}"
+                            strCaseReasonsToSkip="{!v.strCaseReasonsToSkip}" 
+                            onopenprimarytab="{!c.handlePrimaryTab}" 
+                            onclosemodal="{!c.handleCloseModal}"></c:caseMergeLwcCmp>
+    
+
+</aura:component>

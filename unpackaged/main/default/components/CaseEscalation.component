@@ -1,0 +1,97 @@
+<apex:component allowDML="true" selfClosing="true" controller="PlayModeCaseListController">
+    <apex:attribute type="string" name="caseId"  assignTo="{!escalationCaseId}" description="Page Block Section for to escalation a Case" required="true"/>
+    <head>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <link rel="stylesheet" href="//jqueryui.com/dialog/resources/demos/style.css"/>
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <apex:includeScript value="/support/console/41.0/integration.js"/>
+        
+        <script>
+            $( function() {
+                //$( "#dialog" ).dialog();
+                //alert($( "#escalationbtn" ));
+                 var profileName = '{!$Profile.Name}';
+                if(profileName != 'Vendor CX'){
+                    $( "#escalationbtn" ).hide();
+                }
+                var loggedInRoleName = '{!$UserRole.Name}';
+                //alert('loggedInRoleName'+ loggedInRoleName);
+                if(loggedInRoleName == 'Task Us Team (Flex)'){
+                    $( "#escalationbtn" ).show();
+                }
+                
+                $( "#escalatecase-confirm" ).hide();
+              } );
+              
+            function escalateCase(){               
+               $( "#escalatecase-confirm" ).show();
+               $( "#escalatecase-confirm" ).dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: "auto",
+                  modal: true,
+                  buttons: {
+                    "Escalate": function() {
+                         var escacmnt =  $("#escalatecommentbox").val(); 
+                         var escarsn = $('.escalatereason :selected').text(); 
+                         //alert("cmt: "+escacmnt+" rsn: "+escarsn);
+                         
+                         var usrConfirm = confirm("Are you sure, you want to Escalate the case?");
+                         
+                         if(usrConfirm == true){
+                             //alert("before escalation");
+                            createescalationrec(escacmnt,escarsn);
+                             //alert("after escalation");
+                             //setTimeout(closePrimaryTab(), 3000);
+                         }
+                         
+                         $( this ).dialog( "close" );
+                    },
+                    Cancel: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+               });
+            }
+             
+            function closePrimaryTab(){          
+               sforce.console.getFocusedPrimaryTabId(closeSubtab);
+            }
+             
+            var closeSubtab = function closeSubtab(result){
+               var tabId = result.id;
+               sforce.console.closeTab(tabId);
+            }
+        </script>
+    </head>
+    <body>
+        <apex:actionfunction action="{!escalateCaseRecord}" rerender="escalatecase-confirm" name="createescalationrec" onComplete="closePrimaryTab();">
+            <apex:param value="" assignto="{!escalationComment}" name="par1"/>
+            <apex:param value="" assignto="{!escalationReason}" name="par2"/>
+        </apex:actionfunction>
+        <div id="escalatecase-confirm" title="Escalate Case" style="vertical-align:top" >
+            <table>
+                <tr>
+                    <td>
+                        <label for="escalatereasonbox" class="slds-form-element__label">Escalation Reason:</label>&nbsp;        
+                    </td>
+                    <td>
+                        <apex:selectList styleclass="escalatereason" size="1" id="escalationreasonbox">
+                             <apex:selectOptions value="{!caseEscalationReason}"/>
+                         </apex:selectList>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="escalatecommentbox" class="slds-form-element__label">Escalation Comment:</label>&nbsp;
+                    </td>
+                    <td>
+                        <textarea id="escalatecommentbox"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</apex:component>

@@ -1,0 +1,40 @@
+<aura:component
+	implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+	access="global"
+>
+	<aura:attribute name="searchURL" type="String" />
+	<aura:attribute name="cardTitle" type="String" default="Open New SFDC Tab" />
+	<aura:attribute name="cardHelptext" type="String" default="Need to open another record in SFDC? Copy and paste your URL here!" />
+
+	<lightning:workspaceAPI aura:id="workspace" />
+
+	<lightning:card>
+		<aura:set attribute="title">
+			<div>
+				<span>{!v.cardTitle}</span>
+				<span class="slds-var-p-left_xx-small helptext-position">
+					<lightning:helptext content="{!v.cardHelptext}" />
+				</span>
+			</div>
+		</aura:set>
+		<lightning:layout multipleRows="true">
+			<lightning:layoutItem size="12" padding="around-small">
+				<lightning:input
+					name="searchInput"
+					label=""
+					value="{!v.searchURL}"
+					variant="label-hidden"
+					type="search"
+					placeholder="Paste your SFDC link here..."
+					class="searchURL"
+					autocomplete="off"
+				/>
+			</lightning:layoutItem>
+			<lightning:layoutItem size="4" padding="around-small"></lightning:layoutItem>
+			<lightning:layoutItem size="4" padding="around-small"></lightning:layoutItem>
+			<lightning:layoutItem size="4" padding="around-small">
+				<lightning:button variant="brand" label="Open" title="open" onclick="{!c.handleOpen}" class="slds-float_right" disabled="{!empty(v.searchURL)}" />
+			</lightning:layoutItem>
+		</lightning:layout>
+	</lightning:card>
+</aura:component>

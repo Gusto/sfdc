@@ -1,0 +1,109 @@
+<aura:component controller="TaxResCaseButtons" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+    
+    <aura:attribute name="blnViewAgency" type="Boolean" default="true" />
+    <aura:attribute name="strAgencyInfoId" type="String" default="" />
+    <aura:attribute name="strOrigAgencyInfoId" type="String" default="" />
+    <aura:attribute name="blnObjSupported" type="Boolean" default="true" />
+    <aura:attribute name="blnIsLoading" type="Boolean" default="false" />
+    <aura:attribute name="objCase" type="Case" default="{'sObjectType':'Case'}" />
+    <aura:attribute name="strPandaEE" type="String" default="" />
+    <aura:attribute name="strPandaURL" type="String" default="" />
+    <aura:attribute name="strAccountLabel" type="String" default="Account" />
+    <aura:attribute name="blnBenefitsAccount" type="Boolean" default="false" />
+    
+    
+    <!-- Popover related attributes -->    
+    <aura:attribute name="blnMouseOverChild" type="Boolean" default="false"/>
+    <aura:attribute name="blnMouseOverText" type="Boolean" default="false"/>
+    <aura:attribute name="popoverInstance" type="Aura.Component"/>
+    <aura:attribute name="blnIsPopOverOpen" type="Boolean" default="false" />
+    <aura:attribute name="objTimerInstance" type="Object" />
+    <aura:attribute name="intPopOverWidth" type="Integer" default="40" />
+    
+    
+    <!-- Event Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="c:caseMouseOverAccountPopoverEvent" action="{!c.handleMouseOverPopover}"/>
+    <aura:handler event="c:caseMouseLeaveAccountPopoverEvent" action="{!c.handleMouseLeavePopover}"/>
+    <aura:handler event="c:caseAccountPopOverCloseEvent" action="{!c.handleClosePopOver}"/>
+    <aura:handler event="c:caseAgencyChangeEvent" action="{!c.doInit}"/>
+    
+    
+    <!-- API Components -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <aura:registerEvent name="caseAgencyChangeEvent" type="c:caseAgencyChangeEvent"/>
+    
+    <div class="slds-page-header test-header">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-account">
+                            <lightning:icon iconName="custom:custom63" size="medium"/>
+                        </span>
+                    </div>
+                    <!--slds-text-heading_medium -->
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h4>
+                                    <aura:if isTrue="{!v.blnViewAgency}">
+                                        <div>
+                                            <a class="slds-page-header__title test-font" onmouseover="{!c.handleShowPop}" onmouseleave="{!c.handleMouseAwayFromText}" title="Name" onclick="{!c.handleOpenAgencyInfo}" >{!v.objCase.Agency_Information__r.Name}</a>
+                                        </div>
+                                    </aura:if>
+                                </h4>
+                            </div>
+                        </div>
+                        <aura:if isTrue="{!!v.blnViewAgency}">
+                            <lightning:recordEditForm objectApiName="Case" recordId="{!v.objCase.Id}">
+                                <lightning:messages />
+                                <lightning:inputField aura:id="caseAgencyInfoId" fieldName="Agency_Information__c" variant="label-hidden" value="{!v.strAgencyInfoId}"/>
+                                <div class="slds-p-top_xx-small">
+                                    <lightning:button variant="neutral" name="Cancel" label="Cancel" class="slds-p-right_x-small" onclick="{!c.handleReset}"/>
+                                    <lightning:button variant="brand" name="Save" label="Save" onclick="{!c.handleSave}"/>
+                                </div>
+                            </lightning:recordEditForm>
+                        </aura:if>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control div-view" id="{!'agencyCss' + v.recordId}">
+                        <aura:if isTrue="{!v.blnViewAgency}">
+                            <div class="slds-dropdown-trigger slds-dropdown-trigger_hover">
+                                <lightning:buttonIcon
+                                                    iconName="utility:down"
+                                                    variant="border-filled"
+                                                    alternativeText="show more"
+                                                    size="x-small"
+                                                    iconClass="slds-m-around_small">
+                                </lightning:buttonIcon>
+                                <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions">
+                                    <ul class="slds-dropdown__list" role="menu">
+                                        <aura:if isTrue="{!v.blnObjSupported}">
+                                            <li class="slds-dropdown__item" role="presentation">
+                                                <a href="javascript:void(0);" role="menuitem" tabindex="0" onclick="{!c.updateClicked}">
+                                                    <span class="slds-truncate" title="Update">Update Agency</span>
+                                                </a>
+                                            </li>
+                                        </aura:if>
+                                    </ul>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+    </div>
+    <aura:if isTrue="{!v.blnIsLoading}">
+        <lightning:spinner alternativeText="Loading" size="small" />
+    </aura:if>
+
+</aura:component>

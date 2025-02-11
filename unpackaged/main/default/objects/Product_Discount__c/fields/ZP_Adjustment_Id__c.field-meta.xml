@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ZP_Adjustment_Id__c</fullName>
+    <description>There are two unique fields on ZP_Adjustments__c. One is a prefixed version of the other. We use the numerical one here, as that is a unique identifier, though not a global identifier across objects. This field is unique because we apply the same adjustment to all open Payroll Opportunities for a given product.</description>
+    <externalId>true</externalId>
+    <inlineHelpText>Field for noting the ZP Adjustment record that made this record. Used only for data migration, not for triggered updates.</inlineHelpText>
+    <label>ZP Adjustment Id</label>
+    <length>255</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

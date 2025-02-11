@@ -1,0 +1,48 @@
+<template>
+    <div class="slds-card_boundary" style="background-color:white;">
+        <div class="slds-page-header related-list-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon
+                                icon-name="standard:task"
+                                alternative-text="Task"
+                                size="small"
+                                title="large size"
+                            ></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-card__header-title slds-truncate related-list-title" title={intTaskCount}>
+                                            Open Task ({intTaskCount})
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="related-list-body" style="background-color: white;">
+            <div class="slds-card_boundary" style="background-color: white;">
+                <template for:each={listTask} for:item="objTask">
+                    <div key={objTask.idTask} style="margin:10px;">
+                        <lightning-pill label={objTask.strInfo} name={objTask.idTask} onclick={openTask} style="margin-bottom:5px;">
+                            <lightning-icon icon-name="standard:task" alternative-text="Task"></lightning-icon>
+                        </lightning-pill>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <template if:true={blnLoading}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+    </div>
+</template>

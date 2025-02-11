@@ -1,0 +1,56 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<template if:true={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" variant="brand" size="large"> </lightning-spinner>
+	</template>
+	<lightning-card title="Update Playmode Configuration">
+		<div style="margin: 20px">
+			<c-auto-complete-cmp
+				autocompletelist={list_carriers}
+				label="Choose Carrier"
+				onfilterlist={handleFilterList}
+				onfilterselected={handleChangeCarrier}
+				icon="standard:picklist_type"
+				disablemouseover="false"
+				blnisvisible="true"
+				selectedvalue={selected_carrier}
+				str-place-holder=""
+			></c-auto-complete-cmp>
+			<div class="slds-grid slds-gutters">
+				<template if:false={blnShowAllStates}>
+					<div class="slds-col" style="display: table">
+						<lightning-input
+							type="checkbox"
+							label="All States"
+							name="input1"
+							onchange={handleAllStates}
+							checked={blnAllStates}
+							style="vertical-align: middle; display: table-cell"
+						></lightning-input>
+					</div>
+				</template>
+
+				<div class="slds-col">
+					<c-multi-select-pick-list-cmp
+						label="States"
+						name="resourceFilter"
+						multi-select="true"
+						onselectoption={handleSelectStates}
+						options={list_states}
+						selected-values={selected_states}
+						disabled={isDisabled}
+					></c-multi-select-pick-list-cmp>
+				</div>
+			</div>
+
+			<template if:true={hasData}>
+				<div class="quote-body quote-c" style="margin-top: 20px;">
+					Use this feature to update how far out Order Playable Date and Audit Playable Date are set for specific carriers. 'First Play' indicates the date set when the order first moves to 'Ready for Confirmation' or 'Approved Pending EE Audit', Post Play indicates the date set after a ticket is closed. To make edits, enter the carrier name and select which States you'd like to update, or select 'All States' to update all states available for the carrier. To update multiple rows with the same value, select the checkbox next to each row. On the first selected row enter the desired number of days, and select 'Update x selected items'. Alternatively, you can edit each row individually.				
+				</div>
+				<div style="margin-top: 20px">
+					<lightning-datatable key-field="id" data={carrierPlayInfo} show-row-number-column draft-values={draftValues} columns={columns} onsave={handleSave}></lightning-datatable>
+				</div>
+			</template>
+		</div>
+	</lightning-card>
+</template>

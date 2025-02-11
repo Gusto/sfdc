@@ -1,0 +1,1169 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div class="slds-box slds-theme_default">
+		<!-- Loading bar -->
+		<template if:true={blnLoading}>
+			<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand"></lightning-spinner>
+		</template>
+		<!-- Show error message If Rule Set Id is unavailable -->
+		<template if:true={blnHeaderErrorMessageVisible}>
+			<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert">
+				<span class="slds-assistive-text">warning</span>
+				<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Rule set Id unavailable">
+					<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+						<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+					</svg>
+				</span>
+				<h2>{strHeaderErrorMessage}</h2>
+			</div>
+		</template>
+
+		<template if:true={idRuleSet}>
+			<!-- Show title and Rule name -->
+			<div class="slds-text-heading_medium slds-text-align_center slds-var-p-around_small">Next Best Action Rule - {objRuleSet.Rule_Name__c}</div>
+
+			<div class="slds-clearfix">
+				<div class="slds-float_right">
+					<table>
+						<tr>
+							<td>
+								<lightning-input type="toggle" name="autoSave" onchange={handleAutoSave} disabled={blnViewOnlyAccess} label="Auto Save"></lightning-input>
+							</td>
+							<template if:true={autoSaveEnabled}>
+								<td style="display: ruby">
+									<span class="slds-text-body_regular"> &nbsp; every &nbsp; </span>
+									<input
+										type="text"
+										id="autoSaveInterval"
+										name="autoSaveInterval"
+										value={autoSaveDuration}
+										onkeyup={handleAutoSaveInterval}
+										disabled={blnViewOnlyAccess}
+										maxlength="5"
+										size="5"
+									/>
+									<span class="slds-text-body_regular"> &nbsp; seconds </span>
+								</td>
+							</template>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class="slds-clearfix">
+				<div class="slds-float_right">
+					<template if:true={autoSaveMessage}>
+						<template if:true={autoSaveSuccessful}>
+							<div class="slds-text-body_regular" style="color: green">{autoSaveMessage}</div>
+						</template>
+						<template if:false={autoSaveSuccessful}>
+							<div class="slds-text-body_regular" style="color: red">{autoSaveMessage}</div>
+						</template>
+					</template>
+				</div>
+			</div>
+
+			<br />
+
+			<div class="slds-truncate slds-text-align_center slds-align_absolute-center">
+				<lightning-button-group>
+					<lightning-button variant="brand" label="Save" onclick={validateAllChanges} disabled={blnViewOnlyAccess}></lightning-button>
+					<lightning-button variant="neutral" label="Reset" onclick={resetChanges} data-id="reset-top" disabled={blnViewOnlyAccess}></lightning-button>
+				</lightning-button-group>
+			</div>
+
+			<br />
+
+			<!-- Selecting base objects -->
+			<div class="slds-grid slds-wrap slds-box">
+				<div class="slds-size_6-of-12">
+					<div class="slds-text-align_center">
+						<lightning-combobox
+							name="listBaseObjects"
+							label="Add base object"
+							placeholder="Add base Object"
+							options={list_AllObjects}
+							data-field="Base_Object__c"
+							onchange={addBaseObject}
+							disabled={blnDisableObjectSelection}
+							value={strSelectedBaseObject}
+						></lightning-combobox>
+					</div>
+				</div>
+
+				<!-- Show error message if no more base objects are available to be selectec -->
+				<div class="slds-size_6-of-12">
+					<template if:true={blnNoAvailableObject}>
+						<div class="slds-text-body_regular" style="position: relative; top: 28px; left: 20px; color: red">No objects available. Please contact admin</div>
+					</template>
+				</div>
+			</div>
+
+			<br />
+
+			<div class="slds-grid slds-wrap slds-box">
+				<div class="slds-size_3-of-12" style="padding-right: 25px">
+					<div class="slds-text-align_center">
+						<lightning-input
+							type="number"
+							label="Rule Frequency Minutes"
+							value={intDelayInMinutes}
+							step="1"
+							min="0"
+							disabled={blnViewOnlyAccess}
+							required="true"
+							data-uniqueid="delayInMinutes"
+							field-level-help="When the rule returns zero records, the rule will be evaluated again based on the minutes chosen in this Rule Frequency Minutes field. For example, if zero results is returned at 10:00 am and Rule Frequency Minutes is 5 minutes, the next time the query will evaluate the rule is 10:06 am to serve records, if any. If Rule Frequency Minutes is 0 minutes, the rule will always be evaluated when serving records."
+							maxlength="10"
+							onchange={handleFrequencyChange}
+						></lightning-input>
+					</div>
+				</div>
+			</div>
+
+			<br />
+
+			<!-- Section visible when an object is selected -->
+			<lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+				<template for:each={list_ChosenObjects} for:item="chosenObject">
+					<lightning-accordion-section name={chosenObject.baseObject} key={chosenObject.baseObject} label={chosenObject.title}>
+						<!-- delete base object button-->
+						<div class="slds-clearfix">
+							<div class="slds-float_right">
+								<lightning-button-group>
+									<lightning-button
+										variant="neutral"
+										label="Restore last version"
+										onclick={handleRestorePreviousVersion}
+										data-object={chosenObject.baseObject}
+										disabled={blnViewOnlyAccess}
+									></lightning-button>
+									<lightning-button
+										variant="brand"
+										label="Delete Object"
+										disabled={blnViewOnlyAccess}
+										data-object={chosenObject.baseObject}
+										onclick={handleDeleteObject}
+									></lightning-button>
+								</lightning-button-group>
+							</div>
+						</div>
+
+						<div class="slds-grid slds-wrap slds-p-bottom_x-small">
+							<div class="slds-size_6-of-12">
+								<div class="slds-box slds-box_x-small slds-text-align_center">
+									<lightning-combobox
+										name="listServingObjects"
+										label="Select serving object"
+										placeholder="Select serving object"
+										options={chosenObject.referenceFields}
+										value={chosenObject.servingField}
+										disabled={blnViewOnlyAccess}
+										onchange={handleServingObjectChange}
+										data-object={chosenObject.baseObject}
+									></lightning-combobox>
+								</div>
+							</div>
+
+							<template if:true={chosenObject.isMissingfields}>
+								<div class="slds-size_6-of-12">
+									<div class="slds-text-body_regular" style="position: relative; top: 28px; left: 20px; color: red">{chosenObject.missingFieldsErrorMessage}</div>
+								</div>
+							</template>
+
+							<template if:false={chosenObject.isMissingfields}>
+								<div class="slds-size_6-of-12">
+									<div class="slds-text-body_regular" style="position: relative; top: 28px; left: 20px; color: green">All NBA fields available for this serving object</div>
+								</div>
+							</template>
+						</div>
+
+						<!-- Display message that filter criteria has not been added yet -->
+						<template if:true={chosenObject.emptyFilterFields}>
+							<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert">
+								<span class="slds-assistive-text">warning</span>
+								<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Rule set Id unavailable">
+									<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+										<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+									</svg>
+								</span>
+								<template if:true={chosenObject.isMissingfields}>
+									<h2>Please add the NBA fields to the object before adding criteria</h2>
+								</template>
+								<template if:false={chosenObject.isMissingfields}>
+									<h2>No criteria added yet. Please click "Add Criteria" button</h2>
+								</template>
+							</div>
+						</template>
+
+						<br />
+						<div>
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="border: 1px solid">
+								<!-- iterate over each filter criteria-->
+								<template for:each={chosenObject.filterFieldsList} for:item="eachFilter">
+									<tr class="slds-hint-parent" key={eachFilter.uniqueId}>
+										<td class="slds-border_bottom slds-border_left" style="width: 10px; border: 1px solid">
+											<div class="slds-text-align_center" style="position: relative; top: 7px">{eachFilter.filterId}</div>
+										</td>
+
+										<!-- Filter type is Fields or SOQL query-->
+										<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+											<div class="slds-text-align_center">
+												<lightning-combobox
+													name="chooseFilterType"
+													label="Choose filter type"
+													placeholder="Choose filter type"
+													options={filtertype}
+													value={eachFilter.filterType}
+													disabled={blnViewOnlyAccess}
+													onchange={handleFilterTypeChange}
+													data-object={chosenObject.baseObject}
+													data-id={eachFilter.filterId}
+												></lightning-combobox>
+											</div>
+										</td>
+
+										<template if:true={eachFilter.isFilterTypeFields}>
+											<!-- Display fields from base object-->
+											<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+												<div class="slds-text-align_center">
+													<c-auto-complete-cmp
+														autocompletelist={eachFilter.list_fieldLabels}
+														label="Choose field"
+														onfilterlist={handleFilterList}
+														onfilterselected={handleFilterSelected}
+														icon="standard:record_lookup"
+														disablemouseover="false"
+														blnisvisible="true"
+														data-object={chosenObject.baseObject}
+														data-id={eachFilter.filterId}
+														data-uniqueid={eachFilter.uniqueId}
+														selectedvalue={eachFilter.selectedFieldLabel}
+														str-place-holder={eachFilter.placeholderText}
+														id={eachFilter.uniqueId}
+														data-source="fields"
+														bln-disabled={blnViewOnlyAccess}
+													></c-auto-complete-cmp>
+													<template if:true={eachFilter.innerTableExists}>
+														<br />
+														<div class="">
+															<template for:each={eachFilter.innerTables} for:item="object">
+																<a
+																	key={object.position}
+																	data-position={object.position}
+																	data-object={chosenObject.baseObject}
+																	data-id={eachFilter.filterId}
+																	onclick={handleInnerTableChange}
+																	data-uniqueid={eachFilter.uniqueId}
+																	data-source="fields"
+																>
+																	{object.strFieldLabel}
+																</a>
+																<span key={object.position} class="slds-p-left_xxx-small slds-p-right_xxx-small"> > </span>
+															</template>
+														</div>
+													</template>
+												</div>
+											</td>
+
+											<!-- Show operator type -->
+											<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+												<div class="slds-text-align_center">
+													<lightning-combobox
+														name="chooseOperator"
+														label="Choose operator"
+														placeholder="Choose operator"
+														options={operatoroptions}
+														disabled={blnViewOnlyAccess}
+														data-object={chosenObject.baseObject}
+														data-id={eachFilter.filterId}
+														required="true"
+														data-uniqueid={eachFilter.operatorUniqueId}
+														onchange={handleDataTypesChange}
+														value={eachFilter.selectedOperator}
+														data-attribute="selectedOperator"
+													></lightning-combobox>
+												</div>
+											</td>
+
+											<template lwc:if={eachFilter.isBooleanField}>
+												<td class="slds-border_bottom" style="border: 1px solid; width: 400px">
+													<div class="slds-text-align_center">
+														<lightning-input
+															type="checkbox"
+															data-object={chosenObject.baseObject}
+															data-id={eachFilter.filterId}
+															onchange={handleDataTypesChange}
+															data-attribute="selectedValue"
+															data-uniqueid={eachFilter.valueUniqueId}
+															disabled={blnViewOnlyAccess}
+															data-type="checkbox"
+															class="slds-align_absolute-center"
+															checked={eachFilter.selectedValue}
+														></lightning-input>
+													</div>
+												</td>
+											</template>
+
+											<!-- Value used in query -->
+
+											<template lwc:else>
+												<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top; width: 400px">
+													<div class="slds-text-align_center">
+														<lightning-input
+															type="text"
+															label="Enter value"
+															data-object={chosenObject.baseObject}
+															data-id={eachFilter.filterId}
+															value={eachFilter.selectedValue}
+															onchange={handleDataTypesChange}
+															data-attribute="selectedValue"
+															data-uniqueid={eachFilter.valueUniqueId}
+															disabled={blnViewOnlyAccess}
+															data-type="text"
+														></lightning-input>
+													</div>
+
+													<template if:true={eachFilter.isDateField}>
+														<br />
+														<div class="slds-text-align_center">
+															<lightning-combobox
+																name="availableChoices"
+																label="Select from available functions"
+																placeholder="Select from available functions"
+																options={eachFilter.dateOptions}
+																disabled={blnViewOnlyAccess}
+																data-object={chosenObject.baseObject}
+																data-id={eachFilter.filterId}
+																data-action="replace"
+																data-type="availableChoices"
+																onchange={handleAvailableChoices}
+															></lightning-combobox>
+														</div>
+													</template>
+
+													<template if:true={eachFilter.isUserLookUpField}>
+														<br />
+														<div class="slds-text-align_center">
+															<lightning-combobox
+																name="availableChoices"
+																label="Select from available functions"
+																placeholder="Select from available functions"
+																options={usercustomfunctions}
+																disabled={blnViewOnlyAccess}
+																data-object={chosenObject.baseObject}
+																data-id={eachFilter.filterId}
+																data-action="replace"
+																data-type="availableChoices"
+																onchange={handleAvailableChoices}
+															></lightning-combobox>
+														</div>
+													</template>
+
+													<template if:true={eachFilter.isPicklistField}>
+														<br />
+														<div class="slds-text-align_center">
+															<lightning-combobox
+																name="availableChoices"
+																label="Select from available values"
+																placeholder="Select from available values"
+																options={eachFilter.list_filterChoices}
+																disabled={blnViewOnlyAccess}
+																data-object={chosenObject.baseObject}
+																data-id={eachFilter.filterId}
+																data-action="append"
+																data-type="availableChoices"
+																onchange={handleAvailableChoices}
+															></lightning-combobox>
+														</div>
+													</template>
+												</td>
+											</template>
+										</template>
+										<template if:false={eachFilter.isFilterTypeFields}>
+											<!-- If filter type is not chosen as Fields, then display SOQL query text area -->
+											<td class="slds-border_bottom" colspan="3" style="border: 1px solid">
+												<div class="slds-text-align_center">
+													<lightning-textarea
+														name="input2"
+														label="SOQL Query"
+														variant="label-stacked"
+														disabled={blnViewOnlyAccess}
+														data-object={chosenObject.baseObject}
+														data-id={eachFilter.filterId}
+														required="true"
+														data-attribute="soqlQuery"
+														value={eachFilter.soqlQuery}
+														onchange={handleDataTypesChange}
+														data-uniqueid={eachFilter.soqlQueryTextAreaUniqueId}
+													></lightning-textarea>
+												</div>
+											</td>
+										</template>
+
+										<!-- Validate filter criteria -->
+										<td style="width: 60px; border: 1px solid" class="slds-border_bottom">
+											<div class="slds-text-align_center">
+												<lightning-button
+													variant="neutral"
+													label="Validate"
+													disabled={blnViewOnlyAccess}
+													data-object={chosenObject.baseObject}
+													data-id={eachFilter.filterId}
+													onclick={handleValidateFilterCriteria}
+													data-uniqueid={eachFilter.uniqueId}
+												></lightning-button>
+											</div>
+										</td>
+
+										<!-- Delete filter criteria -->
+										<td style="width: 10px; border: 1px solid" class="slds-border_bottom slds-border_right">
+											<div class="slds-text-align_center">
+												<!-- sldsValidatorIgnoreNextLine -->
+												<lightning-button-icon
+													icon-name="utility:delete"
+													variant="brand"
+													alternative-text="Delete"
+													data-object={chosenObject.baseObject}
+													data-id={eachFilter.filterId}
+													onclick={handleDeleteFilterCriteria}
+													title="Delete"
+													disabled={blnViewOnlyAccess}
+												></lightning-button-icon>
+											</div>
+										</td>
+
+										<td class="slds-border_bottom slds-border_left" style="width: 5%">
+											<div class="slds-text-align_center">
+												<!-- sldsValidatorIgnoreNextLine -->
+												<lightning-button-icon
+													icon-name="utility:arrowup"
+													variant="brand"
+													alternative-text="Up"
+													data-object={chosenObject.baseObject}
+													title="Up"
+													disabled={blnViewOnlyAccess}
+													data-type="up"
+													data-id={eachFilter.filterId}
+													onclick={handleReArrangeFilter}
+												></lightning-button-icon>
+												&nbsp; &nbsp;
+
+												<lightning-button-icon
+													icon-name="utility:arrowdown"
+													variant="brand"
+													alternative-text="Up"
+													data-object={chosenObject.baseObject}
+													title="Up"
+													disabled={blnViewOnlyAccess}
+													data-type="down"
+													data-id={eachFilter.filterId}
+													onclick={handleReArrangeFilter}
+												></lightning-button-icon>
+											</div>
+										</td>
+									</tr>
+								</template>
+							</table>
+						</div>
+
+						<template if:false={chosenObject.isMissingfields}>
+							<br />
+							<!-- button to add new filter criteria -->
+							<div class="slds-clearfix slds-align_absolute-center">
+								<lightning-button-group>
+									<lightning-button
+										variant="brand"
+										label="Add Criteria"
+										data-object={chosenObject.baseObject}
+										disabled={blnViewOnlyAccess}
+										onclick={handleAddFilterCriteria}
+									></lightning-button>
+								</lightning-button-group>
+							</div>
+							<br />
+
+							<div class="slds-text-align_center">
+								<lightning-textarea
+									label="Generated SOQL"
+									variant="label-stacked"
+									disabled="true"
+									value={chosenObject.soqlQuery}
+									field-level-help="This is a generated SOQL query based on the filter criteria added above. Click validate object button to see the latest generated query. Query will automatically add a default criteria for the serving object. If Base object and Serving object are the same, default criteria will be the ID is not null. If Base object and Serving object are not the same, default criteria will be set to show only those serving object records that have a related base object record."
+									class="custom-textarea"
+								></lightning-textarea>
+							</div>
+
+							<div class="slds-grid slds-wrap slds-box">
+								<div class="slds-text-longform">
+									<lightning-input
+										type="checkbox"
+										label="Help with Criteria, Formulas and SOQLs"
+										name="togglecheatsheet"
+										onchange={toggleCheatSheet}
+										data-object={chosenObject.baseObject}
+										data-attribute="blnShowCheatSheet"
+									></lightning-input>
+									<template if:true={chosenObject.blnShowCheatSheet}>
+										<br />
+										<h3 class="slds-text-heading_small">Common Functions</h3>
+										<ul>
+											<li>Click <a onclick={dateFunctionsHelp}> here </a> to get assistance with common functions to add criteria.</li>
+										</ul>
+
+										<h3 class="slds-text-heading_small">Custom Functions</h3>
+										<ul>
+											<li>
+												<b>N Business Days Ago: </b> Use this function to query a specified number of business days in the past. This function excludes weekends but does not account for Holidays, the function works for date and datetime fields.
+											</li>
+											<li>
+												<b>N Business Days Future: </b> Use this function to query a specified number of business days in the future. This function excludes weekends and Holidays, the function works for date and datetime fields.
+											</li>
+											<li>
+												<b> User functions: </b> Use <code> MYSELF</code> function to query records assigned to the logged in user. You can also this on any user lookup field.
+											</li>
+											<li>Refer this <a onclick={handleCustomFunctions}> article </a> to use list of natively available SOQL functions available out of the box.</li>
+										</ul>
+
+										<h3 class="slds-text-heading_small">SOQL Functions</h3>
+										<ul>
+											<li>Click <a onclick={handleSOQLFunctions}> here </a> to get assistance with writing SOQL queries.</li>
+										</ul>
+									</template>
+								</div>
+							</div>
+
+							<template if:false={chosenObject.emptyFilterFields}>
+								<div class="slds-grid slds-wrap">
+									<div class="slds-size_7-of-12">
+										<div class="slds-text-align_center">
+											<lightning-input
+												type="text"
+												label="Criteria logic"
+												data-object={chosenObject.baseObject}
+												value={chosenObject.criteriaLogic}
+												onchange={handleObjectChange}
+												data-attribute="criteriaLogic"
+												data-uniqueid={chosenObject.criteriaUniqueId}
+												disabled={blnViewOnlyAccess}
+											></lightning-input>
+											&nbsp;
+										</div>
+									</div>
+
+									<div class="slds-size_3-of-12">
+										<div class="slds-text-align_center" style="position: relative; top: 20px">
+											<lightning-button-group>
+												<lightning-button
+													variant="neutral"
+													label="Validate object"
+													data-object={chosenObject.baseObject}
+													disabled={blnViewOnlyAccess}
+													onclick={handleValidateObject}
+													data-type="validate"
+												></lightning-button>
+												<lightning-button
+													variant="brand"
+													label="Performance"
+													data-object={chosenObject.baseObject}
+													disabled={blnViewOnlyAccess}
+													onclick={handleValidateObject}
+													data-type="performance"
+												></lightning-button>
+											</lightning-button-group>
+
+											<br />
+											<br />
+											<template if:true={chosenObject.performanceStatus}>
+												<template if:true={chosenObject.performanceGreen}>
+													<span class="slds-text-body_regular" style="color: green">Excellent - Execution time = {chosenObject.timeTakentoValidate} seconds</span>
+												</template>
+
+												<template if:true={chosenObject.performanceRed}>
+													<span class="slds-text-body_regular" style="color: red"> Poor - Execution time = {chosenObject.timeTakentoValidate} seconds</span>
+												</template>
+
+												<template if:true={chosenObject.performanceBlue}>
+													<span class="slds-text-body_regular" style="color: blue">Good - Execution time = {chosenObject.timeTakentoValidate} seconds</span>
+												</template>
+											</template>
+											<br /><br /><br />
+										</div>
+									</div>
+
+									<div class="slds-size_2-of-12"></div>
+								</div>
+
+								<table style="width: 70%">
+									<template if:true={chosenObject.orderbyFieldsVisible}>
+										<template for:each={chosenObject.list_OrderByFields} for:item="eachOrderBy">
+											<tr key={eachOrderBy}>
+												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 25px">
+													<div class="slds-text-align_center">{eachOrderBy.counter}</div>
+												</td>
+
+												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="padding: 15px; vertical-align: top">
+													<div class="slds-text-align_center">
+														<c-auto-complete-cmp
+															autocompletelist={eachOrderBy.list_fieldLabels}
+															label="Choose order by field"
+															icon="standard:record_lookup"
+															onfilterlist={handleFilterList}
+															onfilterselected={handleFilterSelected}
+															disablemouseover="false"
+															blnisvisible="true"
+															data-object={chosenObject.baseObject}
+															data-uniqueid={eachOrderBy.uniqueId}
+															selectedvalue={eachOrderBy.selectedFieldLabel}
+															str-place-holder={eachOrderBy.placeholderText}
+															data-source="orderby"
+															bln-disabled={blnViewOnlyAccess}
+														></c-auto-complete-cmp>
+														<template if:true={eachOrderBy.innerTableExists}>
+															<br />
+															<div class="">
+																<template for:each={eachOrderBy.innerTables} for:item="object">
+																	<a
+																		key={object.position}
+																		data-position={object.position}
+																		data-object={chosenObject.baseObject}
+																		data-id={object.uniqueId}
+																		onclick={handleInnerTableChange}
+																		data-uniqueid={eachOrderBy.uniqueId}
+																		data-source="orderby"
+																		disabled={blnViewOnlyAccess}
+																	>
+																		{object.strFieldLabel}
+																	</a>
+																	<span key={object.position} class="slds-p-left_xxx-small slds-p-right_xxx-small"> > </span>
+																</template>
+															</div>
+														</template>
+													</div>
+												</td>
+
+
+												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="padding: 15px; vertical-align: top">
+													<div class="slds-text-align_center">
+														<lightning-combobox
+															name="chooseOrder"
+															label="Choose order by type"
+															placeholder="Choose order by type"
+															options={orderbyoptions}
+															value={eachOrderBy.selectedOrder}
+															disabled={blnViewOnlyAccess}
+															data-object={chosenObject.baseObject}
+															data-uniqueid={eachOrderBy.uniqueId}
+															onchange={handleOrderByTypeChange}
+														></lightning-combobox>
+													</div>
+												</td>
+
+												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="padding: 15px; vertical-align: top">
+													<div class="slds-text-align_center">
+														<lightning-combobox
+															name="chooseOrder"
+															label="Choose to optionally order nulls"
+															placeholder="Choose to optionally order nulls"
+															options={nullsorderby}
+															value={eachOrderBy.orderNulls}
+															disabled={blnViewOnlyAccess}
+															data-object={chosenObject.baseObject}
+															data-uniqueid={eachOrderBy.uniqueId}
+															onchange={handleOrderByNullsChange}
+															field-level-help="If None or no value is chosen, nulls are sorted by Nulls First by default."
+														></lightning-combobox>
+													</div>
+												</td>
+
+												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px">
+													<div class="slds-text-align_center">
+														<!-- sldsValidatorIgnoreNextLine -->
+														<lightning-button-icon
+															icon-name="utility:delete"
+															variant="brand"
+															alternative-text="Delete"
+															data-object={chosenObject.baseObject}
+															onclick={handleDeleteOrderByField}
+															title="Delete"
+															disabled={blnViewOnlyAccess}
+															data-uniqueid={eachOrderBy.uniqueId}
+															id={eachOrderBy.counter}
+														></lightning-button-icon>
+													</div>
+												</td>
+
+												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 15%; padding: 15px">
+													<div class="slds-text-align_center">
+														<!-- sldsValidatorIgnoreNextLine -->
+														<lightning-button-icon
+															icon-name="utility:arrowup"
+															variant="brand"
+															alternative-text="Up"
+															data-object={chosenObject.baseObject}
+															title="Up"
+															disabled={blnViewOnlyAccess}
+															onclick={handleReArrangeOrderByFields}
+															data-type="up"
+															data-uniqueid={eachOrderBy.uniqueId}
+															data-id={eachOrderBy.counter}
+														></lightning-button-icon>
+														&nbsp; &nbsp;
+
+														<lightning-button-icon
+															icon-name="utility:arrowdown"
+															variant="brand"
+															alternative-text="Up"
+															data-object={chosenObject.baseObject}
+															title="Up"
+															disabled={blnViewOnlyAccess}
+															onclick={handleReArrangeOrderByFields}
+															data-type="down"
+															data-uniqueid={eachOrderBy.uniqueId}
+															data-id={eachOrderBy.counter}
+														></lightning-button-icon>
+													</div>
+												</td>
+											</tr>
+										</template>
+									</template>
+
+									<tr>
+										<td colspan="5">
+											<div class="slds-text-align_center" style="padding-top: 10px">
+												<lightning-button
+													variant="nuetral"
+													label="Add Order By"
+													data-object={chosenObject.baseObject}
+													disabled={blnViewOnlyAccess}
+													onclick={handleAddOrderBy}
+												></lightning-button>
+
+												<template if:true={chosenObject.orderByFieldsErrorMessage}>
+													<font color="red">&nbsp; &nbsp; You must add at least one field to order by </font>
+												</template>
+											</div>
+										</td>
+									</tr>
+								</table>
+
+								<br />
+							</template>
+
+							<!-- user lookup fields -->
+							<div class="slds-grid slds-wrap slds-box">
+								<br />
+								<div class="slds-text-heading_small">Set Field Values</div>
+								<br />
+								<div class="slds-size_12-of-12">
+									<template if:false={chosenObject.isMissingfields}>
+										<div style="padding-top: 10px">
+											<lightning-input
+												type="checkbox"
+												label="Assign Record Owner when serving"
+												name="assignRecordOwner"
+												onchange={handleObjectChangeBoolean}
+												data-object={chosenObject.baseObject}
+												data-attribute="assignRecordOwner"
+												checked={chosenObject.assignRecordOwner}
+												disabled={blnViewOnlyAccess}
+											></lightning-input>
+										</div>
+										<br />
+									</template>
+									<div class="slds-size_6-of-12">
+										<c-multi-select-pick-list-cmp
+											label="Select additional User Lookup Fields to update with the logged in user on serving record."
+											name="resourceFilter"
+											data-object={chosenObject.baseObject}
+											multi-select="true"
+											onselectoption={handleSelectUserLookups}
+											options={chosenObject.list_userLookupFields}
+											selected-values={chosenObject.userFieldsAssignment}
+											disabled={blnViewOnlyAccess}
+										></c-multi-select-pick-list-cmp>
+									</div>
+									<br />
+									<br />
+									<div class="slds-size_12-of-12">
+										<div class="slds-form-element__label" style="position: absolute;">Add Fields and value mappings to update the value when serving the record.
+											<div style="display: inline-block; position: relative;transform: translateY(-30%);">
+												<lightning-helptext content="[Blank/Empty Value] and [Any Value] are not pick list values, they can be selected to indicate that the 'From' value can be blank or any available pick list value."></lightning-helptext>
+											</div>
+										</div>
+										<br />
+										<br />
+											<template lwc:if={chosenObject.blnShowFieldMappingTable}>
+												<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="border: 1px solid">
+													<template for:each={chosenObject.fieldMapping} for:item="fieldMapping">
+														<tr class="slds-hint-parent" key={fieldMapping.fieldId}>
+															<td class="slds-border_bottom slds-border_left" style="width: 10px; border: 1px solid" rowspan={fieldMapping.mappingSize}>
+																<div class="slds-text-align_center" style="position: relative; top: 7px">{fieldMapping.fieldId}</div>
+															</td>
+															<td class="slds-border_bottom slds-border_left" style="border: 1px solid; vertical-align: top;" rowspan={fieldMapping.mappingSize}>
+																<div class="slds-text-align_center">
+																	<c-auto-complete-cmp
+																		autocompletelist={chosenObject.list_picklistFieldsLabels}
+																		label="Choose field"
+																		onfilterlist={handleFilterList}
+																		onfilterselected={handleChangeFieldValue}
+																		icon="standard:picklist_type"
+																		disablemouseover="false"
+																		blnisvisible="true"
+																		data-object={chosenObject.baseObject}
+																		data-index={fieldMapping.fieldId}
+																		data-uniqueid={fieldMapping.uniqueId}
+																		selectedvalue={fieldMapping.selectedFieldLabel}
+																		str-place-holder=''
+																		id={fieldMapping.uniqueId}
+																		data-source="picklist"
+																		bln-disabled={blnViewOnlyAccess}
+																	></c-auto-complete-cmp>
+																</div>
+															</td>
+															<td style="height: 0px; padding: 0px;"></td>
+															<td style="height: 0px; padding: 0px;"></td>
+															<td style="height: 0px; padding: 0px;"></td>
+															<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px;" rowspan={fieldMapping.mappingSize}>
+																<div class="slds-text-align_center">
+																	<span class="tooltip">
+																		<div style="position:relative">
+																			<lightning-button
+																				variant="brand"
+																				label="+"
+																				disabled={fieldMapping.blnAddMapping}																		data-object={chosenObject.baseObject}
+																				data-index={fieldMapping.fieldId}
+																				onclick={handleAddPicklistValueMapping}
+																			></lightning-button>
+																			<div class=" tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left" style="position:absolute;top:-50px;left:-2px">
+																			<div class="slds-popover__body">Add Value Mapping.</div>
+																			</div>
+																		</div>
+																	</span>
+																</div>
+															</td>
+															<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px" rowspan={fieldMapping.mappingSize}>
+																<div class="slds-text-align_center">
+																	<span class="tooltip">
+																		<div style="position:relative">
+																			<lightning-button-icon
+																				icon-name="utility:delete"
+																				variant="brand"
+																				data-index={fieldMapping.fieldId}
+																				alternative-text="Delete"
+																				data-object={chosenObject.baseObject}
+																				onclick={handleRemoveField}
+																				title="Delete"
+																				disabled={blnViewOnlyAccess}
+																			></lightning-button-icon>
+																			<div class=" tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left" style="position:absolute;top:-50px;left:-2px">
+																				<div class="slds-popover__body">Delete Field.</div>
+																			</div>
+																		</div>
+																	</span>
+																</div>
+															</td>
+														</tr>
+														<template for:each={fieldMapping.mapping} for:item="mapping">
+															<tr class="slds-hint-parent" key={mapping.mappingId}>
+																<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+																	<div class="slds-text-align_center">
+																		<lightning-combobox
+																			label="From:"
+																			value={mapping.fromValue}
+																			placeholder="Select Picklist field"
+																			options={fieldMapping.fromOptions}
+																			data-picklist={fieldMapping.fieldId}
+																			data-index={mapping.mappingId}
+																			data-uniqueid={mapping.fromId}
+																			data-option="fromValue"
+																			data-object={chosenObject.baseObject}
+																			onchange={handleChangeMapValue}
+																			disabled={blnViewOnlyAccess}
+																		></lightning-combobox>
+																	</div>
+																</td>
+																<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+																	<div class="slds-text-align_center">
+																		<lightning-combobox
+																			label="To:"
+																			value={mapping.toValue}
+																			placeholder="Select Picklist field"
+																			options={fieldMapping.toOptions}
+																			data-picklist={fieldMapping.fieldId}
+																			data-uniqueid={mapping.toId}
+																			data-index={mapping.mappingId}
+																			data-option="toValue"
+																			data-object={chosenObject.baseObject}
+																			onchange={handleChangeMapValue}
+																			disabled={blnViewOnlyAccess}
+																		></lightning-combobox>
+																	</div>
+																</td>													
+																<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px">
+																	<div class="slds-text-align_center">
+																		<span class="tooltip">
+																			<div style="position:relative">
+																				<lightning-button-icon
+																					icon-name="utility:delete"
+																					variant="brand"
+																					data-index={mapping.mappingId}
+																					data-picklist={fieldMapping.fieldId}
+																					alternative-text="Delete"
+																					data-object={chosenObject.baseObject}
+																					onclick={handleRemoveMapping}
+																					title="Delete"
+																					disabled={fieldMapping.blnDisabledDelete}
+																				></lightning-button-icon>
+																				<div class=" tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left" style="position:absolute;top:-50px;left:-2px">
+																					<div class="slds-popover__body">Delete Value Mapping.</div>
+																				</div>
+																			</div>
+																		</span>
+																		
+																	</div>
+																</td>
+															</tr>
+														</template>
+													</template>
+												</table>
+											</template>
+											
+											<br />
+											<div class="slds-truncate slds-text-align_center slds-align_absolute-center">
+												<lightning-button
+													variant="brand"
+													label="Add Field Mapping"
+													disabled={chosenObject.blnAddFieldMapping}
+													data-object={chosenObject.baseObject}
+													onclick={handleAddFieldMapping}
+												></lightning-button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<br />
+								<br />
+
+							<!-- talking points -->
+							<div class="slds-grid slds-wrap">
+								<div class="slds-size_12-of-12">
+									<div class="slds-box slds-box_x-small">
+										<div class="slds-form-heading_small">Talking Points
+											<div style="display: inline-block; position: relative;transform: translateY(-10%);">
+												<lightning-helptext content="The NBA Category component should be added to the lightning record page of the served object to display this help text to users. The component can be labeled whatever is appropriate for the team the ruleset applies to."></lightning-helptext>
+											</div>
+										</div>
+										<lightning-input-rich-text
+											name="talkingPoints"
+											disabled={blnViewOnlyAccess}
+											data-object={chosenObject.baseObject}
+											value={chosenObject.talkingPoints}
+											onchange={handleObjectChange}
+											data-attribute="talkingPoints"
+										>
+										</lightning-input-rich-text>
+									</div>
+								</div>
+							</div>
+
+							<br />
+
+							<div class="slds-text-heading_small">Add fields to display in the configuration (View records button)</div>
+
+							<br />
+
+							<template if:true={chosenObject.displayFieldsErrorMessage}>
+								<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert">
+									<span class="slds-assistive-text">warning</span>
+									<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Rule set Id unavailable">
+										<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+											<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+										</svg>
+									</span>
+									<h2>No fields added yet. Please add fields from the dropdown below</h2>
+								</div>
+								<br />
+							</template>
+
+							<br />
+
+							<div class="slds-grid slds-wrap">
+								<div class="slds-size_3-of-12 slds-p-right_small">
+									<div class="slds-text-align_center">
+										<c-auto-complete-cmp
+											autocompletelist={chosenObject.displayField.list_fieldLabels}
+											label="Select field to add"
+											icon="standard:record_lookup"
+											onfilterlist={handleFilterList}
+											onfilterselected={handleFilterSelected}
+											disablemouseover="false"
+											blnisvisible="true"
+											data-object={chosenObject.baseObject}
+											data-uniqueid={chosenObject.displayField.uniqueId}
+											selectedvalue={chosenObject.displayField.selectedFieldLabel}
+											str-place-holder={chosenObject.displayField.placeholderText}
+											data-source="display"
+											bln-disabled={blnViewOnlyAccess}
+										></c-auto-complete-cmp>
+										<template if:true={chosenObject.displayField.innerTableExists}>
+											<br />
+											<div class="">
+												<template for:each={chosenObject.displayField.innerTables} for:item="object">
+													<a
+														key={object.position}
+														data-position={object.position}
+														data-object={chosenObject.baseObject}
+														data-id={object.uniqueId}
+														onclick={handleInnerTableChange}
+														data-uniqueid={object.uniqueId}
+														data-source="display"
+													>
+														{object.strFieldLabel}
+													</a>
+													<span key={object.position} class="slds-p-left_xxx-small slds-p-right_xxx-small"> > </span>
+												</template>
+											</div>
+										</template>
+									</div>
+								</div>
+
+								<template if:true={chosenObject.list_ViewRecordsOptions.length}>
+									<div class="slds-size_1-of-12 slds-p-right_small" style="position: relative; top: 25px">
+										<div class="slds-text-align_center">OR</div>
+									</div>
+
+									<div class="slds-size_3-of-12 slds-p-right_small">
+										<div class="slds-text-align_center">
+											<lightning-combobox
+												name="listViewRecords"
+												label="Add fields from template"
+												placeholder="Add fields from template"
+												options={chosenObject.list_ViewRecordsOptions}
+												data-field="View_Records"
+												onchange={addViewRecords}
+												disabled={blnViewOnlyAccess}
+												data-object={chosenObject.baseObject}
+											></lightning-combobox>
+										</div>
+									</div>
+								</template>
+							</div>
+
+							<template if:false={chosenObject.displayFieldsErrorMessage}>
+								<br />
+								<table class="slds-table slds-table_cell-buffer" style="width: 70%">
+									<!-- iterate over each filter criteria-->
+
+									<thead>
+										<tr class="slds-line-height_reset">
+											<th class="" scope="col">
+												<div class="slds-truncate slds-text-align_center" title="Number">Number</div>
+											</th>
+											<th class="" scope="col">
+												<div class="slds-truncate slds-text-align_center" title="Field path">Field path</div>
+											</th>
+											<th class="" scope="col">
+												<div class="slds-truncate slds-text-align_center" title="Custom text override">Custom text override</div>
+											</th>
+											<th class="" scope="col">
+												<div class="slds-truncate slds-text-align_center" title="Delete">Delete</div>
+											</th>
+											<th class="" scope="col">
+												<div class="slds-truncate slds-text-align_center" title="Rearrange">Rearrange</div>
+											</th>
+										</tr>
+									</thead>
+
+									<template for:each={chosenObject.displayFieldsList} for:item="eachDisplay">
+										<tr class="slds-hint-parent" key={eachDisplay.uniqueId}>
+											<td class="slds-border_bottom slds-border_left" style="width: 5%">
+												<div class="slds-text-align_center">{eachDisplay.counter}</div>
+											</td>
+
+											<td class="slds-border_bottom slds-border_left">
+												<div class="slds-text-align_center">{eachDisplay.selectedField}</div>
+											</td>
+
+											<td class="slds-border_bottom slds-border_left">
+												<div class="slds-text-align_center">
+													<lightning-input
+														type="text"
+														label="Enter custom label"
+														data-object={chosenObject.baseObject}
+														data-id={eachDisplay.counter}
+														value={eachDisplay.customText}
+														onchange={handleCustomLabelChange}
+														data-attribute="selectedValue"
+														data-uniqueid={eachDisplay.uniqueId}
+														required="true"
+														disabled={blnViewOnlyAccess}
+													></lightning-input>
+												</div>
+											</td>
+
+											<td class="slds-border_bottom slds-border_left" style="width: 5%">
+												<div class="slds-text-align_center">
+													<!-- sldsValidatorIgnoreNextLine -->
+													<lightning-button-icon
+														icon-name="utility:delete"
+														variant="brand"
+														alternative-text="Delete"
+														data-object={chosenObject.baseObject}
+														data-id={eachDisplay.counter}
+														onclick={handleDeleteDisplayField}
+														title="Delete"
+														disabled={blnViewOnlyAccess}
+													></lightning-button-icon>
+												</div>
+											</td>
+
+											<td class="slds-border_bottom slds-border_left" style="width: 5%">
+												<div class="slds-text-align_center">
+													<!-- sldsValidatorIgnoreNextLine -->
+													<lightning-button-icon
+														icon-name="utility:arrowup"
+														variant="brand"
+														alternative-text="Up"
+														data-object={chosenObject.baseObject}
+														data-id={eachDisplay.counter}
+														title="Up"
+														disabled={blnViewOnlyAccess}
+														onclick={handleRearrangeDisplayFields}
+														data-type="up"
+													></lightning-button-icon>
+													&nbsp; &nbsp;
+
+													<lightning-button-icon
+														icon-name="utility:arrowdown"
+														variant="brand"
+														alternative-text="Up"
+														data-object={chosenObject.baseObject}
+														data-id={eachDisplay.counter}
+														title="Up"
+														disabled={blnViewOnlyAccess}
+														onclick={handleRearrangeDisplayFields}
+														data-type="down"
+													></lightning-button-icon>
+												</div>
+											</td>
+										</tr>
+									</template>
+								</table>
+							</template>
+						</template>
+					</lightning-accordion-section>
+				</template>
+			</lightning-accordion>
+
+			<br />
+
+			<div class="slds-truncate slds-text-align_center slds-align_absolute-center">
+				<lightning-button-group>
+					<lightning-button variant="brand" label="Save" onclick={validateAllChanges} disabled={blnViewOnlyAccess}></lightning-button>
+					<lightning-button variant="neutral" label="Reset" onclick={resetChanges} data-id="reset-bottom" disabled={blnViewOnlyAccess}></lightning-button>
+				</lightning-button-group>
+			</div>
+		</template>
+	</div>
+</template>

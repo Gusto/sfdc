@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Call_Update__c</fullName>
+    <formula>(
+Opportunity__c != NULL &amp;&amp; 
+(
+Opportunity__r.Last_Call__c == null
+||
+(Activity_Date__c) &gt; Opportunity__r.Last_Call__c
+)
+)
+||
+(
+Lead__c != NULL &amp;&amp; 
+(
+Lead__r.Last_Call__c == null
+||
+(Activity_Date__c) &gt; Lead__r.Last_Call__c
+)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Last Call Update</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

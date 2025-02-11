@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Org Notification 49</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/articles/BizTech_FAQ/How-to-fix-Auto-Case-Close-Batch-errors-Org-Notification-49?popup=false&amp;navBack=H4sIAAAAAAAAAIuuVipWslLyzssvz0lNSU_1yM9NVdJRygaKFSSmp4ZkluSA-KVAvn58aaZ-NkyhPpCDosu-ODWxKDnDVqk2FgDeHqwIVQAAAA</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Notification__c</field>
+        <value xsi:type="xsd:string">There are 10 or more cases which were not Closed as part of Auto Close Batch class</value>
+    </values>
+    <values>
+        <field>Payops_Notification__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Point_Of_Contact__c</field>
+        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+    </values>
+    <values>
+        <field>Point_of_Contact_Name__c</field>
+        <value xsi:type="xsd:string">Sanjay Paryani</value>
+    </values>
+    <values>
+        <field>Query_Return_Type__c</field>
+        <value xsi:type="xsd:string">Integer</value>
+    </values>
+    <values>
+        <field>Record_Threshold__c</field>
+        <value xsi:type="xsd:double">10.0</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.lightning.force.com/lightning/r/Report/00O8Y000008XMflUAG/view</value>
+    </values>
+    <values>
+        <field>SOQL_Query__c</field>
+        <value xsi:type="xsd:string">SELECT count() FROM Case WHERE Auto_Close_Date_Time__c != NULL AND Auto_Close_Date_Time__c &lt; TODAY AND Confirm_Case_Reason__c != NULL AND Status = &apos;Solved&apos; AND RecordType.Name IN (&apos;Payroll Care&apos;,&apos;Benefits Care&apos;,&apos;Modern Bank&apos;,&apos;Payroll Care - Read Only&apos;,&apos;Benefits Care - Read Only&apos;,&apos;Modern Bank - Read Only&apos;,&apos;Risk Assurance - Read Only&apos;, &apos;Risk Assurance&apos;, &apos;R&amp;D Tax Credits&apos;)</value>
+    </values>
+</CustomMetadata>

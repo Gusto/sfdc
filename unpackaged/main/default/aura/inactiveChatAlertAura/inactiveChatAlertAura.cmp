@@ -1,0 +1,33 @@
+<!--
+    Purpose: Aura component to alert the user that the chat is inactive
+    Written by: Pradeep Chary
+    Date: 11/22/2024
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" description="Inactive Chat Alert Aura">
+	<!-- Lightning component for conversation toolkit API -->
+	<lightning:conversationToolkitAPI aura:id="conversationKit" />
+	<!-- Lightning component for workspace API -->
+	<lightning:workspaceAPI aura:id="workspace" />
+	<!-- Handler for chat ended event -->
+	<aura:handler event="lightning:conversationChatEnded" action="{!c.onChatEnded}" />
+	<!-- Handler for component initialization -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<!-- Attribute to store tab information -->
+	<aura:attribute name="tabInfo" type="Object" />
+	<!-- Attribute to store chat parameter -->
+	<aura:attribute name="objChatParameter" type="String" />
+	<!-- Attribute to store the Reminder repeat count -->
+	<aura:attribute name="intCount" type="Integer" default="0" />
+	<!-- Attribute to store record details -->
+	<aura:attribute name="objRecord" type="Object"/>
+	<!-- Attribute to store record error -->
+	<aura:attribute name="recordError" type="String"/>
+	<!-- LDS Save record -->
+	<force:recordData 
+		aura:id="recordHandler" 
+		recordId="{!v.recordId}" 
+		fields="Reminder_Timestamp_1__c,Reminder_Timestamp_2__c" 
+		targetFields="{!v.objRecord}" 
+		targetError="{!v.recordError}"
+		mode="EDIT" />
+</aura:component>

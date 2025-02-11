@@ -1,0 +1,18 @@
+<!--
+    Purpose: Aura Component used for rendering dynamic case output fields
+    Written by : Praveen Sethu
+    Date: 09/16/2020
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
+    
+    <!-- Event handlers -->
+    <aura:handler event="c:caseContactChangeEvent" action="{!c.handleCaseAccountContactChange}"/>
+    <aura:handler event="c:caseAccountChangeEvent" action="{!c.handleCaseAccountContactChange}"/>
+
+    <!-- Attribute names to be filled on App Builder-->
+    <aura:attribute name="strObjectname" type="String" />
+    <aura:attribute name="strFieldname" type="String" />
+    <aura:attribute name="blnIsFieldsUnderlined" type="Boolean" />
+    
+    <c:renderDynamicFieldsCmp aura:id="renderDynamicFields" recordId="{!v.recordId}" objectname="{!v.strObjectname}" fieldname="{!v.strFieldname}" isfieldsunderlined="{!v.blnIsFieldsUnderlined}"></c:renderDynamicFieldsCmp>
+</aura:component>

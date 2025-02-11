@@ -1,0 +1,62 @@
+<apex:page controller="BTTransitionToFulfilmentExtension" showHeader="false" sidebar="false" tabStyle="Transition_to_Fulfillment__c">
+    <apex:slds />
+    <c:GustoActionStatus />   
+    <style>
+        #overlay {
+            position: fixed; /* Sit on top of the page content */
+            display: none; /* Hidden by default */
+            width: 100%; /* Full width (cover the whole page) */
+            height: 100%; /* Full height (cover the whole page) */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+            z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+            cursor: pointer; /* Add a pointer on hover */
+            justify-content: center;
+        }
+    
+    </style>
+    <apex:form >
+        <apex:pageMessages id="messages"/>            
+        <apex:outputPanel style="display:flex;">
+            <apex:inputFile value="{!objAttachmentNew.body}" filename="{!objAttachmentNew.name}"></apex:inputFile>
+            <apex:commandButton styleclass="btn" value="Upload File"  action="{!uploadAttachment}" onclick="showOverLay();"/>
+        </apex:outputPanel>              
+            
+        <apex:outputPanel styleclass="slds-m-top_medium "  layout="block" id="attachment_Panel" rendered="{! if(lst_TTFAttachmentList.size > 0,true,false)}">   
+            <apex:actionFunction name="deleteAttachmentRecord" action="{!deleteAttachmentRecord}" status="actStatusId" rendered="messages,attachment_Panel">
+                <apex:param value="" assignTo="{!strAttachmentIdToDelete}" name="Attachmentpar1"/>
+            </apex:actionFunction>                     
+            <div class="slds-text-heading_small slds-m-top_medium">Uploaded Files</div>
+            <ul class="slds-has-dividers_bottom-space" style="overflow-y:scroll;max-height:140px;">
+                <apex:repeat value="{!lst_TTFAttachmentList}" var="attachmentRec">
+                    <li class="slds-item slds-p-left_none">
+                        <apex:commandLink value="x" onclick="javascript:return confirmRemove();"  styleclass="slds-float_right" style="font-size: 24px; color: red; text-decoration: none; margin-top: -10px;" action="{!deleteAttachmentRecord}">
+                            <apex:param value="{!attachmentRec.Id}" assignTo="{!strAttachmentIdToDelete}" name="Attachmentpar2"/> 
+                        </apex:commandLink>
+                        <a href="javascript:void(0);" onclick="openFile('{!attachmentRec.Id}')">{!attachmentRec.Name}</a>
+                    </li>
+                </apex:repeat>
+            </ul>
+        </apex:outputPanel> 
+        <apex:outputPanel rendered="{! if(lst_TTFAttachmentList.size > 0,false,true)}" layout="none">
+            <span style="margin-top:5px;color:red;">No record found.</span>
+        </apex:outputPanel>
+        <div id="overlay"><img class="waitingImage" src="{!$Resource.GustoLoader}" title="Please Wait..." style="align-self: flex-start;padding-top:5%;" /></div>
+    </apex:form>
+		   <script>
+				function confirmRemove() {
+				    return confirm('Are you sure want to remove?');
+				}
+
+                function openFile(strFieldId){
+                    window.open('/servlet/servlet.FileDownload?file='+strFieldId);
+                }
+
+                function showOverLay(){
+                    document.getElementById("overlay").style.display = "flex";
+                }
+		</script>
+</apex:page>

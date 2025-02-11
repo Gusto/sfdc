@@ -1,0 +1,60 @@
+<template>
+    <div class="spinner">
+        <template if:true={blnIsLoading}>
+            <div class="slds-is-relative">
+                <lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium">
+                </lightning-spinner>
+            </div>
+        </template>
+    </div>
+    <lightning-record-edit-form record-id={recordId} object-api-name="Case" onsubmit={handleSubmit} onsuccess={handleSuccess}>            
+        <table>
+            <template for:each={list_CaseApiNames}
+            for:item="item"
+            for:index="indexVar" >
+                <tr key={item.val1} class="border-bottom" if:true={blnIsCaseSolvedClosed}>
+                    <td>
+                        <lightning-output-field field-name={item.val1} > </lightning-output-field>
+                    </td>
+                    <td>
+                        <lightning-output-field field-name={item.val2} > </lightning-output-field>
+                    </td>
+                </tr> 
+                <tr key={item.val1} class="border-bottom" if:false={blnIsCaseSolvedClosed}>
+                    <td>
+                        <lightning-input-field field-name={item.val1} > </lightning-input-field>
+                    </td>
+                    <td>
+                        <lightning-input-field field-name={item.val2} > </lightning-input-field>
+                    </td>
+                </tr>                     
+            </template>
+            <tr>
+                <td colspan="2"></td>
+            </tr>  
+            <template 
+            for:each={list_TaxRates}
+            for:item="item"
+            for:index="indexVar" if:true={blnIsTaxRateAvailable}>
+                <tr key={item.value}>
+                    <td>
+                        {item.label}
+                    </td>
+                    <td>  
+                        <div>
+                            <lightning-input data-row-id={item.value} type="number" formatter="percent-fixed" step=".0000000001" onkeypress={validateSuiRate} variant="label-hidden" value={item.perCentSuiRate} onchange={handelSuiRateChange}></lightning-input>
+                        </div>                        
+                    </td>
+                </tr>
+            </template>   
+            <tr>
+                <td colspan="2">
+                    <div class="slds-var-m-top_medium">
+                        <lightning-button variant="brand-outline" label="Save" type="submit" >
+                        </lightning-button>
+                    </div>
+                </td>
+            </tr>               
+        </table>
+    </lightning-record-edit-form>
+</template>

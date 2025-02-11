@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Submission_Deadline_New__c</fullName>
+    <formula>CASE(Order_Assignment__c,
+&apos;Carrier Switch&apos;,Submission_Deadline__c,
+&apos;New to Gusto&apos;,Submission_Deadline__c,
+&apos;New Line of Coverage&apos;,Submission_Deadline__c,
+&apos;New line of Coverage&apos;,Submission_Deadline__c,
+&apos;Same carrier, plan/group level changes&apos;,Group_Submission_Date__c,
+&apos;Same Carrier, Plan/Group Level Changes&apos;,Group_Submission_Date__c,
+&apos;Same carrier, NO plan/group level Changes&apos;,Member_Submission_Date__c,
+&apos;Same Carrier, NO Plan/Group Level Changes&apos;,Member_Submission_Date__c,
+null)</formula>
+    <label>Submission Deadline</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

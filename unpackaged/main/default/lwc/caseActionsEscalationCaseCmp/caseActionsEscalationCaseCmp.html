@@ -1,0 +1,29 @@
+<template>
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <div class="slds-theme_default" onmouseover={checkValidity}>
+        <lightning-layout multiple-rows>
+            
+
+            <lightning-layout-item size="12" class="slds-p-right_small slds-p-top_xx-small">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                        <c-case-reason-group-auto-complete-cmp strcasereason={objCase.Confirm_Case_Reason__c}
+                            blncasereasonfound={blnIsCaseReasonFound} onselectcasereason={handleCaseReasonSelected}
+                            onfiltercasereason={handleFilterCaseReason} mapcasereason={map_caseReasonToGroupMap}
+                            casereasons={list_caseReasons} strlabel="Confirm Case Reason"
+                            blnisdisabled={blnIsReadOnlyCase}></c-case-reason-group-auto-complete-cmp>
+                    </div>
+                </div>
+            </lightning-layout-item>
+
+           
+
+           
+
+        </lightning-layout>
+
+    </div>
+</template>

@@ -1,0 +1,10 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable,lightning:isUrlAddressable"
+	access="global" >
+	<!-- Workspace API -->
+	<lightning:workspaceAPI aura:id="workspace" />
+	<!-- navigation API -->
+	<lightning:navigation aura:id="navService" />
+
+	<c:taxResReadyForDataCaptureCases onOpenCase="{!c.openSubTab}" >
+    </c:taxResReadyForDataCaptureCases>
+</aura:component>

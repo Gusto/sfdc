@@ -1,0 +1,36 @@
+<template>
+    <div class="slds-box">
+        <lightning-card title = {strCardTitle} icon-name = "standard:order_item">    
+            <div>
+                <template if:true={arrayRecords.length}>                    
+                    <div class="slds-grid slds-wrap slds-grid_vertical-align-start">
+                        <div class="slds-col slds-size_12-of-12" style={datatableHeight}>
+                            <lightning-datatable key-field="Id"  
+                                                data={arrayRecords}  
+                                                columns={array_columns}
+                                                hide-checkbox-column={blnHideCheckbox}
+                                                selected-rows={selectedRows}
+                                                onrowselection={handleRowSelection}
+                                                onrowaction={callRowAction}>  
+                            </lightning-datatable>    
+                        </div>
+                        <div class="slds-col slds-size_12-of-12 slds-m-top_x-small">
+                            <lightning-button variant="brand" label="Complete Results" title="Complete Results" onclick={handleAction}
+                                class="slds-m-right_x-small">
+                            </lightning-button>
+                            <lightning-button variant="brand" label="QA First Pass" title="QA First Pass" onclick={handleAction}
+                                class="slds-m-right_x-small">
+                            </lightning-button>
+                            <lightning-button variant="brand" label="QA Second Pass" title="QA Second Pass" onclick={handleAction}
+                                class="slds-m-right_x-small">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+                <template if:true = {strError}>    
+                    {strError}                    
+                </template>    
+            </div>    
+        </lightning-card>
+    </div>
+</template>

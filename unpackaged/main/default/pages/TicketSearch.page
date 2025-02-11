@@ -1,0 +1,319 @@
+<apex:page controller="TicketSearchController" action="{!searchRecords}" sidebar="false"  id="mainpg"  standardStylesheets="false">
+	
+	<apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"/> 
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    
+    <head>
+	    
+
+	    <script type="text/javascript">
+			
+	    	$(document).ready(function(){
+	    		initializeSlideJS();	    		
+			});
+
+
+	    	$(window).load(function() {
+		        attachEnterEvent();		        
+	    	});
+
+	    	function initializeSlideJS(){
+	    		$(".showFilterDiv").hide();
+	    		$(".ticketInfoDiv").hide();
+			 	$(".hideFilterDiv").click(function(){
+			 		$("#collapseDiv").slideUp();
+			    	$(".showFilterDiv").show();
+			    	$(".ticketInfoDiv").show();
+			  	});
+				$(".showFilterDiv").click(function(){
+			    	$("#collapseDiv").slideDown();
+			    	$(".showFilterDiv").hide();
+			  	});			  	
+	    	}
+
+	    	function attachEnterEvent(){
+	    		$(".searchStrText").on('keyup', function (e) {
+				    if (e.keyCode == 13) {
+				        sortTable('');
+				        //console.log('@@## enter event catched');
+				    }
+				});    		
+	    	}
+
+			var selectedCaseId;
+	        function openTicketRec(frid) {
+	            selectedCaseId = frid;
+	            if(sforce.console.isInConsole()){
+	            	sforce.console.openPrimaryTab(null , '/'+frid, true,'Ticket',openSuccess,'Ticket');
+	            }
+	            else{
+	            	window.open('/'+frid);
+	            }
+	            
+	        }
+	        
+	       
+
+	        var openSuccess = function openSuccess(result) {
+	            //Report whether opening the new tab was successful
+	            if (result.success == true) {
+	                //alert('Primary tab successfully opened');
+	            } else {
+	                alert('Primary tab cannot be opened');
+	            }
+	        };
+
+	        
+
+	    </script>
+	    <style type="text/css">
+	    	.label_div{
+	    		text-align:right;
+	    	}
+
+	    	.txtleft{
+	    		text-align: left;
+	    	}
+	    </style>
+    </head>
+
+
+    <div class="gusto">
+    	<apex:outputPanel id="frmId">
+    	<apex:form id="frmId2">
+			<apex:actionFunction action="{!searchRecords}" name="sortTable" reRender="frmId" status="fetchStatus" oncomplete="attachEnterEvent();">
+	            <apex:param name="sortField" value="" />
+	        </apex:actionFunction>
+
+	        <apex:actionFunction name="getticketInfo1" reRender="feedPanel" status="fetchStatus" oncomplete="attachEnterEvent();" immediate="true">
+	            <apex:param name="ticketidd1" value="" assignTo="{!selectedTicketId}"/>
+	        </apex:actionFunction>	
+	        <apex:actionFunction name="refreshReasonDetail" reRender="frmId"/>
+   	 	
+			<apex:actionStatus id="fetchStatus" >
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                                                                        height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span> 
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+        
+            <!-- page header Code -->
+            <div class="slds-page-header">
+				<div class="slds-page-header__row">
+					<div class="slds-page-header__col-title">
+						<div class="slds-media">
+							<div class="slds-media__figure">
+								<span class="slds-icon_container slds-icon-standard-Ticket__c" title="Ticket">
+									<span class="slds-assistive-text">Ticket__c</span>
+								</span>
+							</div>
+							<div class="slds-media__body">
+								<div class="slds-page-header__name">
+									<div class="slds-page-header__name-title">
+										<h1>
+											<span class="slds-page-header__title slds-truncate" title="Rohde Corp - 80,000 Widgets">Ticket Search</span>
+										</h1>
+									</div>
+								</div>
+								<p class="slds-page-header__name-meta"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br/>
+
+            <!-- Filter Code -->
+            <div id="collapseDiv">
+	            <table>
+            		<tr>
+            			<td>
+					    	Search Criteria:
+					  	</td>
+            			<td>
+		        			<apex:selectList id="sc1" value="{!searchCriteriaStr}" size="1">
+				                <apex:selectOptions value="{!CommentDescriptionFilterList}" />
+				            </apex:selectList>
+            			</td>
+            			<td>
+			    			<apex:outputLabel value="Search String:" />
+            			</td>
+            			<td>
+			    			<apex:inputText value="{!searchTicketVar.Description__c}" styleclass="searchStrText"/>
+            			</td>
+            			<td>
+							<apex:outputLabel value="Escalation Reason:" />
+            			</td>
+            			<td>
+							<apex:inputField Value="{!searchTicketVar.Escalation_Reason__c}" />
+            			</td>
+            			<td>
+							<apex:outputLabel value="Escalation Reason Detail:" />
+            			</td>
+            			<td>
+							<apex:inputField Value="{!searchTicketVar.Escalation_Reason_Detail__c}" id="escalationdetail"/> 
+            			</td>
+        			</tr>
+			 		<tr>
+		 				<td>
+		 					Reporting Team:
+		 				</td>
+		 				<td>
+		 					<apex:inputField Value="{!searchTicketVar.Reporting_Team__c}"/>
+		 				</td>
+		 				<td>
+		 					Error Origin:
+		 				</td>
+		 				<td>
+		 					<apex:inputField Value="{!searchTicketVar.Error_Origin__c}"/>
+		 				</td>
+		 			</tr>
+		 			<tr>
+		 				<td>
+		 					Record Type:
+		 				</td>
+		 				<td>
+		 					<apex:outputPanel id="recordTypePicklistGrid">
+					            <table style="width:350px;">
+					            	<tr>
+					            		<td style="width:40%;">
+								            <apex:selectList id="sel1" value="{!recordTypeLeftSelected}" multiselect="true" style="width: 160px" size="5">
+								                <apex:selectOptions value="{!DeselectedRecordTypeValues}" />
+								            </apex:selectList>
+						        		</td>
+						        		<td style="width:20%;text-align: center;">
+							                <apex:image styleClass="picklistArrowRight" value="/s.gif" style="height: 20px !important;">
+							                    <apex:actionSupport event="onclick" action="{!getSelectRecordType}"  reRender="recordTypePicklistGrid"/>
+							                </apex:image>
+							                <br/><br/>
+							                <apex:image styleClass="picklistArrowLeft" value="/s.gif" style="height: 20px !important;">
+							                    <apex:actionSupport event="onclick" action="{!getDeselectRecordType}" reRender="recordTypePicklistGrid"/>
+							                </apex:image>
+					        			</td>
+					        			<td style="width:40%;">
+					        				<apex:selectList id="sel2" value="{!recordTypeRightSelected}" multiselect="true" style="width: 160px" size="5">
+								                <apex:selectOptions value="{!SelectedrecordTypeValues}" />
+								            </apex:selectList>
+				        				</td>
+					        		</tr>
+						        </table>
+					    	</apex:outputPanel>
+		 				</td>
+		 				<td>
+		 					Status:
+		 				</td>
+		 				<td>
+		 					<apex:outputPanel id="statusPicklistGrid">
+					            <table style="width:250px;">
+					            	<tr>
+					            		<td style="width:40%;">
+								            <apex:selectList id="statussel1" value="{!statusLeftSelected}" multiselect="true" style="width:110px" size="5">
+								                <apex:selectOptions value="{!DeselectedStatusValues}" />
+								            </apex:selectList>
+						        		</td>
+						        		<td style="width:20%;text-align: center;">
+							                <apex:image styleClass="picklistArrowRight" value="/s.gif" style="height: 20px !important;">
+							                    <apex:actionSupport event="onclick" action="{!getSelectStatus}" reRender="statusPicklistGrid"/>
+							                </apex:image>
+							                <br/><br/>
+							                <apex:image styleClass="picklistArrowLeft" value="/s.gif" style="height: 20px !important;">
+							                    <apex:actionSupport event="onclick" action="{!getDeselectStatus}" reRender="statusPicklistGrid"/>
+							                </apex:image>
+					        			</td>
+					        			<td style="width:40%;">
+					        				<apex:selectList id="statussel2" value="{!statusRightSelected}" multiselect="true" style="width:110px" size="5">
+								                <apex:selectOptions value="{!SelectedStatusValues}" />
+								            </apex:selectList>
+				        				</td>
+					        		</tr>
+						        </table>
+					    	</apex:outputPanel>
+		 				</td>
+		 				<td colspan="4"  style="text-align: center;vertical-align: bottom;">
+		 					<apex:commandButton value="Search" styleclass="btn slds-button slds-button--neutral" action="{!searchRecords}" immediate="true" reRender="frmId" status="fetchStatus" oncomplete="initializeSlideJS();"/>
+		 				</td>
+		 			</tr>
+			 	</table>
+			 	<br/>
+			</div> 
+			<a class="showFilterDiv" href="javascript:void(0);">Show Filters</a>
+			</apex:form>
+            <table style="width: 100%;">
+        		<tr>
+        			<td style="width: 30%;">
+        				<div class="slds-scrollable" style="width: 100%;max-height: 500px;overflow: scroll;">
+				            <apex:outputPanel id="editPanel" rendered="{!IF(TicketList != null && TicketList.size > 0 , true, false)}">
+				                <table class="slds-table slds-table--bordered slds-table_cell-buffer slds-table_fixed-layout" id="frtable" style="width: 100%"> 
+				                    <thead>
+				                        <tr class="slds-text-title">
+				                            <th>
+				                                Ticket Number
+				                            </th>
+				                            <th>
+				                                Description
+				                            </th>
+				                        </tr>
+				                    </thead>
+				                    <tbody >
+				                    <apex:repeat var="ticket" value="{!ticketList}" id="ttable">
+			                            <tr class="slds-text-title detailRow">
+			                                <td style="color:#54698d;cursor: pointer;">
+			                                    <a class="hideFilterDiv" onclick="getticketInfo1('{!ticket.objTicketRec.id}');return false;">{!ticket.objTicketRec.Name}</a>
+			                                </td>
+			                                <td style="max-width: 200px;white-space: normal;">
+			                                    {!ticket.strDescription}
+			                                </td>			                                
+			                            </tr>
+				                    </apex:repeat>
+				                    </tbody> 
+				                </table> 
+				            </apex:outputPanel>
+				            <apex:outputPanel rendered="{!IF(TicketList.size != null && TicketList.size > 0, true, false)}"> 
+				            	<apex:form id="frmId3">  
+					            	<table style="width: 100%">
+					                	<tr>
+						                    <td>
+						                        <apex:outputText value=" Page {!IF(CEILING(setcon.ResultSize/setcon.PageSize)==0,0,setcon.PageNumber)} of {!CEILING(setcon.ResultSize/setcon.PageSize)}"/>
+						                    </td>
+						                    <td style="text-align: center !important;">
+						                        <apex:commandLink action="{!setcon.Previous}" value="« Previous" rendered="{!setcon.HasPrevious}"/>
+						                        <apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(setcon.HasPrevious)}"/>&nbsp;&nbsp;  
+						                        <apex:commandLink action="{!setcon.Next}" value="Next »" rendered="{!setcon.HasNext}"/>
+						                        <apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(setcon.HasNext)}"/>
+						                    </td>
+						                    <td style="text-align: right !important;">
+					                            <apex:selectList value="{!setcon.PageSize}" size="1">
+					                                <apex:selectOption itemValue="20" itemLabel="20"/>
+					                                <apex:selectOption itemValue="50" itemLabel="50"/>
+					                                <apex:selectOption itemValue="100" itemLabel="100"/>
+					                                <apex:actionSupport event="onchange" reRender="frmId" status="status"/>
+					                            </apex:selectList>
+					                        </td>
+					                    </tr>
+					                </table>
+				            	</apex:form>
+				            </apex:outputPanel>
+				            <apex:outputPanel id="editPanel1" rendered="{!IF(TicketList.size == 0 , true, false)}">
+				                No Records Found!
+				            </apex:outputPanel>
+						</div>
+        			</td>
+        			<td style="width: 70%;">
+        				<apex:outputPanel id="feedPanel">    					
+        					<div class="ticketInfoDiv" style="max-height: 500px;overflow: scroll;padding-top: none !important;">
+        						<chatter:feed entityId="{! selectedTicketId}"/>
+	        					<apex:detail subject="{!selectedTicketId}" relatedList="false" title="false" inlineEdit="true" rendered="{! if(selectedTicketId != null,true,false)}"/>
+	        				</div>
+        				</apex:outputPanel>
+        			</td>
+        		</tr>
+            </table>
+        </apex:outputPanel>    
+	</div>
+</apex:page>

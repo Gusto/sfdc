@@ -1,0 +1,9 @@
+<apex:page >
+<apex:sectionHeader title="Gusto Benefits" subtitle="All things Benefits with Gusto"/>
+<apex:pageBlock title="Benefit Orders">
+    <apex:enhancedList type="Benefit_Order__c" height="375" rowsPerPage="50" customizable="true" />
+</apex:pageBlock>
+<apex:pageBlock title="Carrier Orders">
+    <apex:enhancedList type="Carrier_Order__c" height="375" rowsPerPage="50" customizable="true"/>
+    </apex:pageBlock>
+</apex:page>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_Changes_Closed_Order</fullName>
+    <active>true</active>
+    <description>Prevents the policy from changing orders once the carrier orders closed.</description>
+    <errorConditionFormula>ISCHANGED(Carrier_Order__c) &amp;&amp;
+Carrier_Order__r.Closed__c</errorConditionFormula>
+    <errorDisplayField>Carrier_Order__c</errorDisplayField>
+    <errorMessage>Unable to change carrier order: the carrier order associated to the policy has been closed.</errorMessage>
+</ValidationRule>

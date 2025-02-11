@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>53.0</apiVersion>
+    <assignments>
+        <description>Team, Sub-Team, Status</description>
+        <name>Copy_Important_HR_Fields</name>
+        <label>Copy Important HR Fields</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <assignmentItems>
+            <assignToReference>Get_User.Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Team__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_User.Sub_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Sub_Team__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_User.HR_Worker_Information_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Status__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_User.EmployeeNumber</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Employee_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_User.Last_Updated_At__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Updated_At__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_User</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>User_Found</name>
+        <label>User Found?</label>
+        <locationX>182</locationX>
+        <locationY>431</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>UserFound</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_User.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_Important_HR_Fields</targetReference>
+            </connector>
+            <label>User Found</label>
+        </rules>
+    </decisions>
+    <description>1/13/20: Added email notification functionality.
+2/5/21: Updated logic to avoid errors when user is not found.
+7/30/21 Updated logic to update the HR Worker Team and Subteam whenever they change. Also added the functionality to remove the Distribution Engine License. Note: It happens 1-2 min after flow initiated.
+11/28/22 Removed Managed Package Logic, Phone Number Logic, Changed name from HR_Worker_Information Triggered Actions. 
+Updated to only run with the Team, Subteam or Status Changes
+Updated to run on Insert as well</description>
+    <environments>Default</environments>
+    <interviewLabel>HR_Worker_Information - User Field Updates {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>HR_Worker_Information - User Field Updates</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Query for the matching user</description>
+        <name>Get_User</name>
+        <label>Get User</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>User_Found</targetReference>
+        </connector>
+        <filterLogic>1 and 4 AND (2 or 3)</filterLogic>
+        <filters>
+            <field>UserType</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Guest</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>EmployeeNumber</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Employee_Id__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Username</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Email__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Is_Api_Integration__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>EmployeeNumber</queriedFields>
+        <queriedFields>Team__c</queriedFields>
+        <queriedFields>Sub_Team__c</queriedFields>
+        <queriedFields>HR_Worker_Information_Status__c</queriedFields>
+        <queriedFields>Calendar_Link__c</queriedFields>
+        <queriedFields>IsActive</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>FirstName</queriedFields>
+        <queriedFields>LastName</queriedFields>
+        <queriedFields>Email</queriedFields>
+        <queriedFields>Last_Updated_At__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_User</name>
+        <label>Update User</label>
+        <locationX>50</locationX>
+        <locationY>647</locationY>
+        <inputReference>Get_User</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_User</targetReference>
+        </connector>
+        <filterFormula>!ISBLANK({!$Record.Employee_Id__c}) &amp;&amp;
+(
+ISNEW() ||
+ISCHANGED({!$Record.Team__c}) ||
+ISCHANGED({!$Record.Sub_Team__c}) ||
+ISCHANGED({!$Record.Status__c})
+)</filterFormula>
+        <object>HR_Worker_Information__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>EmailBody</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;The user record for {!Get_User.Name} is has been changed to {!$Record.Status__c}.  Please click this link to open the user record and deactivate the user and then deactivate the corresponding accounts in other applications.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://gusto.my.salesforce.com/{!Get_User.Id}?noredirect=1&amp;amp;isUserEntityOverride=1&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;https://gusto.my.salesforce.com/{!Get_User.Id}?noredirect=1&amp;amp;isUserEntityOverride=1&lt;/a&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>EmailSubject</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>HR Worker Record {!$Record.Name} was changed to {!$Record.Status__c} for {!Get_User.Name}</text>
+    </textTemplates>
+    <variables>
+        <description>Collection of package licenses to delete</description>
+        <name>LicensestoDelete</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <description>All phone number records for all phone number assignments</description>
+        <name>PhoneNumberIDs</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

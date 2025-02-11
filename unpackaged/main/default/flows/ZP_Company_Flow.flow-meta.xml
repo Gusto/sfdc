@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <name>Check_Error_Message</name>
+        <label>Check Error Message</label>
+        <locationX>182</locationX>
+        <locationY>455</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Found_Parent_Company_Id_keyword</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>check_message_for_parentcompanyid</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Post_To_Slack</targetReference>
+            </connector>
+            <label>Found Parent Company Id keyword</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Processing_State</name>
+        <label>Check Processing State</label>
+        <locationX>512</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Dead_State</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Dead</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Error_Message</targetReference>
+            </connector>
+            <label>Dead State</label>
+        </rules>
+        <rules>
+            <name>Error_State</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error</stringValue>
+                </rightValue>
+            </conditions>
+            <label>Error State</label>
+        </rules>
+    </decisions>
+    <description>added CONTAINS method to search error message for parent companyid keyword</description>
+    <formulas>
+        <name>check_message_for_parentcompanyid</name>
+        <dataType>Boolean</dataType>
+        <expression>CONTAINS({!$Record.Message__c} , &quot;Parent Company ID&quot;)</expression>
+    </formulas>
+    <interviewLabel>ZP Company Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ZP Company Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>386</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Processing_State</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Message__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>ZP_Company__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+    <subflows>
+        <name>Post_To_Slack</name>
+        <label>Post To Slack</label>
+        <locationX>50</locationX>
+        <locationY>575</locationY>
+        <flowName>Slack_Notification_ZP_Company_Object</flowName>
+        <inputAssignments>
+            <name>Zp_company_record</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+</Flow>

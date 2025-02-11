@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>do_Callout</name>
+        <label>do Callout</label>
+        <locationX>275</locationX>
+        <locationY>600</locationY>
+        <actionName>ArdiusMulesoftService.postSalesforceOpportunityCreation</actionName>
+        <actionType>externalService</actionType>
+        <connector>
+            <targetReference>handle_Response</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>requestParamters</name>
+            <value>
+                <elementReference>objRequest</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>ArdiusMulesoftService.postSalesforceOpportunityCreation</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <assignments>
+        <name>populate_Request</name>
+        <label>populate Request</label>
+        <locationX>275</locationX>
+        <locationY>492</locationY>
+        <assignmentItems>
+            <assignToReference>objRequest.opportunityx5fid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objRequest.fullx5fname</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>formulaFullName</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objRequest.email</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_First_Opp_Contact_Role.Contact.Email</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objRequest.companyx5fname</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Account.Name</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objRequest.referralx5fcode</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Referral_Code__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objRequest.companyx5ftype</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Corporation_Type__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>do_Callout</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Check_Whether_Integration_Enabled</name>
+        <label>Check Whether Integration Enabled</label>
+        <locationX>473</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>Is Disabled</defaultConnectorLabel>
+        <rules>
+            <name>Is_Active</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Setup.Ardius_Configuration__c.Is_Mulesoft_Opportunity_Integ_Active__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_First_Opp_Contact_Role</targetReference>
+            </connector>
+            <label>Is Active</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>handle_Response</name>
+        <label>handle Response</label>
+        <locationX>275</locationX>
+        <locationY>708</locationY>
+        <defaultConnectorLabel>Is Success</defaultConnectorLabel>
+        <rules>
+            <name>is_Failed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>do_Callout.responseCode</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <numberValue>200.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>do_Callout.responseCode</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <numberValue>204.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>create_Exception_Log</targetReference>
+            </connector>
+            <label>is Failed</label>
+        </rules>
+    </decisions>
+    <description>Ardius --&gt; Mulesoft --&gt; Ardius Website Opportunity Integration.
+1. Triggered when Off Gusto Opportunity moved to Closed Won  --&gt; Create Account in Ardius Website</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>formulaExceptionMessage</name>
+        <dataType>String</dataType>
+        <expression>LEFT((
+&quot;Ticket: &quot; + {!$Record.Id} + &quot; -- &quot; +
+IF({!do_Callout.responseCode} = 400, &quot;400| &quot; + {!do_Callout.400Exc.eventx5fid} + &quot;| &quot; + {!do_Callout.400Exc.response} + &quot;| &quot; + {!do_Callout.400Exc.status}, &quot;&quot;) +
+IF({!do_Callout.responseCode} = 404, &quot;404| &quot; + {!do_Callout.404Exc.eventx5fid} + &quot;| &quot; + {!do_Callout.404Exc.response} + &quot;| &quot; + {!do_Callout.404Exc.status}, &quot;&quot;) +
+IF({!do_Callout.responseCode} = 405, &quot;405| &quot; + {!do_Callout.405Exc.eventx5fid} + &quot;| &quot; + {!do_Callout.405Exc.response} + &quot;| &quot; + {!do_Callout.405Exc.status}, &quot;&quot;) +
+IF({!do_Callout.responseCode} = 415, &quot;415| &quot; + {!do_Callout.415Exc.eventx5fid} + &quot;| &quot; + {!do_Callout.415Exc.response} + &quot;| &quot; + {!do_Callout.415Exc.status}, &quot;&quot;) +
+&quot;Default Exception: &quot; + {!do_Callout.defaultExc}
+), 131072)</expression>
+    </formulas>
+    <formulas>
+        <name>formulaFullName</name>
+        <dataType>String</dataType>
+        <expression>IF(!ISBLANK({!Get_First_Opp_Contact_Role.Contact.FirstName})
+, {!Get_First_Opp_Contact_Role.Contact.FirstName} + &quot; &quot; + {!Get_First_Opp_Contact_Role.Contact.LastName}
+,  {!Get_First_Opp_Contact_Role.Contact.LastName})</expression>
+    </formulas>
+    <interviewLabel>Ardius - Mulesoft Off Gusto Opportunity Integration {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Ardius - Mulesoft Opportunity Integration</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>create_Exception_Log</name>
+        <label>create Exception Log</label>
+        <locationX>143</locationX>
+        <locationY>816</locationY>
+        <inputAssignments>
+            <field>Class_Name__c</field>
+            <value>
+                <stringValue>Flow: Ardius - Mulesoft Off Gusto Opportunity Integration</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Message__c</field>
+            <value>
+                <elementReference>formulaExceptionMessage</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Record_ID__c</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type__c</field>
+            <value>
+                <stringValue>Integration Failure</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Exception_Log__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_First_Opp_Contact_Role</name>
+        <label>Get First Opp Contact Role</label>
+        <locationX>275</locationX>
+        <locationY>384</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>populate_Request</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OpportunityId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>OpportunityContactRole</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Asc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Opportunity_Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Tax Credits</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Gusto_Source__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Off-Gusto</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Closed Won</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Opportunity</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Check_Whether_Integration_Enabled</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>objRequest</name>
+        <apexClass>ExternalService__ArdiusMulesoftService_postSalesforceOpportunityCreation_IN_requestParamters</apexClass>
+        <dataType>Apex</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+</Flow>

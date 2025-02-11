@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Program__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF ( OR( Lead.Owner:User.UserRole.Id = &quot;00E16000000z1on&quot;, Contact.Owner.UserRoleId = &quot;00E16000000z1on&quot;), &quot;Partner AE&quot;, 
+IF (OR ( Lead.Owner:User.UserRole.Id = &quot;00E16000000yt72&quot;, Contact.Owner.UserRoleId = &quot;00E16000000yt72&quot;), &quot;Partner AM&quot;, 
+IF ( OR (Contact.Owner.UserRole.Id = &quot;005G0000003apUz&quot;, Contact.Owner.UserRoleId = &quot;00E16000001Bw8UEAS&quot;, Lead.Owner:User.UserRole.Id = &quot;005G0000003apUz&quot;, Lead.Owner:User.UserRole.Id = &quot;00E16000001Bw8UEAS&quot;), 
+&quot;CS&quot;, 
+IF ( OR (Lead.Owner:User.UserRole.Id = &quot;00E16000000yzV5&quot;, Contact.Owner.UserRoleId = &quot;00E16000000yzV5&quot;), &quot;SBS&quot;, 
+
+IF (OR (Lead.Owner:User.UserRole.Id = &quot;00EG0000000yeqj&quot;, Contact.Owner.UserRoleId = &quot;00EG0000000yeqj&quot;), &quot;LBS&quot;, 
+
+IF (OR( Lead.Owner:User.UserRole.Id = &quot;00EG0000000yeqo&quot;, Lead.Owner:User.UserRole.Id = &quot;00E16000000z1os&quot;, Contact.Owner.UserRoleId =&quot;00EG0000000yeqo&quot;, Contact.Owner.UserRoleId = &quot;00E16000000z1os&quot;), &quot;SDR&quot;, 
+
+
+&quot;Other&quot; ))))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Program</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

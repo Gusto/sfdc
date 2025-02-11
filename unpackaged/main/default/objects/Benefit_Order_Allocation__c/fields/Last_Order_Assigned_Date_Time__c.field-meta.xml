@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Order_Assigned_Date_Time__c</fullName>
+    <label>Last Order Assigned Date/Time</label>
+    <summarizedField>Order_BOA_Relationship__c.CreatedDate</summarizedField>
+    <summaryForeignKey>Order_BOA_Relationship__c.Benefit_Order_Allocation__c</summaryForeignKey>
+    <summaryOperation>max</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

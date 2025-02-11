@@ -1,0 +1,29 @@
+<!--
+	Purpose: Ticket object New Button override by component to skip for a few profiles
+	Written by : Pradeep Chary
+	Date: 12/21/2023
+-->
+<template>
+	<!-- Page Header -->
+	<div class="slds-card__header-title slds-theme_default slds-p-around_large slds-align_absolute-center slds-text-heading_medium">
+		<h1>New Ticket</h1>
+	</div>
+	<div class="slds-card slds-p-around_large">
+		<!-- Record Edit Form displaying default New Button form -->
+		<template if:true={blnEnable}>
+			<lightning-record-form 
+				object-api-name={strObjectApi}
+				layout-type="Full"
+				record-type-id={strRecordTypeId}
+				mode="edit"
+				columns="2"
+				onsuccess={handleSuccess}
+				oncancel={handleReset}>
+			</lightning-record-form>
+		</template>
+		<!-- Message for Profiles with no access -->
+		<template if:true={blnShowMessage}>
+			<div class="slds-text-align_center slds-text-heading_small">{strMessage}</div>
+		</template>
+	</div>
+</template>

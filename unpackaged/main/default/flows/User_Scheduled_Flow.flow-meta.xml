@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Check_Role_Hierarchy</name>
+        <label>Check Role Hierarchy</label>
+        <locationX>275</locationX>
+        <locationY>408</locationY>
+        <actionName>EngagementUserRole</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>User_Role_Hierarchy</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>strRoleHierarchy</name>
+            <value>
+                <stringValue>Engagement;Task_Us_PH;Task_Us_Support;Task_Us_Micro_Admin;Task_Us_SME</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>idUserRole</name>
+            <value>
+                <elementReference>$Record.UserRole.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>EngagementUserRole</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Run FireCaseAssignmentRule.triggerCaseAssignmentRule() to route cases through assignment rules.</description>
+        <name>Fire_Case_Assignment_Rule</name>
+        <label>Fire Case Assignment Rule</label>
+        <locationX>143</locationX>
+        <locationY>648</locationY>
+        <actionName>FireCaseAssignmentRule</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>strMessage</name>
+            <value>
+                <stringValue>Case reassignment - advocate OOO</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>blnPostMessage</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>idUser</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>FireCaseAssignmentRule</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>User_Out_Of_Office_Check</name>
+        <label>User Out Of Office Check</label>
+        <locationX>473</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Out_Of_Office__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Role_Hierarchy</targetReference>
+            </connector>
+            <label>True</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>User_Role_Hierarchy</name>
+        <label>User Role Hierarchy</label>
+        <locationX>275</locationX>
+        <locationY>528</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Engagement_and_Task_Us_PH</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Check_Role_Hierarchy</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Fire_Case_Assignment_Rule</targetReference>
+            </connector>
+            <label>Engagement and Task Us PH</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>User Scheduled Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>User Scheduled Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <object>User</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <name>X72_Hours_After_Out_Of_Office</name>
+            <connector>
+                <targetReference>User_Out_Of_Office_Check</targetReference>
+            </connector>
+            <label>72 Hours After Out Of Office</label>
+            <offsetNumber>72</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>Last_OOO_Modified_Timestamp__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+</Flow>

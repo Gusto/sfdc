@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Org Notification 29</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/kA28Y0000005LMlSAM</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Notification__c</field>
+        <value xsi:type="xsd:string">100 or more leads created last year has been updated to MQL by Outreach or Marketo. Please check report.</value>
+    </values>
+    <values>
+        <field>Payops_Notification__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Point_Of_Contact__c</field>
+        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+    </values>
+    <values>
+        <field>Point_of_Contact_Name__c</field>
+        <value xsi:type="xsd:string">Praveen Sethu</value>
+    </values>
+    <values>
+        <field>Query_Return_Type__c</field>
+        <value xsi:type="xsd:string">Integer</value>
+    </values>
+    <values>
+        <field>Record_Threshold__c</field>
+        <value xsi:type="xsd:double">100.0</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/00O8Y000008mZJu</value>
+    </values>
+    <values>
+        <field>SOQL_Query__c</field>
+        <value xsi:type="xsd:string">select COUNT() from leadhistory where field = &apos;Status&apos; and Lead.Status = &apos;MQL&apos; AND CreatedBy.Name NOT IN (&apos;BizTech Integrations&apos;,&apos;Workato Integration&apos;,&apos;API Heroku&apos;,&apos;RingLead Integration&apos;) AND Lead.CreatedDate &lt; THIS_YEAR AND CreatedDate = TODAY AND Lead.Owner.Name != &apos;Penny at Gusto&apos;</value>
+    </values>
+</CustomMetadata>

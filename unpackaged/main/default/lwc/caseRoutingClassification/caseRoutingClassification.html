@@ -1,0 +1,54 @@
+<template>
+
+    <div class="slds-theme_default">
+
+        <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+        </template>
+
+
+        <!-- Display any Error messages if we are unable to load component -->
+        <template if:true={isMessageVisible}>
+            <div class="slds-box slds-theme_default">
+                <div class={messageClass} role="alert">
+                    <span class="slds-assistive-text">warning</span>
+                    <h2>{message}</h2>
+                </div>
+            </div>
+        </template>
+
+        <template if:false={isMessageVisible}>
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="5" padding="around-small">
+                    <div>
+
+                        <c-case-reason-group-auto-complete-cmp strcasereason={routingReasonClassification}
+                            blncasereasonfound={isCaseReasonFound} onclosed={handleClose}
+                            onselectcasereason={handleCaseReasonSelected} onfiltercasereason={handleFilterCaseReason}
+                            mapcasereason={map_caseReasonToGroupMap} strlabel="Routing Case Reason Classification">
+                        </c-case-reason-group-auto-complete-cmp>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="2" padding="around-small">
+                    <div>
+                        <lightning-input type="text" label="Class" value={caseReasonClass} disabled></lightning-input>
+                    </div>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="2" padding="around-small">
+                    <div>
+                        <lightning-input type="text" label="Type" value={caseReasonType} disabled></lightning-input>
+                    </div>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="2" padding="around-small">
+                    <div>
+                        <lightning-input type="text" label=" Record Type" value={caseReasonType} disabled>
+                        </lightning-input>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </template>
+    </div>
+</template>

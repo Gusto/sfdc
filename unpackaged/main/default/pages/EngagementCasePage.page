@@ -1,0 +1,2765 @@
+<apex:page standardController="Case" extensions="EngagementCaseViewExtension"  action="{!initEngagementCase}" docType="html-5.0" id="mainPage" showHeader="false" >
+    <apex:includeScript value="/support/console/44.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+    <script> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+    .message .messageText a {
+        margin: 0px;
+    }
+    </script>
+    
+    <script type="text/javascript">
+    var $j = jQuery.noConflict();
+    
+    $j( document ).ready(function() { 
+        window.timer = setTimeout(function(){
+            updateCaseStatus();
+        },2000);
+    });
+    
+    function RefreshPrimaryTab() 
+    {
+        sforce.console.getFocusedPrimaryTabId(showTabId);
+    }
+    
+    var showTabId = function showTabId(result) 
+    {
+        var tabId = result.id;
+        sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+    };
+    
+    var refreshSuccess = function refreshSuccess(result) 
+    {
+        //Report whether refreshing the primary tab was successful
+        if (result.success == true) 
+        {
+        } 
+        else 
+        {
+        }
+    };
+    
+    //================================================
+    function takeIt(){
+        acceptCase();
+        RefreshPrimaryTab();
+        return false;
+    }
+    
+    function route(){
+        routeCase();
+        RefreshPrimaryTab();
+        return false;
+    }
+    
+    function reopenTab(){
+        caseRecId = '{!theCase.id}';
+        if(caseRecId != null && caseRecId.length > 0){ 
+            sforce.console.getFocusedPrimaryTabId(getTabLink1);
+        }
+        else{
+            return false;
+        }
+    }
+    
+    var currentTabId;
+    var getTabLink1 = function getTabLink1(result) {
+        currentTabId = result.id;
+        sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLink1);
+    };
+    
+    var showTabLink1 = function showTabLink1(result) {
+        var urll = result.tabLink; 
+        if(urll != null && urll.length >0 && urll.indexOf("isplay") > -1){
+            sforce.console.openPrimaryTab(currentTabId, "/{!theCase.id}?isplay=1", true);              
+        }
+        else{
+            sforce.console.openPrimaryTab(currentTabId ,'/{!theCase.id}' ,true);  
+        }
+    };
+    
+    var reopenTabById = function reopenTabById(result) 
+    {
+        var tabId = result.id;
+        sforce.console.openPrimaryTab(tabId ,'/{!theCase.id}' ,true);
+    };
+    
+    function openAccount() {
+        //First find the ID of the primary tab to put the new subtab in
+        sforce.console.getEnclosingPrimaryTabId(openAccountSubtab);
+    }
+    
+    var openAccountSubtab = function openAccountSubtab(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId , '/{!theCase.AccountId}', false, 
+                                  'Account', null, openSuccess, 'salesforceAccountSubtab');
+    };
+    
+    function openCallback() {
+        //First find the ID of the primary tab to put the new subtab in
+        sforce.console.getEnclosingPrimaryTabId(openCallbackSubtab);
+    }
+    
+    var openCallbackSubtab = function openCallbackSubtab(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId , '/apex/SubmitCallback?caseId={!theCase.Id}', false, 
+                                  'Callback', null, openSuccess, 'salesforceCallbackSubtab');
+    };
+    
+    var openSuccess = function openSuccess(result) {
+        //Report whether we succeeded in opening the subtab
+        if(result.success==true){
+            sforce.console.focusSubtabById(result.id);
+        }
+    };
+    
+    function openContact() {
+        //First find the ID of the primary tab to put the new subtab in
+        sforce.console.getEnclosingPrimaryTabId(openContactSubtab);
+    }
+    
+    var openContactSubtab = function openContactSubtab(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId , '/{!theCase.ContactId}', false, 
+                                  'Contact', null, openSuccess, 'salesforceContactSubtab');
+    };
+    function openProductUpsell() {
+        //First find the ID of the primary tab to put the new subtab in
+        sforce.console.getEnclosingPrimaryTabId(openProductUpsellSubtab);
+    }
+    
+    var openProductUpsellSubtab = function openContactSubtab(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        //window.$Label = window.$Label || {};
+        var caseNo = '{!thecase.CaseNumber}';
+        var url = '{!JSENCODE($Label.Product_Upsell_URL)}';
+        var caseId = '{!thecase.Id}';
+        caseId = encodeURI(caseId)
+        url = url.replace('CASENO','{!thecase.CaseNumber}');
+        url = url.replace('CASEID1',caseId);
+        url = url.replace('CASEID2','%2F' + caseId);
+        console.log(url);
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId , url, false, 
+                                  'New Product Upsell', null, openSuccess, 'salesforceProductUpsellSubtab');
+    };
+    //=============================
+    function processExternalLinks(urll){
+        if(urll != null && urll != undefined && urll.length > 0){
+            if(urll.indexOf('apex') == -1){
+                window.open(urll);
+            }
+            if(urll.indexOf('apex') > -1){
+                openGivenPage(urll);
+            }
+        }
+        return false;  
+    }
+    //=====================open given page name in subtab================
+    var pageNameVar;
+    function openGivenPage(pageName) {
+        pageNameVar = pageName;
+        //First find the ID of the primary tab to put the new subtab in
+        sforce.console.getEnclosingPrimaryTabId(openPageInSubtab);
+    }
+    
+    var openPageInSubtab = function openPageInSubtab(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        if(pageNameVar != undefined && pageNameVar != null){
+            sforce.console.openSubtab(primaryTabId , pageNameVar+'?id={!theCase.id}', true, 
+                                      '{!theCase.CaseNumber}', null, openSuccess, 'salesforceSubtab');
+        }
+        
+    };
+    //=================open page as it is=========
+    function openGivenPage_v2(pageName) {
+        pageNameVar = pageName;
+        //First find the ID of the primary tab to put the new subtab in
+        sforce.console.getEnclosingPrimaryTabId(openPageInSubtab_v2);
+    }
+    
+    var openPageInSubtab_v2 = function openPageInSubtab_v2(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        if(pageNameVar != undefined && pageNameVar != null){
+            sforce.console.openSubtab(primaryTabId , pageNameVar, true, 
+                                      '{!theCase.CaseNumber}', null, openSuccess, 'salesforceSubtab');
+        }            
+    };
+    
+    //======================
+    
+    function openUnassignedCase(cseId){
+        var urll = '/'+cseId;
+        sforce.console.openPrimaryTab(null,urll,true);
+    }
+    
+    function createQuickText() {
+        sforce.console.getEnclosingPrimaryTabId(openQuickTextTab);
+    }
+    
+    function openQuickTextTab(result) {
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId, '{!$Label.ChatQuickText}', true, 'New Quick Text');
+    }
+    //=============Following code is placed to listen for the "Call Pickup/Connect" event ==============================  
+    var phonepickuplistener = function(result){ 
+        console.log('@@## listener Data> '+JSON.stringify(result));
+        assignCaseToRep1();
+    }; 
+    function trackConversationJS(){
+        openProductUpsell();
+        updateCount('TrackConversation');
+    }
+    function notApplicableJS(){
+        updateCount('NotApplicable');
+    }
+    
+    
+    sforce.console.addEventListener('inin.salesforce.constants.consoleevent.pc.INTERACTION_CONNECTED', phonepickuplistener);
+    //=====================================
+    
+    </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    
+    
+    <div class="gusto" style="margin-left: 5px;">
+        <apex:pageMessages id="pgMsg" escape="false"></apex:pageMessages>
+        <apex:outputPanel rendered="{!theCase.status!='Closed'}" id="mainPanel">
+            
+            <apex:form id="routeToForm">
+                
+                <apex:outputPanel id="reloadPage">
+                    <apex:outputPanel rendered="{! if(refreshPage,true,false)}">
+                        <script>
+                        parent.location.reload();                    
+                        </script>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                
+                
+                
+                <apex:actionstatus id="status_page">
+                    <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                            <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                                <img class="waitingImage" src="/img/loading.gif"  />
+                                <span class="waitingDescription">Loading...</span>
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionstatus>
+                <apex:actionFunction action="{!routeCase}" name="routeCase" rerender="routeToPannel,pgMsg" id="routeCase" oncomplete="reopenTab(); " status="status_page"></apex:actionFunction>
+                
+                <apex:actionFunction action="{!assignUserOnCallPickup}" name="assignCaseToRep1" rerender="pgMsg" id="assignCaseToRep1" oncomplete="location.reload(true);" status="status_page"/>
+                <apex:actionFunction name="updateCount" action="{!updateCount}" reRender="parentPanel"  >
+                    <apex:param name="operation" assignTo="{!operation}" value="" />
+                </apex:actionFunction>  
+                <apex:outputPanel >
+                    <div class="slds-button-group" role="group">                    
+                        <button class="slds-button slds-button_brand prepare-send-btn slds-button--neutral" style="min-width: 143px;"  
+                                onclick="processExternalLinks('https://app.gusto.com/panda/{!theCase.Panda_Company_URL__c}');return false;">View Company In Panda</button>
+                        <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-button_last prepare-send-dropdown">
+                            <button class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn slds-button--neutral" aria-haspopup="true" title="Show More" onclick="return false;" style="border-radius: 0 0.25rem 0.25rem 0;">                        
+                                <img src="{!URLFOR($Resource.sldsicons, '/icons/arrow.png')}"/>  
+                                <span class="slds-assistive-text">Show More</span>                     
+                            </button>
+                            <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions" style="min-width: 174px;">
+                                <ul class="slds-dropdown__list" role="menu">                          
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/{!theCase.Panda_Company_URL__c}');">
+                                            <span class="slds-truncate" title="View Company In Panda">View Company In Panda</span>
+                                        </a>
+                                    </li>
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/employees/{!theCase.Contact_Employee_Id__c}');">
+                                            <span class="slds-truncate" title="View Employee In Panda">View Employee In Panda</span>
+                                        </a>
+                                    </li>
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/users/{!theCase.Contact_User_Id__c}');">
+                                            <span class="slds-truncate" title="View User In Panda">View User In Panda</span>
+                                        </a>
+                                    </li>
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('/apex/CaseMergeListViewPage');">
+                                            <span class="slds-truncate" title="Merge Case">Merge Case</span>
+                                        </a>
+                                    </li>
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('/apex/CaseFeatureRequestPage');">
+                                            <span class="slds-truncate" title="Feature Request">Feature Request</span>
+                                        </a>
+                                    </li>
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="openGivenPage_v2('/500?rlid=RelatedChildCaseList&hierarchy=1&fromroot=1&id={!theCase.Id}');">
+                                            <span class="slds-truncate" title="View Case Hierarchy">View Case Hierarchy</span>
+                                        </a>
+                                    </li>                            
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </apex:outputPanel>
+                <apex:outputPanel id="routeToPannel">
+                    Route To: 
+                    <apex:selectList value="{!caseType}" multiselect="false" size="1" >
+                        <apex:selectOptions value="{!caseTypeOption}"> </apex:selectOptions>
+                    </apex:selectList>
+                    <apex:commandButton onClick="routeCase()" rerender="routeToPannel" value=">>" styleclass=""   />
+                </apex:outputPanel>            
+            </apex:form>
+            <apex:form id="acceptCaseFrom">
+                <apex:actionFunction name="acceptCase" action="{!acceptCase}" immediate="true" reRender="secondaryPanel" id="acceptCaseAction"/>
+            </apex:form>
+            
+            <apex:form id="mainForm">
+                <c:SkipCase caseId="{!theCase.id}" />
+                <c:CaseEscalation caseId="{!theCase.id}" />
+                <apex:actionPoller action="{!checkCaseTaskFromPoller}" reRender="reloadPage,pgMsg" id="actionFunction12" interval="5" rendered="{! if(theCase.OwnerId == phoneRoutingId,true,false)}"/>
+                <apex:actionFunction name="updateCaseStatus" action="{!checkCaseStatus}" reRender="statusChanged1,statusChanged2,statusChanged3,statusChanged4,statusChanged5" />
+                <apex:actionFunction name="saveCaseRec" action="{!saveCaseRecord}" reRender="routeToForm"/>
+                <apex:actionFunction name="saveCaseRecRefresh" action="{!saveCaseRecord}" oncomplete="location.reload();"/>
+                <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                    <apex:commandButton action="{!SavePayrollCareCase}" value="Save" styleclass="slds-button slds-button--neutral" />
+                    <apex:commandButton action="{!SavePayrollCareCase}"  value="Save & Next" styleclass="slds-button slds-button--neutral linkCss" onComplete="nextCase();return false" />
+                    <apex:outputPanel >
+                        <apex:actionRegion immediate="true" renderRegionOnly="true">
+                            <apex:commandButton action="{!acceptCase}" immediate="true" value="Take It" styleclass="slds-button slds-button--neutral" />
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                    <apex:commandButton styleclass="slds-button slds-button--neutral" value="Create Quick Text" onclick="createQuickText(); return false;" rendered="{!boolIsChat}"/>
+                    <input type="submit" value="Skip" class="slds-button slds-button--neutral linkCss" onclick="skipCase();return false"/>
+                    <input type="submit" value="Skip & Next" class="slds-button slds-button--neutral linkCss" onclick="skipAndNextCase();return false"/>
+                    <input type="submit" value="Escalate" class="slds-button slds-button--neutral" id="escalationbtn" onclick="escalateCase();return false"/>
+                    
+                    <apex:outputPanel rendered="{!(theCase.Origin =='Phone' || (theCase.Origin == 'Gusto' && theCase.Channel__c == 'Phone'))}">
+                        <input type="submit" value="Callback" class="slds-button slds-button--neutral" id="callbackbtn" onclick="openCallback();return false"/>
+                    </apex:outputPanel>
+                </div> 
+                <apex:outputPanel id="parentPanel">
+                    <apex:outputPanel id="customerExperiment" rendered="{!showUpsellRecomendation}">
+                        
+                        <font size="2" >
+                            <table class="table.spacing" bgcolor="#f4eca4" border="0" cellpadding="0" cellspacing="0">   
+                                <tr>
+                                    <td width="50%">
+                                        <label class="slds-form-element__label" for="status">Tier Recommendation: <mark >Complete</mark> </label>
+                                    </td>
+                                    <td nowrap="true" width="50%" class="slds-form-element__control">
+                                        <apex:commandLink onclick="trackConversationJS(); return false;" value="Track Conversation"  />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >
+                                        <apex:commandLink onclick="notApplicableJS(); return false;" value="Not Applicable"  />
+                                    </td>
+                                </tr>
+                            </table>
+                        </font>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:outputPanel id="secondaryPanel">
+                    <apex:outputPanel rendered="{!theCase.type!='Payroll Suspension' && theCase.type!='Otter Case' && theCase.type!='EOY Spot Check' && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                        <Table class="table.spacing">   
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Owner: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                        </apex:inputField>
+                                        <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Status: </label>
+                                </td>
+                                <td>
+                                    <apex:outputPanel id="statusChanged1">
+                                        <div class="slds-form-element__control">
+                                            <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                                <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                                <apex:selectOptions value="{!caseStatusOption}"/>
+                                            </apex:selectList>
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                        </div>
+                                    </apex:outputPanel>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Account: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Contact: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Escalated to: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Escalatedto__c}">
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                                    </td>
+                                    <td>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c==''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:inputField value="{!theCase.Direction__c}" > 
+                                                </apex:inputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:outputField value="{!theCase.Direction__c}" > 
+                                                </apex:outputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </td>                    
+                                </Tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">CX Experiment: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.CX_Experiment__c}" > 
+                                            </apex:outputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Related Incident: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Related_to_Incident__c}">
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Routing Case Reason*: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputText value="{!theCase.Routing_Case_Reason__c}" html-autocomplete="off" styleclass="routingcreason" list="{!caseReasons}"/> 
+                                        </div>
+                                    </td>                    
+                                </Tr> 
+                            </apex:outputPanel>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Class: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Class__c}" > 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Unresponsive_Customer__c}" /> 
+                                    </div>
+                                </td>                    
+                            </tr> 
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Priority: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputText value="{!theCase.Priority}" > 
+                                        </apex:outputText>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Follow Up Date: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Follow_Up_Date__c}" onchange="saveCaseRec();" /> 
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" onkeyup="refreshSubCaseReasons();"/>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputPanel id="subCaseReasons">
+                                            <apex:inputText value="{!theCase.Confirm_Sub_Case_Reason__c}" list="{!list_SubCaseReasons}" html-autocomplete="off" />
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>
+                            <apex:actionFunction name="refreshSubCaseReasons" action="{!setSubCaseReason}" rerender="subCaseReasons"/>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Other_Case_Reason_Description__c}"  > 
+                                        </apex:inputText>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Shared_With__c}" > 
+                                            </apex:inputField>{!theCase.Partner_Record_Id__c}
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!surveyOverride==true || !boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                        </Table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!theCase.type=='Otter Case'  && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                        <Table class="table.spacing">
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Owner: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                        </apex:inputField>
+                                        <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Status: </label>
+                                </td>
+                                <td>
+                                    <apex:outputPanel id="statusChanged2">
+                                        <div class="slds-form-element__control">
+                                            <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                                <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                                <apex:selectOptions value="{!caseStatusOption}"/>
+                                            </apex:selectList>
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                        </div>
+                                    </apex:outputPanel>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Account: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Contact: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                                <tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Customer Inquiry: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.IVR_Transcript__c}" style="bgcolor:green;">
+                                            </apex:outputField>
+                                        </div>
+                                    </td>  
+                                </tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Escalated to: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Escalatedto__c}"/>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Unresponsive_Customer__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                                    </td>
+                                    <td>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c==''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:inputField value="{!theCase.Direction__c}" > 
+                                                </apex:inputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:outputField value="{!theCase.Direction__c}" > 
+                                                </apex:outputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </td>                    
+                                </Tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">CX Experiment: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.CX_Experiment__c}" > 
+                                            </apex:outputField>
+                                        </div>
+                                    </td>                    
+                                </Tr> 
+                            </apex:outputPanel>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Otter Audit Type: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Otter_Audit_Type__c}" style="width:173px"> 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr> 
+                            
+                            
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" onkeyup="refreshSubCaseReasons2();"/> 
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputPanel id="subCaseReasons2">
+                                            <apex:inputText value="{!theCase.Confirm_Sub_Case_Reason__c}" list="{!list_SubCaseReasons}" html-autocomplete="off" />
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>
+                            <apex:actionFunction name="refreshSubCaseReasons2" action="{!setSubCaseReason}" rerender="subCaseReasons2"/>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Employee Ids: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Employee_Ids__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Tax Id: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Tax_Id__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Shared_With__c}" > 
+                                            </apex:inputField>{!theCase.Partner_Record_Id__c}
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!surveyOverride==true || !boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                        </Table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!theCase.type=='EOY Spot Check' && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                        <Table class="table.spacing">
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Owner: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                        </apex:inputField>
+                                        <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Status: </label>
+                                </td>
+                                <td>
+                                    <apex:outputPanel id="statusChanged3">
+                                        <div class="slds-form-element__control">
+                                            <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" >
+                                                <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/> 
+                                                <apex:selectOptions value="{!caseStatusOption}"/>
+                                            </apex:selectList>
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                        </div>
+                                    </apex:outputPanel>
+                                </td>  
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Account: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Contact: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                                <tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Customer Inquiry: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.IVR_Transcript__c}" style="bgcolor:green;">
+                                            </apex:outputField>
+                                        </div>
+                                    </td>  
+                                </tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Escalated to: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Escalatedto__c}">
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Unresponsive_Customer__c}" /> 
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                                    </td>
+                                    <td>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c==''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:inputField value="{!theCase.Direction__c}" > 
+                                                </apex:inputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:outputField value="{!theCase.Direction__c}" > 
+                                                </apex:outputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </td>                    
+                                </Tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">CX Experiment: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.CX_Experiment__c}" > 
+                                            </apex:outputField>
+                                        </div>
+                                    </td>                    
+                                </Tr> 
+                            </apex:outputPanel>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" onkeyup="refreshSubCaseReasons3();" />
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputPanel id="subCaseReasons3">
+                                            <apex:inputText value="{!theCase.Confirm_Sub_Case_Reason__c}" list="{!list_SubCaseReasons}" html-autocomplete="off" />
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>
+                            <apex:actionFunction name="refreshSubCaseReasons3" action="{!setSubCaseReason}" rerender="subCaseReasons3"/>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Shared_With__c}" > 
+                                            </apex:inputField>{!theCase.Partner_Record_Id__c}
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!surveyOverride==true || !boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                        </Table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!theCase.type=='Payroll Suspension' && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                        <table class="table.spacing">
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Owner: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                        </apex:inputField>
+                                        <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Status: </label>
+                                </td>
+                                <td>
+                                    <apex:outputPanel id="statusChanged6">
+                                        <div class="slds-form-element__control">
+                                            <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                                <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                                <apex:selectOptions value="{!caseStatusOption}"/>
+                                            </apex:selectList>
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                        </div>
+                                    </apex:outputPanel>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Account: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Contact: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                                <tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Customer Inquiry: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.IVR_Transcript__c}" style="bgcolor:green;">
+                                            </apex:outputField>
+                                        </div>
+                                    </td>  
+                                </tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Escalated to: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Escalatedto__c}" >
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Unresponsive_Customer__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Related Incident: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Related_to_Incident__c}">
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Routing Case Reason: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputText value="{!theCase.Routing_Case_Reason__c}"  list="{!caseReasons}" html-autocomplete="off"/>
+                                        </div>
+                                    </td>                    
+                                </tr> 
+                            </apex:outputPanel>
+                            
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" onkeyup="refreshSubCaseReasons4();"/> 
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputPanel id="subCaseReasons4">
+                                            <apex:inputText value="{!theCase.Confirm_Sub_Case_Reason__c}" list="{!list_SubCaseReasons}" html-autocomplete="off" />
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>
+                            <apex:actionFunction name="refreshSubCaseReasons4" action="{!setSubCaseReason}" rerender="subCaseReasons4"/>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Other_Case_Reason_Description__c}"  > 
+                                        </apex:inputText>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Reason_for_Leaving__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Reason_for_Leaving__c}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Confirmed_Reason_for_Leaving__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Confirmed_Reason_for_Leaving__c}"> 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >{!$objectType.Case.Fields.Suspension_Status__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Suspension_Status__c}"> 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >{!$objectType.Case.Fields.Google_Calendar_Event__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Google_Calendar_Event__c}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Reason_Notes__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Reason_Notes__c}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Suspension_Contact_Number__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Suspension_Contact_Number__c}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Suspension_Call_Scheduled_Date_Time__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Suspension_Call_Scheduled_Date_Time__c}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Next_Payroll_Provider__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Next_Payroll_Provider__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Feature_Service_Desired__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Feature_Service_Desired__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Notes__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Notes__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!(theCase.Origin=='Phone' || (theCase.Origin == 'Gusto' && theCase.Channel__c == 'Phone'))}">
+                        <Table class="table.spacing">
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Owner: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                        </apex:inputField>
+                                        <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Status: </label>
+                                </td>
+                                <td>
+                                    <apex:outputPanel id="statusChanged4">
+                                        <div class="slds-form-element__control">
+                                            <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                                <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                                <apex:selectOptions value="{!caseStatusOption}"/>
+                                            </apex:selectList>
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                        </div>
+                                    </apex:outputPanel>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Account: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Contact: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                                <tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Customer Inquiry: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.IVR_Transcript__c}" style="bgcolor:green;">
+                                            </apex:outputField>
+                                        </div>
+                                    </td>  
+                                </tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Escalated to: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Escalatedto__c}">
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Unresponsive_Customer__c}" /> 
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >{!$objectType.Case.Fields.Opt_Out_Updating_Phone__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Opt_Out_Updating_Phone__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                                    </td>
+                                    <td>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c==''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:inputField value="{!theCase.Direction__c}" > 
+                                                </apex:inputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:outputField value="{!theCase.Direction__c}" > 
+                                                </apex:outputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </td>                    
+                                </Tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">CX Experiment: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.CX_Experiment__c}" > 
+                                            </apex:outputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Related Incident: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Related_to_Incident__c}">
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" onkeyup="refreshSubCaseReasons5();" /> 
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputPanel id="subCaseReasons5">
+                                            <apex:inputText value="{!theCase.Confirm_Sub_Case_Reason__c}" list="{!list_SubCaseReasons}" html-autocomplete="off" />
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>
+                            <apex:actionFunction name="refreshSubCaseReasons5" action="{!setSubCaseReason}" rerender="subCaseReasons5"/>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Other_Case_Reason_Description__c}"  > 
+                                        </apex:inputText>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Audience: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Audience__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Follow Up Method: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Follow_Up_Method__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Follow Up Date: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Follow_Up_Date__c}" onchange="saveCaseRec();"/>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Shared_With__c}" > 
+                                            </apex:inputField>{!theCase.Partner_Record_Id__c}
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!surveyOverride==true || !boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                        </Table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!(theCase.Origin=='Chat' || (theCase.Origin == 'Gusto' && theCase.Channel__c == 'Chat'))}">
+                        <Table class="table.spacing">
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Owner: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                        </apex:inputField>
+                                        <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Status: </label>
+                                </td>
+                                <td>
+                                    <apex:outputPanel id="statusChanged5">
+                                        <div class="slds-form-element__control">
+                                            <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                                <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                                <apex:selectOptions value="{!caseStatusOption}"/>
+                                            </apex:selectList>
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                        </div>
+                                    </apex:outputPanel>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Account: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Contact: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                                <tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Customer Inquiry: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.IVR_Transcript__c}" style="bgcolor:green;">
+                                            </apex:outputField>
+                                        </div>
+                                    </td>  
+                                </tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="status">Escalated to: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Escalatedto__c}"/>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                                    </td>
+                                    <td>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c==''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:inputField value="{!theCase.Direction__c}" > 
+                                                </apex:inputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                            <div class="slds-form-element__control">
+                                                <apex:outputField value="{!theCase.Direction__c}" > 
+                                                </apex:outputField>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </td>                    
+                                </Tr>
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">CX Experiment: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:outputField value="{!theCase.CX_Experiment__c}" > 
+                                            </apex:outputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>                    
+                            </apex:outputPanel>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="relatedCase">{!$ObjectType.Case.Fields.Unresponsive_Abandoned_Chat__c.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Unresponsive_Abandoned_Chat__c}" />
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="status">Related Incident: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Related_to_Incident__c}">
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Routing Case Reason: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputText value="{!theCase.Routing_Case_Reason__c}"  list="{!caseReasons}" html-autocomplete="off"/>
+                                        </div>
+                                    </td>                    
+                                </Tr> 
+                            </apex:outputPanel>
+                            
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" onkeyup="refreshSubCaseReasons6();"/>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputPanel id="subCaseReasons6">
+                                            <apex:inputText value="{!theCase.Confirm_Sub_Case_Reason__c}" list="{!list_SubCaseReasons}" html-autocomplete="off" />
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>
+                            <apex:actionFunction name="refreshSubCaseReasons6" action="{!setSubCaseReason}" rerender="subCaseReasons6"/>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputText value="{!theCase.Other_Case_Reason_Description__c}"  > 
+                                        </apex:inputText>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Audience: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Audience__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                            <tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                        </apex:inputField>
+                                    </div>
+                                </td>                    
+                            </tr>
+                            <apex:outputPanel rendered="{!!boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Shared_With__c}" > 
+                                            </apex:inputField>{!theCase.Partner_Record_Id__c}
+                                        </div>
+                                    </td>                    
+                                </Tr>      
+                            </apex:outputPanel>                 
+                            <apex:outputPanel rendered="{!surveyOverride==true || !boolIsChat}">
+                                <Tr>
+                                    <td>
+                                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                                    </td>
+                                    <td>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                            </apex:inputField>
+                                        </div>
+                                    </td>                    
+                                </Tr>
+                            </apex:outputPanel>
+                        </Table>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <br/>
+            </apex:form>
+            <c:ContactUserInformation usrId="{!theCase.Contact.ZP_User_Id__c}" emlId="{!theCase.SuppliedEmail}" cseId="{!theCase.id}"/>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel rendered="{!theCase.status=='Closed'}" id="readonlyOutput">
+            <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                <apex:form >
+                    <apex:commandButton action="{!unmergeCase}" immediate="true" value="UnMerge" styleclass="slds-button slds-button--neutral" rendered="{!theCase.Closed_Reason__c=='Merged Duplicate'}"/>                    
+                </apex:form> 
+            </div> 
+            
+            <apex:outputPanel rendered="{!theCase.type!='Otter Case' && theCase.type!='EOY Spot Check' && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                <Table class="table.spacing">   
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.OwnerId}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Status: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Status}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Account: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Contact: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Escalated to: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Escalatedto__c}" />
+                                </div>
+                            </td>                    
+                        </Tr>
+                    </apex:outputPanel>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Unresponsive_Customer__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Related Incident: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Related_to_Incident__c}">
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Routing Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Routing_Case_Reason__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr> 
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Class: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Class__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr> 
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Priority: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Priority}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Sub_Case_Reason__c}" /> 
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Other_Case_Reason_Description__c}"  />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Shared_With__c}" > 
+                                </apex:outputField>
+                                
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                </Table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!theCase.type=='Otter Case'  && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                <Table class="table.spacing">
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.OwnerId}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Status: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Status}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Account: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Contact: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Escalated to: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Escalatedto__c}" />
+                                </div>
+                            </td>                    
+                        </Tr>
+                    </apex:outputPanel>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Unresponsive_Customer__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Otter Audit Type: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Otter_Audit_Type__c}" style="width:173px"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr> 
+                    
+                    
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Sub_Case_Reason__c}" /> 
+                            </div>
+                        </td>
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Employee Ids: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Employee_Ids__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Tax Id: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Tax_Id__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Shared_With__c}" > 
+                                </apex:outputField>                               
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                </Table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!theCase.type=='EOY Spot Check' && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                <Table class="table.spacing">
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.OwnerId}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Status: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Status}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Account: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Contact: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Escalated to: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Escalatedto__c}" />
+                                </div>
+                            </td>                    
+                        </Tr>
+                    </apex:outputPanel>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Unresponsive_Customer__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Sub_Case_Reason__c}" /> 
+                            </div>
+                        </td>
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Shared_With__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Skip_Survey__c}"  rendered="{!$Profile.Name!='Vendor CX'}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                </Table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!theCase.type=='Payroll Suspension' && theCase.Origin !='Phone' && theCase.Origin !='Chat'}">
+                <table class="table.spacing">
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.OwnerId}" />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Status: </label>
+                        </td>
+                        <td>
+                            <apex:outputPanel id="statusChanged6">
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Status}"/> 
+                                </div>
+                            </apex:outputPanel>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Account: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Contact: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>                                
+                            </div>
+                        </td>                    
+                    </tr>
+                    <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Escalated to: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Escalatedto__c}" />
+                                </div>
+                            </td>                    
+                        </Tr>
+                    </apex:outputPanel>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Unresponsive_Customer__c}" />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Related Incident: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Related_to_Incident__c}">
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Routing Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Routing_Case_Reason__c}"  />
+                            </div>
+                        </td>                    
+                    </tr> 
+                    
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Sub_Case_Reason__c}" /> 
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:OutputField value="{!theCase.Other_Case_Reason_Description__c}"  />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Reason_for_Leaving__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Reason_for_Leaving__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Confirmed_Reason_for_Leaving__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirmed_Reason_for_Leaving__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" >{!$objectType.Case.Fields.Suspension_Status__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Suspension_Status__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" >{!$objectType.Case.Fields.Google_Calendar_Event__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Google_Calendar_Event__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Reason_Notes__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Reason_Notes__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Suspension_Contact_Number__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Suspension_Contact_Number__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Suspension_Call_Scheduled_Date_Time__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Suspension_Call_Scheduled_Date_Time__c}"/>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Next_Payroll_Provider__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Next_Payroll_Provider__c}" />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Feature_Service_Desired__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Feature_Service_Desired__c}" />
+                            </div>
+                        </td>                    
+                    </tr>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!(theCase.Origin=='Phone' || (theCase.Origin == 'Gusto' && theCase.Channel__c == 'Phone'))}">
+                <Table class="table.spacing">
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.OwnerId}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Status: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Status}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Account: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Contact: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Escalated to: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Escalatedto__c}" />
+                                </div>
+                            </td>                    
+                        </Tr>
+                    </apex:outputPanel>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">{!$objectType.Case.Fields.Unresponsive_Customer__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Unresponsive_Customer__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" >{!$objectType.Case.Fields.Opt_Out_Updating_Phone__c.Label}: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Opt_Out_Updating_Phone__c}" />
+                            </div>
+                        </td>                    
+                    </tr>
+                    <apex:outputPanel rendered="{!!boolIsChat}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Direction__c}" > 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">CX Experiment: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.CX_Experiment__c}" > 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                    </apex:outputPanel>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Related Incident: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Related_to_Incident__c}">
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" > 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Confirm_Sub_Case_Reason__c}" /> 
+                            </div>
+                        </td>
+                    </tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:OutputField value="{!theCase.Other_Case_Reason_Description__c}"  />
+                            </div>
+                        </td>                    
+                    </tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Audience: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Audience__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Follow Up Method: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Follow_Up_Method__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Follow Up Date: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Follow_Up_Date__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Non English Preferred Language: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Non_English_Preferred_Language__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Shared_With__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+            </Table>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!(theCase.Origin=='Chat' || (theCase.Origin == 'Gusto' && theCase.Channel__c == 'Chat'))}">
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Owner: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.OwnerId}"> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Status: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Status}"> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Account: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Contact: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                        </div>
+                    </td>                    
+                </Tr>
+                <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Escalated to: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.Escalatedto__c}" />
+                            </div>
+                        </td>                    
+                    </Tr>
+                </apex:outputPanel>
+                <tr>
+                    <td>
+                        <label class="slds-form-element__label" for="relatedCase">{!$ObjectType.Case.Fields.Unresponsive_Abandoned_Chat__c.Label}: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Unresponsive_Abandoned_Chat__c}" />
+                        </div>
+                    </td>                    
+                </tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Related Incident: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Related_to_Incident__c}">
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Routing Case Reason: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Routing_Case_Reason__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Confirm Sub Case Reason: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Confirm_Sub_Case_Reason__c}" /> 
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="slds-form-element__label" >Other Case Reason Description: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:OutputField value="{!theCase.Other_Case_Reason_Description__c}"  /> 
+                        </div>
+                    </td>                    
+                </tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Audience: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Audience__c}" > 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="relatedCase">Shared With: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Shared_With__c}" > 
+                            </apex:outputField>
+                        </div>
+                        
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Skip Survey: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Skip_Survey__c}" rendered="{!$Profile.Name!='Vendor CX'}"> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+            </Table>
+        </apex:outputPanel>
+        <br/>
+    </apex:outputPanel>
+</div>
+
+<script>    
+</script>
+</apex:page>

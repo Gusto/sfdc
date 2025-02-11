@@ -1,0 +1,34 @@
+<apex:page controller="RecoveryCaseClassSettingUpdateController">
+	<apex:form >
+    	<apex:pageBlock title="Recovery Case Class Assignment Setting Update">
+            <apex:pageMessages />
+            <apex:pageBlockTable value="{!lst_wrapper}" var="settRec">
+            	<apex:column headerValue="Order">
+            		<apex:outputText value="{!settRec.name}"/>
+            	</apex:column>
+            	<apex:column headerValue="Error Code">
+            		<apex:inputText value="{!settRec.errorCode}"/>
+            	</apex:column>
+            	<apex:column headerValue="Recovery Amount Lower Limit">
+            		<apex:inputText value="{!settRec.amtLowerLimit}"/>
+            	</apex:column>
+            	<apex:column headerValue="Recovery Amount Upper Limit">
+            		<apex:inputText value="{!settRec.amtUpperLimit}"/>
+            	</apex:column>
+            	<apex:column headerValue="Eligible Class">
+            		<apex:inputText value="{!settRec.eClass}"/>
+				</apex:column>
+				<apex:column headerValue="Expedite Reason">
+                    <apex:inputText value="{!settRec.eReason}"/>
+                </apex:column>
+                <apex:column headerValue="Vendor CX">
+                    <apex:inputCheckbox value="{!settRec.isTaskUs}"/>
+                </apex:column>
+            </apex:pageBlockTable> 
+            <apex:pageBlockButtons >
+            	<apex:commandButton action="{!closeCurrentPage}" value="Close"/>
+                <apex:commandButton action="{!saveCustomSetting}" value="Update"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

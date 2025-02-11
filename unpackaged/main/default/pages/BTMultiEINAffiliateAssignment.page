@@ -1,0 +1,113 @@
+<apex:page standardController="Benefit_Order__c" extensions="BTMultiEINAffiliateAssignmentController">
+    <apex:slds />
+    <c:BTCustomCSS />
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    search_Accounts();
+                }
+            });
+        });
+    </script>
+    <apex:form id="mainform">
+        <div class="slds-scope">
+            <c:GustoActionStatus /> 
+            <apex:sectionHeader title="Affiliate Assignment" subtitle="Multi-EIN : {!objBenefitOrder.Account__r.Name}"/>
+                
+            <apex:pageBlock id="pageblock">
+                <apex:pageMessages id="messages"/>
+  
+                <apex:pageBlockSection rendered="{!if(list_AccWrapper.size==0,false,true)}" title="Multi EEIN" columns="1" collapsible="false">
+                    <apex:pageblockSectionItem >
+                        <apex:outputPanel id="accountsSearch" >
+                            <table>
+                                <tr>
+                                    <td> <apex:outputLabel for="searchAcc" value="Affiliate Name"/> </td>
+                                    <td><apex:inputText id="searchAcc" value="{!strAccName}"/></td>
+                                    <td><apex:outputLabel for="searchZP" value="ZP Company Id"/></td>
+                                    <td><apex:inputText id="searchZP" value="{!strZPCompanyId}"/></td>
+                                    <td>
+                                        <apex:commandButton value="Search" status="actStatusId" action="{!searchAccounts}" rerender="accountsSection,sendOrderPanel"/>
+                                        <apex:actionFunction action="{!searchAccounts}" status="actStatusId" rerender="accountsSection,sendOrderPanel" name="search_Accounts"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageBlockSection columns="2">                           
+                        <apex:pageblockSectionItem >
+                            <apex:outputPanel id="accountsSection" >
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                    <thead>
+                                        <tr class="slds-text-title slds-line-height_reset">
+                                            <th>Select</th>
+                                            <th>Name</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!list_AccWrapper}" var="aWrap" id="accTable">
+                                            <tr class="slds-text-title slds-line-height_reset">
+                                                <td>
+                                                    <apex:inputCheckbox value="{!aWrap.blnIsSelected}" disabled="{!if(aWrap.objAccount.ParentId!=null,true,false)}">
+                                                        <apex:actionSupport event="onchange" action="{!selectCompany}" status="actStatusId" rerender="selectedAccountSection,sendOrderPanel">
+                                                            <apex:param name="companyIndex" value="{!aWrap.intIndex}" assignTo="{!intSelectedCompanyIndx}"/>
+                                                        </apex:actionSupport>
+                                                    </apex:inputCheckbox>
+                                                </td>
+                                                <td>
+                                                    <apex:outputField value="{!aWrap.objAccount.name}"/>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </apex:repeat>
+                                        <tr>
+                                            <td><apex:commandButton value="First" reRender="accountsSection,selectedAccountSection" action="{!first}" status="actStatusId" disabled="{! !setCon.hasPrevious}" styleclass="slds-button slds-button_neutral"/></td>
+                                            <td><apex:commandButton value="Previous" rerender="accountsSection,selectedAccountSection" action="{!previous}" status="actStatusId" disabled="{!!setCon.hasPrevious}" styleclass="slds-button slds-button_neutral"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;</td>
+                                            <td><apex:commandButton value="Next" rerender="accountsSection,selectedAccountSection" action="{!next}" status="actStatusId" disabled="{!!setCon.hasNext}" styleclass="slds-button slds-button_neutral"/></td>
+                                            <td><apex:commandButton value="Last" rerender="accountsSection,selectedAccountSection" action="{!last}" status="actStatusId" disabled="{!!setCon.hasNext}" styleclass="slds-button slds-button_neutral"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </apex:outputPanel>
+                        </apex:pageblockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputPanel id="selectedAccountSection">
+                                <h2><strong>Selected Affilites</strong></h2>
+                                <table title="Selected Companies" class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                    <tbody>
+                                        <apex:repeat value="{!map_SelectedAccounts}" var="key" >
+                                            <tr class="slds-text-title slds-line-height_reset">
+                                                <td>
+                                                    <apex:commandLink value="X" status="actStatusId" action="{!removeAccount}" rerender="selectedAccountSection,accountsSection,sendOrderPanel" >
+                                                        <apex:param name="idAcc" value="{!key}" assignTo="{!idAcccountToBeRemoved}"></apex:param>
+                                                    </apex:commandLink>
+                                                </td>
+                                                <td>  
+                                                    <apex:outputField value="{!map_SelectedAccounts[key].objAccount.name}"/>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                </apex:pageBlockSection>
+				
+				<apex:pageBlockButtons >                
+					<apex:commandButton action="{!saveChildAccount}" rendered="{!if(list_AccWrapper.size==0,false,true)}"  value="Save" status="actStatusId" reRender="mainform"/>
+                    <apex:commandButton action="{!cancelBO}" value="Cancel" status="actStatusId" reRender="mainform"/>
+				</apex:pageBlockButtons>  
+            </apex:pageBlock>
+        </div>
+    </apex:form>       
+</apex:page>

@@ -1,0 +1,140 @@
+<apex:page standardController="Case" extensions="CaseFeatureRequestExtension">
+	<apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+	<apex:includeScript value="/support/console/42.0/integration.js"/>
+	<apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+	<script type="text/javascript">
+		var j$ = jQuery.noConflict();
+        function setTabTitle() {
+	    	//Set the current tab's title
+	        sforce.console.setTabTitle('Request Feature');
+	    }
+		var pageLoad = window.onload;
+	    window.onload = function() {
+	        setTabTitle();
+	    }
+    </script>
+	<div class="gusto" >
+	    <apex:actionstatus id="status">
+			<apex:facet name="start">
+				<div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+	                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+	                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+	                    <span class="waitingDescription">Loading...</span>
+	            	</div>
+	            </div>
+	        </apex:facet>
+	    </apex:actionstatus>
+	    <apex:form >
+	    
+	    	<apex:outputPanel id="submitFeatureBlock" title="Request Feature">
+	    		<div class="slds-section slds-is-open">
+				  <h3 class="slds-section__title slds-theme--shade">
+				    <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Request Feature</span>
+				  </h3>&nbsp;&nbsp;  
+		    		<apex:pageMessages />&nbsp;&nbsp;
+		    		<div class="slds-form slds-form_stacked">  
+			    		<div class="slds-form-element">
+							<label class="slds-form-element__label" for="text-input-id-1">Feature</label>
+						  	<div class="slds-form-element__control">
+							    <div class="">
+							      	<apex:selectList size="1" value="{!selectedFeature}">
+							      		<apex:selectOptions value="{!featureList}"/>
+							    	</apex:selectList>
+							    </div>
+							</div>
+						</div>
+						<div class="slds-form-element">
+							<label class="slds-form-element__label" for="textarea-id-01">Comments</label>
+						  	<div class="slds-form-element__control">
+						    	<apex:inputTextarea value="{!selectedFeatureComment}" cols="60" rows="4"/>
+						  	</div>
+						</div><br/>
+						<apex:commandButton styleclass="slds-button_neutral" style="padding: 2px 3px !important;" Id="btnSearch" action="{!submitFeature}" rerender="caseFeatureListBlock,submitFeatureBlock" status="status" title="Submit" value="Submit"></apex:commandButton>
+	    			</div>
+					<!--<apex:pageblockSection id="submitFeatureBlockSection" >
+//<apex:outputLabel > Feature : </apex:outputLabel>
+/<apex:selectList size="1" value="{!selectedFeature}">
+//<apex:selectOptions value="{!featureList}"/>
+//</apex:selectList> 
+//<apex:outputLabel > Comments : </apex:outputLabel>
+//<apex:inputTextarea value="{!selectedFeatureComment}" cols="60" rows="4"/>
+//<apex:outputLabel ></apex:outputLabel>
+/<apex:commandButton styleclass="slds-button_neutral" style="padding: 2px 3px !important;" Id="btnSearch" action="{!submitFeature}" rerender="caseFeatureListBlock,submitFeatureBlock" status="status" title="Submit" value="Submit"></apex:commandButton>
+//</apex:pageblockSection> -->
+	        	</div>
+	    	</apex:outputPanel>&nbsp;  
+	        <apex:outputPanel id="caseFeatureListBlock">
+	        <apex:outputPanel rendered="{!IF(caseFeatureList != null && caseFeatureList.size > 0, true, false)}">	        
+				<table class="slds-table slds-table--bordered slds-table_cell-buffer">
+					<thead>
+				    	<tr class="slds-text-title">
+				        	<th scope="col">
+				        		<div class="slds-truncate" title="Feature">Feature</div>
+				      		</th>
+				      		<th scope="col">
+				        		<div class="slds-truncate" title="Comments">Comments</div>
+				      		</th>
+				      		<th scope="col">
+				        		<div class="slds-truncate" title="Created By">Created By</div>
+				      		</th>
+				      		<th scope="col">
+				        		<div class="slds-truncate" title="Created Date">Created Date</div>
+				      		</th>
+				    	</tr>
+				  	</thead>
+				  	<tbody>
+					  	<apex:repeat var="f" value="{!caseFeatureList}">
+							<tr>
+						    	<th scope="row" data-label="Feature">
+						        	<div class="slds-truncate" title="Feature">{!f.Feature__c}</div>
+						      	</th>
+						      	<td data-label="Account Name">
+						        	<div class="slds-truncate" title="Comments">{!f.Comments__c}</div>
+						      	</td>
+						      	<td data-label="Created By">
+						        	<div class="slds-truncate" title="Created By">{!f.CreatedBy.name}</div>
+						      	</td>
+						      	<td data-label="Created Date">
+						        	<div class="slds-truncate" title="Created Date">{!f.Createddate}</div>
+						      	</td>
+						    </tr>
+	                    </apex:repeat> 
+				  	</tbody>
+				  	</table>
+                <!--
+//<apex:pageBlockTable value="{!caseFeatureList}" var="feature" rendered="{!IF(caseFeatureList != null && caseFeatureList.size > 0, true, false)}">
+//<apex:column value="{!feature.Feature__c}"/>
+//<apex:column value="{!feature.Comments__c}"/>
+//<apex:column value="{!feature.CreatedBy.name}"/>
+//<apex:column value="{!feature.Createddate}"/>
+//</apex:pageBlockTable> 
+-->
+		            <table style="width: 100%">
+						<tr>
+							<td>
+								<apex:outputText value=" Page {!IF(CEILING(setcon.ResultSize/setcon.PageSize)==0,0,setcon.PageNumber)} of {!CEILING(setcon.ResultSize/setcon.PageSize)}"/>
+							</td>
+							<td style="text-align: center !important;">
+								<apex:commandLink action="{!setcon.Previous}" value="« Previous" rendered="{!setcon.HasPrevious}"/>
+								<apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(setcon.HasPrevious)}"/>&nbsp;&nbsp;  
+								<apex:commandLink action="{!setcon.Next}" value="Next »" rendered="{!setcon.HasNext}"/>
+								<apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(setcon.HasNext)}"/>
+							</td>
+							<td style="text-align: right !important;">
+								<apex:selectList value="{!setcon.PageSize}" size="1">
+									<apex:selectOption itemValue="20" itemLabel="20"/>
+									<apex:selectOption itemValue="50" itemLabel="50"/>
+									<apex:selectOption itemValue="100" itemLabel="100"/>
+									<apex:actionSupport event="onchange" reRender="caseFeatureListBlock" status="status"/>
+								</apex:selectList>
+							</td>
+						</tr>
+					</table>
+				</apex:outputPanel>	
+				<apex:outputPanel rendered="{!IF(caseFeatureList.size == 0, true,false)}">
+		        	No Feature Requested for this case.
+	        	</apex:outputPanel>
+	        </apex:outputPanel>
+	    </apex:form>
+	</div>		
+</apex:page>

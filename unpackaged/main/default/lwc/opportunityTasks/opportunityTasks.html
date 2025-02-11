@@ -1,0 +1,30 @@
+<template>
+	<div class="slds-is-relative">
+		<lightning-card icon-name="standard:disclosure_and_compliance">
+			<!--Title-->
+			<div slot="title">
+				<b class="slds-text-heading_medium">Opportunity Activities</b>
+			</div>
+
+			<!--Button actions-->
+			<div slot="actions">
+				<lightning-button-group>
+					<lightning-button label="Refresh" variant="base" onclick={handleRefresh} class="dot-between-button"></lightning-button>
+					<lightning-button label="Expand All" variant="base" onclick={handleExpandAll} class="dot-between-button"></lightning-button>
+					<lightning-button label="Collapse All" variant="base" onclick={handleCollapseAll} class="dot-between-button"></lightning-button>
+				</lightning-button-group>
+			</div>
+
+			<!--Tasks-->
+			<div>
+				<ul class="slds-timeline">
+					<template for:each={listTasks} for:item="objTask">
+						<li key={objTask.Id}>
+							<c-opportunity-task-detail obj-task={objTask} map-task-record-type-to-icon={mapTaskRecordTypeToIcon}></c-opportunity-task-detail>
+						</li>
+					</template>
+				</ul>
+			</div>
+		</lightning-card>
+	</div>
+</template>

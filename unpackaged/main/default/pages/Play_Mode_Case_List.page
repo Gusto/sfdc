@@ -1,0 +1,163 @@
+<apex:page Controller="PlayModeCaseListController"> 
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <script>
+        function openCaseTabs(caseIds)
+        {
+            if(caseIds =='' || caseIds.length == 0){
+                 return;
+            }
+            else
+            {
+                var caseIdArr = caseIds.split(',');
+                for(var i = 0; i< caseIdArr.length; i++ )
+                {
+                    sforce.console.openPrimaryTab(null,'/'+caseIdArr[i] + "?isplay=1",true);
+                }
+               refreshPage(); 
+            }
+            sforce.console.setCustomConsoleComponentVisible(false);
+        }
+        
+        var getEnclosingPrimaryTabId = function getEnclosingPrimaryTabId() {
+            sforce.console.getFocusedPrimaryTabId(getTabLink);
+        };
+
+        var getTabLink = function getTabLink(result) {
+            sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLink);
+        };
+
+        var showTabLink = function showTabLink(result) {
+            var urll = result.tabLink; 
+            if(urll == null || !(urll.length >0) || (urll.indexOf("isplay") == -1)){
+                jq(".linkCss").hide();           
+            }
+            else{
+                jq(".linkCss").show();  
+            }
+        };
+    
+        function startPlay(id, qid){
+            caseRecordId= id;
+            qIdd = qid;
+            
+            //alert(id);
+            //First find the ID of the primary tab to put the new subtab in
+
+            //alert('URL----->'+'{!$CurrentPage.URL}');
+            if(id==''){
+                alert('There are no cases to play');   
+            } else {
+             sforce.console.setCustomConsoleComponentVisible(false);
+                
+             if (sforce.console.isInConsole())
+                //sforce.console.getEnclosingTabId(openSubtab);
+                getEnclosingPrimaryTabId();
+             else
+              window.top.location.href = '/' + id; 
+            }
+              
+        }        
+        
+        var openSubtab = function openSubtab(result){
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            
+            sforce.console.openPrimaryTab(null , '/'+caseRecordId+'?isplay=1', true);
+        };
+        
+        function nextCaseInPlay(id, qid){
+            cIdd= id;
+            qIdd2 = qid;
+            //First find the ID of the primary tab to put the new subtab in
+
+            //alert('URL----->'+'{!$CurrentPage.URL}');
+
+             if (sforce.console.isInConsole())
+                sforce.console.getFocusedPrimaryTabId(nextCase);
+             else
+              window.top.location.href = '/' + id; 
+        }
+        
+        var nextCase = function nextCase(result){
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId2 = result.id;
+            
+            sforce.console.openPrimaryTab(primaryTabId2 , '/apex/Play_mode_case_list?cid='+cIdd+'&qid='+qIdd2 + '?isplay=1' , true);
+        };
+        
+        function openRec(caseid){        
+            sforce.console.openPrimaryTab(null, "/"+caseid + '?isplay=1', true);
+        }
+        
+        
+    
+    
+    </script>
+    <style>
+         .container{
+             overflow:auto;
+             height:300px;
+         }
+         
+         .btn-custom{
+            background-repeat: no-repeat !important;
+            background-position: 4px -257px !important;
+            height: 27px;
+            width: 29px;
+            background-image: url('/img/support/servicedesk/serviceDeskListReskin-sprite.png') !important;
+         }
+    </style>
+
+    <div class="gusto">
+    <apex:form >        
+        <apex:actionFunction name="getSelectedQueueRecords" action="{!getQueueRecords}"  status="status" rerender="caselist"/> 
+        <!-- <apex:actionPoller action="{!getQueueRecords}"  interval="15" status="status" rerender="caselist"/> -->
+        
+        
+        <apex:pageblock id="caselist">
+            
+            <apex:panelGrid columns="4" id="theGrid" cellspacing="3">
+                <apex:selectList value="{!selectedCaseQueueId}" size="1" onChange="getSelectedQueueRecords();"  rendered="{! if(isUserFieldsNull,false,true)}">
+                    <apex:selectOptions value="{!caseQueueList}"/>
+                </apex:selectList>
+                <apex:selectList id="bulkSize_picklist" label="Number to Serve Up" value="{!strPlaySize}" size="1">
+                    <apex:selectOption itemValue="0" itemLabel="Number to Serve Up" />
+                    <apex:selectOption itemValue="1" itemLabel="1" />
+                    <apex:selectOption itemValue="5" itemLabel="5" />
+                    <apex:selectOption itemValue="10" itemLabel="10" />
+                </apex:selectList>
+                <apex:commandButton value="Case Play" action="{!launchCasePlay}" disabled="{! if(totalRecordsQueried>0,false,true)}"
+                   oncomplete="openCaseTabs('{!strCaseIds}')"  status="status" rendered="{! if(isUserFieldsNull,false,true)}"/>
+                <input type="button" class="btn btn-custom" title="Refresh" onclick="getSelectedQueueRecords();return false"/>
+            </apex:panelGrid>
+            
+            <apex:outputPanel layout="block" styleClass="container" id="tableData" >    
+                <apex:pageblockTable id="recTable" value="{!cases}" var="caseRec" rendered="{! if(cases.size>0,false,false)}" style="padding-bottm:20px;" >
+                    <apex:column value="{!caseRec.CaseNumber}" onclick="openRec('{!caseRec.id}');return false" style="cursor: pointer;text-decoration: underline;"/>
+                    <apex:repeat var="f" value="{!$ObjectType.Case.FieldSets.Case_Play_List_View_Fields}">
+                        <apex:column headerValue="{!f.label}" value="{!caseRec[f]}"/>
+                    </apex:repeat>
+                </apex:pageblockTable>
+            </apex:outputPanel>
+            
+            <br/>
+            <apex:outputText value="No Records Found." rendered="{! if(totalRecordsQueried>0,false,true)}" style="font-weight:800;" /> 
+            <br/>
+        </apex:pageblock>    
+        <apex:outputpanel >
+            <apex:actionstatus id="status">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                           height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span> 
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+        </apex:outputpanel>  
+    </apex:form>
+    </div>
+</apex:page>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>QA_Sheet</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>QA Sheet</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>var strRecordTypeName = &apos;{!Opportunity.Opportunity_Record_Type_Name__c}&apos;;
+if (strRecordTypeName == &apos;Benefits New Plan&apos;) {
+	strRecordTypeName = &apos;new_plans_applications&apos;;
+} else if (strRecordTypeName == &apos;Benefits Change&apos;) {
+	strRecordTypeName = &apos;benefit_change_applications&apos;;
+} else if (strRecordTypeName == &apos;Benefits Renewal&apos;) {
+	strRecordTypeName = &apos;renewals&apos;;
+}
+
+var objURL = &apos;https://hippo.gusto.com/companies/&apos; + &apos;{!Account.ZP_Company_ID__c}/&apos; + strRecordTypeName + &apos;/{!Opportunity.Application_Id__c}/&apos; + &apos;qa_sheet&apos;;
+
+window.open(objURL);</url>
+</WebLink>

@@ -1,0 +1,17 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+    <div class="slds-page-header test-header slds-border_bottom">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <c:caseSubjectHeader recordId="{!v.recordId}"></c:caseSubjectHeader>
+            </div>
+            
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                        <c:taxResCaseButtonscmp recordId="{!v.recordId}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</aura:component>

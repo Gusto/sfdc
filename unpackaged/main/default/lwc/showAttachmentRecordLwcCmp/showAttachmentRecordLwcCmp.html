@@ -1,0 +1,78 @@
+<template>
+    <div class="slds-theme_default">        
+        <!-- <div style="border-radius: var(--lwc-borderRadiusMedium,0.25rem);
+                    border: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218))">             -->
+        <div class="slds-box">
+            <div class="slds-page-header slds-page-header_record-home" style="background-color: rgb(221, 219, 218);">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning-icon size="medium" icon-name="doctype:image" alternative-text="Files" title="Files"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span>Attachment</span>
+                                    <span class="slds-page-header__title slds-truncate" title={strAttachName}>{strAttachName}</span>
+                                </h1>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>               
+            </div>
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-details">
+                    <ul class="slds-page-header__detail-row">
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Size">Size</div>
+                            <div class="slds-truncate" title="Size">{strAttachsize}</div>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="File Extension">File Extension</div>
+                            <div class="slds-truncate" title="Multiple Values">{strAttachtype}</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+                    
+        <div class="slds-box slds-size_8-of-12" style="padding-top: 10px;">
+            <lightning-tabset active-tab-value="one">
+                <lightning-tab label="Preview" value="one">
+                    <div class="slds-col">
+                        <lightning-layout>
+                            <lightning-layout-item flexibility="auto">
+                                <div class="headerfixed" style="min-height: 300px;">
+                                    <iframe src={attachurl}  style="max-height: 300px;max-width:100%;border: 0;"></iframe>                                    
+                                </div>
+                            </lightning-layout-item>
+                        </lightning-layout>                            
+                    </div>
+                </lightning-tab>
+                <lightning-tab label="Details" value="two">                
+                    <div class="slds-box slds-col">
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <label class="slds-form-element__label" for="form-element-01">Name</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static">{strAttachName}</div>
+                                <!-- <input type="text" id="form-element-01" class="slds-input" value={attachName}/> -->
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                            <label class="slds-form-element__label" for="form-element-02">Description</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element__static">{strAttachDesc}</div>
+                                <!-- <input type="text" id="form-element-02" class="slds-input" value={attachDesc}/> -->
+                            </div>
+                        </div>
+                    </div>           
+                </lightning-tab>
+            </lightning-tabset>    
+        </div>                    
+        <!-- </div> -->
+    </div>
+</template>

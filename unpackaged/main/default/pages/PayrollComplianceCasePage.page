@@ -1,0 +1,389 @@
+<apex:page standardController="Case" extensions="EngagementCaseViewExtension" action="{!initPayrollComplianceCase}" docType="html-5.0">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+    </style>
+    <script type="text/javascript">
+    
+	   
+	   function RefreshPrimaryTab() 
+	   {
+	       sforce.console.getFocusedPrimaryTabId(showTabId);
+	   }
+	   
+	   var showTabId = function showTabId(result) 
+	   {
+	       var tabId = result.id;
+	       //alert('Primary Tab IDs: primaryTabId ' + tabId );
+	       sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+	   };
+	   
+	   var refreshSuccess = function refreshSuccess(result) 
+	   {
+	       //Report whether refreshing the primary tab was successful
+	       if (result.success == true) 
+	       {
+	           //alert('Email Sent');
+	       } 
+	       else 
+	       {
+	           //alert('Cannot refresh the page');
+	       }
+	   };
+    
+    //================================================
+    
+    </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:outputPanel rendered="{!theCase.status!='Closed'}">
+            
+            <apex:form >
+            	<apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                    Route To: 
+                    <apex:selectList value="{!caseType}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!caseTypeOption}"> </apex:selectOptions>
+                    </apex:selectList>
+                    <apex:commandButton action="{!routeCase}" value=">>" styleclass="" />
+                </apex:outputPanel>
+            </apex:form>
+            <apex:form >
+                <c:SkipCase caseId="{!theCase.id}" />
+                <c:CaseEscalation caseId="{!theCase.id}" />
+                <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                    <apex:commandButton action="{!SaveTaxOpsCase}" value="Save" styleclass="slds-button slds-button--neutral" />
+                    <!--<apex:commandButton action="{!SaveTaxOpsCase}"  value="Save & Next" styleclass="slds-button slds-button--neutral linkCss" onComplete="nextCase();return false" />-->
+                    <apex:commandButton action="{!acceptCase}" immediate="true" value="Take It" styleclass="slds-button slds-button--neutral" rendered="{!showAssignToMe}"/>
+                    <!--
+					<input type="submit" value="Skip" class="slds-button slds-button--neutral" onclick="skipCase();return false"/>
+                    <input type="submit" value="Escalate" class="slds-button slds-button--neutral" id="escalationbtn" onclick="escalateCase();return false"/>
+					-->
+                </div> 
+                
+                <apex:outputPanel >
+                    <Table class="table.spacing">    
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Subject: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Subject}"> 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Owner: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.OwnerId}"> 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Status}"> 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Account: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.AccountId}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Contact: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.ContactId}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Global Issue?: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Global_Issue__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr> 
+                         
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Priority: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Priority}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Agency: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Agency_Information__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Affect Filing/Payment?: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Affect_Filing_Payment__c }" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Anticipated Effective Date: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Anticipated_Effective_Date__c  }" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Blocker?: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Blocker__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">JIRA ID: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.JIRA_ID__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        
+                    </Table>
+                </apex:outputPanel>
+                
+                <br/>
+                <!-- <A HREF="#" onClick="nextCase();return false" class="linkCss">Next Ticket</A>
+<input id="caseId" type="hidden"/>  --> 
+            </apex:form>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel rendered="{!theCase.status=='Closed'}">
+
+            <apex:outputPanel >
+                    <Table class="table.spacing">    
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Subject: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Subject}"> 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Owner: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.OwnerId}"> 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Status}"> 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Account: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.AccountId}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Contact: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.ContactId}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Global Issue?: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Global_Issue__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr> 
+                         
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Priority: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Priority}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Agency: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Agency_Information__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Affect Filing/Payment?: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Affect_Filing_Payment__c }" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Anticipated Effective Date: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Anticipated_Effective_Date__c  }" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Blocker?: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Blocker__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">JIRA ID: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.JIRA_ID__c}" > 
+                                        <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </Tr>
+ 
+                        
+                        
+                    </Table>
+                </apex:outputPanel>
+            	
+            
+            <br/>
+            <label class="slds-form-element__label" for="description">Description: </label><br/>
+        {!theCase.Description}            
+       
+        </apex:outputPanel>
+    </div>
+    <script>
+    if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+        RefreshPrimaryTab();
+        
+    }
+    
+    </script>
+</apex:page>

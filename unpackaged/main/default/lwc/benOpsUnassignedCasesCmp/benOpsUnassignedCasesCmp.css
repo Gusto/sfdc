@@ -1,0 +1,24 @@
+.testfont{
+    color:black;
+    text-decoration: underline;
+}
+
+h3{
+    position: relative;
+}
+
+.overflow-tip {
+    /* show hidden part outside of parent */
+    overflow-x: visible;
+    /* and with inner span */
+    span {
+        /* allow to overlap siblings */
+        position: relative;
+        /* make readable design */
+        background-color: PaleGoldenRod;
+        border: 1px solid gray;
+        padding: 3px;
+        /* compensate padding and border size to avoid jerking */
+        margin-left: -4px;
+    }
+ }

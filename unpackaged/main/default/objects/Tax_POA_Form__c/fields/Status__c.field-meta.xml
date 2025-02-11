@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>Status of the POA form</description>
+    <label>Status</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Ready for Signature</fullName>
+                <default>false</default>
+                <label>Ready for Signature</label>
+            </value>
+            <value>
+                <fullName>Send for Signature</fullName>
+                <default>false</default>
+                <label>Send for Signature</label>
+            </value>
+            <value>
+                <fullName>Sent for Signature</fullName>
+                <default>false</default>
+                <label>Sent for Signature</label>
+            </value>
+            <value>
+                <fullName>Signed by Customer</fullName>
+                <default>false</default>
+                <label>Signed by Customer</label>
+            </value>
+            <value>
+                <fullName>Sent to Agency</fullName>
+                <default>false</default>
+                <label>Sent to Agency</label>
+            </value>
+            <value>
+                <fullName>Incomplete Data</fullName>
+                <default>false</default>
+                <label>Incomplete Data</label>
+            </value>
+            <value>
+                <fullName>Signature Declined</fullName>
+                <default>false</default>
+                <label>Signature Declined</label>
+            </value>
+            <value>
+                <fullName>Pending Processing</fullName>
+                <default>false</default>
+                <label>Pending Processing</label>
+            </value>
+            <value>
+                <fullName>Inquiry from Customer</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Inquiry from Customer</label>
+            </value>
+            <value>
+                <fullName>Signature Complete</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Signature Complete</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

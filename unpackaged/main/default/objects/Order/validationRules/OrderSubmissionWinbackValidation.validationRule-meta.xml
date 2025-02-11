@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OrderSubmissionWinbackValidation</fullName>
+    <active>true</active>
+    <description>Checks for mandatory field Is this a winback migration? submitting a single migration order for approval.</description>
+    <errorConditionFormula>AND( ISBLANK(Bulk_Migration__c), ISCHANGED(Status), ISPICKVAL( Status , &apos;Sales Submitted&apos;),  ISBLANK(TEXT(Is_this_a_winback_migration__c)) )</errorConditionFormula>
+    <errorDisplayField>Is_this_a_winback_migration__c</errorDisplayField>
+    <errorMessage>is Mandatory !</errorMessage>
+</ValidationRule>

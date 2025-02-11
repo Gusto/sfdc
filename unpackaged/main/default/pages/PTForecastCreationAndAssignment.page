@@ -1,0 +1,267 @@
+<apex:page standardController="Payroll_Transfer_FBOS_Forecast__c" tabStyle="Payroll_Transfer_FBOS_Forecast__tab" extensions="PTForecastCreationAssignmentExtension" sidebar="false" title="FBOS Forecast Management">
+   <!--<c:ForecastInvCapTabComp capacityTab="active" inventoryTab=""/>  -->
+     <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <apex:slds />
+	<style>
+		.freeze{
+			pointer-events: none; 
+			background: #dddddd;
+		}
+		th {
+			font-weight:bold!important;
+		}
+		.highlightAssignedOrder{
+			color : red;
+		}
+	</style>
+     <apex:form id="frm" >
+    <div class="tabcontent slds-scope" >
+            <c:ActionStatus />
+            
+            <apex:actionFunction name="getForecastRecords" action="{!getForecastRecord}" reRender="calender,forecsetDetailPanel,addForecast,msgs" status="statusSave"/>
+
+            <apex:pageBlock title="FBOS Forecast Details"  rendered="{!AND (boolIsAuthUser,bln_openForeCastDetailPanel)}">
+              <apex:pageMessages id="msgs"/>
+            	<table class="custom-table" style="width: 50% !important;" cellspacing="5">
+            		<tr>
+            			<th>Role :</th>
+            			<td><apex:selectList value="{!strSelectedFBOSRecordType}" size="1" onchange="getForecastRecords();" html-align="left">
+            					<apex:selectOptions value="{!lstFBOSRecordTypes}"/>
+            			</apex:selectList>
+            			</td>
+            		
+            			<th>Year :</th>
+            			<td><apex:inputField value="{!foreCastObj.Year__c}" onchange="getForecastRecords();" html-align="left"/></td>
+            			<th>Calendar :</th>
+           				<td><apex:inputField value="{!objBOARef.Week_Start_Date__c}" html-align="right" id="calender" html-title="Click to view Calendar"/></td>
+         			</tr>
+        		</table>
+                <apex:outputPanel id="forecsetDetailPanel">
+                    <apex:outputPanel rendered="{! if(NULL != lstForecastWrap && lstForecastWrap.size>0,true,false)}">
+                        <br/> <br/>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr class="slds-text-title slds-line-height_reset">
+                                	<th scope="col"></th>
+                                    <th scope="col">Month</th>
+                                    <th scope="col">FBOS Forecast</th>
+                                    <th scope="col">Forecast Multiplier</th>
+                                    <th scope="col">Total Month Cap</th>
+                                    <th scope="col">1st Week Cap</th>
+                                    <th scope="col">2nd Week Cap</th>
+                                    <th scope="col">3rd Week Cap</th>
+                                    <th scope="col">4th Week Cap</th>
+                                    <th scope="col">5th Week Cap</th>
+                                </tr>                        
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!lstForecastWrap}" var="fWrap">
+                                    <tr class="slds-text-title detailRow">
+                                    	<td>
+                                            <apex:commandLink value="X" status="statusSave" action="{!removeForecastRecord}" onclick="return confirm('Do you want to delete this forecast?');">
+						                        <apex:param name="rowToBeDeleted" value="{!fWrap.intIndx}" assignTo="{!intIndxToBeRemoved}"></apex:param>
+						                    </apex:commandLink>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.Month__c}">
+                                            	<apex:actionsupport event="onchange" rerender="forecsetDetailPanel" status="statusSave" action="{!onMonthChange}">
+                                            		<apex:param name="rowToBeAutoPopulated" value="{!fWrap.intIndx}" assignTo="{!intIndxToBeUpdated}"></apex:param>
+                                            	</apex:actionsupport>
+                                            </apex:inputField>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.FBOS_Forecast__c}">
+                                            	<apex:actionsupport event="onchange" rerender="forecsetDetailPanel" status="statusSave"/>
+                                            </apex:inputField>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.Forecast_Multiplier__c}">
+                                            	<apex:actionsupport event="onchange" rerender="forecsetDetailPanel" status="statusSave"/>
+                                            </apex:inputField>
+                                        </td>
+                                        <td>
+                                            <apex:outputText value="{!fWrap.intTotalMonthCap}" id="totalCap"/>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.First_week_cap__c}"/>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.Second_week_cap__c}"/>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.Third_week_cap__c}"/>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.Fourth_Week_Cap__c}"/>
+                                        </td>
+                                        <td>
+                                            <apex:inputField value="{!fWrap.objForecast.Fifth_Week_Cap__c}" id="fifthweek" styleClass="{!IF(fWrap.intNoOfWeeks < 5,'freeze','')}"/>
+                                        </td>
+                                    </tr>
+                                </apex:repeat>
+                            </tbody>
+                        </table>
+                        <br/>
+                    </apex:outputPanel>
+                    
+                    <apex:commandButton html-align="left" id="addForecast" value="Add Forecast" action="{!insertNewForecastRecord}" disabled="{!NOT(bln_showAddForecast)}" reRender="frm" status="statusSave"/>                
+                   	<div style="text-align: center">
+	                    <apex:outputPanel rendered="{! if(NULL != lstForecastWrap && lstForecastWrap.size>0,true,false)}">
+	                            <apex:commandButton value="Close" onclick="javascript:window.open('','_self').close();"  status="statusSave" /> 
+	                            &nbsp;<apex:commandButton value="Save Forecast" action="{!upsertForecastRecords}" status="statusSave" reRender="frm,msgs"/>
+	                            &nbsp;<apex:commandButton value="Assign Cap to Users" action="{!showUserAssignmentSection}" status="statusSave" reRender="frm,msgs"/>
+                            	<!--&nbsp;<apex:commandButton rendered="{!blnIsFacilitator}" value="Facilitator Inventory" action="{!RedirectToFacilitatorInventory}" status="statusSave" reRender="frm,msgs"/>-->
+	                    </apex:outputPanel>
+                    </div>
+                    <apex:outputPanel rendered="{! if( NULL == lstForecastWrap || lstForecastWrap.size == 0,true,false)}">
+                        No record found for the selected year.
+                    </apex:outputPanel>
+                </apex:outputPanel>                
+            </apex:pageBlock>
+			<apex:pageBlock title="User Assignment" id="UserAssignmentSection" rendered="{!AND(boolIsAuthUser,NOT(bln_openForeCastDetailPanel))}">
+				<apex:pageMessages id="msgs"/>
+                <apex:outputPanel id="userAssignmentContents">
+					<table class="custom-table" style="width: 50% !important;">
+						<tr>
+							<td> 
+								<apex:inputField value="{!foreCastObj.Year__c}" >
+									<apex:actionSupport event="onchange" status="statusSave" action="{!getForeCastAndBOARecords}" rerender="frm,msgs"/>
+								</apex:inputField>
+							</td>
+							<td>
+								<apex:SelectList value="{!selectedMonth}" size="1" id="fCastMonth">
+									<apex:selectOptions value="{!lstMonths}"/>
+									<apex:actionSupport event="onchange" status="statusSave" action="{!fetchAdvocates}" rerender="userAssignmentContents,msgs"/>
+								</apex:SelectList>
+							</td>
+							<th>Calendar :</th>
+           					<td><apex:inputField value="{!objBOARef.Week_Start_Date__c}" html-align="right" id="calender" html-title="Click to view Calendar"/></td>
+							<th>Role</th>
+							<td>{!mapFBOSRecTypeIDName[strSelectedFBOSRecordType]}</td>
+						</tr>
+						<tr>
+							<td></td><td></td><td></td><td></td>
+							<th><apex:outputLabel value="Month Forecast" for="monthlyCap"/></th>
+							<td><apex:outputField value="{!objSelectedFBOS.objForecast.FBOS_Forecast__c}" id="monthlyCap"/> </td>
+						</tr>
+						<tr>
+							<td></td><td></td><td></td><td></td>
+							<th><apex:outputLabel value="Multiplier" for="percent"/></th>
+							<td><apex:outputField value="{!objSelectedFBOS.objForecast.Forecast_Multiplier__c}" id="percent"/> </td>
+						</tr>
+						<tr>
+							<td></td><td></td><td></td><td></td>
+							<th><apex:outputLabel value="Total Month Cap" for="totalCap"/></th>
+							<td><apex:outputText value="{!objSelectedFBOS.intTotalMonthCap}" id="totalCap"/> </td>
+						</tr>
+                        <tr>
+							<td colspan="4"></td>
+							<th><apex:outputLabel rendered="{!!blnIsFacilitator}" value="Total Count of Orders" for="TotalCountforAdv"/></th>
+							<td><apex:outputText rendered="{!!blnIsFacilitator}" value="{!intTotalCountofOrdersAdvocate}" id="TotalCountforAdv"/> </td>
+						</tr>
+					</table>
+					<apex:outputPanel rendered="{! if(NULL != lstUserAssignmentWrap && lstUserAssignmentWrap.size>0,true,false)}" id="userAssignmentPanel">
+						<table class="slds-table slds-table_cell-buffer" id="userAssgnTable">
+                            <thead>
+                                <tr class="slds-text-title slds-line-height_reset">
+                                	<th scope="col" ></th>
+                                    <th scope="col" colspan="3">First Week</th>
+                                    <th scope="col" colspan="3">Second Week</th>
+                                    <th scope="col" colspan="3">Third Week</th>
+                                    <th scope="col" colspan="3">Fourth Week</th>
+                                    <th scope="col" colspan="3">Fifth Week</th>
+                                </tr>                        
+                            </thead>
+                            <tbody>
+                            	<tr class="slds-text-title detailRow">
+                            		<td></td>
+                            		<apex:repeat value="{!objSelectedFBOS.mapDaysInWeek}" var="wk">
+                            			<td colspan="3">
+                            				<apex:outputText value="{!objSelectedFBOS.mapDaysInWeek[wk]} day(s)"/>
+                            			</td>
+                           			</apex:repeat>
+                           			<td>
+                           				<apex:outputText value="0 day(s)" rendered="{!IF(objSelectedFBOS.intNoOfWeeks < 5,true,false)}"/>
+                           			</td>
+                            	</tr>
+                            	<tr class="slds-text-title detailRow">
+                            		<td><apex:outputText value="{!IF(mapFBOSRecTypeIDName[strSelectedFBOSRecordType] == 'Advocate','Order Cap Per Week','Employee Cap Per Week')}"/></td>
+                            		<td><apex:inputField value="{!objSelectedFBOS.objForecast.First_week_cap__c}"/></td>
+                            		<td><b><apex:outputText value="{!mapWeeklyAssignedCount[1]}"/></b></td>
+                                    <td><b><apex:outputText value="{!map_WeeklyUnAssignedAIC[1]}"/></b></td>
+                            		<td><apex:inputField value="{!objSelectedFBOS.objForecast.Second_week_cap__c}"/></td>
+                            		<td><b><apex:outputText value="{!mapWeeklyAssignedCount[2]}"/></b></td>
+                                    <td><b><apex:outputText value="{!map_WeeklyUnAssignedAIC[2]}"/></b></td>
+                            		<td><apex:inputField value="{!objSelectedFBOS.objForecast.Third_week_cap__c}"/></td>
+                            		<td><b><apex:outputText value="{!mapWeeklyAssignedCount[3]}"/></b></td>
+                                    <td><b><apex:outputText value="{!map_WeeklyUnAssignedAIC[3]}"/></b></td>
+                            		<td><apex:inputField value="{!objSelectedFBOS.objForecast.Fourth_Week_Cap__c}"/></td>
+                            		<td><b><apex:outputText value="{!mapWeeklyAssignedCount[4]}"/></b></td>
+                                    <td><b><apex:outputText value="{!map_WeeklyUnAssignedAIC[4]}"/></b></td>
+                            		<td><apex:inputField value="{!objSelectedFBOS.objForecast.Fifth_Week_Cap__c}" styleClass="{!IF(objSelectedFBOS.intNoOfWeeks < 5,'freeze','')}"/></td>
+                            		<td><b><apex:outputText value="{!mapWeeklyAssignedCount[5]}"/></b></td>
+                                    <td><b><apex:outputText value="{!map_WeeklyUnAssignedAIC[5]}"/></b></td>
+                            	</tr>
+                            	
+                            	<tr class="slds-text-title detailRow" >
+                           	 	 	<td></td>
+                           	 	 	<apex:repeat value="{!objSelectedFBOS.mapDaysInWeek}" var="wk" >
+	                           	 	 	<th><b><apex:outputText value="{!IF(mapFBOSRecTypeIDName[strSelectedFBOSRecordType] == 'Advocate','Order Forecast','Employee Count Forecast')}"/></b></th>
+                                        <th><b><apex:outputText value="{!IF(mapFBOSRecTypeIDName[strSelectedFBOSRecordType] == 'Advocate','Assigned Orders','AIC Count')}"/></b></th>
+                                        <th><b><apex:outputText value="{!IF(mapFBOSRecTypeIDName[strSelectedFBOSRecordType] == 'Advocate','','Unassigned')}"/></b></th>
+                           	 	 	</apex:repeat>
+                           	 	 </tr>
+                            	 <apex:repeat value="{!lstUserAssignmentWrap}" var="uWrap">
+                                    <tr class="slds-text-title detailRow" >
+                                    	<th >
+                                    		<apex:outputText value="{!uWrap.strUserName}"/>
+                                    	</th>
+                                    	<apex:repeat value="{!uWrap.mapWeekToBOA}" var="wk">
+	                                    	<td >
+	                                    		 <apex:inputField value="{!uWrap.mapWeekToBOA[wk].Week_Order_Capacity__c}"/>
+	                                    	</td>
+	                                    	<td>
+	                                    		<span class="{!IF(NULL != uWrap.mapWeekToBOA[wk].Open_Order_Count__c && uWrap.mapWeekToBOA[wk].Open_Order_Count__c > uWrap.mapWeekToBOA[wk].Week_Order_Capacity__c,'highlightAssignedOrder','')}">
+	                                    			<apex:outputField value="{!uWrap.mapWeekToBOA[wk].Open_Order_Count__c}" rendered="{!IF(mapFBOSRecTypeIDName[strSelectedFBOSRecordType] == 'Advocate',true,false)}"/>
+                                    			</span>
+                                    			<span class="{!IF(NULL != uWrap.mapWeekToBOA[wk].Open_Order_Employee_Count__c && uWrap.map_weekToAICCount[wk] > uWrap.mapWeekToBOA[wk].Week_Order_Capacity__c,'highlightAssignedOrder','')}">
+                                    				<apex:outputText value="{! uWrap.map_weekToAICCount[wk]}" rendered="{!IF(mapFBOSRecTypeIDName[strSelectedFBOSRecordType] == 'Advocate',false,true)}"/>
+	                                    		</span>
+	                                    	</td>
+                                            <td >&nbsp;</td>
+                                    	</apex:repeat>
+                                    	<td>
+                                    		<apex:inputText rendered="{!IF(objSelectedFBOS.intNoOfWeeks < 5 ,true,false)}" styleClass="freeze"/>
+                                   		</td>
+                                   	</tr>
+                               	</apex:repeat>
+                            </tbody>
+                    	</table>
+                    	<div style="text-align: center;padding-top:1%">
+                    		<apex:commandButton value="Refresh"   status="statusSave" action="{!fetchAdvocates}" rerender="frm,msgs"/>
+	                        &nbsp;<apex:commandButton value="Back to FBOS Details"   status="statusSave" action="{!showFBOSSection}" rerender="frm,msgs"/> 
+	                        &nbsp;<apex:commandButton value="Save Assignment" action="{!upsertBOARecords}" status="statusSave" reRender="userAssignmentContents,msgs"/>
+	                	</div>
+	                </apex:outputPanel>
+	                <apex:outputPanel rendered="{! if(NULL == lstUserAssignmentWrap || lstUserAssignmentWrap.size == 0,true,false)}">
+	                    No users found with {!mapFBOSRecTypeIDName[strSelectedFBOSRecordType]} Role.
+	                </apex:outputPanel>
+                </apex:outputPanel>
+			</apex:pageBlock>
+    </div>
+  </apex:form>
+	<script type="text/javascript">
+        function setTabTitle() {
+            //Set the current tab's title
+            sforce.console.setTabTitle('Manage Forecasts and Cap Assignment');
+        }
+        var pageLoad = window.onload;
+          window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  setTabTitle();
+          }
+    </script>
+</apex:page>

@@ -1,0 +1,99 @@
+<apex:page standardController="Benefit_Order__c" title="Ticket" extensions="NPRU_TicketButtonOnBODetailExt" tabStyle="Ticket__c" showHeader="false" sidebar="false">
+	<apex:includeScript value="/support/console/45.0/integration.js"/>
+
+    <script type="text/javascript">         
+        
+    function openSubTab(recId){
+        let strRecordParameter = (sforce.one !== undefined) ? '/lightning/r/Account/'+recId+'/view' : recId;
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openSubtab(primaryResult.id, strRecordParameter, true, '', null);
+                    });
+                });
+            } else {
+                // for inline Vf
+                window.open('/'+recId, '_blank');
+            }
+        } 
+               
+    </script>
+    <div class="gusto">
+    <apex:form Id="frmId">
+        <apex:actionstatus id="status">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+        <apex:actionFunction action="{!allTickets}" name="sortTable" reRender="frmId" status="status">
+            <apex:param name="sortField" value=""/>
+        </apex:actionFunction>
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!list_Tickets}" var="objTicket" rendered="{!list_Tickets.size > 0}" >
+                    <apex:column headerValue="Ticket Name" styleClass="tableColumn">
+                        <apex:commandLink onclick="openSubTab('{!objTicket.id}');return false;">{!objTicket.name}</apex:commandLink>
+                    </apex:column>
+                	<apex:column >
+                        <apex:facet name="header" >
+                            <a onclick="sortTable('Status__c');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Status</a>
+                        </apex:facet>
+                        <apex:outputText value="{!objTicket.Status__c}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <a onclick="sortTable('Escalation_Reason__c');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Ticket Reason</a>
+                        </apex:facet>
+                        <apex:outputText value="{!objTicket.Escalation_Reason__c}"/>
+                	</apex:column>
+                	 <apex:column >
+                        <apex:facet name="header">
+                            <a onclick="sortTable('Owner.Name');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Owner</a>
+                        </apex:facet>
+                        <apex:outputText value="{!objTicket.Owner.Name}"/>
+                	</apex:column>
+                	<apex:column >
+                        <apex:facet name="header" >
+                            <a onclick="sortTable('CreatedBy.FirstName');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Created By</a>
+                        </apex:facet>
+                        <apex:outputText value="{!objTicket.CreatedBy.FirstName}"/>
+                	</apex:column>
+                    <apex:column >
+                        <apex:facet name="header" >
+                            <a onclick="sortTable('CreatedDate');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Created Date</a>
+                        </apex:facet>
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+	                        <apex:param value="{!objTicket.CreatedDate}"/>
+	                    </apex:outputText>
+                	</apex:column>
+                	
+                	<apex:column >
+                        <apex:facet name="header">
+                            <a onclick="sortTable('LastModifiedBy.FirstName');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Last Modified By</a>
+                        </apex:facet>
+                        <apex:outputText value="{!objTicket.LastModifiedBy.FirstName}"/>
+                	</apex:column>
+                	<apex:column >
+                        <apex:facet name="header">
+                            <a onclick="sortTable('LastModifiedDate');" class="slds-truncate" style="color:#54698d;cursor: pointer;">Last Modified Date</a>
+                        </apex:facet>
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+	                        <apex:param value="{!objTicket.LastModifiedDate}"/>
+	                    </apex:outputText>
+                	</apex:column>
+                	
+                </apex:pageBlockTable>
+            <apex:pageBlockSection columns="1">
+                <apex:outputPanel rendered="{!IF(list_Tickets.size == 0, true,false)}">
+                    No Ticket associated to Benefit Order.
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    </div>
+</apex:page>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_Plan_Priority_Indicator__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( AND( 
+NOT(ISPICKVAL(Order_Status__c,&quot;Submitted&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Approved&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Canceled&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Closed lost&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Denied&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Closed Admin&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Fulfilled&quot;)),(TODAY() &lt;= (Submission_Deadline__c - 5) )) ,  IMAGE(&quot;/servlet/servlet.FileDownload?file=0151M00000PZaOg&quot;,&apos;&apos;) , IF(AND( NOT(ISPICKVAL(Order_Status__c,&quot;Submitted&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Approved&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Canceled&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Closed lost&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Denied&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Closed Admin&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Fulfilled&quot;)),(TODAY() &lt;= (Submission_Deadline__c -2)) ),IMAGE(&quot;/servlet/servlet.FileDownload?file=0151M00000PZaOc&quot;,&apos;&apos;) ,  IF(AND( NOT(ISPICKVAL(Order_Status__c,&quot;Submitted&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Approved&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Canceled&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Closed lost&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Denied&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Closed Admin&quot;)),NOT(ISPICKVAL(Order_Status__c,&quot;Fulfilled&quot;)),OR( TODAY() &lt;=(Submission_Deadline__c -1), TODAY()=(Submission_Deadline__c) )),
+IMAGE(&quot;/servlet/servlet.FileDownload?file=0151M00000SKle8&quot;,&apos;&apos;) , &apos;&apos;)) )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>New Plan Priority Indicator</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

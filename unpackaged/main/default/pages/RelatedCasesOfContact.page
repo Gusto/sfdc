@@ -1,0 +1,46 @@
+<apex:page standardController="Case" extensions="RelatedCases">     
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+
+    <script type="text/javascript">
+        function CaseInPrimaryTab(cUrl,CaseNum) {
+        //alert('https://gusto--sandbox.cs53.my.salesforce.com' + cUrl);
+            //Open a new primary tab with the salesforce.com home page in it
+            sforce.console.openPrimaryTab(undefined,cUrl, true, 
+                CaseNum, openSuccess, CaseNum);
+        }
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether opening the new tab was successful
+            if (result.success == true) {
+                alert('Primary tab successfully opened');
+            } else {
+                alert('Primary tab cannot be opened');
+            }
+        };
+        
+  </script>
+
+    <div class="gusto" >
+        <apex:form >
+            <apex:outputText rendered="false" value="{!Case.Contact.name}" /> 
+
+            <div style="overflow:auto;height:auto">
+                <apex:dataTable value="{!Cases}" var="C"  rendered="{!(Cases.size != 0)}" styleClass="slds-table slds-table--bordered slds-table--striped">
+                    <apex:column headerValue="Case Number">
+                        <apex:outputLink onclick="CaseInPrimaryTab('/{!C.Id}','{!C.CaseNumber}'); " >{!C.CaseNumber}</apex:outputLink>
+                    </apex:column>
+
+                    <apex:column value="{!C.Subject}" headerValue="Subject"/>
+                    <apex:column value="{!C.status}" headerValue="Status"/>
+                    <apex:column value="{!C.type}" headervalue="Type"/>
+                    <apex:column value="{!C.Status_Detail__c}" headervalue="Status Detail"/>
+                    <apex:column headerValue="Owner" value="{!C.Owner.name}"/>
+                    <apex:column value="{!C.CreatedDate}" headervalue="Created Date"/>
+                </apex:dataTable>
+                <apex:outputText rendered="{!(Cases.size = 0)}" value="No records to display" />
+            </div>
+        </apex:form>
+    </div>
+  
+</apex:page>

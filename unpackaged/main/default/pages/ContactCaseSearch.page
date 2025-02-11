@@ -1,0 +1,182 @@
+<apex:page standardController="Contact" extensions="CaseSearchController">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        function setTabTitle() {
+            //Set the current tab's title
+        }
+        var pageLoad = window.onload;
+        window.onload = function() {
+            setTabTitle();
+        }
+        
+        function openRecInNewTab(caseid){
+            sforce.console.openPrimaryTab(null, "/"+caseid, true);
+        }
+    </script>
+    <style>
+        .slds-scope.main th, .slds-scope.main td {
+           white-space: normal !important;
+        }
+    </style>
+    <div class="gusto" >
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                    <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        <apex:form >
+            <apex:pageMessages />
+            <table>
+                <tr>
+                    <td>
+                        <div class="slds-section slds-is-open">                        
+                        <table class="slds-table slds-table--bordered slds-table_cell-buffer">
+                            <thead>
+                                <tr class="slds-text-title">
+                                    <td scope="col">
+                                        <div class="slds-truncate" >Record Type</div>
+                                    </td>
+                                    <td>
+                                        <apex:selectList value="{!recordTypeFilter}" multiselect="false" size="1" id="rectypepanel">
+                                            <apex:selectOptions value="{!recordTypeOptionList}"> </apex:selectOptions>
+                                        </apex:selectList> 
+                                    </td>
+                                    
+                                    <td scope="col">
+                                        <div class="slds-truncate" >Status</div>
+                                    </td>
+                                    <td>
+                                        <apex:selectList value="{!filterCase.status}" multiselect="false" size="1" id="statuspanel">
+                                            <apex:selectOptions value="{!caseStatusOptionList}"> </apex:selectOptions>
+                                        </apex:selectList>
+                                    </td>
+                                </tr>
+                                <tr class="slds-text-title">
+                                    <td scope="col">
+                                        <div class="slds-truncate" >Origin</div>
+                                    </td>
+                                    <td>
+                                        <apex:selectList value="{!filterCase.origin}" multiselect="false" size="1" id="originpanel">
+                                            <apex:selectOptions value="{!caseOriginOptionList}"> </apex:selectOptions>
+                                        </apex:selectList>
+                                    </td> 
+                                    
+                                    <apex:outputPanel rendered="{!contactId!=null}">
+                                    <td scope="col">
+                                        <div class="slds-truncate" >Filter By Contact</div>
+                                    </td>
+                                    <td>
+                                        <apex:inputCheckbox value="{!filterByContact}" label="Filter By Contact"/>
+                                    </td>
+                                    </apex:outputPanel>
+                                </tr>
+                                <tr class="slds-text-title">
+                                    <td scope="col">
+                                        <div class="slds-truncate" >Created Date</div>
+                                    </td>
+                                    <td>
+                                        <apex:inputField value="{!filterCase.Created_At_Date__c}" label="Created Date"/>
+                                    </td>
+                                    
+                                   <td >
+                                       <apex:commandButton action="{!getCaseList}" value="Search"/>
+                                   </td>
+                                </tr>
+                               </thead> 
+                               <tbody>
+                           </tbody>         
+                        </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputPanel id="accountCaseListBlock">
+                        <h4 class="slds-section__title slds-theme--shade">
+                          <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Case List</span>
+                        </h4>&nbsp;&nbsp;
+                            <table class="slds-table slds-table--bordered slds-table_cell-buffer">
+                               <thead>
+                                   <tr class="slds-text-title">
+                                       <th scope="col">
+                                           <div class="slds-truncate" title="Number">Case Number</div>
+                                       </th>
+                                       <th scope="col">
+                                           <div class="slds-truncate" title="Subject">Subject</div>
+                                       </th>
+                                       <th scope="col">
+                                           <div class="slds-truncate" title="Date">Created Date</div>
+                                       </th>
+                                       <th scope="col">
+                                           <div class="slds-truncate" title="Status">Status</div>
+                                       </th>
+                                       <th scope="col">
+                                           <div class="slds-truncate" title="Record">Record Type</div>
+                                       </th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                  <apex:repeat id="recTable" value="{!accountCaseList}" var="caseRec" rendered="{! IF(accountCaseList.size>0,true,false)}">
+                                      <tr>                                    
+                                        <th scope="row" data-label="Case Number">
+                                            <div class="slds-truncate" title="CaseNumber"><apex:inputField value="{!caseRec.CaseNumber}" onclick="openRecInNewTab('{!caseRec.Id}');return false" style="cursor: pointer;text-decoration: underline;"/></div>
+                                        </th>
+                                        <td data-label="Origin">
+                                        <div class="slds-truncate" title="Subject">{!caseRec.Subject}</div>
+                                        </td>
+                                          <td data-label="Created Date">
+                                        <div class="slds-truncate" title="CreatedDate"><apex:outputField value="{!caseRec.CreatedDate}"/></div>
+                                        </td> 
+                                        <td data-label="Status">
+                                        <div class="slds-truncate" title="Status">{!caseRec.Status}</div>
+                                        </td>
+                                        <td data-label="Record Type">
+                                        <div class="slds-truncate" title="Name">{!caseRec.RecordType.Name}</div>
+                                        </td>
+                                        <td data-label="Origin">
+                                        <div class="slds-truncate" title="Origin">{!caseRec.Origin}</div>
+                                        </td> 
+                                      </tr>
+                                  </apex:repeat> 
+                               </tbody>                          
+                            </table>
+                            <table style="width: 100%">
+                                <tr>
+                                    <td>
+                                        <apex:outputText value=" Page {!IF(CEILING(caseSet.ResultSize/caseSet.PageSize)==0,0,caseSet.PageNumber)} of {!CEILING(caseSet.ResultSize/caseSet.PageSize)}"/>
+                                    </td>
+                                    <td style="text-align: center !important;">
+                                        <apex:commandLink action="{!caseSet.Previous}" value="« Previous" rendered="{!caseSet.HasPrevious}"/>
+                                        <apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(caseSet.HasPrevious)}"/>&nbsp;&nbsp;  
+                                        <apex:commandLink action="{!caseSet.Next}" value="Next »" rendered="{!caseSet.HasNext}"/>
+                                        <apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(caseSet.HasNext)}"/>
+                                    </td>
+                                    <td style="text-align: right !important;">
+                                        <apex:selectList value="{!caseSet.PageSize}" size="1">
+                                            <apex:selectOption itemValue="20" itemLabel="20"/>
+                                            <apex:selectOption itemValue="50" itemLabel="50"/>
+                                            <apex:selectOption itemValue="100" itemLabel="100"/>
+                                            <apex:actionSupport event="onchange" reRender="accountCaseListBlock" status="status"/>
+                                        </apex:selectList>
+                                    </td> 
+                                </tr>
+                            </table>
+                        <apex:outputPanel rendered="{!IF(accountCaseList.size == 0, true,false)}">
+                            No case found for this account.
+                        </apex:outputPanel>
+                            
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table>
+        </apex:form>
+    </div>
+</apex:page>

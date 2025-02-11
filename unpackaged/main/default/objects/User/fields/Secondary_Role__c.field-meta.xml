@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Secondary_Role__c</fullName>
+    <description>Used for when users need to temporarily support or &quot;flex&quot; to another function without impacting their current Role. This field selection should represents the role to which they are flexing</description>
+    <label>Secondary Role</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>admin</fullName>
+                <default>false</default>
+                <label>admin</label>
+            </value>
+            <value>
+                <fullName>Advising Fulfillment</fullName>
+                <default>false</default>
+                <label>Advising Fulfillment</label>
+            </value>
+            <value>
+                <fullName>Advising Fulfillment Team</fullName>
+                <default>false</default>
+                <label>Advising Fulfillment Team</label>
+            </value>
+            <value>
+                <fullName>Benefits Compliance</fullName>
+                <default>false</default>
+                <label>Benefits Compliance</label>
+            </value>
+            <value>
+                <fullName>Benefits Compliance Team</fullName>
+                <default>false</default>
+                <label>Benefits Compliance Team</label>
+            </value>
+            <value>
+                <fullName>Benefits Onboarding Implementation</fullName>
+                <default>false</default>
+                <label>Benefits Onboarding Implementation</label>
+            </value>
+            <value>
+                <fullName>Benefit Transfer Fulfillment</fullName>
+                <default>false</default>
+                <label>Benefit Transfer Fulfillment</label>
+            </value>
+            <value>
+                <fullName>Benefit Transfer Fulfillment Team</fullName>
+                <default>false</default>
+                <label>Benefit Transfer Fulfillment Team</label>
+            </value>
+            <value>
+                <fullName>CX</fullName>
+                <default>false</default>
+                <label>CX</label>
+            </value>
+            <value>
+                <fullName>CXIO</fullName>
+                <default>false</default>
+                <label>CXIO</label>
+            </value>
+            <value>
+                <fullName>Dedicated Support</fullName>
+                <default>false</default>
+                <label>Dedicated Support</label>
+            </value>
+            <value>
+                <fullName>Dedicated Support Team - Concierge</fullName>
+                <default>false</default>
+                <label>Dedicated Support Team - Concierge</label>
+            </value>
+            <value>
+                <fullName>Dedicated Support Team - VIP</fullName>
+                <default>false</default>
+                <label>Dedicated Support Team - VIP</label>
+            </value>
+            <value>
+                <fullName>Engagement</fullName>
+                <default>false</default>
+                <label>Engagement</label>
+            </value>
+            <value>
+                <fullName>exec</fullName>
+                <default>false</default>
+                <label>exec</label>
+            </value>
+            <value>
+                <fullName>Fulfillment</fullName>
+                <default>false</default>
+                <label>Fulfillment</label>
+            </value>
+            <value>
+                <fullName>Full-Stack Care</fullName>
+                <default>false</default>
+                <label>Full-Stack Care</label>
+            </value>
+            <value>
+                <fullName>Full-Stack Care Team</fullName>
+                <default>false</default>
+                <label>Full-Stack Care Team</label>
+            </value>
+            <value>
+                <fullName>I&amp;O</fullName>
+                <default>false</default>
+                <label>I&amp;O</label>
+            </value>
+            <value>
+                <fullName>Inactive Users</fullName>
+                <default>false</default>
+                <label>Inactive Users</label>
+            </value>
+            <value>
+                <fullName>Integration Users</fullName>
+                <default>false</default>
+                <label>Integration Users</label>
+            </value>
+            <value>
+                <fullName>Member Fulfillment</fullName>
+                <default>false</default>
+                <label>Member Fulfillment</label>
+            </value>
+            <value>
+                <fullName>Member Fulfillment Team</fullName>
+                <default>false</default>
+                <label>Member Fulfillment Team</label>
+            </value>
+            <value>
+                <fullName>Modern Bank</fullName>
+                <default>false</default>
+                <label>Modern Bank</label>
+            </value>
+            <value>
+                <fullName>Modern Bank Team</fullName>
+                <default>false</default>
+                <label>Modern Bank Team</label>
+            </value>
+            <value>
+                <fullName>New Plan Fulfillment</fullName>
+                <default>false</default>
+                <label>New Plan Fulfillment</label>
+            </value>
+            <value>
+                <fullName>New Plan Fulfillment Team</fullName>
+                <default>false</default>
+                <label>New Plan Fulfillment Team</label>
+            </value>
+            <value>
+                <fullName>Onboarding Advocate</fullName>
+                <default>false</default>
+                <label>Onboarding Advocate</label>
+            </value>
+            <value>
+                <fullName>Payroll Care</fullName>
+                <default>false</default>
+                <label>Payroll Care</label>
+            </value>
+            <value>
+                <fullName>Payroll Care Team</fullName>
+                <default>false</default>
+                <label>Payroll Care Team</label>
+            </value>
+            <value>
+                <fullName>Payroll Compliance</fullName>
+                <default>false</default>
+                <label>Payroll Compliance</label>
+            </value>
+            <value>
+                <fullName>Payroll Compliance Team</fullName>
+                <default>false</default>
+                <label>Payroll Compliance Team</label>
+            </value>
+            <value>
+                <fullName>Payroll Transfer Fulfillment</fullName>
+                <default>false</default>
+                <label>Payroll Transfer Fulfillment</label>
+            </value>
+            <value>
+                <fullName>Payroll Transfer Fulfillment Team</fullName>
+                <default>false</default>
+                <label>Payroll Transfer Fulfillment Team</label>
+            </value>
+            <value>
+                <fullName>PPIO</fullName>
+                <default>false</default>
+                <label>PPIO</label>
+            </value>
+            <value>
+                <fullName>Qualification Advocate</fullName>
+                <default>false</default>
+                <label>Qualification Advocate</label>
+            </value>
+            <value>
+                <fullName>Renewal Fulfillment</fullName>
+                <default>false</default>
+                <label>Renewal Fulfillment</label>
+            </value>
+            <value>
+                <fullName>Renewal Fulfillment Team</fullName>
+                <default>false</default>
+                <label>Renewal Fulfillment Team</label>
+            </value>
+            <value>
+                <fullName>Risk</fullName>
+                <default>false</default>
+                <label>Risk</label>
+            </value>
+            <value>
+                <fullName>Risk Team</fullName>
+                <default>false</default>
+                <label>Risk Team</label>
+            </value>
+            <value>
+                <fullName>sales_mdr_xx_xx</fullName>
+                <default>false</default>
+                <label>sales_mdr_xx_xx</label>
+            </value>
+            <value>
+                <fullName>sales_mm_b4_xx</fullName>
+                <default>false</default>
+                <label>sales_mm_b4_xx</label>
+            </value>
+            <value>
+                <fullName>sales_mm_b4_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_mm_b4_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_mm_den_pr_mgr</fullName>
+                <default>false</default>
+                <label>sales_mm_den_pr_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_mm_fs_xx</fullName>
+                <default>false</default>
+                <label>sales_mm_fs_xx</label>
+            </value>
+            <value>
+                <fullName>sales_mm_fs_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_mm_fs_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_mm_np_xx</fullName>
+                <default>false</default>
+                <label>sales_mm_np_xx</label>
+            </value>
+            <value>
+                <fullName>sales_mm_np_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_mm_np_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_mm_pr_xx</fullName>
+                <default>false</default>
+                <label>sales_mm_pr_xx</label>
+            </value>
+            <value>
+                <fullName>sales_mm_xx_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_mm_xx_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_partner_ae_xx</fullName>
+                <default>false</default>
+                <label>sales_partner_ae_xx</label>
+            </value>
+            <value>
+                <fullName>sales_partner_am_xx</fullName>
+                <default>false</default>
+                <label>sales_partner_am_xx</label>
+            </value>
+            <value>
+                <fullName>sales_partner_xx_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_partner_xx_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_sb_ib_xx</fullName>
+                <default>false</default>
+                <label>sales_sb_ib_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sb_ob_xx</fullName>
+                <default>false</default>
+                <label>sales_sb_ob_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sb_xx_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_sb_xx_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_sdr_xx_xx</fullName>
+                <default>false</default>
+                <label>sales_sdr_xx_xx</label>
+            </value>
+            <value>
+                <fullName>sales_vf_ob_xx</fullName>
+                <default>false</default>
+                <label>sales_vf_ob_xx</label>
+            </value>
+            <value>
+                <fullName>Submission Advocate</fullName>
+                <default>false</default>
+                <label>Submission Advocate</label>
+            </value>
+            <value>
+                <fullName>Task Us</fullName>
+                <default>false</default>
+                <label>Task Us</label>
+            </value>
+            <value>
+                <fullName>Task Us Team</fullName>
+                <default>false</default>
+                <label>Task Us Team</label>
+            </value>
+            <value>
+                <fullName>Task Us Team (Flex)</fullName>
+                <default>false</default>
+                <label>Task Us Team (Flex)</label>
+            </value>
+            <value>
+                <fullName>Tax Ops</fullName>
+                <default>false</default>
+                <label>Tax Ops</label>
+            </value>
+            <value>
+                <fullName>Tax Ops Team</fullName>
+                <default>false</default>
+                <label>Tax Ops Team</label>
+            </value>
+            <value>
+                <fullName>Tax Res</fullName>
+                <default>false</default>
+                <label>Tax Res</label>
+            </value>
+            <value>
+                <fullName>Tax Res Team</fullName>
+                <default>false</default>
+                <label>Tax Res Team</label>
+            </value>
+            <value>
+                <fullName>Vitals</fullName>
+                <default>false</default>
+                <label>Vitals</label>
+            </value>
+            <value>
+                <fullName>Payroll Care Team (Flex)</fullName>
+                <default>false</default>
+                <label>Payroll Care Team (Flex)</label>
+            </value>
+            <value>
+                <fullName>Payroll Care Team (Zerpforce)</fullName>
+                <default>false</default>
+                <label>Payroll Care Team (Zerpforce)</label>
+            </value>
+            <value>
+                <fullName>Full-Stack Care Team (Flex)</fullName>
+                <default>false</default>
+                <label>Full-Stack Care Team (Flex)</label>
+            </value>
+            <value>
+                <fullName>Customer Success</fullName>
+                <default>false</default>
+                <label>Customer Success</label>
+            </value>
+            <value>
+                <fullName>sales_sb_np_xx</fullName>
+                <default>false</default>
+                <label>sales_sb_np_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sb_np_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_sb_np_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_mm_br_xx</fullName>
+                <default>false</default>
+                <label>sales_mm_br_xx</label>
+            </value>
+            <value>
+                <fullName>sales_mm_br_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_mm_br_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_sb_br_xx</fullName>
+                <default>false</default>
+                <label>sales_sb_br_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sb_br_xx_mgr</fullName>
+                <default>false</default>
+                <label>sales_sb_br_xx_mgr</label>
+            </value>
+            <value>
+                <fullName>sales_sdr_mm_mgr_xx</fullName>
+                <default>false</default>
+                <label>sales_sdr_mm_mgr_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sdr_mm_xx</fullName>
+                <default>false</default>
+                <label>sales_sdr_mm_xx</label>
+            </value>
+            <value>
+                <fullName>sales_bdr_xx_xx</fullName>
+                <default>false</default>
+                <label>sales_bdr_xx_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sdr_partner_mgr_xx</fullName>
+                <default>false</default>
+                <label>sales_sdr_partner_mgr_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sdr_partner_xx</fullName>
+                <default>false</default>
+                <label>sales_sdr_partner_xx</label>
+            </value>
+            <value>
+                <fullName>sales_sb_fs_xx</fullName>
+                <default>false</default>
+                <label>sales_sb_fs_xx</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

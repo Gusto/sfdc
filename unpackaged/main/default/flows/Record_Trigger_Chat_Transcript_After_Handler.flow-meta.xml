@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <description>- Added checks in entry criteria
+- Added Status isChanged check in entry criteria</description>
+    <environments>Default</environments>
+    <interviewLabel>Record Trigger:  After Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Chat Transcript After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Create_Task_Record_For_Chat_Transcript</targetReference>
+        </connector>
+        <filterLogic>(1 AND (5 OR 6)) AND (2 OR 3 OR 4)</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>LeadId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>AccountId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>ContactId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>InProgress</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </filters>
+        <object>LiveChatTranscript</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Create_Task_Record_For_Chat_Transcript</name>
+        <label>Create Task Record For Chat Transcript</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <flowName>SubFlow_Create_Task_Record_For_Chat_Transcript</flowName>
+        <inputAssignments>
+            <name>objChatTranscript</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+</Flow>

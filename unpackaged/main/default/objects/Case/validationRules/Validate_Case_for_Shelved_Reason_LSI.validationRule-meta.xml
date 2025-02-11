@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validate_Case_for_Shelved_Reason_LSI</fullName>
+    <active>true</active>
+    <description>Validate Case for Shelved Reason &quot;Waiting for LSI Resolution&quot; if LSI Case classification is blank</description>
+    <errorConditionFormula>AND(
+NOT($User.Exempt_from_Validation_Rules__c),
+ISPICKVAL(Shelved_Reason__c, &quot;Waiting for LSI resolution&quot;),
+OR(ISNULL(Large_Scale_Issue_Classification__c),ISBLANK(Large_Scale_Issue_Classification__c)),
+ISPICKVAL(Status, &quot;Shelved&quot;)
+)</errorConditionFormula>
+    <errorMessage>Cannot Shelve a case with a Shelved Reason &quot;Waiting for LSI Resolution&quot; until the &quot;Large Scale Issue Case Classification&quot; field is populated</errorMessage>
+</ValidationRule>

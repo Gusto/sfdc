@@ -1,0 +1,119 @@
+<apex:page controller="BTManageTicketsCtrl" tabStyle="Ticket__c" showHeader="false" sidebar="false" title="QC ERROR" >
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <script  type="text/javascript">
+        function RefreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+        };
+    
+        var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               console.log('Test1');
+               sforce.console.getFocusedSubtabId(function(subTabId){
+                   sforce.console.closeTab(subTabId.id);
+               });
+           } 
+           else 
+           {
+                console.log('Test2');
+               //alert('Cannot refresh the page');
+           }
+       };
+    </script>
+    <apex:form id="frmId">
+        <apex:pageBlock id="pageBlock">
+            <apex:pageMessages />
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:outputField value="{!objQcError.Benefit_Order__c}" label="Benefit Order" rendered="{!blnIsBOObject}"/>
+                <apex:outputField value="{!objQcError.Carrier_Order__c}" label="Carrier Order" rendered="{!!blnIsBOObject}"/>
+                <apex:selectList value="{!objTicket.Reporting_Team__c}" size="1" label="My Team">
+                    <apex:selectOptions value="{!list_FromTeam}"/>
+                    <apex:actionSupport event="onchange" action="{!ticketToTeam}" reRender="frmId"  status="actStatusId"/>
+                </apex:selectList>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="QC Error Team" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!strSelectedTeam}" size="1">
+                            <apex:actionSupport event="onchange" action="{!subTeam}" reRender="frmId"  status="actStatusId"/>
+                            <apex:selectOptions value="{!list_Team}" />
+                        </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!blnIsSubTeamExit}">
+                    <apex:outputLabel value="QC Error Sub Team" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!strSelectedSubTeam}" size="1">
+                            <apex:actionSupport event="onchange" reRender="frmId" action="{!assignOwner}"  status="actStatusId"/>
+                            <apex:selectOptions value="{!list_SubTeam}" />
+                        </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Error Type" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!strSelectedReason}" size="1">
+                            <apex:actionSupport event="onchange" action="{!ticketDetail}" reRender="detail" status="actStatusId"/>
+                            <apex:selectOptions value="{!list_ReasonList}" />
+                        </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Error Type Detail" />
+                    <apex:outputPanel styleClass="requiredInput" id="detail">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block" rendered="{!IF(list_ReasonDetail.size > 1, true, false)}"/>
+                        <apex:selectList value="{!strSelectedReasonDetail}" size="1">
+                            <apex:actionSupport event="onchange" action="{!ticketUpdateCoOnlyValue}" reRender="frmId"/>
+                            <apex:selectOptions value="{!list_ReasonDetail}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!(blnIsCOUpdateOnly || blnIsTicketForFaciliator) && blnIsBOObject}">
+                	<apex:outputLabel value="Select Carrier Order"/>
+                	<apex:actionRegion >
+                		<apex:outputPanel styleClass="requiredInput" layout="block" >
+                			<apex:outputPanel styleClass="requiredBlock" layout="block"/>
+	                 		<apex:selectList value="{!strSelectedCO}" size="1">
+	                        	<apex:actionSupport event="onchange" reRender="tktOwnerSection" action="{!assignOwnerFromCO}"  status="actStatusId"/>
+	                        	<apex:selectOptions value="{!list_CarrierOrder}" />
+	                    	</apex:selectList>
+                    	</apex:outputPanel>
+                 	</apex:actionRegion>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+	            	<apex:outputLabel value="Ticket Owner"/>
+	            	<apex:outputField value="{!objBO.Escalated_User__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Error Type Description" />
+                    <apex:outputPanel styleClass="requiredInput" id="detail">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputField value="{!objQcError.Description__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputText value="{!strScriptvar}" escape="false"></apex:outputText>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!saveQCError}" value="Save" reRender="frmId" status="actStatusId"/>
+                <apex:commandButton onClick="RefreshPrimaryTab();" value="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

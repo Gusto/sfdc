@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HI_Supported_State__c</fullName>
+    <formula>AND(  NOT( ISBLANK(BillingState) ) , CONTAINS( $Label.HI_Supported_States, BillingState ) )</formula>
+    <label>HI Supported State</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

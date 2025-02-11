@@ -1,0 +1,351 @@
+<apex:page standardController="Benefit_Order__c" extensions="BTBOSideViewCtrl" sidebar="false" showHeader="false"
+           lightningStylesheets="true" docType="html-5.0" tabStyle="Carrier_Order__c">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <script type="text/javascript"> 
+    function openParentTab(recId,label){
+        var redirectUrl = '/'+recId; 
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                	sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openPrimaryTab(undefined,redirectUrl,true,label);
+                });
+            })
+        } else {
+            // for inline Vf
+            window.open(redirectUrl, '_blank');
+        }
+    }
+    
+    function openSubTab(recId,recName){
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, recId, true, recName, null,null,recName);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+recId, '_blank');
+        }
+    } 
+    
+    function openAllTicket(recId){
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, recId, true, 'View All Ticket', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+recId, '_blank');
+        }
+    } 
+    function RefreshPrimaryTab(){
+        sforce.console.getFocusedPrimaryTabId(showTabId);
+    }
+    
+    var showTabId = function showTabId(result){
+        var tabId = result.id;
+        //alert('Primary Tab IDs: primaryTabId ' + tabId );
+        sforce.console.refreshPrimaryTabById(tabId , true);
+    };
+
+    $(".header-section").click(function(){
+        $(this).nextAll(".slide-section:first").slideToggle("slow");
+        $(this).find("i").toggleClass("arrow-down");
+    });
+    
+    $(".new-ticket").click(function(e){
+        e.stopPropagation();
+    });    
+    </script>
+     <script type="text/javascript">
+        function closeTab() {
+            //First find the ID of the current tab to close it
+			sforce.console.getFocusedPrimaryTabId(closeSubtab);
+        }
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+  </script>
+    
+    <apex:slds />
+    <c:BTCustomCSS />
+    <style>
+        .pbBody {
+            margin: 5px !important;
+        }
+        .dateFormat {
+            padding: 0;
+            clear: both;
+            display: block;
+        }
+        .scrollable-x .pbSubsection {
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+        .hideDiv{
+            display: none;
+        }
+        .custom-text-center td{
+        	text-align:center !important;
+        }
+    </style>
+    <c:GustoActionStatus />
+    <apex:form id="frmId"> 
+        
+   <apex:pageBlock >
+   		<apex:outputpanel rendered="{!if(objBenefitOrder.Order_Status__c=='Pending ER Signature',true,false)}" >
+			 <div class="scrollable-x">   
+				<apex:pageBlockSection title="Carrier Order(s)" columns="1" collapsible="false">
+				   <apex:pageBlockTable value="{!list_CarrierOrderWrapper}" var="cow">
+					   <apex:column headerValue="Carrier Name">
+						   <apex:outputLink onclick="openSubTab('{!cow.objCarrierOrder.Id}','{!JSENCODE(cow.objCarrierOrder.Name)}');return false;">
+						   {!cow.objCarrierOrder.Name}
+						   </apex:outputLink>
+					   </apex:column>
+					   <apex:column headerValue="Renewal Date">
+						   <apex:outputField value="{!cow.objCarrierOrder.Renewal_Date__c}" />
+					   </apex:column>
+					   <apex:column headerValue="Benefit Types">
+						   <apex:outputField value="{!cow.objCarrierOrder.Benefit_Types__c}" />
+					   </apex:column>                            
+					   <apex:column headerValue="Implementation Stage">
+							<apex:outputField value="{!cow.objCarrierOrder.Implementation_Stage__c}" />                
+					   </apex:column>                        
+				   </apex:pageBlockTable>
+				</apex:pageBlockSection> 
+			</div>
+					
+	   		<div class="custom-text-center"> 	
+		   		<apex:pageBlockSection columns="1" collapsible="false" title="Customer Signed App?">
+		            <apex:inputCheckbox value="{!blnCustomerSignedApp}" />
+		        </apex:pageBlockSection>
+	        </div>
+	         <div class="slds-text-align_center"> 
+	       		 <apex:commandButton value="Save" status="actStatusId" rerender="frmId" action="{!saveBO}" oncomplete="RefreshPrimaryTab();return false" styleClass="btn-blue"/>
+	       	</div>
+        </apex:outputpanel>
+                  
+   		<apex:outputpanel rendered="{!if(objBenefitOrder.Order_Status__c=='Pending ER Signature',false,true)}" >
+          
+	        <apex:outputPanel rendered="{!blnShowAcceptOrderButton}" layout="block" styleclass="slds-text-align_center"> 
+	               <apex:commandButton value="Accept Order"  style="margin-bottom: 5px !important;" action="{!acceptOrder}" styleClass="btn-blue" rerender="frmId" status="actStatusId" oncomplete="RefreshPrimaryTab();return false" />
+            </apex:outputPanel>
+	        <div class="left-panel">
+	            <apex:outputpanel rendered="{!blnShowAcceptOrderButton}">
+	                <div class="content-overlay"></div>
+	            </apex:outputpanel> 
+	            <div><apex:pageMessages id="showmsg"/></div>
+	            <div class="slds-text-heading_small">
+	                <strong>
+	                    <apex:outputpanel rendered="{!blnIsADV}">
+	                            Advocate View
+	                     </apex:outputpanel>
+	                     <apex:outputpanel rendered="{!blnIsQF}">
+	                            Qualifier View
+	                  </apex:outputpanel>
+	                  </strong>
+	            </div>
+	            <hr style="margin: 5px 0px;"/>
+                  <apex:outputpanel rendered="{!objBenefitOrder.Is_Multi_EIN__c}">
+                    <span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(objBenefitOrder.Is_Multi_EIN__c,'','none')}">Multi-EEIN</span>
+                    <span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(objBenefitOrder.Is_Multi_EIN__c && objBenefitOrder.Parent_Benefit_Order__c == null,'','none')}">Parent Benefit Order</span>
+                    <span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(objBenefitOrder.Is_Multi_EIN__c && objBenefitOrder.Parent_Benefit_Order__c != null,'','none')}">Child Benefit Order</span>                    
+                	<br/>  
+                </apex:outputpanel>
+                <br/>
+                <div class="scrollable-x">   
+                    <apex:pageBlockSection rendered="{!if(list_AllMultiBOWrapper!=null,true,false)}" title="Multi EIN Benefit Order(s)" columns="1" collapsible="false">
+                        <apex:pageBlockTable value="{!list_AllMultiBOWrapper}" var="bow">
+                            <apex:column headerValue="Benefit Order">
+                                <apex:outputLink onclick="openParentTab('{!bow.objBenefitOrder.id}','{!JSENCODE(bow.objBenefitOrder.Name)}');return false;">
+                                    {!bow.objBenefitOrder.Name}
+                                </apex:outputLink>
+                            </apex:column>
+                            <apex:column headerValue="Type">
+                                {!bow.strBORelation}
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection> 
+                </div>
+                
+	              <apex:outputLink rendered="{!objBenefitOrder.Transition_to_Fulfillment__c != null}" onclick="openSubTab('{!objBenefitOrder.Transition_to_Fulfillment__c}','{!JSENCODE(objBenefitOrder.Transition_to_Fulfillment__r.Name)}');return false;">
+	                      Transition To Fulfillment: {!objBenefitOrder.Transition_to_Fulfillment__r.Name}
+	               </apex:outputLink>
+	               <apex:outputpanel layout="block" rendered="{!blnIsADV}">
+	               		<a href="{!objBenefitOrder.GDrive_Link__c}" target="_blank">G Drive Link</a> 
+	               </apex:outputpanel>
+	               <div class="scrollable-x">   
+	                    <apex:pageBlockSection rendered="{!if(list_CarrierOrderWrapper.size!=0,true,false)}" title="Carrier Order(s)" columns="1" collapsible="false">
+	                       <apex:pageBlockTable value="{!list_CarrierOrderWrapper}" var="cow">
+	                           <apex:column headerValue="Carrier Name">
+	                               <apex:outputLink onclick="openSubTab('{!cow.objCarrierOrder.Id}','{!JSENCODE(cow.objCarrierOrder.Name)}');return false;">
+	                               {!cow.objCarrierOrder.Name}
+	                               </apex:outputLink>
+	                           </apex:column>
+	                           <apex:column headerValue="Renewal Date">
+	                               <apex:inputField value="{!cow.objCarrierOrder.Renewal_Date__c}" />
+	                           </apex:column>
+	                           <apex:column headerValue="Benefit Types">
+	                               <apex:outputField value="{!cow.objCarrierOrder.Benefit_Types__c}" />
+	                           </apex:column>                            
+	                           <apex:column headerValue="Implementation Stage">
+	                                <apex:outputField value="{!cow.objCarrierOrder.Implementation_Stage__c}" />                
+	                           </apex:column>                        
+	                       </apex:pageBlockTable>
+	                    </apex:pageBlockSection> 
+	                </div>
+	                <apex:outputpanel styleClass="slds-is-relative" layout="block" rendered="{!AND(blnIsADV,blnShowTADASection)}">
+                        <apex:commandButton style="position:absolute;left:0;right:0;top:35px;z-index:99999;margin:0px auto;" reRender="frmId" status="actStatusId" rendered="{!blnShowTADAAcceptBtn}" value="Begin collecting documents"  styleclass="btn-blue" action="{!UpdateStage}" oncomplete="openSubTab('/apex/BTTADACheckList?COID={!objCarrierOrder.id}','Collect Documents');return false;"/>
+                        <apex:outputpanel rendered="{!blnShowTADAAcceptBtn}">
+	                		<div class="content-overlay"></div>
+	            		</apex:outputpanel> 
+	                    <apex:pageBlockSection title="TADAs Order" columns="1" collapsible="false">
+	                        <apex:inputField value="{!objCarrierOrder.Renewal_Date__c}"/>
+	                        <apex:outputField value="{!objCarrierOrder.Implementation_Stage__c}"/>
+	                        <apex:outputField value="{!objCarrierOrder.Benefit_Types__c}"/>
+	                   </apex:pageBlockSection>  
+	                   <div class="slds-text-align_center">
+	                        <apex:outputpanel layout="block" rendered="{!!blnShowTADAAcceptBtn}" styleclass="slds-text-align_center">
+	                               <apex:commandLink status="actStatusId" rerender="frmId" rendered="{!if(AND(objBenefitOrder.Order_Status__c=='Enrollment Confirmed',objCarrierOrder.Implementation_Stage__c!='Fulfilled'),true,false)}" styleclass="btn-blue" oncomplete="RefreshPrimaryTab();return false" value="TAdA complete" action="{!MarkTADAComplete}"/>
+	                               <apex:outputpanel >&nbsp;&nbsp;<a href="javascript:void(0);" class="btn-blue" onclick="openSubTab('/apex/BTTADACheckList?COID={!objCarrierOrder.id}','Collect Documents');return false;">Collect Documents</a></apex:outputpanel>
+                                	<!--rendered="{!if(objCarrierOrder.Implementation_Stage__c=='Collecting Documents',true,false)}"-->
+	                       </apex:outputpanel>
+	                    </div>
+	                </apex:outputpanel> 
+	               <apex:pageBlockSection rendered="{!blnIsQF}" columns="1" collapsible="false">
+	                     External Deductions-Not signed for? <span style="color:red">*</span><br/>
+	                     <apex:pageBlockSectionItem >
+	                         <apex:inputField value="{!objBenefitOrder.External_Deductions__c}" style="min-width:100%"></apex:inputField>
+	                     </apex:pageBlockSectionItem> 
+	                     Are there external deductions for LiDi or post tax disability? <span style="color:red">*</span><br/>
+	                     <apex:pageBlockSectionItem >
+	                         <apex:inputField value="{!objBenefitOrder.External_Deductions_for_LiDi__c}" style="min-width:100%"></apex:inputField>
+	                     </apex:pageBlockSectionItem>                          
+	                     Useful docs in attachments? <span style="color:red">*</span><br/>
+	                     <apex:pageBlockSectionItem >
+	                             <apex:inputField value="{!objBenefitOrder.Useful_docs_in_attachments__c}" style="min-width:100%"></apex:inputField>
+	                     </apex:pageBlockSectionItem>
+                         Letters sent to all carriers? <span style="color:red">*</span><br/>
+	                     <apex:pageBlockSectionItem >
+                             <apex:inputField value="{!objBenefitOrder.Letters_sent_to_all_carriers__c}" />
+	                     </apex:pageBlockSectionItem>
+	                     Qualifier Notes: <br/>
+	                     <apex:pageBlockSectionItem >
+	                             <apex:inputField value="{!objBenefitOrder.Qualification_Follow_Up_Notes__c}" style="min-width:100%"></apex:inputField>
+	                     </apex:pageBlockSectionItem>
+	                     Add GDrive Link: <span style="color:red">*</span><br/>
+	                     <apex:pageBlockSectionItem >
+	                             <apex:inputField value="{!objBenefitOrder.GDrive_Link__c}" style="min-width:100%"></apex:inputField>
+	                     </apex:pageBlockSectionItem>                          
+	                 </apex:pageBlockSection> 
+	                <apex:pageBlockSection title="Qualifier Notes" rendered="{!blnIsADV}" columns="1" collapsible="false">
+                       <apex:outputlabel value="{!objBenefitOrder.Qualification_Follow_Up_Notes__c}" style="white-space:pre-wrap;" escape="false"/>
+	                </apex:pageBlockSection>
+	                <apex:pageBlockSection columns="1" rendered="{!blnIsADV}" collapsible="false" title="Advocate Notes">
+	                    <apex:pageBlockSectionItem >
+	                             <apex:inputField value="{!objBenefitOrder.Follow_Up_Notes__c}" style="min-width:100%;height: 77px;"></apex:inputField>
+	                     </apex:pageBlockSectionItem>
+	                </apex:pageBlockSection>
+                	<apex:pageBlockSection columns="1" rendered="{!blnIsADV}" collapsible="false" title="Follow Up Date">
+                         <apex:pageBlockSectionItem >
+	                             <apex:inputField value="{!objBenefitOrder.Follow_Up_Date__c}" style="min-width:100%;"></apex:inputField>
+	                     </apex:pageBlockSectionItem>
+	                </apex:pageBlockSection>
+	                 <apex:pageBlockSection columns="1" collapsible="false" title="MO Notes">   
+	                        Action necessary: <br/>
+	                        <apex:pageBlockSectionItem >
+	                            <apex:inputField value="{!objBenefitOrder.Action_Necessary_Notes__c}" style="min-width:100%"></apex:inputField>
+	                        </apex:pageBlockSectionItem>   
+	                  </apex:pageBlockSection>
+	                  <apex:outputpanel styleclass="slds-text-align_center" layout="block">
+                          	<!--rendered="{!OR(showSaveButton,blnIsADV)}"-->
+	                         <apex:commandButton value="Save" status="actStatusId" rerender="frmId" action="{!saveBO}" oncomplete="RefreshPrimaryTab();return false" styleClass="btn-blue"/> &nbsp;&nbsp;
+	                         <apex:commandButton rendered="{!AND(blnShowQualifyButton,!blnIsADV)}" rerender="frmId" oncomplete="RefreshPrimaryTab();return false" status="actStatusId"  value="Qualify Order" action="{!qualifyOrder}" styleClass="btn-blue"/>
+	                  </apex:outputpanel>
+	                  <div class="tabs-scoped blue" style="margin: 5px;">
+	                <ul>
+	                    <li class="active-tab"><a aria-controls="tab-scoped-11" href="javascript:void(0);">Customer Cases</a></li>
+	                    <li><a aria-controls="tab-scoped-12" href="javascript:void(0);">Carrier Cases</a></li>
+	                </ul>
+	                <div class="tabs-scoped-content show-tab" id="tab-scoped-11">                
+	                     <table cellpadding="4" width="100%">
+	                             <tr>
+	                                 <th>Case Number</th>
+	                                 <th>&nbsp;&nbsp;Subject</th>
+	                             </tr>
+	                             <apex:repeat var="cs" value="{!objBenefitOrder.cases__r}">
+	                                 <tr>
+	                                     <td><a href="javascript:void(0);" onclick="openSubTab('{!cs.id}','{!JSENCODE(cs.CaseNumber)}');return false;">{!cs.CaseNumber}</a></td>
+	                                     <td>{!cs.Subject}</td>
+	                                 </tr>
+	                             </apex:repeat>
+	                         </table>
+	                </div>
+	                <div class="tabs-scoped-content" id="tab-scoped-12">                
+	                     <table cellpadding="4" width="100%">
+	                             <tr>
+	                                 <th>Case Number</th>
+	                                 <th>&nbsp;&nbsp;Subject</th>
+	                             </tr>
+	                             <apex:repeat var="cs" value="{!list_CarrierCases}">
+	                                 <tr>
+	                                     <td><a href="javascript:void(0);" onclick="openSubTab('{!cs.id}','{!JSENCODE(cs.CaseNumber)}');return false;">{!cs.CaseNumber}</a></td>
+	                                     <td>{!cs.Subject}</td>
+	                                 </tr>
+	                             </apex:repeat>
+	                         </table>
+	                   </div>
+	             </div>
+	                    <div class="heading header-section">
+	                    	<span class="float_right new-ticket" style="padding: 5px 0px 10px;">
+				            <a href="#"  onclick="openSubTab('/apex/BTManageTickets?id={!IdBenefitOrder}&source=Ticket','New Ticket');return false;">New Ticket</a> &nbsp;&nbsp;
+				              <a href="#" onclick="openSubTab('/apex/BTManageQCError?id={!IdBenefitOrder}&source=QC Error','New QC Error');return false;">New QC Error</a>
+				            </span>
+	                    </div>
+	                     <apex:pageBlockSection title="New Ticket" columns="1" collapsible="true">
+	                         <table cellpadding="0" width="100%">
+	                             <tr>
+	                                 <th>Ticket Number</th>
+	                                 <th>Status</th>
+	                                 <th>Escalation Reason</th>
+	                                 <th>Owner</th>
+	                             </tr>
+	                             <apex:repeat var="ticket" value="{!objBenefitOrder.tickets__r}">
+	                                 <tr>
+	                                     <td><a href="javascript:void(0);" onclick="openSubTab('{!ticket.id}','{!JSENCODE(ticket.Name)}');return false;">{!ticket.Name}</a></td>
+	                                     <td>{!ticket.Status__c}</td>
+	                                     <td>{!ticket.Escalation_Reason__c}</td>
+	                                     <td>{!ticket.Owner.Name}</td>
+	                                 </tr>
+	                             </apex:repeat>
+	                         </table>
+	                         <div style="text-align: right;">
+	                             <apex:commandLink styleclass="float_right new-ticket" onclick="openAllTicket('/apex/AllTicketDetailBO?id={!IdBenefitOrder}&selectedView=All');return false;" rendered="{!IF(objBenefitOrder.tickets__r.size != 0, true,false)}">More details...</apex:commandLink>
+	                         </div>
+	                     </apex:pageBlockSection>
+	                </div> 
+			</apex:outputpanel>
+			
+        <script type="text/javascript">            
+            $('.tabs-scoped ul li a').click(function(){
+              var tab_id = $(this).attr('aria-controls');
+    
+              $(this).closest(".tabs-scoped").children('ul').find('li').removeClass('active-tab');
+              $(this).closest(".tabs-scoped").children('.tabs-scoped-content').removeClass('show-tab');
+              $(this).closest(".tabs-scoped").find('.tabs-scoped-content.hideDiv').removeClass('show-tab');
+    
+              $(this).parent('li').addClass('active-tab');
+              $("#"+tab_id).addClass('show-tab');
+            })
+         </script>
+     </apex:pageBlock>
+    </apex:form>
+</apex:page>

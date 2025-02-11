@@ -1,0 +1,192 @@
+<template>
+	<div class="container" style={containerStyle}>
+		<template if:true={isShowSpinner}>
+			<lightning-spinner size="small"></lightning-spinner>
+		</template>
+
+		<template if:true={isShowIframe}>
+			<iframe style="height: 465px;" onload={handleIframeLoaded} src={iframeSRC} data-id="iframeid" width="100%" frameborder="0" > </iframe>
+		</template>
+
+		<template if:true={isDisplayEndChatFeedback}>
+			<div style="padding: 15px">
+				<p style="margin-bottom: 10px; font-weight: bold">
+					On a scale of 1 to 5 how easy was it to work with {agentName} today? Please provide a rating for your interaction with {agentName}, with 1 being "not easy" and 5 being "very easy".
+				</p>
+
+				<lightning-combobox name="rating" label="Rate Interaction" options={options} onchange={handleRatingInteractionChange}> </lightning-combobox>
+
+				<lightning-textarea name="feedback" label="Feedback" value={feedback} style="margin-top: 12px" onchange={handleRatingFeedbackChange}></lightning-textarea>
+
+				<div style="margin-top: 20px" class="slds-align--absolute-center">
+					<lightning-button variant="brand-outline" label="Skip" title="Skip" onclick={handleCancel}></lightning-button>
+					<lightning-button variant="brand" class="slds-m-left--small" label="Save" title="Save" onclick={handleFeedbackSave}></lightning-button>
+				</div>
+			</div>
+		</template>
+
+		<div data-id="chatcontainer">
+			<section role="log" class="slds-chat autoscroll" if:false={displayCoPilot}>Sorry, this feature is not available yet.</section>
+			<section role="log" class="slds-chat autoscroll" if:true={displayCoPilot}>
+					<div class="slds-chat-list content">
+						<template if:true={isShowLoadMoreComments}>
+							<div data-id="show" class="show-previous-interaction-btn">
+								<lightning-button 
+									variant="neutral" 
+									label="Show last 10 conversations" 
+									title="Show last 10 conversations" 
+									onclick={handleAddPreviosuChatTranscripts}
+									class="slds-align--absolute-center slds-m-bottom--medium slds-m-right--x-small slds-m-top--medium">
+								</lightning-button>
+							</div>
+						</template>	
+						<!-- Iterate over chat messages -->
+						<template for:each={chatMessages} for:item="message" for:index="index">
+							<!-- Check if message is inbound or outbound -->
+							<template if:true={message.sender}>
+								<li class="slds-chat-listitem slds-chat-listitem_inbound" data-listid={message.messageId} key={message.id}>
+									<div class="slds-chat-message">
+										<span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
+											<abbr class="slds-avatar__initials slds-avatar__initials_inverse" title={message.senderName} style="font-weight: bold"> {message.timer} </abbr>
+										</span>
+										<div class="slds-chat-message__body">
+											<!-- Display Typing -->
+											<span class="slds-icon-typing slds-is-animated typing-span" title="Customer is typing" if:true={message.typing}>
+												<span class="slds-icon-typing__dot"></span>
+												<span class="slds-icon-typing__dot"></span>
+												<span class="slds-icon-typing__dot"></span>
+												<span class="slds-assistive-text">Customer is typing</span>
+											</span>
+											<div class="slds-chat-message__text slds-chat-message__text_inbound" if:false={message.typing} data-id="responseDiv">
+												<span>{message.content}</span>
+												<br /><br />
+												<span if:true={message.contentURL} class="content-article">
+													<a href={message.contentURL} target="_blank">Here is a knowledge article about this</a>
+												</span>
+											</div>
+											<div class="slds-chat-message__meta" aria-label="Sender">{message.senderName} &nbsp; &nbsp;
+												<lightning-formatted-date-time value={message.timestamp} year="numeric" month="numeric" day="numeric" hour="2-digit"
+												minute="2-digit"></lightning-formatted-date-time>
+											</div> 
+											<!--Answer Rating Star Component-->
+											<div class="rate" if:true={message.displayRating}>
+												<div if:true={message.isDisplayRatingDropdown}>
+													<select name="feedback" style="margin-top: 5px; width: 250px" disabled={message.isPreviousInteraction} data-conversationid={message.messageId}>
+														<template for:each={message.dynamicRating} for:item="dynamicItem">
+															<template if:true={dynamicItem.selected}>
+																<option value={dynamicItem.value} key={dynamicItem.value} selected>{dynamicItem.dynamicId}</option>
+															</template>
+															<template if:false={dynamicItem.selected}>
+																<option value={dynamicItem.value} key={dynamicItem.value}>{dynamicItem.dynamicId}</option>
+															</template>
+														</template>
+													</select>
+
+													<div class="slds-form-element__help" style="display: none; color: red" data-errorid={message.messageId}>Please select any rating</div>
+
+													<lightning-textarea
+														data-feedbacktxt={message.messageId}
+														name="feedbackTxt"
+														placeholder="Please provide feedback"
+														style="margin-right: 5px; margin-top: -4px"
+														disabled={message.isPreviousInteraction}
+														value={message.feedbackValue}>
+													</lightning-textarea>
+
+													<div>
+														<button
+															onclick={handleFeedbackSubmit}
+															data-convbtnid={message.messageId}
+															class="slds-button slds-button_brand submit-button"
+															style="margin-top: 10px; display: inline-flex !important"
+															if:false={message.isPreviousInteraction}>
+															Submit
+														</button>
+													</div>
+
+													<div if:true={message.isShowError} class="slds-form-element__help" style="display: inline-block; color: red; margin-top: 7px">
+														{message.errorMessage}
+													</div>
+												</div>
+
+												<template if:true={message.isShowAskToChatWithSupport}>
+													<div class="did-this-answer-question-txt">Do you want to chat with an Advanced Product Specialist?</div>
+
+													<div style="margin-top: 9px">
+														<button class="answer-button yes-answer-button slds-button slds-button_brand" data-messageid={message.messageId} onclick={hanldeYesClick}>
+															Yes
+														</button>
+														<button class="answer-button no-answer-button slds-button slds-button_neutral" data-messageid={message.messageId} onclick={hanldeNoClick}>
+															No
+														</button>
+													</div>
+												</template>
+
+												<template if:true={message.isShowQueueDropdown}>
+													<template if:true={isDisplayQueueDropdown}>
+														<div style="margin-top: 5px; margin-bottom: 3px">Is your issue related to Payroll or Benefits?</div>
+
+														<div style="width: 250px;">
+															<select name="queueOption" style="width: 250px" onchange={handleQueueChange}>
+																<template for:each={queueOption} for:item="queueItem">
+																	<option value={queueItem.value} key={queueItem.value}>{queueItem.label}</option>
+																</template>
+															</select>
+															<button onclick={handleSubmit} class="slds-button slds-button_brand submit-button" style="margin-top: 10px">Submit</button>
+														</div>
+													</template>
+
+													<br />
+													<template if:true={isNotDisplayQueueDropdown}> Chatting with an Advanced Product Specialist is only available on the case record page. </template>
+												</template>
+											</div>
+										</div>
+									</div>
+								</li>
+							</template>
+							<template if:true={message.receiver}>
+								<li class="slds-chat-listitem slds-chat-listitem_outbound" key={message.messageId}>
+									<div class="slds-chat-message">
+										<div class="slds-chat-message__body">
+											<div class="slds-chat-message__text slds-chat-message__text_outbound">
+												<span>{message.content}</span>
+											</div>
+											<div class="slds-chat-message__meta" aria-label="Sender">{message.senderName}</div>
+										</div>
+									</div>
+								</li>
+							</template>
+							<template if:true={message.isLastChatHistory}>
+								<hr key={message.messageId}>
+								<div key={message.messageId} class="slds-align--absolute-center" style="margin-top: -30px;text-align: center;">The information above are the todays previous conversations</div>
+							</template>
+						</template>
+					</div>
+					<!-- Chat input form -->
+					<div class="slds-chat-composer sticky-footer">
+						<div class="chat-input-container">
+							<lightning-icon
+								icon-name="utility:anywhere_chat"
+								alternative-text="New Chat"
+								variant="success"
+								size="small"
+								title="New Chat"
+								onclick={startNewChat}
+								class="new-chat"
+								disabled={isLoading}
+							></lightning-icon>
+							<input
+								class="chat-input"
+								type="text"
+								placeholder="Type your message..."
+								value={userQuestion}
+								oninput={handleQuestionChange}
+								onkeydown={handleKeyDown}
+								disabled={isLoading}
+							/>
+						</div>
+					</div>
+				</section>
+		</div>
+	</div>
+</template>

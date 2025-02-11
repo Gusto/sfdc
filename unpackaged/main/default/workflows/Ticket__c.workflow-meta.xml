@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Initial_notification_sent_to_ticket_owner</fullName>
+        <description>Initial notification sent to ticket owner</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Payroll_Transfer_Opportunity_Templates/Initial_Email_sent_to_Opportunity_Owner</template>
+    </alerts>
+    <alerts>
+        <fullName>PT_Solution_Engineer_Ticket_Created</fullName>
+        <description>PT Solution Engineer Ticket Created</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notification_on_Ticket_Creation</template>
+    </alerts>
+    <alerts>
+        <fullName>PT_Solution_Engineer_Ticket_In_Progress</fullName>
+        <description>PT Solution Engineer Ticket In Progress</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notification_on_Ticket_In_Progress</template>
+    </alerts>
+    <alerts>
+        <fullName>PT_Solution_Engineer_Ticket_In_Review</fullName>
+        <description>PT Solution Engineer Ticket In Review</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notification_on_Ticket_In_Review</template>
+    </alerts>
+    <alerts>
+        <fullName>PT_Solution_Engineer_Ticket_Resolved_Closed</fullName>
+        <description>PT Solution Engineer Ticket Resolved or Closed</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notification_on_Ticket_Resolution_Closure</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Status_Change_Notification</fullName>
+        <description>Payroll Transfer Status Change Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Payroll_Transfer_Opportunity_Templates/Payroll_Transfer_Escalation_Task_Reminder</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfers_Escalation_Email_Alert</fullName>
+        <description>Payroll Transfers Escalation Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>creator</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Payroll_Transfer_Opportunity_Templates/Payroll_Transfer_Status_Change_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>Send_Alert_to_Ticket_Owner_on_Due_Date</fullName>
+        <description>Send Alert to Ticket Owner on Due Date</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Lasha/Send_Email_to_Ticket_Owner_on_Due_Date</template>
+    </alerts>
+</Workflow>

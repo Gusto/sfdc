@@ -1,0 +1,86 @@
+<apex:page controller="BTTADACheckListCtrl" tabStyle="Carrier_Order__c">
+    <apex:includeScript value="/support/console/45.0/integration.js" />
+    <apex:slds />
+    <c:BTCustomCSS />
+    <script>
+         function RefreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result){
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , true);
+        };
+    </script>
+    <apex:form id="frmId">
+        <c:GustoActionStatus />
+      <apex:actionFunction action="{!GetStageChecklistValue}" name="ShowCheckList" status="actStatusId" reRender="frmId">	
+       	<apex:param name="costage" value=""/>
+      </apex:actionFunction>
+     <div class="slds-scope">
+     	
+        <apex:sectionHeader title="Checklist" subtitle="Details" />
+        <div class="slds-path slds-m-bottom_small">
+          <div class="slds-grid slds-path__track slds-p-around_none">
+            <div class="slds-grid slds-path__scroller-container">
+              <div class="slds-path__scroller" role="application">
+                <div class="slds-path__scroller_inner">
+                  <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                    <apex:repeat value="{!lstStageWrapper}" var="sw">
+                        <li class="slds-path__item {!sw.strCSS}" role="presentation">
+                          <a aria-selected="false" class="slds-path__link" href="#" onclick="javascript:return ShowCheckList('{!sw.strCOStage}')" id="path-11" role="option" tabindex="-1">
+                            	<span class="slds-path__title">{!sw.strCOStage}</span>
+                          </a>
+                        </li>
+                    </apex:repeat>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <apex:pageBlock id="PageBlock">
+        <apex:pageMessages id="showmsg" />
+            <table style="display:{!if(isChecklistAvailable==false,'none;','')}" cellpadding="5" cellspacing="0" width="100%" class="custom-table">
+                <thead>
+                    <th class="head-th">Check List Name</th>
+                    <th class="head-th">Check List Implemented</th>
+                    <th class="head-th">Advocate Notes</th>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!set_BenefitType}" var="benefitType">
+                        <tr>
+                            <th style="text-align: Left;" colspan="3">{!benefitType}</th>
+                        </tr>
+                        <apex:repeat value="{!map_borCheckList[benefitType]}" var="borChecklist">
+                            <tr>
+                                <td>{!borChecklist.BOR_Checkpoints__r.BOR_Checklist_Name__c}
+                                </td>
+                                <td>
+                                	<div class="{!if(blnPreviousChecklist==true,'disable-checkbox','')}">
+                               		 	<apex:inputField style="margin: 10px;" value="{!borChecklist.IsCheckPointImplemented__c}"/>
+                               		 </div>
+                               </td>
+                                	
+                                <td>
+                                   <apex:inputTextarea value="{!borChecklist.Facilitator_Notes__c}" rows="2" cols="56" />
+                                    <!--disabled="{!blnDisableAll}"-->
+                                </td> 
+                            </tr>
+                        </apex:repeat>
+                    </apex:repeat>
+                </tbody>
+            </table>
+            
+            <apex:outputpanel layout="block" style="text-align: center;">
+                <apex:commandButton rendered="{!isChecklistAvailable}" oncomplete="RefreshPrimaryTab();return false"  style="margin-top: 15px;" action="{!SaveChecklist}" styleClass="btn-blue" value="Save" status="actStatusId" reRender="PageBlock, frmId" />
+                	&nbsp;&nbsp;
+                <apex:commandButton rendered="{!AND(isChecklistAvailable,!blnPreviousChecklist,!blnIsLastTADAStatus)}" status="actStatusId" reRender="PageBlock, frmId" oncomplete="RefreshPrimaryTab();return false"  style="margin-top: 15px;" action="{!SaveAndSubmitChecklist}" styleClass="btn-blue" value="Save & Proceed"/>
+                &nbsp;&nbsp;
+                <apex:commandButton rendered="{!AND(isChecklistAvailable,blnIsLastTADAStatus)}" status="actStatusId" reRender="PageBlock, frmId" oncomplete="RefreshPrimaryTab();return false"  style="margin-top: 15px;" action="{!MarkComplete}" styleClass="btn-blue" value="Mark Complete"/>
+            </apex:outputpanel>
+        </apex:pageBlock>  
+     </div>  
+    </apex:form> 
+</apex:page>

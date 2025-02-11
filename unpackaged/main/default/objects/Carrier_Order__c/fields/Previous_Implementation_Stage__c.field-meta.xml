@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Previous_Implementation_Stage__c</fullName>
+    <description>The Previous Implementation Stage and Implementation stage should be in sync. This status is mapped to previous implementation stage and OB message is sent to app using Kafka.</description>
+    <externalId>false</externalId>
+    <formula>IF( ISPICKVAL( Implementation_Stage__c , &quot;Ready For Qualification&quot;) , &apos;New&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;With Sales&quot;), &apos;With Advising&apos;, 
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Qualification&quot;), &apos;ER Docs Received&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Blocked&quot;), &apos;Blocked&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;OE Prep&quot;), &apos;QA&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Qualification&quot;), &apos;UW&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;OE&quot;), &apos;OE&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Ready for Submission Prep&quot;), &apos;Submission Prep&apos;, 
+ IF(ISPICKVAL( Implementation_Stage__c , &quot;OE Verification/Checking Participation&quot;), &apos;Pending ER Signature&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Awaiting Routing&quot;), &apos;Signatures Received&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Ready for Confirmation&quot;), &apos;Submitted&apos;,  
+IF(ISPICKVAL( Implementation_Stage__c , &quot;Pending Item&quot;), &apos;Received Pending Items&apos;, 
+ IF(ISPICKVAL( Implementation_Stage__c , &quot;Ready for Confirmation&quot;), &apos;Submitted Pending Items&apos;,  
+ IF(ISPICKVAL( Implementation_Stage__c , &quot;Approved&quot;), &apos;Activated&apos;,
+ IF(ISPICKVAL( Implementation_Stage__c , &quot;Approved Pending EE Audit&quot;), &quot;Approved&quot;, 
+ IF(ISPICKVAL( Implementation_Stage__c , &quot;Ready for OE Prep&quot;), &apos;UW&apos;, &apos;&apos;)  ) ) )) ) ) ) ) ) ) ) ) )))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Previous Implementation Stage</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Root_Cause_of_Complaint__c</fullName>
+    <description>Root Cause of Social or executive escalation</description>
+    <label>Root Cause of Complaint</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Carrier Error</fullName>
+                <default>false</default>
+                <label>Carrier Error</label>
+            </value>
+            <value>
+                <fullName>Commuter</fullName>
+                <default>false</default>
+                <label>Commuter</label>
+            </value>
+            <value>
+                <fullName>Complaint against Gusto Partner</fullName>
+                <default>false</default>
+                <label>Complaint against Gusto Partner</label>
+            </value>
+            <value>
+                <fullName>Financial Services Products</fullName>
+                <default>false</default>
+                <label>Financial Services Products</label>
+            </value>
+            <value>
+                <fullName>Gusto contracts or TOS</fullName>
+                <default>false</default>
+                <label>Gusto contracts or TOS</label>
+            </value>
+            <value>
+                <fullName>Gusto Health Insurance Products</fullName>
+                <default>false</default>
+                <label>Gusto Health Insurance Products</label>
+            </value>
+            <value>
+                <fullName>Gusto onboarding/offboarding process</fullName>
+                <default>false</default>
+                <label>Gusto onboarding/offboarding process</label>
+            </value>
+            <value>
+                <fullName>Gusto service (sales or CX or Risk)</fullName>
+                <default>false</default>
+                <label>Gusto service (sales or CX or Risk)</label>
+            </value>
+            <value>
+                <fullName>HSA</fullName>
+                <default>false</default>
+                <label>HSA</label>
+            </value>
+            <value>
+                <fullName>Payroll or Tax features and products</fullName>
+                <default>false</default>
+                <label>Payroll or Tax features and products</label>
+            </value>
+            <value>
+                <fullName>User privacy or account access</fullName>
+                <default>false</default>
+                <label>User privacy or account access</label>
+            </value>
+            <value>
+                <fullName>Customer Error</fullName>
+                <default>false</default>
+                <label>Customer Error</label>
+            </value>
+            <value>
+                <fullName>FSA</fullName>
+                <default>false</default>
+                <label>FSA</label>
+            </value>
+            <value>
+                <fullName>Gusto Partner Error</fullName>
+                <default>false</default>
+                <label>Gusto Partner Error</label>
+            </value>
+            <value>
+                <fullName>Gusto Team Error</fullName>
+                <default>false</default>
+                <label>Gusto Team Error</label>
+            </value>
+            <value>
+                <fullName>Manila TaskUs Vendor Error</fullName>
+                <default>false</default>
+                <label>Manila TaskUs Vendor Error</label>
+            </value>
+            <value>
+                <fullName>Marketing/UX Error</fullName>
+                <default>false</default>
+                <label>Marketing/UX Error</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Product is non-compliant of has limited functionality</fullName>
+                <default>false</default>
+                <label>Product is non-compliant of has limited functionality</label>
+            </value>
+            <value>
+                <fullName>Repeating Issues</fullName>
+                <default>false</default>
+                <label>Repeating Issues</label>
+            </value>
+            <value>
+                <fullName>Sales Error</fullName>
+                <default>false</default>
+                <label>Sales Error</label>
+            </value>
+            <value>
+                <fullName>Software Issue</fullName>
+                <default>false</default>
+                <label>Software Issue</label>
+            </value>
+            <value>
+                <fullName>State/IRS Agency Error</fullName>
+                <default>false</default>
+                <label>State/IRS Agency Error</label>
+            </value>
+            <value>
+                <fullName>Texas TaskUs Vendor Error</fullName>
+                <default>false</default>
+                <label>Texas TaskUs Vendor Error</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Carrier Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Commuter</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Complaint against Gusto Partner</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Financial Services Products</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Gusto contracts or TOS</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Gusto Health Insurance Products</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Gusto onboarding/offboarding process</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Gusto service (sales or CX or Risk)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>HSA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Payroll or Tax features and products</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>User privacy or account access</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Customer Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>FSA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Gusto Partner Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Gusto Team Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Manila TaskUs Vendor Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Marketing/UX Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Product is non-compliant of has limited functionality</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Repeating Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Sales Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Software Issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>State/IRS Agency Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Social Escalation</controllingFieldValue>
+            <controllingFieldValue>Executive Escalation</controllingFieldValue>
+            <controllingFieldValue>Gustie Escalation</controllingFieldValue>
+            <controllingFieldValue>Better Business Bureau</controllingFieldValue>
+            <controllingFieldValue>Abusive Customer</controllingFieldValue>
+            <valueName>Texas TaskUs Vendor Error</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,633 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_NewEditProjectCtrl" applyBodyTag="false" sidebar="false" id="rsProject">
+ 
+  <apex:form id="frm">
+      <head>
+        <title>Gusto</title>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
+        <apex:includeScript value="//code.jquery.com/jquery-2.1.1.min.js"/>
+        <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.18.3/js/jquery.tablesorter.js"/>
+        <c:UR_HeaderComponent />
+        <script>
+             $(document).ready(function(){
+             $ = jQuery.noConflict();
+             $("[id$=mlktp]").hide();
+             });
+             
+             function checkEnterKey(e){
+                var keyCode = e.which ? e.which : e.keyCode
+                if(keyCode==13){
+                   return false;
+                   // $("html, body").animate({ scrollTop: 0 }, "slow");
+                }
+            }
+        </script>
+      </head>
+      <style>
+        .dateFormat{
+            display: none;  
+        }
+        .multiSelectPicklistRow td {
+            width: 45%;
+        }
+        .multiSelectPicklistRow td.multiSelectPicklistCell {
+            width: 10%;
+        }
+      </style>
+      <body class="slds-scope">
+        
+        <c:UR_ActionStatus />
+        
+        <div class="slds-p-around_small">
+
+          <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-6 ">
+              <div class="slds-media">
+                <div class="slds-media__figure">
+                  <div class="slds-p-vertical_xx-small slds-p-horizontal_x-small">
+                    <a href="#" onClick="gotoHome();">
+                      <apex:image url="{!URLFOR($Resource.UR_ScoutLogo)}" width="30"/>
+                    </a>
+                  </div>
+                </div>
+                <div class="slds-media__body">
+                  <div>UXR Scout</div>
+                  <div class="slds-text-heading_large"><strong>{!if(projectMaster.Id==null, 'New Project', projectMaster.Name)} </strong></div>
+                </div>
+              </div>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-6">
+              <div class="slds-text-align_right slds-m-top_small">
+                <apex:actionFunction name="cancel" action="{!cancel}" status="statusSave" reRender="frm"/> 
+                <apex:actionFunction name="cancelProject" action="{!cancelProject}" status="statusSave" reRender="frm"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!if(projectMaster.Id==null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frm"/> 
+                
+                <apex:commandButton value="Cancel" action="{!cancelProject}" rendered="{!if(projectMaster.Id!=null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frm"/>
+            
+              </div>
+            </div>
+
+
+          </div>
+          
+          <apex:pageMessages id="msg"/>
+ 
+          <div class="slds-card slds-m-bottom_small" style="border: 1px solid #dddbda;">
+            <div class="slds-card__header slds-grid slds-p-bottom_small slds-m-bottom_none bg-grey">
+              <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    Key details
+                  </h2>
+                </div>
+                <div>
+                  <abbr class="slds-required" title="required">*</abbr> Required Information
+                </div>
+              </div>
+            </div>
+
+              <div class="slds-card__body slds-m-bottom_none slds-p-around_small">
+                <div class="slds-form">
+                  <div class="slds-wrap slds-gutters_large">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                      <div class="slds-form-element">
+                        <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> Research Project Name
+                        <span  class="info-tooltip" style="position: relative;">
+                            <i class="fas fa-info-circle info-tooltip"></i>
+                            <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                              <p class="slds-popover__body">[SEGMENT] identifiable project title (month/year)</p>
+                            </span>
+                        </span>
+                        </label>
+                        <div class="slds-form-element__control">
+                          <apex:inputField value="{!projectMaster.Name}" styleClass="slds-input"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6" style="{!if(blnApprovalCodeVisible, '', 'display:none;')}">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for="">
+                        <abbr class="slds-required" title="required">*</abbr>Project Approval Code
+                        <span  class="info-tooltip"  style="position: relative;">
+                          <i class="fas fa-info-circle info-tooltip"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                            <p class="slds-popover__body">This code comes from your segment's research roadmap. If you don't have a code, you won't be able to recruit with Scout or request incentives. Contact your segment researcher or lead to discuss more.</p>
+                          </span>
+                        </span>
+                      </label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField value="{!projectMaster.Project_Approval_Code__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>  
+                <div class="slds-wrap slds-gutters_large">
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> Anticipated Study Start Date
+                      <span  class="info-tooltip" style="position: relative;">
+                          <i class="fas fa-info-circle info-tooltip"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                            <p class="slds-popover__body">When do you plan to start conducting interviews and/or send a survey? Note: this can be changed later.</p>
+                          </span>
+                      </span>
+                      </label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField value="{!projectMaster.Project_Start_Date__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> Anticipated Study End Date</label>
+                      <div class="slds-form-element__control" style="">
+                         <apex:inputField value="{!projectMaster.Project_End_Date__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>                 
+                
+                <div class="slds-wrap slds-gutters_large">
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for="">Segment(s)</label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField value="{!projectMaster.Segment__c}"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="slds-wrap slds-gutters_large">
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> Type of Research</label>
+                      <div class="slds-form-element__control">
+                        
+                        <apex:inputField id="typeOfResearch" onChange="showHideHowLongInterview();" value="{!projectMaster.Type_of_Research__c}" styleClass="slds-input"/>
+                      </div> 
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element" id="howLongInterviewsBe" >
+                      <label class="slds-form-element__label" for="">How long will your interviews be (in minutes)?</label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField value="{!projectMaster.How_long_will_your_interviews_be__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="slds-wrap slds-gutters_large">   
+              
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element" id="howLongInterviewsBe5" >
+                      <label class="slds-form-element__label" for="">Buffer after interview
+                        <span  class="info-tooltip"  style="position: relative;">
+                          <i class="fas fa-info-circle info-tooltip"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                            <p class="slds-popover__body">Input how much time you'll add to the end of sessions for debrief. We recommend at least 15 minutes.</p>
+                          </span>
+                        </span>
+                      </label>
+                      <div class="slds-form-element__control">
+                          <apex:selectList styleclass="slds-input" value="{!projectMaster.Time_for_Post_interview_discussion__c}" size="1" multiselect="false">
+                              <apex:selectOptions value="{!selBufferTimeList}"/>
+                          </apex:selectList>  
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> Please summarize project goals or what you are studying 
+                      </label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField value="{!projectMaster.Description__c}" styleClass="slds-textarea"/>
+                      </div>
+                    </div>
+                  </div>  
+                  
+                </div>
+                
+                <div class="slds-wrap slds-gutters_large">
+                   <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for="">Who are you hoping to find &amp; contact? 
+                        <span  class="info-tooltip"  style="position: relative;">
+                          <i class="fas fa-info-circle info-tooltip"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                            <p class="slds-popover__body">Consider: what account or person attributes will you be looking for? <br/> Identifying this first will remind you during the recruit, and help improve the search options over time.</p>
+                          </span>
+                        </span>
+                      </label>
+                      
+                      <div class="slds-form-element__control">
+                         <apex:inputField value="{!projectMaster.Type_of_people_are_you_hoping_to_contact__c}" styleClass="slds-textarea"/>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> How many participants are you aiming to interview / study?</label>
+                      <div class="slds-form-element__control">
+                        <apex:inputText value="{!projectMaster.Number_of_Participants_to_Add_to_Project__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                
+                <div class="slds-wrap slds-gutters_large">
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr> Plan to offer incentives?</label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField id="planToOffer" onChange="showHideIncentive();" value="{!projectMaster.Plan_to_offer_incentives__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+               
+                    <div class="slds-form-element" id="incentiveAmount" style="display:{!if(projectMaster.Plan_to_offer_incentives__c!=null && CONTAINS(projectMaster.Plan_to_offer_incentives__c,'Yes') , 'block;', 'none;')}">
+                      <label class="slds-form-element__label" for="">Incentive monetary amount $
+                             <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                     <!-- <p class="slds-popover__body">Not sure how much to offer? go to go/uxr-incentives for guidelines.</p>-->
+                                      <p class="slds-popover__body">Reminder: do not incentivize surveys without input from #ux-research team.</p>
+                                  </span>
+                              </span>  
+                      </label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField onkeypress="return IsNumeric(event);" value="{!projectMaster.Incentive_Amount__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element" id="describeIncentive">
+                      <label class="slds-form-element__label" for="">Describe incentive type</label>
+                      <div class="slds-form-element__control">
+                        <apex:inputField value="{!projectMaster.Describe_Incentive_Type__c}" styleClass="slds-input"/>
+                      </div>
+                    </div>
+                  </div>
+                   
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr>Project Brief URL / UX Research Plan URL
+                      </label>
+                      <div class="slds-form-element__control">
+                        <apex:inputText value="{!projectMaster.Project_Brief_URL__c}" styleClass="slds-input" />
+                      </div>
+                    </div>
+                  </div>
+                                                   
+                </div>
+
+
+              </div>
+            </div>
+              
+          </div>
+        
+          <div class="slds-card slds-m-bottom_small" style="border: 1px solid #dddbda;">
+            <div class="slds-card__header slds-grid slds-p-bottom_small slds-m-bottom_none bg-grey">
+              <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    Additional Details
+                  </h2>
+                </div>
+                <div>
+                  <!--  -->
+                </div>
+              </div>
+            </div>
+
+              <div class="slds-card__body slds-m-bottom_none slds-p-around_small add-info">
+                <div class="slds-form" >
+                  <div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                      <div class="slds-form-element">
+                        <label class="slds-form-element__label" for=""><abbr class="slds-required" title="required">*</abbr>Persona / Participant profile(s)  
+                          <span  class="info-tooltip"  style="position: relative;">
+                            <i class="fas fa-info-circle info-tooltip"></i>
+                            <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                              <p class="slds-popover__body">check go/uxr-toolkit to understand the difference</p>
+                            </span>
+                          </span>
+                        </label>
+                        <div class="slds-form-element__control">
+                          <apex:inputField value="{!projectMaster.Customer_Types__c}" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="slds-wrap slds-gutters_large">
+                      <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Relevant Product Area(s)</label>
+                          <div class="slds-form-element__control">
+                            <apex:inputField value="{!projectMaster.Product_Area__c}"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="slds-wrap slds-gutters_large">
+                      <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                        <div class="slds-form-element">
+                          <label class="slds-form-element__label" for="">Project Lead(s)
+                            <span  class="info-tooltip"  style="position: relative;">
+                              <i class="fas fa-info-circle info-tooltip"></i>
+                              <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                <p class="slds-popover__body">Who is owning the initiation of this research? Note: Does not need to be the person recruiting or moderating.</p>
+                              </span>
+                            </span>
+                          </label>
+                          <div class="slds-form-element__control">
+                            <apex:inputField value="{!projectMaster.Project_Leads__c}" styleClass="slds-input" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    
+
+                </div> 
+
+
+              </div>
+            </div>
+              
+          </div>
+
+      <!-- BEGIN NEW -->  
+      <div class="slds-card slds-m-bottom_small" style="border: 1px solid #dddbda; display:{!if(projectMaster.Id==null, 'none;', '')}">
+        <div class="slds-card__header slds-grid slds-p-bottom_small slds-m-bottom_none bg-grey">
+          <div class="slds-media slds-media_center slds-has-flexi-truncate">
+            
+            <div class="slds-media__body">
+              <h2 class="slds-card__header-title">
+                Team Roles &amp; Permissions
+              </h2>
+            </div>
+            <div>
+              <apex:outputPanel rendered="{!if(projectMaster.Id==null, false, true)}" >
+                  <apex:commandLink rerender="frm" status="statusSave" action="{!addTeamMember}">
+                      Add project team member <i class="fas fa-user-plus"></i>
+                  </apex:commandLink>
+              </apex:outputPanel>
+            </div>
+          </div>
+        </div>
+        
+          <div class="slds-card__body slds-m-bottom_none slds-m-top_none slds-p-around_small slds-border_top">
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-media">
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      <strong>All Gusties</strong> can <strong>view</strong> this project.
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+        <apex:outputPanel rendered="{!if(projectMaster.Id==null, true, false)}" >
+        <div class="slds-card__body slds-m-bottom_none slds-m-top_none slds-p-around_small slds-border_top">
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <p class="slds-m-bottom_small">
+                        <apex:outputText value="{!$User.FirstName&' '&$User.LastName}"/>
+                 
+                  <span class="text-grey fs-11"><em>
+                    <br/>
+                    <apex:outputText value="project creator" />
+                    </em></span></p>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-media slds-m-bottom_small">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                         <input type="checkbox" name="label" checked="checked" disabled="disabled" value="option" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      can <strong>edit</strong> this project &amp; <strong>contact customers</strong> on behalf of this project
+                    </div>
+                  </div>
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                        <input type="checkbox" name="label" checked="checked" disabled="disabled" value="option" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      Should be <strong>invited</strong> to any <strong>scheduled customer interviews</strong>
+                      <span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip"></i>
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                          <p class="slds-popover__body">This will send an invitation to observe the sessions that are scheduled through Scout.</p>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-m-top_small slds-m-top_large">
+                            <p><em>* You can add additional team members after the project has been created.</em></p>
+                  </div>
+                </div>
+            </div>
+        </div>
+        </apex:outputPanel>
+        
+          <apex:repeat value="{!projectTeamMap}" var="key">
+          <div class="slds-card__body slds-m-bottom_none slds-p-around_small slds-border_top">
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-m-bottom_small">
+                        <apex:inputField onkeypress="return checkEnterKey(event);" rendered="{!if(projectTeamMap[key].Id == null,true,false)}" value="{!projectTeamMap[key].User__c}" />
+                        <apex:outputField rendered="{!if(projectTeamMap[key].Id != null,true,false)}" value="{!projectTeamMap[key].User__c}" />
+                 <br/>
+                  <span class="text-grey fs-11">
+                    <em>
+                        <apex:outputPanel rendered="{!if(projectTeamMap[key].Project_Creator__c,true,false)}" >
+                            project creator <br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!if(projectMaster.Id!=null && projectTeamMap[key].User__c == projectMaster.OwnerId ,true,false)}" >
+                            owner
+                        </apex:outputPanel>
+                    </em>
+                    </span>
+                    
+                </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-media slds-m-bottom_small">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                        <apex:inputField value="{!projectTeamMap[key].Edit_Access__c}" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      can <strong>edit</strong> this project &amp; <strong>contact customers</strong> on behalf of this project
+                    </div>
+                  </div>
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                        <apex:inputField value="{!projectTeamMap[key].Invite_for_Interviews__c}" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      should be <strong>invited</strong> to any <strong>scheduled customer interviews</strong> 
+                      <span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip"></i>
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                          <p class="slds-popover__body">This will send an invitation to observe the sessions that are scheduled through this tool.</p>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  
+                </div>
+                    
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-text-align_right slds-m-top_small">
+                    <apex:commandButton rendered="{!if(projectTeamMap[key].Project_Creator__c,false,true)}" styleclass="slds-button slds-button_text-destructive" rerender="frm" status="statusSave" value="Delete" action="{!deleteTeamMember}">
+                          <apex:param name="eventId" value="{!key}" assignTo="{!deleteRowIndex}"/>
+                    </apex:commandButton> 
+                  </div>
+                </div>
+              </div>
+          </div>
+          </apex:repeat> 
+          
+      </div>
+      <!-- END NEW -->
+
+          <div Id="addMember" class="slds-m-top_large">
+           	<!--
+            <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!if(projectMaster.Id==null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frm"/>
+            <apex:commandButton value="Cancel" action="{!cancelProject}" rendered="{!if(projectMaster.Id!=null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frm"/>
+ 			-->
+            <apex:outputpanel rendered="{!isEditable}">
+                <apex:commandButton rendered="{!if(projectMaster.Id!=null,true,false)}" value="Save" action="{!saveProject}" styleClass="slds-button slds-button_brand slds-m-bottom_small slds-float_right" status="statusSave" reRender="frm"/>
+                <apex:commandButton rendered="{!if(projectMaster.Id==null,true,false)}" value="Create Project" action="{!saveProject}" styleClass="slds-button slds-button_brand slds-m-bottom_small slds-float_right" status="statusSave" reRender="frm"/>          
+            </apex:outputpanel>
+          </div>
+
+        </div>
+
+
+
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+         <script type="text/javascript">
+           
+           $('.add-info-btn').click(function() {
+            $('.add-info').slideToggle();
+            $('.add-info-btn i').toggleClass('fa-angle-up');        
+          });
+           $('.add-info-btn-01').click(function() {
+            $('.add-info-01').slideToggle();
+            $('.add-info-btn-01 i').toggleClass('fa-angle-up');        
+           });
+
+           function showHideIncentive(){
+                var objValue = $(document.getElementById('rsProject:frm:planToOffer')).find(":selected").text();
+                console.log('====>' + objValue);
+                if(objValue!='' && objValue.includes('Visa')){
+                    $("#incentiveAmount").show();
+                }else{
+                    $("#incentiveAmount").hide();
+                }
+                
+                if(objValue!='' && objValue.includes('Other')){
+                    $("#describeIncentive").show();
+                }else{
+                    $("#describeIncentive").hide();
+                }
+           }
+           
+           function showHideHowLongInterview(){
+                var objValue = $(document.getElementById('rsProject:frm:typeOfResearch')).find(":selected").text();
+                console.log('11====>' + objValue);
+                if(objValue=='--None--' || objValue=='Unmoderated - Usability test' || objValue=='Unmoderated - Survey' || objValue=='Unmoderated - Diary' || objValue=='Other'){
+                    $("#howLongInterviewsBe").hide();
+                    $("#howLongInterviewsBe5").hide();
+                    console.log('<===if 22====>');
+                }else{
+                    $("#howLongInterviewsBe").show();
+                    $("#howLongInterviewsBe5").show();
+                    console.log('<===else====>');
+                }
+           }
+           
+           function showField(){
+                $("#howLongInterviewsBe1").show();
+                $("#howLongInterviewsBe2").show();
+                $("#howLongInterviewsBe3").show();
+                $("#howLongInterviewsBe4").show();
+                $("#howLongInterviewsBe5").show();
+                $("#howLongInterviewsBe6").show();
+           }
+           function hideField(){
+                $("#howLongInterviewsBe1").hide();
+                $("#howLongInterviewsBe2").hide();
+                $("#howLongInterviewsBe3").hide();
+                $("#howLongInterviewsBe4").hide();
+                $("#howLongInterviewsBe5").hide();
+                $("#howLongInterviewsBe6").hide();
+           }
+ 
+           function gotoHome(){
+                var objId = '{!projectMaster.Id}';
+                if(objId != '' && objId != 'null'){
+                    cancelProject();
+                }else{
+                    cancel();
+                }
+           }
+
+           function resizeMultiSelects() {
+              $('.multiSelectPicklistRow').each(function(i, v) {
+                  $(this).find('[multiple="multiple"]').attr('size', $(this).find('option').length + 1);
+              });
+           }
+
+           function sanitizeField() {
+            $(this).val($(this).val().replace(/\n/g, ''));
+           }
+
+           $('body').on('keypress blur', 'textarea.slds-input', sanitizeField);
+
+           showHideIncentive();
+           showHideHowLongInterview();
+           resizeMultiSelects();
+        
+           window.onload = function() {
+               console.log('{!isEditTeam}');
+               if('{!isEditTeam}'=='true'){  
+                    console.log('---------');
+                   $('html, body').animate({ scrollTop: $("#addMember").offset().top }, 10);
+               }
+           };
+         </script> 
+      
+      </body>
+
+  </apex:form>
+  
+</apex:page>

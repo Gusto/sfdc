@@ -1,0 +1,21 @@
+<apex:page standardController="Case" extensions="PrivacyRequestSendDataExt" >
+    <html>
+        <apex:slds />
+        <div class="slds-scope">
+            <div class="slds-text-align_center">
+                <div class="slds-text-heading_small">Case Status must be "Ready to Disclose" for email to be sent</div>
+                <apex:form >
+                    <apex:pageMessages />
+                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Send data" action="{!sendData}" reRender="redirectPanel" onClick="this.disabled=true;"/>
+                    <apex:outputPanel id="redirectPanel" >
+                        <apex:outputText rendered="{!shouldRedirect}">
+                            <script type="text/javascript">
+                                window.top.location.href = '/console';
+                            </script>
+                        </apex:outputText>
+                    </apex:outputPanel>
+                </apex:form>
+            </div>
+        </div>
+    </html>
+</apex:page>

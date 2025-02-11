@@ -1,0 +1,40 @@
+<apex:page standardController="Opportunity" extensions="MassUpdateController_Custom" recordSetvar="unused"  id="page">
+        
+     <apex:outputPanel >  
+        <apex:form id="wizard">
+            
+            <apex:sectionHeader title="Opportunity Mass Owner Update"/>
+            
+            <apex:pageBlock id="step1" title="Confirm records to be updated"  mode="edit" rendered="{!step='1'}">
+                <apex:pagemessages escape="false"></apex:pagemessages>
+                <apex:pageBlockSection columns="1" rendered="{! !hideRecordSection}">
+                    <apex:pageBlockTable var="a" value="{!selected}">
+                        <apex:column value="{!a.Name}"/>
+                        <apex:column value="{!a.Account.Name}"/>
+                        <apex:column value="{!a.CloseDate}"/>
+                        <apex:column value="{!a.Amount}"/>
+                        <apex:column value="{!a.IsClosed}"/>
+                        <apex:column headerValue="Owner" value="{!a.Owner.Name}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:panelGrid columns="2">
+                </apex:panelGrid>
+                <apex:pageBlockSection title="Specify the new value for - Opportunity Owner" rendered="{! !hideRecordSection}">
+                    <apex:inputField label="New Owner" value="{!oppRec.OwnerId}"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!cancel}" value="Cancel"  immediate="true" style="margin-left: 2em"/>
+                    <apex:commandButton action="{!step2}" value="Update" rendered="{! !hideRecordSection}"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>  
+            
+            <apex:pageBlock id="step2" title="Results" mode="edit" rendered="{!step='2'}">
+                <apex:pagemessages escape="false"></apex:pagemessages>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!cancel}" value="Close"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock> 
+            
+        </apex:form>
+    </apex:outputPanel>
+</apex:page>

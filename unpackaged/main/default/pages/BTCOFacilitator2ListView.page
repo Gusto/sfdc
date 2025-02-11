@@ -1,0 +1,174 @@
+<apex:page controller="BTFacilitator2PlayModeCtrl" sidebar="false" action="{!seeMyOrders}" docType="html-5.0">
+    <c:BTFacilitatorComp facListTab="" facOOOTab="" fac2ListTab="active"/>
+    <apex:form id="frmBody">
+        <div class="slds-scope"> 
+            <!-- Enrollment Review Orders -->  
+            <apex:pageblock title="Enrollment Review Carrier Orders (Records)" id="coPanel">
+                <div style="text-align: right; margin-top: -40px;">
+                    <apex:commandButton value="Refresh" action="{!seeMyOrders}" reRender="frmBody" status="actStatusId" styleclass="btn-blue" style="padding: 3px 8px !important;"/>
+                </div>                  
+                <apex:pageMessage summary="{!strErrorInEnrollmentReview}" severity="warning" strength="3" rendered="{!If(strErrorInEnrollmentReview!='',true,false)}" />
+
+                <table id="CarrierOrderTable_Account" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                    <thead>
+                        <tr>
+                            <th >Account Name</th>
+                            <th data-orderable="false">Carrier Order Name</th>
+                            <th data-orderable="false">Parent Carrier Order</th><!-- link opens in new tab-->
+                            <th data-orderable="false">Implementation Stage</th>
+                            <th>Renewal Date</th>
+                            <th data-orderable="false">Follow Up Date</th>
+                            <th>Age (Since Qualified)</th>
+                            <th data-orderable="false">Facilitator 2 Notes</th>
+                            <th data-orderable="false">Mark Complete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+						<apex:repeat value="{!set_AccountName}" var="key">
+                        	<apex:repeat value="{!map_COWLI[key].list_COWLines}" var="value" > 
+                                    <tr>
+                                        <td rowspan="{!map_COWLI[key].numOfGroupedCO}" style="display:{!IF(CASESAFEID(value.objCarrierOrderLI.id)==CASESAFEID(map_COWLI[key].firstOfList), 'table-data','none' )};"> 
+                                            {!value.objCarrierOrderLI.Benefit_Order__r.Account__r.Name}
+                                        </td>                                   
+                                        <td>
+                                            <a href="javascript:void(0);" onclick="openSubTab('{!value.objCarrierOrderLI.Id}','{!JSENCODE(value.objCarrierOrderLI.Name)}');return false;">{!value.objCarrierOrderLI.Name}</a>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" onclick="openSubTab('{!value.objCarrierOrderLI.Parent_Carrier_Order__c}','{!JSENCODE(value.objCarrierOrderLI.Parent_Carrier_Order__r.Name)}');return false;">{!value.objCarrierOrderLI.Parent_Carrier_Order__r.Name}</a>
+                                        </td>                                        
+                                        <td>{!value.objCarrierOrderLI.Implementation_Stage__c}</td>
+                                        <td>
+                                           <!--<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                                <apex:param value="{!value.objCarrierOrderLI.Renewal_Date__c}" />
+                                            </apex:outputText>-->
+                                            <div style="display: none;">{!value.strRenewalDate}</div><apex:outputfield value="{!value.objCarrierOrderLI.Renewal_Date__c}"/>
+
+                                        </td>
+                                        <td>
+                                            <apex:inputField showDatePicker="true" value="{!value.objCarrierOrderLI.Follow_Up_Date__c}" />
+                                        </td>                                    
+                                        <td>{!value.objCarrierOrderLI.Benefit_Order__r.Age__c}</td>
+                                        <td class="pxy-5" style="word-break: break-word;" >
+                                            <apex:inputField value="{!value.objCarrierOrderLI.Facilitator_2_Enrollment_Review_Notes__c}"/>
+                                        </td>
+                                        <td>
+                                            <apex:inputCheckbox value="{!value.blnIsLineItemMarkedComplete}"/>
+                                        </td>                                
+                                    </tr>                                      
+                            </apex:repeat>
+                        </apex:repeat>   
+                    </tbody> 
+                </table>
+                <apex:pageBlockButtons location="Bottom">
+                    <apex:commandButton value="Save My Enrollment Review Orders" action="{!saveMyEnrollmentReviewOrders}"/>
+                </apex:pageBlockButtons>
+            </apex:pageblock> 
+            
+         <!-- Plan Review Orders -->   
+        <apex:pageblock title="Plan Review Carrier Orders ({!list_CarrierOrderWrapper.size} Records)" id="myCOPanel">
+            <apex:pageMessage summary="{!strErrorInPlanReview}" severity="warning" strength="3" rendered="{!If(strErrorInPlanReview != '',true,false)}" />            
+            <table id="CarrierOrderTable" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                <thead>
+                    <tr>
+                        <th>Carrier Order Name</th>
+                        <th>Parent Carrier Order</th><!-- link opens in new tab-->
+                        <th>Implementation Stage</th>
+                        <th>Renewal Date</th>
+                        <th>Follow Up Date</th>
+                        <th>Age (Since Qualified)</th>
+                        <th data-orderable="false">Facilitator 2 Notes</th>                        
+                        <!--<th>Open Ticket</th>-->
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!list_CarrierOrderWrapper}" var="cow">
+                        <tr>
+                            <td>
+                                <a href="javascript:void(0);" onclick="openSubTab('{!cow.objCarrierOrder.Id}','{!JSENCODE(cow.objCarrierOrder.Name)}');return false;">{!cow.objCarrierOrder.Name}</a>
+                            </td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="openSubTab('{!cow.objCarrierOrder.Parent_Carrier_Order__c}','{!JSENCODE(cow.objCarrierOrder.Parent_Carrier_Order__r.Name)}');return false;">{!cow.objCarrierOrder.Parent_Carrier_Order__r.Name}</a>
+                            </td>                                
+                            <td>{!cow.objCarrierOrder.Implementation_Stage__c}</td>
+                            <td>
+                                <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                    <apex:param value="{!cow.objCarrierOrder.Renewal_Date__c}" />
+                                </apex:outputText>
+                            </td>
+                            <td>
+                                <apex:inputField showDatePicker="true" value="{!cow.objCarrierOrder.Follow_Up_Date__c}"/>
+                            </td>                              
+                            <td>{!cow.objCarrierOrder.Benefit_Order__r.Age__c}</td>
+                            <td class="pxy-5" style="word-break: break-word;" >
+                                <apex:inputField value="{!cow.objCarrierOrder.Facilitator_2_Plan_Review_Notes__c}"/>
+                            </td>                            
+                           <!-- <td ><apex:outputpanel rendered="{!if(cow.strTicketId!=null,true,false)}"><a href="javascript:void(0);" onclick="openSubTab('{!cow.strTicketId}','{!JSENCODE(cow.strTicketNumber)}');return false;">{!cow.strTicketNumber}</a></apex:outputpanel></td>
+                        --></tr>
+                    </apex:repeat>
+                </tbody> 
+            </table>
+                <apex:pageBlockButtons location="Bottom">
+                    <apex:commandButton value="Save My Plan Review Orders" action="{!saveMyPlanReviewOrders}"/>
+                </apex:pageBlockButtons>            
+        </apex:pageblock>  
+<!-- Tickets section Start -->
+  <apex:pageblock title="Open Tasks" id="openTasks"> 
+        <apex:pageMessage summary="{!strErrorInTickets}" severity="warning" strength="3" rendered="{!If(strErrorInTickets!='',true,false)}" />                 
+        <apex:outputpanel id="ticketPanel">
+	         <div class="tab">
+	          <apex:commandLink action="{!ShowTicketCreatedByMe}" status="statusSave" rerender="ticketPanel" styleclass="tablinks subTabLinks {!if(strTicketFilter=='created','active','')}" style="padding:5px 12px">Tickets Created by Me ({!intNoOfTicketCreated} Records)</apex:commandLink>
+	          <apex:commandLink action="{!ShowTicketOwnedByMe}" status="statusSave" rerender="ticketPanel" styleclass="tablinks subTabLinks {!if(strTicketFilter == 'owned','active','')}" style="padding:5px 12px">Tickets Assigned to Me ({!intNoOfTicketOnwed} Records)</apex:commandLink>
+	          <apex:commandLink action="{!ShowClosedTicket}" status="statusSave" rerender="ticketPanel" styleclass="tablinks subTabLinks {!if(strTicketFilter == 'closed','active','')}" style="padding:5px 12px">Tickets Closed Within Past Week ({!intNoOfTicketClosed} Records)</apex:commandLink>
+	        </div>
+	         <br/>
+	        <div class="tabcontent">
+	        	<!-- Ticket Created By me Start -->
+		            <table id="TicketTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+		              <thead>
+		                <tr>
+		                  <th>Days since ticket created</th>
+		                  <th data-orderable="false">Carrier Order name</th>
+		                  <th>Ticket Status</th>
+		                  <th>Ticket Reason</th>
+		                  <th>Ticket Reason Detail</th>
+		                  <th data-orderable="false">Ticket # </th>
+		                  <th>Effective date </th>
+		                  <th data-orderable="false">Description</th>
+		                  <th data-orderable="false">Reporting team</th>
+		                   <th data-orderable="false">Last modified date</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              <apex:repeat value="{!list_TicketWrapper}" var="tkt">
+		                <tr>
+		                  <td>{!tkt.intDaySinceLastCreated}</td>                         
+		                  <td><a href="javascript:void(0);" onclick="openSubTab('{!tkt.objTicket.Carrier_Order__c}','{!JSENCODE(tkt.objTicket.Carrier_Order__r.Name)}');return false;">{!tkt.objTicket.Carrier_Order__r.Name}</a></td>
+		                  <td><apex:outputlabel value="{!tkt.objTicket.Status__c}"/></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason__c}"/></td>
+		                   <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason_Detail__c}"/></td>
+		                  <td><a href="javascript:void(0);" onclick="openSubTab('{!tkt.objTicket.Id}','{!JSENCODE(tkt.objTicket.Name)}');return false;">{!tkt.objTicket.Name}</a></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Carrier_Order__r.Renewal_Date__c}"/></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Description__c}"/></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Reporting_Team__c}"/></td>
+		                  <td>
+		                  	<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+							    <apex:param value="{!tkt.objTicket.LastModifieddate}" />
+							</apex:outputText>
+		                  </td>
+		                </tr>
+		              </apex:repeat>
+		              </tbody>
+		            </table>
+	            </div>
+        	</apex:outputpanel>
+      </apex:pageblock>       
+        </div>  
+        <script>
+        $(function() {
+            $("#TicketTable").DataTable({"aaSorting": []});
+            // $("#CarrierOrderTable_Account").DataTable({"aaSorting": [],"paging":false,"searching": false});
+        });
+        
+        </script>         
+    </apex:form>    
+</apex:page>

@@ -1,0 +1,749 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ProjectCloserCtrl" id="pageId" applyBodyTag="false" sidebar="false">
+ <apex:form id="frm" >
+  <head> 
+    <title>Gusto</title>
+       <style>
+         .blacklist-optout td, .blacklist-optout:hover td, .blacklist-optout:focus td{
+            background-color: #f8d7da !important;
+         }
+         .custom-tooltip .custom-tooltip-box {
+            display: none;
+         }
+         .custom-tooltip a:hover + .custom-tooltip-box {
+            display: block;
+         }
+        
+         .chevrondownImage{
+            width: 15px; 
+         }
+         .arrowdownImage{
+            width: 15px;
+         }
+         .arrowupImage{
+            width: 15px;
+         }
+           
+         .tablesorter thead .sorter-false {
+            padding: .25rem 10px !important;
+          }
+           
+          @media (min-width: 768px){
+            .mt-items {
+                margin-top: -30px;
+            }
+          }
+          
+           
+       </style>
+       <script>
+        function setFocusOnLoad() {}
+      </script>
+    <c:UR_SortingTable />
+    <style>
+        .tooltip-bottom {
+            position: absolute !important; 
+            top: 25px; 
+            right: -15px; 
+            text-transform: none !important; 
+            white-space: normal; 
+            width: 180px !important; 
+            font-weight: normal;
+        }
+    </style>
+  </head>
+
+  <body class="slds-scope">
+     <c:UR_ActionStatus />
+     <c:UR_MenuHeaderComponent tabName="Results" subTabName="RA" prjId="{!objProject.Id}"/>
+     <apex:actionFunction rerender="pageId" status="statusSave" name="sortParticipantList" action="{!sortParticipantList}">
+        <apex:param name="sortby" value="" assignTo="{!sortbyFieldAPIName}"/>
+        <apex:param name="orderas" value="{!orderas}"/>
+        <apex:param name="projectId" value="{!objProject.Id}"/>
+     </apex:actionFunction> 
+      
+	 <apex:actionFunction rerender="frm" status="statusSave" name="markAsBlackList" action="{!updateGiftCardStatus}">
+        <apex:param name="strPartId" value=""/>
+     </apex:actionFunction> 
+	 
+     <apex:actionFunction rerender="frm" status="statusSave" name="updateIncentiveStatusAmount" action="{!updateIncentiveStatus}">
+        <apex:param name="strPartId" value=""/>
+     </apex:actionFunction> 
+      
+     <apex:actionFunction rerender="frm" status="statusSave" name="UpdateParticipants" action="{!UpdatePartDetail}">
+        <apex:param name="selectedStatus" value="" assignTo="{!selectedStatus}"/>
+     </apex:actionFunction> 
+     <apex:actionFunction rerender="frm" status="statusSave" name="searchParticipant" action="{!searchParticipantFromList}"/>
+  
+  
+ <!--body start here-->  
+    <div class="slds-p-around_small"> 
+      <div class="slds-tabs_default slds-border_bottom slds-m-bottom_small" style="position: relative;">
+          <ul class="slds-tabs_default__nav results-nav" role="tablist" style="margin-bottom: -1px; flex: 1;">
+            <li class="slds-tabs_default__item slds-is-active">
+              <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" data-toggle="tab" data-target="#attendance" tabindex="-1" aria-selected="false" aria-controls="tab-results-attendance__item" id="tab-results-attendance">Attendance</a>
+            </li>
+            <li class="slds-tabs_default__item" style="display:{!if(isSurveyExist,'','none;')}">
+              <a class="slds-tabs_default__link uxr-scout-url {!if(isSurveyExist,'','disablelink')}" href="UR_ViewSurveyResponse?Id={!objProject.Id}" role="tab" data-toggle="tab" data-target="#survey-results" tabindex="-1" aria-selected="true" aria-controls="tab-results-surveys__item" id="tab-results-surveys">Surveys <span class="slds-badge slds-badge_inverse">{!if(newSurveyCount>0,newSurveyCount,'')}</span></a>
+            </li>
+          </ul>
+      </div>  
+      <apex:pageMessages id="msg"/>
+      
+      <apex:outputPanel id="notePanel">
+          <div class="slds-text-align_left bg-grey slds-p-around_small" style="border-radius: .25rem;">
+            <div class="slds-grid slds-wrap wd-100">
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12">
+                <div class="slds-m-top_xx-small">
+                  <div class="slds-text-heading_medium"><strong>Notes</strong></div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12">
+                <apex:outputpanel layout="block" rendered="{!if(objNote.id!=null,true,false)}" styleclass="slds-m-top_x-small text-grey">Last updated at &nbsp;<apex:outputField value="{!objNote.LastModifiedDate}"/> by &nbsp;<apex:outputField value="{!objNote.LastModifiedBy.Name}"/></apex:outputpanel>
+              </div>
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12 slds-text-align_right">
+                  <apex:outputpanel rendered="{!isEditable}">
+	                  <apex:commandLink rendered="{!addNote}" rerender="notePanel" status="statusSave" value="Cancel" action="{!CancelNote}" styleclass="slds-button slds-button_outline-brand"/>&nbsp;
+	        		  <apex:commandButton rendered="{!addNote}" rerender="notePanel" status="statusSave" value="Save notes" action="{!SaveNotes}" styleclass="slds-button slds-button_brand"/>
+	                  <apex:commandButton rendered="{!!addNote}" rerender="notePanel" status="statusSave" value="Add notes" action="{!AddNote}" styleclass="slds-button slds-button_outline-brand"/>
+                   </apex:outputpanel>
+             </div>
+            </div>
+          </div>
+               
+          <apex:outputpanel rendered="{!!addNote}" layout="block" styleclass="slds-p-around_small slds-m-bottom_medium slds-scrollable_y" style="max-height: 150px;">
+              <em><apex:outputField value="{!objNote.Body}"/></em>
+          </apex:outputpanel>
+          <apex:outputpanel rendered="{!addNote}" layout="block" styleclass="slds-m-bottom_medium">
+              <apex:inputField value="{!objNote.Body}" styleClass="slds-textarea" style="height: 80px;width: 100%"/>
+          </apex:outputpanel>  
+      </apex:outputPanel>  
+        
+      <div class="slds-grid slds-wrap" style="align-items: flex-end; justify-content: space-between">
+      	  <div class="slds-col slds-size_1-of-1 slds-size_1-of-1 slds-medium-size_3-of-6">
+          	  <div class="slds-grid slds-m-bottom_x-small" style="align-items: center">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-m-right_small">
+                    <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                      <i class="fas fa-search"></i>
+                    </span>
+                    <apex:inputText disabled="{!!isParticipantExist}" onkeypress="checkEnterKey(event);" value="{!searchString}" id="text-input-id-1" html-placeholder=" Search this list" styleClass="slds-input" />
+                </div>
+                <div id="recordCount" class="slds-m-around_none mt-items">
+                     <div style="display:{!if(isEditable==true,'none;','block;')}"><br/></div>{!totalParticipant} participants
+                </div>
+
+              </div>
+          </div>
+          
+          <div class="slds-grid">
+              <apex:outputpanel rendered="{!isEditable}" styleClass="slds-grid">
+                <div>
+                    <apex:selectlist id="selectAction" rendered="{!if(lstResearchProjectDetailWrapper.size>0,true,false)}" onChange="UpdateParticipantStatus(this);" styleclass="slds-select slds-m-bottom_x-small update-status custom-select" style="width: 180px; display:none;" value="{!selectedStatus}" size="1">
+                        <apex:selectOptions value="{!statusList}"/>
+                    </apex:selectlist> 
+                </div>&nbsp;
+                <div>
+                    <apex:commandButton style="display:none;" styleclass="slds-button slds-button_brand request-incentive-btn" value="Request incentives" action="{!countAttendedParticipant}" oncomplete="openIncentiveModal();" reRender="incentiveModal" status="statusSave"/>
+                </div>
+              </apex:outputpanel>
+          </div>
+      </div>
+
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">
+          
+          <apex:outputpanel >
+          <div class="slds-p-vertical_small">
+               <div class="slds-scrollable" style="max-height:500px; min-height:200px; width: 100%;">
+                  <table class="slds-table slds-table_cell-buffer slds-table_bordered  fix-header">
+                    <thead>
+                      <tr class="slds-line-height_reset">
+                        <th class="slds-text-title_caps sorter-false" scope="col"  style="padding-left: 18px !important;">
+                            <div class="slds-checkbox slds-checkbox_standalone">
+                              <apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'selContact'); countSelectedRecord();"/>
+                            <span class="slds-checkbox_faux"></span>
+                            </div>
+                        </th>
+                        <th class="slds-text-title_caps sorter-false" scope="col"></th>
+                        <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Contact__r.Name');">
+						   <ul class="slds-list_horizontal">
+							  <li class="slds-truncate">Name</li>
+							  <li>
+								  <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Contact__r.Name' && orderAs=='desc','','none;')}"></i>
+								  <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Contact__r.Name' && orderAs=='asc','','none;')}"></i> 
+							  </li>                      
+						  </ul>
+						 
+                        </th>
+                        <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Contact__r.Email');">
+						  <ul class="slds-list_horizontal">
+							  <li class="slds-truncate">Email</li>
+							  <li>
+								  <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Contact__r.Email' && orderAs=='desc','','none;')}"></i>
+								  <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Contact__r.Email' && orderAs=='asc','','none;')}"></i> 
+							  </li>                      
+						  </ul>
+						</th>
+                        <th class="slds-text-title_caps sorter-false" style="min-width: 120px;" scope="col"  onclick="sortParticipantList('Research_Participant_Status_Number__c');">
+						  <ul class="slds-list_horizontal">
+							  <li class="slds-truncate">Status</li>
+							  <li>
+								  <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Research_Participant_Status_Number__c' && orderAs=='desc','','none;')}"></i>
+								  <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Research_Participant_Status_Number__c' && orderAs=='asc','','none;')}"></i> 
+							  </li>                      
+						  </ul>
+						</th>
+                        <th class="slds-text-title_caps sorter-false" scope="col" width="250" onclick="sortParticipantList('Blacklist__c');">
+						   <ul class="slds-list_horizontal">
+							  <li>Add to Blocklist
+                              	<span class="info-tooltip" style="position: relative;">
+                                    <i class="fas fa-info-circle info-tooltip"></i>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_top-right tooltip-bottom" role="tooltip" id="help">
+                                        <p class="slds-popover__body">This will block this person from future UXR invitations</p>
+                                    </span>
+                                  </span>   
+                              </li>
+							  <li>
+								  <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Blacklist__c' && orderAs=='desc','','none;')}"></i>
+								  <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Blacklist__c' && orderAs=='asc','','none;')}"></i> 
+							  </li>                      
+						  </ul>
+						</th>
+                        <th style="min-width:180px;" class="slds-text-title_caps sorter-false" scope="col" width="180" onclick="sortParticipantList('Incentive__c');">
+						  <ul class="slds-list_horizontal">
+							  <li>To be sent
+									<span class="info-tooltip" style="position: relative;">
+										<i class="fas fa-info-circle info-tooltip"></i>
+										<span class="slds-popover slds-popover_tooltip slds-nubbin_top-right tooltip-bottom" role="tooltip" id="help">
+										  <p class="slds-popover__body">Adjust amount if needed</p>
+										</span>
+									</span>  
+							  </li>
+							  <li>
+								  <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Incentive__c' && orderAs=='desc','','none;')}"></i>
+								  <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Incentive__c' && orderAs=='asc','','none;')}"></i> 
+							  </li>                      
+						  </ul>
+						</th>
+                          
+                          <th style="min-width:180px;" class="slds-text-title_caps sorter-false" scope="col"  width="150" onclick="sortParticipantList('Incentive__c');">
+                              <ul class="slds-list_horizontal">
+                                  <li>Incentives Sent
+                                      <span class="info-tooltip" style="position: relative;">
+                                          <i class="fas fa-info-circle info-tooltip"></i>
+                                          <span class="slds-popover slds-popover_tooltip slds-nubbin_top-right tooltip-bottom" role="tooltip" id="help">
+                                              <p class="slds-popover__body">Incentives sent weekly (Fridays at noon PST)</p>
+                                          </span>
+                                      </span>  
+                                  </li>	
+                                  <li>
+                                      <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Incentive__c' && orderAs=='desc','','none;')}"></i>
+                                      <i class="fas fa-arrow-up" style=" margin-left: 5px; display:{!if(sortbyFieldAPIName=='Incentive__c' && orderAs=='asc','','none;')}"></i> 
+                                  </li>                      
+                              </ul>
+                          </th>
+                        <!--
+                        <th style="min-width:180px;" class="slds-text-title_caps sorter-false" scope="col"  width="150" onclick="sortParticipantList('Gift_card_swag_sent__c');">
+						  <ul class="slds-list_horizontal">
+							  <li>Gift card/swag sent
+                                  <span class="info-tooltip" style="position: relative;">
+                                      <i class="fas fa-info-circle info-tooltip"></i>
+                                      <span class="slds-popover slds-popover_tooltip slds-nubbin_top-right tooltip-bottom" role="tooltip" id="help">
+                                          <p class="slds-popover__body">Incentives sent weekly (Fridays at noon PST)</p>
+                                      </span>
+                                  </span>  
+							  </li>	
+							  <li>
+								  <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Gift_card_swag_sent__c' && orderAs=='desc','','none;')}"></i>
+								  <i class="fas fa-arrow-up" style=" margin-left: 5px; display:{!if(sortbyFieldAPIName=='Gift_card_swag_sent__c' && orderAs=='asc','','none;')}"></i> 
+							  </li>                      
+						  </ul>
+                        </th> -->
+                      </tr>
+                    </thead>
+                    <tbody>
+        
+                          <apex:repeat value="{!lstResearchProjectDetailWrapper}" var="pd" id="table">
+                            <tr> 
+                              <td style="padding-left: 18px !important;">                            
+                                  <div class="slds-checkbox slds-checkbox_standalone">
+                                    <apex:inputCheckbox onclick="countSelectedRecord();" disabled="{!pd.prjDetail.Opt_Out__c}" id="selContact" value="{!pd.flag}" styleClass="upload-csv-cb-1 add-chk-box {!if(pd.prjDetail.Opt_Out__c,'','ux-checkbox')} {!if(pd.prjDetail.Research_Participant_Status__c == 'Attended','ux-attended','')} "/>
+                                    <span class="slds-checkbox_faux"></span>
+                                  </div>
+                              </td>
+                              <td>
+                                  <div style="display:{!if(pd.prjDetail.Blacklist__c==true || pd.prjDetail.Opt_Out__c==true ,'block;','none;')} position: relative;" class="custom-tooltip slds-float_right">
+                                      <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:#c23934"></i></a>
+                                      <div style="position: absolute; bottom: 20px; left: -17px; white-space: nowrap;" class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left custom-tooltip-box" role="tooltip"  >
+                                          
+                                          <div class="slds-popover__body">
+                                              {!if(pd.prjDetail.Blacklist__c==true,'BlockList','')}  {!if(pd.prjDetail.Opt_Out__c==true,'Opt Out','')} 
+                                          </div>
+                                      </div>
+                                  </div>  
+                              </td>
+                              <td><a href="/{!pd.prjDetail.Contact__r.Id}" target="_blank">{!pd.prjDetail.Contact__r.Name}</a></td>
+                              <td><apex:outputText value="{!pd.prjDetail.Contact__r.Email}"/></td>
+                              <td><apex:outputField value="{!pd.prjDetail.Research_Participant_Status__c}"/></td>
+                              
+                              
+                              <td>  
+                                    <ul class="slds-list_horizontal">
+                                        <li>
+                                            <label class="slds-checkbox_toggle slds-grid">
+                                                <apex:inputcheckbox onClick="editBlackList('{!$Component.editComment}', '{!pd.prjDetail.Id}');" disabled="{!!isEditable}" styleClass="slds-checkbox black-list-checkbox" value="{!pd.prjDetail.Blacklist__c}" id="blackListId" />
+                                                <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                                                    <span class="slds-checkbox_faux"></span>
+                                                </span>
+                                            </label>
+                                        </li>
+                                        <li style="width: 100%; margin-left: 5px;">
+                                            <div class="inline-edit" id="comment-{!pd.prjDetail.Id}">                                   
+                                                <apex:outputText style="{!if(pd.isInlineEdit,'color:#ff6a00; font-weight: bold;', '')}" id="outputCommentId" value="{!pd.strComment}" /> 
+                                                <a href="javascript:void(0);" style="display:{!if(isEditable==true,'','none;')}" class="link-grey edit-icon" id="editSingleComment_{!pd.prjDetail.Id}" onclick="editComment('{!$Component.outputCommentId}', 'edit{!pd.prjDetail.Id}', '{!pd.prjDetail.Id}');" ><i class="fas fa-pencil-alt"></i></a>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    <div id="editSingle{!pd.prjDetail.Id}" class="slds-popover slds-popover slds-popover_edit editSingle" role="dialog" style="position: absolute; top: 0px; left: 0; display: none;">
+                                     
+                                        <div class="slds-popover__body" id="dialog-body-id-1">
+                                          <div class="slds-form-element slds-grid slds-wrap">
+                                            <label class="slds-form-element__label slds-form-element__label_edit">
+                                            </label>
+                                            <div class="slds-form-element__control slds-grow">
+                                              <apex:inputText onblur="updateTextValue('{!$Component.outputCommentId}', '{!pd.prjDetail.Id}', '{!pd.strComment}');" styleClass="slds-input" id="inputCommentId" value="{!pd.strComment}"  html-placeholder=" Enter blocklist reason"/>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+									
+									 <apex:inputcheckbox styleClass="slds-checkbox inline-edit-checkbox inline-blacklist" value="{!pd.isInlineEdit}" id="editComment" style="display:none;"/>
+									 
+									  <apex:inputcheckbox styleClass="slds-checkbox inline-edit-checkbox" value="{!pd.isEditIncentive}" id="editIncentiveAmount"  style="display:none;"/>
+									  
+                              </td>
+                              <td>
+                                                
+                                    <ul class="slds-list_horizontal">
+                                        <!--<li>
+                                           <label class="slds-checkbox_toggle slds-grid">
+                                                <apex:inputcheckbox disabled="{!if(pd.prjDetail.Research_Participant_Status__c!='Attended' || isEditable==false,true,false)}" value="{!pd.incentiveStatus}">
+                                                    <apex:actionSupport event="onchange" action="{!updateIncentiveStatus}" rerender="frm" status="statusSave">
+                                                            <apex:param name="strPartId" value="{!pd.prjDetail.Id}"/>
+                                                    </apex:actionSupport>
+                                                </apex:inputcheckbox>
+                                                <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                                                    <span class="slds-checkbox_faux"></span>
+                                                </span>   
+                                             </label> 
+                                     
+                                        </li> -->
+                                        <li>
+                                            <div  style="margin-top: 5px; margin-left: 10px;">
+                                                <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li style="width: 100%">
+                                            <span class="{!if(pd.prjDetail.Research_Participant_Status__c=='Attended' &&  pd.incentiveStatus==true && pd.strIncentive!='' && VALUE(pd.strIncentive)>0 , 'info-tooltip','')} " style="position: relative;">
+                                                <div class="inline-edit" id="incentive-{!pd.prjDetail.Id}">
+                                                    <apex:outputText style="{!if(pd.incentiveStatus==true && VALUE(pd.strIncentive)>0,'background-color: yellow; cursor: default;', '')} {!if(pd.isEditIncentive,'color:#ff6a00 !important; font-weight: bold !important;', '')}" id="outputIncentiveId" value="{!pd.strIncentive}" /> 
+                                                    <a href="javascript:void(0);" style="display:{!if(pd.prjDetail.Research_Participant_Status__c=='Attended' && isEditable==true,'','none;')}" class="link-grey edit-icon" id="editSingleBtn" onclick="editIncentive('{!$Component.outputIncentiveId}', 'edit{!pd.prjDetail.Id}', '{!pd.prjDetail.Id}');" ><i class="fas fa-pencil-alt"></i></a>
+                                                </div>
+                                                <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 0px; left: 0px;">
+                                                   <p class="slds-popover__body">
+													   {!if(pd.strIncentive!='' && VALUE(pd.strIncentive)>0 , 'Incentive Pending', '' )}
+                                                       
+                                                    </p>
+                                                </span>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div id="editIncentiveSingle{!pd.prjDetail.Id}" class="slds-popover slds-popover slds-popover_edit editSingle" role="dialog" style="position: absolute; top: 0px; left: 0; display: none;">
+                                     
+                                        <div class="slds-popover__body" id="dialog-body-id-1">
+                                          <div class="slds-form-element slds-grid slds-wrap">
+                                            <label class="slds-form-element__label slds-form-element__label_edit">
+                                            </label>
+                                            <div class="slds-form-element__control slds-grow">
+                                              <apex:inputText onkeypress="return IsNumeric(event);" onblur="updateIncentiveValue('{!$Component.outputIncentiveId}', '{!pd.prjDetail.Id}', '{!pd.strIncentive}');" styleClass="slds-input" id="inputIncentiveId" value="{!pd.strIncentive}" />
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                  
+                               </td>
+                               <td>
+                                    <ul class="slds-list_horizontal">
+                                        <li>
+                                            <div  style="margin-top: 5px; margin-left: 10px;">
+                                                <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li style="margin-top: 2px; margin-left: 2px;"> 
+                                            <span class="{!if(pd.prjDetail.Incentive__c!=null && pd.prjDetail.Incentive__c>0, 'info-tooltip', '')}"  style="position: relative;">
+                                                <apex:outputText value="{!pd.prjDetail.Incentive__c}" />
+                                                <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 20px; left: -30px; width: 170px;">
+                                                   <p class="slds-popover__body">
+                                                       
+                                                        {!if(pd.prjDetail.Incentive__c!=null && pd.prjDetail.Incentive__c>0 && pd.prjDetail.Incentive_Apporved_by_UXR_Admin__c==true, 'Approved by UXR Admin', '' )}
+                                                        {!if(pd.prjDetail.Incentive__c!=null && pd.prjDetail.Incentive__c>0 && pd.prjDetail.Incentive_Apporved_by_UXR_Admin__c==false, 'Approved by Owner', '' )}
+                                                        
+                                                    </p>
+                                                </span>
+                                            </span>
+                                        </li>
+                                   </ul>
+                               </td>
+                              <!--
+                               <td>
+                                <apex:outputpanel > 
+                                    <label class="slds-checkbox_toggle slds-grid">
+                                        <apex:inputcheckbox disabled="{!if(isEditable==false || pd.prjDetail.Incentive_Apporved_by_UXR_Admin__c==true,true,false)}" value="{!pd.giftCardStatus}">
+                                            <apex:actionSupport event="onchange" action="{!updateGiftCardStatus}" rerender="frm" status="statusSave">
+                                                    <apex:param name="strPartId" value="{!pd.prjDetail.Id}"/>
+                                            </apex:actionSupport>
+                                        </apex:inputcheckbox>
+                                        <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                                            <span class="slds-checkbox_faux"></span>
+                                        </span>
+                                     </label>  
+                                 </apex:outputpanel>
+                              </td> -->
+                          </tr>
+                          
+                          </apex:repeat> 
+                    </tbody>
+                  </table>
+                </div>  
+
+              
+
+           
+            <apex:outputpanel rendered="{!if(lstResearchProjectDetailWrapper.size>0 && isEditable==true,true,false)}" id="actionBtn">
+                 <div class="slds-m-top_medium slds-text-align_right">
+                      <apex:commandButton value="First" action="{!first}" rerender="frm" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>
+                      <apex:commandButton value="Previous" action="{!previous}" rerender="frm" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                      <apex:commandButton value="Next" action="{!next}" rerender="frm" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                      <apex:commandButton value="Last" action="{!last}" rerender="frm" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                </div> 
+            </apex:outputpanel>
+            
+            <!--<div class="slds-text-align_right">
+                <apex:selectlist id="selectAction1" rendered="{!if(lstResearchProjectDetailWrapper.size>0,true,false)}" onChange="UpdateParticipantStatus(this);" styleclass="slds-select slds-m-top_small update-status custom-select" style="width: 180px; display:none;" value="{!selectedStatus}" size="1">
+                      <apex:selectOptions value="{!statusList}"/>
+                </apex:selectlist> 
+            </div>-->
+            
+            <div class="slds-text-align_right">
+                <apex:commandButton rendered="{!isEditable}" id="saveUpdate" rerender="frm" status="statusSave" value="Save Updates" styleclass="slds-button slds-button_brand slds-m-top_small" action="{!saveProjectDetails}"/>
+            </div>
+              
+          </div>
+         </apex:outputpanel> 
+        </div>
+      </div>
+    
+
+    </div>
+      
+     <!--generic Popup -->
+       <div class="modal-window add-generic-modal" style="display: none;">
+          <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container" style="max-width: 500px;">
+            <div class="slds-modal__header">
+              
+              <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Record Attendance </h2>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+              <p id="msg-content">Please select at least one participant.</p>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_neutral close-modal" onclick="return false;">OK</button>
+                        
+            </div>
+          </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </div>
+      <!---->
+	    
+    <apex:outputPanel id="incentiveModal">
+        <div class="modal-window request-incentive-modal" style="display: none;">
+            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+            <div class="slds-modal__container" style="max-width: 500px;">
+                <div class="slds-modal__header">
+                    <h2 id="modal-heading-101" class="slds-text-heading_medium slds-hyphenate">Request incentives</h2>
+                    <i>Note: only participants with "attended" status may be sent incentives.</i>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p class="slds-m-bottom_medium">
+                        Please confirm the amount to send to {!intTotalAttended} attended participant(s).
+                    </p>
+                    <apex:inputText onkeypress="return IsNumeric(event);" style="resize: none;" styleClass="slds-input clear-textbox" value="{!intMultiIncentive}" html-placeholder="Incentive amount"/><br/>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral close-modal" rerender="frm" status="statusSave" onclick="return false;">Cancel</button> &nbsp;
+                    <apex:commandButton styleClass="slds-button slds-button_brand" rerender="frm" status="statusSave" disabled="{!if(intTotalAttended == 0, true, false)}" value="Request" action="{!allowIncentive}"/>
+                </div>
+            </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <script>
+            $('.close-modal').click(function() {
+                $('.modal-window').fadeOut();
+            });
+        </script>
+    </apex:outputPanel>
+
+    <!--body end here-->  
+           <script type="text/javascript">
+                $(document).ready(function(){
+                    /* $("table").tablesorter({
+                        theme : 'jui', 
+                        headerTemplate : '{content} {icon}',
+                        widgets : ['uitheme', 'zebra'],
+                        widgetOptions : {
+                            zebra   : ["even", "odd"],
+                        }
+                    });*/
+                }); 
+            
+              $('.close-modal').click(function() {
+                    $('.modal-window').fadeOut();
+              });
+              $('.close-project-btn').click(function() {
+                    if('{!totalRecord}' == '0'){
+                        $('.add-blank-project-modal').fadeIn(); 
+                    }else{
+                        checkReason();                  
+                    }
+              });
+                 
+   
+              function checkReason(){
+                    var reasonFlag = false;
+                    $.each($('.black-list-checkbox'), function(){
+                        var idString = this.id + ''; 
+                        var flag = $(this).prop("checked");
+                        var reasonValue = '';
+                        if(flag){
+                            idString = idString.replace("blackListId", "reasonId");                     
+                            reasonValue = document.getElementById(idString).value;                          
+                            if(reasonValue == ''){                          
+                                reasonFlag = true;
+                            }
+                        }
+                    });
+                    
+                    if(reasonFlag){
+                        $('#modal-heading-NA').html('Please enter reason for blacklist.');
+                        $('.add-blank-project-modal').fadeIn(); 
+                        
+                    }else{
+                        $('.add-project-modal').fadeIn();
+                    }
+            }
+             
+            function UpdateParticipantStatus(selectedObj){
+                var selectedIteam = $('.ux-checkbox:checked').length;
+                if(selectedIteam>0){ 
+                    var status = selectedObj.options[selectedObj.selectedIndex].value;
+                    UpdateParticipants(status);
+                    document.getElementById('pageId:frm:selectAction').value='';
+                }else{
+                    $('.add-generic-modal').fadeIn();
+                    document.getElementById('pageId:frm:selectAction').value='';
+                }
+            }
+            
+            function checkEnterKey(e){
+                var keyCode = e.which ? e.which : e.keyCode
+                if(keyCode==13){
+                    searchParticipant();
+                }
+            }
+
+			function editBlackList(checkObj, objId){
+				var editComment = document.getElementById(checkObj);
+				$(editComment).prop('checked', true);
+				console.log(objId + '<====checkObj====> ' + checkObj);
+				
+				var inlineTextId = document.getElementById(checkObj.replace('editComment','outputCommentId'));
+				var commentBorderId = document.getElementById('comment-'+objId);
+				$(inlineTextId).css('color','#ff6a00');
+				$(inlineTextId).css('font-weight','bold');
+				$(commentBorderId).attr('title','unsaved data');
+                document.getElementById("pageId:frm:saveUpdate").disabled = false;
+                inputCommentBoxId = checkObj.replace('editComment','inputCommentId');
+                
+				editId = 'editSingleComment_' + objId;
+                setTimeout(enableComment,100);
+			}
+			
+			var editId = '';
+            var inputCommentBoxId = '';
+            function enableComment(){
+                try{
+                    document.getElementById(editId).click();
+                    document.getElementById(inputCommentBoxId).focus();
+                }catch(err){}
+            }
+			
+            function editComment(checkObj , elementId, objId){
+                $('.editSingle').hide(); 
+                var inlineTextId = document.getElementById(checkObj);
+                var inputTextBox = document.getElementById(checkObj.replace('outputCommentId','inputCommentId'));
+                inputTextBox.value = inlineTextId.innerHTML;
+                var editSingle = document.getElementById('editSingle'+objId);
+                $(editSingle).css('display','');
+
+            }
+            function updateTextValue(checkObj, objId, prevValue){
+				var commentBorderId = document.getElementById('comment-'+objId);
+                var inlineTextId = document.getElementById(checkObj);
+                var inputTextBox = document.getElementById(checkObj.replace('outputCommentId','inputCommentId'));
+                inlineTextId.innerHTML = inputTextBox.value;
+				var editComment = document.getElementById(checkObj.replace('outputCommentId','editComment'));
+                $(editComment).prop('checked', true);
+				
+				if(prevValue!='' && inputTextBox.value==''){
+					$(commentBorderId).attr('title','Deleted');
+				}else if(prevValue!=inputTextBox.value){
+					$(inlineTextId).css('color','#ff6a00');
+					$(inlineTextId).css('font-weight','bold');
+					$(commentBorderId).attr('title','unsaved data');
+				}else{
+					$(inlineTextId).css('color','');
+					$(inlineTextId).css('font-weight','');
+					$(commentBorderId).attr('title','');
+				}
+                document.getElementById("pageId:frm:saveUpdate").disabled = false;
+				
+				markAsBlackList(objId);
+            }
+            
+            function editIncentive(checkObj , elementId, objId){
+                $('.editSingle').hide(); 
+                var inlineTextId = document.getElementById(checkObj);
+                var inputTextBox = document.getElementById(checkObj.replace('outputIncentiveId','inputIncentiveId'));
+                inputTextBox.value = inlineTextId.innerHTML;
+                var editSingle = document.getElementById('editIncentiveSingle'+objId);
+                $(editSingle).css('display','');
+            }
+            function updateIncentiveValue(checkObj, objId, prevValue){
+				var incentiveBorderId = document.getElementById('incentive-'+objId);
+                var inlineTextId = document.getElementById(checkObj);
+                var inputTextBox = document.getElementById(checkObj.replace('outputIncentiveId','inputIncentiveId'));
+                inlineTextId.innerHTML = inputTextBox.value;
+				var editComment = document.getElementById(checkObj.replace('outputIncentiveId','editIncentiveAmount'));
+                $(editComment).prop('checked', true);
+				if(prevValue!='' && inputTextBox.value==''){
+					$(incentiveBorderId).attr('title','Deleted');
+				}else if(prevValue!=inputTextBox.value){
+					$(inlineTextId).css('color','#ff6a00');
+					$(inlineTextId).css('font-weight','bold');
+					$(incentiveBorderId).attr('title','unsaved data');
+				}else{
+					$(inlineTextId).css('color','');
+					$(inlineTextId).css('font-weight','');
+					$(incentiveBorderId).attr('title','');
+				}
+                document.getElementById("pageId:frm:saveUpdate").disabled = false;
+                
+                updateIncentiveStatusAmount(objId);
+            }
+            
+            $(".edit-icon, .slds-popover_edit").click(function(e){
+              e.stopPropagation();
+            });
+            $(document).click(function(){
+              $('.editSingle').hide();
+              $('.editMultiple').hide();
+            });
+            
+            $(document).ready(function() {
+                var $chkboxes = $('.ux-checkbox');
+                $chkboxes.click(function(e) {
+                    showSelectedRecord();
+                });           
+            });
+            
+            function showSelectedRecord(){
+                 var selectedIteam = $('.ux-checkbox:checked').length;
+                /*if(selectedIteam>0){
+                    $('.update-status').css('display','');
+                 }else{
+                    $('.update-status').css('display','none');
+                 }*/
+            }
+            showSelectedRecord();
+            
+      /*
+            $('.mark-project-complete').click(function() {
+                fetchProjectDetails();
+            });
+            $('.re-open-btn').click(function() {
+                fetchCloseProjectDetails();
+            });
+      */
+      
+            function countSelectedRecord(){
+                var selectedIteam = parseInt($('.ux-checkbox:checked').length);
+                if(selectedIteam>0){
+                    $('.mt-items').html(selectedIteam +' participants selected');
+                    document.getElementById('pageId:frm:selectAction').style.display = "";
+                }else{
+                     $('.mt-items').html('{!totalParticipant} participants');
+                    document.getElementById('pageId:frm:selectAction').style.display = "none";
+                }
+
+                selectedIteam = parseInt($('.ux-attended:checked').length);
+                if(selectedIteam>0){
+                    document.getElementsByClassName("request-incentive-btn")[0].style.display = "";
+                }else{
+                    document.getElementsByClassName("request-incentive-btn")[0].style.display = "none";
+                }
+            }
+
+            countSelectedRecord();
+        </script>
+       <script>
+          $('.send-survey-btn').click(function(e) {
+                  blankSendSurvey();
+          });
+          $('.invite-to-interview-btn').click(function(e) {
+                  blankInviteToInterview();
+          });
+          $('.send-follow-up-btn').click(function(e) {
+                  blankSendFollowUp();
+          });
+           
+          function disabledSaveBtn(){
+			
+			var selectedIteam = parseInt($('.inline-edit-checkbox:checked').length);
+			if(selectedIteam>0){
+				document.getElementById("pageId:frm:saveUpdate").disabled = false;
+			}else{
+				document.getElementById("pageId:frm:saveUpdate").disabled = true;
+			} 
+          }
+          disabledSaveBtn();
+          
+      	   $('.uxr-scout-url').click(function() {
+                $('#customURL').removeClass('slds-hide');
+           });
+           
+            function openIncentiveModal(){
+                $('.request-incentive-modal').fadeIn();
+            }
+      </script>
+    
+  </body>
+    </apex:form>
+</apex:page>

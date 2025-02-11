@@ -1,0 +1,79 @@
+<template>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <!-- Modal/Popup Box LWC header here -->
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small">
+                    </lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create a Ticket</h2>
+            </header>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium" style="min-height: 300px;overflow: initial;" id="modal-content-id-1">
+
+                <div class="content slds-col">
+                    <div class="slds-var-p-around_x-large slds-text-align_center slds-p-bottom--small">
+                        <div class="slds-text-heading_large title-font">Select Ticket Reason and Sub Reason</div>
+                    </div>
+                </div>
+
+                <lightning-record-edit-form object-api-name="Ticket__c">
+                    <lightning-layout>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <label class="slds-form-element__label" for="UI_Ticket_Reason__c"> Ticket Reason </label>
+                            <lightning-input-field id="UI_Ticket_Reason__c" variant="label-hidden" field-name="UI_Ticket_Reason__c">
+                            </lightning-input-field>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small" >
+                            <label class="slds-form-element__label" for="UI_Ticket_Sub_Reason__c"> Ticket Sub Reason </label>
+                            <lightning-input-field variant="label-hidden" field-name="UI_Ticket_Sub_Reason__c">
+                            </lightning-input-field>
+
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </lightning-record-edit-form>
+                <!-- <lightning-record-form object-api-name="Ticket__c" fields={fields} columns="2">
+                </lightning-record-form> -->
+
+            </div>
+            <!-- Modal/Popup Box LWC footer starts here -->
+            <footer class="slds-modal__footer">
+
+                <lightning-layout>
+                    <lightning-layout-item size="2">
+                        <lightning-button variant="neutral" label="Back"></lightning-button>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="8" class="center-align">
+
+                        <lightning-progress-indicator current-step="1" type="base" variant="base">
+                            <lightning-progress-step label="Select Ticket Reason" value="1"></lightning-progress-step>
+                            <lightning-progress-step label="Step 2" value="2"></lightning-progress-step>
+                            <lightning-progress-step label="Step 3" value="3"></lightning-progress-step>
+                            <lightning-progress-step label="Step 4" value="4"></lightning-progress-step>
+                        </lightning-progress-indicator>
+
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="2">
+                        <lightning-button variant="brand" label="Start"></lightning-button>
+
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+
+
+
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+
+</template>

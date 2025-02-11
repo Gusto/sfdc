@@ -1,0 +1,16 @@
+<apex:page standardController="Carrier_Order__c" extensions="CarrierOrderExt" action="{!stageCanceled}">
+    <apex:sectionHeader title="Move Order Stages"
+    subtitle="Please provide additional details {!Carrier_Order__c.Name}"/>
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="{!$Label.Confirm}" action="{!save}" rendered="{!!blnHasError}"/>
+                <apex:commandButton value="{!$Label.Discard}" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:outputPanel rendered="{!!blnHasError}">
+                <c:CarrierOrderCancel CarrierOrder="{!Carrier_Order__c}"/>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

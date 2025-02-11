@@ -1,0 +1,23 @@
+<!--
+    Purpose: Aura that listens when a particular utility is clicked and we open split view.
+    Written by : Praveen Sethu
+    Date: 09/16/2020
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
+
+
+    <aura:handler event="lightning:tabFocused" action="{! c.getAllUtilityInfo }"/>
+
+    <!-- doInit opens post tab if case origin is phone or chat -->
+    <aura:handler name="init" value="{!this}" action="{! c.handleDoInit }" />
+    <aura:handler name="init" value="{! this }" action="{! c.getAllUtilityInfo }" />
+    
+    <!-- Api components -->
+    <lightning:utilityBarAPI aura:id="utilitybar" />
+    <lightning:quickActionAPI aura:id="quickActionAPI" />
+    
+    <!-- Aura attributes -->
+    <aura:attribute type="Object" name="map_utilityIdToLabelMap" ></aura:attribute>
+    <!-- child component -->
+    <c:openSplitViewListenerCmp aura:id="splitViewListener"></c:openSplitViewListenerCmp>
+</aura:component>

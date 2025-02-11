@@ -1,0 +1,239 @@
+<apex:component allowDML="true" selfClosing="true" controller="ContactUserInformationController">
+    <apex:attribute type="string" name="usrId" description="User Id of the user" assignTo="{!userId}"  required="false"/>
+    <apex:attribute type="string" name="emlId" description="email of the user"  assignTo="{!email}"  required="false"/>
+    <apex:attribute type="string" name="cseId" description="caes from where the component is launched"  assignTo="{!caseId}"  required="false"/>
+    <head>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <link rel="stylesheet" href="//jqueryui.com/dialog/resources/demos/style.css"/>
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <apex:includeScript value="/support/console/41.0/integration.js"/>
+        <!-- <apex:slds /> -->
+        <script>
+        var $jq = jQuery.noConflict();
+            
+            $jq( document ).ready(function() {
+                
+                $jq(".nametag").hover(function(e) {
+                
+                var tempstr = $jq(this).siblings(".permissionDiv").text();
+                if(tempstr != null && tempstr.trim().length > 0){
+                    $jq(this).siblings(".permissionDiv").css("display","inline-block");
+                }  
+                
+                  //$jq(".permissionDiv").css("display","inline-block");
+                }, function() {
+                  $jq(".permissionDiv").css("display","none");
+                });
+                
+            });
+            
+            function openfirm(fid) {               
+                //First find the ID of the primary tab to put the new subtab in
+               //sforce.console.getEnclosingPrimaryTabId(openFirmSubtab);
+               var urll = "{!$Label.gusto_url_prefix}"+"/panda/accounting_firms/"+fid;
+               window.open(urll);
+            };
+            
+            function openCompany(cId) {
+                //First find the ID of the primary tab to put the new subtab in
+                //sforce.console.getEnclosingPrimaryTabId(openCompanySubtab);
+                var urll = "{!$Label.gusto_url_prefix}"+"/panda/companies/"+cId;
+                window.open(urll);
+            };
+            
+            function RefreshPrimaryTab() 
+           {
+               sforce.console.getFocusedPrimaryTabId(showTabId);
+           }
+           
+           var showTabId = function showTabId(result) 
+           {
+               var tabId = result.id;
+               //alert('Primary Tab IDs: primaryTabId ' + tabId );
+               sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+           };
+           
+           var refreshSuccess = function refreshSuccess(result) 
+           {
+               //Report whether refreshing the primary tab was successful
+               if (result.success == true) 
+               {
+                   //alert('Email Sent');
+               } 
+               else 
+               {
+                   //alert('Cannot refresh the page');
+               }
+           };
+            
+            
+        </script>
+        <style>
+            
+            
+            .permissionDiv {
+                display: none;
+                position: absolute;
+                bottom: 25px;
+                z-index: 999999;
+                background: #fff;
+                border: 1px solid #ccc;
+                padding: 5px;
+                right: 0px;
+                left:0px;
+                max-width: 250px;
+                margin: 0px auto;
+            }
+        </style>
+    </head>
+    
+    <body>
+        
+        <div class="gusto" >
+            <apex:form >
+            <!-- <apex:pageMessages id="pgMsg_userPer"/> -->
+            <apex:actionFunction name="updateAcc" action="{!updateAccount}" oncomplete="RefreshPrimaryTab();" reRender="pgMsg_userPer" status="ac_status">
+                <apex:param value="" assignTo="{!company_FirmId}" name="accId"/>
+            </apex:actionFunction>
+            <apex:actionFunction name="updateReRouteAcc" action="{!updateRerouteAccount}" oncomplete="RefreshPrimaryTab();" reRender="pgMsg_userPer" status="ac_status">
+                <apex:param value="" assignTo="{!company_FirmId}" name="accIdReRoute"/>
+            </apex:actionFunction>
+            <apex:actionStatus startText="Processing..." id="ac_status" startStyle=""/>
+            <apex:outputPanel rendered="{!UserInformation.firmInfo.size>0}">
+                <b>Firm Info:</b>
+                <Table class="wrappertable">
+                    <!-- 
+                    SJay - 3/23/202- Changed variable from firmInfo to firmUserRoleMap for retriving the records.
+                    Jira: BT-7264 - Collection size issue when opening email case.
+                    -->
+                    <apex:repeat value="{!UserInformation.firmUserRoleMap}" var="acc">
+                        <Tr>
+                            <td style="position:relative;">
+                                <A HREF="#" class="nametag" onClick="openfirm('{!UserInformation.firmUserRoleMap[acc].zpFirmId}');return false">{!UserInformation.firmUserRoleMap[acc].firmName}</A>
+                                <div class="permissionDiv"><apex:outputText value="{!UserInformation.firmUserRoleMap[acc].conciergeGroupId}{!UserInformation.firmUserRoleMap[acc].tier}{!UserInformation.firmUserRoleMap[acc].permissionStr}" escape="false"/></div>                                
+                                    <apex:outputLabel rendered="{!UserInformation.firmUserRoleMap[acc].accountant}">
+                                        <div style="background-color:#ffe94f;width:20px;float:left;text-align: center;">
+                                            <b>A</b>
+                                        </div>
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.firmUserRoleMap[acc].payrollAdmin}">
+                                        <div style="background-color:#b6ccef;width:20px;float:left;text-align: center;">
+                                            <b>P</b>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.firmUserRoleMap[acc].employee}">
+                                        <div style="background-color:#7cddbb;width:20px;float:left;text-align: center;">
+                                            <b>E</b>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.firmUserRoleMap[acc].signatory}">
+                                        <div style="background-color:#f9f9a4;width:20px;float:left;text-align: center;">
+                                            <b>S</b>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.firmUserRoleMap[acc].billingAdmin}">
+                                        <div style="background-color:#ffa94f;width:20px;float:left;text-align: center;">
+                                            <b>B</b>
+                                        </div>
+                                    </apex:outputLabel>
+                                    <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                                      <button class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn slds-button--neutral" aria-haspopup="true" title="Show More" style="padding:0; margin:0;height:16px;width:16px;line-height:10px;" onclick="return false;">
+                                        <img src="{!URLFOR($Resource.Smallerdropdown)}"/>
+                                        <span class="slds-assistive-text">Show More</span>
+                                      </button>
+                                      <div class="slds-dropdown slds-dropdown_bottom slds-dropdown_left slds-dropdown_xx-small">
+                                        <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
+                                          <li class="slds-dropdown__item" role="presentation">
+                                            <a href="javascript:void(0);" onclick="updateAcc('{!UserInformation.firmUserRoleMap[acc].firmId}');" role="menuitem" tabindex="0">
+                                              <span class="slds-truncate" title="Menu Item One">Update Account</span>
+                                            </a>
+                                          </li>
+                                          <li class="slds-dropdown__item" role="presentation">
+                                            <a href="javascript:void(0);" onclick="updateReRouteAcc('{!UserInformation.firmUserRoleMap[acc].firmId}');" role="menuitem" tabindex="-1">
+                                              <span class="slds-truncate" title="Menu Item Two">Update Account and Route</span>
+                                            </a>
+                                          </li>                                      
+                                        </ul>
+                                      </div>
+                                    </div>
+                            </td>
+                        </Tr>
+                    </apex:repeat>
+                </Table>
+            </apex:outputPanel>
+             <apex:outputPanel rendered="{!UserInformation.companyInfo.size>0}">
+                 <b>Company Info:</b>
+                <Table class="wrappertable">
+                    <!-- 
+                    SJay - 3/23/202- Changed variable from companyInfo to companyUserRoleMap for retriving the records.
+                    Jira: BT-7264 - Collection size issue when opening email case.
+                    -->                    
+                    <apex:repeat value="{!UserInformation.companyUserRoleMap}" var="comp">
+                        <Tr>
+                            <td class="nametag" style="position:relative;">
+                                <A HREF="#" class="nametag" onClick="openCompany('{!UserInformation.companyUserRoleMap[comp].zpCompanyId}');return false">{!UserInformation.companyUserRoleMap[comp].companyName}</A>                                
+                                    <div class="permissionDiv">
+                                        <apex:outputText value="{!UserInformation.companyUserRoleMap[comp].conciergeGroupId}{!UserInformation.companyUserRoleMap[comp].tier}{!UserInformation.companyUserRoleMap[comp].permissionStr}" escape="false"/>
+                                    </div>
+                                    <apex:outputLabel rendered="{!UserInformation.companyUserRoleMap[comp].accountant}">
+                                        <div style="background-color:#ffe94f;;width:20px;float:left;text-align: center;">
+                                            <b>A</b>
+                                        </div>
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.companyUserRoleMap[comp].payrollAdmin}">
+                                        <div style="background-color:#b6ccef;width:20px;float:left;text-align: center;">
+                                            <b>P</b>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.companyUserRoleMap[comp].employee}">
+                                        <div style="background-color:#7cddbb;;width:20px;float:left;text-align: center;">
+                                            <b>E</b>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.companyUserRoleMap[comp].signatory}">
+                                        <div style="background-color:#f9f9a4;;width:20px;float:left;text-align: center;">
+                                            <b>S</b>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                    </apex:outputLabel>
+                                    <apex:outputLabel rendered="{!UserInformation.companyUserRoleMap[comp].billingAdmin}">
+                                        <div style="background-color:#ffa94f;;width:20px;float:left;text-align: center;">
+                                            <b>B</b>
+                                        </div>
+                                    </apex:outputLabel>
+                                    <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                                      <button class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn slds-button--neutral" aria-haspopup="true" title="Show More" style="padding:0; margin:0;height:16px;width:16px;line-height:10px;" onclick="return false;">
+                                        <img src="{!URLFOR($Resource.Smallerdropdown)}"/>
+                                        <span class="slds-assistive-text">Show More</span>
+                                      </button>
+                                      <div class="slds-dropdown slds-dropdown_bottom slds-dropdown_left slds-dropdown_xx-small">
+                                        <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
+                                          <li class="slds-dropdown__item" role="presentation">
+                                            <a href="javascript:void(0);" onclick="updateAcc('{!UserInformation.companyUserRoleMap[comp].companyId}');" role="menuitem" tabindex="0">
+                                              <span class="slds-truncate" title="Menu Item One">Update Account</span>
+                                            </a>
+                                          </li>
+                                          <li class="slds-dropdown__item" role="presentation">
+                                            <a href="javascript:void(0);" onclick="updateReRouteAcc('{!UserInformation.companyUserRoleMap[comp].companyId}');" role="menuitem" tabindex="-1">
+                                              <span class="slds-truncate" title="Menu Item Two">Update Account and Route</span>
+                                            </a>
+                                          </li>                                       
+                                        </ul>
+                                      </div>
+                                    </div>
+                            </td>
+                        </Tr>
+                    </apex:repeat>
+                </Table>
+            </apex:outputPanel>
+        </apex:form>
+        </div>
+    </body>
+</apex:component>

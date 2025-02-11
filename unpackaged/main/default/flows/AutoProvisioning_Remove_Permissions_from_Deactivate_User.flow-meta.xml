@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <description>If Permission Sets were assigned the Permission Sets (Removed) should be updated but if they were not removed it&apos;s current value should be unchanged.</description>
+        <name>Check_if_Permission_Sets_Were_Removed</name>
+        <label>Check if Permission Sets Were Removed</label>
+        <locationX>314</locationX>
+        <locationY>695</locationY>
+        <defaultConnector>
+            <targetReference>Update_the_User_Account_when_no_perm_sets_removed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Permission_Sets_Removed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Perm_Set_Removal_User</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_the_User_Account</targetReference>
+            </connector>
+            <label>Permission Sets Removed</label>
+        </rules>
+    </decisions>
+    <description>Overview: When a user is deactivated. 
+*  Assign Inactive User profile and 
+*  Remove all permission sets and Managed Packages.   
+*  Clears Calendar Field
+*.  Clears the Permission Sets (Locked) field
+UPDATES
+4/26/22 - Added Functionality to remove the CXOne Managed Package
+11/29/22 - Added Functionality to update Permission Sets (Removed) and Permission Sets (Locked) Fields</description>
+    <environments>Default</environments>
+    <interviewLabel>AutoProvisioning - Remove Permissions from Deactivate User {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisioning - Remove Permissions from Deactivate User</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Find the ID</description>
+        <name>Find_ID_of_the_Inactive_User_Profile</name>
+        <label>Find ID of the Inactive User Profile</label>
+        <locationX>314</locationX>
+        <locationY>335</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Remove_all_Permission_Sets</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Send_Slack_Message_for_Find_ID_of_the_Inactive_User_Profile</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Inactive User</stringValue>
+            </value>
+        </filters>
+        <object>Profile</object>
+        <outputAssignments>
+            <assignToReference>varInactive_User_Profile_ID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordUpdates>
+        <description>Assign the Inactive User Profile to remove permissions, clear calendar field</description>
+        <name>Update_the_User_Account</name>
+        <label>Update the User Account</label>
+        <locationX>50</locationX>
+        <locationY>815</locationY>
+        <faultConnector>
+            <targetReference>Send_Slack_Message_for_Update_the_User_Account</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Calendar_Link__c</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>CallCenterId</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Last_Removed_By__c</field>
+            <value>
+                <elementReference>var_Perm_Set_Removal_User</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Last_Removed__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Locked__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ProfileId</field>
+            <value>
+                <elementReference>varInactive_User_Profile_ID</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Assign the Inactive User Profile ,clear calendar field, remove lock</description>
+        <name>Update_the_User_Account_when_no_perm_sets_removed</name>
+        <label>Update the User Account when no perm sets removed</label>
+        <locationX>578</locationX>
+        <locationY>815</locationY>
+        <faultConnector>
+            <targetReference>Send_Slack_Message_for_Update_the_User_Account_when_no_perm_sets_removed</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Calendar_Link__c</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>CallCenterId</field>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Locked__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ProfileId</field>
+            <value>
+                <elementReference>varInactive_User_Profile_ID</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Find_ID_of_the_Inactive_User_Profile</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>IsActive</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>User</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <description>Remove all permission sets from user account</description>
+        <name>Remove_all_Permission_Sets</name>
+        <label>Remove all Permission Sets</label>
+        <locationX>314</locationX>
+        <locationY>455</locationY>
+        <connector>
+            <targetReference>Remove_Managed_Packages</targetReference>
+        </connector>
+        <flowName>AutoProvisioning_Remove_Permission_Set_Assignments_Sub_Flow</flowName>
+        <inputAssignments>
+            <name>varUserRecord</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>var_Perm_Set_Removal_User</assignToReference>
+            <name>Perm_Set_Removal_User</name>
+        </outputAssignments>
+    </subflows>
+    <subflows>
+        <name>Remove_Managed_Packages</name>
+        <label>Remove Managed Packages</label>
+        <locationX>314</locationX>
+        <locationY>575</locationY>
+        <connector>
+            <targetReference>Check_if_Permission_Sets_Were_Removed</targetReference>
+        </connector>
+        <flowName>AutoProvisioning_User_Manage_Package_Handler</flowName>
+        <inputAssignments>
+            <name>User_ID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <description>Send Slack message to the</description>
+        <name>Send_Slack_Message_for_Find_ID_of_the_Inactive_User_Profile</name>
+        <label>Send Slack Message for Find ID of the Inactive User Profile</label>
+        <locationX>1106</locationX>
+        <locationY>455</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Find ID of the Inactive User Profile</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Lookup the profile id of the Inactive User Profile</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>Remove Permissions for Deactivated User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>varUserID</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <description>Send Slack message to the</description>
+        <name>Send_Slack_Message_for_Update_the_User_Account</name>
+        <label>Send Slack Message for Update the User Account</label>
+        <locationX>314</locationX>
+        <locationY>935</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Update the User Account</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Update fields on the deactivated user account</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>Remove Permissions for Deactivated User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>varUserID</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <description>Send Slack message to the</description>
+        <name>Send_Slack_Message_for_Update_the_User_Account_when_no_perm_sets_removed</name>
+        <label>Send Slack Message for Update the User Account when no perm sets removed</label>
+        <locationX>842</locationX>
+        <locationY>935</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Update the User Account when no perm sets removed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Update fields on the deactivated user account</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>Remove Permissions for Deactivated User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>varUserID</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <variables>
+        <description>If Permission Sets were removed from the AutoProvisioning-Remove Permission Set Assignments flow.  This variable will store the running user</description>
+        <name>var_Perm_Set_Removal_User</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>ID for the Inactive User Profile</description>
+        <name>varInactive_User_Profile_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Id of the record triggering the flow</description>
+        <name>varUserID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <elementReference>$Record.Id</elementReference>
+        </value>
+    </variables>
+</Flow>

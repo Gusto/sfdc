@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_ClosedLostDetail_If_Lost</fullName>
+    <active>true</active>
+    <description>The field Lost Detail &amp; Lost Detail2 or Disqualified Reason are required before closing an Ardius Ticket.</description>
+    <errorConditionFormula>RecordType.DeveloperName == &quot;Ardius&quot;
+&amp;&amp; ISPICKVAL(Status__c , &quot;Lost&quot;)
+&amp;&amp; !(   !ISPICKVAL(Disqualified_Reason__c, &quot;&quot;)
+        ||  (
+                !ISPICKVAL(Lost_Detail__c, &quot;&quot;)
+                &amp;&amp; ( !ISPICKVAL(Lost_Detail2__c, &quot;&quot;) 
+                    || ISPICKVAL(Lost_Detail__c, &quot;Out of business&quot;)
+                    || ISPICKVAL(Lost_Detail__c, &quot;Account suspended&quot;)
+                    || ISPICKVAL(Lost_Detail__c, &quot;Disqualified&quot;)
+                    || ISPICKVAL(Lost_Detail__c, &quot;Duplicate&quot;)
+                   )
+            )
+    )
+    &amp;&amp; !$User.Exempt_from_Validation_Rules__c</errorConditionFormula>
+    <errorMessage>Please Select a Lost Detail and Lost Detail 2 or a Disqualified Reason Before Closing the Ticket.</errorMessage>
+</ValidationRule>

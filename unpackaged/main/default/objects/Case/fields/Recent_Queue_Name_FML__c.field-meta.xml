@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recent_Queue_Name_FML__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK( Recent_Queue_Name__c ), Text(Origin)+&quot; &quot;+Text(Type)+&quot; &quot;+ Text(Class__c) , Recent_Queue_Name__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Recent Queue Name FML</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

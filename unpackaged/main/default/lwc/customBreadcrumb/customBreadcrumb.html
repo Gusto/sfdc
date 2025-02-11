@@ -1,0 +1,7 @@
+<template>
+	<lightning-breadcrumbs>
+		<template for:each={listBreadCrumbs} for:item="objBreadcrumb">
+			<lightning-breadcrumb key={objBreadcrumb.name} label={objBreadcrumb.label} href={objBreadcrumb.href}> </lightning-breadcrumb>
+		</template>
+	</lightning-breadcrumbs>
+</template>

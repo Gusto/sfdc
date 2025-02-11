@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Reason_for_Exception_Required</fullName>
+    <active>true</active>
+    <description>Makes Reason for Exception Request mandatory if Exception Request is checked.</description>
+    <errorConditionFormula>AND(Exception_Request__c ,ISBLANK(Exception_Request_Reason__c))</errorConditionFormula>
+    <errorDisplayField>Exception_Request_Reason__c</errorDisplayField>
+    <errorMessage>Please enter a value in Exception Request Reason.</errorMessage>
+</ValidationRule>

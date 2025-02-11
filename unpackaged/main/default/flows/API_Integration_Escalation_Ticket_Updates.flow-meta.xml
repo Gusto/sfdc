@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>50.0</apiVersion>
+    <assignments>
+        <description>Assign the value that is on the BizDev Partner Relationships record</description>
+        <name>Assign_Integration_Build</name>
+        <label>Assign Integration Build</label>
+        <locationX>176</locationX>
+        <locationY>431</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.BizDev_Partner_Relationships_Record__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_BizDev_Partner_Relationship_Record.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Integration_Build__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_BizDev_Partner_Relationship_Record.Integration_Build__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.BizDev_Partner_Tier__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_BizDev_Partner_Relationship_Record.Tiers__c</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <description>API Integration Escalation Ticket Updates</description>
+    <interviewLabel>API Integration Escalation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>API Integration Escalation Ticket Updates</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get the record who&apos;s Account matches</description>
+        <name>Get_BizDev_Partner_Relationship_Record</name>
+        <label>Get BizDev Partner Relationship Record</label>
+        <locationX>176</locationX>
+        <locationY>311</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_Integration_Build</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>BizDev_Account__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Integration__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Partner_Referral_Source__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Tiers__c</queriedFields>
+        <queriedFields>Integration_Build__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_BizDev_Partner_Relationship_Record</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>0121M000001Ygh7</stringValue>
+            </value>
+        </filters>
+        <object>Ticket__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User_Skill_Hash__c</fullName>
+    <description>constructs skill hash for IR assignment</description>
+    <externalId>false</externalId>
+    <formula>Agency_Information__r.Agency_Abbreviation__c + &apos;|&apos; +
+TEXT(Agency_Information__r.Agency_Complexity__c) + &apos;|&apos; +
+TEXT(Tax_Notice_Type__c) + &apos;|&apos; + 
+TEXT(Form_Number_Complexity__c) + &apos;|&apos; +
+TEXT(Debit_Credit__c) + &apos;|&apos; + 
+TEXT(Thresholds__c)  + &apos;|&apos; +
+IF(ISBLANK(TEXT(Tier__c)), &apos;NA&apos;, TEXT(Tier__c))  + &apos;|&apos; +
+IF(ISBLANK(TEXT(Partner_Tier__c)), &apos;NA&apos;, TEXT(Partner_Tier__c))  + &apos;|&apos; +
+TEXT(Multi_Year__c)</formula>
+    <label>User Skill Hash</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

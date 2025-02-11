@@ -1,0 +1,48 @@
+<template>
+    <div class="slds-theme_default slds-box_border">
+        <template if:true={blnIsLoading}>
+            <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+        </template>
+        <template if:true={blnShowHide}>
+            <!-- Header Section Start -->
+            <div class="custom-page-header">
+                <header class="slds-media_center">
+                    <lightning-layout horizontal-align="spread" vertical-align="center">
+
+                        <lightning-layout-item padding="around-small">
+                            <h2><b>Email Response Recommendation</b></h2>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item padding="around-small">
+                            <c-case-reason-group-auto-complete-cmp strcasereason={strRoutingReasonClassification}
+                                blncasereasonfound={blnIsCaseReasonFound} onselectcasereason={handleCaseReasonSelected}
+                                onfiltercasereason={handleFilterCaseReason} mapcasereason={map_caseReasonToGroupMap}>
+                            </c-case-reason-group-auto-complete-cmp>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item padding="around-small">
+                            <lightning-button-group>
+                                <lightning-button-icon icon-name="utility:insert_template"
+                                    alternative-text="Insert Email" variant="brand" onclick={handleInsertEmail}
+                                    title="Insert Email"></lightning-button-icon>
+                                <lightning-button-icon icon-name={strIcon} alternative-text={strHideOrShowLabel}
+                                    variant="border-filled" onclick={handleHideOrShowEmail} title={strHideOrShowLabel}>
+                                </lightning-button-icon>
+                            </lightning-button-group>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+
+                </header>
+            </div>
+            <!-- Header Section End -->
+            <template if:true={blnShowTemplte}>
+                <lightning-layout horizontal-align="start" class="slds-p-around_small custom-container">
+                    <div class="slds-scrollable_y">
+                        <lightning-formatted-rich-text value={strBody}></lightning-formatted-rich-text>
+                    </div>
+                </lightning-layout>
+            </template>
+        </template>
+    </div>
+</template>

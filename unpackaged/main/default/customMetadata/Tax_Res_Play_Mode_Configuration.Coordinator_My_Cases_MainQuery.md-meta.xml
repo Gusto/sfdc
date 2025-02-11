@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Coordinator My Cases MainQuery</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Filter_Type__c</field>
+        <value xsi:type="xsd:string">MainQuery</value>
+    </values>
+    <values>
+        <field>Filter_Value__c</field>
+        <value xsi:type="xsd:string">SELECT Id,User_Name__c,User_Role__c,User_Role__r.User__c,User_Role__r.User__r.Out_Of_Office__c,Skill__r.Region_POD__c
+FROM User_Skill__c WHERE Skill__r.Region_POD__r.Team__c = &apos;Account Specialist&apos;
+AND User_Role__r.User__r.IsActive = TRUE AND User_Role__r.User__r.Out_Of_Office__c = FALSE AND User_Role__r.Remove_From_Assignment__c = FALSE</value>
+    </values>
+    <values>
+        <field>Order_by_records__c</field>
+        <value xsi:type="xsd:string">ORDER BY CreatedDate</value>
+    </values>
+    <values>
+        <field>Play_Type__c</field>
+        <value xsi:type="xsd:string">My Cases</value>
+    </values>
+    <values>
+        <field>Priority__c</field>
+        <value xsi:type="xsd:string">0</value>
+    </values>
+    <values>
+        <field>Skill_Type__c</field>
+        <value xsi:type="xsd:string">All Cases</value>
+    </values>
+    <values>
+        <field>Team__c</field>
+        <value xsi:type="xsd:string">Coordinator</value>
+    </values>
+</CustomMetadata>

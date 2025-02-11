@@ -1,0 +1,12 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:attribute name="recordId" type="Id" />
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:registerEvent name="mouseLeaveAccountHeaderEvent" type="c:caseMouseLeaveAccountPopoverEvent"/>
+    <aura:registerEvent name="mouseOverAccountHeaderEvent" type="c:caseMouseOverAccountPopoverEvent"/>
+    <aura:registerEvent name="caseAccountPopOverCloseEvent" type="c:caseAccountPopOverCloseEvent"/>
+    
+    <aura:registerEvent name="caseContactChangeEvent" type="c:caseContactChangeEvent"/>
+    <div onmouseleave="{!c.handleMouseLeave}" onmouseover="{!c.handleMouseOver}">
+        <c:caseAgencyHeaderPopover caseRecordId="{!v.recordId}" onclosepopover="{!c.handleClosePopOver}" onupdatecontact="{!c.handleUpdateContact}" onopenlink="{!c.handleOpenContact}" />
+    </div>
+</aura:component>

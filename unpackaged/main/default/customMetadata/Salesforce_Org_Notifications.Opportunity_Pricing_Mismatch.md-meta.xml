@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Opportunity Pricing Mismatch</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/kA2R700000003kHKAQ</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Notification__c</field>
+        <value xsi:type="xsd:string">There are more than 0 opportunities with price mismatch. Please review report and run script from knowledge article</value>
+    </values>
+    <values>
+        <field>Payops_Notification__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Point_Of_Contact__c</field>
+        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+    </values>
+    <values>
+        <field>Point_of_Contact_Name__c</field>
+        <value xsi:type="xsd:string">Praveen Sethu</value>
+    </values>
+    <values>
+        <field>Query_Return_Type__c</field>
+        <value xsi:type="xsd:string">Integer</value>
+    </values>
+    <values>
+        <field>Record_Threshold__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/00OR7000000RLpx</value>
+    </values>
+    <values>
+        <field>SOQL_Query__c</field>
+        <value xsi:type="xsd:string">SELECT count() FROM Opportunity where recordtype.name = &apos;company opportunity&apos; and Price_Mismatch__c = true and payment_invoice__c = null and stagename != &apos;closed lost&apos;and stagename != &apos;closed admin&apos; and account.pricing__c != null and createddate = last_n_days:180</value>
+    </values>
+</CustomMetadata>

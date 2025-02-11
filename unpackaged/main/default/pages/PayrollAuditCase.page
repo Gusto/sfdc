@@ -1,0 +1,474 @@
+<apex:page standardController="Case" extensions="EngagementCaseViewExtension" action="{!initPayrollAuditCase}" docType="html-5.0">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+        .message .messageText a {
+            margin: 0px;
+        }
+        .dateFormat {
+            visibility:hidden;
+        }
+    </style>
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        
+        function reopenTab(){
+            caseRecIdd = '{!theCase.id}';
+            if(caseRecIdd != null && caseRecIdd.length > 0){
+                 return sforce.console.getFocusedPrimaryTabId(getTabLink1);
+            }    
+            else{
+                return false;
+            }
+        }
+        
+        var currentTabId;
+        var getTabLink1 = function getTabLink1(result) {
+            currentTabId = result.id;
+            sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLink1);
+        };
+        
+        var showTabLink1 = function showTabLink1(result) {
+            var urll = result.tabLink; 
+            if(urll != null && urll.length >0 && urll.indexOf("isplay") > -1){
+                sforce.console.openPrimaryTab(currentTabId, "/{!theCase.id}?isplay=1", true);              
+            }
+            else{
+                sforce.console.openPrimaryTab(currentTabId ,'/{!theCase.id}' ,true);  
+            }
+        };
+        
+        var reopenTabById = function reopenTabById(result) {
+            var tabId = result.id;
+            sforce.console.openPrimaryTab(tabId ,'/{!theCase.id}' ,true);
+        };
+    
+        function openAccount() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openAccountSubtab);
+        }
+        
+        var openAccountSubtab = function openAccountSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/{!theCase.AccountId}', false, 
+                'Account', null, openSuccess, 'salesforceAccountSubtab');
+        };
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if(result.success==true){
+                sforce.console.focusSubtabById(result.id);
+                }
+        };
+    
+        function openContact() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openContactSubtab);
+        }
+        
+        var openContactSubtab = function openContactSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/{!theCase.ContactId}', false, 
+                'Contact', null, openSuccess, 'salesforceContactSubtab');
+        };
+        
+        //===============Links functionality=======================
+        //====================================
+        function processExternalLinks(urll){
+            if(urll != null && urll != undefined && urll.length > 0){
+              if(urll.indexOf('apex') == -1){
+                  window.open(urll);
+                  return false;
+              }
+              if(urll.indexOf('apex') > -1){
+                openGivenPage(urll);
+              }
+            }
+        }
+        //=====================open given page name in subtab================
+        var pageNameVar;
+        function openGivenPage(pageName) {
+          pageNameVar = pageName;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openPageInSubtab);
+        }
+        
+        var openPageInSubtab = function openPageInSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            if(pageNameVar != undefined && pageNameVar != null){
+              sforce.console.openSubtab(primaryTabId , pageNameVar+'?id={!theCase.id}', true, 
+                '{!theCase.CaseNumber}', null, openSuccess, 'salesforceSubtab');
+            }
+            
+        };
+    
+        //=================open page as it is=========
+        function openGivenPage_v2(pageName) {
+          pageNameVar = pageName;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openPageInSubtab_v2);
+        }
+        
+        var openPageInSubtab_v2 = function openPageInSubtab_v2(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            if(pageNameVar != undefined && pageNameVar != null){
+              sforce.console.openSubtab(primaryTabId , pageNameVar, true, 
+                '{!theCase.CaseNumber}', null, openSuccess, 'salesforceSubtab');
+            }
+        };
+        
+    </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <div class="gusto" >
+        <apex:pageMessages id="pgMsg" escape="false"></apex:pageMessages>
+        <apex:outputPanel rendered="{!theCase.status!='Closed'}"  id="mainPanel">
+            <apex:form id="routeToForm">
+                <script>
+                    function RefreshPrimaryTab1(){
+                        var error ='{!blnHasError}';
+                        if (error == 'false') {
+                            sforce.console.getFocusedPrimaryTabId(getTabLink1);
+                        }
+                    }
+                </script>
+                <apex:outputPanel id="reloadPage">
+                    <apex:outputPanel rendered="{! if(refreshPage,true,false)}">
+                    <script>
+                        location.reload();
+                    </script>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+
+                <apex:actionstatus id="status_page">
+                    <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                            <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                                <img class="waitingImage" src="/img/loading.gif"  />
+                                <span class="waitingDescription">Loading...</span>
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionstatus>
+
+                <apex:actionFunction action="{!routeCase}" name="routeCase" rerender="routeToPannel,pgMsg" id="routeCase" oncomplete="reopenTab();"/>
+                <apex:outputPanel >
+                    <div class="slds-button-group" role="group">                    
+                        <button class="slds-button slds-button_brand prepare-send-btn slds-button--neutral" style="min-width: 143px;"  
+                            onclick="processExternalLinks('https://app.gusto.com/panda/{!theCase.Panda_Company_URL__c}');return false;">View Company In Panda</button>
+                        <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-button_last prepare-send-dropdown">
+                            <button class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn slds-button--neutral" aria-haspopup="true" title="Show More" onclick="return false;" style="border-radius: 0 0.25rem 0.25rem 0;">                        
+                            <img src="{!URLFOR($Resource.sldsicons, '/icons/arrow.png')}"/>  
+                            <span class="slds-assistive-text">Show More</span>                     
+                            </button>
+                            <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions" style="min-width: 174px;">
+                                <ul class="slds-dropdown__list" role="menu">                          
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/{!theCase.Panda_Company_URL__c}');">
+                                            <span class="slds-truncate" title="View Company In Panda">View Company In Panda</span>
+                                        </a>
+                                    </li>
+                                
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('/apex/CaseMergeListViewPage');">
+                                            <span class="slds-truncate" title="Merge Case">Merge Case</span>
+                                        </a>
+                                    </li>
+                                
+                                    <li class="slds-dropdown__item" role="presentation">
+                                        <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="openGivenPage_v2('/500?rlid=RelatedChildCaseList&hierarchy=1&fromroot=1&id={!theCase.Id}');">
+                                            <span class="slds-truncate" title="View Case Hierarchy">View Case Hierarchy</span>
+                                        </a>
+                                    </li>                            
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!$Profile.Name!='Task Us'}"  id="routeToPannel">
+                    Route To: 
+                    <apex:selectList value="{!caseType}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!caseTypeOption}"> </apex:selectOptions>
+                    </apex:selectList>
+                    <apex:commandButton onClick="routeCase()" rerender="routeToPannel" value=">>" styleclass=""   />
+                </apex:outputPanel>
+            </apex:form>  
+            <apex:form id="mainForm">
+                <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                    <apex:commandButton action="{!SavePayrollAuditCase}" value="Save" styleclass="slds-button slds-button--neutral" status="status_page" oncomplete="RefreshPrimaryTab1();" reRender="pgMsg,routeToForm"/>
+                    <apex:outputPanel rendered="{!$Profile.Name!='Task Us'}">
+                        <apex:commandButton action="{!acceptCase}" immediate="true" value="Take It" styleclass="slds-button slds-button--neutral" status="status_page" onComplete="reopenTab();"/>
+                    </apex:outputPanel>
+                </div> 
+                
+                <apex:outputPanel id="secondaryPanel">
+                    <table class="table.spacing">
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Owner: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                    </apex:inputField>
+                                    <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status: </label>
+                            </td>
+                            <td>
+                                <apex:outputPanel id="statusChanged1">
+                                    <div class="slds-form-element__control">
+                                        <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                            <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                            <apex:selectOptions value="{!caseStatusOption}"/>
+                                        </apex:selectList>
+                                        <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                                    </div>
+                                </apex:outputPanel>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status Detail: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:selectList value="{!theCase.Status_Detail__c}"  multiselect="false" size="1" > 
+                                        <apex:selectOptions value="{!caseStatusDetailOption}"/>
+                                    </apex:selectList>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Next Steps: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Next_Steps__c}" > 
+                                    </apex:inputField>
+                                </div>
+                            </td> 
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Account: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                </div>
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Contact: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Agency: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Agency_Information__c}" >
+                                    </apex:inputField>
+                                </div>
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                            </td>
+                            <td>
+                                <apex:outputPanel rendered="{!theCase.Direction__c==''}">
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!theCase.Direction__c}" >
+                                        </apex:inputField>
+                                    </div>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Direction__c}" > 
+                                        </apex:outputField>
+                                    </div>
+                                </apex:outputPanel>
+                            </td>                    
+                        </tr> 
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Priority: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!theCase.Priority}" >
+                                    </apex:inputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputText value="{!theCase.Confirm_Case_Reason__c}" list="{!caseReasons}" html-autocomplete="off" />
+                                </div>
+                            </td>                    
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+                <br/>
+            </apex:form> 
+            <br/>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!theCase.status=='Closed'}">
+            <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                <apex:form >
+                    <apex:commandButton action="{!unmergeCase}" immediate="true" value="UnMerge" styleclass="slds-button slds-button--neutral" rendered="{!theCase.Closed_Reason__c=='Merged Duplicate'}"/>                    
+                </apex:form> 
+            </div>        
+            <apex:form >
+                <apex:outputPanel >
+                    <Table class="table.spacing">
+                        <tr>
+                        <td>
+                            <label class="slds-form-element__label" for="status">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!theCase.OwnerId}"> 
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Status}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status Detail: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Status_Detail__c}"> 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Next Steps: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Next_Steps__c}" > 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Account: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <A HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</A>
+                                </div>
+                            </td>                   
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Contact: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <A HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</A>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Agency: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Agency_Information__c}" > 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Direction: </label>
+                            </td>
+                            <td>
+                                <apex:outputPanel rendered="{!theCase.Direction__c!=''}">
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theCase.Direction__c}" > 
+                                        </apex:outputField>
+                                    </div>
+                                </apex:outputPanel>
+                            </td>                    
+                        </tr> 
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Priority: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Priority}" > 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="slds-form-element__label" for="requiresAction">Confirm Case Reason: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.Confirm_Case_Reason__c}" > 
+                                    </apex:outputField>
+                                </div>
+                            </td>                    
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+                
+                <br/>
+            </apex:form>
+        </apex:outputPanel>
+        
+    </div>
+    <script>
+    if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+    }
+    </script>
+</apex:page>

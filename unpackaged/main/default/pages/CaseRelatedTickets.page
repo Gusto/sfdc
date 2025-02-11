@@ -1,0 +1,165 @@
+<apex:page showHeader="true" sidebar="true" controller="CaseRelatedTicketsController" action="{!searchRecords}">
+	
+	<apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/> 
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+
+    <script type="text/javascript">
+		
+    	$(window).load(function() {
+	        attachEnterEvent();
+    	});
+
+
+    	function attachEnterEvent(){
+    		$(".searchStrText").on('keyup', function (e) {
+			    if (e.keyCode == 13) {
+			        sortTable('');
+			        //console.log('@@## enter event catched');
+			    }
+			});    		
+    	}
+
+		var selectedCaseId;
+        function openTicketRec(frid) {
+            selectedCaseId = frid;
+            console.log('@@## ticket id: '+selectedCaseId);
+            //First find the ID of the primary tab to put the new subtab in
+            //sforce.console.getEnclosingPrimaryTabId(openCaseSubtab);
+            sforce.console.openPrimaryTab(null , '/'+selectedCaseId, true,'Ticket',openSuccess,'Ticket');
+        }
+
+        var openSuccess = function openSuccess(result) {
+            //Report whether opening the new tab was successful
+            if (result.success == true) {
+            } else {
+                alert('Primary tab cannot be opened');
+            }
+        };
+
+        
+
+    </script>
+
+
+    <div class="gusto">
+    	<apex:form id="frmId">
+    		<apex:actionFunction action="{!searchRecords}" name="sortTable" reRender="frmId" status="fetchStatus" oncomplete="attachEnterEvent();">
+	            <apex:param name="sortField" value=""/>
+	        </apex:actionFunction>
+			<div class="slds-scrollable" style="width: 100%;height: 300px;overflow: scroll;">
+				<apex:actionStatus id="fetchStatus" >
+	                <apex:facet name="start">
+	                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+	                                                                        height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+	                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+	                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+	                            <span class="waitingDescription">Please Wait...</span> 
+	                        </div>
+	                    </div>
+	                </apex:facet>
+	            </apex:actionStatus>
+				<apex:outputLabel value="Search String:" />
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <apex:inputText value="{!searchTicketVar.Description__c}" styleclass="searchStrText"/>	            
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <apex:outputLabel value="Scope:" />
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <apex:selectList value="{!selectedcompanyContactFilterStr}" size="1">
+	                <apex:selectOptions value="{!companyContactFilterList}"/></apex:selectList>
+	        	<br/><br/>
+	        	<apex:outputLabel value="From Date:" />
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <apex:inputField Value="{!searchTicketVar.Due_Date__c}"/>
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <apex:outputLabel value="To Date:" />
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <apex:inputField Value="{!searchTicketVar.Close_Date__c}"/>
+	            &nbsp;&nbsp;&nbsp;&nbsp;
+	            <br/><br/>       
+	            <apex:commandButton value="Search" styleclass="btn slds-button slds-button--neutral" action="{!searchRecords}" reRender="frmId" status="fetchStatus"/>
+	            &nbsp;&nbsp;
+	            <apex:outputPanel id="editPanel" rendered="{!IF(TicketList != null && TicketList.size > 0 , true, false)}">
+	                <table class="slds-table slds-table--bordered slds-table_cell-buffer slds-table_fixed-layout" id="frtable" style="width: 100%"> 
+	                    <thead>
+	                        <tr class="slds-text-title">
+	                            <th>
+	                                Ticket Number
+	                            </th>
+	                            <th>
+	                                Record Type
+	                            </th>
+	                            <th>
+	                                Description
+	                            </th>
+	                            <th> 
+	                                Escalation Reason
+	                            </th>
+	                            <th> 
+	                                Status
+	                            </th>
+	                            <th> 
+	                                <a onclick="sortTable('Parent.Contact.Name');" class="slds-truncate" style="color:#54698d;">Created Date</a> 
+	                            </th>
+	                        </tr>
+	                    </thead>
+	                    <tbody >
+	                    <apex:repeat var="ticket" value="{!ticketList}" id="ttable">
+                            <tr class="slds-text-title detailRow">
+                                <td style="color:#54698d;cursor: pointer;">
+                                    <a  onclick="openTicketRec('{!ticket.id}');return false;">{!ticket.Name}</a>
+                                </td>
+                                <td style="cursor: pointer;">
+                                    {!ticket.RecordType.Name}
+                                </td>
+                                <td style="max-width: 200px;white-space: normal;">
+                                    {!ticket.Description__c}
+                                </td>
+                                <td >
+                                    <apex:outputField value="{!ticket.Escalation_Reason__c}"/>
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!ticket.Status__c}"/>
+                                </td>
+                                <td>                                    
+                                    <apex:outputText value="{0,date,short}">
+                                        <apex:param value="{!ticket.CreatedDate}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+	                    </apex:repeat>
+	                    </tbody> 
+	                </table> 
+	            </apex:outputPanel>
+	            <apex:outputPanel rendered="{!IF(TicketList.size != null && TicketList.size > 0, true, false)}">   
+	            	<table style="width: 100%">
+	                	<tr>
+		                    <td>
+		                        <apex:outputText value=" Page {!IF(CEILING(setcon.ResultSize/setcon.PageSize)==0,0,setcon.PageNumber)} of {!CEILING(setcon.ResultSize/setcon.PageSize)}"/>
+		                    </td>
+		                    <td style="text-align: center !important;">
+		                        <apex:commandLink action="{!setcon.Previous}" value="« Previous" rendered="{!setcon.HasPrevious}"/>
+		                        <apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(setcon.HasPrevious)}"/>&nbsp;&nbsp;  
+		                        <apex:commandLink action="{!setcon.Next}" value="Next »" rendered="{!setcon.HasNext}"/>
+		                        <apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(setcon.HasNext)}"/>
+		                    </td>
+		                    <td style="text-align: right !important;">
+	                            <apex:selectList value="{!setcon.PageSize}" size="1">
+	                                <apex:selectOption itemValue="20" itemLabel="20"/>
+	                                <apex:selectOption itemValue="50" itemLabel="50"/>
+	                                <apex:selectOption itemValue="100" itemLabel="100"/>
+	                                <apex:actionSupport event="onchange" reRender="frmId" status="status"/>
+	                            </apex:selectList>
+	                        </td>
+	                    </tr>
+	                </table>
+	            </apex:outputPanel>
+	            <apex:outputPanel id="editPanel1" rendered="{!IF(TicketList.size == 0 , true, false)}">
+	                No Records Found!
+	            </apex:outputPanel>
+
+			</div>
+    	</apex:form>
+	</div>
+</apex:page>

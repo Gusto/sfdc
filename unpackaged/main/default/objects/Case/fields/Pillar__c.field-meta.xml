@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pillar__c</fullName>
+    <description>Pillar is determined based on the Persona, Company Size, Type and Support Level. BTE-2500</description>
+    <externalId>false</externalId>
+    <formula>IF( 
+    ISPICKVAL(Persona__c, &apos;Accountant&apos;) , 
+    &apos;Care Accountants&apos;, 
+     IF(  
+        AND(
+                ISPICKVAL(Persona__c, &apos;Admin&apos;), 
+                ISPICKVAL(Company_Size__c, &apos;Grower 50&apos;)
+        ),
+        &apos;Care Growers 50&apos;,
+        IF( 
+            AND(
+                ISPICKVAL(Persona__c, &apos;Admin&apos;), 
+                ISPICKVAL(Company_Size__c, &apos;Grower 25-49&apos;)
+             ),
+            &apos;Care Growers 25&apos;,
+            IF(
+                AND(
+                    ISPICKVAL(Persona__c, &apos;Admin&apos;), 
+                    ISPICKVAL(Company_Size__c, &apos;Standard 5-24&apos;),
+                    ISPICKVAL(Type, &apos;Benefits&apos;),
+                    ISPICKVAL(Support_Level__c, &apos;Tier 2&apos;)
+                ),
+                &apos;Care Benefits T2&apos;,
+                IF(
+                    AND(
+                        ISPICKVAL(Persona__c, &apos;Admin&apos;), 
+                        ISPICKVAL(Company_Size__c, &apos;Standard 5-24&apos;),
+                        ISPICKVAL(Type, &apos;Benefits&apos;),
+                        ISPICKVAL(Support_Level__c, &apos;Tier 1&apos;)
+                    ),
+                    &apos;Care Benefits T1&apos;,
+                    IF(
+                         AND(
+                            ISPICKVAL(Persona__c, &apos;Admin&apos;), 
+                            ISPICKVAL(Company_Size__c, &apos;Standard 5-24&apos;),
+                            OR(ISPICKVAL(Type, &apos;Payroll&apos;),ISPICKVAL(Type, &apos;Taxes&apos;)),
+                            ISPICKVAL(Support_Level__c, &apos;Tier 2&apos;)
+                            ),
+                            &apos;Care Admin Payroll T2&apos;,
+                                IF(
+                                    AND(
+                                        ISPICKVAL(Persona__c, &apos;Admin&apos;), 
+                                        ISPICKVAL(Company_Size__c, &apos;Micro 0-4&apos;),
+                                        OR(ISPICKVAL(Type, &apos;Payroll&apos;),ISPICKVAL(Type, &apos;Taxes&apos;))
+                                     ),
+                                    &apos;Care Micro-Admin Payroll&apos;,
+                                    IF(
+                                        ISPICKVAL(Persona__c, &apos;Member&apos;),
+                                        &apos;Care Members&apos;,
+                                        IF(
+                                            ISPICKVAL(Specialization__c, &apos;Cancel&apos;),
+                                            &apos;Care Client Retention&apos;,
+                                            IF(
+                                                ISPICKVAL(Type, &apos;Gusto Global&apos;),
+                                                &apos;Care Gusto Global&apos;,
+                                                &apos;&apos;
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )</formula>
+    <label>Pillar</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

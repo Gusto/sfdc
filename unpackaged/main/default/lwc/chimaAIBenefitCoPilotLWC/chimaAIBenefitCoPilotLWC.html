@@ -1,0 +1,98 @@
+<template>
+	<div class="container">
+		<lightning-card class="scrollable-card" style="height: 480px !important;">
+            <section role="log" class="slds-chat autoscroll" style="height: 405px; overflow-y: auto;" if:false={isChimaAIBenfitsCoPilotEnabled}>
+                Sorry, this feature is not available yet.
+            </section>
+			<div if:true={isChimaAIBenfitsCoPilotEnabled}>
+				<lightning-combobox
+					name="specificTopic"
+					label="Specific Topic"
+					class="specific-topic"
+					value={selectedTopic}
+					placeholder="Specific Topic"
+					options={specificTopicOptions}
+					onchange={handleSpecificTopicChange} >
+				</lightning-combobox>
+			</div>
+			<section role="log" class="slds-chat autoscroll" style="height: 368px; overflow-y: auto;" if:true={isChimaAIBenfitsCoPilotEnabled}>
+				<div class="slds-chat-list content">
+					<!-- Iterate over chat messages -->
+					<template for:each={chatMessages} for:item="message" for:index="index">
+						<!-- Check if message is inbound or outbound -->
+						<template if:true={message.sender}>
+							<li class="slds-chat-listitem slds-chat-listitem_inbound" key={message.id}>
+								<div class="slds-chat-message">
+									<span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
+										<abbr class="slds-avatar__initials slds-avatar__initials_inverse" title={message.senderName}> {message.senderInitials} </abbr>
+									</span>
+									<div class="slds-chat-message__body">
+										<!-- Display Typing -->
+										<span class="slds-icon-typing slds-is-animated typing-span" title="Customer is typing" if:true={message.typing}>
+											<span class="slds-icon-typing__dot"></span>
+											<span class="slds-icon-typing__dot"></span>
+											<span class="slds-icon-typing__dot"></span>
+											<span class="slds-assistive-text">Customer is typing</span>
+										  </span>
+										<div class="slds-chat-message__text slds-chat-message__text_inbound" if:false={message.typing} data-id="responseDiv">
+											<span>{message.content}</span>
+                                            <span if:true={message.isContentURLExist} class="content-article">
+												<br/><br/>
+                                                <span>Here is a knowledge article about this</span>
+                                            </span>
+											<template for:item="contentURL" for:each={message.contentURLs}>
+												<br key={contentURL.linkURL}>
+												<br key={contentURL.linkURL}>
+												<a href={contentURL.linkURL} key={contentURL.linkURL} target="_blank">
+													{contentURL.linkName}
+												</a>
+											</template>
+										</div>
+										<div class="slds-chat-message__meta" aria-label="Sender">{message.senderName}</div>
+										<!--Answer Rating Star Component-->
+										<div class="rate" if:true={message.displayRating}>
+											<div class="rate-container" >
+												<!-- like 5 star-->
+												<div for:each={message.dynamicRating} for:item="dRating" key={message.message_id}>
+													<lightning-button-icon if:true={dRating.isIcon} icon-name='utility:like' class="feedback-icon-color icon-like" alternative-text='like' size='large' title='5 star rating' data-conversationid={message.messageId} data-valueid = 5 onclick={setRating} data-id={dRating.dynamicId} data-elementtype="icon" variant="bare"></lightning-button-icon>
+												</div>
+
+												<div for:each={message.dynamicRating} for:item="dRating" key={message.message_id}>
+													<lightning-button if:false={dRating.isIcon} variant="brand" label={dRating.value} title="Rating 1" class="slds-m-left_x-small fdb-rating-button" data-conversationid={message.messageId} data-valueid = {dRating.value} onclick={setRating} data-elementtype="button" data-id={dRating.dynamicId}></lightning-button>
+												</div>
+											</div>
+										</div>
+
+										<div if:true={message.isShowError} class="slds-form-element__help" style="display: inline-block; color: red; margin-top: 7px">
+											{message.errorMessage}
+										</div>
+									</div>
+								</div>
+							</li>
+						</template>
+						<template if:true={message.receiver}>
+							<li class="slds-chat-listitem slds-chat-listitem_outbound lst" key={message.id}>
+								<div class="slds-chat-message">
+									<div class="slds-chat-message__body">
+										<div class="slds-chat-message__text slds-chat-message__text_outbound">
+											<span>{message.content}</span>
+										</div>
+										<div class="slds-chat-message__meta" aria-label="Sender">{message.senderName}</div>
+									</div>
+								</div>
+							</li>
+						</template>
+					</template>
+				</div>
+				<!-- Chat input form -->
+				<div class="slds-chat-composer sticky-footer">
+					
+					<div class="chat-input-container">
+						<lightning-icon icon-name='utility:anywhere_chat' alternative-text='New Chat' variant='success' size='small' title='New Chat' onclick={startNewChat} class="new-chat" disabled={isLoading}></lightning-icon>
+						<input class="chat-input" data-id="chatInputId" type="text" placeholder="Type your message..." value={userQuestion} disabled={isLoading}></input>
+					  </div>
+				</div>
+			</section>
+		</lightning-card>
+	</div>
+</template>

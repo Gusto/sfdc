@@ -1,0 +1,297 @@
+<apex:page standardController="Benefit_Order__c" title="Ticket" extensions="NPRU_TicketButtonOnBODetailExt" tabStyle="Ticket__c"
+ showHeader="false" sidebar="false">
+	<apex:includeScript value="/support/console/45.0/integration.js" />
+	<script type="text/javascript">
+		function RefreshPrimaryTab() {
+			sforce.console.getFocusedPrimaryTabId(showTabId);
+		}
+
+		var showTabId = function showTabId(result) {
+			var tabId = result.id;
+			sforce.console.refreshPrimaryTabById(tabId, false, refreshSuccess, true);
+		};
+
+		var refreshSuccess = function refreshSuccess(result) {
+			//Report whether refreshing the primary tab was successful
+			if (result.success == true) {
+				sforce.console.getFocusedSubtabId(function (subTabId) {
+					sforce.console.closeTab(subTabId.id);
+				});
+			}
+		};
+		function closeCurrentTab() {
+			//First find the ID of the current tab to close it
+			sforce.console.getEnclosingTabId(closeSubtab);
+			RefreshPrimaryTab();
+		}
+
+		var closeSubtab = function closeSubtab(result) {
+			//Now that we have the tab ID, we can close it
+			var tabId = result.id;
+			sforce.console.closeTab(tabId);
+		};
+	</script>
+	<apex:actionstatus id="status">
+		<apex:facet name="start">
+			<div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;">
+				<div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;">
+					<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+					<span class="waitingDescription">Loading...</span>
+				</div>
+			</div>
+		</apex:facet>
+	</apex:actionstatus>
+	<apex:form id="frmId">
+		<apex:pageBlock >
+			<apex:pageMessages id="messagesSec" />
+			<apex:pageBlockSection id="ticketGeneralInfo" rendered="{!objTicketRecord.Reporting_Team__c != null}">
+				<apex:selectList value="{!objTicketRecord.Reporting_Team__c}" size="1" label="My Team">
+					<apex:selectOptions value="{!list_FromTeams}"/>
+					<apex:actionSupport event="onchange" action="{!ticketToTeam}" reRender="ticketGeneralInfo,relatedInfoSection,ticketInfo,renewalDateSec,SummarySection" status="status"/>
+				</apex:selectList>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Ticket to Team" />
+					<apex:actionRegion >
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:selectList value="{!strSelectedTeam}" size="1">
+								<apex:actionSupport event="onchange" action="{!subTeam}" reRender="ticketGeneralInfo,relatedInfoSection,ticketInfo,renewalDateSec,SummarySection"
+								/>
+								<apex:selectOptions value="{!list_Teams}" />
+							</apex:selectList>
+						</apex:outputPanel>
+					</apex:actionRegion>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!IF(Contains(strSelectedTeam, 'Onboarding'), true, false)}">
+					<apex:outputLabel value="Ticket to Sub Team" />
+					<apex:actionRegion >
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:selectList value="{!strSelectedSubTeam}" size="1">
+								<apex:actionSupport event="onchange" reRender="ticketInfo,tktOwnerSection,relatedInfoSection,messagesSec,SummarySection"
+								 action="{!assignOwner}" />
+								<apex:selectOptions value="{!list_SubTeams}" />
+							</apex:selectList>
+						</apex:outputPanel>
+					</apex:actionRegion>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:outputPanel id="ticketInfo" rendered="{!objTicketRecord.Reporting_Team__c != null}">
+				<apex:pageBlockSection rendered="{!IF(strSelectedTeam != 'None', true, false)}" columns="1" title="Information" collapsible="false">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Ticket Reason" />
+						<apex:actionRegion >
+							<apex:outputPanel styleClass="requiredInput" layout="block">
+								<apex:outputPanel styleClass="requiredBlock" layout="block" />
+								<apex:selectList id="tktReason" value="{!strSelectedReason}" size="1">
+									<apex:actionSupport event="onchange" action="{!ticketDetail}" reRender="detail,tktOwnerSection,relatedInfoSection,messagesSec,ticketInfo,SummarySection,ticketReason"
+									 status="status"/>
+									<apex:selectOptions value="{!list_Reasons}" />
+								</apex:selectList>
+							</apex:outputPanel>
+						</apex:actionRegion>
+					</apex:pageBlockSectionItem>
+
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Ticket Reason Detail" />
+						<apex:outputPanel styleClass="requiredInput" layout="block" id="detail">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" rendered="{!IF(list_ReasonsDetail.size > 1, true, false)}" />
+							<apex:selectList value="{!strSelectedReasonDetail}" size="1">
+								<apex:actionSupport event="onchange" action="{!updateTicketOwner}" reRender="messagesSec,tktOwnerSection" status="status"/>
+								<apex:selectOptions value="{!list_ReasonsDetail }" />
+							</apex:selectList>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement', true, false)}">
+						<apex:outputLabel value="Carrier" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Carrier__c}" id="carrier">
+								<apex:actionsupport event="onchange" action="{!copyCarrierStatesToTicket}" rerender="ticketInfo" />
+							</apex:inputField>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem id="tktStates" rendered="{!if(strSelectedReason == 'Concession/Reimbursement', true, false)}">
+						<apex:outputLabel value="States" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.States__c}" id="states" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+
+					<apex:inputField value="{!objTicketRecord.Renewal_Date__c}" label="Effective Date" required="true" rendered="{!IF(OR(strSelectedTeam == 'Benefits Advising', blnIsOnboardingRenewal == true) && !blnIsBenefitsBYB, true, false)}"
+					/>
+
+					<apex:inputField value="{!objTicketRecord.Assign_to__c}" label="Assign to at Creation" rendered="{!IF(OR(strSelectedTeam == 'Benefit Transfer', strSelectedTeam == 'Member Processing', strSelectedTeam == 'Benefits Compliance',strSelectedTeam == 'Member Operations'), true, false)}"
+					/>
+
+					<apex:pageBlockSectionItem rendered="{!IF(strSelectedSubTeam == 'Implementation Advocate - Amplifier', true, false)}">
+						<apex:outputLabel value="Ticket Owner" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objBOTemp.Escalated_User__c}" id="ticketOwner" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+
+					<apex:pageBlockSectionItem rendered="{!IF(Contains(strSelectedSubTeam, 'Fulfillment'),true,false)}">
+						<apex:outputLabel value="Select Carrier Order" title="You can create ticket only for carrier orders which have owner" />
+						<apex:actionRegion >
+							<apex:outputPanel styleClass="requiredInput" layout="block">
+								<apex:outputPanel styleClass="requiredBlock" layout="block" />
+								<apex:selectList value="{!strSelectedCO}" size="1" title="You can create ticket only for carrier orders which have owner">
+									<apex:actionSupport event="onchange" reRender="tktOwnerSection" action="{!assignOwnerFromCO}" />
+									<apex:selectOptions value="{!list_COsOwner}" />
+								</apex:selectList>
+							</apex:outputPanel>
+						</apex:actionRegion>
+					</apex:pageBlockSectionItem>
+
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Error Type" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Error_Type__c}" id="errorType">
+								<apex:actionSupport event="onchange" action="{!onChangeDependentPicklist}" rendered="ticketInfo,ticketReason" />
+							</apex:inputField>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Sub Error Type" />
+						<apex:outputPanel layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Sub_Error_Type__c}" id="subErrorType" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Error Origin" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Error_Origin__c}" id="errorOrigin">
+								<apex:actionSupport event="onchange" action="{!onChangeDependentPicklist}" rendered="ticketInfo,ticketReason" />
+							</apex:inputField>
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Error Origin Details" />
+						<apex:outputPanel layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Error_Origin_Details__c}" id="errorOriginDetails" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Error Origin Date" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Error_Origin_Date__c}" id="errorOriginDate" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Reimbursement Amount Requested" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Reimbursement_Amount_Requested__c}" id="remAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Number of Discounted Months Requested" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Number_of_Discounted_Months_Requested__c}" id="discountMonReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Concession/Reimbursement' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Discount Amount Requested" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Discount_Amount_Requested__c}" id="discountAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+
+
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Licensing' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Broker's Name" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Broker_s_Name__c}" id="discountAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Licensing' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Broker's Team" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Broker_s_Team__c}" id="discountAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Licensing' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Broker's Home State" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Broker_s_Home_State__c}" id="discountAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Licensing' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Broker's Resident License" />
+						<apex:outputPanel layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Broker_s_Resident_License__c}" id="discountAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!if(strSelectedReason == 'Licensing' && strSelectedTeam == 'Benefits Compliance', true, false) }">
+						<apex:outputLabel value="Which states need to be licensed?" />
+						<apex:outputPanel layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Which_states_need_to_be_licensed__c}" id="discountAmtReq" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+
+	                <apex:pageBlockSectionItem rendered="{!if(strSelectedTeam == 'New Plan Sales' || strSelectedTeam == 'Full Stack Sales', true, false) }">
+						<apex:outputLabel value="Due Date" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Due_Date__c}" id="dueDate" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+			</apex:outputPanel>
+			<apex:pageBlockSection id="tktOwnerSection" rendered="{!objTicketRecord.Reporting_Team__c != null}">
+				<apex:pageBlockSectionItem rendered="{!IF(objBOTemp.Escalated_User__c != NULL && !blnIsOwnerQueue, true, false)}">
+					<apex:outputLabel value="Ticket Owner" />
+					<apex:outputField value="{!objBOTemp.Escalated_User__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!blnIsOwnerQueue}">
+					<apex:outputLabel value="Ticket Owner" />
+					<apex:outputLabel value="{!strAssignedQueueName}"/>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:outputPanel id="SummarySection" rendered="{!objTicketRecord.Reporting_Team__c != null}">
+				<apex:pageBlockSection columns="1" title="Summary" collapsible="false" rendered="{!IF(strSelectedTeam != 'None', true, false)}">
+					<apex:pageBlockSectionItem rendered="{!IF(strSelectedTeam == 'Onboarding', true, false)}">
+						<apex:outputLabel value="Summary" />
+						<apex:outputPanel styleClass="requiredInput" layout="block">
+							<apex:outputPanel styleClass="requiredBlock" layout="block" />
+							<apex:inputField value="{!objTicketRecord.Summary__c}" id="summary" />
+						</apex:outputPanel>
+					</apex:pageBlockSectionItem>
+					<apex:inputField value="{!objTicketRecord.Description__c}" label="Description" />
+				</apex:pageBlockSection>
+			</apex:outputPanel>
+			<apex:outputPanel id="relatedInfoSection" rendered="{!objTicketRecord.Reporting_Team__c != null}">
+				<apex:pageBlockSection rendered="{!IF(strSelectedTeam != 'None', true, false)}" columns="2" title="Related Information" collapsible="false">
+					<apex:outputField value="{!objTicketRecord.Opportunity__c}" label="Opportunity" />
+					<apex:outputField value="{!objTicketRecord.Benefit_Order__c}" label="Benefit Order" />
+					<apex:outputField value="{!objTicketRecord.Case__c}" label="Case" />
+					<apex:outputField rendered="{!IF(objTicketRecord.Benefit_Order__c != NULL,true,false)}" value="{!list_BenefitOrders[0].Submission_Deadline__c}"
+					 label="Benefit Order Submission Deadline" />
+					<apex:outputText value="{!strScript}" escape="false"></apex:outputText>
+				</apex:pageBlockSection>
+			</apex:outputPanel>
+			<apex:pageBlockButtons location="bottom" rendered="{!objTicketRecord.Reporting_Team__c != null}">
+				<apex:commandButton action="{!saveTicket}" value="Save" reRender="detail,messagesSec,ticketInfo,SummarySection" status="status"
+				 oncomplete="{!IF(NOT(blnHasError),'closeCurrentTab();','return NULL;')}" />
+				<apex:commandButton onClick="RefreshPrimaryTab();" value="Cancel" immediate="true" />
+			</apex:pageBlockButtons>
+
+			<apex:inputField style="display:none;" value="{!objTicketRecord.Escalation_Reason__c}" id="ticketReason" />
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

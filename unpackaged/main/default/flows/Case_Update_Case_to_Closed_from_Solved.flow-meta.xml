@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <name>Assign_Record_to_objCase</name>
+        <label>Assign Record to objCase</label>
+        <locationX>1062</locationX>
+        <locationY>288</locationY>
+        <assignmentItems>
+            <assignToReference>objCase</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Record_Types</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Copy_1_of_Assign_Record_to_objCase</name>
+        <label>Copy 1 of Assign Record to objCase</label>
+        <locationX>710</locationX>
+        <locationY>288</locationY>
+        <assignmentItems>
+            <assignToReference>objCase</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>If_closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case status to Closed</description>
+        <name>Copy_1_of_Copy_2_of_Update_status_to_Closed</name>
+        <label>Copy 1 of Copy 2 of Update status to Closed</label>
+        <locationX>50</locationX>
+        <locationY>983</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>0121M000001Yf5YQAS</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_status_to_Closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case status to Closed</description>
+        <name>Copy_2_of_Copy_2_of_Update_status_to_Closed</name>
+        <label>Copy 2 of Copy 2 of Update status to Closed</label>
+        <locationX>578</locationX>
+        <locationY>983</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>0121M0000014MjiQAE</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_status_to_Closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case status to Closed</description>
+        <name>Copy_2_of_Update_status_to_Closed</name>
+        <label>Copy 2 of Update status to Closed</label>
+        <locationX>314</locationX>
+        <locationY>983</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>0121M000001Yf5WQAS</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_status_to_Closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case status to Closed</description>
+        <name>Copy_3_of_Copy_2_of_Update_status_to_Closed</name>
+        <label>Copy 3 of Copy 2 of Update status to Closed</label>
+        <locationX>842</locationX>
+        <locationY>983</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>0121M000001YggUQAS</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_status_to_Closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case status to Closed</description>
+        <name>Copy_4_of_Copy_2_of_Update_status_to_Closed</name>
+        <label>Copy 4 of Copy 2 of Update status to Closed</label>
+        <locationX>1106</locationX>
+        <locationY>983</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>0121M000001Yf5gQAC</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_status_to_Closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case status to Closed</description>
+        <name>Update_status_to_Closed</name>
+        <label>Update status to Closed</label>
+        <locationX>710</locationX>
+        <locationY>1199</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_objCase</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>If_closed</name>
+        <label>If closed</label>
+        <locationX>710</locationX>
+        <locationY>408</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Record_Types</targetReference>
+            </connector>
+            <label>Closed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Record_Types</name>
+        <label>Record Types</label>
+        <locationX>710</locationX>
+        <locationY>863</locationY>
+        <defaultConnector>
+            <targetReference>Update_status_to_Closed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Payroll_Care</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll_Care</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_1_of_Copy_2_of_Update_status_to_Closed</targetReference>
+            </connector>
+            <label>Payroll Care</label>
+        </rules>
+        <rules>
+            <name>Benefits_Care</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits_Care</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_2_of_Update_status_to_Closed</targetReference>
+            </connector>
+            <label>Benefits Care</label>
+        </rules>
+        <rules>
+            <name>Modern_Bank</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Modern_Bank</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_2_of_Copy_2_of_Update_status_to_Closed</targetReference>
+            </connector>
+            <label>Modern Bank</label>
+        </rules>
+        <rules>
+            <name>PayrollOps_Audit</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>PayrollOps_Audit</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_3_of_Copy_2_of_Update_status_to_Closed</targetReference>
+            </connector>
+            <label>PayrollOps Audit</label>
+        </rules>
+        <rules>
+            <name>Tax_Res</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Tax_Res</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_4_of_Copy_2_of_Update_status_to_Closed</targetReference>
+            </connector>
+            <label>Tax Res</label>
+        </rules>
+    </decisions>
+    <description>TO BE DEPRECATED
+
+Added exception for Tax Res to not have Confirm Case Reason
+Update Case to Closed from Solved</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>RecordTypeandStatusCheck</name>
+        <dataType>Boolean</dataType>
+        <expression>{!objCase.RecordType.DeveloperName} == &apos;Payroll_Care&apos;</expression>
+    </formulas>
+    <interviewLabel>Case: Update Case to Closed from Solved Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case: Update Case to Closed from Solved</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_objCase</name>
+        <label>Update objCase</label>
+        <locationX>710</locationX>
+        <locationY>1319</locationY>
+        <inputReference>objCase</inputReference>
+    </recordUpdates>
+    <sourceTemplate>TEMPLATE_Case_Helper_Flow</sourceTemplate>
+    <start>
+        <locationX>584</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>({!$Record.RecordType.DeveloperName} = &apos;Payroll_Care&apos; || {!$Record.RecordType.DeveloperName} = &apos;Benefits_Care&apos; || {!$Record.RecordType.DeveloperName} = &apos;Modern_Bank&apos; || {!$Record.RecordType.DeveloperName} = &apos;PayrollOps_Audit&apos;  || {!$Record.RecordType.DeveloperName} = &apos;Tax_Res&apos;  || {!$Record.RecordType.DeveloperName} = &apos;GEP_CX&apos;) 
+&amp;&amp; 
+(
+    (
+        ISPICKVAL({!$Record.Status}, &apos;Solved&apos;) &amp;&amp; 
+        {!$User.Data_Migration_Validation__c} = false  &amp;&amp; 
+       (!ISBLANK(TEXT({!$Record.Confirm_Case_Reason__c})) &amp;&amp; {!$Record.RecordType.DeveloperName} != &apos;Tax_Res&apos; )
+    )
+    ||
+    (
+        ISPICKVAL({!$Record.Status}, &apos;Solved&apos;) &amp;&amp; 
+        {!$User.Data_Migration_Validation__c} = false  &amp;&amp; 
+       {!$Record.RecordType.DeveloperName} = &apos;Tax_Res&apos; 
+    )
+    || 
+    ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)
+)</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Copy_1_of_Assign_Record_to_objCase</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X5_mins_after_Auto_Close_Date_Time</name>
+            <connector>
+                <targetReference>Assign_Record_to_objCase</targetReference>
+            </connector>
+            <label>5 mins after Auto Close Date Time</label>
+            <maxBatchSize>10</maxBatchSize>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>Auto_Close_Date_Time__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Fault Message: {!$Flow.FaultMessage}
+----
+Interview Guid: {!$Flow.InterviewGuid}
+----
+Current Record: {!$Flow.CurrentRecord}
+----
+You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.  
+https://gusto.lightning.force.com/lightning/setup/Pausedflows/home</text>
+    </textTemplates>
+    <variables>
+        <description>Boolean for skipping Case Trigger</description>
+        <name>blnSkipTrigger</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Case Object passed from Case Handler Flow.</description>
+        <name>objCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Exception Log Event Object to capture fault path details.</description>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+</Flow>

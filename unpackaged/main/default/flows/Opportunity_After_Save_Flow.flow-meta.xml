@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Customer_Success_Survey_Qualtrics</name>
+        <label>Customer Success Survey (Qualtrics)</label>
+        <locationX>50</locationX>
+        <locationY>575</locationY>
+        <actionName>Opportunity.Customer_Success_Survey_Qualtrics</actionName>
+        <actionType>outboundMessage</actionType>
+        <connector>
+            <targetReference>Update_Opportunity_Survey_Sent</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Opportunity.Customer_Success_Survey_Qualtrics</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>OB_Opp_Slack_Notifications</name>
+        <label>OB Opp Slack Notifications</label>
+        <locationX>578</locationX>
+        <locationY>575</locationY>
+        <actionName>Opportunity.OB_Opp_Slack_Notifications</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Opportunity.OB_Opp_Slack_Notifications</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Slack_OB_for_NP</name>
+        <label>Send Slack OB for NP</label>
+        <locationX>314</locationX>
+        <locationY>575</locationY>
+        <actionName>Opportunity.Send_Slack_OB_for_NP</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Opportunity.Send_Slack_OB_for_NP</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <name>Opportunity_Fields_Check</name>
+        <label>Opportunity Fields Check</label>
+        <locationX>446</locationX>
+        <locationY>455</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Customer_Success_Survey_is_False</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Customer Success</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Won</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Skip_Survey__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Primary_Contact__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Survey_Sent__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Customer_Success_Survey_Qualtrics</targetReference>
+            </connector>
+            <label>Customer Success Survey is False</label>
+        </rules>
+        <rules>
+            <name>NP_Completed_Opps</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits New Plan</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Benefits_Current_Setup_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Verifying Eligibility</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Benefits_Current_Setup_Step__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.SlackNotificationPending__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Slack_OB_for_NP</targetReference>
+            </connector>
+            <label>NP Completed Opps</label>
+        </rules>
+        <rules>
+            <name>Opportunity_Slack_Notifications</name>
+            <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Slack_Notification__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Partner</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Slack_Notification_Posted__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Lost</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Admin</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>OB_Opp_Slack_Notifications</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Opportunity Slack Notifications</label>
+        </rules>
+    </decisions>
+    <description>Set to run after a user has saved a record.
+- Added Bypass logic.</description>
+    <environments>Default</environments>
+    <interviewLabel>Opportunity (After Save) Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity (After Save) Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Opportunity_Survey_Sent</name>
+        <label>Update Opportunity Survey Sent</label>
+        <locationX>50</locationX>
+        <locationY>695</locationY>
+        <inputAssignments>
+            <field>Survey_Sent__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>320</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Send_Email_Alerts_0</targetReference>
+        </connector>
+        <filterFormula>(NOT({!$Permission.Bypass_Flow_Opportunity})
+&amp;&amp; NOT({!$Permission.Bypass_Flows}))</filterFormula>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <description>Send Email Alerts where Oppty matches logic in flow</description>
+        <name>Send_Email_Alerts_0</name>
+        <label>Send Email Alerts</label>
+        <locationX>446</locationX>
+        <locationY>335</locationY>
+        <connector>
+            <targetReference>Opportunity_Fields_Check</targetReference>
+        </connector>
+        <flowName>Opportunity_Email_Alerts_Subflow</flowName>
+        <inputAssignments>
+            <name>var_ByPass_Flows</name>
+            <value>
+                <elementReference>var_Bypass_Flows</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>var_Current_Oppty</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>var_Prior_Oppty</name>
+            <value>
+                <elementReference>$Record__Prior</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <variables>
+        <description>To be checked if the user has the permission set assigned that bypasses flows. 
+Note: As of 6/17/22 the &quot;Bypass Triggers&quot; Permission set will be used.  However, we are investigating renaming it to &quot;Bypass Triggers and Flows&quot;</description>
+        <name>var_Bypass_Flows</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

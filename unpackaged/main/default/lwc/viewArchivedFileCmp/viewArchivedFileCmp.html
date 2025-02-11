@@ -1,0 +1,249 @@
+<template>
+	<!-- Check if there are any attachments -->
+	<template if:true={attachmentExists}>
+		<div class="slds-box slds-theme_default">
+			<!-- Show a loading spinner while data is being fetched -->
+			<template if:true={blnLoading}>
+				<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" style="z-index: 9999"></lightning-spinner>
+			</template>
+
+			<!-- Notification about migrated files -->
+			<div class="slds-notify slds-notify_alert" role="alert">
+				<span class="slds-assistive-text">info</span>
+				<span class="slds-icon_container slds-icon-utility-user slds-m-right_x-small" title="Description of icon when needed">
+					<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+						<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#user"></use>
+					</svg>
+				</span>
+				<template if:true={isCaseObject}>
+					<h2>Some or all files related to emails of this Case have been migrated to S3. Please use this section to view all emails and preview/download migrated files</h2>
+				</template>
+
+				<template if:false={isCaseObject}>
+					<h2>Some or all files related to this {strSobject} have been migrated to S3. Please use this section to preview/download migrated files</h2>
+				</template>
+			</div>
+			<br />
+			<br />
+			<!-- Radio group to select between Email and Case attachments -->
+			<template if:true={isCaseObject}>
+				<lightning-radio-group
+					name="radioGroup"
+					label="Select Email or Case attachments"
+					options={viewoptions}
+					value={viewValue}
+					type="radio"
+					onchange={handleRadioChange}
+				></lightning-radio-group>
+			</template>
+
+			<!-- Check if there are no attachments found -->
+			<template if:false={noAttachmentsFound}>
+				<!-- Show filter checkbox if viewing email attachments -->
+				<template if:true={isCaseObject}>
+					<template if:true={emailView}>
+						<div class="slds-float_right">
+							<template if:true={emailsCheckbox}>
+								<lightning-input type="checkbox" label="Filters emails with attachments only" onchange={handleCheckboxChange} checked="true"></lightning-input>
+							</template>
+
+							<template if:false={emailsCheckbox}>
+								<lightning-input type="checkbox" label="Filters emails with attachments only" onchange={handleCheckboxChange}></lightning-input>
+							</template>
+						</div>
+					</template>
+				</template>
+			</template>
+
+			<!-- Show a warning message if no attachments are found -->
+			<template if:true={noAttachmentsFound}>
+				<br />
+				<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+					<span class="slds-assistive-text">warning</span>
+					<span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+						<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+							<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+						</svg>
+					</span>
+					<h2>No migrated {viewValue} attachments found for this record.</h2>
+				</div>
+			</template>
+
+			<!-- Show attachments if they are found -->
+			<template if:false={noAttachmentsFound}>
+				<!-- Show email attachments -->
+				<template if:true={emailView}>
+					<br />
+					<br />
+					<lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+						<template for:each={list_EmailMessages} for:item="message">
+							<lightning-accordion-section key={message.idEmailMessage} label={message.accordionTitle}>
+								<br />
+								<!-- Check if the email has files -->
+								<template if:true={message.filesExists}>
+									<div class="slds-page-header slds-page-header_vertical header-style" style="background-color: rgb(243, 242, 242)">
+										<div class="slds-page-header__row">
+											<div class="slds-page-header__col-title">
+												<div class="slds-media">
+													<div class="slds-media__figure">
+														<lightning-icon size="small" icon-name="standard:file" alternative-text="Files" title="Files"></lightning-icon>
+													</div>
+													<div class="slds-media__body">
+														<div class="slds-page-header__name">
+															<h2>
+																<span class="slds-text-heading_small"><b>Email Files</b></span>
+															</h2>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- Table to display email attachments -->
+										<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+											<tbody>
+												<template for:each={message.list_Files} for:item="attachmentRecord">
+													<tr class="slds-hint-parent" key={attachmentRecord.Id}>
+														<td style="width: 95%">
+															<div class="slds-truncate" title={attachmentRecord.Name}>
+																<div class="slds-media">
+																	<div class="slds-media__figure">
+																		<lightning-icon size="medium" icon-name="doctype:attachment" alternative-text="Files" title="Files"></lightning-icon>
+																	</div>
+																	<div class="slds-media__body">
+																		<div style="white-space: normal">
+																			<a onclick={handlePreview} data-id={attachmentRecord.Id}> {attachmentRecord.Name} </a>
+																			<br />
+																			{attachmentRecord.NEILON__Size_Text__c} &nbsp;&bull;&nbsp; {attachmentRecord.NEILON__Content_Type__c}
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</td>
+														<td style="width: 5%">
+															<!-- Button to preview the attachment -->
+															<lightning-button
+																size="x-small"
+																value={attachmentRecord.Id}
+																variant="border-filled"
+																icon-name="utility:preview"
+																alternative-text="Preview"
+																data-filename={attachmentRecord.Name}
+																title="Preview"
+																onclick={handlePreview}
+																data-id={attachmentRecord.Id}
+															></lightning-button>
+
+															<!-- Button to download the attachment -->
+															<lightning-button
+																size="x-small"
+																value={attachmentRecord.Id}
+																variant="border-filled"
+																icon-name="utility:download"
+																alternative-text="Download"
+																data-filename={attachmentRecord.Name}
+																title="Download"
+																onclick={handleDownload}
+																data-id={attachmentRecord.Id}
+															></lightning-button>
+														</td>
+													</tr>
+												</template>
+											</tbody>
+										</table>
+									</div>
+								</template>
+								<!-- Show a warning message if no files are found for the email -->
+								<template if:false={message.filesExists}>
+									<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+										<span class="slds-assistive-text">warning</span>
+										<span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+											<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+												<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+											</svg>
+										</span>
+										<h2>No attachments found for this email</h2>
+									</div>
+								</template>
+							</lightning-accordion-section>
+						</template>
+					</lightning-accordion>
+				</template>
+
+				<!-- Show case attachments -->
+				<template if:false={emailView}>
+					<br />
+					<div class="slds-page-header slds-page-header_vertical header-style" style="background-color: rgb(243, 242, 242)">
+						<div class="slds-page-header__row">
+							<div class="slds-page-header__col-title">
+								<div class="slds-media">
+									<div class="slds-media__figure">
+										<lightning-icon size="small" icon-name="standard:file" alternative-text="Files" title="Files"></lightning-icon>
+									</div>
+									<div class="slds-media__body">
+										<div class="slds-page-header__name">
+											<h2>
+												<span class="slds-text-heading_small"><b>{strSobject} Files</b></span>
+											</h2>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Table to display case attachments -->
+						<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+							<tbody>
+								<template for:each={list_RecordAttachments} for:item="attachmentRecord">
+									<tr class="slds-hint-parent" key={attachmentRecord.Id}>
+										<td style="width: 95%">
+											<div class="slds-truncate" title={attachmentRecord.Name}>
+												<div class="slds-media">
+													<div class="slds-media__figure">
+														<lightning-icon size="medium" icon-name="doctype:attachment" alternative-text="Files" title="Files"></lightning-icon>
+													</div>
+													<div class="slds-media__body">
+														<div style="white-space: normal">
+															<a onclick={handlePreview} data-id={attachmentRecord.Id}> {attachmentRecord.Name} </a>
+															<br />
+															{attachmentRecord.NEILON__Size_Text__c} &nbsp;&bull;&nbsp; {attachmentRecord.NEILON__Content_Type__c}
+														</div>
+													</div>
+												</div>
+											</div>
+										</td>
+										<td style="width: 5%">
+											<!-- Button to preview the attachment -->
+											<lightning-button
+												size="x-small"
+												value={attachmentRecord.Id}
+												variant="border-filled"
+												icon-name="utility:preview"
+												alternative-text="Preview"
+												data-filename={attachmentRecord.Name}
+												title="Preview"
+												onclick={handlePreview}
+												data-id={attachmentRecord.Id}
+											></lightning-button>
+
+											<!-- Button to download the attachment -->
+											<lightning-button
+												size="x-small"
+												value={attachmentRecord.Id}
+												variant="border-filled"
+												icon-name="utility:download"
+												alternative-text="Download"
+												data-filename={attachmentRecord.Name}
+												title="Download"
+												onclick={handleDownload}
+												data-id={attachmentRecord.Id}
+											></lightning-button>
+										</td>
+									</tr>
+								</template>
+							</tbody>
+						</table>
+					</div>
+				</template>
+			</template>
+		</div>
+	</template>
+</template>

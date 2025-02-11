@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_Ownership_Changes</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+  ISCHANGED(OwnerId),  
+  PRIORVALUE(OwnerId) &lt;&gt; $User.Id,
+  NOT(CONTAINS(Owner:Queue.QueueName , &apos;Raw&apos;)), 
+  NOT($User.Exempt_from_Validation_Rules__c),
+  NOT(Skip_MQL_Routing__c),
+  NOT(Lead_Owner_Change__c)
+)</errorConditionFormula>
+    <errorMessage>Insufficient Privileges: You do not have the level of access necessary to perform the operation you requested. Please contact the owner of the record, your team lead, or your administrator if access is necessary.</errorMessage>
+</ValidationRule>

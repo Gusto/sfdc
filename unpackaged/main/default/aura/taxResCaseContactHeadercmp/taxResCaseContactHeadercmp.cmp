@@ -1,0 +1,151 @@
+<aura:component
+	implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"
+	controller="LWC_ContactUserInformationController"
+>
+	<!-- API Components -->
+	<lightning:workspaceAPI aura:id="workspace" />
+	<lightning:overlayLibrary aura:id="overlayLib" />
+
+	<!--Aura Attributes -->
+	<aura:attribute name="blnShowSpinner" type="Boolean" default="false" />
+	<aura:attribute name="blnViewContact" type="Boolean" default="true" />
+	<aura:attribute name="blnObjSupported" type="Boolean" default="true" />
+	<aura:attribute name="blnIsContractor" type="Boolean" default="true" />
+	<aura:attribute name="idWorkingRecord" type="Id" />
+
+	<aura:attribute name="idOriginalContact" type="Id" />
+	<aura:attribute name="idContact" type="Id" />
+
+	<aura:attribute name="caseRecord" type="Object" />
+
+	<!-- Popover related attributes -->
+	<aura:attribute name="blnMouseOverChild" type="Boolean" default="false" />
+	<aura:attribute name="blnMouseOverText" type="Boolean" default="false" />
+	<aura:attribute name="popoverInstance" type="Aura.Component" />
+	<aura:attribute name="blnPopOverOpen" type="Boolean" default="false" />
+	<aura:attribute name="timerInstance" type="Object" />
+	<aura:attribute name="intPopOverWidth" type="Integer" default="40" />
+
+	<!-- Event Handlers -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:handler event="c:caseMouseOverContactPopoverEvent" action="{!c.handleMouseOverPopover}" />
+	<aura:handler event="c:caseMouseLeaveContactPopoverEvent" action="{!c.handleMouseLeavePopover}" />
+	<aura:handler event="c:caseContactPopOverCloseEvent" action="{!c.handleClosePopOver}" />
+	<aura:handler event="c:caseContactChangeEvent" action="{!c.doInit}" />
+	<aura:registerEvent name="caseContactChangeEvent" type="c:caseContactChangeEvent" />
+
+	<aura:if isTrue="{!v.blnShowSpinner}">
+		<lightning:spinner alternativeText="Loading" size="small" variant="brand"></lightning:spinner>
+	</aura:if>
+	<div class="slds-page-header test-header">
+		<div class="slds-page-header__row">
+			<div class="slds-page-header__col-title">
+				<div class="slds-media slds-media_center">
+					<div class="slds-media__figure">
+						<span class="slds-icon_container slds-icon-standard-opportunity">
+							<lightning:icon iconName="standard:contact" size="medium"></lightning:icon>
+						</span>
+					</div>
+					<div class="slds-media__body">
+						<div class="slds-page-header__name">
+							<div class="slds-page-header__name-title">
+								<h4>
+									<aura:if isTrue="{!v.blnViewContact}">
+										<div>
+											<a
+												class="slds-page-header__title test-font"
+												title="Name"
+												onmouseover="{!c.handleShowPop}"
+												onmouseleave="{!c.handleMouseAwayFromText}"
+												onclick="{!c.handleOpenContact}"
+												>{!v.caseRecord.Contact.Name}</a
+											>
+										</div>
+									</aura:if>
+								</h4>
+							</div>
+						</div>
+
+						<aura:if isTrue="{!v.blnViewContact}">
+							<aura:set attribute="else">
+								<lightning:recordEditForm objectApiName="Case" recordId="{!v.idWorkingRecord}">
+									<lightning:messages />
+									<lightning:inputField
+										aura:id="contactId"
+										fieldName="ContactId"
+										variant="label-hidden"
+										onchange="{!c.handleContactChange}"
+										value="{!v.idContact}"
+									>
+									</lightning:inputField>
+									<div class="slds-p-top_xx-small">
+										<lightning:button
+											variant="neutral"
+											name="Cancel"
+											label="Cancel"
+											class="slds-p-right_x-small"
+											onclick="{!c.toggleViewContact}"
+										></lightning:button>
+										<lightning:button
+											variant="brand"
+											name="Save"
+											label="Save"
+											onclick="{!c.handleSave}"
+										></lightning:button>
+									</div>
+								</lightning:recordEditForm>
+							</aura:set>
+						</aura:if>
+					</div>
+				</div>
+			</div>
+
+			<div class="slds-page-header__col-actions">
+				<div class="slds-page-header__controls">
+					<div class="slds-page-header__control div-padding-right" id="{!'css'+v.recordId}">
+						<aura:if isTrue="{!v.blnViewContact}">
+							<div class="slds-dropdown-trigger slds-dropdown-trigger_hover">
+								<lightning:buttonIcon
+									iconName="utility:down"
+									variant="border-filled"
+									alternativeText="show more"
+									size="x-small"
+									title="Settings"
+									iconClass="slds-m-around_small"
+								/>
+								<div class="slds-dropdown slds-dropdown_right slds-dropdown_actions">
+									<ul class="slds-dropdown__list" role="menu">
+										<li class="slds-dropdown__item" role="presentation">
+											<a href="javascript:void(0);" role="menuitem" tabindex="0" onclick="{!c.viewUserInPanda}">
+												<span class="slds-truncate" title="Hippo">View User In Panda</span>
+											</a>
+										</li>
+										<li class="slds-dropdown__item" role="presentation">
+											<a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.goToPanda}">
+												<span class="slds-truncate" title="Panda">View Employee in Panda</span>
+											</a>
+										</li>
+										<aura:if isTrue="{!v.blnObjSupported}">
+											<li class="slds-dropdown__item" role="presentation">
+												<a href="javascript:void(0);" role="menuitem" tabindex="0" onclick="{!c.updateClicked}">
+													<span class="slds-truncate" title="Update">Update Contact</span>
+												</a>
+											</li>
+										</aura:if>
+										<aura:if isTrue="{!v.blnIsContractor}">
+											<li class="slds-dropdown__item" role="presentation">
+												<a href="javascript:void(0);" role="menuitem" tabindex="0" onclick="{!c.viewContractorInPanda}">
+													<span class="slds-truncate" title="Contracter">View Contractor in Panda</span>
+												</a>
+											</li>
+										</aura:if>
+									</ul>
+								</div>
+							</div>
+						</aura:if>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</aura:component>

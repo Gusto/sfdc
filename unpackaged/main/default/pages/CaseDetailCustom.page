@@ -1,0 +1,353 @@
+<apex:page standardController="Case" recordSetVar="contollerCaseList" extensions="CaseDetailCustomController" title="Cases" sidebar="false" id="mainpg" docType="html-5.0"  standardStylesheets="false"> 
+    
+    <head>
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        
+        <apex:includeScript value="/support/console/42.0/integration.js"/>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <style>
+            .btnhide{
+                display:none; 
+            
+            }
+            .table-container{
+                 overflow:auto;
+                 max-height:400px;
+                 width:100%;
+             }
+             
+             .label-div{                
+                width:20%;
+             }
+             .gusto .slds-table th, .gusto .slds-table td {
+                white-space: normal !important;
+             }
+        
+        </style>
+        <script>
+            $(document).ready(function(){
+                $("select.queueList").change(function(){            
+                    var selectedQueueId = $(".queueList option:selected").val();            
+                    alert("You have selected the queue - " + selectedQueueId);          
+                }); 
+                
+                hidedetailPanel();   
+            });
+            
+            function showdetailPanel(){
+                $("#detailrow").show();
+            }
+            
+            function hidedetailPanel(){
+                $("#detailrow").hide();
+            }
+            
+        </script>
+        
+    </head>
+    
+    <div class="gusto">
+        <apex:outputPanel >                      
+            <apex:actionStatus id="fetchStatus" >
+                <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                               height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                                <span class="waitingDescription">Please Wait...</span> 
+                            </div>
+                        </div>
+                    </apex:facet>
+            </apex:actionStatus>
+        </apex:outputPanel>         
+        <apex:outputPanel id="caselist" layout="block">
+            <table>
+                <tr style="vertical-align:top;">
+                    <td width="60%">
+                        <div  style="overflow: auto; width: 650px;">
+
+                            <apex:form >
+                            <apex:pagemessages />
+                            <apex:actionfunction action="{!getCaseDetail}" name="openRec" rerender="caselist" status="fetchStatus" >
+                                <apex:param name="pr1" value="" assignTo="{!currentCaseId}"/> 
+                            </apex:actionfunction>
+                            
+                            <table>
+                                <tr>
+                                    <td>
+                                       <apex:selectList styleClass="filterSel" value="{!selectedCaseQueueId}" size="1"  style="margin-bottom:10px;width:50%;" styleclass="slds-select"> 
+                                            <apex:actionSupport event="onchange" rerender="caselist" status="fetchStatus" action="{!getCases}"/>
+                                            <apex:selectOptions value="{!caseQueueList}"/>
+                                        </apex:selectList>
+                                        &nbsp;
+                                        <apex:commandButton value="Play" rendered="{! !isPlay}" styleclass="btn slds-button slds-button--neutral" action="{!startPlay}" status="fetchStatus" rerender="caselist" />        
+                                    </td>
+                                </tr>
+                                <tr>
+                                   <td class="slds-scope section" >
+                                       <apex:outputPanel id="detailrow" styleclass="table-container" layout="block" rendered="{! if(selectedCaseRec.id != null,true,false)}">
+                                       <h3 class="salds-section__title slds-theme--shade">
+                                           <span class="slds-truncate slds-p-horizontal_small" title="Section Title" style="padding-left:10px;">Case Details</span>
+                                        </h3>&nbsp;
+                                        <Table class="table.spacing" style="padding-left:10px;" >
+                                                <tr>
+                                                    <td colspan="2" style="text-align:left;padding:25px;">
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save" action="{!saveCaseRecord}" id="saveButtonTop" status="fetchStatus" rerender="caselist" />    
+                                                    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save & Next" action="{!saveNextRecord}" id="saveNextButtonTop" status="fetchStatus" rerender="caselist" rendered="{! if(isPlay==true,true,false)}"/>    
+                                                    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Cancel" id="cancelButtonTop" action="{!cancelUpdate}" rerender="caselist" status="fetchStatus" />
+                                                    </td>
+                                                </tr> 
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="casecount">No. of records in selected queue: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="casecount">
+                                                            <apex:outputText value="{!selectedQueueRecCount}" />
+                                                        </div>
+                                                    </td>
+                                                </Tr>
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="caseNumber">{!$ObjectType.Case.fields.CaseNumber.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="caseNumber">
+                                                            <apex:outputField value="{!selectedCaseRec.CaseNumber}" />
+                                                        </div>
+                                                    </td>
+                                                </Tr>
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="RecordType">{!$ObjectType.Case.fields.RecordTypeId.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:selectList value="{!caseType}" multiselect="false" size="1" id="RecordType">
+                                                            <apex:actionSupport event="onchange" rerender="detailrow" status="fetchStatus" action="{!getCaseReasons}" />
+                                                            <apex:selectOptions value="{!caseTypeOption}"> </apex:selectOptions>
+                                                        </apex:selectList>        
+                                                    </td>
+                                                </Tr>
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="CaseType">{!$ObjectType.Case.fields.Type.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:inputText value="{!selectedCaseRec.type}" list="{!caseTypeList}" id="CaseType" html-autocomplete="off">
+                                                            <!-- <apex:inlineEditSupport event="ondblClick"  showOnEdit="saveButton"/> -->
+                                                        </apex:inputText>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="RoutingCaseReason">{!$ObjectType.Case.fields.Routing_Case_Reason__c.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:inputText value="{!selectedCaseRec.Routing_Case_Reason__c}" list="{!caseReasons}" id="RoutingCaseReason" html-autocomplete="off">
+                                                            <!-- <apex:inlineEditSupport event="ondblClick"  showOnEdit="saveButton"/> -->
+                                                        </apex:inputText>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="RoutingCaseReason">{!$ObjectType.Case.fields.OwnerId.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:inputField value="{!selectedCaseRec.OwnerId}"  id="OwnerId" >
+                                                            <!-- <apex:inlineEditSupport event="ondblClick"  showOnEdit="saveButton"/> -->
+                                                        </apex:inputField>
+                                                    </td>
+                                                </tr>
+                                                <apex:outputPanel layout="none" rendered="{! if(caseType == 'Tax Res',true,false)}">
+                                                    <tr>
+                                                        <td class="label-div">
+                                                            <label class="slds-form-element__label" for="agency">{!$ObjectType.Case.fields.Agency_Information__c.Label}: </label>
+                                                        </td>
+                                                        <td>
+                                                            <apex:inputField value="{!selectedCaseRec.Agency_Information__c}" id="agency"/>
+                                                        </td>
+                                                    </tr>
+                                                </apex:outputPanel> 
+                                                <apex:outputPanel layout="none" rendered="{! if(caseType == 'Tax Res',true,false)}">
+                                                    <tr>
+                                                        <td class="label-div">
+                                                            <label class="slds-form-element__label" for="agency">{!$ObjectType.Case.fields.LSI__c.Label}: </label>
+                                                        </td>
+                                                        <td>
+                                                            <apex:inputField value="{!selectedCaseRec.LSI__c}" id="lsi"/>
+                                                        </td>
+                                                    </tr>
+                                                </apex:outputPanel> 
+                                                <apex:outputPanel layout="none" rendered="{! if(caseType == 'Tax Res',true,false)}">
+                                                    <tr>
+                                                        <td class="label-div">
+                                                            <label class="slds-form-element__label" for="customer_journey">{!$ObjectType.Case.fields.Customer_Journey__c.Label}: </label>
+                                                        </td>
+                                                        <td>
+                                                            <apex:inputField value="{!selectedCaseRec.Customer_Journey__c}" id="customer_journey"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="label-div">
+                                                            <label class="slds-form-element__label" for="Root Cause">{!$ObjectType.Case.fields.Root_Cause__c.Label}: </label>
+                                                        </td>
+                                                        <td>
+                                                            <apex:inputField value="{!selectedCaseRec.Root_Cause__c}" id="Root_Cause"/>
+                                                        </td>
+                                                    </tr>
+                                                </apex:outputPanel> 
+                                                <apex:outputPanel layout="none" rendered="{! if(caseType == 'Benefits Care',true,false)}">
+                                                    <tr>
+                                                        <td class="label-div">
+                                                            <label class="slds-form-element__label" for="priority">{!$ObjectType.Case.fields.Priority.Label}: </label>
+                                                        </td>
+                                                        <td>
+                                                            <apex:inputField value="{!selectedCaseRec.Priority}" id="priority"/>
+                                                        </td>
+                                                    </tr>
+                                                </apex:outputPanel> 
+                                             <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" >Benefits: </label>
+                                                    </td>
+                                                    <td>                                                        
+                                                        <apex:outputText style="background: lightgreen;" rendered="{!if(selectedCaseRec.AccountId != null && selectedCaseRec.Account.HI_Active_Benefits__c == true,true,false)}" value="Yes"/>
+                                                        <apex:outputText style="background: lightcoral;" rendered="{!if(selectedCaseRec.AccountId == null || selectedCaseRec.Account.HI_Active_Benefits__c != true,true,false)}" value="No"/>
+                                                    </td>
+                                                </tr>                                                
+                        
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="Subject">{!$ObjectType.Case.fields.Subject.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:outputField value="{!selectedCaseRec.Subject}" id="Subject"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="Description">{!$ObjectType.Case.fields.Description.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:outputField value="{!selectedCaseRec.Description}" id="Description"/>
+                                                    </td>
+                                                </tr>
+                                                                       <tr>
+                                                    <td colspan="2" style="text-align:left;padding:25px;">
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save" action="{!saveCaseRecord}" id="saveButton" status="fetchStatus" rerender="caselist" />    
+                                                    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save & Next" action="{!saveNextRecord}" id="saveNextButton" status="fetchStatus" rerender="caselist" rendered="{! if(isPlay==true,true,false)}"/>    
+                                                    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Cancel" id="cancelButton" action="{!cancelUpdate}" rerender="caselist" status="fetchStatus" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="RoutingCaseReason">{!$ObjectType.Case.fields.Non_English_Preferred_Language__c.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:inputField value="{!selectedCaseRec.Non_English_Preferred_Language__c}"/>
+                                                    </td>
+                                                </tr> 
+                                            </Table>
+                                         </apex:outputPanel>
+                                         <apex:outputPanel rendered="{! if(isPlayEmpty==true,true,false)}">
+                                            All the records has been traversed for the selected queue.
+                                            Please select a different queue.
+                                         </apex:outputPanel>  
+                                   </td>
+                                </tr>
+                            </table>
+                        </apex:form>  
+                            
+                        </div>
+                    </td>
+                    <td style="width:40%;padding-top:3%;">
+                        <apex:outputPanel id="feedPanel" styleclass="table-container" layout="block">
+                            <apex:outputPanel rendered="{! if(selectedCaseRec.id == null,false,true)}">        
+                               <chatter:feed entityId="{!selectedCaseRec.id}"  /> 
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="vertical-align:top;overflow:auto;" >
+                        <apex:outputPanel id="casedataList" styleclass="table-container" layout="block">
+                            <table class="slds-table slds-table--bordered slds-table_cell-buffer">
+                               <thead>
+                                <tr class="slds-text-title">
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Case Number">{!$ObjectType.Case.fields.CaseNumber.Label}</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Subject">{!$ObjectType.Case.fields.Subject.Label}</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Account">Account</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Contact">Contact</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Record Type">Record Type</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Record Type">Routing Case Reason</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Record Type">Confirm Case Reason</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Created Date">{!$ObjectType.Case.fields.CreatedDate.Label}</div>
+                                    </th>
+                                </tr>
+                               </thead>
+                               <tbody>
+                                   <apex:repeat id="recTable" value="{!caseList}" var="caseRec"   >
+                                     <tr>
+                                         <td>
+                                               <a href="#" onclick="openRec('{!caseRec.id}');return false" style="cursor: pointer;text-decoration: underline;">{!caseRec.CaseNumber}</a>
+                                         </td>
+                                         <td>
+                                             {!caseRec.Subject}
+                                         </td>                                   
+                                         <td>
+                                             {!caseRec.Account.Name}
+                                         </td> 
+                                         <td>
+                                             {!caseRec.Contact.Name}
+                                         </td>
+                                         <td>
+                                             {!caseRec.RecordType.Name}
+                                         </td> 
+                                         <td>
+                                             {!caseRec.Routing_Case_Reason__c}
+                                         </td> 
+                                         <td>
+                                             {!caseRec.Confirm_Case_Reason__c}
+                                         </td> 
+                                         <td>
+                                             {!caseRec.Createddate}
+                                         </td>  
+                                     </tr>
+                                   </apex:repeat>
+                                   <tr>
+                                    <td colspan="6">
+                                        <apex:outputPanel rendered="{!IF(caseList.size == null ||caseList.size == 0, true,false)}" layout="block">
+                                            No record found for the selected queue.
+                                        </apex:outputPanel> 
+                                    </td>
+                                   </tr>
+                                    
+                               </tbody>                          
+                            </table>
+                        </apex:outputPanel>                                             
+                    </td>                    
+                </tr>                
+            </table>
+        </apex:outputPanel>
+    </div>
+</apex:page>

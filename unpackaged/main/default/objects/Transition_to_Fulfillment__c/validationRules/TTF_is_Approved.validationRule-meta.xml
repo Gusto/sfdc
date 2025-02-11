@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TTF_is_Approved</fullName>
+    <active>true</active>
+    <description>Approved TTFs cannot be edited.</description>
+    <errorConditionFormula>AND(
+NOT($Permission.Payroll_Transfer_Exception_Override),
+TEXT(TTF_Status__c) = &apos;PT Approved&apos;,
+NOT(ISCHANGED(Intro_Notification_Sent__c)),
+NOT(ISCHANGED(TTF_Status__c)),
+NOT(ISNEW())
+)</errorConditionFormula>
+    <errorMessage>This TTF is approved, for any edits please reach out to a Qualifier on Payroll Transfers</errorMessage>
+</ValidationRule>

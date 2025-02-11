@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_line_of_Coverage__c</fullName>
+    <description>pulled from benefit-specific qual_loc_data values on qa_sheet_info, indicates whether the coverage is a newly added line of coverage for the company</description>
+    <label>New line of Coverage</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Y</fullName>
+                <default>false</default>
+                <label>Y</label>
+            </value>
+            <value>
+                <fullName>N</fullName>
+                <default>false</default>
+                <label>N</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,27 @@
+<template>
+    <template if:false={blnIsLoaded}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <template if:true={blnIsLoaded}>
+        <div>
+            <header class="slds-modal__header">
+                <h2 class="title slds-text-heading_medium slds-hyphenate">Create Social &amp; Executive Escalation</h2>
+            </header>
+            <span class="slds-assistive-text">Close</span>
+
+            <template if:true={blnShowSocialEscalationFlow}>
+                <div class="slds-modal__content slds-var-p-around_medium">
+
+                    <lightning-flow flow-input-variables={inputVariables}
+                        flow-api-name='Social_Executive_Escalation_Flow' onstatuschange={handleFlowStatusChange}>
+                    </lightning-flow>
+                </div>
+            </template>
+            <template if:false={blnShowSocialEscalationFlow}>
+                <div class="slds-modal__content slds-var-p-around_medium">
+                    You do not have permission to Create Social & Executive Escalation case
+                </div>
+            </template>
+        </div>
+    </template>
+</template>

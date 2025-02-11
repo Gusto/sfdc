@@ -1,0 +1,260 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 08-10-2022
+  @last modified by  : Nigam Goyal
+-->
+<template>
+	<div class="slds-theme_shade custom-container">
+		<template if:true={blnSpinner}>
+			<lightning-spinner alternative-text="Loading" size="small" class="spinner" variant="brand"> </lightning-spinner>
+		</template>
+
+		<template if:false={interactionFound}>
+			<div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+				<span class="slds-assistive-text">error</span>
+				<span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+					<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+						<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+					</svg>
+				</span>
+				<h2>Unable to find sales interaction. please contact administrator.</h2>
+				<div class="slds-notify__close">
+					<button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" title="Close">
+						<svg class="slds-button__icon" aria-hidden="true">
+							<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+						</svg>
+						<span class="slds-assistive-text">Close</span>
+					</button>
+				</div>
+			</div>
+		</template>
+		<template if:true={interactionFound}>
+			<lightning-layout multiple-rows>
+				<lightning-layout-item size="6" medium-device-size="6" large-device-size="6">
+					<lightning-card icon-name="standard:search" title="Search" padding="around-small">
+						<lightning-layout multiple-rows>
+							<lightning-layout-item padding="horizontal-small" size="12" medium-device-size="4" large-device-size="6">
+								<lightning-input name="strFirstName" onkeypress={handleEnter} class="validate" type="text" label="First Name" onchange={searchKeyword}></lightning-input>
+								<lightning-input name="strLastName" onkeypress={handleEnter} class="validate" type="text" label="Last Name" onchange={searchKeyword}></lightning-input>
+							</lightning-layout-item>
+							<lightning-layout-item padding="horizontal-small" size="12" medium-device-size="4" large-device-size="6">
+								<lightning-input name="strAccountName" class="validate" onkeypress={handleEnter} type="text" label="Company" onchange={searchKeyword}></lightning-input>
+							</lightning-layout-item>
+							<lightning-layout-item padding="horizontal-small" size="12" medium-device-size="4" large-device-size="12">
+								<lightning-input
+									name="strEmail"
+									onkeypress={handleEnter}
+									class="validate"
+									type="email"
+									label="Email"
+									pattern="[A-Za-z0-9._-]+@[a-z0-9-]+.[a-z]{2,}$"
+									message-when-pattern-mismatch="Please enter a valid email"
+									onchange={searchKeyword}
+								>
+								</lightning-input>
+							</lightning-layout-item>
+							<lightning-layout-item padding="horizontal-small" size="12" medium-device-size="4" large-device-size="12">
+								<lightning-input name="strPhone" class="validate" type="tel" label="Phone" onkeypress={handleEnter} onchange={searchKeyword}></lightning-input>
+							</lightning-layout-item>
+
+							<lightning-layout-item padding="around-small" size="12" class="slds-m-top_medium">
+								<lightning-button label="Search" onclick={handleSearchKeywordClick} variant="brand"> </lightning-button>
+							</lightning-layout-item>
+						</lightning-layout>
+					</lightning-card>
+				</lightning-layout-item>
+				<lightning-layout-item size="6" medium-device-size="6" large-device-size="6">
+					<div class="slds-m-left_xx-small">
+						<lightning-card icon-name="standard:voice_call" title="Task" padding="around-small">
+							<div>
+								<lightning-layout multiple-rows>
+									<lightning-layout-item padding="horizontal-small" size="12">
+										<lightning-input type="text" label="Subject" value={taskObj.Subject} placeholder="Subject" onchange={handleFieldValueChange}> </lightning-input>
+									</lightning-layout-item>
+									<lightning-layout-item padding="horizontal-small" size="6">
+										<c-com-lookup
+											hide-create-new-record-button
+											label-for="Name"
+											onselectedrecordidlistchange={handleSelectRecordIdAction}
+											parent-obj-api-name="Task"
+											value={taskObj.WhoId}
+											class="WhoId"
+											selected-record-ids={taskObj.WhoId}
+											ref-field-api-name="WhoId"
+											is-view="true"
+											required
+										>
+										</c-com-lookup>
+									</lightning-layout-item>
+									<lightning-layout-item padding="horizontal-small" size="6">
+										<c-com-lookup
+											hide-create-new-record-button
+											label-for="Related To"
+											onselectedrecordidlistchange={handleSelectRecordIdAction}
+											parent-obj-api-name="Task"
+											value={taskObj.WhatId}
+											class="WhatId"
+											selected-record-ids={taskObj.WhatId}
+											ref-field-api-name="WhatId"
+										></c-com-lookup>
+									</lightning-layout-item>
+									<lightning-layout-item padding="horizontal-small" size="6">
+										<lightning-combobox
+											name="Primary_Call_Reason__c"
+											label="Contact Reason"
+											value={taskObj.Primary_Call_Reason__c}
+											options={list_ContactReasonOptions}
+											onchange={handleContactReasonChange}
+											placeholder="Select Contact Reason"
+											required
+											data-name="Call Reason"
+										>
+										</lightning-combobox>
+									</lightning-layout-item>
+									<lightning-layout-item padding="horizontal-small" size="6">
+										<lightning-combobox
+											name="Secondary_Call_Reason__c"
+											label="Sub Contact Reason"
+											value={taskObj.Secondary_Call_Reason__c}
+											options={subcontactReasonValues}
+											onchange={handleSubContactReasonChange}
+											placeholder="Select Sub-Contact Reason"
+											required
+											data-name="Call Reason"
+											disabled={blnIsSecCallReasonDisabled}
+										>
+										</lightning-combobox>
+									</lightning-layout-item>
+
+									<lightning-layout-item padding="horizontal-small" size={intCommentsLayoutItemSize}>
+										<lightning-textarea
+											name="comments"
+											value={taskObj.Description}
+											onchange={commentHandleChange}
+											placeholder="Compose your comment"
+											label="Comments"
+											maxlength="32000"
+											message-when-too-long="A maximum of 140 characters are allowed in a tweet."
+										>
+										</lightning-textarea>
+									</lightning-layout-item>
+
+									<lightning-layout-item padding="around-small" size="12" class="slds-var-p-top_small">
+										<lightning-button label="Save" onclick={handleSave}> </lightning-button>
+									</lightning-layout-item>
+								</lightning-layout>
+							</div>
+						</lightning-card>
+					</div>
+				</lightning-layout-item>
+			</lightning-layout>
+			<div class="outer-div slds-m-top_xx-small">
+				<div class="slds-card slds-m-top_x-small">
+					<div class="slds-p-left_small slds-m-top_x-small">
+						<lightning-icon size="small" icon-name="standard:lead_list" alternative-text="Leads" title="Leads"></lightning-icon>
+						<span class="slds-p-left_x-small slds-text-heading_small slds-truncate"><b>Leads</b></span>
+						<lightning-button label="New" class="slds-p-left_x-small" onclick={navigateToNewLead}></lightning-button>
+					</div>
+					<div class="slds-m-around_medium">
+						<template if:true={isLeadRecordsFound}>
+							<c-inbound-call-data-table
+								key-field="id"
+								columns={leadColumns}
+								data={leadData}
+								hide-checkbox-column
+								default-sort-direction={defaultSortDirection}
+								sorted-direction={sortDirection}
+								onrowaction={handleRowAction}
+								sorted-by={sortedBy}
+								onsort={onHandleSort}
+								onselectedrec={handleSelectedRec}
+							>
+							</c-inbound-call-data-table>
+						</template>
+						<template if:false={isLeadRecordsFound}> No lead record found </template>
+					</div>
+				</div>
+				<div class="slds-m-top_xx-small">
+					<div class="slds-card slds-m-top_x-small">
+						<div class="slds-p-left_small slds-m-top_x-small">
+							<lightning-icon size="small" icon-name="standard:contact_list" alternative-text="Contacts" title="Contacts"></lightning-icon>
+							<span class="slds-p-left_x-small slds-text-heading_small slds-truncate"><b>Contacts</b></span>
+							<lightning-button label="New" class="slds-p-left_x-small" onclick={navigateToNewContact}></lightning-button>
+						</div>
+
+						<div class="slds-m-around_medium">
+							<template if:true={isContactRecordsFound}>
+								<c-inbound-call-data-table
+									key-field="id"
+									columns={contactColumns}
+									data={contactData}
+									hide-checkbox-column
+									default-sort-direction={defaultSortDirection}
+									sorted-direction={sortDirection}
+									sorted-by={sortedBy}
+									onsort={onHandleSort}
+									onselectedrec={handleSelectedRec}
+									onrowaction={handleRowAction}
+								>
+								</c-inbound-call-data-table>
+							</template>
+							<template if:false={isContactRecordsFound}> No contact record found </template>
+						</div>
+					</div>
+				</div>
+				<div class="slds-m-top_xx-small slds-card">
+					<div class="slds-p-left_small slds-m-top_x-small">
+						<lightning-icon size="small" icon-name="standard:opportunity" alternative-text="Opportunities" title="Opportunities"></lightning-icon>
+						<span class="slds-p-left_x-small slds-text-heading_small slds-truncate"><b>Opportunities</b></span>
+						<lightning-button label="New" class="slds-p-left_x-small" onclick={navigateToNewOpportunity}></lightning-button>
+					</div>
+					<div class="slds-m-around_medium">
+						<template if:true={isOppRecordsFound}>
+							<c-inbound-call-data-table
+								key-field="id"
+								columns={opportunityColumns}
+								data={opportunitiesData}
+								hide-checkbox-column
+								default-sort-direction={defaultSortDirection}
+								sorted-direction={sortDirection}
+								sorted-by={sortedBy}
+								onsort={onHandleSort}
+								onselectedrec={handleSelectedRec}
+								onrowaction={handleRowAction}
+							>
+							</c-inbound-call-data-table>
+						</template>
+						<template if:false={isOppRecordsFound}> Click on account name in above lists, to get related opportunities. </template>
+					</div>
+				</div>
+				<div class="slds-m-top_xx-small slds-card">
+					<div class="slds-p-left_small slds-m-top_x-small">
+						<lightning-icon size="small" icon-name="standard:case" alternative-text="Cases" title="Cases"></lightning-icon>
+						<span class="slds-p-left_x-small slds-text-heading_small slds-truncate"><b>Cases</b></span>
+					</div>
+					<div class="slds-m-around_medium">
+						<template if:true={isCaseRecordsFound}>
+							<c-inbound-call-data-table
+								key-field="id"
+								columns={caseColumns}
+								data={casesData}
+								hide-checkbox-column
+								default-sort-direction={defaultSortDirection}
+								sorted-direction={sortDirection}
+								sorted-by={sortedBy}
+								onsort={onHandleSort}
+								onselectedrec={handleSelectedRec}
+								onrowaction={handleRowAction}
+							>
+							</c-inbound-call-data-table>
+						</template>
+						<template if:false={isCaseRecordsFound}> No case record found. </template>
+					</div>
+				</div>
+			</div>
+			<p if:true={blnRerender}></p>
+		</template>
+	</div>
+</template>

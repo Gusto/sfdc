@@ -1,0 +1,16 @@
+<template>
+	<template lwc:if={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<lightning-quick-action-panel header="Email Customer" class="header-modal">
+		<div style="color: black">
+			<p>
+				<b>Warning: You have selected ‘Email Customer’. Please click ‘Ok’ only if you intend to email the customer. If you need to email the carrier, please select ‘Email Carrier’.</b>
+			</p>
+		</div>
+		<div slot="footer">
+			<lightning-button variant="neutral" label="Close" onclick={handleCancelClick}></lightning-button>
+			<lightning-button variant="brand" label="OK" onclick={handleEmailCustomer} class="slds-m-left_x-small"></lightning-button>
+		</div>
+	</lightning-quick-action-panel>
+</template>

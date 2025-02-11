@@ -1,0 +1,130 @@
+<!--
+@description       : Mass Update of Carrier Fields
+@author            : Deepika Saini
+@last modified on  : 02 July 2024
+@last modified by  : Deepika Saini
+-->
+<apex:page standardController="Carrier__c" recordSetVar="Carriers" extensions="CarrierMassUpdateCtrl"  lightningStylesheets="true" docType="html-5.0">
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" />
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        /*color : #FFA500;*/
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position above the icon */
+            left: 50%;
+            margin-left: -100px; /* Center the tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .checkbox-container {
+            border: 4px solid #c5bdbd;
+            padding: 1px;
+            border-radius: 1px;
+            margin: 16px 0;
+        }
+		
+    </style>
+    <apex:outputPanel id="mainPage">      
+        <apex:form id="frm">            
+            <apex:sectionHeader title="Update Carrier Records"/>
+            <apex:pageBlock id="step1" title="Total Carriers selected :  {!intSelectedCarrier} " mode="edit" rendered="{!step='1'}">
+                <apex:pagemessages escape="false" id="msg"></apex:pagemessages> 
+                <div style="margin:5px; max-height: 500px; overflow: scroll; display:{!if(intSelectedCarrier > 0, 'block;', 'none;')}">
+                    <apex:pageBlockSection columns="1" rendered="{!if(intSelectedCarrier > 0, true, false)}">
+                        <apex:pageBlockTable var="obj" value="{!list_CarrierRecord}">
+                            <apex:column headerValue="Carrier"><apex:outputField value="{!obj.Name}"/></apex:column>
+                            <apex:repeat value="{!fields}" var="f">
+                                <apex:column headerValue="{!f.Label}">
+                                    <apex:outputField value="{!obj[f.fieldPath]}"/>
+                                </apex:column>
+                            </apex:repeat>
+                        </apex:pageBlockTable> 
+                    </apex:pageBlockSection>
+                </div><br/>
+                <div id="mainDiv">
+                    <div>
+                        <div class="pbSubheader brandTertiaryBgr tertiaryPalette">
+                            <h3>
+                                Fields to Update
+                            </h3>
+                        </div>  
+                        <table style="width:100%;" class="checkbox-container"> 
+                            <tr >
+                                <td style="width:20%;vertical-align: middle;padding-left: 5px;border: 4px solid #c5bdbd">
+                                    <b>Please Select Field(s) To Be Updated</b>
+                                    <a href="#" class="tooltip">
+                                        <i  class="fas fa-question-circle"></i>
+                                        <span class="tooltiptext">
+                                            For the selected fields, any value currently present on the selected carrier records will be wiped and replaced with the values you select below. Only select the field that you intend to update.
+                                        </span>
+                                    </a> 
+                                </td>
+                                <td>
+                                    <apex:pageBlockSection collapsible="false" columns="2">
+                                    <apex:repeat value="{!list_FieldListToDisplay}" var="f">
+                                        <apex:pageblocksectionitem >
+                                            <apex:inputCheckbox value="{!f.selected}">
+                                                <apex:actionSupport event="onchange" action="{!onCheckBoxChange}" reRender="step1" status="actStatusId"/>
+                                            </apex:inputCheckbox>
+                                            <apex:outputLabel value="{!f.label}" style="font-weight: bold"/ >
+                                        </apex:pageblocksectionitem>
+                                    </apex:repeat>
+                                    </apex:pageBlockSection>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <apex:pageBlockSection title="Specify the New Values" collapsible="false" columns="2" id="fields1"  rendered="{!if(list_fieldList.size>0,true,false)}">
+                        <apex:repeat value="{!fieldsToUpdate}" var="f" id="loop">
+                        <apex:pageBlockSectionItem id="fields2">
+                            <apex:outputLabel value="{!f.Label}"/ >
+                                <apex:inputField value="{!objCarrier[f.fieldPath]}"/>
+                            </apex:pageBlockSectionItem>
+                        </apex:repeat>
+                    </apex:pageBlockSection>
+                </div>              
+                <apex:pageBlockButtons location="bottom"  id="fields2">
+                    <apex:commandButton value="Save" action="{!updateCarrier}" rendered="{!(intSelectedCarrier > 0 && if(list_fieldList.size>0,true,false))}" status="actStatusId"/>
+                    <apex:commandButton action="{!cancel}" value="Cancel"  immediate="true" style="margin-left: 5px;" status="actStatusId" reRender="step1"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>    
+            <apex:pageBlock id="step2" title="Results" mode="edit" rendered="{!step='2'}">
+                <apex:pagemessages escape="false"></apex:pagemessages>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton action="{!cancel}" value="Close" status="actStatusId" reRender="step2"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:form>
+        <c:GustoActionStatus />
+    </apex:outputPanel> 
+</apex:page>

@@ -1,0 +1,395 @@
+<apex:page standardController="Tax_Ops_Failed_Record__c" extensions="TaxOpsFailedRecordsCreationController" recordsetvar="failedRecs" action="{!syncFailedRecords}">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/> 
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        
+        
+        j$(document).ready(function() {
+            applyRowSelect();
+            getFocusedSubTabId();
+            hidePanel();
+        });
+
+        function hidePanel(){
+            sforce.console.getFocusedSubtabId(hidePanel1);
+        }
+
+        function getFocusedSubTabId(){
+            sforce.console.getFocusedPrimaryTabId(hidePanel1);
+        };
+
+        var hidePanel1 = function hidePanel1(result) {
+            var currentTabIdd = result.id;
+            setSidebarVisible(currentTabIdd);
+        };   
+          
+        function setSidebarVisible(tabidd) {
+               sforce.console.setSidebarVisible(false,tabidd,sforce.console.Region.RIGHT);
+        };
+
+        function applyRowSelect(){
+            // following code is making the row clickable
+            j$( "#frtable tbody tr" ).on( "click", function(e) { 
+                console.log('@@ tagName '+e.target.nodeName);
+                if(e.target.nodeName === 'TD'){
+                    var $tc = j$(this).find('input:checkbox:first');
+                    var tv = $tc.prop( "checked" );
+                    $tc.prop( "checked", !tv); 
+                    console.log('@@## '+!tv);
+                    //j$(this).css('box-shadow', '#d8dde6 0 -1px 0 inset, #d8dde6 0 1px 0 inset');  
+                    if(!tv) 
+                        j$(this).css('background-color','rgb(241, 244, 248)');
+                    else
+                        j$(this).css('background-color','');
+                }
+            });
+        }
+
+        //================================
+        function toggle(source) {
+          checkboxes = document.getElementsByName('failRec');
+          for(var i=0, n=checkboxes.length;i<n;i++) {
+            checkboxes[i].checked = source.checked;
+          }
+        }
+        
+        //============================================
+        function setTabTitle() {
+            //Set the current tab's title
+            sforce.console.setTabTitle('{!selectedRecordTypeName}');
+        }
+        var pageLoad = window.onload;
+        window.onload = function() {
+            setTabTitle(); //we are setting the tab name when are opening the tab
+            
+        }
+        
+        function openRecInNewTab(failedRecid){
+              // alert(caseid);        
+            sforce.console.openPrimaryTab(null, "/"+failedRecid, true);
+        }
+        //-------------------------------
+        function getSelectedRecIds(fromCommonUpdate){
+            var selectedCheckBoxIdStr;
+            j$('input[type=checkbox]').each(function () {
+                if(this.checked && this.id.indexOf('selected__')=='0'){
+                    if(selectedCheckBoxIdStr == null ||selectedCheckBoxIdStr.length=='0'){
+                        selectedCheckBoxIdStr = this.id;
+                    }
+                    else{
+                        selectedCheckBoxIdStr += this.id;
+                    }
+                }
+            });
+            console.log('@@## '+selectedCheckBoxIdStr);
+            saveCommonFields(selectedCheckBoxIdStr,fromCommonUpdate);          
+        }
+        
+        //==========================
+        function getSelectedRecIdsForEmailBodySaving(){
+            var selectedCheckBoxIdStr;
+            j$('input[type=checkbox]').each(function () {
+                if(this.checked && this.id.indexOf('selected__')=='0'){
+                    if(selectedCheckBoxIdStr == null ||selectedCheckBoxIdStr.length=='0'){
+                        selectedCheckBoxIdStr = this.id;
+                    }
+                    else{
+                        selectedCheckBoxIdStr += this.id;
+                    }
+                }
+            });
+            console.log('@@## '+selectedCheckBoxIdStr);
+            saveEmailBody(selectedCheckBoxIdStr,true);          
+        }
+        //==========================
+        function getSelectedRecIdsForMassEmail(){
+            var selectedCheckBoxIdStr;
+            j$('input[type=checkbox]').each(function () {
+                if(this.checked && this.id.indexOf('selected__')=='0'){
+                    if(selectedCheckBoxIdStr == null ||selectedCheckBoxIdStr.length=='0'){
+                        selectedCheckBoxIdStr = this.id;
+                    }
+                    else{
+                        selectedCheckBoxIdStr += this.id;
+                    }
+                }
+            });
+            console.log('@@## '+selectedCheckBoxIdStr);
+            sendMassEmail(selectedCheckBoxIdStr,true);          
+        }
+       //==================================
+        function closeFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(closeSubTab);
+        } 
+        var closeSubTab = function closeSubTab(result) { 
+            var subTabId = result.id;
+            sforce.console.closeTab(subTabId);    
+        };       
+        //================close sub tab=============
+        function callCloseSubTab() {
+            //First find the ID of the current tab to close it
+            sforce.console.getEnclosingTabId(closeSubtab);
+        }
+        
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+
+        //============refresh primary tab===
+        function RefreshClosePrimaryTab() 
+       {
+           sforce.console.getFocusedPrimaryTabId(showTabId);
+       }
+       
+       var showTabId = function showTabId(result) 
+       {
+           var tabId = result.id;
+           //alert('Primary Tab IDs: primaryTabId ' + tabId );
+           sforce.console.refreshPrimaryTabById(tabId , false);
+           callCloseSubTab();
+       };
+       //=======open FRs in sub tab=========
+       var selectedFrId;
+        function openSubTab(frid) {
+            selectedFrId = frid;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openFRinSubtab);
+        }
+        
+        var openFRinSubtab = function openFRinSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+selectedFrId, true, 
+                '', null, null, 'Tax Ops Failed Record');
+        };
+
+        //===========Refresh SubTabs===========
+        function refreshAllTabsExceptCurrentTab(){
+            sforce.console.getFocusedSubtabId(currentTabId1);
+        };
+        var currentTabIdd;
+        var currentTabId1 = function currentTabId1(result) {
+            currentTabIdd = result.id;
+            sforce.console.getSubtabIds('' , refreshAllSubTabs1);
+        };  
+
+        var refreshAllSubTabs1 = function refreshAllSubTabs1(result){
+            var siblingTabArr = result.ids;
+            console.log('@@## 12 '+siblingTabArr);
+            var i;
+            for (i = 0; i < siblingTabArr.length; i++) { 
+                var tabIdd = siblingTabArr[i];
+                if(tabIdd != currentTabIdd){
+                    sforce.console.refreshSubtabById(tabIdd, false);
+                }
+            }
+        };
+    </script>
+    <style>
+        .slds-scope.main th, .slds-scope.main td {
+           white-space: normal !important;
+        }
+    </style>
+    <div class="gusto" >
+        <apex:form id="frm"> 
+            <apex:actionfunction action="{!massUpdate}" name="saveCommonFields" rerender="frm,pgmsg" status="fetchStatus" oncomplete="applyRowSelect();refreshAllTabsExceptCurrentTab();">
+                <apex:param name="par1" assignTo="{!selectedRecIdStr}" value=""/>
+                <apex:param name="par2" assignTo="{!isCommonUpdate}" value=""/>
+            </apex:actionfunction>
+            <apex:actionfunction action="{!populateEmailBodySampleToFailedRecords}" name="saveEmailBody" rerender="frm,pgmsg" status="fetchStatus" oncomplete="applyRowSelect();">
+                <apex:param name="temppar1" assignTo="{!selectedRecIdStr}" value=""/>
+                <apex:param name="temppar2" assignTo="{!saveEmailBody}" value=""/>
+            </apex:actionfunction>
+            <apex:actionfunction action="{!populateEmailBodySampleToFailedRecords}" name="sendMassEmail" rerender="frm,pgmsg" status="fetchStatus" oncomplete="applyRowSelect();">
+                <apex:param name="temppar3" assignTo="{!selectedRecIdStr}" value=""/>
+                <apex:param name="temppar4" assignTo="{!sendMassEmail}" value=""/>
+            </apex:actionfunction>
+            <apex:actionFunction action="{!init}" name="sortTable" reRender="frm,pgmsg" status="fetchStatus" oncomplete="applyRowSelect();">
+                <apex:param name="tempPar5" assignTo="{!sortField}" value=""/>
+            </apex:actionFunction>       
+            <apex:actionFunction action="{!init}" name="toggleDuplicates" reRender="dataTable,pgmsg" status="fetchStatus" oncomplete="applyRowSelect();"/>     
+            <apex:actionFunction action="{!setcon.Save}" name="saveRecList" oncomplete="nextRecList();"/>
+            <apex:actionFunction action="{!setcon.Next}" name="nextRecList" />
+            <apex:actionFunction action="{!setcon.Previous}" name="previousRecList" />
+            <apex:actionStatus id="fetchStatus" >
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                               height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span> 
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageMessages id="pgmsg"/> 
+            <apex:outputPanel id="editPanel" rendered="{!IF(selectedFailedRecordList != null && selectedFailedRecordList.size > 0 && !massUpdateSuccessful, true, false)}"> 
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">{!selectedRecordTypeName} &nbsp;&nbsp;  {!taskRec.Tax_Code__c}</span>
+                </h4>&nbsp;&nbsp;
+                <table class="slds-table slds-table--bordered slds-table_cell-buffer">                    
+                    <apex:repeat var="f" value="{!commonFieldsApiNameList}">
+                        <tr>
+                            <th scope="col" style="width:25%">
+                                <div class="slds-truncate">{!f.label}</div>
+                            </th>
+                            <td>
+                                <apex:inputField value="{!toUpdateFailedRecord[f]}"/>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                    <tr class="slds-text-title">
+                        <td colspan="2">
+                            <input type="button" class="btn slds-button slds-button--neutral" onclick="getSelectedRecIds(true);return false;" value="Update Selected Records"/>                           
+                            &nbsp;&nbsp;
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Mass Update">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <div>
+                    <apex:selectList styleClass="filterSel" value="{!selectedFilterStr}" size="1">
+                        <apex:selectOptions value="{!filterOptions}"/>
+                    </apex:selectList>
+                    &nbsp;&nbsp;
+                    <apex:inputText value="{!filterStr}" />
+                    &nbsp;&nbsp;
+                    <apex:commandButton value="Search" styleclass="btn slds-button slds-button--neutral" action="{!init}" reRender="frm" status="fetchStatus"/>                    
+                    &nbsp;&nbsp;
+                    <input type="button" class="btn slds-button slds-button--neutral" onclick="getSelectedRecIds(false);" value="Update Records"/>                          
+                    &nbsp;&nbsp;
+                    <!-- <apex:commandButton action="{!}" value="" /> -->
+                    <apex:outputPanel rendered="{! if(taskRec.Process_Step__c == 'Payments',false,true)}">
+                        <input type="button" class="btn slds-button slds-button--neutral" onclick="getSelectedRecIdsForEmailBodySaving();" value="Apply Email Template"/>
+                        &nbsp;&nbsp;
+                        <input type="button" class="btn slds-button slds-button--neutral" onclick="getSelectedRecIdsForMassEmail();" value="Send Email"/>
+                        &nbsp;&nbsp;
+                        <apex:commandButton action="{!createAttachFailedRec}" value="Save as CSV" styleclass="btn slds-button slds-button--neutral" reRender="pgmsg"/>
+                        &nbsp;&nbsp;
+                    </apex:outputPanel>
+                    <input type="button" class="btn slds-button slds-button--neutral" onclick="getSelectedRecIds(false);RefreshClosePrimaryTab();" value="Close"/>
+                    &nbsp;&nbsp;
+                    <apex:outputLabel value="Show duplicate records:" for="showDuplicate"/> 
+                    &nbsp;                    
+                    <apex:inputCheckbox value="{!showDuplicates}" id="showDuplicate" onchange="toggleDuplicates();"/>
+                </div>&nbsp;&nbsp;    
+                
+                <apex:outputPanel id="dataTable">
+                    <table class="slds-table slds-table--bordered slds-table_cell-buffer" id="frtable">  
+                        <thead>
+                            <tr class="slds-text-title">                                
+                                <th scope="col" >
+                                   <input type="checkbox" id="selecteAll" onclick="toggle(this);" style="cursor: pointer;"/>
+                                </th>
+                                <th scope="col" >   
+                                        <a onclick="sortTable('FEIN__c');" class="slds-truncate" style="color:#54698d;">FEIN</a>
+                                </th>
+                                <th>
+                                    <a onclick="sortTable('Account_Number__c');" class="slds-truncate" style="color:#54698d;">Account Number</a>
+                                </th>
+                                <apex:repeat var="f" value="{!fieldsApiNameList}">                          
+                                    <th scope="col" >
+                                        <apex:outputPanel rendered="{! if(f=='Failure_Reason__c' || f=='Email_Templates__c' || f=='Date_Sent__c',true,false)}">    
+                                            <a onclick="sortTable('{!f}');" class="slds-truncate" style="color:#54698d;">{!f.label}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{! if(f!='Failure_Reason__c' && f !='Email_Templates__c' && f !='Date_Sent__c',true,false)}">    
+                                            <div class="slds-truncate">{!f.label}</div>
+                                        </apex:outputPanel>     
+                                       
+                                    </th>
+                                </apex:repeat>
+                            </tr>
+                        </thead> 
+                        <tbody >              
+                            <apex:repeat var="failedRec" value="{!selectedFailedRecordList}">
+                                <tr class="slds-text-title detailRow" id="row__{!failedRec['Id']}" style="cursor: pointer;">
+                                    <td>
+                                        <input type="checkbox" name="failRec" id="selected__{!failedRec['Id']}"/>
+                                    </td>
+                                    <td>
+                                        <a  onclick="openSubTab('{!failedRec.id}');">{!failedRec.FEIN__c}</a>
+                                    </td>
+                                    <td>
+                                        <a onclick="openSubTab('{!failedRec.id}');">{!failedRec.Account_Number__c}</a>
+                                    </td>         
+                                    <apex:repeat var="f" value="{!fieldsApiNameList}">                              
+                                        <td>
+                                            <apex:inputField value="{!failedRec[f]}" rendered="{!if(f != 'Date_Sent__c',true,false)}"/><apex:outputField value="{!failedRec[f]}" rendered="{!if(f == 'Date_Sent__c',true,false)}"/>
+                                        </td>
+                                    </apex:repeat>
+                                </tr>
+                            </apex:repeat>  
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!IF(selectedFailedRecordList != null && selectedFailedRecordList.size > 0, true, false)}">   
+                    <table style="width: 100%">
+                        <tr>
+                            <td>
+                                <apex:outputText value=" Page {!IF(CEILING(setcon.ResultSize/setcon.PageSize)==0,0,setcon.PageNumber)} of {!CEILING(setcon.ResultSize/setcon.PageSize)}"/>
+                            </td>
+                            <td style="text-align: center !important;">
+                                <apex:commandLink action="{!saveAndPrevious}" value="« Previous" reRender="editPanel" oncomplete="applyRowSelect();" rendered="{!setcon.HasPrevious}" status="fetchStatus"/>
+                                <apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(setcon.HasPrevious)}"/>&nbsp;&nbsp;  
+                                <apex:commandLink action="{!saveAndNext}" value="Next »"  reRender="editPanel" oncomplete="applyRowSelect();" rendered="{!setcon.HasNext}" status="fetchStatus"/>
+                                <apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(setcon.HasNext)}"/>
+                            </td>
+                            <apex:actionFunction name="show" action="{!changePageSize}" reRender="editPanel" />
+                            <td style="text-align: right !important;">
+                                <apex:selectList value="{!pageSize}" size="1" onchange="show()">
+                                    <apex:selectOption itemValue="20" itemLabel="20"/>
+                                    <apex:selectOption itemValue="50" itemLabel="50"/> 
+                                    <apex:selectOption itemValue="100" itemLabel="100"/>
+                                    <apex:actionSupport event="onchange" reRender="dataTable" status="fetchStatus"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel id="noRecordPanel" rendered="{!IF(selectedFailedRecordList != null && selectedFailedRecordList.size > 0, false, true)}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Mass Update">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <div class="slds-scoped-notification slds-media slds-media_center" role="status">
+                  <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-info" title="information">
+                      <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#info" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                      </svg>
+                      <span class="slds-assistive-text">information</span>
+                    </span>
+                  </div>
+                  <div class="slds-media__body">
+                    <p>No record found.&nbsp; <input type="button" onclick="closeFocusedSubtabId();" value="Close" class="btn slds-button slds-button_neutral"/></p>
+                  </div>
+                </div>                
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!massUpdateSuccessful}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Mass Update">Mass Update</span>
+                </h4>
+                <div class="slds-scoped-notification slds-media slds-media_center" role="status">
+                  <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-info" title="information">
+                      <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#info" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                      </svg>
+                      <span class="slds-assistive-text">information</span>
+                    </span>
+                  </div>
+                  <div class="slds-media__body">
+                    <p>Records successfully updated.&nbsp; <input type="button" onclick="closeFocusedSubtabId();" value="Close" class="btn slds-button slds-button_neutral"/></p>
+                  </div>
+                </div> 
+            </apex:outputPanel>            
+        </apex:form>
+    </div>
+</apex:page>

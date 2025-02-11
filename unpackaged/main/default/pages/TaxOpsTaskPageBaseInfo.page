@@ -1,0 +1,74 @@
+<apex:page standardController="Tax_Ops_Task__c" extensions="TaxOpsTaskPageExtension">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+    </style>    
+    <script>
+        function openAttachment() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(attchmentInSubTab);
+        }
+        
+        var attchmentInSubTab = function attchmentInSubTab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            var attachmentIdd = '{!latestAttachment.id}'; 
+            //sforce.console.openSubtab(primaryTabId , '/servlet/servlet.FileDownload?file='+attachmentIdd, true, 
+             //   'Attachment',null);
+             window.open("/servlet/servlet.FileDownload?file="+attachmentIdd,"");
+        };
+    
+        function RefreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+           
+    	var showTabId = function showTabId(result) 
+    	{
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+    	};
+    	var refreshSuccess = function refreshSuccess(result){ };
+    
+    </script>
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+             <apex:form id="frm">
+               <apex:pageBlock >
+                    <apex:pageMessages id="msg"></apex:pageMessages>
+                    <apex:actionstatus id="status_page">
+                        <apex:facet name="start">
+                            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                                    <img class="waitingImage" src="/img/loading.gif"  />
+                                    <span class="waitingDescription">Loading...</span>
+                                </div>
+                            </div>
+                        </apex:facet>
+                    </apex:actionstatus>
+                   <apex:pageBlockButtons location="top">
+                        <apex:commandButton action="{!updateTaxOps}" value="Save" status="status_page" styleclass="slds-button slds-button--neutral" reRender="frm" /> 
+                        <apex:commandButton value="Set Void" action="{!setVoid}" status="status_page" styleclass="slds-button slds-button--neutral" reRender="frm"  oncomplete="RefreshPrimaryTab();"/> 
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockSection columns="2">
+                        <apex:outputField value="{!Tax_Ops_Task__c.OwnerId}"/>
+                        
+                        <apex:repeat value="{!list_TaxOpsTask}" var="objOps">
+                             <apex:repeat value="{!list_FieldSetWrapper}" var="objField">
+                        	 	<apex:outputField value="{!objOps[objField.objFieldSet.FieldPath]}" rendered="{!!objField.blnEditable}"/>
+                                 <apex:inputField value="{!objOps[objField.objFieldSet.FieldPath]}" rendered="{!objField.blnEditable}"/>
+                            </apex:repeat>
+                        </apex:repeat>
+                    </apex:pageBlockSection>
+               </apex:pageBlock>  
+                <apex:pageBlock >
+                     <apex:pageBlockSection columns="1">
+                         <label class="slds-form-element__label" for="ownerf">Latest Attachment: </label>
+                          <a onclick="openAttachment();">{!latestAttachment.name}</a>
+                    </apex:pageBlockSection>
+             </apex:pageBlock>
+         </apex:form>
+         </div>
+         
+</apex:page>

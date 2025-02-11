@@ -1,0 +1,16 @@
+<template>
+	<template lwc:if={blnShowCmp}>
+		<lightning-card title={titleLabel} icon-name="standard:metrics">
+			<div style="margin: 20px">
+				<template for:each={list_response} for:item="item">
+					<div key={item.label} style="display: flex; justify-content: space-between; margin: 5px">
+						<div><b>{item.label}</b></div>
+						<div>
+							<lightning-badge label={item.value} class={item.style}></lightning-badge>
+						</div>
+					</div>
+				</template>
+			</div>
+		</lightning-card>
+	</template>
+</template>

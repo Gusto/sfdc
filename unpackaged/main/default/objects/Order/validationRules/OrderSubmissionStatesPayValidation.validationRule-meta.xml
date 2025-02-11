@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OrderSubmissionStatesPayValidation</fullName>
+    <active>true</active>
+    <description>Checks for mandatory fields States and Pay Schedule for submitting a single migration order for approval.</description>
+    <errorConditionFormula>AND( ISBLANK(Bulk_Migration__c), ISCHANGED(Status), ISPICKVAL( Status , &apos;Sales Submitted&apos;), OR(ISBLANK(States__c), ISBLANK( TEXT( Pay_Schedules__c ) )) )</errorConditionFormula>
+    <errorMessage>Please fill States and Pay Schedule !</errorMessage>
+</ValidationRule>

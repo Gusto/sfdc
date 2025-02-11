@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>Case Status for Package query ran in TaxroticeAutoSolveBatch</description>
+    <label>Case Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Ready for Research</fullName>
+                <default>false</default>
+                <label>Ready for Research</label>
+            </value>
+            <value>
+                <fullName>Research in progress</fullName>
+                <default>false</default>
+                <label>Research in progress</label>
+            </value>
+            <value>
+                <fullName>Research complete</fullName>
+                <default>false</default>
+                <label>Research complete</label>
+            </value>
+            <value>
+                <fullName>Resolution in progress</fullName>
+                <default>false</default>
+                <label>Resolution in progress</label>
+            </value>
+            <value>
+                <fullName>Escalated to Specialist Captain</fullName>
+                <default>false</default>
+                <label>Escalated to Specialist Captain</label>
+            </value>
+            <value>
+                <fullName>Waiting for POA</fullName>
+                <default>false</default>
+                <label>Waiting for POA</label>
+            </value>
+            <value>
+                <fullName>Waiting for JIRA</fullName>
+                <default>false</default>
+                <label>Waiting for JIRA</label>
+            </value>
+            <value>
+                <fullName>Waiting to call agency</fullName>
+                <default>false</default>
+                <label>Waiting to call agency</label>
+            </value>
+            <value>
+                <fullName>Agency call in progress</fullName>
+                <default>false</default>
+                <label>Agency call in progress</label>
+            </value>
+            <value>
+                <fullName>Blocked</fullName>
+                <default>false</default>
+                <label>Blocked</label>
+            </value>
+            <value>
+                <fullName>Ready for Resolution</fullName>
+                <default>false</default>
+                <label>Ready for Resolution</label>
+            </value>
+            <value>
+                <fullName>Checklist in progress</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Checklist in progress</label>
+            </value>
+            <value>
+                <fullName>Escalated to Analyst Captain</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Escalated to Analyst Captain</label>
+            </value>
+            <value>
+                <fullName>Ready for Checklist</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Ready for Checklist</label>
+            </value>
+            <value>
+                <fullName>Waiting for Coordinator</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Waiting for Coordinator</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

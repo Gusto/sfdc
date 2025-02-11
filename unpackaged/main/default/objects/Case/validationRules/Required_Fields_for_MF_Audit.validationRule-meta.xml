@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Fields_for_MF_Audit</fullName>
+    <active>false</active>
+    <description>Required fields for MF Audit.</description>
+    <errorConditionFormula>$User.Exempt_from_Validation_Rules__c = false &amp;&amp;
+RecordType.Name = &apos;MF Audit&apos; &amp;&amp; 
+(ISBLANK(Description) ||
+ISBLANK(Subject) ||
+ISBLANK(Carrier__c) ||
+ISPICKVAL(Type,&apos;&apos;) )</errorConditionFormula>
+    <errorMessage>Carrier, Subject, Description, and Type are required fields.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_Tax_Questionnaire</fullName>
+    <active>true</active>
+    <label>New Tax Questionnaire</label>
+    <picklistValues>
+        <picklist>Agency_Accepts_Generic_Annual_Form__c</picklist>
+        <values>
+            <fullName>N%2FA - No Annual Form Needed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No - Agency Requires Official Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes - Accepts Gusto%27s Generic Form</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Agency_contact_info_added__c</picklist>
+        <values>
+            <fullName>Pending</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Can_Employer_Register_Before_Liable__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Changes_To_Out_Of_State_Wage_Reporting__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Contractor_Reporting_Required__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Data_Element_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Deposit_Payment_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Dormancy_Period_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EFT_Authorization_Required__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EFT_Mandate_Threshhold__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Filing_Due_Date_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Filing_Method__c</picklist>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fax</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mail</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Server To Server %28FTP%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Web Upload</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Fixed_Tax_Surcharge_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Form_Changes_NHR__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Form_s_saved_in_Pufferfish_Drive__c</picklist>
+        <values>
+            <fullName>N%2FA%2C Generic Form for all Forms</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Final Forms From Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes%2C All Official Forms Saved</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Gusto_s_Generic_Form_Acceptance__c</picklist>
+        <values>
+            <fullName>No%2C Form Saved in Drive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Gustos_Payment_Method__c</picklist>
+        <values>
+            <fullName>ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Holiday_Weekend_Rules__c</picklist>
+        <values>
+            <fullName>Due Biz Day After</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Due Biz Day Before</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Due Date is the Exact Date</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>How_are_W_2s_Submitted__c</picklist>
+        <values>
+            <fullName>N%2FA - W-2s Don%27t Need to be Reported</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>On Paper</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>On encrypted CD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other - See additional notes field</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unique W-2 Reporting Requirements</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Uploaded Using EFW-2 Specs</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Is_A_Payment_Coupon_Required__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Is_A_Zero_Payment_Required__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Is_This_A_Mandate__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Local_EIN_Required__c</picklist>
+        <values>
+            <fullName>Unique EIN format%28see details%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Uses FEIN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Uses State EIN</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>New_Employer_Rate__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Notification_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>PFML_Rate_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Payment_Changes_New_Payment_Method__c</picklist>
+        <values>
+            <fullName>ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Payment_Method_Utilized__c</picklist>
+        <values>
+            <fullName>ACH Credit optional</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ACH credit required</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Registration_req_d__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Reporting_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SOC_Reporting__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SUI_Rate_Changes__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Tax_Subjectivity_Determination__c</picklist>
+        <values>
+            <fullName>No%2C customer must select%2Fadd in set up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes%2C Geolocation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Tax_Type__c</picklist>
+        <values>
+            <fullName>CombinedRpt</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local%3A Collector</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local%3A Generic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local%3A Unique</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paid Family Medical Leave</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unemployment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unsupported</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Withholding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WorkersComp</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type_Of_Requirement__c</picklist>
+        <values>
+            <fullName>Needed for Data Exchange</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Needed to File%2FPay</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Only for ER Account Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other %28see notes%29</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Unclaimed_Property_Agency_Payment_Change__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Unclaimed_Property_Agency_Payment_Method__c</picklist>
+        <values>
+            <fullName>ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Unit_Reporting_Required__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Update_Is_Needed_To_HC_IKB__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Wage_Reporting_EE_on_Non_Annual_Rec__c</picklist>
+        <values>
+            <fullName>N%2FA%2C Not required</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paper Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes%2C Unique Electronic Specs</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes%2C Will Accept Standard EFW2 Format</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Where_is_Local_Tax_Reported_on_W_2__c</picklist>
+        <values>
+            <fullName>Box 14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Boxes 18%2C 19%2C 20</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Req%27d on W2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other - See additional notes field</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>X1099_NEC_Req_d__c</picklist>
+        <values>
+            <fullName>N%2FA - 1099-NEC Not Required</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes on Paper</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes%2C Uploaded Using Pub 1220</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

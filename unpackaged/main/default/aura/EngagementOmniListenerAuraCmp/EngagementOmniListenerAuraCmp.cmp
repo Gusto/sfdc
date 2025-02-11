@@ -1,0 +1,10 @@
+<!--
+    Description - Aura component that updates listens to Omni Channel events and updates the case status accordingly
+    Author - Sanjay Paryani
+    Date - 08/24/2023
+-->
+<aura:component implements="lightning:backgroundUtilityItem,force:hasRecordId,flexipage:availableForAllPageTypes" access="global" controller="EngagementOmniListenerController">
+	<lightning:omniToolkitAPI aura:id="omniToolkit" />
+	<!-- Listens to OmniChannel Status changes except for Offline status and calls an action-->
+	<aura:handler event="lightning:omniChannelStatusChanged" action="{!c.doCaseUpdateOnAgentStatusChange}" />
+</aura:component>

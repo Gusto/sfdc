@@ -1,0 +1,192 @@
+<apex:page controller="BulkOrderUploadController">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/> 
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <script>
+    function showSpinner()
+    {
+        document.getElementById('opaque').style.display='block';
+        var popUp = document.getElementById('spinner');
+        
+        popUp.style.display = 'block';
+    }
+    </script>
+    <style>
+       #spinner{
+           display: none;
+           width:200px;
+           height: 50px;
+           position: fixed;
+           top: 50%;
+           left: 50%;
+           text-align:center;
+           padding:10px;
+           font:normal 16px Tahoma, Geneva, sans-serif;
+           margin-left: -100px;
+           margin-top: -100px;
+           z-index:2;
+           overflow: auto;
+           border:1px solid #CCC;
+           background-color:white;
+           z-index:100;
+           padding:5px;
+           line-height:10px;
+        }
+        #opaque {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: none;
+            background-color: gray;
+            filter: alpha(opacity=30);
+            opacity: 0.3;
+            -moz-opacity:0.3;
+            -khtml-opacity:0.3
+        }
+        * html #opaque {
+            position: absolute;
+        }
+        .gusto .slds-table th, .gusto .slds-table td {
+            white-space: normal;
+        }
+        
+        .message {
+            background-color: #ffc;
+            border-style: solid;
+            border-width: 1px;
+            color: #cc0000;
+            padding: 6px 8px 6px 6px;
+            margin: 4px 20px;
+        }
+     </style>
+    
+    <apex:sectionHeader title="" subtitle="Bulk Order Upload"/>
+    
+    <div class="gusto">
+        <div id="opaque"/>
+        <div id="spinner">
+            <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; font-size:10px;}'><apex:image value="/img/loading.gif"/>&nbsp;Please wait</p>
+        </div>
+        <apex:form id="frmId">            
+            <apex:actionstatus id="status_page">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                        <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                            <img class="waitingImage" src="/img/loading.gif"  />
+                            <span class="waitingDescription">Loading...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+            <apex:pageBlock id="pBlock">
+                <apex:pagemessages />
+                
+                <div id="responseErrors"> 
+                </div>
+                
+                <apex:pageBlockSection id="pBlockSec" columns="2">
+                    <apex:pageBlockSectionItem id="pBlockSecItem1">
+                        <apex:outputLabel value="Requested By"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Requested_By__c}" required="true"></apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <!--
+                    <apex:pageBlockSectionItem id="pBlockSecItem2">
+                        <apex:outputLabel value="Bulk Migration Owner"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Bulk_Migration_Owner__c}" required="true"></apex:inputField>
+                    </apex:pageBlockSectionItem>-->
+                    <apex:pageBlockSectionItem id="pBlockSecItem3">
+                        <apex:outputLabel value="Requested First Check Date"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Requested_First_Check_Date__c}" required="true"></apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pBlockSecItem4">
+                        <apex:outputLabel value="Primary Point of Contact"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Primary_Point_of_Contact__c}" required="true"></apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pBlockSecItem5">
+                        <apex:outputLabel value="Final Check Date"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Final_Check_Date__c}" required="true"></apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pBlockSecItem6">
+                        <apex:outputLabel value="Transition To Fulfillment"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Transition_To_Fulfillment__c}" required="true"></apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pBlockSecItem7">
+                        <apex:outputLabel value="Reseller Account"></apex:outputLabel>
+                        <apex:inputField value="{!BMRRecord.Reseller_Account__c}"></apex:inputField>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pBlockSecItem8">                    
+                        <apex:outputLabel value="Choose"></apex:outputLabel>
+                        <apex:outputPanel >
+                            <apex:inputFile id="bulkFile" value="{!fileData}" contentType="csv"></apex:inputFile>
+                            <apex:commandButton value="Upload CSV" action="{!readFromFile}" onclick="return checkFileSize();"/>
+                        </apex:outputPanel>                    
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection> 
+                <apex:pageBlockButtons location="bottom" rendered="{!readSuccess}">
+                    <apex:commandButton action="{!confirm}" value="Confirm" onclick="showSpinner()"/>
+                    <apex:commandButton action="{!discard}" value="Discard" onclick="showSpinner()"/>
+                </apex:pageBlockButtons>
+        </apex:pageBlock>            
+            <apex:pageBlock id="dataPanel" rendered="{!readSuccess}">
+                <div>
+                    <apex:pageblocktable value="{!lstCSVRecordsFinal}" var="con" id="theTable" style="width:100%" styleClass="slds-table slds-table--bordered slds-table_cell-buffer slds-table_fixed-layout" >
+                        <apex:repeat value="{!setFieldNames}" var="fieldName">
+                            <apex:column headerValue="{!fieldName}" > <apex:inputText value="{!con[fieldNamesMap[fieldName]]}" style="width:100px;" />
+                            </apex:column>
+                        </apex:repeat>
+                    </apex:pageblocktable>
+                </div>
+            </apex:pageBlock>
+            
+        </apex:form>
+    </div>
+    
+    
+    <!-- script to check file size -->
+    <script>
+    function getFileSize(file){
+        var varFileObject = new ActiveXObject("Scripting.FileSystemObject"),
+        filepath = file.value,
+        thefile = varFileObject.getFile(filepath);
+        return thefile.size;
+    }
+    
+    function checkFileSize()
+    {
+        var goodSize = true;
+        var limit = "{!$Label.PT_BulkOrderUploadLimit}";
+        $('input[type=file]').each(function()
+        {
+            if(typeof this.files[0] !== 'undefined')
+            {
+                var file = this.files[0],
+                   
+                size = typeof ActiveXObject !== 'undefined' ?
+                    getFileSize(file)
+                    :
+                    file.fileSize || file.size;
+
+                goodSize = (limit*1000) > size;
+                
+                if(!goodSize)
+                {
+                    var alertMsg = 'Your file is too large. Please update your CSV to bring it to '+limit+' kb or less and try uploading again.';
+                    document.getElementById("responseErrors").classList.add('message');
+                    document.getElementById("responseErrors").innerHTML = alertMsg;
+                }
+                else
+                {
+                    showSpinner();
+                }
+                return goodSize;
+            }
+        });
+        return goodSize;
+    }
+
+  </script>    
+    <!-- script ends -->
+</apex:page>

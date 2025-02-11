@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Existing_Case_Chatter_Post</name>
+        <label>Existing Case Chatter Post</label>
+        <locationX>182</locationX>
+        <locationY>1430</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>Skip_Case_Trigger</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>Existing_Case_ChatterPost_Msg</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>objCase.Related_Case__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>New_Case_Chatter_Post</name>
+        <label>New Case Chatter Post</label>
+        <locationX>182</locationX>
+        <locationY>1322</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>Existing_Case_Chatter_Post</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <elementReference>New_Case_ChatterPost_Msg</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Acknowledgement_Email</name>
+        <label>Send Acknowledgement Email</label>
+        <locationX>1898</locationX>
+        <locationY>350</locationY>
+        <actionName>Case.Engagement_Send_Case_Acknowledgement_Email</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Skip_Case_Trigger</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.Engagement_Send_Case_Acknowledgement_Email</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Auto_Solve_Email_with_Attachments</name>
+        <label>Send Auto Solve Email with Attachments</label>
+        <locationX>578</locationX>
+        <locationY>458</locationY>
+        <actionName>TaxResAutoSolveEmailHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Update_Auto_Solve_Email_Sent</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_Cases</name>
+            <value>
+                <elementReference>objCase</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>TaxResAutoSolveEmailHelper</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send Data Capture Auto Solve Email Alert</description>
+        <name>Send_Data_Capture_Auto_Solve_Email_Alert</name>
+        <label>Send Data Capture Auto Solve Email Alert</label>
+        <locationX>50</locationX>
+        <locationY>458</locationY>
+        <actionName>Case.Auto_Email_From_Case_Reason</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Create_Email_Message_Record</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.Auto_Email_From_Case_Reason</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_UnAuthorized_Email_Notification</name>
+        <label>Send UnAuthorized Email Notification</label>
+        <locationX>2162</locationX>
+        <locationY>350</locationY>
+        <actionName>Case.Engagement_Payroll_Taxres_Send_UnAuthorized_Email_Notification</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Skip_Case_Trigger</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.Engagement_Payroll_Taxres_Send_UnAuthorized_Email_Notification</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>This invokable method will skip CaseTriggerHelper class.</description>
+        <name>Skip_Trigger</name>
+        <label>Skip Trigger</label>
+        <locationX>1106</locationX>
+        <locationY>1814</locationY>
+        <actionName>CaseTriggerHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Add_objCase_to_list_Cases</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>booleanList</name>
+            <value>
+                <elementReference>blnSkipTrigger</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>CaseTriggerHelper</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <description>Add objCase record to Case list for DML update.</description>
+        <name>Add_objCase_to_list_Cases</name>
+        <label>Add objCase to list_Cases</label>
+        <locationX>1370</locationX>
+        <locationY>2054</locationY>
+        <assignmentItems>
+            <assignToReference>list_Cases</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>objCase</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_objCase</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Closed_Reason_Assignment</name>
+        <label>Closed Reason Assignment</label>
+        <locationX>182</locationX>
+        <locationY>1214</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Closed_Reason__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Merged Previously Answered</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>New_Case_Chatter_Post</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Initializing Fault Line details for fault paths in objExceptionLogEvent record.</description>
+        <name>Initializing_Fault_Line_Details</name>
+        <label>Initializing Fault Line Details (Add Logic below this node)</label>
+        <locationX>1370</locationX>
+        <locationY>134</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strExceptionLogMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Tax_Res_Route</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Auto Solve email is unable to be sent due to no contact related to the case.</description>
+        <name>Missing_Contact_Error</name>
+        <label>Missing Contact Error</label>
+        <locationX>1634</locationX>
+        <locationY>350</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Automation_Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strMissingContactErrorMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objCase.Automation_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Failed</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Skip_Case_Trigger</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Auto Solve Email sent and close case</description>
+        <name>Update_Auto_Solve_Email_Sent</name>
+        <label>Update Auto Solve Email Sent</label>
+        <locationX>314</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Automation_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objCase.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objCase.Tax_Res_Auto_Response_Sent__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Previously_Answered_Auto_Solve_Check</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update objExceptionLogMessage with Fault Line details.</description>
+        <name>Update_objCase_Failed</name>
+        <label>Update objCase Failed</label>
+        <locationX>314</locationX>
+        <locationY>566</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>No_Notice_Attached_Autosolve_Fired</name>
+        <label>No Notice Attached Autosolve Fired</label>
+        <locationX>314</locationX>
+        <locationY>350</locationY>
+        <defaultConnector>
+            <targetReference>Send_Auto_Solve_Email_with_Attachments</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objCase.Mass_Email_Step__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>No Notice Attached Auto-Solve fired</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Data_Capture_Auto_Solve_Email_Alert</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Previously_Answered_Auto_Solve_Check</name>
+        <label>Previously Answered Auto Solve Check</label>
+        <locationX>314</locationX>
+        <locationY>1106</locationY>
+        <defaultConnector>
+            <targetReference>Skip_Case_Trigger</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Automation_Trigger_Check_for_Previously_Answered</name>
+            <conditionLogic>(1 OR 2) AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>objCase.Mass_Email_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Previously Answered Auto-Solve Fired</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Mass_Email_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Previously Answered Auto-Solve Fired Closed/Solved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Closed_Reason_Assignment</targetReference>
+            </connector>
+            <label>Automation Trigger Check for Previously Answered</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Skip_Case_Trigger</name>
+        <label>Skip Case Trigger? (Add Logic above this node)</label>
+        <locationX>1370</locationX>
+        <locationY>1706</locationY>
+        <defaultConnector>
+            <targetReference>Add_objCase_to_list_Cases</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>blnSkipTrigger_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnSkipTrigger</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Skip_Trigger</targetReference>
+            </connector>
+            <label>blnSkipTrigger True</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If case is in &quot;Data Capture in Progress&quot; status and set to have a case auto solved send email alert.</description>
+        <name>Tax_Res_Route</name>
+        <label>Tax Res Route</label>
+        <locationX>1370</locationX>
+        <locationY>242</locationY>
+        <defaultConnector>
+            <targetReference>Skip_Case_Trigger</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Valid_Auto_Solve_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formulaValidAutoCloseCase</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>No_Notice_Attached_Autosolve_Fired</targetReference>
+            </connector>
+            <label>Valid Auto-Solve Case</label>
+        </rules>
+        <rules>
+            <name>Valid_SUI_Case_Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formulaValidSUIClosedCase</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <isGoTo>true</isGoTo>
+                <targetReference>No_Notice_Attached_Autosolve_Fired</targetReference>
+            </connector>
+            <label>Valid SUI Case Closed</label>
+        </rules>
+        <rules>
+            <name>Valid_P_I_Autosolve_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Valid_PI_Autosolve_Case</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <isGoTo>true</isGoTo>
+                <targetReference>No_Notice_Attached_Autosolve_Fired</targetReference>
+            </connector>
+            <label>Valid P&amp;I Autosolve Case</label>
+        </rules>
+        <rules>
+            <name>Auto_Solve_Without_Contact</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formulaAutoSolveNoContact</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Missing_Contact_Error</targetReference>
+            </connector>
+            <label>Auto-Solve Without Contact</label>
+        </rules>
+        <rules>
+            <name>TaxRes_Email_Web_Engagement_Case</name>
+            <conditionLogic>1 AND ((2 AND 4) OR 3) AND 5 AND 6 AND 7 AND 8 AND NOT(9 OR 10) AND 11 AND NOT(12 OR 13)</conditionLogic>
+            <conditions>
+                <leftValueReference>objOldCase</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Gusto</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Authorized_User__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>No</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Type</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Otter Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Type</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>EOY Spot Check</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Historical_Data__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Skip_Auto_Response__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>apintego.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>guideline.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Routing_Case_Reason__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Response to NPS Survey</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>hranswerlink.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>myhrsupportcenter.com</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Acknowledgement_Email</targetReference>
+            </connector>
+            <label>TaxRes-Email/Web Engagement Case</label>
+        </rules>
+        <rules>
+            <name>Notify_UnAuthorized_Users</name>
+            <conditionLogic>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND NOT(7 OR 8) AND 9 AND NOT(10 OR 11)</conditionLogic>
+            <conditions>
+                <leftValueReference>objOldCase</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Authorized_User__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>No</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Type</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Cobra</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Historical_Data__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Skip_Auto_Response__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>guideline.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>apintego.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Routing_Case_Reason__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Response to NPS Survey</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>myhrsupportcenter.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Requester_Email__c</leftValueReference>
+                <operator>Contains</operator>
+            </conditions>
+            <connector>
+                <targetReference>Send_UnAuthorized_Email_Notification</targetReference>
+            </connector>
+            <label>Notify UnAuthorized Users</label>
+        </rules>
+    </decisions>
+    <description>- Ela: Moved &quot;Update Auto Solve Email Sent&quot; to common from under no notice attached
+- Shyam: Updated for Autosolve email with attachments
+- Shyam: Added &apos;P&amp;I Late Deposit/Amendment Autosolve&apos; condition
+- Shyam: Added &apos;Below Tolerance Auto Solve fired&apos; condition in formulaValidAutoCloseCase
+- Ela: Added logic to update the case status after the email is sent
+- Ela : Added Electronic Notice logic to call the send email method with attachments
+- Ela: Deployed from prod latest copy
+- Shyam: Added AutoSolve Email with Attachment for &quot;Gusto is addressee of record
+- New: Added previously answered closed to the valid auto solve formula
+- Added &quot;Create Email Message&quot; record creation for &quot;Valid Auto-Solve Case&quot; branch
+    - Ela: Added a logic for SUI rate closed
+- Added &quot;Create Email Message&quot; record creation for &quot;Valid Auto-Solve Case&quot; branch
+- Added Duplicate Notice logic in AutoCloseCase formula
+- Added IRS validation period removal
+Tax Res RecordType Subflow that contains business logic.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Existing_Case_ChatterPost_Msg</name>
+        <dataType>String</dataType>
+        <expression>&apos;Case &apos;&amp;{!objCase.CaseNumber}&amp;&apos; was merged to this case.&apos;</expression>
+    </formulas>
+    <formulas>
+        <name>formulaAutoSolveNoContact</name>
+        <dataType>Boolean</dataType>
+        <expression>{!objCase.RecordType.Name} = &apos;Tax Res&apos; &amp;&amp;
+{!objCase.ContactEmail} = null &amp;&amp;
+{!objCase.Auto_Response_Email_Content__c} &lt;&gt; null &amp;&amp;
+{!objCase.Tax_Res_Auto_Response_Sent__c} = false &amp;&amp;
+{!objCase.IsClosed} = false &amp;&amp;
+ ISPICKVAL( {!objCase.Status} , &apos;Data Capture in Progress&apos; )</expression>
+    </formulas>
+    <formulas>
+        <name>formulaValidAutoCloseCase</name>
+        <dataType>Boolean</dataType>
+        <expression>{!objCase.ContactEmail} &lt;&gt; null &amp;&amp;
+{!objCase.Auto_Response_Email_Content__c} &lt;&gt; null &amp;&amp;
+{!objCase.Tax_Res_Auto_Response_Sent__c} = false &amp;&amp;
+{!objCase.IsClosed} = false &amp;&amp;
+( ISPICKVAL( {!objCase.Status} , &apos;Data Capture in Progress&apos; ) ||  ISPICKVAL( {!objCase.Status} , &apos;OCR Capture Complete&apos; ) )&amp;&amp;
+{!objCase.Auto_Response_Email_Content__c} &lt;&gt; {!objOldCase.Auto_Response_Email_Content__c} &amp;&amp;
+(INCLUDES({!objCase.Mass_Email_Step__c} , &apos;No Notice Attached Auto-Solve fired&apos; ) || 
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;After Gusto Auto-Solve fired&apos;) ||  
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;Prior to Gusto Auto-Solve fired&apos;) ||
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;Duplicate Notice Auto-Solve fired&apos;) || 
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;Previously Answered Auto-Solve Fired&apos;) ||
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;Previously Answered Auto-Solve Fired Closed/Solved&apos;) ||
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;Below Tolerance Auto-Solve fired&apos;))</expression>
+    </formulas>
+    <formulas>
+        <name>formulaValidSUIClosedCase</name>
+        <dataType>Boolean</dataType>
+        <expression>{!objCase.ContactEmail} &lt;&gt; null &amp;&amp;
+{!objCase.Auto_Response_Email_Content__c} &lt;&gt; null &amp;&amp;
+{!objCase.Tax_Res_Auto_Response_Sent__c} = false &amp;&amp;
+{!objCase.Is_ZP_Updated_with_SUI_rates__c} = true &amp;&amp;
+{!objCase.Is_ZP_Updated_with_SUI_rates__c} &lt;&gt; {!objOldCase.Is_ZP_Updated_with_SUI_rates__c} &amp;&amp;
+INCLUDES({!objCase.Mass_Email_Step__c} , &apos;SUI Rate Auto-Solve fired&apos; )</expression>
+    </formulas>
+    <formulas>
+        <name>New_Case_ChatterPost_Msg</name>
+        <dataType>String</dataType>
+        <expression>&apos;This case is merged to &apos;&amp; {!objCase.Related_Case__r.CaseNumber}</expression>
+    </formulas>
+    <formulas>
+        <name>Valid_PI_Autosolve_Case</name>
+        <dataType>Boolean</dataType>
+        <expression>{!objCase.ContactEmail} &lt;&gt; null &amp;&amp;
+{!objCase.Auto_Response_Email_Content__c} &lt;&gt; null &amp;&amp;
+{!objCase.Tax_Res_Auto_Response_Sent__c} = false &amp;&amp;
+{!objCase.IsClosed} = false &amp;&amp;
+( ISPICKVAL( {!objCase.Status} , &apos;Research in progress&apos;) )&amp;&amp;
+{!objCase.Auto_Response_Email_Content__c} &lt;&gt; {!objOldCase.Auto_Response_Email_Content__c} &amp;&amp;
+(INCLUDES({!objCase.Mass_Email_Step__c} , &apos;P&amp;I Late Deposit/Amendment Auto-Solve Fired&apos; ) )</expression>
+    </formulas>
+    <interviewLabel>TEMPLATE: Case Helper Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Tax Res SubFlow Helper</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Email_Message_Record</name>
+        <label>Create Email Message Record</label>
+        <locationX>50</locationX>
+        <locationY>566</locationY>
+        <connector>
+            <targetReference>Update_Auto_Solve_Email_Sent</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>HtmlBody</field>
+            <value>
+                <elementReference>EmailText</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>MessageDate</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentId</field>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>3</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>objCase.Subject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ToAddress</field>
+            <value>
+                <elementReference>objCase.ContactEmail</elementReference>
+            </value>
+        </inputAssignments>
+        <object>EmailMessage</object>
+    </recordCreates>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>314</locationX>
+        <locationY>674</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordUpdates>
+        <description>Final DML Update</description>
+        <name>Update_objCase</name>
+        <label>Update objCase</label>
+        <locationX>1370</locationX>
+        <locationY>2162</locationY>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <inputReference>list_Cases</inputReference>
+    </recordUpdates>
+    <sourceTemplate>TEMPLATE_Case_Helper_Flow</sourceTemplate>
+    <start>
+        <locationX>1244</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Initializing_Fault_Line_Details</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>EmailText</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Times; font-size: medium;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Times; font-size: medium;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;table class=&quot;ql-table-blob&quot; style=&quot;width: 629px; color: rgb(68, 68, 68); white-space: pre-wrap; font-family: Times; margin: 0px 10px 0px 1px; text-align: right;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;padding: 0px 0px 20px; vertical-align: top;&quot;&gt;&lt;table style=&quot;width: 629px;&quot; cellpadding=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;padding: var(--lwc-spacingXSmall,0.5rem);&quot;&gt;&lt;table cellpadding=&quot;0&quot; width=&quot;100%&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;padding: var(--lwc-spacingXSmall,0.5rem); width: 1px;&quot; align=&quot;center&quot; rowspan=&quot;2&quot;&gt;&lt;a style=&quot;text-decoration-line: underline;&quot; href=&quot;http://www.gusto.com/&quot;&gt;&lt;img style=&quot;max-width: 120px; margin-bottom: var(--lwc-spacingSmall,0.75rem); outline: none; line-height: 16px;&quot; alt=&quot;Gusto Logo&quot; src=&quot;https://go.gusto.com/rs/110-WOX-868/images/gusto-rebrand-logo.png&quot; width=&quot;115&quot;&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table style=&quot;vertical-align: top;&quot; align=&quot;right&quot; cellpadding=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;padding: 0px 10px; border-right: 1px solid rgb(204, 204, 204);&quot;&gt;&lt;a style=&quot;color: rgb(10, 128, 128); text-decoration-line: underline; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; line-height: 18px; font-family: Arial, sans-serif; text-align: right; white-space: nowrap;&quot; href=&quot;https://app.gusto.com/login&quot;&gt;Your Account&lt;/a&gt;&lt;/td&gt;&lt;td style=&quot;padding-left: 10px; border: 0px none;&quot;&gt;&lt;a style=&quot;color: rgb(10, 128, 128); text-decoration-line: underline; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; line-height: 18px; font-family: Arial, sans-serif; text-align: right; white-space: nowrap;&quot; href=&quot;https://support.gusto.com/&quot;&gt;Help Center&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding: 7px 0px 5px; text-align: right; vertical-align: top;&quot;&gt;&lt;span style=&quot;font-size: 20px; font-family: Arial, Helvetica, sans-serif; line-height: 24px; margin: 0px; padding: 0px; color: rgb(0, 0, 0) !important;&quot;&gt;Message From Customer Support&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p style=&quot;text-align: right;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Hi {!objCase.Contact_First_Name__c},&lt;/p&gt;&lt;p&gt;{!objCase.Auto_Response_Email_Content__c}&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Fault Message: {!$Flow.FaultMessage}
+----
+Interview Guid: {!$Flow.InterviewGuid}
+----
+Current Record: {!$Flow.CurrentRecord}
+----
+You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.  
+https://gusto.lightning.force.com/lightning/setup/Pausedflows/home</text>
+    </textTemplates>
+    <variables>
+        <description>Boolean for skipping Case Trigger</description>
+        <name>blnSkipTrigger</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Case Record List.</description>
+        <name>list_Cases</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Case Object passed from Case Handler Flow.</description>
+        <name>objCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Exception Log Event Object to capture fault path details.</description>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+    <variables>
+        <description>Input variable coming from Case After Save Handler flow. Prior Values.</description>
+        <name>objOldCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Error message &quot;No contact linked. &quot;</description>
+        <name>strMissingContactErrorMessage</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>No contact linked. </stringValue>
+        </value>
+    </variables>
+</Flow>

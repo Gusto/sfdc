@@ -1,0 +1,118 @@
+<template>
+	<template if:true={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<lightning-modal-header label="Close Case"></lightning-modal-header>
+	<template if:false={blnIsLoading}>
+		<lightning-modal-body>
+			<lightning-layout multiple-rows>
+				<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+					<div class="slds-form-element">
+						<c-case-reason-group-auto-complete-cmp
+						strcasereason={objCase.Confirm_Case_Reason__c}
+							blncasereasonfound={blnIsCaseReasonFound}
+						onselectcasereason={handleCaseReasonSelected}
+							onfiltercasereason={handleFilterCaseReason}
+						mapcasereason={map_caseReasonToGroupMap}
+							strlabel="Confirm Case Reason"
+						blnisdisabled={blnIsReadOnlyCase}
+					>
+						</c-case-reason-group-auto-complete-cmp>
+					</div>
+					<template if:true={caseReasonError}>
+						<p style="color: red">Please select a value.</p>
+					</template>
+				</lightning-layout-item>
+				<template if:true={blnIsPartnerAccountVisible}>
+					<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+							<div class="slds-form-element record-form">
+								<div class="slds-form-element__control">
+									<lightning-record-edit-form record-id={idCase} object-api-name="Case">
+										<label class="slds-form-element__label">
+											<abbr class="slds-required" title="required">*</abbr>
+											Partner Account
+										</label>
+										<lightning-input-field data-visibility="true" data-input-field="true" required="true" field-name="Partner_Account__c" data-api="Partner_Account__c" onchange={handleDataChange} value={objCase.Partner_Account__c} variant="label-hidden">
+										</lightning-input-field>
+									</lightning-record-edit-form>
+								</div>
+							</div>
+							<template if:true={partnerAccountError}>
+								<p style="color: red">Please select a value.</p>
+							</template>
+					</lightning-layout-item>
+				</template>
+				<template if:true={blnIsSubCaseReasonVisible}>
+					<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+						<div class="slds-form-element">
+							<label class="slds-form-element__label" for="unique-id-of-input">
+								<template if:true={blnIsSubCaseReasonRequired}>
+									<abbr class="slds-required" title="required">*</abbr>
+								</template>
+								Confirm Sub Case Reason
+							</label>
+							<div class="slds-form-element__icon"></div>
+							<div class="slds-form-element__control">
+								<lightning-combobox
+								required={blnIsSubCaseReasonRequired}
+								data-visibility="true"
+									variant="label-hidden"
+								class="custom-font custom-dropdown"
+								label=""
+									placeholder="Select Sub Case Reason"
+								options={list_subCaseReasons}
+									data-api="Confirm_Sub_Case_Reason__c"
+								onchange={handleDataChange}
+									value={objCase.Confirm_Sub_Case_Reason__c}
+								disabled={blnIsReadOnlyCase}
+							>
+								</lightning-combobox>
+							</div>
+							<template if:true={subReasonError}>
+								<p style="color: red">Please select a value.</p>
+							</template>
+						</div>
+					</lightning-layout-item>
+				</template>
+				<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+					<template if:true={audienceValues.data}>
+						<lightning-combobox name="progress" label="Audience" value={value} options={audienceValues.data.values} onchange={handleChange} required="true"> </lightning-combobox>
+					</template>
+					<template if:true={blnAudienceError}>
+						<p style="color: red">Please select a value.</p>
+					</template>
+				</lightning-layout-item>
+				<template if:true={stateBoolean}>
+					<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+						<template if:true={stateValues.data}>
+							<lightning-combobox name="progress" label="State" value={value} options={stateValues.data.values} onchange={handleStateChange} required = {blnIsStateRequiredVal}> </lightning-combobox>
+						</template>
+						<template if:true={stateError}>
+							<p style="color: red">Please select a value.</p>						
+						</template>
+					</lightning-layout-item>
+				</template>
+				<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+					<lightning-input type="date" label="Follow-Up Date" onchange={handleFollowUpDateChange}></lightning-input>
+				</lightning-layout-item>
+				<template if:true={countryBoolean}>
+					<lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+						<template if:true={countryValues.data}>
+							<lightning-combobox name="country" label="Country" value={value} options={countryValues.data.values} onchange={handleCountryChange} required>
+							</lightning-combobox>
+						</template>
+						<template if:true={countryError}>
+							<p style="color: red">Please select a value.</p>						
+						</template>
+					</lightning-layout-item>
+				</template>
+			</lightning-layout>
+		</lightning-modal-body>
+		<lightning-modal-footer>
+			<div class="slds-m-top_medium">
+				<lightning-button variant="brand" label="Save" onclick={handleSave}></lightning-button>
+				<lightning-button variant="neutral" label="Cancel" onclick={closeModal}></lightning-button>
+			</div>
+		</lightning-modal-footer>
+	</template>
+</template>

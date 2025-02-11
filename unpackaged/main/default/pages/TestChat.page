@@ -1,0 +1,375 @@
+<apex:page >
+
+    <html>
+        <body>
+            <input type="text" id="bid" name="bid"></input>
+            <button id="myBtnOnline">Chat Now</button>
+            <table>
+                <thead>
+                    <tr>
+                        <td><b>Dev Name</b></td>
+                        <td><b>Button id</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Test Chat</td>
+                        <td>5731M000000D7H6</td>
+                    </tr>
+                    <tr>
+                        <td>PRC_Payroll_Class_3</td>
+                        <td>5731M000000D7Fj</td>
+                    </tr>
+                    <tr>
+                        <td>PRC_Concierge_Payroll_Class_3</td>
+                        <td>5731M000000D7FU</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Concierge_Benefits_Class_1</td>
+                        <td>5731M000000D7EW</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Benefits_Class_3</td>
+                        <td>5731M000000D7ER</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Payroll_Class_2</td>
+                        <td>5731M000000D7F5</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Payroll_Class_3</td>
+                        <td>5731M000000D7FA</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Concierge_Payroll_Class_1</td>
+                        <td>5731M000000D7El</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Concierge_Payroll_Class_2</td>
+                        <td>5731M000000D7Eq</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Concierge_Payroll_Class_3</td>
+                        <td>5731M000000D7Ev</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Concierge_Benefits_Class_2</td>
+                        <td>5731M000000D7Eb</td>
+                    </tr>
+                    <tr>
+                        <td>FSC_Concierge_Benefits_Class_3</td>
+                        <td>5731M000000D7Eg</td>
+                    </tr>
+                    <tr>
+                        <td>PRC</td>
+                        <td>5731M000000D7FF</td>
+                    </tr>
+                    <tr>
+                        <td>FSC</td>
+                        <td>5731M000000D7EC</td>
+                    </tr>
+                    <tr>
+                        <td>PRC_VIP_Payroll_Class_2</td>
+                        <td>5731M000000D7Ft</td>
+                    </tr>
+                    <tr>
+                        <td>PRC_VIP_Payroll_Class_3</td>
+                        <td>5731M000000D7Fy</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </body>
+        <style type='text/css'>
+            .embeddedServiceHelpButton .helpButton .uiButton {
+                background-color: #005290;
+                font-family: "Arial", sans-serif;
+            }
+            .embeddedServiceHelpButton .helpButton .uiButton:focus {
+                outline: 1px solid #005290;
+            }
+        </style>
+        
+        <style type='text/css'>
+            .embeddedServiceHelpButton .helpButton .uiButton {
+                background-color: #0A8080;
+                font-family: "Arial", sans-serif;
+            }
+            .embeddedServiceHelpButton .helpButton .uiButton:focus {
+                outline: 1px solid #0A8080;
+            }
+        </style>
+        
+        <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+        <script type='text/javascript'>
+            var chatKey;
+            const url='https://www.workato.com/webhooks/rest/e141f32e-f840-4349-a461-df043c04026c/salesforcechat';
+            var initESW = function(gslbBaseURL, buttonid, launch) {                
+                embedded_svc.addEventHandler("onChatEndedByChasitor", function(data) {
+                    const Http = new XMLHttpRequest();
+                    Http.open("POST", url);
+                    Http.setRequestHeader("Content-Type", "application/json");
+                    Http.send(JSON.stringify(data));
+                });
+
+                embedded_svc.addEventHandler("onChatEndedByAgent", function(data) {
+                    const Http = new XMLHttpRequest();
+                    Http.open("POST", url);
+                    Http.setRequestHeader("Content-Type", "application/json");
+                    Http.send(JSON.stringify(data));
+                });
+                
+                embedded_svc.settings.displayHelpButton = true; //Or false
+                embedded_svc.settings.language = 'en-US'; //For example, enter 'en' or 'en-US'
+                //embedded_svc.settings.prechatBackgroundImgURL = ''';
+                embedded_svc.settings.defaultMinimizedText = 'Chat with an Advocate'; //(Defaults to Chat with an Expert)
+                embedded_svc.settings.disabledMinimizedText = 'Advocates Offline'; //(Defaults to Agent Offline)
+        
+                //embedded_svc.settings.loadingText = ''; //(Defaults to Loading)
+                //embedded_svc.settings.storageDomain = 'yourdomain.com'; //(Sets the domain for your deployment so that visitors can navigate subdomains during a chat session)
+        
+                // Settings for Chat
+                //embedded_svc.settings.directToButtonRouting = function(prechatFormData) {
+                    // Dynamically changes the button ID based on what the visitor enters in the pre-chat form.
+                    // Returns a valid button ID.
+                //};
+                //embedded_svc.settings.prepopulatedPrechatFields = embedded_svc.settings.prepopulatedPrechatFields = {}; //Sets the auto-population of pre-chat form fields
+                //embedded_svc.settings.fallbackRouting = []; //An array of button IDs, user IDs, or userId_buttonId
+                //embedded_svc.settings.offlineSupportMinimizedText = '...'; //(Defaults to Contact Us)
+                embedded_svc.settings.extraPrechatFormDetails = [{  
+                    "label": "Digital IVR Subject",
+                    "value": "third_level Name",
+                    "transcriptFields": [ "Digital_IVR_Subject__c" ],
+                    "displayToAgent": false
+                },{  
+                    "label": "DIVR Id",
+                    "value": "SomeDIVRId",
+                    "transcriptFields": [ "DIVR_Id__c" ],
+                    "displayToAgent": true
+                },{  
+                    "label": "Preferred Name",
+                    "value": "{PREFERRED NAME}",
+                    "transcriptFields": [ "Preferred_Name__c" ],
+                    "displayToAgent": true
+                },{
+                    "label": "First Name",
+                    "value": "{CUSTOMER FIRSTNAME}",
+                    "displayToAgent": true
+                },{
+                    "label": "Last Name",
+                    "value": "{CUSTOMER LASTNAME}",
+                    "displayToAgent": true
+                },{
+                    "label": "Subject",
+                    "value": "third_level",
+                    "displayToAgent": true
+                },{
+                    "label": "Email",
+                    "value": "alex.xiong@gusto.com",
+                    "transcriptFields": [ "Chat_Visitor_Email__c" ],
+                    "displayToAgent": true
+                },{
+                    "label": "ZP Company Id",
+                    "value": "{CUSTOMER ZP COMPANY ID}",
+                    "displayToAgent": true
+                },{
+                    "label": "ZP User Id",
+                    "value": "{CUSTOMER ZP User ID}",
+                    "displayToAgent": true
+                },{
+                    "label": "Case Origin",
+                    "value": "Gusto",
+                    "displayToAgent": true
+                },{
+                    "label": "RecordType",
+                    "Name" : "RecordType",
+                    "value": "0121M000001Yf5X",
+                    "displayToAgent": true
+                },{
+                    "label": "Priority",
+                    "value": "Medium",
+                    "displayToAgent": true
+                },{
+                    "label": "Direction",
+                    "value": "Inbound",
+                    "displayToAgent": true
+                },{
+                    "label": "Type",
+                    "value": "Payroll Care",
+                    "displayToAgent": true
+                },{
+                    "label": "IVR Journey",
+                    "value": "IvrRecord",
+                    "displayToAgent": true
+                },{
+                    "label": "First Level",
+                    "value": "Payroll and Taxes",
+                    "displayToAgent": true,
+                },{
+                    "label": "Second Level",
+                    "value": "Paying your team",
+                    "displayToAgent": true,
+                },{
+                    "label": "Third Level",
+                    "value": "Run a regular payroll",
+                    "displayToAgent": true,
+                },{
+                    "label": "User Role Id",
+                    "value": "{USER ROLE ID}",
+                    "transcriptFields": [ "User_Role_Id__c" ],
+                    "displayToAgent": true
+                }
+                
+                ];
+                embedded_svc.settings.extraPrechatInfo = [{
+                    "entityName": "Contact",
+                    "showOnCreate": true,
+                    "linkToEntityName": "Case",
+                    "linkToEntityField": "ContactId",
+                    "saveToTranscript": "ContactId",
+                    "entityFieldMaps": [{
+                        "isExactMatch": false,
+                        "fieldName": "FirstName",
+                        "doCreate": false,
+                        "doFind": false,
+                        "label": "First Name"
+                    }, {
+                        "isExactMatch": false,
+                        "fieldName": "LastName",
+                        "doCreate": false,
+                        "doFind": false,
+                        "label": "Last Name"
+                    }, {
+                        "isExactMatch": true,
+                        "fieldName": "Email",
+                        "doCreate": false,
+                        "doFind": true,
+                        "label": "Email"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "ZP_User_Id__c",
+                        "doCreate": false,
+                        "doFind": false,
+                        "label": "ZP User Id"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "Account.ZP_Company_ID__c",
+                        "doCreate": false,
+                        "doFind": false,
+                        "label": "ZP Company Id"
+                    }]
+                    }, {
+                    "entityName": "Case",
+                    "showOnCreate": true,
+                    "saveToTranscript": "CaseId",
+                    "entityFieldMaps": [{
+                        "isExactMatch": false,
+                        "fieldName": "Subject",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "Subject"
+                    }, {
+                        "isExactMatch": false,
+                        "fieldName": "RecordTypeId",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "RecordType"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "Status",
+                        "doCreate": false,
+                        "doFind": true,
+                        "label": "Status"
+                    }, {
+                        "isExactMatch": false,
+                        "fieldName": "Origin",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "Case Origin"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "Priority",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "Priority"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "Direction__c",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "Direction"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "First_Level__c",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "First Level"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "Second_Level__c",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "Second Level"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "Third_Level__c",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "Third Level"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "User_Role_Id__c",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "User Role Id"
+                    },{
+                        "isExactMatch": false,
+                        "fieldName": "DIVR_Id__c",
+                        "doCreate": true,
+                        "doFind": false,
+                        "label": "DIVR Id"
+                    }]
+                    },{ 
+                    "entityName": "Account",
+                    "showOnCreate": true,
+                    "linkToEntityName": "Case",
+                    "linkToEntityField": "AccountId",
+                    "saveToTranscript": "AccountId",
+                    "entityFieldMaps": [{
+                        "isExactMatch": true,
+                        "fieldName": "ZP_Company_Id__c",
+                        "doCreate": false,
+                        "doFind": true,
+                        "label": "ZP Company Id"
+                    }]
+                }]
+                embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+                embedded_svc.settings.entryFeature = 'LiveAgent';
+
+                embedded_svc.init(
+                    "{!$Label.Internal_chat_org_url}",
+                    "{!$Label.External_chat_site_url}",
+                    gslbBaseURL,
+                    "{!$Label.Internal_chat_org_id}",
+                    'CX_Chat',
+                    {
+                        baseLiveAgentContentURL: "{!$Label.Internal_chat_baseLiveAgentContentURL}",
+                        deploymentId: "{!$Label.Internal_chat_deploymentId}",
+                        buttonId: buttonid,
+                        baseLiveAgentURL: "{!$Label.Internal_chat_baseLiveAgentURL}",
+                        eswLiveAgentDevName: "{!$Label.External_chat_eswLiveAgentDevName}",
+                        isOfflineSupportEnabled: false
+                    }
+                );
+            };
+                
+            document.getElementById("myBtnOnline").addEventListener("click", function() {
+                var launch = true;
+                var buttonid = document.getElementById("bid").value;
+                //get embedded service details - return here and then send to the initESW
+                
+                initESW('https://service.force.com',buttonid,launch);
+            });
+        </script>
+    </html>
+</apex:page>

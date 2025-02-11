@@ -1,0 +1,91 @@
+<apex:component access="global" controller="NPRNOrderNotificationComponentController">
+    <apex:attribute name="CaseId" type="Id" description="Case Id" assignTo="{!caseRecordId}" access="global" />
+    <apex:attribute name="opportunityId" type="Id" description="Opportunity Id" assignTo="{!oppId}" access="global" />
+    <apex:attribute name="oppDate" type="Date" description="Opportunity Effective Date" assignTo="{!oppEffDate}" access="global" />
+    <apex:attribute name="contactName" type="String" description="Contact Name" assignTo="{!conName}" access="global" />
+    <apex:attribute name="boOwnerName" type="String" description="Benefit Order Owner Name" assignTo="{!benefitOwnerName}" access="global" />
+    <apex:attribute name="oppWaitingPeriod" type="String" description="Waiting Period" assignTo="{!waitingPeriod}" access="global" />
+
+    <div style="font-size: 15px;">
+        <apex:outputPanel rendered="{!opp.RecordType.Name=='Benefits New Plan'}">
+            <p>
+                Hi {!conName},<br />
+                <p>
+                    Great job choosing benefits for your team, it’s been a pleasure working with you. Please <a href="https://app.gusto.com/benefits">review the summary of your team’s benefits</a> for
+                    <apex:outputText value=" {0,date,MM/dd/yy}"> <apex:param value="{!oppEffDate}" /> </apex:outputText> . Your next opportunity to make changes to your team’s benefits will be during your group’s renewal next year.
+                </p>
+
+                <p>
+                    Once our team has reviewed your benefits package and confirmed that initial carrier requirements are met, you'll receive an email from your onboarding advocate (newplans@gusto.com) that includes your open enrollment
+                    details and required action items. For more details, please check out the New Benefits with Gusto - Process Overview PDF attached.
+                </p>
+
+                <p>Please respond to this email if you have any questions in the meantime. Your onboarding advocate will be happy to assist!</p>
+
+                <apex:outputPanel rendered="{!medicalCarrierSubmissionDays!=null && medicalCarrierSubmissionDays<21}">
+                    <p>
+                        During <b>open enrollment</b>, we may need additional documentation from you. Please be on the lookout for emails from <b>newplans@gusto.com</b> and respond within 48 hours to make sure we stay on track for a
+                        <apex:outputText value=" {0,date,MM/dd/yy}"> <apex:param value="{!oppEffDate}" /> </apex:outputText> start date
+                    </p>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!medicalCarrierSubmissionDays!=null && medicalCarrierSubmissionDays>=21}">
+                    <p>
+                        During <b>open enrollment</b>, we may need additional documentation from you. Please be on the lookout for emails from <b>newplans@gusto.com</b> and respond within 24 hours to make sure we stay on track for a
+                        <apex:outputText value=" {0,date,MM/dd/yy}"> <apex:param value="{!oppEffDate}" /> </apex:outputText> start date.
+                    </p>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!blnIsSpecialEnrolled}">
+                    <p>
+                        As a reminder, your application will be submitted as a <a href="https://gusto.com/blog/health-insurance/small-group-special-open-enrollment-period">Special Enrollment</a> group. During this period, insurance carriers
+                        have relaxed guidelines to allow small companies access to health insurance. However, this also means there are strict deadlines. To ensure we meet them, please expect the following:
+                    </p>
+                    <ul>
+                        <li>A shorter open enrollment window. This could be anywhere from 3-5 business days.</li>
+                        <li>Diligent follow-up to ensure all eligible employees complete open enrollment.</li>
+                        <li>All requested documents and information should be provided as soon as possible.</li>
+                    </ul>
+                    <p>If carrier requirements aren't met by 12/10 (<strong>at the latest</strong>), then your company’s health insurance won’t start on 1/1.</p>
+                </apex:outputPanel>
+            </p>
+
+            <div>
+                <p>
+                    <b>Carrier Payment Information</b><br />
+                    The company is responsible for paying the premium(s) in full directly to the insurance carrier(s). Employee contributions will be deducted from employee paychecks once benefits are active. These will be listed as
+                    “Employee Medical Deduction” on each employee’s payroll and will remain in the company account so you can pay the full invoice. In other words, the company pays the carrier directly at the beginning of the month, and the
+                    employee pays their portion through payroll deductions during that month.
+                </p>
+            </div>
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!opp.RecordType.Name=='Benefits Renewal'}">
+            <p>
+                Hi {!conName},<br />
+                <apex:outputPanel >
+                    <p>
+                        Thank you for confirming your benefits package for the upcoming plan year! Please <a href="https://app.gusto.com/benefits">review the summary of your team’s benefits</a> for <apex:outputText value=" {0,date,MM/dd/yy}"> <apex:param value="{!oppEffDate}" /> </apex:outputText>. Your next opportunity to make changes to your team’s benefits will be during your group’s renewal next year.
+                    </p>
+
+                    <p>
+                        Once our team has reviewed your benefits package and confirmed that carrier requirements are met, you'll receive an email from your onboarding advocate (renewals@gusto.com) with your open enrollment details and next steps. Please respond to this email if you have any questions. Your onboarding advocate will be happy to assist!
+                    </p>
+                </apex:outputPanel>
+            </p>
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!(opp.RecordType.Name == 'Benefits New Plan' && objConfig.End_of_Year_Insert__c)}"> <apex:outputText value="{!NEWPLAN_MACRO}" escape="false" /><br /> </apex:outputPanel>
+        <apex:outputPanel rendered="{!(opp.RecordType.Name == 'Benefits Renewal' && objConfig.End_of_Year_Insert__c)}"> <apex:outputText value="{!RENEWAL_MACRO}" escape="false" /><br /> </apex:outputPanel>
+        <br />
+
+        <apex:outputPanel rendered="{!opp.RecordType.Name=='Benefits Renewal' && blnIsAdvisingIncludedInSignature}">
+            Your Benefits Advising Team<br /> —<br /> Customer Experience | Advising<br /> Gusto | The people platform built for small businesses<br />
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!((opp.RecordType.Name == 'Benefits New Plan') || (opp.RecordType.Name == 'Benefits Renewal' && !blnIsAdvisingIncludedInSignature))}">
+            Best, <br />
+            {!opp.Owner.FirstName}
+        </apex:outputPanel>
+        <br />
+        <br />
+    </div>
+</apex:component>

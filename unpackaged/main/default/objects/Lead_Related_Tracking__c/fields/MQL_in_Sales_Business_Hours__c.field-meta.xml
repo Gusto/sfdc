@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MQL_in_Sales_Business_Hours__c</fullName>
+    <description>If MQL DateTime between 8am MST and 5pm MST then this box is checked.</description>
+    <formula>AND(
+  WEEKDAY(DATEVALUE(MQL_Datetime__c)) &lt;&gt; 1,
+  WEEKDAY(DATEVALUE(MQL_Datetime__c)) &lt;&gt; 7, 
+  OR(
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 8,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 9,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 10,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 11,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 12,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 13,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 14,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 15,
+    HOUR(TIMEVALUE(MQL_Datetime__c))-7 = 16
+  )
+)</formula>
+    <inlineHelpText>If MQL DateTime between 8am MST and 5pm MST then this box is checked.</inlineHelpText>
+    <label>MQL in Sales Business Hours</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

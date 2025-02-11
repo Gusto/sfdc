@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>Case Escalation After Save {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Escalation After Save</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Case_Owner</name>
+        <label>Update Case Owner</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Case__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>OwnerId</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_Case_Owner</targetReference>
+        </connector>
+        <filterFormula>ISNew() || (ISCHANGED({!$Record.OwnerId}) )</filterFormula>
+        <object>Case_Escalation__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

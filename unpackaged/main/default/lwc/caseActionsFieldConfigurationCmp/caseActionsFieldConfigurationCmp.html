@@ -1,0 +1,369 @@
+<template>
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+
+    <div class="slds-theme_default">
+        <br />
+        <div class="slds-text-heading_medium slds-align_absolute-center">
+            Field Configuration
+        </div>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="6" padding="around-small">
+                <div class="slds-text-align_center">
+                    <lightning-combobox label="Select SObject Type" value={strSelectedSObjectType}
+                        placeholder="Select SObject Type" options={list_sObject} onchange={handleSObjectTypeSelected}>
+                    </lightning-combobox>
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" padding="around-small">
+                <div class="slds-text-align_center">
+                    <lightning-combobox label="Select Display Type" value={strSelectedDisplayType}
+                        placeholder="Select Display Type" options={list_displayTypes}
+                        onchange={handleDisplayTypeSelected}></lightning-combobox>
+                </div>
+            </lightning-layout-item>
+
+            <template if:false={blnIsRelatedList}>
+
+                <lightning-layout-item size="12" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <lightning-combobox value={strSelectedRecordType} name="queue" label="Select Record Type"
+                            placeholder="Select Record Type" options={list_caseRecordType}
+                            onchange={handleRecordTypeSelected}></lightning-combobox>
+                    </div>
+                </lightning-layout-item>
+
+                <template if:true={blnRecordTypeSelected}>
+
+                    <template if:false={blnIsConfigFound}>
+                        <div class=" slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                            <h2>No active config found for <b> {strSelectedRecordType} </b> record type of SObject Type
+                                <b> {strSelectedSObjectType} </b> for display type <b> {strSelectedDisplayType} </b>.
+                            </h2>
+                        </div>
+                    </template>
+                    <lightning-layout-item size="6" padding="around-small">
+                        <div class="slds-text-align_center">
+                            <c-auto-complete-cmp autocompletelist={list_searchFields} label="Search Fields"
+                                onfilterlist={handleFilterList} onfilterselected={handleFilterSelected}
+                                icon="standard:sobject_collection" selectedvalue={strSelectedField}></c-auto-complete-cmp>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="slds-text-align_center">
+                            <lightning-dual-listbox name="languages" label="Select Fields"
+                                source-label="Available Fields" selected-label="Selected Fields" options={list_caseFields}
+                                onchange={handleFieldChange} value={list_selectedValues}>
+                            </lightning-dual-listbox>
+                        </div>
+                    </lightning-layout-item>
+
+                    <template if:true={blnFieldSelected}>
+
+
+                        <lightning-layout-item size="12" padding="around-small">
+                            <div class="slds-align_absolute-center">
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" style="text-align: center;"
+                                                    title="Field Name">
+                                                    Field Name</div>
+                                            </th>
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" style="text-align: center;"
+                                                    title="Override Label">Override Label</div>
+                                            </th>
+                                            <template if:false={blnIsDisplayTypeOutput}>
+
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Input/Output">Input/Output</div>
+                                                </th>
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Visibility">Visibility</div>
+                                                </th>
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Visibility">Required</div>
+                                                </th>
+
+                                            </template>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" style="text-align: center;"
+                                                    title="Visibility">
+                                                    Size</div>
+                                            </th>
+                                        </tr>
+                                        <template for:each={list_selectedCaseFields} for:item="selectedField">
+                                            <tr key={selectedField.label} class="slds-hint-parent">
+                                                <td data-label="Field Name">
+                                                    <div class="slds-truncate" title={selectedField.label}>
+                                                        {selectedField.label}
+                                                    </div>
+                                                </td>
+
+                                                <td data-label="Override Label">
+                                                    <div class="slds-truncate" title={selectedField.label}>
+                                                        <lightning-input variant="label-hidden" type="text"
+                                                            value={selectedField.overrideLabel}
+                                                            placeholder={selectedField.label} label=""
+                                                            data-label={selectedField.label}
+                                                            onchange={handleOverrideLabelChange}></lightning-input>
+                                                    </div>
+                                                </td>
+
+                                                <template if:false={blnIsDisplayTypeOutput}>
+                                                    <td data-label="Input Output Toggle">
+                                                        <div class="slds-truncate" title={selectedField.label}>
+
+                                                            <template if:false={selectedField.input}>
+                                                                <lightning-input type="toggle" checked label=""
+                                                                    data-label={selectedField.label}
+                                                                    message-toggle-active="Output"
+                                                                    message-toggle-inactive="Input"
+                                                                    onchange={handleToggleChange} name="input1">
+                                                                </lightning-input>
+                                                            </template>
+
+                                                            <template if:true={selectedField.input}>
+                                                                <lightning-input type="toggle" label=""
+                                                                    data-label={selectedField.label}
+                                                                    message-toggle-active="Output"
+                                                                    message-toggle-inactive="Input"
+                                                                    onchange={handleToggleChange} name="input1">
+                                                                </lightning-input>
+                                                            </template>
+
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Visibility Toggle">
+                                                        <div class="slds-truncate" title={selectedField.label}>
+
+                                                            <template if:true={selectedField.isVisible}>
+                                                                <lightning-input type="toggle" label=""
+                                                                    data-label={selectedField.label}
+                                                                    message-toggle-active="Visible" checked
+                                                                    message-toggle-inactive="Hidden"
+                                                                    onchange={handleVisibilityChange} name="input1">
+                                                                </lightning-input>
+                                                            </template>
+
+                                                            <template if:false={selectedField.isVisible}>
+                                                                <lightning-input type="toggle" label=""
+                                                                    data-label={selectedField.label}
+                                                                    message-toggle-active="Visible"
+                                                                    message-toggle-inactive="Hidden"
+                                                                    onchange={handleVisibilityChange} name="input1">
+                                                                </lightning-input>
+                                                            </template>
+                                                        </div>
+                                                    </td>
+
+                                                    <td data-label="Required Toggle">
+                                                        <div class="slds-truncate" title={selectedField.label}>
+                                                            <template if:true={selectedField.isRequired}>
+                                                                <lightning-input type="toggle" label=""
+                                                                    data-label={selectedField.label}
+                                                                    message-toggle-active="Required" checked
+                                                                    message-toggle-inactive="Not Required"
+                                                                    onchange={handleRequiredChange} name="input1">
+                                                                </lightning-input>
+                                                            </template>
+
+                                                            <template if:false={selectedField.isRequired}>
+                                                                <lightning-input type="toggle" label=""
+                                                                    data-label={selectedField.label}
+                                                                    message-toggle-active="Required"
+                                                                    message-toggle-inactive="Not Required"
+                                                                    onchange={handleRequiredChange} name="input1">
+                                                                </lightning-input>
+                                                            </template>
+                                                        </div>
+                                                    </td>
+                                                </template>
+                                                <td data-label="Size">
+                                                    <div title={selectedField.label}>
+                                                        <!-- <lightning-slider label=""  data-label={selectedField.label} variant="label-hidden" min="3" max="12" value={selectedField.size} step="3" onchange={handleSizeChange} ></lightning-slider> -->
+
+                                                        <lightning-combobox data-label={selectedField.label} label=""
+                                                            variant="label-hidden" placeholder="Size"
+                                                            options={sizeOptions} value={selectedField.size}
+                                                            onchange={handleSizeChange}>
+                                                        </lightning-combobox>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </thead>
+                                </table>
+                            </div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size="12" padding="around-small">
+                            <div class="slds-text-align_center">
+                                <lightning-combobox name="queue"
+                                    label="Select fields to conditionally display based on criteria"
+                                    placeholder="Select conditional display fields" options={list_selectedCaseFields}
+                                    onchange={handleConditionalDisplayFields} value={strFilterValue}></lightning-combobox>
+                            </div>
+                        </lightning-layout-item>
+
+                        <template if:true={blnIsFilterCriteriaVisible}>
+                            <lightning-layout-item size="12" padding="around-small">
+
+                                <template if:true={blnNoFilterWarningMessage}>
+                                    <div class=" slds-notify_alert slds-theme_alert-texture slds-theme_warning"
+                                        role="alert">
+                                        <h2>It is empty down here. Start adding new filter criteria.
+                                        </h2>
+                                    </div>
+                                </template>
+
+                                <template if:false={blnNoFilterWarningMessage}>
+                                    <template for:each={list_criteria} for:item="criteria">
+                                        <lightning-layout key={criteria.key} multiple-rows class="align-center">
+                                            <lightning-layout-item size="4" padding="around-small">
+                                                <lightning-combobox name="queue" label="Field" placeholder="Field"
+                                                    variant="label-hidden" options={list_caseFields}
+                                                    onchange={handleFilterCriteriaChange} value={criteria.name}
+                                                    data-key={criteria.key} data-api="name"></lightning-combobox>
+
+                                            </lightning-layout-item>
+
+                                            <lightning-layout-item size="4" padding="around-small">
+                                                <lightning-combobox name="queue" label="Criteria" placeholder="Criteria"
+                                                    variant="label-hidden" options={list_criteriaOptions}
+                                                    onchange={handleFilterCriteriaChange} data-key={criteria.key}
+                                                    data-api="operator" value={criteria.operator}></lightning-combobox>
+                                            </lightning-layout-item>
+
+                                            <lightning-layout-item size="3" padding="around-small">
+                                                <lightning-input type="text" label="Value" variant="label-hidden"
+                                                    onchange={handleFilterCriteriaChange} data-key={criteria.key}
+                                                    data-api="value" value={criteria.value}></lightning-input>
+                                            </lightning-layout-item>
+
+                                            <lightning-layout-item size="1" padding="around-small">
+                                                <lightning-button-icon v icon-name="utility:delete"
+                                                    alternative-text="Delete" title="Delete" data-api={criteria.key}
+                                                    onclick={handleDelete}></lightning-button-icon>
+                                            </lightning-layout-item>
+
+                                        </lightning-layout>
+
+                                    </template>
+                                </template>
+
+                                <div class="slds-align_absolute-center slds-var-p-top_medium">
+                                    <br />
+                                    <lightning-button variant="brand" label="Add Filter Criteria" title="Primary action"
+                                        onclick={handleFilterCriteriaClick}></lightning-button>
+                                </div>
+                            </lightning-layout-item>
+                        </template>
+
+                        <lightning-layout-item size="12" padding="around-small">
+                            <div class="custom-box slds-box slds-var-p-around_medium slds-text-align_center">
+                                <lightning-button-group>
+                                    <lightning-button label="Save" variant="brand" icon-name="utility:save"
+                                        onclick={handleSubmit}></lightning-button>
+                                    <lightning-button label="Cancel" variant="neutral"
+                                        icon-name="utility:cancel_file_request" onclick={handleCancel}>
+                                    </lightning-button>
+                                </lightning-button-group>
+                            </div>
+                        </lightning-layout-item>
+
+                    </template>
+                </template>
+            </template>
+        </lightning-layout>
+        <template if:true={blnIsRelatedList}>
+            <lightning-layout multiple-rows>
+
+                <lightning-layout-item size="12" padding="around-small">
+                    <div class="slds-text-align_center">
+                        <lightning-combobox required value={strLookupField} label="Select Lookup field"
+                            placeholder="Select Lookup field" options={list_lookupFields}
+                            onchange={handleLookupFieldSelected}></lightning-combobox>
+
+                    </div>
+                </lightning-layout-item>
+
+                <template if:true={blnIsRelatedObjectVisible}>
+
+                    <lightning-layout-item size="4" padding="around-small">
+                        <div class="slds-text-align_center">
+                            <lightning-combobox required value={strRelatedObject} label={strRelatedObjectLabel}
+                                placeholder={strRelatedObjectLabel} options={list_relatedObjects}
+                                onchange={handleRelatedObjectSelected}></lightning-combobox>
+
+                        </div>
+                    </lightning-layout-item>
+
+                    <template if:true={blnIsRelatedObjectSelected}>
+                        <lightning-layout-item size="4" padding="around-small">
+                            <div class="slds-text-align_center">
+                                <lightning-combobox required value={strRelatedField} label={strRelatedFieldLabel}
+                                    placeholder={strRelatedFieldLabel} options={list_relatedFields}
+                                    onchange={handleRelatedFieldSelected}></lightning-combobox>
+
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+
+                    <template if:true={relatedFieldSelected}>
+                        <lightning-layout-item size="4" padding="around-small">
+                            <div class="slds-text-align_center">
+                                <lightning-input disabled label={relatedOnFieldLabel} value={relatedOnFieldValue}>
+                                </lightning-input>
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+
+                    <template if:true={relatedRecordTypeVisible}>
+
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-dual-listbox name="languages" label="Select Record Type"
+                                source-label="Available record types" selected-label="Selected record types"
+                                options={list_relatedRecordType} value={strSelectedRelatedRecordType} onchange={handleRelatedRecordTypeChange}>
+                            </lightning-dual-listbox>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-text-align_center">
+                                <c-auto-complete-cmp autocompletelist={list_relatedRecordFieldSearch} label="Search Fields"
+                                    onfilterlist={handleRelatedFilterList} onfilterselected={handleRelatedFilterSelected}
+                                    icon="standard:sobject_collection" selectedvalue={strSelectedField}></c-auto-complete-cmp>
+                            </div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-dual-listbox required name="languages" label="Select fields"
+                                source-label="Available fields" selected-label="Selected fields"
+                                options={list_relatedRecordFields} value={strSelectedRelatedField} onchange={handleRelatedFieldChange} message-when-value-missing="Please select at least one field" >
+                            </lightning-dual-listbox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size="12" padding="around-small">
+                            <div class="slds-align_absolute-center">
+                                <lightning-button label="Save Related list configuration" onclick={handleSaveRelatedConfig} variant="brand">
+                                </lightning-button>
+                            </div>
+                        </lightning-layout-item>
+
+                    </template>
+
+                </template>
+
+            </lightning-layout>
+        </template>
+
+    </div>
+</template>

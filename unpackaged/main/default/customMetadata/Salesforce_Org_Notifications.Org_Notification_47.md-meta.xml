@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Org Notification 47</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/kA48Y000000DFhOSAW</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Notification__c</field>
+        <value xsi:type="xsd:string">There are more than 50,000 ZP User Roles not processed. Please check report and re-process records accordingly!</value>
+    </values>
+    <values>
+        <field>Payops_Notification__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Point_Of_Contact__c</field>
+        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+    </values>
+    <values>
+        <field>Point_of_Contact_Name__c</field>
+        <value xsi:type="xsd:string">Praveen</value>
+    </values>
+    <values>
+        <field>Query_Return_Type__c</field>
+        <value xsi:type="xsd:string">Integer</value>
+    </values>
+    <values>
+        <field>Record_Threshold__c</field>
+        <value xsi:type="xsd:double">50000.0</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/00O8Y000008XJ9r</value>
+    </values>
+    <values>
+        <field>SOQL_Query__c</field>
+        <value xsi:type="xsd:string">SELECT COUNT() FROM ZP_User_Role__c WHERE (Processing_State__c = &apos;Error&apos; OR Processing_State__c = &apos;Queued&apos;)</value>
+    </values>
+</CustomMetadata>

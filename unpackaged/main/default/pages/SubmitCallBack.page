@@ -1,0 +1,63 @@
+<apex:page controller="CallBackController" docType="html-5.0">
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <table>
+        <tr>
+            <td width="50%">
+                <div class="gusto" >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <apex:form rendered="{!NOT(isSuccess)}">
+                        <apex:pageBlock id="highlightBlock"  >
+                            <apex:pageBlockButtons >
+                                <apex:commandButton action="{!submitCallBack}" value="Submit Callback"/>
+                            </apex:pageBlockButtons>
+                            <apex:pageblockSection columns="1" id="BlockSection" >
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Queue"></apex:outputLabel>
+                                    <apex:selectList multiselect="false" size="1" value="{!queueId}">
+                                        <apex:selectOptions value="{!queueList}"></apex:selectOptions>
+                                    </apex:selectList>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Phone"></apex:outputLabel>
+                                    <apex:inputText value="{!Phone}"></apex:inputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Name"></apex:outputLabel>
+                                    <apex:inputText value="{!Name}"></apex:inputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Requested Time"></apex:outputLabel>
+                                    <apex:outputField value="{!tempCase.Auto_Close_Date_Time__c}" ></apex:outputField>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Route Callback to me"></apex:outputLabel>
+                                    <img src="/img/checkbox_{!IF(bool_UserCallBack == TRUE, '', 'un')}checked.gif"/>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageblockSection>
+                        </apex:pageBlock>
+                        
+                    </apex:form>
+                    
+                </div>                
+            </td>
+            <td width="50%">
+                <apex:outputPanel rendered="{!NOT(isSuccess)}">
+                <apex:pageBlock title="Case Info">
+                    <apex:pageBlockSection >
+                        <apex:outputField value="{!cs.SuppliedPhone}"/>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+                
+                <apex:pageBlock title="Case Contact Info">
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputField value="{!c.Phone}"/>
+                        <apex:outputField value="{!c.MobilePhone}"/>
+                        <apex:outputField value="{!c.HomePhone}"/>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+                </apex:outputPanel>
+            </td>
+        </tr>
+    </table>
+    
+</apex:page>

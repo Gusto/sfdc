@@ -1,0 +1,66 @@
+<template>
+	<div class="slds-form-element">
+		<label class="slds-form-element__label" for="combobox-id-13">{label}</label>
+		<div class="slds-form-element__control">
+			<div class="slds-combobox_container">
+				<div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+					<div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none" onmouseleave={handleFocusOut} onmouseover={handleMouseOver}>
+						<lightning-input
+							type="text"
+							variant="label-hidden"
+							autocomplete="off"
+							value={selectedvalue}
+							onfocus={handleChange}
+							onchange={handleChange}
+							disabled={blnDisabled}
+							placeholder={strPlaceHolder}
+							data-id={id}
+						></lightning-input>
+						<template if:true={selectedvalue}>
+							<template if:false={blnDisabled}>
+								<button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" onclick={handleClose} title="Remove selected option" style={customTop}>
+									<lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+									<span class="slds-assistive-text">Remove selected option</span>
+								</button>
+							</template>
+						</template>
+						<template if:false={selectedvalue}>
+							<span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+								<lightning-icon icon-name="utility:search" size="x-small"></lightning-icon>
+							</span>
+						</template>
+
+						<template if:true={blnIsVisible}>
+							<div class="drop-down-list" style="position: relative">
+								<div id="listbox-id-15" class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox" style="position: absolute; top: -2px">
+									<ul class="slds-listbox slds-listbox_vertical" role="presentation">
+										<template for:each={autocompletelist} for:item="eachValue">
+											<li id={eachValue} key={eachValue} role="presentation" data-api={eachValue} class="slds-listbox__item selectable-option">
+												<div
+													id={eachValue}
+													onclick={handleSelected}
+													data-api={eachValue}
+													class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+													role="option"
+												>
+													<span data-api={eachValue} class="slds-media__figure slds-listbox__option-icon">
+														<span data-api={eachValue} class="slds-icon_container">
+															<lightning-icon data-api={eachValue} icon-name={icon} size="small"></lightning-icon>
+														</span>
+													</span>
+													<span data-api={eachValue} class="slds-media__body">
+														<span data-api={eachValue} class="slds-listbox__option-text slds-listbox__option-text_entity">{eachValue}</span>
+													</span>
+												</div>
+											</li>
+										</template>
+									</ul>
+								</div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

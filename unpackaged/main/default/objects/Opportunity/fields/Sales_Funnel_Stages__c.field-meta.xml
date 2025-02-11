@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Funnel_Stages__c</fullName>
+    <description>Mirrors pre-2019 Sales stages for manual selection by user</description>
+    <label>Sales Funnel Stages</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>SAL</fullName>
+                <default>true</default>
+                <label>SAL</label>
+            </value>
+            <value>
+                <fullName>Qualified</fullName>
+                <default>false</default>
+                <label>Qualified</label>
+            </value>
+            <value>
+                <fullName>Engaged</fullName>
+                <default>false</default>
+                <label>Engaged</label>
+            </value>
+            <value>
+                <fullName>Final Evaluation</fullName>
+                <default>false</default>
+                <label>Final Evaluation</label>
+            </value>
+            <value>
+                <fullName>Commit</fullName>
+                <default>false</default>
+                <label>Commit</label>
+            </value>
+            <value>
+                <fullName>Backlog</fullName>
+                <default>false</default>
+                <label>Backlog</label>
+            </value>
+            <value>
+                <fullName>Closed Won</fullName>
+                <default>false</default>
+                <label>Closed Won</label>
+            </value>
+            <value>
+                <fullName>Closed Lost</fullName>
+                <default>false</default>
+                <label>Closed Lost</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

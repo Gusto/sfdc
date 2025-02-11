@@ -1,0 +1,10 @@
+<!--
+	Description - Aura Wrapper that contains a child lwc component. It displays similar unassigned cases for a particular case's contact
+	Author - Praveen Sethu
+ 	Date - 09/16/2020
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
+<!-- Event handler when case contact changes. re-render the UI -->
+<aura:handler event="c:caseContactChangeEvent" action="{!c.handleCaseContactChange}"/>
+<c:viewUnAssignedCaseCmp aura:id="unassignedcases" recordId="{!v.recordId}"/>
+</aura:component>

@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:attribute name="strCaseReasonsToSkip" type="String" access="public" default="" />
+
+    <div class="slds-page-header test-header  slds-border_bottom">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <c:caseSubjectHeader recordId="{!v.recordId}"></c:caseSubjectHeader>
+            </div>
+            
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                        <c:careCaseButtonsAura recordId="{!v.recordId}" strCaseReasonsToSkip="{!v.strCaseReasonsToSkip}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

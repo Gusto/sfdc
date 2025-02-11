@@ -1,0 +1,102 @@
+<apex:page StandardController="Opportunity">
+    <apex:form >
+        <table>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Benefits_Current_Setup_Step__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                    <apex:outputField value="{!Opportunity.Benefits_Current_Setup_Step__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Selecting_Employee_Eligibility__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Selecting_Employee_Eligibility__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Completed__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Completed__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Selecting_Enrollment_Periods_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Selecting_Enrollment_Periods_End__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Receiving_Medical_Education_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Receiving_Medical_Education_End__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Selecting_Base_Tier_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Selecting_Base_Tier_End__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Selecting_Base_Plan_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Selecting_Base_Plan_End__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Selecting_Complementary_Plans_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Selecting_Complementary_Plans_End__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Selecting_Non_Medical_Plans_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Selecting_Non_Medical_Plans_End__c}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Collecting_Company_Information_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Collecting_Company_Information_End__c}"/>
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Reviewing_Summary_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Reviewing_Summary_End__c}"/>
+                </td>
+            </tr>
+              <tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Verifying_Eligibility_End__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Verifying_Eligibility_End__c}"/>
+                </td>
+            </tr>
+        </table>
+    </apex:form>
+</apex:page>

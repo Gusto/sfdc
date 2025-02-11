@@ -1,0 +1,16 @@
+<aura:component implements="lightning:isUrlAddressable,force:hasRecordId">
+    
+    <!-- Event Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <!-- Utility Tools-->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    
+
+    <!-- Aura Attributes -->
+    <aura:attribute name="caseId" type="String" />
+    <aura:attribute name="rendered" type="Boolean" default="false" />
+
+    <!-- Create Ticket LWC -->
+    <c:createTicketCmp caseid="{! v.caseId }" onclosetab="{! c.closeTab}" />
+</aura:component>

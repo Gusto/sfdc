@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <name>Check_Stage</name>
+        <label>Check Stage</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Is_Opportunity_OwnerId_Changed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Closed_Lost_or_Close_Won</name>
+            <conditionLogic>(1 OR 2) AND 3 AND 4</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Lost</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Won</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>formulaIsAutoCloseTasks</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Mark_as_Completed</targetReference>
+            </connector>
+            <label>Is Closed Lost or Close Won</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Company_Info_Completed_Changed</name>
+        <label>Is Company Info Completed Changed</label>
+        <locationX>182</locationX>
+        <locationY>923</locationY>
+        <defaultConnector>
+            <targetReference>Is_Onboarding_Completed_Changed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Company_Info_Changed_to_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Company_Information_Complete__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Company_Information_Complete__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Ardius_Tickets_related</targetReference>
+            </connector>
+            <label>Company Info Changed to True</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Onboarding_Completed_Changed</name>
+        <label>Is Onboarding Completed Changed</label>
+        <locationX>182</locationX>
+        <locationY>1223</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Onboarding_Completed_changed_to_true</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Onboarding_Complete__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Onboarding_Complete__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Mark_task_as_completed</targetReference>
+            </connector>
+            <label>Onboarding Completed changed to true</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Opportunity_OwnerId_Changed</name>
+        <label>Is Opportunity OwnerId Changed</label>
+        <locationX>182</locationX>
+        <locationY>623</locationY>
+        <defaultConnector>
+            <targetReference>Is_Company_Info_Completed_Changed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Changed_from_Integration_User_to_User</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>formulaIsOwnerChangedFromIntg</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_related_Task_record</targetReference>
+            </connector>
+            <label>Changed from Integration User to User</label>
+        </rules>
+    </decisions>
+    <description>Ardius Flow for creating an Opportunity task for  Decision Maker Bought In / Contract Sent Stages
+Auto Close Tasks when Opportunity Closed.
+Re-create related Ticket tasks when Opportunity.Company Info completed</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>formulaIsAutoCloseTasks</name>
+        <dataType>Boolean</dataType>
+        <expression>{!$Record.RecordType.DeveloperName} == &quot;Tax_Credits&quot; ||
+{!$Record.RecordType.DeveloperName} == &quot;Customer_Success&quot;</expression>
+    </formulas>
+    <formulas>
+        <description>Is opportunity owner changed from a Integration user to Normal user</description>
+        <name>formulaIsOwnerChangedFromIntg</name>
+        <dataType>Boolean</dataType>
+        <expression>AND (
+        CONTAINS(LOWER({!$Setup.Ardius_Configuration__c.Opportunity_Integration_Users__c}), 
+                          LOWER(CASESAFEID({!$Record__Prior.OwnerId}))),
+        NOT(CONTAINS(LOWER({!$Setup.Ardius_Configuration__c.Opportunity_Integration_Users__c}), 
+                                  LOWER(CASESAFEID({!$Record.OwnerId}))))
+        )</expression>
+    </formulas>
+    <formulas>
+        <name>formulaNextBusinessDay</name>
+        <dataType>Date</dataType>
+        <expression>CASE(WEEKDAY(TODAY() + 1)
+, 1, TODAY() + 2
+, 7, TODAY() + 3
+, TODAY() + 1
+)</expression>
+    </formulas>
+    <interviewLabel>Ardius Opportunity Task Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Ardius Opportunity Task Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Mark_as_Completed</name>
+        <label>Mark  as Completed</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Is_Opportunity_OwnerId_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>WhatId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Mark_task_as_completed</name>
+        <label>Mark task as completed</label>
+        <locationX>50</locationX>
+        <locationY>1331</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>WhatId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Feature_Request__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Onboarding Stalled</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Ardius_Tickets_related</name>
+        <label>Update Ardius Tickets related</label>
+        <locationX>50</locationX>
+        <locationY>1031</locationY>
+        <connector>
+            <targetReference>Is_Onboarding_Completed_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Opportunity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Ticket_Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Ardius</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Re_Sync_Tasks__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <object>Ticket__c</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_related_Task_record</name>
+        <label>Update related Task record</label>
+        <locationX>50</locationX>
+        <locationY>731</locationY>
+        <connector>
+            <targetReference>Is_Company_Info_Completed_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>WhatId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Feature_Request__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Stage</targetReference>
+        </connector>
+        <filterFormula>NOT({!$Permission.Bypass_Flows}) 
+&amp;&amp; NOT({!$Permission.Bypass_Flow_Opportunity})
+&amp;&amp; {!$Record.RecordType.DeveloperName} == &quot;Tax_Credits&quot;</filterFormula>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

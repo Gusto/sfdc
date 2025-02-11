@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Acknowledgement_Email</name>
+        <label>Send Acknowledgement Email</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>updateCaseField</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>varEmailTemplateBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>varCase.Contact.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>senderAddress</name>
+            <value>
+                <elementReference>varFromEmailAddress</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>senderType</name>
+            <value>
+                <stringValue>OrgWideEmailAddress</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>varEmailSubject</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>emailSimple</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>51.0</apiVersion>
+    <description>This flow sends an Adverse Action Notice email to customers from the Financial Product team  and create Email Message record on Case record for tracking. Email Messages are required for compliance audits from our banking partners.</description>
+    <interviewLabel>Financial Product - Adverse Action Email {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Financial Product - Adverse Action Email</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>createEmailMessage</name>
+        <label>createEmailMessage</label>
+        <locationX>176</locationX>
+        <locationY>398</locationY>
+        <inputAssignments>
+            <field>CcAddress</field>
+            <value>
+                <elementReference>varCase.CCEmailAddress__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FromAddress</field>
+            <value>
+                <elementReference>varFromEmailAddress</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentId</field>
+            <value>
+                <elementReference>varCase.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>3</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>varEmailSubject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>TextBody</field>
+            <value>
+                <elementReference>varEmailTemplateBody</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ToAddress</field>
+            <value>
+                <elementReference>varCase.ContactEmail</elementReference>
+            </value>
+        </inputAssignments>
+        <object>EmailMessage</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordUpdates>
+        <name>updateCaseField</name>
+        <label>updateCaseField</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <connector>
+            <targetReference>createEmailMessage</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varCase.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Additional_Auto_Email_Sent__c</field>
+            <value>
+                <elementReference>varEmailAlertName</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Send_Acknowledgement_Email</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>varEmailTemplateBody</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Dear {!varCase.Contact.FirstName}:
+
+After carefully reviewing your account, we are sorry to inform you that we cannot approve the Gusto Cashout loan that you requested on {!varCase.CreatedDate}. If you would like a statement of specific reasons why your application was denied, please contact us by email at wallet@gusto.com, or at the address shown below within 60 days of the date of this email. We will provide you with the statement of reasons within 30 days after receiving your request. Please feel free to call us at 800-936-0383 with any questions.
+
+Gusto
+Attn: MBCX
+1201 16th St Mall #350
+Denver, CO
+80202
+
+Gusto services the Cashout loans on behalf of Sunrise Banks, N.A. 200 University Avenue West, St. Paul, MN 55103.
+
+Sincerely,
+Gusto
+
+
+Our credit decision was based in whole or in part on information obtained from an outside source other than a consumer reporting agency. Under the Fair Credit Reporting Act, you have the right to make a written request, no later than 60 days after you receive the notice for the disclosure of the nature of this information.
+
+The Federal Equal Credit Opportunity Act prohibits creditors from discriminating against credit applicants on the basis of race, color, religion, national origin, sex, marital status, age (provided the applicant has the capacity to enter into a binding contract); because all or part of the applicant&apos;s income derives from any public assistance program; or because the applicant has in good faith exercised any right under the Consumer Credit Protection Act. The Federal agency that administers compliance with this law concerning this creditor is the Office of the Comptroller of the Currency, Customer Assistance Group, P. O. Box 53570, Houston, TX 77052.</text>
+    </textTemplates>
+    <variables>
+        <name>varCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <name>varEmailAlertName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varEmailSubject</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varFromEmailAddress</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

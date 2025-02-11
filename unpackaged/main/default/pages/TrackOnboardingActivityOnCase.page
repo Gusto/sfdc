@@ -1,0 +1,96 @@
+<apex:page standardController="Case" extensions="TrackOnboardingActivityOnCaseExt">
+    <apex:includeScript value="/support/console/50.0/integration.js"/>
+    <apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js" />
+    <apex:form >
+        <apex:actionFunction action="{!updateCaseStatusToOpen}" name="moveToOpen" reRender="none">
+            <apex:param name="moveToOpenId" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!updateCaseStatusToInProgress}" name="moveToInProgress" reRender="none">
+            <apex:param name="moveToInProgressId" value=""/>
+        </apex:actionFunction>
+    </apex:form>
+    <script>
+        var tabToPrimaryTabMap = new Map();
+        var onTabClose = function(result){
+            sforce.console.getFocusedPrimaryTabId(function(response){
+                var idArray = new Array();
+                if(tabToPrimaryTabMap.has(response.id)){
+                    idArray.push(tabToPrimaryTabMap.get(response.id));
+                }
+                else{
+                    idArray.push(response.id);
+                }
+                changeCaseStatusToOpen(null,idArray);
+            });
+            
+        };
+        var onSubTabFocus = function(){
+            sforce.console.getFocusedSubtabId(function(response){
+                if(response.success){
+                    sforce.console.getFocusedSubtabObjectId(function(result){
+                        console.log('Obj in focus : '+result.id);
+                        if(result.id != undefined && result.id != null){
+                            focussedTab(result.id);
+                        }
+                    });
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryTab){
+                        tabToPrimaryTabMap.set(response.id,primaryTab.id);
+                    });
+                    
+                    sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB,onTabClose, { tabId : response.id });
+                }
+            });
+        };
+        var onPrimaryTabFocus = function(){
+            sforce.console.getFocusedPrimaryTabObjectId(function(result){
+                if(result.id != undefined && result.id != null){
+                    focussedTab(result.id);
+                }
+            });
+
+            sforce.console.getFocusedPrimaryTabId(function(result){
+                sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB,onTabClose, { tabId : result.id });
+            });
+        };
+        function focussedTab(focussedId){
+            moveToOpenStatus(focussedId);
+            if(focussedId != '' && focussedId.startsWith('500')){
+                moveToInProgress(focussedId);
+            }
+        } 
+        function moveToOpenStatus(focussedId){
+            //for getting all othe tabs
+            sforce.console.getPrimaryTabIds(function(response) {
+                var primaryTabIds = response.ids;
+                changeCaseStatusToOpen(focussedId,primaryTabIds);
+            }); 
+        }
+        function changeCaseStatusToOpen(focussedId,primaryTabIds){
+            for (let id of primaryTabIds) {
+                sforce.console.getSubtabIds( id,function(response){
+                    var subTabIds = response.ids;
+                    for (let subId of subTabIds) {
+                        sforce.console.getPageInfo(subId, function(response) {
+                            if(response!=null){
+                                var myVar = JSON.parse(response.pageInfo);
+                                if(myVar!=null){
+                                    var objectId = myVar.objectId;
+                                    if (objectId!=focussedId && objectId != null && objectId != undefined && objectId.startsWith('500')) {
+                                        console.log('objectId ------ '+objectId);
+                                        moveToOpen(objectId);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        sforce.console.onFocusedSubtab(onSubTabFocus);
+        sforce.console.onFocusedPrimaryTab(onPrimaryTabFocus); 
+
+        $(document).ready(function(){
+            onPrimaryTabFocus();
+        });
+    </script>
+</apex:page>

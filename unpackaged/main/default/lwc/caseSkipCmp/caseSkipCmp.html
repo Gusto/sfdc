@@ -1,0 +1,66 @@
+<!--
+    Purpose: LWC used for take it button that assigns cases to logged in user
+            and other buttons including Skip, Skip and Next that serves cases via play mode
+    Written by : Praveen Sethu
+    Date: 09/16/2020
+-->
+
+<template> 
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <div class="slds-theme_default">
+        <div class="slds-align_absolute-center">
+            <lightning-button-group>
+                <template if:true={blnIsTakeItButtonVisible}>
+                    <lightning-button variant="brand" onclick={handleTakeIt} label="Take It"> </lightning-button>
+                </template>
+                <template if:true={blnIsPlayMode}>
+                    <lightning-button label="Skip" onclick={openSkipCaseModal} > </lightning-button>
+                    <lightning-button label="Skip and Next" onclick={openSkipAndNextCaseModal}> </lightning-button>
+                </template>
+            </lightning-button-group>
+            <template if:true={blnIsPlayMode}>
+                &nbsp; &nbsp;{strViewLabel}
+            </template>
+        </div>
+    </div>
+    <template if:true={blnIsSkipCaseModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeSkipCaseModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Are you Sure ?</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-var-p-around_small" id="modal-content-id-1">
+                    <div class="content slds-col">
+                        <div class="slds-var-p-around_x-small slds-text-align_center slds-var-p-bottom_small">
+                            <div class="slds-text-heading_large" style="font-size: 20px;font-weight: 400;">Please provide Skip Comment</div>
+                        </div>
+                    </div>
+                    <lightning-layout>
+                        <lightning-layout-item size="12">
+                            <lightning-textarea message-when-value-missing="Please provide skip reason" required label="Skip Comment" value={skipComment} onchange={handleDataChange}></lightning-textarea>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closeSkipCaseModal} title="Cancel">Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick={handleSkipCaseClick} title={strSkipLabel}>{strSkipLabel}</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

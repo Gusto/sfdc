@@ -1,0 +1,429 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 08-03-2022
+  @last modified by  : Nigam Goyal
+-->
+<template>
+	<template if:true={isLoad}>
+		<lightning-card title="Onboarding Steps" icon-name="utility:calculated_insights">
+			<div class="slds-progress slds-progress_vertical slds-p-horizontal_small">
+				<ol class="slds-progress__list">
+					<li class="slds-progress__item ZP_Add_Company_Addresses__c" data-title="ZP_Add_Company_Addresses__c" onclick={handleClick}>
+						<template if:true={ZP_Add_Company_Addresses__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Add_Company_Addresses__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Add Company Addresses</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#3"
+										>Add Company Address Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.d50p8bavwwug">Types of Addresses</a>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/article/106622257100000/Edit-company-details">Edit Company Details</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Add_Employees__c" data-title="ZP_Add_Employees__c" onclick={handleClick}>
+						<template if:true={ZP_Add_Employees__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Add_Employees__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Add Employees</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#4"
+										>Hire New Employees Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.78j8e6o6woex">I-9 Information</a>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/article/106622106100000/View-and-update-form-w-4-withholding-elections">View and Update your W-4</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Set_Up_Federal_Taxes__c" data-title="ZP_Set_Up_Federal_Taxes__c" onclick={handleClick}>
+						<template if:true={ZP_Set_Up_Federal_Taxes__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Set_Up_Federal_Taxes__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Set Up Federal Taxes</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#5"
+										>Federal Taxes Setup Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.i24muc2o2pci">FEIN Updates</a>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/article/105983699100000/Types-of-business-entities">Types of Business Entities IKB</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Set_Up_State_Taxes__c" data-title="ZP_Set_Up_State_Taxes__c" onclick={handleClick}>
+						<template if:true={ZP_Set_Up_State_Taxes__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Set_Up_State_Taxes__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Set Up State Taxes</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a target="_blank" href="https://support.gusto.com/article/105983652100000/State-tax-reference-table"
+										>Federal Required State Taxes for New Businesses - signified by asterisk</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://support.gusto.com/article/106622236100000/State-unemployment-insurance-sui-tax">Recommended new employer SUI Rates</a>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/">Search the state in the IKB for instructions to register</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Set_Up_Bank_Account__c" data-title="ZP_Set_Up_Bank_Account__c" onclick={handleClick}>
+						<template if:true={ZP_Set_Up_Bank_Account__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Set_Up_Bank_Account__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Set Up Bank Account</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#7"
+										>Verify Bank Account Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.3emjai4wmci8">Common Bank Questions</a>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/article/191119488100000/Use-instant-bank-verification-ibv-to-connect-your-bank-account"
+											>Instant Bank Verification</a
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Select_a_Payroll_Schedule__c" data-title="ZP_Select_a_Payroll_Schedule__c" onclick={handleClick}>
+						<template if:true={ZP_Select_a_Payroll_Schedule__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Select_a_Payroll_Schedule__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Select a Payroll Schedule</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#8"
+										>Select Pay Schedule Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.krjfcqvmnr1w"
+										>Common Select Pay Schedule Questions</a
+									>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/article/220617123816107/Pay-schedules">Pay Schedule IKB</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Report_Previous_Paystubs__c" data-title="ZP_Report_Previous_Paystubs__c" onclick={handleClick}>
+						<template if:true={ZP_Report_Previous_Paystubs__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Report_Previous_Paystubs__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Report Previous Paystubs</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#9"
+										>Previous Payrolls Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/11PEtVPmCX-Cdbi-mUGRv-qlS3YQl45zmaxLRJ4NwNJM/edit#bookmark=id.q724q3sun45d"
+										>Troubleshooting Previous Payrolls</a
+									>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.bokpk25ik190"
+											>Common Previous Payroll Questions</a
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Add_Signatory__c" data-title="ZP_Add_Signatory__c" onclick={handleClick}>
+						<template if:true={ZP_Add_Signatory__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Add_Signatory__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Add Signatory</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#10"
+										>Sign Documents Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.axqvmppf2p8f"
+										>Signatory Verification Common Questions</a
+									>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://support.gusto.com/article/105983575100000/Signatory-verification"
+											>Manual Signatory Verification for international signatories IKB
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Sign_Company_Forms__c" data-title="ZP_Sign_Company_Forms__c" onclick={handleClick}>
+						<template if:true={ZP_Sign_Company_Forms__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Sign_Company_Forms__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Sign Company Forms</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a
+										target="_blank"
+										href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#10"
+										>Sign Documents Video</a
+									>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://support.gusto.com/article/105983262100000/Form-8655">What is Form 8655?</a>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.6g4hpdf4z0vu"
+											>Common Sign Forms Questions</a
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Enter_Unpaid_Tax_Liabilities__c" data-title="ZP_Enter_Unpaid_Tax_Liabilities__c" onclick={handleClick}>
+						<template if:true={ZP_Enter_Unpaid_Tax_Liabilities__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Enter_Unpaid_Tax_Liabilities__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Unpaid Tax Liabilities</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.g9qux7k0tsrb">Common UPTL Questions</a>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://support.gusto.com/article/105983959100000/Paying-previous-tax-liabilities">What are Unpaid Tax Liabilities?</a>
+								</div>
+
+								<div>
+									<div>
+										<a
+											target="_blank"
+											href="https://www.canva.com/design/DAEm8oiIA44/dEpfCajK3dxAheYPsMwaIQ/view?utm_content=DAEm8oiIA44&utm_campaign=designshare&utm_medium=link&utm_source=publishpresent#11"
+											>Unpaid Tax Liabilities Video</a
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="slds-progress__item ZP_Ran_Payroll__c" data-title="ZP_Ran_Payroll__c" onclick={handleClick}>
+						<template if:true={ZP_Ran_Payroll__c}>
+							<span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+								<lightning-icon size="xx-small" icon-name="utility:success" alternative-text="Success" title="Success"></lightning-icon>
+
+								<span class="slds-assistive-text">Complete</span>
+							</span>
+						</template>
+						<template if:false={ZP_Ran_Payroll__c}>
+							<div class="slds-progress__marker"></div>
+						</template>
+						<div class="slds-progress__item_content">
+							<div class="slds-grid slds-grid_align-spread">
+								<div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">Approval / Run Payroll</div>
+							</div>
+							<div class="hyperLink slds-p-left_x-small">
+								<div>
+									<a target="_blank" href="https://support.gusto.com/article/105984208100000/Company-approval-process">Company Approval Process IKB</a>
+								</div>
+
+								<div>
+									<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.iibjjh9oo78z"
+										>Common Approval Process Questions</a
+									>
+								</div>
+
+								<div>
+									<div>
+										<a target="_blank" href="https://docs.google.com/document/d/1oHaUoZSb8l_A22YVNIUYWoBMcjye1duSi4wd8Fi702s/edit#bookmark=id.tv519lds5hxx"
+											>Common Run Payroll Questions</a
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ol>
+				<div aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" role="progressbar">
+					<span class="slds-assistive-text">Progress: 25%</span>
+				</div>
+			</div>
+		</lightning-card>
+	</template>
+</template>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Formation_Complete__c</fullName>
+    <formula>IF(Opportunity__r.State_Setup_Completed_Date__c &gt; Opportunity__r.Federal_Tax_Setup_Completed_Date__c,
+    IF(Opportunity__r.State_Setup_Completed_Date__c &gt; Opportunity__r.Verify_Bank_Info_Completed_Date__c, Opportunity__r.State_Setup_Completed_Date__c, Opportunity__r.Verify_Bank_Info_Completed_Date__c),
+    IF(Opportunity__r.Federal_Tax_Setup_Completed_Date__c &gt; Opportunity__r.Verify_Bank_Info_Completed_Date__c, Opportunity__r.Federal_Tax_Setup_Completed_Date__c, Opportunity__r.Verify_Bank_Info_Completed_Date__c)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Business Formation Complete</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

@@ -1,0 +1,36 @@
+<apex:page standardController="Case" showHeader="true" extensions="EmailCarrierCaseExtension">
+<style>
+    #content {
+  margin: 0 auto;
+  border: 1px solid red;
+  position:absolute;
+  bottom:0px;
+  top:0px;
+  overflow:auto
+}  
+</style> 
+    <div id="content">
+    <apex:emailPublisher id="myEmailPublisher" 
+        entityId="{!case.id}" 
+        title="Send Email To Customer"
+        emailBodyHeight="300em"
+        expandableHeader="false"
+   		subject=""
+        emailBody=""
+        showAdditionalFields="true" 
+        emailBodyFormat="textAndHTML"
+                         enableQuickText="true"
+                         rendered="true"
+                         sendButtonName="Send To Customer"
+                         showTemplates="True"
+        fromVisibility="{!if(blnShowFromAddress, 'selectable', 'hidden')}"
+        toVisibility="editable"
+        bccVisibility="hidden" 
+        ccVisibility="editable"                         
+        toAddresses="{!objCase.Contact.Email}" 
+        onSubmitSuccess="alert('Email Send Successfully!');"
+        onSubmitFailure="alert('Email failed');"
+        fromAddresses="{!strFromEmailAddresses}"
+    />     
+    </div>
+</apex:page>

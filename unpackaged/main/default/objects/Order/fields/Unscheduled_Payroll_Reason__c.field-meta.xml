@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unscheduled_Payroll_Reason__c</fullName>
+    <description>Added in order to track if payroll is taking place.  Jira BT-4279</description>
+    <label>Unscheduled Payroll Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>First_Payroll_Call_Scheduled__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Admin opted out</fullName>
+                <default>false</default>
+                <label>Admin opted out</label>
+            </value>
+            <value>
+                <fullName>Ran on their own</fullName>
+                <default>false</default>
+                <label>Ran on their own</label>
+            </value>
+            <value>
+                <fullName>Called Sales instead</fullName>
+                <default>false</default>
+                <label>Called Sales instead</label>
+            </value>
+            <value>
+                <fullName>Called Care instead</fullName>
+                <default>false</default>
+                <label>Called Care instead</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>No</controllingFieldValue>
+            <valueName>Admin opted out</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>No</controllingFieldValue>
+            <valueName>Ran on their own</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>No</controllingFieldValue>
+            <valueName>Called Sales instead</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>No</controllingFieldValue>
+            <valueName>Called Care instead</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>No</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

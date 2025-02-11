@@ -1,0 +1,16 @@
+<apex:page showHeader="false" sidebar="false" standardController="Case">
+    <apex:includeLightning />    
+    <div id="LightningComponentid" />    
+    <script>
+        //get Case Id from URL
+        var caseId = "{!$CurrentPage.parameters.id}";
+        $Lightning.use("c:TaxRateValuesUpdateAura", function() {
+            $Lightning.createComponent("c:taxRateValuesUpdateCmp",
+            { "recordId" : caseId },
+            "LightningComponentid",
+            function(cmp) {
+                console.log('LWC Componenet added in VF page');
+            });
+        });
+    </script>
+</apex:page>

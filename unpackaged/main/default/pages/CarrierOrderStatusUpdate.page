@@ -1,0 +1,10 @@
+<apex:page standardController="Carrier_Order__c" extensions="CarrierOrderExt" action="{!stageBOOrderStatus}">
+<apex:form >
+<apex:pageMessage summary="Stage Updated Successfully" severity="info" strength="3" />
+<apex:pageBlock >
+<apex:pageBlockButtons location="bottom" >
+<apex:commandButton value="Back" action="{!previousPage}"/>
+</apex:pageBlockButtons>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

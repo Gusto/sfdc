@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CW_Oppty_Cannot_Move_Backward</fullName>
+    <active>true</active>
+    <description>Any oppty in Closed Won cannot move to another stage.</description>
+    <errorConditionFormula>AND(
+PRIORVALUE(IsWon),
+ISCHANGED(StageName),
+!ISPICKVAL(StageName,&quot;Order Lost&quot;),
+!ISPICKVAL(StageName,&quot;Closed Admin&quot;),
+RecordType.Name!=&apos;BizDev Opportunity&apos;,
+RecordType.Name!=&apos;Customer Success&apos;,
+IF(RecordType.DeveloperName == &apos;Tax_Credits&apos; &amp;&amp; ISPICKVAL(StageName, &apos;Closed Lost&apos;), FALSE, TRUE),
+NOT($User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>You cannot change the stage of a won opportunity.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,92 @@
+<template>
+    <div class="slds-form-element">
+        <label class="slds-form-element__label" for="combobox-id-10">{label}</label>
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                    aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right parent-component" onmouseleave={handleFocusOut} onmouseover={handleChange} role="none"  >
+                        <lightning-input type="text" variant="label-hidden" value={casereason} class="text-style"   autocomplete="off"  onfocus={handleChange} onchange={handleChange} disabled={isdisabled} ></lightning-input>
+                        <!-- <input type="text" class={textStyleClass} value={casereason} onfocus={handleChange} onchange={handleChange}/> -->
+                        <template if:true={casereason}>
+                            <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                    onclick={handleClose} title="Remove selected option">
+                                    <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                                    <span class="slds-assistive-text">Remove selected option</span>
+                            </button>
+                        </template>
+                        <template if:false={casereason}>
+                            <span
+                                class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                <lightning-icon icon-name="utility:search" size="x-small"></lightning-icon>
+                            </span>
+                        </template>
+                    
+                    <template if:true={isvisible}>
+                        <template if:true={casereasonfound}>
+                            <!-- If you need to set height style="max-height: 200px;overflow: scroll;" -->
+                            <!-- little padding top added to avoid extra space at the top -->
+                            <div class="drop-down-list" style="position: relative;">
+                                <div id="listbox-id-3" class="slds-dropdown slds-dropdown_fluid" role="listbox" style="position:absolute; top:-2px;">
+                                    <template for:each={casereasonmap} for:item="caseReason">
+                                        <ul key={caseReason.group} data-value={eachValue}  class="slds-listbox slds-listbox_vertical" role="group" aria-label="Group One">
+                                            <li role="presentation" data-value={eachValue}>
+                                                <div 
+                                                    class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                                    role="presentation">
+                                                    <span class="slds-media__figure slds-listbox__option-icon">
+                                                        <span class="slds-icon_container slds-icon-utility-anchor">
+                                                            <lightning-icon icon-name="standard:groups" size="x-small"></lightning-icon>
+                                                        </span>
+                                                    </span>
+                                                    <h3 class="slds-listbox__option-header" role="presentation">{caseReason.group}</h3>
+                                                </div>
+                                            </li>
+                                            <template for:each={caseReason.value} for:item="eachValue">
+                                                <li id={eachValue} key={eachValue} role="presentation" data-api={eachValue} class="selectable-option">
+                                                    <div data-value={eachValue} aria-selected="true" id={eachValue} onclick={handleSelected} data-api={eachValue} class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                                        role="option">
+                                                        <span data-api={eachValue} class="slds-media__figure slds-listbox__option-icon">
+                                                            <span data-api={eachValue} class="slds-icon_container slds-icon-utility-anchor">
+                                                                <lightning-icon data-api={eachValue} icon-name="custom:custom13" size="x-small"></lightning-icon>
+                                                            </span>
+                                                        </span>
+                                                        <span data-api={eachValue} class="slds-media__body">
+                                                            <span data-api={eachValue} class="slds-truncate"><lightning-formatted-rich-text data-api={eachValue} value={eachValue}>
+                                                            </lightning-formatted-rich-text></span>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:false={casereasonfound}>
+                            <div class="slds-dropdown slds-dropdown_fluid" role="listbox">
+                                <ul class="slds-listbox slds-listbox_vertical" role="group" aria-label="Group Two">
+                                    <li role="presentation">
+                                        <div id="option5"
+                                            class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                            role="option">
+                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                <span class="slds-icon_container slds-icon-utility-anchor">
+                                                    <lightning-icon icon-name="standard:first_non_empty" size="x-small"></lightning-icon>
+                                                </span>
+                                            </span>
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title="Edge Communications">No case reasons match your filter criteria.</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
+                    </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

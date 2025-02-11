@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Escalation_Reason_detail_required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( Escalation__c , OR (ISBLANK(TEXT( Escalation_Reason_Detail__c) ), ISBLANK( Escalation_Details__c ) ), RecordType.Name=&apos;Benefits Renewal&apos; )</errorConditionFormula>
+    <errorDisplayField>Escalation_Details__c</errorDisplayField>
+    <errorMessage>Please enter Escalation Reason and Escalation Details</errorMessage>
+</ValidationRule>

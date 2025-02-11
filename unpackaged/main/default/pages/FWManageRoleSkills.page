@@ -1,0 +1,176 @@
+<apex:page standardController="Role__c" extensions="FWManageRoleSkillsCtrl">
+    <c:GustoActionStatus />
+  	<apex:form id="frmBody" >
+	<style>
+		.edit-record{
+			color:#ff6a00 !important;
+			font-weight:bold !important; 
+		}
+        .assigned-pod{
+        	padding: 4px;
+            background-color: #c57cac;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+	</style>
+        <apex:pageMessages id="showmsg" />
+        <apex:pageBlock mode="View" title="Manage Role and Skills">
+        	 <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select Team"/>
+                    <apex:outputPanel >
+                        <apex:inputField value="{!objRegionPOD.Team__c}">
+                            <apex:actionSupport action="{!ShowTeamSkillType}" event="onchange" reRender="frmBody" status="actStatusId"/>  
+                        </apex:inputField>
+                    </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               <apex:pageBlockSectionItem rendered="{!if(objRegionPOD.Team__c!=null,true,false)}">
+                    <apex:outputLabel value="Select Skill Type"/>
+                   <apex:selectList value="{!strSkillType}" size="1">
+                       <apex:selectOptions value="{!list_SkillType}"></apex:selectOptions>
+                       <apex:actionSupport action="{!ChangeSkillType}" event="onchange" reRender="frmBody" status="actStatusId"/>
+                   </apex:selectList>
+               </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton rendered="{!blnShowSaveSkillButton}" value="Save SKill" action="{!SaveSkill}" reRender="frmBody" status="actStatusId"/>
+                <!--<apex:commandButton value="Cancel" action="{!Cancel}"/>-->
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+
+        <apex:pageBlock mode="View" title="{!strTitle}" rendered="{!if(AND(strSkillType!=null,OR(blnShowRegionSection==true,blnShowCarrierPODSection==true)),true,false)}">
+        	<!--Code Region POD Start-->
+             <apex:outputPanel rendered="{!OR(!blnCarierPODAvailable,strSkillType=='Core')}">
+                 <apex:pageBlockSection columns="1" rendered="{!if(blnShowRegionSection==true,true,false)}">
+                     <apex:pageBlockSectionItem >
+                        <apex:outputlabel >Name</apex:outputlabel>
+                        <apex:outputPanel ><apex:inputText value="{!strRegionName}" maxlength="80" style="width:29%"/></apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel >State</apex:outputlabel>
+                        <apex:outputPanel >
+                            <c:MultiselectPicklist leftLabel="Available State"
+                            leftOption="{!list_UnSelectedState}"
+                            rightLabel="Selected State"
+                            rightOption="{!list_SelectedState}"
+                            size="6"
+                            width="300px"
+                            showUpDownButtons="false"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+               
+                <apex:pageBlockSection columns="1" title="Selected Carrier(s)" rendered="{!blnShowCarrierPODSection}">
+                    <apex:pageBlockSectionItem rendered="{!(list_SelectedAssignedCarrier.size>0)}" >
+                            <apex:outputlabel >Selected Carrier(s)</apex:outputlabel>
+                            <apex:outputPanel >
+                                <div class="slds-scrollable" style="max-height: 250px; width: 100%; overflow:auto" >
+                                    <apex:pageBlockTable id="allCarriers"  value="{!list_SelectedAssignedCarrier}"  var="carr"  style="word-break: break-word;" styleclass="outBorder fix-header" >
+                                        <apex:column styleclass="inBorder" width="10%">
+                                            <apex:facet name="header">
+                                                <apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'selAssignedCarrier')"/>
+                                            </apex:facet>
+                                            <apex:inputcheckbox id="selAssignedCarrier" styleClass="slds-checkbox add-chk-box" value="{!carr.blnIsChecked}"/>
+                                        </apex:column>
+                                        <apex:column width="90%">
+                                                <apex:facet name="header">Name </apex:facet>
+                                            <apex:outputText value="{!carr.strCarrName}"></apex:outputText>
+                                        </apex:column>
+                                    </apex:pageBlockTable>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!!(list_SelectedAssignedCarrier.size>0)}" dataStyle="text-align: center;">
+                            <apex:outputText value="Carrier(s) are not available"/>
+                        </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <center> 
+					<apex:commandButton style="margin-bottom: 10px;" action="{!SaveRegionPODRecords}" value="{!strButtonLabel}" reRender="frmBody" status="actStatusId"/>
+					&nbsp;<apex:commandButton style="margin-bottom: 10px;" rendered="{!if(objRegionPOD.id!=null,true,false)}" action="{!cancelSelectedRegionPOD}" value="Cancel" reRender="frmBody" status="actStatusId"/>
+				</center>
+            </apex:outputPanel>
+           <!--Code Region POD End--> 
+           <div class="assigned-pod" style="display:{!if(blnCarierPODAvailable==true,'','none;')}">&nbsp; Assigned POD</div>
+            <apex:pageBlockTable value="{!list_RegionPODWrapper}" var="rp" cellpadding="5" rendered="{!if(blnCarierPODAvailable==true,true,false)}">
+                <apex:column headerValue="Action" width="30%" styleClass="{!if(objRegionPOD.id==rp.objRegionPOD.Id,'edit-record','')}">
+                    <apex:commandLink styleClass="{!if(objRegionPOD.id==rp.objRegionPOD.Id,'edit-record','')}" value="Edit" action="{!updateRegionPOD}" reRender="frmBody" status="actStatusId">
+                        <apex:param value="{!rp.objRegionPOD.Id}" name="Id"/>
+                    </apex:commandLink>&nbsp;|&nbsp;
+                    <apex:commandLink styleClass="{!if(objRegionPOD.id==rp.objRegionPOD.Id,'edit-record','')}" value="Delete" onclick="return confirmDelete();" action="{!deleteRegionPOD}">
+                        <apex:param value="{!rp.objRegionPOD.Id}" name="Id"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Name" styleClass="{!if(objRegionPOD.id==rp.objRegionPOD.Id,'edit-record','')}">
+                    {!rp.objRegionPOD.Name}
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+
+          <apex:pageBlock mode="View" rendered="{!if(AND(strSkillType!=null,strSkillType!='Core',blnCarierPODAvailable),true,false)}">
+             <apex:pageBlockSection columns="1" >
+                <apex:pageBlockSectionItem rendered="{!blnShowStateSection}">
+                     <apex:outputlabel >Select State </apex:outputlabel>
+                     <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnSelectedState}"
+                                            rightLabel="" rightOption="{!list_SelectedState}"
+                                            size="5" width="300px" showUpDownButtons="false"/>
+                 </apex:pageBlockSectionItem>   				
+				
+                 <apex:pageBlockSectionItem rendered="{!blnShowOrderTypeSection}">
+                     <apex:outputlabel >Select Order Type </apex:outputlabel>
+                     <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnSelectedOrderType}"
+                                            rightLabel="" rightOption="{!list_SelectedOrderType}"
+                                            size="5" width="300px" showUpDownButtons="false"/>
+                 </apex:pageBlockSectionItem>
+				 
+                <apex:pageBlockSectionItem rendered="{!blnShowSPartnerSection}">
+                     <apex:outputlabel >Select Partner </apex:outputlabel>
+                     <c:MultiselectPicklist leftLabel="" leftOption="{!list_UnSelectedPartner}"
+                                            rightLabel="" rightOption="{!list_SelectedPartner}"
+                                            size="5" width="300px" showUpDownButtons="false"/>
+                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!blnShowTADASection}">
+                     <apex:outputlabel >TADA </apex:outputlabel>
+                    <apex:inputCheckbox value="{!blnTADA}"/>
+                 </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+            	<apex:commandButton value="Save SKill" action="{!SaveSkill}" reRender="frmBody" status="actStatusId"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+       
+    </apex:form>
+    <script language="javascript">
+        function confirmDelete(){
+            if(confirm('Are you sure you want to delete?')){
+                return true;
+            }
+            return false;
+        }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){ 
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    /*function SetTabTitle() {
+            sforce.console.setTabTitle('Region Pod Assignment');
+        }
+        var pageLoad = window.onload;
+        window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                SetTabTitle();
+        }*/
+    </script>
+</apex:page>

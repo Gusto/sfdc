@@ -1,0 +1,79 @@
+<apex:component allowDML="true" selfClosing="true" controller="QualifyingLifeCasePlayModeController">    
+    <head>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <link rel="stylesheet" href="//jqueryui.com/dialog/resources/demos/style.css"/>
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <apex:includeScript value="/support/console/41.0/integration.js"/>
+        
+        <script>
+            var $jqc = jQuery.noConflict();
+            
+            $jqc( function() {
+                getEnclosingPrimaryTabIdMF();
+            });
+            
+            //to show hide save&next button depending on whether user is in play-mode or not      
+            var getEnclosingPrimaryTabIdMF = function getEnclosingPrimaryTabIdMF() {
+                sforce.console.getFocusedPrimaryTabId(getTabLinkMF);
+            };
+            
+            var getTabLinkMF = function getTabLinkMF(result) {
+                sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLinkMF);
+            };
+            
+            var showTabLinkMF = function showTabLinkMF(result) {
+                var urll = result.tabLink; 
+                //alert(' Success '+result.success+" URL: "+urll);
+                if(urll == null || !(urll.length >0) || (urll.indexOf("isMFplay") == -1)){
+                    $(".playCssMF").hide();                                     
+                }
+                else{
+                    $(".playCssMF").show();  
+                }
+            };
+            
+            function playNextCase(){
+                
+                Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.QualifyingLifeCasePlayModeController.nextCase}',
+                    function(result, event){
+                        if (event.statusCode == '200') {
+                            console.log('remote result '+result);
+                            
+                            if(result !== null && result !== 'null'){
+                                openNewRec(result); 
+                            } 
+                            
+                        }
+                              
+	                    if (event.statusCode == '400') {
+	                       //$jq('#sortDetails').html('In-complete information, please check configuration.');
+	                    }
+                    }, 
+	                 {escape: true}
+	            );
+            }
+            
+            var nextCaseId;
+            
+            function openNewRec(nextCaseIdd){
+                nextCaseId = nextCaseIdd;
+                sforce.console.getFocusedPrimaryTabId(openNextCase);
+                // use getFocusedPrimaryTabObjectId to get primary tab record id
+            }
+            
+            var openNextCase = function openNextCase(result){
+                var tabId = result.id;
+                //var caseid = $("#caseId").val();
+                //alert('Primary Tab IDs: primaryTabId ' + tabId );
+                //alert();
+                sforce.console.openPrimaryTab(tabId, "/"+nextCaseId+"?isMFplay=1", true);
+                sforce.console.refreshPrimaryTabById(tabId , true);
+            };
+            
+        
+        </script>
+    
+    </head>
+</apex:component>

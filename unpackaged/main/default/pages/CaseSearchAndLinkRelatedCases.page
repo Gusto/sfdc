@@ -1,0 +1,75 @@
+<apex:page standardController="Case" extensions="CaseSearchExtension">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        
+        <apex:includeScript value="/support/console/34.0/integration.js"/>
+        <script type="text/javascript">
+        function linkCases(caseId){
+            //alert(caseId);
+            linkCaseToACase(caseId);
+        }
+        
+        function RefreshPrimaryTab() 
+        {
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+        };
+        
+        var refreshSuccess = function refreshSuccess(result) 
+        {
+            //Report whether refreshing the primary tab was successful
+            if (result.success == true) 
+            {
+                alert('Case is successfully linked');
+            } 
+            else 
+            {
+                alert('Primary did not refresh');
+            }
+        };   
+        
+        </script>
+        <div class="gusto" >
+            <apex:form >
+                <apex:outputLabel >Search Text</apex:outputLabel>
+                <apex:inputText id="searchString" value="{!searchString}"/>
+                <apex:commandButton value="Search" action="{!searchCase}"></apex:commandButton>
+                
+                <apex:actionFunction name="linkCaseToACase" action="{!linkCase}" oncomplete="RefreshPrimaryTab();">
+                    <apex:param id="rCase" name="relatedCase" value="" />
+                    <!-- assignTo="{!relatedCase}" id="relatedCase"-->
+                </apex:actionFunction>
+                <div style="overflow:auto;height:300px;">
+                    <apex:dataTable value="{!caseList}" var="c" styleClass="slds-table slds-table--bordered slds-table--striped">
+                        <apex:column >
+                            <apex:facet name="header">Case Number</apex:facet>
+                            <a href="javascript:linkCases('{!c.Id}');">{!c.CaseNumber}</a>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">Subject</apex:facet>                             
+                            <apex:outputText value="{!LEFT(c.Subject,50)}"/>
+                        </apex:column>
+                        <apex:column value="{!c.Contact.Name}">
+                            <apex:facet name="header">Contact</apex:facet>
+                        </apex:column>
+                        <apex:column value="{!c.Type}">
+                            <apex:facet name="header">Type</apex:facet>
+                        </apex:column>
+                        <apex:column value="{!c.Status}">
+                            <apex:facet name="header">Status</apex:facet>
+                        </apex:column>
+                    </apex:dataTable>
+                </div>
+            </apex:form>
+        </div>
+        
+    </html>
+    
+</apex:page>

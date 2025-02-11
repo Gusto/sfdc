@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Scheduled_Required</fullName>
+    <active>false</active>
+    <description>When account is approved/payroll submitted the Payroll Scheduled? field must be completed.   Jira BT-4279</description>
+    <errorConditionFormula>AND( OR( ISPICKVAL( Status , &quot;Closed: Payroll Run&quot;) ,ISPICKVAL( Status , &quot;Payroll Submitted&quot;)) , ISBLANK(TEXT(First_Payroll_Call_Scheduled__c)) , NOT( $User.Exempt_from_Validation_Rules__c ) )</errorConditionFormula>
+    <errorDisplayField>First_Payroll_Call_Scheduled__c</errorDisplayField>
+    <errorMessage>The First Payroll Call Scheduled field must be completed for Accounts that are in the Payroll Submitted or Closed: Payroll Run status.</errorMessage>
+</ValidationRule>

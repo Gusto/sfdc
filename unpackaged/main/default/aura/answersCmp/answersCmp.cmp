@@ -1,0 +1,15 @@
+<!--
+    Description - Aura component that updates case status to In Progress when advocates view cases they own
+    Author - Praveen Sethu
+    Date - 09/16/2020
+-->
+<aura:component implements="lightning:backgroundUtilityItem,force:hasRecordId,flexipage:availableForAllPageTypes" access="global" controller="AnswersAuraComponentController">
+    <aura:attribute name="caseStatuses" type="String"/>
+    <!-- Registering app event -->
+    <aura:registerEvent name="caseStatusChangeEvent" type="c:caseStatusChangeEvent"/>
+    <lightning:workspaceAPI aura:id="workspace"/> 
+    <!-- Tab Event Handlers-->
+    <aura:handler event="lightning:tabFocused" action="{! c.onTabFocused }"/>
+    <aura:handler event="lightning:tabCreated" action="{! c.onTabCreated }"/>
+    <aura:handler event="lightning:tabClosed" action="{!c.onTabClosed}"/>
+</aura:component>

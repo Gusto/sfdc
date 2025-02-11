@@ -1,0 +1,115 @@
+<apex:page title="Ticket" controller="BTManageTicketsCtrl" tabStyle="Ticket__c" showHeader="false" sidebar="false">
+	<apex:includeScript value="/support/console/45.0/integration.js" />
+	<script type="text/javascript">
+		function RefreshPrimaryTab() {
+			sforce.console.getFocusedPrimaryTabId(showTabId);
+		}
+
+		var showTabId = function showTabId(result) {
+			var tabId = result.id;
+			sforce.console.refreshPrimaryTabById(tabId, false, refreshSuccess, true);
+		};
+
+		var refreshSuccess = function refreshSuccess(result) {
+			//Report whether refreshing the primary tab was successful
+			if (result.success == true) {
+				sforce.console.getFocusedSubtabId(function (subTabId) {
+					sforce.console.closeTab(subTabId.id);
+				});
+			}
+		};
+	</script>
+	<c:GustoActionStatus />
+	<apex:form id="frmId">
+		<apex:pageBlock >
+            <apex:pageMessages id="messagesSec" />
+            <apex:pageBlockSection rendered="{!objTicket.Reporting_Team__c!=null}">
+                <apex:selectList value="{!objTicket.Reporting_Team__c}" size="1" label="My Team">
+                    <apex:selectOptions value="{!list_FromTeam}"/>
+                    <apex:actionSupport event="onchange" action="{!ticketToTeam}" reRender="frmId" status="actStatusId"/>
+                </apex:selectList>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Ticket to Team" />
+                <apex:actionRegion >
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                        <apex:selectList value="{!strSelectedTeam}" size="1">
+                            <apex:actionSupport event="onchange" action="{!subTeam}" reRender="frmId" status="actStatusId"/>
+                            <apex:selectOptions value="{!list_Team}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:actionRegion>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem rendered="{!blnIsSubTeamExit}">
+                <apex:outputLabel value="Ticket to Sub Team" />
+                <apex:actionRegion >
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                        <apex:selectList value="{!strSelectedSubTeam}" size="1">
+                            <apex:actionSupport event="onchange" reRender="blockSection1,tktOwnerSection,messagesSec" action="{!assignOwner}" status="actStatusId"/>
+                            <apex:selectOptions value="{!list_SubTeam}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:actionRegion>
+            </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection rendered="{!IF(strSelectedTeam != '', true, false)}"  id="blockSection1" columns="1" title="Information" collapsible="false" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Ticket Reason" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:selectList value="{!strSelectedReason}" size="1">
+                                <apex:actionSupport event="onchange" action="{!ticketDetail}" reRender="blockSection1,messagesSec" status="actStatusId"/>
+                                <apex:selectOptions value="{!list_ReasonList}" />
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Ticket Reason Detail"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="detail">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block" rendered="{!IF(list_ReasonDetail.size > 1, true, false)}"/>
+                        <apex:selectList value="{!strSelectedReasonDetail}" size="1">
+                            <apex:actionSupport event="onchange" action="{!ticketUpdateCoOnlyValue}" reRender="blockSection1,messagesSec" status="actStatusId"/>
+                            <apex:selectOptions value="{!list_ReasonDetail}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!(blnIsCOUpdateOnly || blnIsTicketForFaciliator) && blnIsBOObject}">
+                    <apex:outputLabel value="Select Carrier Order"/>
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:selectList value="{!strSelectedCO}" size="1">
+                                <apex:actionSupport event="onchange" reRender="tktOwnerSection" action="{!assignOwnerFromCO}" status="actStatusId"/>
+                                <apex:selectOptions value="{!list_CarrierOrder}" />
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection id="tktOwnerSection">
+                <apex:pageBlockSectionItem rendered="{!IF(objBO.Escalated_User__c != NULL, true, false)}">
+                    <apex:outputLabel value="Ticket Owner"/>
+                    <apex:outputField value="{!objBO.Escalated_User__c}" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection rendered="{!IF(strSelectedTeam != '', true, false)}"  columns="1" title="Summary" collapsible="false" >
+                <apex:inputField value="{!objTicket.Description__c}" label="Description"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection rendered="{!IF(strSelectedTeam != '', true, false)}"  columns="2" title="Related Information" collapsible="false" >
+                <apex:outputField value="{!objTicket.Opportunity__c}" label="Opportunity"/>
+                <apex:outputField value="{!objTicket.Benefit_Order__c}" label="Benefit Order" rendered="{!blnIsBOObject}"/>
+                <apex:outputField value="{!objTicket.Carrier_Order__c}" label="Carrier Order" rendered="{!!blnIsBOObject}"/>
+                <apex:outputField value="{!objTicket.Case__c}" label="Case"/>
+                <apex:outputField rendered="{!(objTicket.Benefit_Order__c != NULL)}" value="{!objTicket.Renewal_Date__c}" label="Benefit Order Renewal Date"/> 
+                <apex:outputText value="{!strScriptvar}" escape="false"></apex:outputText>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom"  rendered="{!objTicket.Reporting_Team__c!=null}">
+                <apex:commandButton action="{!saveTicket}" value="Save" reRender="frmId" status="actStatusId"/>
+                <apex:commandButton onClick="RefreshPrimaryTab();" value="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Tax Res POD Forecast</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Filter_Type__c</field>
+        <value xsi:type="xsd:string">MainQuery</value>
+    </values>
+    <values>
+        <field>Filter_Value__c</field>
+        <value xsi:type="xsd:string">SELECT ID,Account_Specialist_POD__c,Coordinator_POD__c,Notice_Analyst_POD__c, Coordinator_Assignment_Date_Time__c, Account_Specialist__c, Notice_Analyst__c,Email_Status__c,Status,Agency_Information__c,RecordTypeId, Last_out_bound_email__c, ContactId, OwnerId FROM Case WHERE RecordTypeId =:CASE_RECORD_TYPE_ID AND Status NOT IN:set_ExcludeCases AND Agency_Information__c != null AND (Notice_Analyst_POD__c = null OR Account_Specialist_POD__c = null OR Coordinator_POD__c = null)</value>
+    </values>
+    <values>
+        <field>Order_by_records__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Play_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Priority__c</field>
+        <value xsi:type="xsd:string">0</value>
+    </values>
+    <values>
+        <field>Skill_Type__c</field>
+        <value xsi:type="xsd:string">All Cases</value>
+    </values>
+    <values>
+        <field>Team__c</field>
+        <value xsi:type="xsd:string">Feature</value>
+    </values>
+</CustomMetadata>

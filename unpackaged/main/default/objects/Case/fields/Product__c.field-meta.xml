@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product__c</fullName>
+    <description>Product field for Modern Bank to identify the product that customers are reaching out about.</description>
+    <label>Product</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Cashout</fullName>
+                <default>false</default>
+                <label>Cashout</label>
+            </value>
+            <value>
+                <fullName>Savings goals</fullName>
+                <default>false</default>
+                <label>Savings goals</label>
+            </value>
+            <value>
+                <fullName>Spending account (debit card)</fullName>
+                <default>false</default>
+                <label>Spending account (debit card)</label>
+            </value>
+            <value>
+                <fullName>Instant Cashout</fullName>
+                <default>false</default>
+                <label>Instant Cashout</label>
+            </value>
+            <value>
+                <fullName>Mobile app</fullName>
+                <default>false</default>
+                <label>Mobile app</label>
+            </value>
+            <value>
+                <fullName>Paycheck splitter</fullName>
+                <default>false</default>
+                <label>Paycheck splitter</label>
+            </value>
+            <value>
+                <fullName>Not Product Specific</fullName>
+                <default>false</default>
+                <label>Not Product Specific</label>
+            </value>
+            <value>
+                <fullName>Cash Accounts</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cash Accounts</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

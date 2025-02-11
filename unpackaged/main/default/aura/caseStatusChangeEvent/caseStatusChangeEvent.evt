@@ -1,0 +1,9 @@
+<!--
+    Purpose: Aura Application Event used to indicate when case status changes. It will be fired from answers component (background utility)
+    Written by : Praveen Sethu
+    Date: 09/15/2020
+-->
+<aura:event type="APPLICATION" description="Used for firing case status changes">
+    <aura:attribute name="idCase" type="String"/>
+    <aura:attribute name="strStatus" type="String"/>
+</aura:event>

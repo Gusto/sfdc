@@ -1,0 +1,9 @@
+<aura:component implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes">
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:attribute name="openModal" type="Boolean" default="false" />
+    <aura:attribute name="recordId" type="String" default=" " />
+    <aura:registerEvent name="newEvent" type="c:closeModalHandler"/>
+    <c:caseMergeComponent recordId="{!v.recordId}" openModal="{!v.openModal}" onopenprimarytab="{!c.handlePrimaryTab}" onclosemodal="{!c.handleCloseModal}"/>
+    
+
+</aura:component>

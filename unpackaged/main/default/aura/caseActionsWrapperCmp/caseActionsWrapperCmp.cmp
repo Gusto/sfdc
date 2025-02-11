@@ -1,0 +1,35 @@
+<!--
+    Purpose: Aura Wrapper component for case actions. Renders Dynamic case fields. Users can either solve or save cases
+    Written by : Praveen Sethu
+    Date: 09/15/2020
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
+<!-- Workspace API -->
+<lightning:workspaceAPI aura:id="workspace"/>
+<aura:attribute name="strFocusedTabId" type="String"/>
+<aura:attribute name="caseRecordTypes" type="String"/>
+<aura:attribute name="partnerAccountCaseReasons" type="String" default=""/>
+<aura:attribute name="caseStatuses" type="String"/>
+<aura:attribute name="productAreaEnabledRecordTypes" type="String"/>
+
+<!-- Event Handler-->
+<aura:handler name="init" action="{!c.doInit}" value="this"/>
+<aura:handler event="c:caseStatusChangeEvent" action="{! c.handleStatusChangeEvent }"/>
+<aura:handler event="c:caseUpdateEvent" action="{!c.handleCaseUpdate}"/>
+<!-- Event Registers-->
+<aura:registerEvent name="caseUpdateEvent" type="c:caseUpdateEvent"/>
+<!-- onclosetab = used for play mode to close focussed tab and serve additional cases -->
+<!-- onreloadcase = when the same case tab is open somewhere else, the data on case actions need to be refreshed -->
+<!-- onclosefocustab = used when a case is solved. when a case is solved, we update the status and close the focussed tab -->
+<c:caseActionsCmp 
+    aura:id="caseAction" 
+    recordId="{!v.recordId}" 
+    onclosetab="{!c.handleCloseTab}" 
+    onclosefocustab="{!c.handleCloseFocussedTab}" 
+    onreloadcase="{!c.handleReloadCase}"
+    strCaseRecordTypes="{!v.caseRecordTypes}"
+    strPartnerAccountCaseReasons="{!v.partnerAccountCaseReasons}"
+    strCaseStatuses="{!v.caseStatuses}"
+    strProductAreaEnabledRecordTypes="{!v.productAreaEnabledRecordTypes}">
+</c:caseActionsCmp>
+</aura:component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Approval_Details</fullName>
+    <active>false</active>
+    <description>Approval details must be complete to request approval</description>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(SMB_Approval_Request__c)),
+  ISBLANK(SMB_Approval_Detail__c), 
+  NOT($User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorDisplayField>SMB_Approval_Detail__c</errorDisplayField>
+    <errorMessage>Approval Details must be complete to request SMB Approval</errorMessage>
+</ValidationRule>

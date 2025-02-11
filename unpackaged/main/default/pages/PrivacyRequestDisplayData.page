@@ -1,0 +1,19 @@
+<apex:page standardController="Case" extensions="PrivacyRequestDisplayDataExt">
+    <html>
+        <apex:slds />
+        <div class="slds-scope">
+            <div class="slds-text-align_center">
+                <apex:form >
+                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Generate data" action="{!displayData}" reRender="redirectPanel" onClick="this.disabled=true;"/>
+                    <apex:outputPanel id="redirectPanel" >
+                        <apex:outputText rendered="{!shouldRedirect}">
+                            <script type="text/javascript">
+                                window.top.location.href = '/console';
+                            </script>
+                        </apex:outputText>
+                    </apex:outputPanel>
+                </apex:form>
+            </div>
+        </div>
+    </html>
+</apex:page>

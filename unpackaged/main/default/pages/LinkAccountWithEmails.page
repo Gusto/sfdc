@@ -1,0 +1,528 @@
+<apex:page id="mainPage" controller="LinkAccountWithEmailsCtrl" title="Benefits Carrier Inbox" doctype="HTML-5.0">
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:slds />
+    <link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script>
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <style>
+            .custom-table th, .custom-table td {
+                 padding: 5px;
+                 white-space: normal; 
+                 vertical-align: top;  
+            }
+            .ms-options-wrap > button:focus, .ms-options-wrap > button {
+               background: #fff;
+               max-width: 408px;
+            }
+            .ms-options-wrap {
+                position: relative;
+            }
+            .pbSubheader h3{
+                display: inline;
+            }
+            .custom-tooltip .custom-tooltip-box {
+                display: none;
+            }
+            .custom-tooltip a:hover + .custom-tooltip-box {
+                display: block;
+            }
+    </style>
+    <apex:form id="mainForm">
+    <div class="slds-scope">
+        <script type="text/javascript">
+        function noenter(e){
+            if(window.event){    
+                key = window.event.keyCode; //IE            
+            } else{          
+                key = e.which; //firefox         
+            }
+            
+            if(key == 13) {   //mainPage:mainForm:emailMessagesBlock:searchButton     
+                var ele = document.getElementById('{!$Component.mainForm.emailMessagesBlock.searchButton}');  
+                //console.log('ele: ' + ele);
+                ele.click();   
+                return false;
+            } else{
+                return true;
+            }
+        }        
+        </script>
+        <c:ActionStatus />
+        <!--<apex:actionFunction name="attachEmail" status="statusSave"  action="{!attachEmailToCase}" reRender="linkAccountSection,msgSec">
+            <apex:param name="caseToAttachEmailTo" value="" assignTo="{!idSelectedCase}"></apex:param>
+        </apex:actionFunction>
+        <apex:actionFunction name="attachEmailToExisting" status="statusSave" action="{!attachEmailToExistingCase}" reRender="linkAccountSection,msgSec">
+            <apex:param name="accToAttachEmailTo" value="" assignTo="{!idSelectedAccount}"></apex:param>
+        </apex:actionFunction>-->
+        <apex:actionFunction rerender="searchResults, recordCount" status="statusSave" name="sortEmailList" action="{!sortEmailList}" >
+            <apex:param name="sortby" value="" assignTo="{!strSortBy}"/>
+            <apex:param name="orderas" value="{!strOrderAs}"/>
+        </apex:actionFunction> 
+                   
+        <apex:actionFunction action="{!archiveSelectedEmail}" status="statusSave" rerender="searchResults, recordCount" name="archiveEmail">
+            <apex:param name="index" value="" assignTo="{!intSelectedEmail}"/>
+            <apex:param name="messageId" value="" assignTo="{!idSelectedEmail}"/>  
+        </apex:actionFunction>
+        <apex:actionFunction action="{!secureSelectedEmail}" status="statusSave" rerender="searchResults, recordCount" name="secureEmail">
+            <apex:param name="index" value="" assignTo="{!intSelectedEmail}"/>
+            <apex:param name="messageId" value="" assignTo="{!idSelectedEmail}"/>  
+        </apex:actionFunction>
+        <apex:actionFunction action="{!unSecureSelectedEmail}" status="statusSave" rerender="searchResults, recordCount" name="unSecureEmail">
+            <apex:param name="index" value="" assignTo="{!intSelectedEmail}"/>
+            <apex:param name="messageId" value="" assignTo="{!idSelectedEmail}"/>  
+        </apex:actionFunction>
+        <div class="tabcontent" id="mainDiv">
+            <apex:pageMessages id="msgSec"/>
+            <apex:outputPanel id="allEmailsSection" rendered="{!NOT(bool_ShowEmailLinkSection)}">
+                <apex:pageblock id="emailMessagesBlock" title="Email Messages">
+                    
+                    <table class="custom-table" style="width: auto !important;"> 
+                        <tr>
+                            <th>Search :</th>
+                            <td >
+                                <apex:inputText styleClass="slds-input" value="{!str_SubSearch}" style="width:100%" onkeypress="return noenter(event);"/>
+                            </td>
+                            <th>Date From:</th>
+                            <td><apex:input styleClass="slds-input" value="{!dtStartDate}" type="date"/> </td>
+                            <th>To :</th>
+                            <td><apex:input styleClass="slds-input" value="{!dtEndDate}" type="date"/></td>
+                        </tr>
+                        <tr>
+                            <th>Email Type :</th>
+                            <td >
+                                <apex:selectList value="{!lstSelectedInboxType}" multiselect="true">
+                                    <apex:selectOptions value="{!lstInboxType}"/>
+                                </apex:selectList>
+                            </td>
+                            <th colspan="2">
+                                <apex:inputCheckbox styleClass="slds-checkbox" value="{!boolGetArchivedEmails}" /> Include Archived Emails
+                            </th>
+                            <th colspan="2">
+                                <apex:inputCheckbox styleClass="slds-checkbox" value="{!blnGetSecuredEmails}" /> Secure Emails Only 
+                            </th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th align="center" style="display: inline-block;">
+                                <apex:commandButton action="{!refreshEmails}" status="statusSave" rerender="searchResults,msgSec, recordCount, showRecordCount" value="Refresh" styleClass="slds-button slds-button_outline-brand"/>
+                            </th>                            
+                            <th align="center" style="display: inline-block;">
+                                <apex:commandButton id="searchButton" action="{!fetchEmails}" status="statusSave" rerender="searchResults,msgSec, recordCount, showRecordCount" value="Search" styleClass="slds-button slds-button_outline-brand"/>
+                            </th>
+                        </tr>
+                    </table>
+                    <apex:outputPanel id="searchResults">
+                        <apex:pageblockSection id="result" title="Emails">
+                            <apex:outputPanel id="emailSection" rendered="{!IF(NULL != lst_EmailsWrap && lst_EmailsWrap.size > 0, true,false)}">
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                    <thead>
+                                        <tr class="slds-text-title slds-line-height_reset">
+                                            <th class="sorter-false" scope="col">
+                                                <div class="slds-checkbox slds-checkbox_standalone"><apex:inputcheckbox id="selectAllChkBox" styleClass="slds-checkbox" onclick="selectAllEmail(this,'InputId'); countSelectedRecord();"/>
+                                                    <span class="slds-checkbox_faux"></span>
+                                                </div>
+                                            </th>
+                                            <th class="sorter-false" scope="col" onclick="sortEmailList('From_Addresses__c');">
+                                                <ul class="slds-list_horizontal">
+                                                    <li class="slds-truncate">From</li>
+                                                    <li>
+                                                        <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(strSortBy=='From_Addresses__c' && strOrderAs=='DESC','','none;')}"></i>
+                                                        <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(strSortBy=='From_Addresses__c' && strOrderAs=='ASC','','none;')}"></i>
+                                                    </li>                      
+                                                </ul>
+                                            </th>
+                                            <th class="sorter-false" scope="col" onclick="sortEmailList('To_Address__c');">
+                                                <ul class="slds-list_horizontal">
+                                                    <li class="slds-truncate">To</li>
+                                                    <li>
+                                                        <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(strSortBy=='To_Address__c' && strOrderAs=='DESC','','none;')}"></i>
+                                                        <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(strSortBy=='To_Address__c' && strOrderAs=='ASC','','none;')}"></i>
+                                                    </li>                      
+                                                </ul>
+                                            </th>
+                                            <th class="sorter-false" scope="col" onclick="sortEmailList('CC_Address__c');">
+                                                <ul class="slds-list_horizontal">
+                                                    <li class="slds-truncate">CC</li>
+                                                    <li>
+                                                        <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(strSortBy=='CC_Address__c' && strOrderAs=='DESC','','none;')}"></i>
+                                                        <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(strSortBy=='CC_Address__c' && strOrderAs=='ASC','','none;')}"></i>
+                                                    </li>                      
+                                                </ul>
+                                            </th>
+                                            <th class="sorter-false" scope="col" onclick="sortEmailList('Subject__c');">
+                                                <ul class="slds-list_horizontal">
+                                                    <li class="slds-truncate">Subject</li>
+                                                    <li>
+                                                        <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(strSortBy=='Subject__c' && strOrderAs=='DESC','','none;')}"></i>
+                                                        <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(strSortBy=='Subject__c' && strOrderAs=='ASC','','none;')}"></i>
+                                                    </li>                      
+                                                </ul>
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th class="sorter-false" scope="col" onclick="sortEmailList('CreatedDate');">
+                                                <ul class="slds-list_horizontal">
+                                                    <li class="slds-truncate">Date</li>
+                                                    <li>
+                                                        <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(strSortBy=='CreatedDate' && strOrderAs=='DESC','','none;')}"></i>
+                                                        <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(strSortBy=='CreatedDate' && strOrderAs=='ASC','','none;')}"></i>
+                                                    </li>                      
+                                                </ul>
+                                            </th>
+                                            <th class="sorter-false" scope="col" onclick="sortEmailList('Linked_Accounts__c');">
+                                                <ul class="slds-list_horizontal">
+                                                    <li class="slds-truncate">Linked Accounts</li>
+                                                    <li>
+                                                        <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(strSortBy=='Linked_Accounts__c' && strOrderAs=='DESC','','none;')}"></i>
+                                                        <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(strSortBy=='Linked_Accounts__c' && strOrderAs=='ASC','','none;')}"></i>
+                                                    </li>                      
+                                                </ul>
+                                            </th>
+                                            <th class="sorter-false" scope="col">
+                                                Possible Account Matches
+                                            </th>
+
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!lst_EmailsWrap}" var="email"> 
+                                            <tr class="slds-text-title slds-line-height_reset">  
+                                                <td>
+                                                    <div class="slds-checkbox slds-checkbox_standalone slds-float_left">
+                                                        <apex:inputcheckbox styleClass="slds-checkbox manage-checkbox {!if(email.obj_Message.Archived__c, '', 'archive-checkbox')} {!if(email.obj_Message.Secure_Email__c, 'un-secure-checkbox', 'secure-checkbox')}" value="{!email.blnSelect}" id="InputId"/>
+                                                        <span class="slds-checkbox_faux"></span>
+                                                    </div>   
+                                                </td>                                       
+                                                <td>
+                                                    <apex:outputText value="{!email.obj_Message.From_Addresses__c}"/>
+                                                </td>
+                                                <td>
+                                                    <apex:repeat value="{!email.lst_ToAddresses}" var="toAddr">
+                                                        <apex:outputText value="{!toAddr}"/><br/>
+                                                    </apex:repeat>
+                                                </td>
+                                                <td>
+                                                    <apex:repeat value="{!email.lst_CCAddresses}" var="ccAddr">
+                                                        <apex:outputText value="{!ccAddr}"/><br/>
+                                                    </apex:repeat>
+                                                </td>                                                                                              
+                                                <td style="white-space: break-spaces !important;min-width: 240px;">
+                                                    <apex:commandLink value="{!email.obj_Message.Subject__c}" action="{!showSelectedEmail}" onComplete="openmodal();" status="statusSave" rerender="popupSection">
+                                                        <apex:param name="index" value="{!email.indx}" assignTo="{!intSelectedEmail}"/>
+                                                        <apex:param name="messageId" value="{!email.obj_Message.Id}" assignTo="{!idSelectedEmail}"/>
+                                                    </apex:commandLink>
+                                                </td >
+                                                <td>
+                                                    <a href="javascript:void(0);" onClick="openRecord('{!email.obj_Message.Id}','{!email.obj_Message.Name}',false);">
+                                                        <i class="material-icons">open_in_new</i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a style="display:{!if(email.obj_Message.Archived__c,'', 'none;')}" href="javascript:void(0);" id="archiveBtn" >
+                                                        <i class="fas fa-folder-minus fa-lg" style="margin: 5px; color: #2a6564;"></i>
+                                                    </a>
+                                                    <a style="display:{!if(email.obj_Message.Archived__c,'none;', '')}" href="javascript:void(0);" id="archiveBtn" onclick="clickArchive('{!email.indx}', '{!email.obj_Message.Id}');" >
+                                                        <i class="material-icons">archive</i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a style="display:{!if(email.obj_Message.Secure_Email__c,'', 'none;')}" href="javascript:void(0);" id="secureBtn" onclick="unSecureArchive('{!email.indx}', '{!email.obj_Message.Id}');">
+                                                        <i class="fas fa-lock fa-lg" style="margin: 5px; color: #2a6564;"></i>
+                                                    </a>
+                                                    <a style="display:{!if(email.obj_Message.Secure_Email__c,'none;', '')}" href="javascript:void(0);" id="secureBtn2" onclick="secureArchive('{!email.indx}', '{!email.obj_Message.Id}');" >
+                                                        <i class="fas fa-lock-open fa-lg" style="margin: 5px; color: #2a6564;"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <apex:outputText value="{!email.createdDateTime}"/>
+                                                </td>
+                                                <td>
+                                                    <apex:outputPanel rendered="{!email.obj_Message.Linked_Accounts__c != null}">
+                                                        <apex:repeat value="{!email.map_LinkedAccounts}" var="relAccId">
+                                                            <a href="javascript:void(0);"  onclick="openRecord('{!relAccId}','{!email.map_LinkedAccounts[relAccId].Name}',false);return true;">{!email.map_LinkedAccounts[relAccId].Name}</a><br/>
+                                                        </apex:repeat>
+                                                    </apex:outputPanel> 
+                                                </td>
+                                                <td>
+                                                    <apex:outputPanel rendered="{!IF(NULL == email.obj_Message.Linked_Accounts__c && NULL != email.map_Accounts, true, false)}">
+                                                        <apex:repeat value="{!email.map_Accounts}" var="relAccId">
+                                                            <a href="javascript:void(0);"  onclick="openRecord('{!relAccId}','{!email.map_Accounts[relAccId].Name}',false);return true;">{!email.map_Accounts[relAccId].Name}</a><br/>
+                                                        </apex:repeat>
+                                                    </apex:outputPanel>
+                                                </td>
+                                                <td> 
+                                                <a href="javascript:void(0);" onclick="openSubTab('/apex/LinkAccount?mId={!email.obj_Message.Id}','Link Account {!email.obj_Message.Name}');return true;">Link Account</a>                            
+                                                    <!--
+                                                    <apex:commandLink value="Link Account" action="{!linkSelectedEmail}" status="statusSave" rerender="mainForm,linkAccountSection">
+                                                        <apex:param name="index" value="{!email.indx}" assignTo="{!intSelectedEmail}"/>
+                                                    </apex:commandLink>
+                                                    <apex:commandLink  value="Link Account Button" action="{!RedirectToLinkAccountPage}" status="statusSave" target="_blank">
+                                                        <apex:param name="index" value="{!email.indx}" assignTo="{!intSelectedEmail}"/>
+                                                    </apex:commandLink >--> 
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                    
+                                        <tr class="slds-text-title slds-line-height_reset">
+                                            <th><apex:commandButton disabled="{!NOT(hasPrevious)}" value="FIRST" reRender="searchResults, recordCount" action="{!first}" status="statusSave" oncomplete="uncheckedSelectAllChkBox();" styleClass="slds-button slds-button_outline-brand"/></th>
+                                            <th><apex:commandButton disabled="{!NOT(hasPrevious)}" value="PREVIOUS" rerender="searchResults, recordCount" action="{!previous}" status="statusSave" oncomplete="uncheckedSelectAllChkBox();" styleClass="slds-button slds-button_outline-brand"/>
+                                                &nbsp;Page {!pageNumber} of {!totalPages}&nbsp;</th>
+                                            <th><apex:commandButton disabled="{!NOT(hasNext)}" value="NEXT" rerender="searchResults, recordCount" action="{!next}" status="statusSave" oncomplete="uncheckedSelectAllChkBox();" styleClass="slds-button slds-button_outline-brand"/></th>
+                                            <th><apex:commandButton disabled="{!NOT(hasNext)}" value="LAST" rerender="searchResults, recordCount" action="{!last}" status="statusSave" oncomplete="uncheckedSelectAllChkBox();" styleClass="slds-button slds-button_outline-brand"/></th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </apex:outputPanel>
+                        </apex:pageblockSection>
+                        <apex:outputPanel id="noEmails" rendered="{!IF(NULL == lst_EmailsWrap || lst_EmailsWrap.size == 0,true,false)}">
+                            No Emails found.
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:pageblock>
+            </apex:outputPanel>
+
+            <script>
+            //      isError = '{!isError}';
+            //      console.log(isError);
+            </script> 
+           <!--/apex:outputPanel> -->
+            <apex:outputPanel id="popupSection">
+                <!-- For Popup Window -->
+                <div class="modal-window view-email-modal" style="display: none;">
+                    <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container" style="max-width: 50%;">
+                            <div class="slds-modal__header">
+                                <h2 id="modal-heading-01" class="slds-text-heading_small slds-hyphenate">
+                                <b>Email - {!objEmailMsgWrapper.obj_Message.Subject__c}</b></h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around_medium slds-scrollable" id="modal-content-id-1"> <!--style="max-height: 350px; overflow-y: auto;"-->
+                                <h3 class="slds-text-body_small slds-text-align_right">
+                                    <b>From: </b>
+                                    <apex:outputText value="{!objEmailMsgWrapper.obj_Message.From_Addresses__c}"/>
+                                </h3>
+                                <h3 class="slds-text-body_small slds-text-align_right">
+                                    <b>To: </b>
+                                    <apex:repeat value="{!objEmailMsgWrapper.lst_ToAddresses}" var="toAddr">
+                                        <apex:outputText value="{!toAddr}"/><br/>
+                                    </apex:repeat>
+                                </h3>
+                                <h3 class="slds-text-body_small slds-text-align_right">
+                                    <b>Created on: </b>
+                                    <apex:outputText value="{!objEmailMsgWrapper.createdDateTime}"/>
+                                </h3>
+                                <p>
+                                    <apex:outputField value="{!emailMessageRecord.Text_Body__c}"/>
+                                </p>
+                            </div>
+                        <div class="slds-modal__footer">
+                            <apex:repeat value="{!objEmailMsgWrapper.obj_Message.attachments}" var="att">
+                                <apex:panelgrid columns="2">
+                                    <!--<a href="javascript:void(0);" onClick="openRecord('{!att.Id}','{!att.Name}',false)">{!att.Name}</a>-->
+                                    <a href="/servlet/servlet.FileDownload?file={!att.Id}" target="_blank">{!att.Name}</a> 
+                                </apex:panelgrid>
+                            </apex:repeat>
+                            
+                            <button class="slds-button slds-button_brand close-modal" onclick="closemodal();return false;">Close</button>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </div>
+                <!-- End Pop-up window code -->
+            </apex:outputPanel>
+        </div>
+        <script>
+            $('select[multiple]').multiselect();
+        </script>
+
+        <!--Popup Start-->
+        <div class="modal-window archive-popup-modal" style="display: none;">
+            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container" style="max-width: 500px;">
+                    <div class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate archive-popup-header">Archive Email</h2>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p class="archive-popup">You have selected 13 emails. Are you sure you want to archive?</p>
+                    </div>
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral close-modal" onclick="closeConfirmationModal();">No</button>
+                        <apex:commandButton rerender="mainForm" status="statusSave" styleclass="slds-button slds-button_brand btn-grey archive-btn" value="Yes" action="{!archiveMassEmail}"/>
+                        <apex:commandButton rerender="mainForm" status="statusSave" styleclass="slds-button slds-button_brand btn-grey secure-btn" value="Yes" action="{!secureMassEmail}"/>
+                        <apex:commandButton rerender="mainForm" status="statusSave" styleclass="slds-button slds-button_brand btn-grey un-secure-btn" value="Yes" action="{!unSecureMassEmail}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <!--Pop end-->
+    </div>    
+    </apex:form>
+    
+    <script>
+        var isError;
+            $(function() {
+                $('select[multiple]').multiselect();
+            });
+            
+            $('.close-modal').click(function() {
+                $('.modal-window').fadeOut();
+               });
+           function closemodal(){
+                $('.view-email-modal').fadeOut(); 
+            }
+           function openmodal(){
+            $('.view-email-modal').fadeIn(); 
+           }
+    function openSubTab(recId, recName) {
+        console.log('recId: ' + recId);
+        //var redirectUrl = 'https://gusto--full.cs78.my.salesforce.com' + '/'+recId; 
+        var redirectUrl = recId; 
+        //https://gusto--full.cs78.my.salesforce.com/apex/LinkAccount?id=a8h1k0000004uGqAAI
+        if (sforce.console.isInConsole()) { 
+            sforce.console.getEnclosingTabId(function (enclosingResult) {
+                sforce.console.getEnclosingPrimaryTabId(function (primaryResult) {
+                    if(primaryResult.id=='null'){
+                        sforce.console.openPrimaryTab(undefined,redirectUrl,true,recName);
+                    } else {
+                        sforce.console.openSubtab(primaryResult.id, recId, true, recName, null);
+                    }
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/' + recId, '_blank');
+        }
+    }    
+    
+           function openRecord(recId,label,isActive){
+                    var redirectUrl = '/'+recId; 
+                    if (sforce.console.isInConsole()) {
+                        sforce.console.getEnclosingTabId(function(enclosingResult){
+                            sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                                console.log(primaryResult.id);
+                                if(primaryResult.id=='null'){
+                                    sforce.console.openPrimaryTab(undefined,redirectUrl,isActive,label);
+                                }else{
+                                console.log(isActive);
+                                    sforce.console.openSubtab(primaryResult.id, redirectUrl, isActive,label, null);
+                                }
+                            });
+                        })
+                    } else {
+                        // for inline Vf
+                        window.open(redirectUrl, '_blank');
+                    }
+                }
+                
+            function callAttachEmail(caseId,caseNumber){
+                attachEmail(caseId);
+                if(isError == 'false')
+                    openRecord(caseId,caseNumber,true);
+            }
+    </script>
+            
+    <apex:outputPanel id="recordCount">
+        <script>
+        function selectAllEmail(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                    if(inputCheckBox[i].disabled == false){
+                        inputCheckBox[i].checked = obj.checked;
+                    }
+                }
+            }
+        }
+
+        function uncheckedSelectAllChkBox(){
+            document.getElementById('mainPage:mainForm:emailMessagesBlock:result:selectAllChkBox').checked = false;
+        }
+
+        function countSelectedRecord() {
+            var selectedIteam = parseInt($('.manage-checkbox:checked').length) + parseInt('{!intSelectedRecordCount}');
+            console.log('------> ' + selectedIteam);
+            $('.mt-items').html(selectedIteam + '');
+        }
+        
+        $(document).ready(function () {
+            var $chkboxes = $('.manage-checkbox');
+            var lastChecked = null;
+            $chkboxes.click(function (e) {
+                console.log('lastChecked----> '+lastChecked);
+                if (!lastChecked) {
+                    lastChecked = this;
+                    var selectedIteam = parseInt($('.manage-checkbox:checked').length) + parseInt('{!intSelectedRecordCount}');
+                    $('.mt-items').html(selectedIteam + '');
+                    return;
+                }
+
+                if (e.shiftKey) {
+                    var start = $chkboxes.index(this);
+                    var end = $chkboxes.index(lastChecked);
+                    var minIndex = Math.min(start, end)
+                    var maxIndex = Math.max(start, end) + 1;
+                    console.log(minIndex + '---index----->' + maxIndex);
+                    $chkboxes.slice(minIndex, maxIndex).prop('checked', lastChecked.checked);
+                }
+
+                lastChecked = this;
+                var selectedIteam = parseInt($('.manage-checkbox:checked').length) + parseInt('{!intSelectedRecordCount}');
+                $('.mt-items').html(selectedIteam + '');
+            });
+        });
+
+        function clickArchive(indexObj, idObj){
+            var selectedIteam = parseInt($('.archive-checkbox:checked').length) + parseInt('{!intSelectedRecordCount}');
+            if (selectedIteam == 0) {
+                archiveEmail(indexObj, idObj);
+            } else {
+                $('.archive-popup').html('You have selected ' + selectedIteam + ' unarchived emails. Are you sure you want to archive?');
+                $('.archive-popup-header').html('Archive Email');
+                $('.archive-btn').fadeIn();
+                $('.secure-btn').fadeOut();
+                $('.un-secure-btn').fadeOut();
+                $('.archive-popup-modal').fadeIn();
+            }
+        }
+
+        function secureArchive(indexObj, idObj) {
+            var selectedIteam = parseInt($('.secure-checkbox:checked').length) + parseInt('{!intSelectedSecureRecordCount}');
+            if (selectedIteam == 0) {
+                secureEmail(indexObj, idObj);
+            } else {
+                $('.archive-popup').html('You have selected ' + selectedIteam + '  unsecured emails. Are you sure you want to secure?');
+                $('.archive-popup-header').html('Secure Email');
+                $('.archive-btn').fadeOut();
+                $('.secure-btn').fadeIn();
+                $('.un-secure-btn').fadeOut();
+                $('.archive-popup-modal').fadeIn();
+            }
+        }
+
+        function unSecureArchive(indexObj, idObj) {
+            var selectedIteam = parseInt($('.un-secure-checkbox:checked').length) + parseInt('{!intSelectedUnSecureRecordCount}');
+            if (selectedIteam == 0) {
+                unSecureEmail(indexObj, idObj);
+            } else {
+                $('.archive-popup').html('You have selected ' + selectedIteam + '  secured emails. Are you sure you want to unsecure?');
+                $('.archive-popup-header').html('Un-Secure Email');
+                $('.archive-btn').fadeOut();
+                $('.secure-btn').fadeOut();
+                $('.un-secure-btn').fadeIn();
+                $('.archive-popup-modal').fadeIn();
+            }
+        }
+
+        function closeConfirmationModal(){
+            $('.modal-window').fadeOut(); 
+        }
+        </script>  
+    </apex:outputPanel>
+
+</apex:page>

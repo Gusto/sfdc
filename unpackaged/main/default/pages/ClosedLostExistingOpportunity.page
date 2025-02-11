@@ -1,0 +1,61 @@
+<apex:page standardController="Opportunity" extensions="Controller" action="{!setClosedLost}" id="mainPage">
+    <apex:sectionHeader title="Opportunity Closed Lost"
+                        subtitle="Mark an Existing Opportunity Closed Lost"/>
+    <style>
+        
+        .reqStyl{
+            background-color: #c00;
+			position: absolute;
+			left: -4px;
+			width: 3px;
+			top: 1px;
+			bottom: 1px;
+        }
+    
+    </style>
+    
+    
+    <apex:form id="frm">
+
+        <apex:pageBlock id="pageblock">
+            <apex:actionstatus id="stat1" startText="Please wait..."/>
+            <apex:pageMessages id="pgmsg"/>
+            <apex:actionFunction name="getReasonDescrption" action="{!getReasonDetails}" rerender="theFields,pgmsg" status="stat1" oncomplete="disableStage();" />
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Save" action="{!updateOpportunity}"  rerender="pgmsg,theFields" status="stat1"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" rerender="pgmsg,theFields"/>
+                <apex:commandButton value="Save & Feedback" action="{!openFeedback}" rerender="pgmsg,theFields"/> 
+            </apex:pageBlockButtons>
+
+
+            <apex:pageBlockSection id="theFields" collapsible="false" columns="2">
+                <apex:pageBlockSection id="fields" columns="1">
+                    <apex:outputField value="{!Opportunity.AccountId}"/>
+	                <apex:outputField value="{!Opportunity.Name}"/>
+	                <apex:outputField value="{!Opportunity.CloseDate}"/>
+	                <apex:inputField value="{!Opportunity.StageName}" id="stageNam" />
+	                <apex:inputField value="{!Opportunity.Stage_Detail__c}" required="true" onchange="getReasonDescrption();"/>
+	                <apex:inputField value="{!Opportunity.Stage_Detail_2__c}" onchange="getReasonDescrption();"/>
+	                <apex:inputField value="{!Opportunity.Competitor__c}" label="Competitor*" onchange="getReasonDescrption();" />
+	                <apex:inputField value="{!Opportunity.Closed_Details__c}" label="Closed Details*" style="width:50%" id="closeDetail"/>
+                    <apex:inputField value="{!Opportunity.Additional_Reasons_Lost__c}" label="Additional Reasons Lost" />
+	            </apex:pageBlockSection>
+                <apex:pageBlockSection id="details" columns="1">  
+                    <apex:inputTextarea disabled="true" label="Definition + Next Steps" style="width:50%;height:200px;" value="{!selectedReasonDetail.descriptionStr}" id="descField" rendered="{! if(selectedReasonDetail.descriptionStr != null,true,false)}"/>
+                </apex:pageBlockSection> 
+            </apex:pageBlockSection>
+
+            <!-- <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:inputField value="{!Opportunity.Closed_Details__c}" style="width:80%;"/>
+                <apex:inputField value="{!Opportunity.Notes__c}" style="width:80%;"/>
+            </apex:pageBlockSection> -->
+
+        </apex:pageBlock>
+        <script>
+            function disableStage(){
+                document.getElementById("mainPage:frm:pageblock:theFields:fields:stageNam").setAttribute('disabled','disabled');
+            }
+            window.onload = disableStage;
+        </script>
+    </apex:form>
+</apex:page>

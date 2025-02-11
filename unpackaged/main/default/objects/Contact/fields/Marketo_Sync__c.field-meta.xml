@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Marketo_Sync__c</fullName>
+    <formula>IF (
+    ((Record_Type__c = &apos;Company&apos; || Record_Type__c = &apos;Reseller&apos; )
+    &amp;&amp;
+    (INCLUDES(ZP_User_Role__c ,&apos;Payroll Admin&apos;) ||
+    INCLUDES(ZP_User_Role__c , &apos;Benefits Admin&apos;) ||
+    INCLUDES(ZP_User_Role__c , &apos;Primary Payroll Admin&apos;) ||
+    INCLUDES(ZP_User_Role__c , &apos;Signatory&apos;) ||
+    INCLUDES(ZP_User_Role__c , &apos;Accountant&apos;)||
+    ISBLANK(ZP_User_Role__c ))),TRUE,FALSE)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Marketo Sync</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" description="Sales Chat Event Listener">
+  <lightning:conversationToolkitAPI aura:id="conversationKit" />
+  <aura:handler event="lightning:conversationChatEnded" action="{!c.onChatEnded}" />
+  <lightning:flow aura:id="flowData" />
+</aura:component>

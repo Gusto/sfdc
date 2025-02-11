@@ -1,0 +1,93 @@
+<apex:page standardController="Benefit_Order__c" extensions="NPRU_TicketButtonOnBODetailExt" showHeader="false" sidebar="false">
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    
+    <script type="text/javascript">         
+        
+    function openSubTab(recId){
+        let strRecordParameter = recId.includes('apex') ? recId : ((sforce.one !== undefined) ? '/lightning/r/Account/'+recId+'/view' : recId);
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openSubtab(primaryResult.id, strRecordParameter, true, 'Ticket', null);
+                    });
+                });
+            } else {
+                // for inline Vf
+                window.open('/'+recId, '_blank');
+            }
+        } 
+    
+        function openQCError(recId){
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openSubtab(primaryResult.id, recId, true, 'QC Error', null);
+                    });
+                });
+            } else {
+                // for inline Vf
+                window.open('/'+recId, '_blank');
+            }
+        } 
+        
+        function openAllTicket(recId){
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openSubtab(primaryResult.id, recId, true, 'View All Ticket', null);
+                    });
+                });
+            } else {
+                // for inline Vf
+                window.open('/'+recId, '_blank');
+            }
+        } 
+        
+        function openMyTicket(recId){
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openSubtab(primaryResult.id, recId, true, 'View My Ticket', null);
+                    });
+                });
+            } else {
+                // for inline Vf
+                window.open('/'+recId, '_blank');
+            }
+        } 
+               
+    </script>
+    <apex:form Id="frmId">
+        <apex:actionFunction name="selectedView" action="{!allTickets}" reRender="frmId">
+            <apex:param name="selectedView" value="" />
+        </apex:actionFunction>
+        <apex:pageBlock >
+            <div align='center'>
+                <button onclick="openSubTab('/apex/CreateNewTicketPage?id={!strCurrentRecord}&from=Ticket');return false;">Create New Ticket</button>&nbsp;&nbsp;&nbsp;
+                <button onclick="openQCError('/apex/CreateNewQCErrorBO?id={!strCurrentRecord}&from=QCError');return false;" style="display:{!if(blnIsBenefitsBYB,'none;','')}">Create New QC Error</button>
+                
+            </div>
+            <apex:pageBlockSection columns="1">
+            <apex:outputPanel >
+                
+                <apex:pageBlockTable value="{!list_Tickets}" var="ticObj" rendered="{!IF(list_Tickets.size > 0, true,false)}">
+                    <apex:column headerValue="Ticket Name">
+                        <apex:commandLink onclick="openSubTab('{!ticObj.id}');return false;">{!ticObj.name}</apex:commandLink>
+                    </apex:column>
+                    <apex:column value="{!ticObj.Status__c}"/>
+                    <apex:column value="{!ticObj.Escalation_Reason__c}"/>
+                    <apex:column value="{!ticObj.Owner.Name}" headerValue="Owner" />
+                </apex:pageBlockTable>
+                <div align='center'>         
+                    <apex:commandLink onclick="openAllTicket('/apex/AllTicketDetailBO?id={!strCurrentRecord}&selectedView=All');return false;" rendered="{!IF(list_Tickets.size != 0, true,false)}">More details...</apex:commandLink>
+                </div>
+                </apex:outputPanel>
+                </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1">
+                <apex:outputPanel rendered="{!IF(list_Tickets.size == 0, true,false)}">
+                    No Ticket associated to Benefit Order.
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

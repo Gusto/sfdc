@@ -1,0 +1,59 @@
+<apex:page standardController="Case" showHeader="true" extensions="EmailCaseTeamExtension">
+    <apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js" />
+    <style>
+        #content {
+        margin: 0 auto;
+        height: 670px;
+        border: 1px solid red; 
+        position:absolute;
+        bottom:0px;
+        top:0px;
+        overflow:auto
+        }  
+    </style> 
+    <script>
+    <!-- used to populate cc -->
+        function initEmailPublisherCaseExtension(){
+            var pub = caseInteraction.getEmailPublisher('{!$CurrentPage.parameters.id}');
+            
+            // show CC field
+            pub.showCc();
+            
+            $j = jQuery.noConflict();
+            
+            var cc_field_id = 'cc_{!$CurrentPage.parameters.id}_textarea';
+            var bcc_field_id = 'bcc_{!$CurrentPage.parameters.id}_textarea';
+            
+            var existingValue = $j("textarea[id$="+cc_field_id+"]:not([id="+bcc_field_id+"])").val();
+            var ccVal = '{!strCCEmails}';
+            if(ccVal!=null && ccVal!=''){
+                $j("textarea[id$="+cc_field_id+"]:not([id="+bcc_field_id+"])").val(existingValue + ';{!strCCEmails}');
+            }
+        }
+    
+    </script>
+    <div id="content">
+        <apex:emailPublisher id="myEmailPublisher" 
+                             entityId="{!case.id}" 
+                             title="Send Email To Customer"
+                             emailBodyHeight="300em"
+                             expandableHeader="false"
+                             subject=""
+                             emailBody=""
+                             showAdditionalFields="true" 
+                             emailBodyFormat="textAndHTML"
+                             enableQuickText="true"
+                             rendered="true"
+                             sendButtonName="Send To Customer"
+                             showTemplates="True"
+                             fromVisibility="selectable"
+                             toVisibility="editable"
+                             bccVisibility="hidden" 
+                             ccVisibility="editable"                         
+                             toAddresses="{!strToEmail}" 
+                             onSubmitSuccess="alert('Email Send Successfully!');"
+                             onSubmitFailure="alert('Email failed');"
+                             fromAddresses="{!strFromEmails}"
+                             />     
+    </div>
+</apex:page>

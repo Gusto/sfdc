@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Slack_Post_Message_To_Notify_Dev_Team_For_HI_Event_Error</name>
+        <label>Slack Post Message To Notify Dev Team For HI Event Error</label>
+        <locationX>308</locationX>
+        <locationY>384</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Slack_Message_Text</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Message_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>61.0</apiVersion>
+    <description>Send Notification to Slack Channel for BT_Retry_Processor__c record is failing</description>
+    <environments>Default</environments>
+    <interviewLabel>Slack Notifications - {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Slack Notifications-HIEventsProcessing</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Message_Destination</name>
+        <label>Get Message Destination</label>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Slack_Post_Message_To_Notify_Dev_Team_For_HI_Event_Error</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>alert-broker-profile-insert-update-failure</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Send_Slack_Message__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>BT_Retry_Processor__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Message_Destination</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>Slack_Message_Text</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Brokerage account update failed for Brokerage {!$Record.UUID__c}. Please investigate and ensure the Brokerage account is created in SFDC.
+*Details:*
+*1. Error Message:* {!$Record.Error__c}
+*2. UUID:* {!$Record.UUID__c}
+*3. Payload:* {!$Record.Payload__c}</text>
+    </textTemplates>
+</Flow>

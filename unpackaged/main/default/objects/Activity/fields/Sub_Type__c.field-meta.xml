@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Type__c</fullName>
+    <description>This field is dependent on the custom type field. This custom field was added to enable dependent picklist values between &apos;Type&apos; and &apos;Subtype&apos;, this was not supported by standard &apos;Type&apos; and &apos;Subtype&apos; fields.</description>
+    <label>Sub Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Type__c</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Missed Dependent Enrollment</fullName>
+                <default>false</default>
+                <label>Missed Dependent Enrollment</label>
+            </value>
+            <value>
+                <fullName>Missed Employee Enrollment</fullName>
+                <default>false</default>
+                <label>Missed Employee Enrollment</label>
+            </value>
+            <value>
+                <fullName>Incorrect Plan Selected</fullName>
+                <default>false</default>
+                <label>Incorrect Plan Selected</label>
+            </value>
+            <value>
+                <fullName>Incorrect Waiting Period Selected</fullName>
+                <default>false</default>
+                <label>Incorrect Waiting Period Selected</label>
+            </value>
+            <value>
+                <fullName>LoC Termination Missed</fullName>
+                <default>false</default>
+                <label>LoC Termination Missed</label>
+            </value>
+            <value>
+                <fullName>Unprocessed Selections</fullName>
+                <default>false</default>
+                <label>Unprocessed Selections</label>
+            </value>
+            <value>
+                <fullName>Automation Error</fullName>
+                <default>false</default>
+                <label>Automation Error</label>
+            </value>
+            <value>
+                <fullName>Missing Proof of Completed Group App</fullName>
+                <default>false</default>
+                <label>Missing Proof of Completed Group App</label>
+            </value>
+            <value>
+                <fullName>Missing Proof of Correctly Submitted Enrollments</fullName>
+                <default>false</default>
+                <label>Missing Proof of Correctly Submitted Enrollments</label>
+            </value>
+            <value>
+                <fullName>Missing Proof of Group Level Changes</fullName>
+                <default>false</default>
+                <label>Missing Proof of Group Level Changes</label>
+            </value>
+            <value>
+                <fullName>Carrier Requested Additional Document(s)</fullName>
+                <default>false</default>
+                <label>Carrier Requested Additional Document(s)</label>
+            </value>
+            <value>
+                <fullName>Waiting on Expected Pending Item</fullName>
+                <default>false</default>
+                <label>Waiting on Expected Pending Item</label>
+            </value>
+            <value>
+                <fullName>Carrier Missing Submission Document(s)</fullName>
+                <default>false</default>
+                <label>Carrier Missing Submission Document(s)</label>
+            </value>
+            <value>
+                <fullName>Submission Form Incomplete/Needs Correction</fullName>
+                <default>false</default>
+                <label>Submission Form Incomplete/Needs Correction</label>
+            </value>
+            <value>
+                <fullName>Missed Pending Item</fullName>
+                <default>false</default>
+                <label>Missed Pending Item</label>
+            </value>
+            <value>
+                <fullName>Carrier Clarification Requested</fullName>
+                <default>false</default>
+                <label>Carrier Clarification Requested</label>
+            </value>
+            <value>
+                <fullName>Form Mapping Issue</fullName>
+                <default>false</default>
+                <label>Form Mapping Issue</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Correct Missing/Incorrect Enrollment</controllingFieldValue>
+            <valueName>Missed Dependent Enrollment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Correct Missing/Incorrect Enrollment</controllingFieldValue>
+            <valueName>Missed Employee Enrollment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Correct Missing/Incorrect Enrollment</controllingFieldValue>
+            <controllingFieldValue>Correct Plan/Waiting Period</controllingFieldValue>
+            <controllingFieldValue>Process Unprocessed Selections</controllingFieldValue>
+            <controllingFieldValue>Upload Missing Proof to Gdrive</controllingFieldValue>
+            <controllingFieldValue>Upload Pending Item</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Correct Plan/Waiting Period</controllingFieldValue>
+            <valueName>Incorrect Plan Selected</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Correct Plan/Waiting Period</controllingFieldValue>
+            <valueName>Incorrect Waiting Period Selected</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Correct Plan/Waiting Period</controllingFieldValue>
+            <valueName>LoC Termination Missed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Process Unprocessed Selections</controllingFieldValue>
+            <valueName>Unprocessed Selections</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Process Unprocessed Selections</controllingFieldValue>
+            <valueName>Automation Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Missing Proof to Gdrive</controllingFieldValue>
+            <valueName>Missing Proof of Completed Group App</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Missing Proof to Gdrive</controllingFieldValue>
+            <valueName>Missing Proof of Correctly Submitted Enrollments</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Missing Proof to Gdrive</controllingFieldValue>
+            <valueName>Missing Proof of Group Level Changes</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Pending Item</controllingFieldValue>
+            <valueName>Carrier Missing Submission Document(s)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Pending Item</controllingFieldValue>
+            <valueName>Submission Form Incomplete/Needs Correction</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Pending Item</controllingFieldValue>
+            <valueName>Missed Pending Item</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Pending Item</controllingFieldValue>
+            <valueName>Carrier Clarification Requested</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Upload Pending Item</controllingFieldValue>
+            <valueName>Form Mapping Issue</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

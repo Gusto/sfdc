@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>State_Tax_Compliance_Interest__c</fullName>
+    <description>Product Upsell interest for compliance vendors</description>
+    <label>State Tax Compliance Interest</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Not Discussed</fullName>
+                <default>false</default>
+                <label>Not Discussed</label>
+            </value>
+            <value>
+                <fullName>Discussed - Not Interested</fullName>
+                <default>false</default>
+                <label>Discussed - Not Interested</label>
+            </value>
+            <value>
+                <fullName>Future Opp</fullName>
+                <default>false</default>
+                <label>Future Opp</label>
+            </value>
+            <value>
+                <fullName>Second Call Scheduled</fullName>
+                <default>false</default>
+                <label>Second Call Scheduled</label>
+            </value>
+            <value>
+                <fullName>Hard Commit</fullName>
+                <default>false</default>
+                <label>Hard Commit</label>
+            </value>
+            <value>
+                <fullName>Soft Commit</fullName>
+                <default>false</default>
+                <label>Soft Commit</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,11 @@
+<apex:page standardController="Benefit_Order__c" recordSetVar="benefit_orders" tabStyle="Benefit_Order__c"  extensions="ReassignBenefitOrderOwnerCtrl" action="{!changeOwner}">
+<apex:form >
+	<apex:sectionHeader title="List of Benefit Order" subtitle=""/>
+	<apex:pageBlock >
+		<apex:pageBlockButtons >
+           	<apex:commandButton value="Back" action="{!cancel}"/>
+        </apex:pageBlockButtons>
+        <apex:pageMessages id="showmsg" />
+	</apex:pageBlock>
+</apex:form>
+</apex:page>

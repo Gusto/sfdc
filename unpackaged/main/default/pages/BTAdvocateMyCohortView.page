@@ -1,0 +1,112 @@
+<apex:page controller="BTAdvocateViewCtrl" sidebar="false" action="{!CallOnBTMyCohort}">
+<apex:form id="frmBody">
+    <c:BTAdvocateComp cohortTab="active" OOOTab="" openTask=""/>
+
+    <div class="slds-scope">
+    <apex:pageblock title="Search Panel" id="searchPanel">
+        <div style="text-align: right; margin-top: -40px;">
+            <apex:commandButton value="Refresh" action="{!ResetSearch}" reRender="frmBody" status="actStatusId" styleclass="btn-blue" style="padding: 3px 8px !important;"/>
+        </div>
+        <apex:pageMessages id="showmsg" />
+         <table class="padding-table" style="width: auto;"> 
+
+                   <tr>
+                       <th>Order Status : </th>
+                       <td width="370">
+                           <apex:selectList value="{!list_OrderStatus}" multiselect="true">
+                               <apex:selectOptions value="{!list_SelectOrderStatus}"/>
+                               <apex:actionSupport event="onchange" action="{!PopulateHippoStatus}" reRender="frmBody" status="actStatusId"/>    
+                           </apex:selectList>
+                       </td>
+                       <td width="20"></td>
+                       <th>Hippo Status : </th>
+                       <td width="370">
+                           <apex:selectList value="{!list_ApplicationStatus}" multiselect="true">
+                               <apex:selectOptions value="{!list_SelectApplicationStatus}"/>
+                           </apex:selectList>
+                       </td>
+                   </tr>
+                   <tr>
+                       <th>Renewal Date :</th>
+                       <td colspan="2"><apex:inputfield value="{!objFromRenewalDate.Renewal_Date__c}" style="max-width: 155px;"/>&nbsp;&nbsp;&nbsp;To&nbsp;&nbsp;&nbsp;<apex:inputfield value="{!objToRenewalDate.Renewal_Date__c}" style="max-width: 155px;"/></td>
+                       <td></td>
+                       <td></td>
+                   </tr>
+                   <tr><td></td><th colspan="4" align="center">
+                        <apex:commandButton value="Reset" action="{!ResetSearch}" reRender="frmBody" status="actStatusId" styleClass="btn-blue white" />
+                        &nbsp;&nbsp;&nbsp;&nbsp;<apex:commandButton value="Show Orders" action="{!SearchBenefitOrder}" reRender="frmBody" status="actStatusId" styleClass="btn-blue"/>
+                        
+                    </th></tr>
+                   
+               </table>
+    </apex:pageblock>
+     <apex:pageblock title="Benefit Orders ({!list_BenefitOrderWarpper.size} Records)" id="boPanel">
+          <table id="BenefitOrderTable" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                <thead>
+                    <tr>
+                        <th>Benefit Order Name</th>
+                        <th>Parent Benefit Order</th>
+                        <th>BOR Status</th>
+                        <th>Renewal Date</th>
+                        <th>DIFOT Target</th>                       
+                        <th>Has TADA</th>
+                        <th>BOR Age</th>
+                        <th>Follow Up Date</th>
+                        <th data-orderable="false">Follow Up Notes</th>
+                        <th data-orderable="false">Reassign OOO Advocate Notes</th>
+                    </tr>
+                </thead>
+                 <tbody>
+               <apex:repeat value="{!list_BenefitOrderWarpper}" var="bo">
+                    <tr>
+                        <td>
+                            <apex:image rendered="{!if(AND(bo.objBOOrder.Age__c!=null,bo.objBOOrder.Age__c>=35),true,false)}" value="{!$Resource.BTAdvocateAge}" title="BOR Age more than 35 days" style="float: right; margin: 2px 0px 5px 10px;"/>
+                            <apex:outputPanel rendered="{!if(bo.objBOOrder.Parent_Benefit_Order__c==null,true,false)}">
+                            	<a href="javascript:void(0);" onclick="openSubTab('{!bo.objBOOrder.Id}','{!JSENCODE(bo.objBOOrder.Name)}');return false;">{!bo.objBOOrder.Name}</a>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!if(bo.objBOOrder.Parent_Benefit_Order__c==null,false,true)}">
+                            	{!bo.objBOOrder.Name}
+                            </apex:outputPanel>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openSubTab('{!bo.objBOOrder.Parent_Benefit_Order__c}','{!JSENCODE(bo.objBOOrder.Parent_Benefit_Order__r.Name)}');return false;">{!bo.objBOOrder.Parent_Benefit_Order__r.Name}</a>
+                        </td>
+                        <td>{!bo.objBOOrder.Order_Status__c}</td>
+                        <td>
+                            <div style="display: none;">{!bo.strRenewalDate}</div>
+                            <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                <apex:param value="{!bo.objBOOrder.Renewal_Date__c}" />
+                            </apex:outputText>
+                        </td>
+                        <td>
+                            <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                <apex:param value="{!bo.objBOOrder.BOR_DIFOT__c}"/>
+                            </apex:outputText>
+
+                        </td>
+                        <td>{!bo.strHasTada}</td>
+                        <td><!-- class="{!bo.strAgeColorCSS}" -->{!bo.objBOOrder.Age__c}</td>
+                        <!--<td><apex:outputpanel rendered="{!if(bo.strCaseId!=null,true,false)}"><a href="javascript:void(0);" onclick="openSubTab('{!bo.objCase.Id}','{!JSENCODE(bo.objCase.CaseNumber)}');return false;">{!bo.objCase.Contact.Name}</a></apex:outputpanel></td>-->
+                        <td>
+                            <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                <apex:param value="{!bo.objBOOrder.Follow_Up_Date__c}"/>
+                            </apex:outputText>
+                        </td>
+                        <td>{!bo.objBOOrder.Follow_Up_Notes__c}</td>
+                        <td>{!bo.objBOOrder.Out_Of_Office_Notes__c}</td>
+                    </tr>
+                  </apex:repeat>
+                </tbody> 
+         </table>
+     </apex:pageblock>
+   </div>
+    <script>
+         $(function() {
+            $("#BenefitOrderTable").DataTable({"aaSorting": [],pageLength:10});
+            //$("#OutOfTheOfficeTable").DataTable({"aaSorting": [],pageLength:10});
+            $('select[multiple]').multiselect();
+         });
+     </script>
+        
+</apex:form>
+</apex:page>

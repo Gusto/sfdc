@@ -1,0 +1,21 @@
+<!--
+    Purpose: Aura Wrapper component for Call Back functionality. 
+            Users can log a call with all the information needed.
+    Written by : Dhir Kumar
+    Date: 09/15/2020
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId" access="global">
+    <!-- Workspace API -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <!-- Navigation API -->
+    <lightning:navigation aura:id="navService"/>
+
+    <!--Handler-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!--Attribute-->
+    <aura:attribute type="String" name="idRec" default=""/>
+    
+    <!--Calling the LWC call back component as passing the record id in it-->
+    <c:callBackLwcCmp recordId="{!v.idRec}" onclosetab="{!c.handleCloseTab}"></c:callBackLwcCmp>
+    
+</aura:component>

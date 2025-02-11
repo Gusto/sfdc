@@ -1,0 +1,6 @@
+<template>
+	<template lwc:if={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<lightning-flow flow-api-name="Case_Create_Engagement_Case" flow-input-variables={inputVariables} onstatuschange={handleStatusChange}> </lightning-flow>
+</template>

@@ -1,0 +1,81 @@
+<apex:page controller="PTPlayModeFacilitatorAssignmentCtrl" action="{!checkNewOrderCounts}">
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/45.0/integration.js" />
+
+    <style>
+        .btn-custom{
+            background-repeat: no-repeat !important;
+            background-position: 4px -261px !important;
+            height: 21px;
+            width: 29px;
+            background-image: url('/img/support/servicedesk/serviceDeskListReskin-sprite.png') !important;
+         }    
+    </style>
+    <script type="text/javascript">
+    
+        
+    function refreshPage(){
+        location.reload();
+    }
+
+    var IdToPlayOrderIds=null;     
+    function openSUbTab(orderId){ 
+        if(orderId =='' || orderId==null){
+            return;
+        }else{
+            IdToPlayOrderIds = orderId;
+            var primaryid = orderId;
+            sforce.console.openPrimaryTab(null,'/'+primaryid,true,'',openSuccess,null);//'/apex/CreateEditOrderFacilitatorChecklist?id='+
+            //location.reload();
+        }
+    }
+
+    var openSuccess = function openSuccess(result) {
+        if(IdToPlayOrderIds!='' && IdToPlayOrderIds!=null && IdToPlayOrderIds.length>0){
+            if (result.success == true) {
+                sforce.console.openSubtab(result.id, '/apex/CreateEditOrderFacilitatorChecklist?id='+IdToPlayOrderIds,false,'Checklist',null);
+                //reload the page after the assignment 
+                sforce.console.setCustomConsoleComponentVisible(false);
+            }
+        }
+    };
+
+    var eventHandler = function (result) {
+            refreshPage();
+        };
+    sforce.console.onCustomConsoleComponentButtonClicked(eventHandler);
+       
+    
+    
+    </script>
+    <div class="gusto">
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                    <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        <apex:form id="frm">
+        <apex:pageMessages escape="false"/>
+            <div>
+                <apex:outputPanel id="countSectionSub" >
+                    <apex:commandButton value="Play New Orders" action="{!playNewOrders}" onComplete="openSUbTab('{!objOrderToPlay.Id}');" rerender="frm" disabled="{!if((intMyBlockedOrders > 0 && intAvailableOrders == 0) || intAvailableOrders == 0 || blnIsUserOutOfOffice,true,false)}" status="status" style="margin-right:8px;"/> 
+                    <apex:commandButton value="Play My Order" action="{!playMyOrders}" onComplete="openSUbTab('{!objOrderToPlay.Id}');" rerender="frm" disabled="{!if(intMyAvailableOrders == 0 || blnIsUserOutOfOffice,true,false)}" status="status" style="margin-right:8px;"/> 
+                    <apex:commandButton value="Play My Blocked Order" action="{!playMyBlockedOrders}" onComplete="openSUbTab('{!objOrderToPlay.Id}');" rerender="frm" disabled="{!if(intMyBlockedOrders == 0 || blnIsUserOutOfOffice,true,false)}" status="status" style="margin-right:8px;"/>                     
+                    <input type="button" class="btn btn-custom" title="Refresh" onclick="refreshPage();" status="status"/>
+                    <apex:outputText >
+                        <p>Number of My Orders ready to play : {!intMyAvailableOrders}</p>
+                        <p>Number of My Orders assigned to advocate : {!intAssignToAdvocateOrders}</p>
+                        <p>Number of My Orders with follow up date set : {!intFollowUpDateOrders}</p>
+                        <p>Number of New Orders ready to play for PT : {!intAvailableOrders}</p>
+                        <p>Number of My Orders Blocked : {!intMyBlockedOrders}</p>
+                    </apex:outputText>
+                </apex:outputPanel>    
+            </div>
+        </apex:form>
+    </div>
+</apex:page>

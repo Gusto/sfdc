@@ -1,0 +1,244 @@
+<!--**************************************************************************************************************************/
+    This page is developed to search for the Relevant case on the basis of the given filters.
+    The selected case is then sent out the email templates and "last outbound email" field of 
+    cases are updated with the Dates.
+    VERSION        AUTHOR            DATE               CHANGE REQUEST           DETAIL
+      1.0 -        Dhir            03/April/2020      Initial Development  
+****************************************************************************************************************************/-->
+<apex:page controller="CX_Engagement_MassEmailController" id="thePage" tabstyle="Case" docType="html-5.0" showHeader="true" >
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+    
+    <style>
+        .bPageBlock .pbBody .pbSubheader{
+            background-color:#f45d48;
+        }
+        .oPanel {
+            width: 50%;
+        }
+
+        #templateNameSec {
+            margin-bottom: 20px;
+        }
+
+        .PopupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .custPopup {
+            background-color: white; 
+            border-width: 2px; 
+            border-style: solid; 
+            z-index: 9999; 
+            left: 50%; 
+            padding:11px; 
+            position: absolute; 
+            width: 600px; 
+            margin-left: -240px; 
+            top:100px;
+        } 
+    </style>
+    <script type="text/javascript">
+        //collapse email template section on load
+        //set default owner search to queue
+        $(document).ready(function() {
+            //twistSection(document.getElementById('img_thePage:theForm:pb:pbs2'));
+            document.getElementById('thePage:theForm:pb:pbs:qpbsItem:queueSearch_mlktp').value = 'case_queue';
+            document.getElementById('thePage:theForm:pb:pbs:qpbsItem:queueSearch_lktp').value = 'case_queue';
+        });
+        $j = jQuery.noConflict();
+        function setCKEditorValues(){
+            //here we assign to our hidden textarea the value of the visible one  
+            $j("[id$='thePage:theForm:pb:pbs2:hidden_text_area_field']").val(CKEDITOR.instances[$j("[id$='thePage:theForm:pb:pbs2:text_area_field']").attr('id')].getData());                          
+        } 
+        function selectUnselect() {
+            var checkboxes = document.getElementsByClassName('caseCheckboxes');
+            if($j('#mainCheckBoxId').is(":checked")) {
+                for (var i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+
+        function disableOnClick() {
+            var button = document.getElementById("thePage:theForm:pb:pbs2:buttonSecItem:sendEmailBtnId");
+            button.disabled = true;
+            button.classList.add("btnDisabled");
+        }
+    </script>
+    <apex:form id="theForm">
+        <apex:pageMessages id="pageMsg"/>
+        <apex:pageBlock title="Mass Email for Cases" mode="detail" tabStyle="Case" id="pb">
+            <apex:pageBlockSection title="Case Filters" columns="2" id="pbs">
+                <apex:pageBlockSectionItem id="qpbsItem">
+                    <apex:outputLabel value="Case Queues" for="case_queue"/>
+                    <apex:outputPanel id="queueSearchOP">
+                        <apex:inputField value="{!dummyCase.OwnerId}" required="false" id="queueSearch"/>
+                        <apex:actionsupport action="{!fetchCaseReasonClassifications}" event="onchange" reRender="Case_Reason,pageMsg,searchBtnId"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Confidence %" for="Conf_per"/>
+                    <apex:inputText value="{!intConfidencePercentage}" id="Conf_per"/> 
+                </apex:pageBlockSectionItem>
+                <!--<apex:pageBlockSectionItem >  
+                    <apex:outputLabel value="Case Type" for="Case_Type" />
+                    <apex:selectList value="{!strCaseType}" size="1" id="Case_Type" required="true">
+                        <apex:selectOption itemLabel="--None--" itemValue="--None--"/>
+                        <apex:selectOption itemLabel="Payroll Care" itemValue="Payroll Care"/>
+                        <apex:selectOption itemLabel="Benefits Care" itemValue="Benefits Care"/>
+                        <apex:selectOption itemLabel="Tax Res" itemValue="Tax Res"/>
+                        <apex:actionsupport action="{!fetchCaseReasonClassifications}" event="onchange" reRender="Case_Reason,pageMsg,searchBtnId"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>-->
+                <apex:pageBlockSectionItem >  
+                    <!--apex:inputText value="{!caseReason}" html-autocomplete="on" styleclass="routingcreason" list="{!casemap}" id="Case_Reason1"/-->
+                    <apex:outputText value="Case Reason"/>
+                    <apex:selectList value="{!strCaseReason}" size="1" id="Case_Reason">
+                        <apex:selectOptions value="{!list_CaseReasonClassifications}" />
+                        <apex:actionSupport event="onchange" reRender="searchBtnId" action="{!toggleSearchButton}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <!--blank space-->
+                </apex:pageBlockSectionItem>
+                <!--<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Has Benefits" for="Has_Benefits" />
+                    <apex:inputCheckbox value="{!boolHasBenefits}" id="Has_Benefits" required="true"/> 
+                </apex:pageBlockSectionItem>-->
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="" for="searchBtnId"/>
+                    <apex:outputPanel styleClass="oPanel">
+                        <apex:commandButton action="{!searchCasesShowMessage}" value="Search" reRender="casePbTSection, pageMsg" id="searchBtnId" disabled="{!boolDisableSearchButton}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!--<apex:outputPanel id="emailTemplateSection" style="width:50%;">
+                    <apex:outputText value="{!EmailTemplateRec.HtmlValue}" escape="false" style="overflow-y:scroll; height:280px; display:block;"/>              
+                </apex:outputPanel>-->
+            </apex:pageBlockSection>            
+            <apex:pageBlockSection title="Template Preview" columns="1" id="pbs2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email Templates" for="Email_Folder"/>
+                    <apex:selectList value="{!strSelectedEmailFolder}" size="1" id="Email_Folder">
+                        <apex:selectOptions value="{!EmailTemplateFolderOpts}"/>
+                        <apex:actionsupport action="{!fetchEmailTemplatesByFolderName}" event="onchange" reRender="Email_Template,pageMsg"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value=""/>
+                    <apex:outputPanel id="Email_Template">
+                        <apex:selectList value="{!strSelectedEmailTemplate}" size="1" rendered="{!IF(strSelectedEmailFolder != '',true,false)}">
+                            <apex:selectOptions value="{!list_emailTemplatesByFolderName}"/>
+                            <apex:actionsupport action="{!displayEmailTemplate}" event="onchange" reRender="emailTemplateSection,pageMsg,sendEmailBtnId,emailButtons"/>
+                        </apex:selectList> 
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="buttonSecItem">
+                    <apex:outputLabel value="" for="sendEmailBtnId"/>
+                    <apex:outputPanel styleClass="oPanel" id="emailButtons">
+                        <apex:commandButton action="{!sendEmail}" value="Send Email" id="sendEmailBtnId" reRender="theForm" status="status"/>
+                        <apex:commandButton action="{!switchToEditor}" value="Modify" id="modify" reRender="emailTemplateSection,emailButtons" rendered="{!AND(EmailTemplateRec != null, boolPreview)}"/>
+                        <apex:commandButton action="{!saveTemplate}" value="Save Template" id="saveTemplate" rendered="{!AND(EmailTemplateRec != null, !boolPreview)}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputPanel id="emailTemplateSection" style="width:50%;" >
+                    <apex:outputPanel id="templateNameSec" rendered="{!AND(EmailTemplateRec != null, !boolPreview)}">
+                        <apex:outputLabel style="padding-right: 1em; font-weight: bold;" value="Template Name" for="templateName"/>
+                        <apex:inputText value="{!strMassEmailName}" id="templateName"/>
+                    </apex:outputPanel>
+                    <br/><br/>
+                    <apex:inputTextarea value="{!strHtmlBody}" style="overflow-y:scroll; height:280px; display:block; width:100%;" styleClass="slds-textarea ckeditor" id="text_area_field" richtext="false" rendered="{!!boolPreview}" onchange="setCKEditorValues()"/>              
+                    <!--<apex:inputHidden id="hidden_text_area_field" value="{!strHtmlBody}"/>-->
+                    <script>
+                            CKEDITOR.replace('{!$Component.text_area_field}',{
+                                
+                                // it should be handled in lightning
+                                //removePlugins:'contextmenu,tabletools',
+                                //removeButtons:'Styles,Format,Blockquote,Copy,Cut,Paste,Undo,Redo,Print,Form,TextField,Textarea,Button,SelectAll,CreateDiv,PasteText,PasteFromWord,Select,HiddenField,Unlink,Subscript,Superscript,Anchor,About,Maximize,Source,Image,Scayt,HorizontalRule,SpecialChar'
+                            });
+                    </script>
+                    <apex:outputText value="{!strHtmlBody}" escape="false" style="overflow-y:scroll; height:280px; display:block;" rendered="{!boolPreview}"/>
+                </apex:outputPanel> 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Cases" columns="1" id="pbs3">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Click here to keep these cases open and in their current queue" for="keepCasesOpen"/>
+                    <apex:outputPanel styleClass="oPanel" id="keepCasesOpen">
+                        <apex:inputCheckbox value="{!boolKeepOpen}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputPanel id="casePbTSection" styleClass="oPanel">
+                    <apex:pageBlockTable value="{!list_CaseWrappers}" var="caseWrap" rendered="{!IF(list_CaseWrappers.size>0, true, false)}">
+                        <apex:column width="1%">
+                            <apex:facet name="header">
+                                <input type="checkbox" id="mainCheckBoxId" onchange="selectUnselect()"/>
+                            </apex:facet>
+                            <!--input type="checkbox" name="caseCheckboxes" id="caseRowId" value="{!caseWrap.check}"/-->
+                            <apex:inputCheckbox styleClass="caseCheckboxes" id="caseRowId" value="{!caseWrap.check}"/>
+                        </apex:column>
+                        <apex:column headerValue="Case Number" width="5%">
+                            <apex:outputField value="{!caseWrap.caseRec.CaseNumber}"/>
+                        </apex:column>
+                        <apex:column headerValue="Subject" width="15%">
+                            <apex:outputLink value="/{!caseWrap.caseRec.Id}">
+                                <apex:outputField value="{!caseWrap.caseRec.Subject}"/>
+                            </apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Description" width="65%">
+                            <!--<apex:outputText value="{!(LEFT(caseWrap.caseRec.Description, 30))}" title="{!(RIGHT(caseWrap.caseRec.Description, LEN(caseWrap.caseRec.Description)-30))}"/>-->
+                            <apex:outputText value="{!caseWrap.caseRec.Description}"/>
+                        </apex:column>
+                        <apex:column headerValue="Type" width="3%">
+                            <apex:outputField value="{!caseWrap.caseRec.Type}"/>
+                        </apex:column>
+                        <apex:column headerValue="Confidence" width="2%">
+                            <apex:outputField value="{!caseWrap.caseRec.Agatha_Confidence__c}"/>
+                        </apex:column>
+                        <apex:column headerValue="Owner" width="5%">
+                            <apex:outputField value="{!caseWrap.caseRec.Owner.Name}"/>
+                        </apex:column>
+                        <apex:column headerValue="Contact" width="5%">
+                            <apex:outputField value="{!caseWrap.caseRec.Contact.Name}"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <apex:pageBlockTable value="{!list_CaseWrappers}" var="caseWrap" rendered="{!IF(list_CaseWrappers.size == 0, true, false)}">
+                        <div>No Records to display</div>
+                    </apex:pageBlockTable>    
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:outputPanel id="actionLink">
+        <script>
+              window.onload = function(){ $('.cke_toolbar').hide();}
+              function hideHyperLink(){ $('.cke_toolbar').hide();}
+                    setTimeout(hideHyperLink,100);
+        </script>
+        </apex:outputPanel>
+    </apex:form>
+    <div style="height:15px;">
+        <apex:actionStatus id="status">
+            <apex:facet name="start">
+            <apex:outputPanel id="popPanel">
+                <apex:outputPanel styleClass="PopupBackground" layout="block"/>
+                <apex:outputPanel styleClass="custPopup" layout="block">
+                    <apex:outputPanel layout="block" style="text-align:center;">
+                        Sending email. Please wait ... &nbsp; <apex:image value="/img/loading.gif"/>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            </apex:facet>
+        </apex:actionStatus>
+    </div>
+</apex:page>

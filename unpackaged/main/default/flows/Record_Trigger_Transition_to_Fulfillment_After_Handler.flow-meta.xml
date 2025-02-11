@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Email_Notification_to_Partner_AE_AM</name>
+        <label>Email Notification to Partner AE/AM</label>
+        <locationX>314</locationX>
+        <locationY>539</locationY>
+        <actionName>Transition_to_Fulfillment__c.Email_notification_to_Partner_AE_AM</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Transition_to_Fulfillment__c.Email_notification_to_Partner_AE_AM</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Email_to_TTF_Owner</name>
+        <label>Send Email to TTF Owner</label>
+        <locationX>578</locationX>
+        <locationY>647</locationY>
+        <actionName>Transition_to_Fulfillment__c.Send_Email_to_TTF_Owner</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Transition_to_Fulfillment__c.Send_Email_to_TTF_Owner</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <description>Call Payroll Transfer Notifications TTF Subflow</description>
+        <name>Call_Payroll_Transfer_Notifications_Helper</name>
+        <label>Call Payroll Transfer Notifications Helper</label>
+        <locationX>281</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>IS_TTF_Approved</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_Payroll_Transfer_Notifications</name>
+            <conditionLogic>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7 AND 8 AND 9 AND 10 AND 11 AND (12 OR 13) AND 14</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Intro_Notification_Sent__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll_Transfer</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TTF_Status__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TTF_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>PT Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Bulk_Migration__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contact__r.Email</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.OwnerId</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>005</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__r.Owner_Id__c</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>005</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__r.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__r.Integration_Key__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__r.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Panda</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__r.Origin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Gusto</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Order__r.Case__r.Order_Owner_Name__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Call_Notifications_Subflow</targetReference>
+            </connector>
+            <label>Send Payroll Transfer Notifications</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>IS_TTF_Approved</name>
+        <label>IS TTF Approved</label>
+        <locationX>512</locationX>
+        <locationY>431</locationY>
+        <defaultConnector>
+            <targetReference>Notify_TTF_Owner_for_Sales_follow_up</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>TTF_Approved</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll_Transfer</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TTF_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>PT Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TTF_Status__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Email_Notification_to_Partner_AE_AM</targetReference>
+            </connector>
+            <label>TTF Approved</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Notify_TTF_Owner_for_Sales_follow_up</name>
+        <label>Notify TTF Owner for Sales follow up</label>
+        <locationX>710</locationX>
+        <locationY>539</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>TTF_Status_Sales_Follow_up</name>
+            <conditionLogic>1 AND 2 AND 3 AND (4 OR 5) AND 6</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.TTF_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Follow-up</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.TTF_Status__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>IS_NEW</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.TTF_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sales Submitted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.TTF_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Pending Qualification</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll_Transfer</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Email_to_TTF_Owner</targetReference>
+            </connector>
+            <label>TTF Status Sales Follow-up</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check if related opportunity needs update</description>
+        <name>Update_Opportunity</name>
+        <label>Update Opportunity?</label>
+        <locationX>281</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Call_Payroll_Transfer_Notifications_Helper</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>PEO_Switcher_updated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.PEO__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Related_Opportunity</targetReference>
+            </connector>
+            <label>PEO Switcher updated</label>
+        </rules>
+    </decisions>
+    <description>Update to include payroll transfer notifications via TTF
+5/2 Update to Send Payroll Transfer notifications criteria to send emails only if order owner is a user
+5/5 Update to Send Payroll Transfer notifications criteria and condition logic to add checks before sending email
+5/16 Update to Send Payroll Transfer notifications criteria and condition logic to remove Account Tier check
+11/2 Update to check if opportunity needs update on change of triggereing fields and perform update if required</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>IS_NEW</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>Record Trigger: Transition to Fulfillment After Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Transition to Fulfillment After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>If the triggering field value changes updated the related opportunity</description>
+        <name>Update_Related_Opportunity</name>
+        <label>Update Related Opportunity</label>
+        <locationX>149</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Call_Payroll_Transfer_Notifications_Helper</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Opportunity__c</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>PEO__c</field>
+            <value>
+                <elementReference>$Record.PEO__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
+    <start>
+        <locationX>155</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_Opportunity</targetReference>
+        </connector>
+        <object>Transition_to_Fulfillment__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <subflows>
+        <description>Subflow action to call Payroll_Transfer_Notifications_TTF flow</description>
+        <name>Call_Notifications_Subflow</name>
+        <label>Call Notifications Subflow</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <flowName>Payroll_Transfer_Notifications_TTF</flowName>
+        <inputAssignments>
+            <name>TTF_Source_Record</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+</Flow>

@@ -1,0 +1,18 @@
+<apex:component allowDML="true" selfClosing="true">
+<apex:attribute type="Carrier_Order__c" name="CarrierOrder" description="Page Block Section for to Cancel a Carrier Order" required="true"/>
+<apex:pageBlockSection columns="1" collapsible="false" title="Please enter the Implementation stage detail and additional details">
+<apex:inputField value="{!CarrierOrder.Implementation_Stage__c}" required="true" id="stageId"/>
+<apex:inputField value="{!CarrierOrder.Stage_Detail__c}" required="true"/>
+<apex:inputField value="{!CarrierOrder.Additional_Details__c}" style="width:20%;"/>
+<script type="text/javascript">
+            (function(){
+                var e = document.querySelectorAll('[id$="stageId"]')[0];
+                for(i=0;i<e.length;i++){
+                if(e[i].value=='Approved'){e.remove(i);}
+               
+                }
+              
+            })();
+            </script>
+</apex:pageBlockSection>
+</apex:component>

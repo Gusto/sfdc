@@ -1,0 +1,14 @@
+<apex:page controller="IkbSearchController" action="{!initAction}" sidebar="false" cache="false" showHeader="false" contentType="text/xml">
+
+<urlset>
+    
+        <apex:repeat value="{!articleList}" var="article">
+            <url>
+                <loc>https://dev1-zenpayrollcommunity.cs19.force.com/ikb/apex/ikbViewArticle?articleId={!article.articleId}</loc>            
+            </url>
+        </apex:repeat>
+<!-- Replace the following URLs with your site's actual URLs -->  
+    
+
+</urlset>
+</apex:page>

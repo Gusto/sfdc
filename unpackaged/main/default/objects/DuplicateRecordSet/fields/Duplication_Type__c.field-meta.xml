@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duplication_Type__c</fullName>
+    <description>Describes the type of duplicate match</description>
+    <label>Duplication Type</label>
+    <required>false</required>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Domain, First Name, Last Name Match</fullName>
+                <default>false</default>
+                <label>Domain, First Name, Last Name Match</label>
+            </value>
+            <value>
+                <fullName>Domain, First Name Match</fullName>
+                <default>false</default>
+                <label>Domain, First Name Match</label>
+            </value>
+            <value>
+                <fullName>Phone Number Match</fullName>
+                <default>false</default>
+                <label>Phone Number Match</label>
+            </value>
+            <value>
+                <fullName>Address Match</fullName>
+                <default>false</default>
+                <label>Address Match</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

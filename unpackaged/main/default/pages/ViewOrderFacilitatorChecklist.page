@@ -1,0 +1,58 @@
+<apex:page sidebar="false" title="ViewOrderFacilitatorChecklist" standardController="Order" extensions="CreateEditOrderFacilitatorChecklistCtrl">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:slds />
+    <style>
+        .selectablePointer {
+            cursor: pointer;
+        }
+        .blockedChecklist{
+            color:red !important;
+        }
+        .completedChecklist{
+            color:black !important;
+            text-decoration: line-through!important;
+        }
+        .inProgressChecklist{
+            color:blue !important;
+        }
+    </style>
+    <div class="gusto" >
+            <apex:outputPanel rendered="{!NULL != lstOrderFacilitatorChkLst && lstOrderFacilitatorChkLst.size > 0}">
+                <div onClick="openRecord();" class="selectablePointer">
+                    <strong>Selected Checklists</strong><br/>
+                        <apex:repeat value="{!lstOrderFacilitatorChkLst}" var="chkLst">
+                                <p><apex:outputText rendered="{!chkLst.Is_Checked__c}" value="{!chkLst.Checklist_Name__c}" styleClass="{!IF(chkLst.Is_Blocked__c,'blockedChecklist',IF(chkLst.Is_Completed__c,'completedChecklist','inProgressChecklist'))}"/></p>
+                        </apex:repeat>
+                </div>
+            </apex:outputPanel>
+            <apex:outputPanel styleClass="selectablePointer" rendered="{!NULL == lstOrderFacilitatorChkLst || lstOrderFacilitatorChkLst.size == 0}" onClick="openRecord();">
+                No checklists have been defined for this order. <strong>Click here to add.</strong>
+            </apex:outputPanel>
+    </div>
+    <script>
+    function test(){
+    alert('test');
+    }
+    var orderId = '{!objOrder.Id}';
+        function openRecord(){
+                    var redirectUrl = '/apex/CreateEditOrderFacilitatorChecklist?id='+orderId; 
+                    if (sforce.console.isInConsole()) {
+                        sforce.console.getEnclosingTabId(function(enclosingResult){
+                            sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                                console.log(primaryResult.id);
+                                if(primaryResult.id=='null'){
+                                    sforce.console.openPrimaryTab(undefined,redirectUrl,true,'Manage Checklists');
+                                }else{
+                                    sforce.console.openSubtab(primaryResult.id, redirectUrl, true,'Manage Checklists', null);
+                                }
+                            });
+                        })
+                    } else {
+                        // for inline Vf
+                        window.open(redirectUrl, '_blank');
+                    }
+                }
+    </script>
+</apex:page>

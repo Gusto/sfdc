@@ -1,0 +1,8 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride" access="global" >
+	<!-- workspace api need to close tabs -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <!-- Record Id fetched from Page -->
+    
+    <c:taxResCaseActions recordId="{!v.recordId}" onrefreshfocusedtab="{!c.refreshMainPage}">
+    </c:taxResCaseActions>
+</aura:component>

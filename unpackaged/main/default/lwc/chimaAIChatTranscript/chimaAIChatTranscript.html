@@ -1,0 +1,106 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<template if:true={isDisplayChat}>
+		<div class="container">
+			<lightning-spinner alternative-text="Loading" size="medium" if:true={isLoading}></lightning-spinner>
+
+			
+
+			<lightning-card class="scrollable-card" style="height: 300px !important">
+				<div if:false={isLastInteractionFeedbackGiven}>
+					<div class="last-interaction-feedback-heading">
+						Please rate the last Co-Pilot response
+					</div>
+				</div>
+
+				<div class="unlock-button-heading">
+					(If your tab is still locked after providing feedback, please click here to unlock tab)
+
+					<button onclick={handleUnlockRecord} 
+						class="slds-button slds-button_brand slds-float--right unlock-button">
+						Unlock Tab
+					</button>
+				</div>
+
+				<section if:true={isChatMessagesLoaded} role="log" class="slds-chat autoscroll" style="height: 280px; overflow-y: auto;border-top: 2px solid black">
+					<div class="slds-chat-list content">
+						<!-- Iterate over chat messages -->
+						<template for:each={chatMessages} for:item="message" for:index="index">
+							<!-- Check if message is inbound or outbound -->
+							<template if:true={message.sender}>
+								<li class="slds-chat-listitem slds-chat-listitem_inbound" key={message.messageId}>
+									<div class="slds-chat-message">
+										<span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
+											<abbr class="slds-avatar__initials slds-avatar__initials_inverse" title={message.senderName}> {message.senderInitials} </abbr>
+										</span>
+									</div>
+								</li>
+
+								<div key={message.id} style="margin-top: 4px" class="slds-chat-message__text slds-chat-message__text_inbound" data-id="responseDiv">
+									<span>{message.content}</span>
+
+									<br /><br />
+									<span if:true={message.contentURL} class="content-article">
+										<a href={message.contentURL} target="_blank">Here is a knowledge article about this</a>
+									</span>
+								</div>
+
+								<div key={message.id} class="slds-chat-message__meta" aria-label="Sender">{message.senderName}</div>
+
+								<div class="rate" if:true={message.displayRating} key={message.messageId} style="margin-top: 10px">
+									<select name="feedback" style="width: 250px" disabled>
+										<template for:each={message.dynamicRating} for:item="dynamicItem">
+											<template if:true={dynamicItem.selected}>
+												<option value={dynamicItem.value} key={dynamicItem.value} disabled selected>{dynamicItem.dynamicId}</option>
+											</template>
+										</template>
+									</select>
+
+									<lightning-textarea placeholder="Enter Feedback" disabled value={message.feedbackValue}>
+									</lightning-textarea>
+								</div>
+
+								<div class="rate" if:true={message.displayRating} key={message.messageId} style="margin-top: 10px">
+									<div class="rating-label">Please select your rating</div>
+
+									<select name="feedback" onchange={setRating} style="width: 250px" data-conversationid={message.messageId}>
+										<template for:each={message.advancedSupportRatingOption} for:item="dynamicItem">
+											<template if:true={dynamicItem.selected}>
+												<option value={dynamicItem.value} key={dynamicItem.value} selected>{dynamicItem.dynamicId}</option>
+											</template>
+
+											<template if:false={dynamicItem.selected}>
+												<option value={dynamicItem.value} key={dynamicItem.value}>{dynamicItem.dynamicId}</option>
+											</template>
+										</template>
+									</select>
+
+									<div class="slds-form-element__help" style="display: none; color: red" data-errorid={message.messageId}>Please select any rating</div>
+
+									<template if:true={message.isDisplayFeedback}>
+										<lightning-textarea placeholder="Enter Feedback" data-feedbackid={message.messageId} onchange={handleFeedbackChange} value={message.advancedSupportFeedbackValue}>
+										</lightning-textarea>
+										<button onclick={handleFeedbackSubmit} data-feedbacksubmitid={message.messageId} class="slds-button slds-button_brand submit-button">Submit</button>
+									</template>
+								</div>
+							</template>
+
+							<template if:true={message.receiver}>
+								<li class="slds-chat-listitem slds-chat-listitem_outbound" key={message.id}>
+									<div class="slds-chat-message">
+										<div class="slds-chat-message__body">
+											<div class="slds-chat-message__text slds-chat-message__text_outbound">
+												<span>{message.content}</span>
+											</div>
+											<div class="slds-chat-message__meta" aria-label="Sender">{message.senderName}</div>
+										</div>
+									</div>
+								</li>
+							</template>
+						</template>
+					</div>
+				</section>
+			</lightning-card>
+		</div>
+	</template>
+</template>

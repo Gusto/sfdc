@@ -1,0 +1,417 @@
+<template>
+
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+
+    <div class="slds-theme_default">
+        <div class="slds-var-p-around_x-large slds-text-align_center slds-p-bottom--small">
+            <div class="slds-text-heading_large">Create a Ticket</div>
+        </div>
+
+        <div class="slds-page-header slds-m-horizontal_small">
+            <div class="slds-text-heading_medium">Ticket Reason</div>
+        </div>
+        <div class="selectteamdiv">
+            <c-auto-complete-cmp data-id="selectteam" autocompletelist={list_Teams} label="Select Team" onfilterlist={handleTeamFilterList}
+                onfilterselected={handleTeamSelected} icon="custom:custom45" selectedvalue={strSelectedTeam}>
+            </c-auto-complete-cmp>
+        </div>
+        <lightning-layout multiple-rows>
+            
+            <lightning-layout-item size="6" padding="around-small">
+                <div >
+                    <c-auto-complete-cmp data-id="selectticketreason" autocompletelist={list_TicketReasons} label="Select Ticket Reason" str-place-holder="Select Ticket Reason" bln-disabled={blnIsTicketReasonDisabled}
+                        onfilterlist={handleFilterList} onfilterselected={handleFilterSelected} icon="custom:custom45"
+                        selectedvalue={strSelectedTicketReason}></c-auto-complete-cmp>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" padding="around-small">
+                <template if:true={blnIsConfigFound}>
+                    <div>
+                        <label class="slds-form-element__label">Definition</label>
+                    </div>
+                    <div class="">
+                        <lightning-formatted-rich-text value={objTicketConfig.Description__c}>
+                        </lightning-formatted-rich-text>
+                    </div>
+                </template>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" padding="around-small">
+                <div>
+                    <lightning-combobox label="Select Ticket Sub Reason" value={strSelectedTicketSubReason}
+                        placeholder="Select Ticket Sub Reason" options={list_TicketSubReasons}
+                        onchange={handleTicketSubReasonSelected} disabled={blnIsticketSubReasonDisabled}>
+                    </lightning-combobox>
+
+                    <template if:true={strSelectedTicketSubReason}>
+                        &nbsp;
+                        <div>
+                            <a onclick={handleTicketSubReasonReset}> Reset </a>
+                        </div>
+                    </template>
+
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" padding="around-small">
+                <template if:true={blnIsConfigFound}>
+                    <div>
+                        <label class="slds-form-element__label">Talking Points</label>
+                    </div>
+                    <div class="">
+                        <lightning-formatted-rich-text value={objTicketConfig.Talking_Points__c}>
+                        </lightning-formatted-rich-text>
+                    </div>
+                </template>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="12" padding="around-small">
+                <div class="slds-border_bottom"></div>
+            </lightning-layout-item>
+
+
+
+            <template if:true={blnIsConfigFound}>
+                
+                <div class="full-width">
+                    <div class="slds-page-header slds-m-horizontal_small">
+                        <div class="slds-text-heading_medium">Customer Details</div>
+                    </div>
+
+                    <lightning-record-edit-form object-api-name="Case" record-id={idCase} class="full-width">
+                        <lightning-layout multiple-rows>
+                            <lightning-layout-item size="4" padding="around-small">
+                                <label class="slds-form-element__label" for="Case">
+                                    Case
+                                </label>
+                                <lightning-output-field variant="label-hidden" field-name="CaseNumber"
+                                    class="custom-font">
+                                </lightning-output-field>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size="4" padding="around-small">
+                                <label class="slds-form-element__label" for="Account">
+                                    Account
+                                </label>
+                                <lightning-output-field variant="label-hidden" field-name="AccountId"
+                                    class="custom-font">
+                                </lightning-output-field>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size="4" padding="around-small">
+                                <label class="slds-form-element__label" for="Contact">
+                                    Contact
+                                </label>
+                                <lightning-output-field variant="label-hidden" field-name="ContactId"
+                                    class="custom-font">
+                                </lightning-output-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-record-edit-form>
+                </div>
+
+                <div class="full-width slds-m-vertical_small slds-m-horizontal_small">
+                    <div class="slds-p-bottom--small">
+                        <div class="slds-text-heading_small">Most Recent Benefit Orders</div>
+                    </div>
+
+                    <template if:true={blnIsBenefitOrderMessageVisible}>
+                        <div class="slds-notify_alert slds-theme_info slds-m-horizontal_small" role="alert">
+                            <h2>No recent Benefit orders found.
+                            </h2>
+                        </div>
+                    </template>
+
+                    <template if:false={blnIsBenefitOrderMessageVisible}>
+
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-horizontal_small">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Select"></div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Name">Name</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Owner">Owner</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Order Status">Order Status</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Created Date">Created Date</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Coverage Effective Date">Coverage Effective Date</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Submission Deadline">Submission Deadline</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={list_BenefitOrders} for:item="order">
+                                    <tr class="slds-hint-parent" key={order.Id}>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="Select Benefit Order">
+                                                <template if:true={order.selected}>
+                                                    <lightning-input type="checkbox" checked onclick={handleBenefitOrderSelected} name="input1"></lightning-input>
+                                                </template>
+                                                <template if:false={order.selected}>
+                                                    <lightning-input type="checkbox" onclick={handleBenefitOrderSelected} data-id={order.Id} name="input1"></lightning-input>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <th data-label="Opportunity Name" scope="row">
+                                            <div class="slds-truncate" title="Order Name">
+                                                <a data-id={order.Id} onclick={navigateToOrder} tabindex="-1">{order.Name}</a>
+                                            </div>
+                                        </th>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="Owner Name">{order.Owner.Name}</div>
+                                        </td>
+                                        <td data-label="Close Date">
+                                            <div class="slds-truncate" title="Order Status">{order.Order_Status__c}</div>
+                                        </td>
+                                        <td data-label="Prospecting">
+                                            <div class="slds-truncate" title="Created Date">
+                                                <lightning-formatted-date-time value={order.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                minute="2-digit" hour12="true"></lightning-formatted-date-time>
+                                            </div>
+                                        </td>
+                                        <td data-label="Close Date">
+                                            <div class="slds-truncate" title="Order Status">
+                                                <lightning-formatted-date-time value={order.Coverage_Effective_Date__c}></lightning-formatted-date-time>
+                                            </div>
+                                        </td>
+                                        <td data-label="Close Date">
+                                            <div class="slds-truncate" title="Order Status">
+                                                <lightning-formatted-date-time value={order.Submission_Deadline__c}></lightning-formatted-date-time>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </div>
+
+
+                <div class="full-width slds-m-vertical_small slds-m-horizontal_small">
+                    <div class="slds-p-bottom--small slds-p-top--small slds-m-horizontal_small">
+                        <div class="slds-text-heading_small">Most Recent Opportunities</div>
+                    </div>
+                    <template if:true={blnIsOpportunityMessageVisible}>
+                        <div class="slds-notify_alert slds-theme_info slds-m-horizontal_small" role="alert">
+                            <h2>No recent Opportunities found.
+                            </h2>
+                        </div>
+                    </template>
+
+                    <template if:false={blnIsOpportunityMessageVisible}>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-horizontal_small">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Select"></div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Name">Name</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Owner">Owner</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Record Type">Record Type</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Created Date">Created Date</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Stage">Stage</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Type">Type</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={list_Opportunities} for:item="opp">
+                                    <tr class="slds-hint-parent" key={opp.Id}>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="Select Opportunity">
+                                                <template if:true={opp.selected}>
+                                                    <lightning-input type="checkbox" checked onclick={handleOpportunitySelected} ></lightning-input>
+                                                </template>
+                                                <template if:false={opp.selected}>
+                                                    <lightning-input type="checkbox" onclick={handleOpportunitySelected} data-id={opp.Id}></lightning-input>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <th data-label="Opportunity Name" scope="row">
+                                            <div class="slds-truncate" title="Order Name">
+                                                <a data-id={opp.Id} onclick={navigateToOpportunity} tabindex="-1">{opp.Name}</a>
+                                            </div>
+                                        </th>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="Owner Name">{opp.Owner.Name}</div>
+                                        </td>
+                                        <td data-label="Close Date">
+                                            <div class="slds-truncate" title="Order Status">{opp.RecordType.Name}</div>
+                                        </td>
+                                        <td data-label="Prospecting">
+                                            <div class="slds-truncate" title="Created Date">
+                                                <lightning-formatted-date-time value={opp.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                minute="2-digit" hour12="true"></lightning-formatted-date-time>
+                                            </div>
+                                        </td>
+                                        <td data-label="Stage">
+                                            <div class="slds-truncate" title="Stage">{opp.StageName}</div>
+                                        </td>
+                                        <td data-label="Type">
+                                            <div class="slds-truncate" title="Stage">{opp.Type}</div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+
+
+                </div>
+                <div class="full-width slds-m-vertical_small slds-m-horizontal_small">
+                    <div class="slds-p-bottom--small">
+                        <div class="slds-text-heading_small">Most Recent Cases</div>
+                    </div>
+                    <template if:true={blnIsCaseMessageVisible}>
+                        <div class="slds-notify_alert slds-theme_info slds-m-horizontal_small" role="alert">
+                            <h2>No recent Cases found.</h2>
+                        </div>
+                    </template>
+                    <template if:false={blnIsCaseMessageVisible}>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-horizontal_small">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Select"></div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Case Number">Case Number</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Owner">Owner</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Case Status">Case Status</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Created Date">Created Date</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={list_RelatedCases} for:item="cs">
+                                    <tr class="slds-hint-parent" key={cs.Id}>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="Select Case">
+                                                <template if:true={cs.selected}>
+                                                    <lightning-input type="checkbox" checked onclick={handleCaseSelected} name="input1"></lightning-input>
+                                                </template>
+                                                <template if:false={cs.selected}>
+                                                    <lightning-input type="checkbox" onclick={handleCaseSelected} data-id={cs.Id} name="input1"></lightning-input>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td data-label="Opportunity Name" scope="row">
+                                            <div class="slds-truncate" title="Case Number">
+                                                <a data-id={cs.Id} onclick={navigateToCase} tabindex="-1">{cs.CaseNumber}</a>
+                                            </div>
+                                        </td>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="Owner Name">{cs.Owner.Name}</div>
+                                        </td>
+                                        <td data-label="Close Date">
+                                            <div class="slds-truncate" title="Case Status">{cs.Status}</div>
+                                        </td>
+                                        <td data-label="Prospecting">
+                                            <div class="slds-truncate" title="Created Date">
+                                                <lightning-formatted-date-time value={cs.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit" minute="2-digit" hour12="true"></lightning-formatted-date-time>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </div>
+                <template if:true={blnIsDynamicFieldsAvailable}>
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="slds-border_bottom"></div>
+                    </lightning-layout-item>
+                    <div class="full-width">
+                        <div class="slds-page-header slds-m-horizontal_small">
+                            <div class="slds-text-heading_medium">Information to provide</div>
+                        </div>
+                        <lightning-record-edit-form object-api-name="Ticket__c" class="full-width">
+                            <lightning-layout multiple-rows>
+                                <template for:each={list_DynamicFields} for:item="field">
+                                    <lightning-layout-item size={field.size} padding="around-small" key={field.api}>
+                                        <div class="">
+                                            <template if:true={field.isRequired}>
+                                                <label class="slds-form-element__label" for={field.api}>
+                                                    {field.label}
+                                                    <abbr title="required" class="slds-required">*</abbr>
+                                                </label>
+                                                <lightning-input-field id={field.api} variant="label-hidden" required
+                                                    field-name={field.api} onchange={handleDataChange}
+                                                    data-api={field.api} class="custom-font" value={field.value}>
+                                                </lightning-input-field>
+                                            </template>
+
+                                            <template if:false={field.isRequired}>
+                                                <label class="slds-form-element__label" for={field.api}>
+                                                    {field.label}
+                                                </label>
+                                                <lightning-input-field id={field.api} variant="label-hidden"
+                                                    field-name={field.api} onchange={handleDataChange}
+                                                    data-api={field.api} class="custom-font" value={field.value}>
+                                                </lightning-input-field>
+                                            </template>
+                                        </div>
+                                    </lightning-layout-item>
+                                </template>
+                                <lightning-layout-item size="12" padding="around-small">
+                                    <div class="slds-align_absolute-center">
+                                        <div class="slds-p-horizontal_x-small">
+                                            <lightning-button variant="brand" icon-name="custom:custom45"
+                                            onclick={handleTicketSave} label="Create Ticket"></lightning-button>
+                                        </div>
+                                        <div class="slds-p-horizontal_x-small">
+                                            <lightning-button variant="neutral" icon-name="utility:cancel_file_request"
+                                            label="Close Tab" onclick={handleCloseTab}></lightning-button>
+                                        </div>
+                                        
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </lightning-record-edit-form>
+                    </div>
+                </template>
+            </template>
+
+            <lightning-layout-item size="12" padding="around-small">
+                <template if:true={strShowWarningMessage}>
+                    <div class=" slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                        <h2>No active ticket config found for team <b> {strSelectedTeam} </b>, ticket reason
+                            <b> {strSelectedTicketReason} </b>  and ticket sub reason <b> {strSelectedTicketSubReason} </b>. Please contact your Salesforce Admin
+                        </h2>
+                    </div>
+                </template>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>

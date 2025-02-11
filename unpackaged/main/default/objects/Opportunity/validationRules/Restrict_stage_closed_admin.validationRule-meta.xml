@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_stage_closed_admin</fullName>
+    <active>true</active>
+    <description>Only a SFDC admin can make these closed. Something is not workable now or in the future. Effectively saying these don&apos;t exist anymore.</description>
+    <errorConditionFormula>AND (
+
+   $User.Exempt_from_Validation_Rules__c = False,
+NOT(ISBLANK(Source_ID__c)),     
+IsChanged(StageName),
+ISPICKVAL(StageName,&apos;Closed Admin&apos;),
+
+/* disabled for renewal and BoR opportunities */
+RecordType.Name != &apos;Benefits Renewal&apos;,
+RecordType.Name != &apos;Benefits BoR&apos;,
+/* disabled for BoR PEs */
+ NOT (CONTAINS($Label.Benefits_Management_Roles , $UserRole.Name + &apos;,&apos;))
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>Only PE’s and system administrators are able to set the opportunity stage to Closed Admin.</errorMessage>
+</ValidationRule>

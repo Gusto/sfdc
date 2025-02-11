@@ -1,0 +1,131 @@
+<apex:page standardController="Case" extensions="CaseMergeControllerExtension">
+	<apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+	<apex:includeScript value="/support/console/42.0/integration.js"/>
+	<apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+	<script type="text/javascript">
+          var j$ = jQuery.noConflict();
+    </script>
+    <apex:actionstatus id="status">
+		<apex:facet name="start">
+			<div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+            	</div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <div class="gusto" >
+    <apex:form >
+    	<apex:actionFunction name="searchToMerge" action="{!searchBySubject}" reRender="caseMergeListBlock"/>
+    	<apex:actionFunction name="massEditStatus" action="{!mergeSeletedCase}" status="status" reRender="caseMergeListBlock">
+            <apex:param name="selectedCaseToMerge" value="" assignTo="{!selectedCaseToMerge}"/>
+        </apex:actionFunction>
+    	<apex:pageBlock id="highlightBlock">
+            <apex:pageBlockButtons >
+            	<apex:commandButton action="{!Cancel}" value="Back to Case"/>
+            </apex:pageBlockButtons>
+    		<apex:pageblockSection id="searchBlockSection">
+        			<apex:outputField value="{! caseToMerge.Casenumber }"/>
+    				<apex:outputField value="{! caseToMerge.RecordTypeId }"/>
+		    		<apex:outputField value="{! caseToMerge.OwnerId }"/>
+		    		<apex:outputField value="{! caseToMerge.Type }"/>
+        			<apex:outputField value="{! caseToMerge.Subject }"/>
+        	</apex:pageblockSection>
+    	</apex:pageBlock>       
+        <apex:pageBlock id="caseMergeListBlock">
+        	<apex:pageMessages />
+        	<apex:panelGroup >
+            	<apex:outputLabel >Filter : Subject &nbsp;</apex:outputLabel>&nbsp;
+               	<apex:inputtext value="{!searchSubject}" onkeypress="return enterEvent(event);"/>&nbsp;&nbsp;
+               	<apex:outputLabel >Status &nbsp;</apex:outputLabel>&nbsp;
+               	<apex:inputtext value="{!searchStatus}" onkeypress="return enterEvent(event);"/>&nbsp;&nbsp;     
+                <br/>
+                <apex:outputLabel >Case Number &nbsp;</apex:outputLabel>&nbsp;
+               	<apex:inputtext value="{!searchCaseNumber}" onkeypress="return enterEvent(event);"/>&nbsp;&nbsp;   
+                
+                <apex:outputLabel >Open Cases &nbsp;</apex:outputLabel>&nbsp;
+               	<apex:inputCheckbox value="{!searchOpenCases}" />&nbsp;&nbsp;
+               	<apex:commandButton Id="btnSearch" styleclass="slds-button_neutral" style="padding: 2px 3px !important;" action="{!searchBySubject}" rerender="caseMergeListBlock" status="status" title="Search" value="Search"></apex:commandButton>
+           	</apex:panelGroup><br/><br/>
+            <apex:pageBlockTable value="{!caseSearchList}" var="case" rendered="{!IF(caseSearchList != null && caseSearchList.size > 0, true, false)}">
+                <apex:column >
+                    <apex:facet name="header">Action</apex:facet>
+                    <apex:outputLink value="#" onclick="checkCaseToMerge('{!case.Status}','{!case.CaseNumber}','{!caseToMerge.Casenumber}','{!case.id}'); return false;">Merge</apex:outputLink>
+                </apex:column>
+                <apex:column >
+                	<apex:facet name="header">Case Number</apex:facet>
+                	<apex:outputLink value="/{!case.id}">{!case.CaseNumber}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!case.RecordTypeId}"/>
+                <apex:column value="{!case.ContactId}"/>
+                <apex:column styleclass="slds-cell-wrap" value="{!case.Subject}"/>
+                <apex:column value="{!case.Status}"/>
+                
+                <apex:column styleclass="slds-cell-wrap" value="{!case.OwnerId}"/>
+                <apex:column value="{!case.SuppliedEmail}"/>							
+            </apex:pageBlockTable>
+            <apex:outputPanel rendered="{!IF(caseSearchList != null && caseSearchList.size > 0, true, false)}">	
+	            <table style="width: 100%">
+					<tr>
+						<td>
+							<apex:outputText value=" Page {!IF(CEILING(setcon.ResultSize/setcon.PageSize)==0,0,setcon.PageNumber)} of {!CEILING(setcon.ResultSize/setcon.PageSize)}"/>
+						</td>
+						<td style="text-align: center !important;">
+							<apex:commandLink action="{!setcon.Previous}" value="« Previous" rendered="{!setcon.HasPrevious}"/>
+							<apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(setcon.HasPrevious)}"/>&nbsp;&nbsp;  
+							<apex:commandLink action="{!setcon.Next}" value="Next »" rendered="{!setcon.HasNext}"/>
+							<apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(setcon.HasNext)}"/>
+						</td>
+						<td style="text-align: right !important;">
+							<apex:selectList value="{!setcon.PageSize}" size="1">
+								<apex:selectOption itemValue="20" itemLabel="20"/>
+								<apex:selectOption itemValue="50" itemLabel="50"/>
+								<apex:selectOption itemValue="100" itemLabel="100"/>
+								<apex:actionSupport event="onchange" reRender="caseMergeListBlock" status="status"/>
+							</apex:selectList>
+						</td>
+					</tr>
+				</table>
+			</apex:outputPanel>
+			<apex:outputPanel rendered="{!IF(caseSearchList.size == 0, true, false)}">
+	        	No records found for the selection.
+			</apex:outputPanel>					
+        </apex:pageBlock>
+    </apex:form>
+    </div>
+    <script>
+    function enterEvent(ev)  {
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            searchToMerge();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    /*function setTabTitle() {
+	    	//Set the current tab's title
+	        sforce.console.setTabTitle('Merge Case');
+	}
+		var pageLoad = window.onload; 
+	    window.onload = function() {
+	        setTabTitle();
+	}*/
+    function checkCaseToMerge(status, selectedCaseNumber, masterCaseNumber, selectedCaseId){
+        //console.log('status >>'+status);
+        //console.log('selectedCaseNumber'+selectedCaseNumber);
+        //console.log('masterCaseNumber >>'+masterCaseNumber);
+        if(status!=null && status == 'Closed'){
+        	var s = confirm("Case is closed. Do you want to still merge ?");
+        	if(s){
+        		massEditStatus(selectedCaseId);
+        	}
+        }else{
+        	var s = confirm("Do you want to merge with Case "+masterCaseNumber+". Once you merge this case "+selectedCaseNumber+" will be Closed. Do you want to proceed ?" );
+        	if(s){
+        		massEditStatus(selectedCaseId);
+        	}
+        }
+    }
+    </script>		
+</apex:page>

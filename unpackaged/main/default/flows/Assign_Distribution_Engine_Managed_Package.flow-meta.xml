@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <description>Assign fields for the license assignment</description>
+        <name>Assign_License_Fields</name>
+        <label>Assign License Fields</label>
+        <locationX>588</locationX>
+        <locationY>48</locationY>
+        <assignmentItems>
+            <assignToReference>License_Assignment.PackageLicenseId__NotFound</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Distribution_Engine_ID</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>License_Assignment.UserId__NotFound</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>User_ID</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Look_for_Existing_Assignment_Record</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Was_existing_record_found</name>
+        <label>Was existing record found?</label>
+        <locationX>945</locationX>
+        <locationY>53</locationY>
+        <defaultConnector>
+            <targetReference>Assign_License_to_User</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Record Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Found_Record</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Found_Assignment</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Found Record</label>
+        </rules>
+    </decisions>
+    <description>Assign license to the user.  Called from Process Builder:  Hide all versions[User] Update User Accounts
+2/5/20 Updated flow to resolve error. 
+1/31/20:  Updated flow to not create record if record already exists</description>
+    <interviewLabel>Assign Distribution Engine Managed Package {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Assign Distribution Engine Managed Package</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Assign Managed Package License to the user</description>
+        <name>Assign_License_to_User</name>
+        <label>Assign License to User</label>
+        <locationX>1194</locationX>
+        <locationY>51</locationY>
+        <inputReference>License_Assignment</inputReference>
+    </recordCreates>
+    <recordLookups>
+        <description>Get the managed package ID</description>
+        <name>Get_the_Distribution_Engine_ID</name>
+        <label>Get the Distribution Engine ID</label>
+        <locationX>390</locationX>
+        <locationY>50</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_License_Fields</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>NamespacePrefix</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>n2de</stringValue>
+            </value>
+        </filters>
+        <object>PackageLicense</object>
+        <outputAssignments>
+            <assignToReference>Distribution_Engine_ID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordLookups>
+        <description>Search for existing record and exit if found</description>
+        <name>Look_for_Existing_Assignment_Record</name>
+        <label>Look for Existing Assignment Record</label>
+        <locationX>771</locationX>
+        <locationY>50</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_existing_record_found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>PackageLicenseId__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>License_Assignment.PackageLicenseId__NotFound</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>UserId__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>License_Assignment.UserId__NotFound</elementReference>
+            </value>
+        </filters>
+        <object>UserPackageLicense</object>
+        <outputReference>Found_Assignment</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_the_Distribution_Engine_ID</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>The ID of the managed package</description>
+        <name>Distribution_Engine_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>Found_Assignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <name>License_Assignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <description>The user ID of the person being assigned the managed package license</description>
+        <name>User_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+</Flow>

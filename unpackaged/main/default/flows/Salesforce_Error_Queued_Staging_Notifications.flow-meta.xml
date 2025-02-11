@@ -1,0 +1,1284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Post_Message_To_Biztech_Backend_System_Notifications</name>
+        <label>Post Message To Biztech Backend System Notifications</label>
+        <locationX>622</locationX>
+        <locationY>1490</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Check_ZP_Company_Error_Size</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>ZPCompanySlackMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Biztech_Backend_System_Notifications_Channel.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_Message_To_Biztech_Backend_System_Notifications_Error</name>
+        <label>Post Message To Biztech Backend System Notifications Error</label>
+        <locationX>622</locationX>
+        <locationY>1898</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>ZPCompanyErrorSlackMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Biztech_Backend_System_Notifications_Channel.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_Message_To_Biztech_Backend_System_Notifications_Error_GF_Lead</name>
+        <label>Post Message To Biztech Backend System Notifications Error</label>
+        <locationX>2470</locationX>
+        <locationY>1898</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>GFLeadErrorMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Biztech_Backend_System_Notifications_Channel.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_Message_To_Biztech_Backend_System_Notifications_Error_ZP_Firm</name>
+        <label>Post Message To Biztech Backend System Notifications Error</label>
+        <locationX>1546</locationX>
+        <locationY>1898</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>ZPCompanyFirmErrorSlackMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Biztech_Backend_System_Notifications_Channel.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_Message_To_Biztech_Backend_System_Notifications_GF_Lead</name>
+        <label>Post Message To Biztech Backend System Notifications</label>
+        <locationX>2470</locationX>
+        <locationY>1490</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Check_GF_Lead_Error_Size</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>GFLeadSuccessMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Biztech_Backend_System_Notifications_Channel.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_Message_To_Biztech_Backend_System_Notifications_ZP_Company_Firm</name>
+        <label>Post Message To Biztech Backend System Notifications</label>
+        <locationX>1546</locationX>
+        <locationY>1490</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Check_ZP_Company_Firm_Error_Size</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>ZPCompanyFirmSlackMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Biztech_Backend_System_Notifications_Channel.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>60.0</apiVersion>
+    <assignments>
+        <name>Add_GF_Leads_Error_Count</name>
+        <label>Add GF Leads Error Count</label>
+        <locationX>2954</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>GFLeadErrorCount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>GF_Lead_Loop</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_GF_Leads_Queue_Count</name>
+        <label>Add GF Leads Queue Count</label>
+        <locationX>2690</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>GFLeadQueueCount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>GF_Lead_Loop</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_ZP_Accounting_Firm_Error_Count</name>
+        <label>Add ZP Accounting Firm Error Count</label>
+        <locationX>2030</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>ZPAccountingFirmErrorCount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>ZP_Accounting_Firm_Loop</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_ZP_Accounting_Firm_Queue_Count</name>
+        <label>Add ZP Accounting Firm Queue Count</label>
+        <locationX>1766</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>ZPAccountingFirmQueueSize</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>ZP_Accounting_Firm_Loop</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_ZP_Company_Error_Count</name>
+        <label>Add ZP Company Error Count</label>
+        <locationX>1106</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>ZPCompanyErrorCount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>ZP_Company_Loop</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_ZP_Company_Queue_Count</name>
+        <label>Add ZP Company Queue Count</label>
+        <locationX>842</locationX>
+        <locationY>998</locationY>
+        <assignmentItems>
+            <assignToReference>ZPCompanyQueueSize</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>ZP_Company_Loop</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Slack_Error_Message</name>
+        <label>Assign Slack Error Message</label>
+        <locationX>622</locationX>
+        <locationY>1790</locationY>
+        <assignmentItems>
+            <assignToReference>stagingTableAPIName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>pointMyContact</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Point_Of_Contact__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>reportLink</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Report_Link__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Message_To_Biztech_Backend_System_Notifications_Error</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Slack_GF_Lead_Error_Message</name>
+        <label>Assign Slack GF Lead Error Message</label>
+        <locationX>2470</locationX>
+        <locationY>1790</locationY>
+        <assignmentItems>
+            <assignToReference>stagingTableAPIName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>pointMyContact</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Point_Of_Contact__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>reportLink</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Report_Link__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Message_To_Biztech_Backend_System_Notifications_Error_GF_Lead</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Slack_Message</name>
+        <label>Assign Slack Message</label>
+        <locationX>622</locationX>
+        <locationY>1382</locationY>
+        <assignmentItems>
+            <assignToReference>stagingTableAPIName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>pointMyContact</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Point_Of_Contact__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>reportLink</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Report_Link__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Message_To_Biztech_Backend_System_Notifications</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Slack_Message_For_GF_Lead</name>
+        <label>Assign Slack Message For GF Lead</label>
+        <locationX>2470</locationX>
+        <locationY>1382</locationY>
+        <assignmentItems>
+            <assignToReference>stagingTableAPIName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>pointMyContact</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Point_Of_Contact__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>reportLink</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Report_Link__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Message_To_Biztech_Backend_System_Notifications_GF_Lead</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Slack_Message_For_ZP_Company_Firm</name>
+        <label>Assign Slack Message For ZP Company Firm</label>
+        <locationX>1546</locationX>
+        <locationY>1382</locationY>
+        <assignmentItems>
+            <assignToReference>stagingTableAPIName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>pointMyContact</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Point_Of_Contact__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>reportLink</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Report_Link__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Message_To_Biztech_Backend_System_Notifications_ZP_Company_Firm</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Slack_ZP_Firm_Error_Message</name>
+        <label>Assign Slack ZP Firm Error Message</label>
+        <locationX>1546</locationX>
+        <locationY>1790</locationY>
+        <assignmentItems>
+            <assignToReference>stagingTableAPIName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>pointMyContact</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Point_Of_Contact__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>reportLink</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Staging_Table_Records.Report_Link__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Post_Message_To_Biztech_Backend_System_Notifications_Error_ZP_Firm</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Check_GF_Lead_Error_Size</name>
+        <label>Check GF Lead Error Size</label>
+        <locationX>2602</locationX>
+        <locationY>1682</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_GF_Lead_Error_Size_Greater_Or_Equal</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>GFLeadErrorCount</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Staging_Table_Records.Error_Limit__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Slack_GF_Lead_Error_Message</targetReference>
+            </connector>
+            <label>Check GF Lead Error Size Greater Or Equal</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_GF_Lead_Processing_State</name>
+        <label>Check GF Lead Processing State</label>
+        <locationX>2954</locationX>
+        <locationY>890</locationY>
+        <defaultConnector>
+            <targetReference>GF_Lead_Loop</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Queue_GF_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>GF_Lead_Loop.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Queued</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_GF_Leads_Queue_Count</targetReference>
+            </connector>
+            <label>Is Queue</label>
+        </rules>
+        <rules>
+            <name>Is_Error_GF_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>GF_Lead_Loop.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_GF_Leads_Error_Count</targetReference>
+            </connector>
+            <label>Is Error</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_GF_lead_Queue_Size</name>
+        <label>Check GF lead Queue Size</label>
+        <locationX>2602</locationX>
+        <locationY>1274</locationY>
+        <defaultConnector>
+            <targetReference>Check_GF_Lead_Error_Size</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_ZP_Company_Firm_List_Size_Equal_Or_Grater_Than_Queue_Limit_GF_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>GFLeadQueueCount</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Staging_Table_Records.Queued_Limit__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Slack_Message_For_GF_Lead</targetReference>
+            </connector>
+            <label>Is ZP Company Firm List Size Equal Or Grater Than Queue Limit</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Staging_Table</name>
+        <label>Check Staging Table</label>
+        <locationX>1832</locationX>
+        <locationY>566</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_ZP_Company</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ZP_Company__c</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Staging_Table_Records.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Staging_Table_1</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_ZP_Company</targetReference>
+            </connector>
+            <label>Is ZP Company</label>
+        </rules>
+        <rules>
+            <name>Is_ZP_Accounting_Firm</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Staging_Table_Records.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Staging_Table_2</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ZP_Accounting_Firm__c</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_ZP_Accounting_Firm</targetReference>
+            </connector>
+            <label>Is ZP Accounting Firm</label>
+        </rules>
+        <rules>
+            <name>Is_GF_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Staging_Table_Records.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Staging_Table_3</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Staging_Table_Records.Staging_Table_API_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>GF_Lead__c</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_GF_Lead</targetReference>
+            </connector>
+            <label>Is GF Lead</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_ZP_Accounting_Firm_Processing_State</name>
+        <label>Check ZP Accounting Firm Processing State</label>
+        <locationX>2030</locationX>
+        <locationY>890</locationY>
+        <defaultConnector>
+            <targetReference>ZP_Accounting_Firm_Loop</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Queue_ZP_Acc_Firm</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZP_Accounting_Firm_Loop.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Queued</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_ZP_Accounting_Firm_Queue_Count</targetReference>
+            </connector>
+            <label>Is Queue</label>
+        </rules>
+        <rules>
+            <name>Is_Error_ZP_Acc_Firm</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZP_Accounting_Firm_Loop.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_ZP_Accounting_Firm_Error_Count</targetReference>
+            </connector>
+            <label>Is Error</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_ZP_Company_Error_Size</name>
+        <label>Check ZP Company Error Size</label>
+        <locationX>754</locationX>
+        <locationY>1682</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_ZP_Company_Error_Size_Greater_Or_Equal</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZPCompanyListSize</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Staging_Table_Records.Error_Limit__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Slack_Error_Message</targetReference>
+            </connector>
+            <label>Check ZP Company Error Size Greater Or Equal</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_ZP_Company_Firm_Error_Size</name>
+        <label>Check ZP Company Firm Error Size</label>
+        <locationX>1678</locationX>
+        <locationY>1682</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_ZP_Company_Firm_Error_Size_Greater_Or_Equal</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZPCompanyErrorCount</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Staging_Table_Records.Error_Limit__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Slack_ZP_Firm_Error_Message</targetReference>
+            </connector>
+            <label>Check ZP Company Firm Error Size Greater Or Equal</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_ZP_Company_Firm_Queue_Size</name>
+        <label>Check ZP Company Firm Queue Size</label>
+        <locationX>1678</locationX>
+        <locationY>1274</locationY>
+        <defaultConnector>
+            <targetReference>Check_ZP_Company_Firm_Error_Size</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_ZP_Company_Firm_List_Size_Equal_Or_Grater_Than_Queue_Limit</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZPAccountingFirmQueueSize</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Staging_Table_Records.Queued_Limit__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Slack_Message_For_ZP_Company_Firm</targetReference>
+            </connector>
+            <label>Is ZP Company Firm List Size Equal Or Grater Than Queue Limit</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_ZP_Company_Processing_State</name>
+        <label>Check ZP Company Processing State</label>
+        <locationX>1106</locationX>
+        <locationY>890</locationY>
+        <defaultConnector>
+            <targetReference>ZP_Company_Loop</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Queue</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZP_Company_Loop.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Queued</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_ZP_Company_Queue_Count</targetReference>
+            </connector>
+            <label>Is Queue</label>
+        </rules>
+        <rules>
+            <name>Is_Error</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZP_Company_Loop.Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_ZP_Company_Error_Count</targetReference>
+            </connector>
+            <label>Is Error</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_ZP_Company_Queue_Size</name>
+        <label>Check ZP Company Queue Size</label>
+        <locationX>754</locationX>
+        <locationY>1274</locationY>
+        <defaultConnector>
+            <targetReference>Check_ZP_Company_Error_Size</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_ZP_Company_List_Size_Equal_Or_Grater_Than_Queue_Limit</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ZPCompanyQueueSize</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Staging_Table_Records.Queued_Limit__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Slack_Message</targetReference>
+            </connector>
+            <label>Is ZP Company List Size Equal Or Grater Than Queue Limit</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Has_Biztech_Backend_System_Notifications_Channel</name>
+        <label>Has Biztech Backend System Notifications Channel</label>
+        <locationX>182</locationX>
+        <locationY>242</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Biztech_Backend_System_Notifications_Channel</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Biztech_Backend_System_Notifications_Channel</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Staging_Table_Error_Queued_Notifications</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Salesforce Error Queued Staging Notifications {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Salesforce Error Queued Staging Notifications</label>
+    <loops>
+        <name>GF_Lead_Loop</name>
+        <label>GF Lead Loop</label>
+        <locationX>2602</locationX>
+        <locationY>782</locationY>
+        <collectionReference>Get_GF_Lead</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_GF_Lead_Processing_State</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Check_GF_lead_Queue_Size</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_Staging_Table_Records</name>
+        <label>Loop Staging Table Records</label>
+        <locationX>50</locationX>
+        <locationY>458</locationY>
+        <collectionReference>Get_Staging_Table_Error_Queued_Notifications</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_Staging_Table</targetReference>
+        </nextValueConnector>
+    </loops>
+    <loops>
+        <name>ZP_Accounting_Firm_Loop</name>
+        <label>ZP Accounting Firm Loop</label>
+        <locationX>1678</locationX>
+        <locationY>782</locationY>
+        <collectionReference>Get_ZP_Accounting_Firm</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_ZP_Accounting_Firm_Processing_State</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Check_ZP_Company_Firm_Queue_Size</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>ZP_Company_Loop</name>
+        <label>ZP Company Loop</label>
+        <locationX>754</locationX>
+        <locationY>782</locationY>
+        <collectionReference>Get_ZP_Company</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_ZP_Company_Processing_State</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Check_ZP_Company_Queue_Size</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Biztech_Backend_System_Notifications_Channel</name>
+        <label>Get Biztech Backend System Notifications Channel</label>
+        <locationX>182</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Has_Biztech_Backend_System_Notifications_Channel</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Label.Biztech_Backend_System_Notifications</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_GF_Lead</name>
+        <label>Get GF Lead</label>
+        <locationX>2602</locationX>
+        <locationY>674</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>GF_Lead_Loop</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Queued</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>GF_Lead__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Processing_State__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Staging_Table_Error_Queued_Notifications</name>
+        <label>Get Staging Table Error/Queued Notifications</label>
+        <locationX>50</locationX>
+        <locationY>350</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Staging_Table_Records</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Staging_Table_1</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Staging_Table_2</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Staging_Table_3</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Staging_Table_Notification_Config__mdt</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Error_Limit__c</queriedFields>
+        <queriedFields>Queued_Limit__c</queriedFields>
+        <queriedFields>Staging_Table_API_Name__c</queriedFields>
+        <queriedFields>QualifiedApiName</queriedFields>
+        <queriedFields>Point_Of_Contact__c</queriedFields>
+        <queriedFields>Report_Link__c</queriedFields>
+        <queriedFields>DeveloperName</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_ZP_Accounting_Firm</name>
+        <label>Get ZP Accounting Firm</label>
+        <locationX>1678</locationX>
+        <locationY>674</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>ZP_Accounting_Firm_Loop</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Queued</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Error</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>ZP_Accounting_Firm__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Processing_State__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_ZP_Company</name>
+        <label>Get ZP Company</label>
+        <locationX>754</locationX>
+        <locationY>674</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>ZP_Company_Loop</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Error</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Queued</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>ZP_Company__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Processing_State__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Biztech_Backend_System_Notifications_Channel</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>GFLeadErrorMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>({!stagingTableAPIName}) - Error notification
+
+
+
+Report link:: {!reportLink}
+
+
+
+{!stagingTableAPIName} has more than /equal to {!ZPCompanyErrorCount} records with a processing state of Error.  
+
+Please look at this report for a full list: {!reportLink}
+
+
+
+Attention: &lt;@{!pointMyContact}&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>GFLeadSuccessMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>({!stagingTableAPIName}) - Queued notification
+
+
+
+Report link:: {!reportLink}
+
+
+
+{!stagingTableAPIName} has more than /equal to {!ZPCompanyListSize} records with a processing state of Queued.  
+
+Please look at this report for a full list: {!reportLink}
+
+
+
+Attention: &lt;@{!pointMyContact}&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ZPCompanyErrorSlackMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>({!stagingTableAPIName}) - Error notification
+
+
+
+Report link:: {!reportLink}
+
+
+
+{!stagingTableAPIName} has more than /equal to {!ZPCompanyErrorCount} records with a processing state of Error.  
+
+Please look at this report for a full list: {!reportLink}
+
+
+
+Attention: &lt;@{!pointMyContact}&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ZPCompanyFirmErrorSlackMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>({!stagingTableAPIName}) - Error notification
+
+
+
+Report link:: {!reportLink}
+
+
+
+{!stagingTableAPIName} has more than /equal to {!ZPCompanyErrorCount} records with a processing state of Error.  
+
+Please look at this report for a full list: {!reportLink}
+
+
+
+Attention: &lt;@{!pointMyContact}&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ZPCompanyFirmSlackMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>({!stagingTableAPIName}) - Queued notification
+
+
+
+Report link:: {!reportLink}
+
+
+
+{!stagingTableAPIName} has more than /equal to {!ZPCompanyListSize} records with a processing state of Queued.  
+
+Please look at this report for a full list: {!reportLink}
+
+
+
+Attention: &lt;@{!pointMyContact}&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ZPCompanySlackMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>({!stagingTableAPIName}) - Queued notification
+
+
+
+Report link:: {!reportLink}
+
+
+
+{!stagingTableAPIName} has more than /equal to {!ZPCompanyListSize} records with a processing state of Queued.  
+
+Please look at this report for a full list: {!reportLink}
+
+
+
+Attention: &lt;@{!pointMyContact}&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>GFLeadErrorCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>GFLeadQueueCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>pointMyContact</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>reportLink</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>stagingTableAPIName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>ZPAccountingFirmErrorCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>ZPAccountingFirmQueueSize</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>ZPCompanyErrorCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>ZPCompanyListSize</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>ZPCompanyQueueSize</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+</Flow>

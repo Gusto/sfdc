@@ -1,0 +1,105 @@
+<apex:component id="theComponent">
+	<apex:attribute type="OrgLimitWrapper" required="true" name="ol" description="The org limit to pass to the chart" />
+	<apex:attribute type="String" required="false" name="theTitle" description="The limit description" default="" />
+	<apex:attribute type="String" required="false" name="theSubTitle" description="The limit description" default="" />
+
+	<apex:variable var="chartTitle" value="{!if(theTitle != '', theTitle, ol.strLTitle)}" />
+	<apex:variable var="chartSubTitle" value="{!if(theSubTitle != '', theSubTitle, ol.strLSubtitle)}" />
+
+	<script type="text/javascript">
+		$(function () {
+			var gaugeOptions = {
+				chart: {
+					type: 'solidgauge'
+				},
+				title: null,
+				pane: {
+					center: ['50%', '85%'],
+					size: '110%',
+					startAngle: -90,
+					endAngle: 90,
+					background: {
+						backgroundColor:
+							Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
+						innerRadius: '60%',
+						outerRadius: '100%',
+						shape: 'arc'
+					}
+				},
+				exporting: {
+					enabled: false
+				},
+				tooltip: {
+					enabled: true
+				},
+				yAxis: {
+					stops: [
+						[0.1, '#55BF3B'], // green
+						[0.5, '#DDDF0D'], // yellow
+						[0.9, '#DF5353'] // red
+					],
+					lineWidth: 0,
+					tickWidth: 0,
+					minorTickInterval: null,
+					//tickAmount: 2,
+					title: {
+						y: -70
+					},
+					labels: {
+						y: 16
+					}
+				},
+				plotOptions: {
+					solidgauge: {
+						dataLabels: {
+							y: 5,
+							borderWidth: 0,
+							useHTML: true
+						}
+					}
+				}
+			};
+			$('#container-{!ol.strlname}').highcharts(Highcharts.merge(gaugeOptions, {
+				title: {
+					text: '{!chartTitle}',
+					margin: 0,
+					y: 50,
+					floating: true
+				},
+				subtitle: {
+					text: '* {!chartSubTitle}',
+					margin: 0,
+                    verticalAlign: 'bottom',
+					align: 'right',
+					x: -10
+				},
+				yAxis: {
+					min: 0,
+					max: {!ol.intllimit},
+					endOnTick: false
+				},
+				credits: {
+					enabled: false
+				},
+				series: [{
+					type: 'solidgauge',
+					name: '{!ol.strlname}',
+					data: [{!ol.intlvalue}],
+					dataLabels: {
+					format: '<div style="text-align:center">' +
+							'<span style="font-size:25px;color:((Highcharts.theme && Highcharts.theme.contrastTextColor) || "black")">{y}</span>' +
+							'<br/>{!ol.strlvalue} of {!ol.strllimit}' +
+							'</div>'
+					},
+					tooltip: {
+						valueSuffix: ' of {!ol.strllimit}'
+					}
+				}]
+			}));
+		});
+	</script>
+
+	<figure class="highcharts-figure">
+		<div id="container-{!ol.strlname}" class="chart-container"></div>
+	</figure>
+</apex:component>

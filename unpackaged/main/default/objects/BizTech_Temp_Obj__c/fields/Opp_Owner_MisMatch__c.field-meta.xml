@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opp_Owner_MisMatch__c</fullName>
+    <formula>Opportunity__r.Account.Pricing__c != Opportunity__r.Pricebook2.Name</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Opp Owner MisMatch</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

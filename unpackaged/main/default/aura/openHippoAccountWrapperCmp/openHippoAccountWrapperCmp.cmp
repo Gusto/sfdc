@@ -1,0 +1,8 @@
+<!--
+    Purpose: Used to dynamically open company page in Hippo staging or Production
+    Written by : Praveen Sethu
+    Date: 07/25/2022
+-->
+<aura:component implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes">
+    <c:openHippoAccountCmp recordId = "{!v.recordId}" onclosemodal = "{!c.closeQuickAction}" />
+</aura:component>

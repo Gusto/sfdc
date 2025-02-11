@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Send Email Notification - To SOps if a deal over 125 without approval has been closed</description>
+        <name>Send_email_alert_for_Unapproved_Large_Deal_Closed</name>
+        <label>Send email alert for Unapproved Large Deal Closed</label>
+        <locationX>50</locationX>
+        <locationY>1622</locationY>
+        <actionName>Opportunity.O_Alert_for_Unapproved_Large_Deal_Closed</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>var_Current_Oppty.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Opportunity.O_Alert_for_Unapproved_Large_Deal_Closed</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send MM Notification - Transfer to Partner</description>
+        <name>Send_MM_Notification_Transfer_to_Partner</name>
+        <label>Send MM Notification - Transfer to Partner</label>
+        <locationX>50</locationX>
+        <locationY>278</locationY>
+        <actionName>Opportunity.MM_Notification_Transfer_to_Partner</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Benefits_BoR_Flow_Email_Alert_Blocked_BoR_Evaluation</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>var_Current_Oppty.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Opportunity.MM_Notification_Transfer_to_Partner</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send Email Alert</description>
+        <name>Send_O_Blocked_BoR</name>
+        <label>Send O: Blocked BoR</label>
+        <locationX>50</locationX>
+        <locationY>614</locationY>
+        <actionName>Opportunity.O_Blocked_BoR</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Evaluate_for</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>var_Current_Oppty.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Opportunity.O_Blocked_BoR</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send Email Notification - HI managers for ROE exception on BoR/NP RT</description>
+        <name>Send_O_ROE_Email_Notification_HI_Email_Alert</name>
+        <label>Send O: ROE Email Notification - HI Email Alert</label>
+        <locationX>50</locationX>
+        <locationY>950</locationY>
+        <actionName>Opportunity.O_ROE_Email_Notification_HI</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Evaluate_for_O_ROE_approval_PR</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>var_Current_Oppty.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Opportunity.O_ROE_Email_Notification_HI</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send Email Notification - HI managers for ROE exception on PR RT</description>
+        <name>Send_O_ROE_Email_Notification_PR_Email_Alert</name>
+        <label>Send O: ROE Email Notification - PR Email Alert</label>
+        <locationX>50</locationX>
+        <locationY>1286</locationY>
+        <actionName>Opportunity.O_ROE_Email_Notification_PR</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Evaluate_for_Deal_of_over_125_EE_s_is_Closed</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>var_Current_Oppty.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Opportunity.O_ROE_Email_Notification_PR</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <name>Benefits_BoR_Flow_Email_Alert_Blocked_BoR_Evaluation</name>
+        <label>Benefits BoR Flow Email Alert Blocked BoR Evaluation</label>
+        <locationX>182</locationX>
+        <locationY>494</locationY>
+        <defaultConnector>
+            <targetReference>Evaluate_for</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_Benefits_BOR_Blocked_Notification</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Benefits_Current_Setup_Step__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Blocked</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_ByPass_Flows</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Prior_Oppty.Benefits_Current_Setup_Step__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Blocked</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits BoR</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Owner.Username</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>success@zenpayroll.com</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_O_Blocked_BoR</targetReference>
+            </connector>
+            <label>Send Benefits BOR Blocked Notification</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Evaluate for Sending Email Notification - HI managers for ROE exception on BoR/NP RT</description>
+        <name>Evaluate_for</name>
+        <label>Evaluate for O: ROE Email Notification - HI</label>
+        <locationX>182</locationX>
+        <locationY>830</locationY>
+        <defaultConnector>
+            <targetReference>Evaluate_for_O_ROE_approval_PR</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_O_ROE_Email_Notification_HI</name>
+            <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.ROE_Exception__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Requested</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Prior_Oppty.ROE_Exception__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Requested</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits BoR</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits New Plan</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_O_ROE_Email_Notification_HI_Email_Alert</targetReference>
+            </connector>
+            <label>Send O: ROE Email Notification - HI</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Evaluate to Send Email Notification - To SOps if a deal over 125 without approval has been closed</description>
+        <name>Evaluate_for_Deal_of_over_125_EE_s_is_Closed</name>
+        <label>Evaluate for Deal of over 125 EE&apos;s is Closed</label>
+        <locationX>182</locationX>
+        <locationY>1502</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_Alert_Deal_of_125_EEs_Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Won</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Prior_Oppty.StageName</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Won</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.EE_Active_Count__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>125.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.ROE_Exception__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Prior_Oppty.IsWon</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Company Opportunity</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_ByPass_Flows</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_email_alert_for_Unapproved_Large_Deal_Closed</targetReference>
+            </connector>
+            <label>Send Alert:: Deal of 125 EEs Closed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Evaluate for Sending Email Notification - HI managers for ROE exception on PR RT</description>
+        <name>Evaluate_for_O_ROE_approval_PR</name>
+        <label>Evaluate for O:: ROE approval - PR</label>
+        <locationX>182</locationX>
+        <locationY>1166</locationY>
+        <defaultConnector>
+            <targetReference>Evaluate_for_Deal_of_over_125_EE_s_is_Closed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_O_ROE_approval_PR</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.ROE_Exception__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Requested</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Prior_Oppty.ROE_Exception__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Requested</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Company Opportunity</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_ByPass_Flows</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_O_ROE_Email_Notification_PR_Email_Alert</targetReference>
+            </connector>
+            <label>Send O:: ROE approval - PR</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Evaluate for Send Email Notification - Notify MM When Partner Opportunity is Transferred</description>
+        <name>MM_Notification_Evaluation</name>
+        <label>MM Notification Evaluation</label>
+        <locationX>182</locationX>
+        <locationY>158</locationY>
+        <defaultConnector>
+            <targetReference>Benefits_BoR_Flow_Email_Alert_Blocked_BoR_Evaluation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_MM_Notification</name>
+            <conditionLogic>1 AND 2 AND 5 AND (3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.OwnerId</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>var_Prior_Oppty.OwnerId</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_ByPass_Flows</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Sold_By__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Referred_By__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Current_Oppty.Previous_Owner_Role__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>sales_mm</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_MM_Notification_Transfer_to_Partner</targetReference>
+            </connector>
+            <label>Send MM Notification</label>
+        </rules>
+    </decisions>
+    <description>Logic to send all email alerts for the opportunity object</description>
+    <formulas>
+        <description>evaluate if email should be sent</description>
+        <name>formula_Benefits_BoR_Flow_Email_Alert_Blocked_BoR</name>
+        <dataType>Boolean</dataType>
+        <expression>AND ( 
+ISPICKVAL(({!var_Current_Oppty.Benefits_Current_Setup_Step__c}), &quot;Blocked&quot;), 
+{!var_Current_Oppty.RecordType.Name} = &apos;Benefits BoR&apos;, 
+{!var_Current_Oppty.Owner.Username} &lt;&gt; &quot;success@zenpayroll.com&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Perform logic to determine if email should be sent</description>
+        <name>formula_MMNotification_TransfertoPartner</name>
+        <dataType>Boolean</dataType>
+        <expression>AND( 
+
+   OR( 
+      NOT(ISBLANK( {!var_Current_Oppty.Sold_By__c})), 
+      NOT(ISBLANK(  {!var_Current_Oppty.Referred_By__c}  ))
+      ), 
+CONTAINS( {!var_Current_Oppty.Previous_Owner_Role__c}, &apos;sales_mm&apos;) 
+
+)</expression>
+    </formulas>
+    <interviewLabel>Opportunity Email Alerts {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity Email Alerts - Subflow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>MM_Notification_Evaluation</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Sent from Main Flow.  Will be True if the the Bypass Flow perm set is assigned</description>
+        <name>var_ByPass_Flows</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>The Oppty that triggered the main flow</description>
+        <name>var_Current_Oppty</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Opportunity</objectType>
+    </variables>
+    <variables>
+        <description>The opportunity record before the change triggered the parent flow</description>
+        <name>var_Prior_Oppty</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Opportunity</objectType>
+    </variables>
+</Flow>

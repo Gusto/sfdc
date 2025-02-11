@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Escalation_Reason__c</fullName>
+    <label>Escalation Reason</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Incorrect Routing</fullName>
+                <default>false</default>
+                <label>Incorrect Routing</label>
+            </value>
+            <value>
+                <fullName>Out of Scope</fullName>
+                <default>false</default>
+                <label>Out of Scope</label>
+            </value>
+            <value>
+                <fullName>Customer Requested</fullName>
+                <default>false</default>
+                <label>Customer Requested</label>
+            </value>
+            <value>
+                <fullName>Do not have required access</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Do not have required access</label>
+            </value>
+            <value>
+                <fullName>Inccorect Routing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Inccorect Routing</label>
+            </value>
+            <value>
+                <fullName>Insufficient Training</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Insufficient Training</label>
+            </value>
+            <value>
+                <fullName>No Access in Panda</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>No Access in Panda</label>
+            </value>
+            <value>
+                <fullName>Unable to Resolve with Macro</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Unable to Resolve with Macro</label>
+            </value>
+            <value>
+                <fullName>Unable to resolve with Knowledge Base</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Unable to resolve with Knowledge Base</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

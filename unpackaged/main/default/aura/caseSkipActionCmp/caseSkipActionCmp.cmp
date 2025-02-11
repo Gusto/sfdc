@@ -1,0 +1,21 @@
+<!--
+    Purpose: Aura component used for take it button that assigns cases to logged in user
+            and other buttons including Skip, Skip and Next that serves cases via play mode
+    Written by : Praveen Sethu
+    Date: 09/16/2020
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
+    <!-- Using workspace api to close and open new tabs-->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <!-- getting logged in user info = used to dynamically show and hide take it button -->
+    <aura:handler name="init" value="{!this}" action="{!c.handleDoInit}"/>
+    <!-- userId attribute that stores logged in user Id-->
+    <aura:attribute name="idUser" type="Id"></aura:attribute>
+    <aura:attribute name="blnShowComponent" type="Boolean" default="true"></aura:attribute>
+    <!-- onclosetab = Fired when we need to close focussed tab, save tab and serve next case -->
+    <!-- onrefreshview = Fires standard refresh view event. It is fired when users click Take It -->
+    <!-- onhidecomponent = when no buttons are visible, hideComponent hides the entire component -->
+    <aura:if isTrue="{!v.blnShowComponent}">
+        <c:caseSkipCmp aura:id="caseSkip" idLoggedInUserId="{!v.idUser}" recordId="{!v.recordId}" onclosetab="{!c.handleCloseTab}" onrefreshview="{!c.handleRefreshView}" onhidecomponent="{!c.handleHideComponent}"></c:caseSkipCmp>
+    </aura:if>
+</aura:component>

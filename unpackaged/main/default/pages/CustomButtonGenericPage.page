@@ -1,0 +1,37 @@
+<apex:page controller="CustomButtonGenericCtrl" action="{!buttonAction}">
+	<apex:form id="customBtnFrm">
+		<apex:pageMessages />
+		<apex:outputLink value="{!strReturnURL}" target="_self">Back to Previous Page</apex:outputLink>
+		
+		<apex:pageBlock id="ERnPISection" rendered="{!authorizedUser}">
+			<apex:pageBlockSection id="ERSection" rendered="{!IF(strButtonSource == 'EROutreach',true,false)}" columns="1">
+				<apex:outputField value="{!objTicket.ER_Outreach_Comments__c}" rendered="{!IF(objTicket.ER_Outreach_Comments__c != null,true,false)}"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Add Comments"/>
+                    <apex:outputPanel layout="block" styleclass="requiredInput">
+                    	<div class="requiredBlock"></div>
+                        <apex:inputTextArea style="width:80%" value="{!comments}" required="true" html-placeholder="Add reason for reaching out to ER."/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				
+				<apex:commandButton value="save" action="{!initiateEROutreach}"/>
+			</apex:pageBlockSection>
+            
+			<apex:pageBlockSection id="PISection" rendered="{!IF(strButtonSource == 'PISubmission',true,false)}" columns="1">
+				<!-- <apex:inputField value="{!objTicket.Ready_for_Submission_Comments__c}" required="true" style="width:80%"/> -->
+				
+				<apex:outputField value="{!objTicket.Ready_for_Submission_Comments__c}" rendered="{!IF(objTicket.Ready_for_Submission_Comments__c != null,true,false)}"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Add Comments"/>
+                    <apex:outputPanel layout="block" styleclass="requiredInput">
+                    	<div class="requiredBlock"></div>
+                        <apex:inputTextArea style="width:80%" value="{!comments}" required="true" html-placeholder="Add comments to submission team."/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+				
+				<apex:commandButton value="save" action="{!readyForPISubmissionAction}"/>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		
+	</apex:form>
+</apex:page>

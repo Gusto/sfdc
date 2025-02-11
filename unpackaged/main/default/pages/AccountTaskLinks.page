@@ -1,0 +1,20 @@
+<apex:page StandardController="Account">
+    <apex:form >
+   
+    
+        <apex:outputLink value="/00T/e?what_id={!Account.Id}&RecordType=01216000000WdR9&tsk4={!Today()}&tsk10=Email&tsk12=Open&retURL=/{!Account.Account_ID_18_Digit__c}">Email Task</apex:outputLink>
+        <br></br><br></br>
+    
+        <apex:outputLink value="/00T/e?what_id={!Account.Id}&RecordType=01216000000WdQz&tsk4={!Today()}&tsk5=Follow Up&tsk10=Follow Up&tsk12=Open&retURL=/{!Account.Account_ID_18_Digit__c}">Follow Up</apex:outputLink>
+        <br></br> <br></br>
+        
+        <apex:outputLink value="/00T/e?what_id={!Account.Id}&RecordType=01216000000WdR4&tsk4={!Today()}&tsk5=Outbound Call&tsk10=Outbound Call&tsk12=Scheduled&retURL=/{!Account.Account_ID_18_Digit__c}">Outb. Call - Scheduled</apex:outputLink>
+        <br></br><br></br>
+       
+        <apex:outputLink value="/00T/e?what_id={!Account.Account_ID_18_Digit__c}&RecordType=01216000000WdRO&tsk4={!Today()}&tsk5=Demo&tsk10=Demo&tsk12=Scheduled&retURL=/{!Account.Account_ID_18_Digit__c}">Demo Scheduled</apex:outputLink>
+        <br></br><br></br>
+      
+        
+   
+    </apex:form>
+</apex:page>

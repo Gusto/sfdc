@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Email_Admins</name>
+        <label>Email Admins</label>
+        <locationX>479</locationX>
+        <locationY>1118</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>Get_Distribution_Engine_ID</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>Email_Body</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <stringValue>thomas.ivy@gusto.com, todd.dowdy@gusto.com, abdul.sultani@gusto.com</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sendRichBody</name>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>Email_Body</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>emailSimple</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>Assign_User_from_Update</name>
+        <label>Assign User from Update</label>
+        <locationX>858</locationX>
+        <locationY>398</locationY>
+        <assignmentItems>
+            <assignToReference>User_For_Update.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>User.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Status</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Clear_Calendly_Link</name>
+        <label>Clear Calendly Link</label>
+        <locationX>611</locationX>
+        <locationY>758</locationY>
+        <assignmentItems>
+            <assignToReference>User_For_Update.Calendar_Link__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_User</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Update_Status</name>
+        <label>Update Status</label>
+        <locationX>858</locationX>
+        <locationY>518</locationY>
+        <assignmentItems>
+            <assignToReference>User_For_Update.HR_Worker_Information_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>HRWorkerInformationRecord.Status__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>User_For_Update.Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>HRWorkerInformationRecord.Team__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>User_For_Update.Sub_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>HRWorkerInformationRecord.Sub_Team__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Was_User_Terminated</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Is_User_Active_and_Terminated</name>
+        <label>Is User Active and Terminated</label>
+        <locationX>611</locationX>
+        <locationY>998</locationY>
+        <defaultConnector>
+            <targetReference>Get_Distribution_Engine_ID</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Active_Terminated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>User.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>HRWorkerInformationRecord.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Terminated</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Email_Admins</targetReference>
+            </connector>
+            <label>Active &amp; Terminated</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>To avoid errors when no user found</description>
+        <name>Was_a_user_found</name>
+        <label>Was a user found</label>
+        <locationX>1114</locationX>
+        <locationY>278</locationY>
+        <defaultConnectorLabel>No user was found</defaultConnectorLabel>
+        <rules>
+            <name>User_was_found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>User</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_User_from_Update</targetReference>
+            </connector>
+            <label>User was found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Only search for assignment if Distribution Engine application was found.</description>
+        <name>Was_Application_Found_0</name>
+        <label>Was Application Found?</label>
+        <locationX>611</locationX>
+        <locationY>1454</locationY>
+        <defaultConnectorLabel>Not Found</defaultConnectorLabel>
+        <rules>
+            <name>License_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Distribution_Engine_ID</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Search_for_Distribution_Engine_Assignment_0_0_0</targetReference>
+            </connector>
+            <label>License Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Was_Assignment_Found_0</name>
+        <label>Was Assignment Found?</label>
+        <locationX>380</locationX>
+        <locationY>1694</locationY>
+        <defaultConnectorLabel>License Not Found</defaultConnectorLabel>
+        <rules>
+            <name>License_Found_2_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>License_Assignment.Id</leftValueReference>
+                <operator>WasSet</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Pause</targetReference>
+            </connector>
+            <label>License Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check before removing Calendly Link</description>
+        <name>Was_User_Terminated</name>
+        <label>Was User Terminated?</label>
+        <locationX>858</locationX>
+        <locationY>638</locationY>
+        <defaultConnector>
+            <targetReference>Update_User_0</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>User was not Terminated</defaultConnectorLabel>
+        <rules>
+            <name>User_was_terminated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>User_For_Update.HR_Worker_Information_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Terminated</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Clear_Calendly_Link</targetReference>
+            </connector>
+            <label>User was terminated</label>
+        </rules>
+    </decisions>
+    <description>When a Gustie changes status this flow will update the user record with that new status and clear the Calendly link.  Created in order to manage terminated employees.
+1/13/20: Added email notification functionality.
+2/5/21: Updated logic to avoid errors when user is not found.</description>
+    <interviewLabel>Update User Record with HR Worker Information Status {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update User Record with HR Worker Information Status</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordDeletes>
+        <description>Remove License Assignment</description>
+        <name>Delete_License_Assignment_0_0_0_0</name>
+        <label>Delete License Assignment</label>
+        <locationX>50</locationX>
+        <locationY>1934</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>UserId__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>User_For_Update.Id</elementReference>
+            </value>
+        </filters>
+        <object>UserPackageLicense</object>
+    </recordDeletes>
+    <recordLookups>
+        <name>Find_the_User_Record</name>
+        <label>Find the User Record</label>
+        <locationX>1114</locationX>
+        <locationY>158</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_a_user_found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Email</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>HRWorkerInformationRecord.Email__c</elementReference>
+            </value>
+        </filters>
+        <object>User</object>
+        <outputReference>User</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Email</queriedFields>
+        <queriedFields>HR_Worker_Information_Status__c</queriedFields>
+        <queriedFields>IsActive</queriedFields>
+        <queriedFields>Name</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>Search for Distribution Engine License Assignment</description>
+        <name>Get_Distribution_Engine_ID</name>
+        <label>Get Distribution Engine ID</label>
+        <locationX>611</locationX>
+        <locationY>1334</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Application_Found_0</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>NamespacePrefix</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>n2de</stringValue>
+            </value>
+        </filters>
+        <object>PackageLicense</object>
+        <outputAssignments>
+            <assignToReference>Distribution_Engine_ID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordLookups>
+        <description>Search for license</description>
+        <name>Search_for_Distribution_Engine_Assignment_0_0_0</name>
+        <label>Search for Distribution Engine Assignment</label>
+        <locationX>380</locationX>
+        <locationY>1574</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Assignment_Found_0</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>PackageLicenseId__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Distribution_Engine_ID</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>UserId__NotFound</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>User_For_Update.Id</elementReference>
+            </value>
+        </filters>
+        <object>UserPackageLicense</object>
+        <outputReference>License_Assignment</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_User</name>
+        <label>Update User</label>
+        <locationX>611</locationX>
+        <locationY>878</locationY>
+        <connector>
+            <targetReference>Is_User_Active_and_Terminated</targetReference>
+        </connector>
+        <inputReference>User_For_Update</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_User_0</name>
+        <label>Update User</label>
+        <locationX>1106</locationX>
+        <locationY>758</locationY>
+        <inputReference>User_For_Update</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>988</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Find_the_User_Record</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>Email_Body</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;The user record for {!User.Name} is has been changed to {!HRWorkerInformationRecord.Status__c}.  Please click this link to open the user record and deactivate the user and then deactivate the corresponding accounts in other applications.&lt;/p&gt;&lt;p&gt;https://gusto.my.salesforce.com/{!User.Id}?noredirect=1&amp;amp;isUserEntityOverride=1&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Email_Subject</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;HR Worker Record was changed to {!HRWorkerInformationRecord.Status__c} for {!User.Name}&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <description>When a user is not found send this message</description>
+        <name>EmailBodyforUserNotFound</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;The user record for{!HRWorkerInformationRecord.First_Name__c} {!HRWorkerInformationRecord.Last_Name__c} is has been changed to {!HRWorkerInformationRecord.Status__c}. &lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;This notice was sent because the email address did not match an active Salesforce user&apos;s email address. &lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <description>When a user is not found send an email with this subject</description>
+        <name>EmailSubjectforUsernotfound</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);&quot;&gt;HR Worker Record was changed to {!HRWorkerInformationRecord.Status__c} for {!HRWorkerInformationRecord.First_Name__c} {!HRWorkerInformationRecord.Last_Name__c}&lt;/span&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>Admins</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>thomas.ivy@gusto.com</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>count of records found</description>
+        <name>CountofRecords</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>CurrentUserLoopVar</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+    <variables>
+        <description>ID of the Distribution Engine Assignment</description>
+        <name>Distribution_Engine_Assignment</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>ID of the package</description>
+        <name>Distribution_Engine_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>The record that activated the Process Builder</description>
+        <name>HRWorkerInformationRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>HR_Worker_Information__c</objectType>
+    </variables>
+    <variables>
+        <description>The Distribution Engine License</description>
+        <name>License_Assignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <name>User</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+    <variables>
+        <name>User_For_Update</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+    <waits>
+        <description>This is a pause the schedule the action and avoid the error:  MIXED_DML_OPERATION: DML operation on setup object is not permitted after you have updated a non-setup object (or vice versa)</description>
+        <name>Pause</name>
+        <label>Pause</label>
+        <locationX>182</locationX>
+        <locationY>1814</locationY>
+        <defaultConnectorLabel>Default Path</defaultConnectorLabel>
+        <waitEvents>
+            <name>Pause_Flow</name>
+            <conditionLogic>and</conditionLogic>
+            <connector>
+                <targetReference>Delete_License_Assignment_0_0_0_0</targetReference>
+            </connector>
+            <eventType>AlarmEvent</eventType>
+            <inputParameters>
+                <name>AlarmTime</name>
+                <value>
+                    <elementReference>$Flow.CurrentDateTime</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeOffset</name>
+                <value>
+                    <numberValue>0.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeOffsetUnit</name>
+                <value>
+                    <stringValue>Hours</stringValue>
+                </value>
+            </inputParameters>
+            <label>Pause Flow</label>
+        </waitEvents>
+    </waits>
+</Flow>

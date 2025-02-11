@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Comms__c</fullName>
+    <description>Does customer communication include any of the following:</description>
+    <inlineHelpText>Does customer communication include any of the following:</inlineHelpText>
+    <label>Customer Comms</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Demand for compensation</fullName>
+                <default>false</default>
+                <label>Demand for compensation</label>
+            </value>
+            <value>
+                <fullName>File a regulatory or government complaint</fullName>
+                <default>false</default>
+                <label>File a regulatory or government complaint</label>
+            </value>
+            <value>
+                <fullName>Get an attorney (lawyer)</fullName>
+                <default>false</default>
+                <label>Get an attorney (lawyer)</label>
+            </value>
+            <value>
+                <fullName>Take legal action against Gusto</fullName>
+                <default>false</default>
+                <label>Take legal action against Gusto</label>
+            </value>
+            <value>
+                <fullName>Talk to Gusto&apos;s legal team</fullName>
+                <default>false</default>
+                <label>Talk to Gusto&apos;s legal team</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

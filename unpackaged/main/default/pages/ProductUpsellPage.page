@@ -1,0 +1,46 @@
+<apex:page standardController="Opportunity" extensions="ProductUpsellPageExtension" tabStyle="Partnership_Interest__c">
+    <apex:sectionHeader title="New Product Upsell"/>
+    <apex:form id="frm">
+        <apex:pagemessages id="pgMsg" escape="false"/>
+        <apex:pageBlock >
+        	<apex:pageBlockSection title="Information" columns="2" collapsible="false">
+        		<apex:pageBlockSectionItem >
+        			<apex:outputLabel value="Contact" />
+                    <apex:outputPanel styleClass="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:selectList id="cadence" size="1" value="{!selectedContact}">
+                            <apex:selectOptions value="{!contactList}"/>
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+        			<apex:outputLabel value="Owner" />
+	            	{!$User.FirstName} {!$User.LastName}
+                </apex:pageBlockSectionItem>
+            	
+            	<apex:inputField value="{!interestObj.Account__c}" required="true"/>
+            	<apex:inputField value="{!interestObj.Opportunity__c}" required="true"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Accounting Services" columns="2" collapsible="false">
+            	<apex:inputField value="{!interestObj.Referral_for_Accounting_Services__c}" />
+                <apex:inputField value="{!interestObj.Accountant_Referral_Notes__c}" />
+            	<apex:inputField value="{!interestObj.Accounting_Service_s_Needed__c}" />
+                <apex:inputField value="{!interestObj.Passed_to__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Other Services" columns="2" collapsible="false">
+            	<apex:inputField value="{!interestObj.Workers_Comp_Interest__c}" />
+            	<apex:inputField value="{!interestObj.Workers_Comp_Notes__c}" />
+            	<apex:selectList id="picklist401k" size="1" label="401K Interest" value="{!strSelected401kVal}">
+                    <apex:selectOptions value="{!lst_401kPicklistValues}"/>
+                </apex:selectList>
+            	<apex:inputField value="{!interestObj.X401k_Notes__c}" />
+            	<apex:inputField value="{!interestObj.X529_Interest__c}" />
+            	<apex:inputField value="{!interestObj.X529_Notes__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="both">
+                <apex:CommandButton action="{!saveRec}" value="Save" />
+                <apex:CommandButton action="{!Cancel}" value="Cancel" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

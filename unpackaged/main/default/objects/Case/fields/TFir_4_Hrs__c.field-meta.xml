@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TFir_4_Hrs__c</fullName>
+    <externalId>false</externalId>
+    <formula>if( Time_To_First_Response_Hours__c&gt;0 &amp;&amp; Time_To_First_Response_Hours__c&lt;=4,1,0 )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>TFir &lt; 4 Hrs</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

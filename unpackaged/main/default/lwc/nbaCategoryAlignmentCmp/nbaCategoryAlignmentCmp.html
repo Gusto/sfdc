@@ -1,0 +1,53 @@
+<template>
+	<div class="slds-theme_default">
+		<!-- Spinner START -->
+		<lightning-spinner if:true={blnSpinner} alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+		<!-- Spinner END -->
+		<br />
+
+		<div class="slds-text-align_center">
+			<span class="slds-text-heading_medium slds-var-p-around_small">{titleLabel}</span>
+		</div>
+
+		<!-- Configurable warning message -->
+		<div class="slds-card slds-theme_shade" if:true={blnShowWarning}>
+			<div class="slds-card__header slds-grid">
+				<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+					<span class="slds-assistive-text">warning</span>
+					<span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+						<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+							<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+						</svg>
+					</span>
+					<h2>{strWarningMessage}</h2>
+				</div>
+			</div>
+		</div>
+
+		<br />
+
+		<!-- Show Talking points to the Primary Category that served the Lead or the Opportunity -->
+		<template if:true={blnPrimaryAvailable}>
+			<span class="slds-text-heading_small slds-var-p-around_small" style="padding-left: 15px; font-weight: 700">Primary Category</span>
+			<lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle} active-section-name={activeSections}>
+				<template for:each={list_PrimaryRuleSets} for:item="rule">
+					<lightning-accordion-section name={rule.Rule_Name__c} label={rule.Rule_Name__c} key={rule.Id}>
+						<lightning-formatted-rich-text value={rule.Talking_Points__c}></lightning-formatted-rich-text>
+					</lightning-accordion-section>
+				</template>
+			</lightning-accordion>
+		</template>
+
+		<!-- Secondary Categories section - List of all other rules that the lead or the Opportunity satisfies -->
+		<template if:true={blnSecondaryAvailable}>
+			<span class="slds-text-heading_small slds-var-p-around_small" style="padding-left: 15px; font-weight: 700">Secondary Categories</span>
+			<lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle} active-section-name={activeSections}>
+				<template for:each={list_SecondaryRuleSets} for:item="rule">
+					<lightning-accordion-section name={rule.Rule_Name__c} label={rule.Rule_Name__c} key={rule.Id}>
+						<lightning-formatted-rich-text value={rule.Talking_Points__c}></lightning-formatted-rich-text>
+					</lightning-accordion-section>
+				</template>
+			</lightning-accordion>
+		</template>
+	</div>
+</template>

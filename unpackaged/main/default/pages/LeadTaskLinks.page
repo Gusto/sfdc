@@ -1,0 +1,31 @@
+<apex:page StandardController="Lead">
+    <apex:form >
+   
+    
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdR9&tsk4={!Today()}&tsk10=Email&tsk12=Open&retURL=/{!Lead.Id}">Email Task</apex:outputLink>
+        <br></br><br></br>
+    
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdQz&tsk4={!Today()}&tsk5=Follow Up&tsk10=Follow Up&tsk12=Open&retURL=/{!Lead.Id}">Follow Up</apex:outputLink>
+        <br></br> <br></br>
+        
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdRO&tsk4={!Today()}&tsk5=Demo&tsk10=Demo&tsk12=Scheduled&retURL=/{!Lead.Id}">Demo - Scheduled</apex:outputLink>
+        <br></br><br></br>
+    
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdR4&tsk4={!Today()}&tsk5=Outbound Call&tsk10=Outbound Call&tsk12=Scheduled&retURL=/{!Lead.Id}">Outb. Call - Scheduled</apex:outputLink>
+        <br></br> <br></br>
+        
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdR4&tsk4={!Today()}&tsk5=Outbound Call&tsk10=Outbound Call&tsk12=Attempt&retURL=/{!Lead.Id}">Outb. Call - Attempt</apex:outputLink>       
+        <br></br><br></br>
+       
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdR4&tsk4={!Today()}&tsk5=Outbound Call&tsk10=Outbound Call&tsk12=Connect&retURL=/{!Lead.Id}">Outb. Call - Connect</apex:outputLink>
+        <br></br><br></br>
+      
+        <apex:outputLink value="00T/e?who_id={!Lead.Id}&RecordType=01216000000WdR4&tsk4={!Today()}&tsk5=Outbound Call&tsk10=Outbound Call&tsk12=Voicemail&retURL=/{!Lead.Id}">Outb. Call - Voicemail</apex:outputLink>
+        <br></br><br></br>
+        
+        <apex:outputLink value="/00T/e?who_id={!Lead.Id}&RecordType=01216000000WdRO&tsk4={!Today()}&tsk5=Demo&tsk10=Demo&tsk12=Completed&retURL=/{!Lead.Id}">Demo - Completed</apex:outputLink>
+        <br></br><br></br>
+        
+   
+    </apex:form>
+</apex:page>

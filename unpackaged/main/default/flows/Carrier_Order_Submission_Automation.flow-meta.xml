@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Carrier_Order_Census_Export_Request</name>
+        <label>Carrier Order Census Export Request</label>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
+        <actionName>CarrierOrderCensusExportReqKafkaCallout</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>strApplicationId</name>
+            <value>
+                <elementReference>$Record.Application_Id__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>strApplicationType</name>
+            <value>
+                <elementReference>$Record.Application_Type__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>strCompanyId</name>
+            <value>
+                <elementReference>$Record.ZP_Company_Id__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>CarrierOrderCensusExportReqKafkaCallout</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <description>Handling all updates from carrier order related to automation</description>
+    <environments>Default</environments>
+    <interviewLabel>Carrier Order Submission Automation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Carrier Order Submission Automation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Implementation_Stage__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Ready for Submission Prep</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>OwnerId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>00G1M000005ocJm</stringValue>
+            </value>
+        </filters>
+        <object>Carrier_Order__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Carrier_Order_Census_Export_Request</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

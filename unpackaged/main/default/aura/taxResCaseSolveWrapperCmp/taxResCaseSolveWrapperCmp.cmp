@@ -1,0 +1,9 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride" access="global" >
+	<!-- workspace api need to close tabs -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:quickActionAPI aura:id="quickActionAPI" />
+    <!-- Record Id fetched from Page -->
+    
+    <c:taxResCaseSolveCmp recordId="{!v.recordId}" onopentab="{!c.copyTextToPublisher}">
+    </c:taxResCaseSolveCmp>
+</aura:component>

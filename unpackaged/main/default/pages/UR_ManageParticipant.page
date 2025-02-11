@@ -1,0 +1,1125 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ManageParticipantCtrl" 
+           applyBodyTag="false" sidebar="false" id="mp">
+  <apex:form id="frm">
+  <head>
+    <title>Gusto</title>
+       <script>
+        function setFocusOnLoad() {}
+      </script>
+    <c:UR_SortingTable />
+      <style>
+        .view-email-btn .fa-envelope-open {
+            opacity: .5;
+        }
+          
+        .blacklist-optout td, .blacklist-optout:hover td, .blacklist-optout:focus td{
+            background-color: #f8d7da !important;
+        }
+        .custom-tooltip .custom-tooltip-box {
+            display: none;
+        }
+        .custom-tooltip a:hover + .custom-tooltip-box {
+            display: block;
+        }
+        
+        .chevrondownImage{
+            width: 15px; 
+         }?
+         .arrowdownImage{
+            width: 15px;
+         }?
+         .arrowupImage{
+            width: 15px;
+         }
+          .tablesorter thead .sorter-false {
+            padding: .25rem 10px !important;
+          }
+         @media (min-width: 768px){
+            .mt-items {
+                margin-top: -30px;
+            }
+        }
+
+      </style>
+  </head>
+
+   <body class="slds-scope">
+   <div  id="pageOverlay" class="slds-spinner_container slds-is-fixed slds-hide"> 
+       <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+           <span class="slds-assistive-text">Loading...</span> 
+           <div class="slds-spinner__dot-a"></div> 
+           <div class="slds-spinner__dot-b"></div>   
+       </div> 
+       <div class="loading-img-text"></div>
+   </div>
+   <c:UR_ActionStatus />
+   <c:UR_MenuHeaderComponent tabName="Participants" subTabName="MP" prjId="{!objProject.Id}"/>
+    
+   <apex:actionFunction name="viewEmail" action="{!viewEmail}" rerender="frm" status="statusSave"/>
+   <apex:actionFunction name="sendSurvey" action="{!sendSurvey}" />
+   <apex:actionFunction name="inviteToInterview" action="{!inviteToInterview}"/>
+   <apex:actionFunction name="sendFollowUp" action="{!sendFollowUp}" />
+   <apex:actionFunction name="actionOnComplete" rerender="frm"/>
+   <apex:actionFunction rerender="frm" status="statusSave" name="UpdateParticipants" action="{!UpdatePartDetail}">
+        <apex:param name="selectedStatus" value="" assignTo="{!selectedStatus}"/>
+   </apex:actionFunction>  
+   <apex:actionFunction rerender="frm" status="statusSave" name="UpdateParticipantsComment" action="{!UpdatePartDetail}">
+        <apex:param name="copyToAllComment" value="" assignTo="{!isCopyToAllComment}"/>
+        <apex:param name="participantCommentId" value="" assignTo="{!participantCommentId}"/>
+        <apex:param name="participantComment" value="" assignTo="{!participantComments}"/>
+   </apex:actionFunction> 
+  <!-- <apex:actionFunction rerender="frm" status="statusSave" name="addParticipants" action="{!addParticipants}"/> -->
+   <apex:actionFunction rerender="mp" status="statusSave" name="sortParticipantList" action="{!sortParticipantList}" >
+        <apex:param name="sortby" value="" assignTo="{!sortbyFieldAPIName}"/>
+        <apex:param name="orderas" value="{!orderas}"/>
+        <apex:param name="projectId" value="{!objProject.Id}"/>
+   </apex:actionFunction> 
+   <apex:actionFunction rerender="frm" status="statusSave" name="searchParticipant" action="{!searchParticipantFromList}"/>
+   
+   <apex:actionFunction rerender="frm" status="statusSendEmail" name="resendEmail" action="{!resendEmail}">
+       <apex:param name="strPartId" value=""/>
+   </apex:actionFunction>
+  
+   
+    <!--body start here--> 
+    
+    <div class="slds-p-around_small slds-p-top_none">   
+          
+        <apex:pageMessages escape="false" id="msg"/>
+		<div class="slds-grid slds-wrap" style="align-items: flex-end; justify-content: space-between">
+            <div class="slds-col slds-size_1-of-1 slds-size_1-of-1 slds-medium-size_4-of-6">
+                <div class="slds-text-heading_medium slds-m-vertical_medium">
+                  <strong>Project Participants</strong>
+                </div>
+              <div class="slds-grid slds-m-bottom_x-small" style="align-items: center; display:{!if(showNumberofCSVBlock,'none;','')}">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-m-right_small">
+                    <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                      <i class="fas fa-search"></i>
+                    </span>
+                    <apex:inputText disabled="{!showNumberofCSVBlock}" onkeypress="checkEnterKey(event);" value="{!searchString}" id="text-input-id-1" html-placeholder=" Search this list" styleClass="slds-input" />
+                </div>
+                <div id="recordCount" class="slds-m-around_none mt-items">
+                     <div style="display:{!if(isEditable==true,'none;','block;')}"><br/></div>{!totalParticipant} total participants in project.
+                </div>
+                <div class="slds-m-around_none alert-mt-items" style="display:none; color:red; font-weight: bold; margin-left: 10px !important;">
+                  <span class="slds-badge slds-theme_warning" style="left: 10px;">
+                    <strong>{!intMaxSendEmailLimit} participants selected - You’ve reached the batch limit.</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="slds-grid">
+                <apex:outputpanel rendered="{!isEditable}" styleClass="slds-grid">
+                <div>
+                  <apex:selectlist id="selectAction" rendered="{!!showNumberofCSVBlock}" onChange="UpdateParticipantStatus(this);" styleclass="slds-select slds-m-bottom_x-small update-status custom-select" style="width: 180px; display:none;" value="{!selectedStatus}" size="1">
+                      <apex:selectOptions value="{!statusList}"/>
+                  </apex:selectlist>
+                </div>
+                <div class="slds-button-group slds-m-left_x-small slds-m-bottom_x-small prepare-and-send" style="display:none; font-size: inherit;" role="group">
+                  <a onclick="javascript:void(0);"  class="slds-button slds-button_brand prepare-send-btn" style="border-right:0"><abbr>Prepare &amp; Send&hellip;</abbr></a>
+                  <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-button_last prepare-send-dropdown">
+                    <a onclick="javascript:void(0);" class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn" aria-haspopup="true" title="More Actions" style="box-shadow:inset 1px 0 0 rgb(255, 255, 255, 0.5);border: 0;">
+                      <i class="fas fa-sort-down" style="line-height: 25px; align-self: baseline;"></i>
+                    </a>
+                    <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions">
+                      <ul class="slds-dropdown__list" role="menu">
+                       <!-- <li class="slds-dropdown__item" role="presentation">
+                          <apex:commandLink action="{!sendEmailParticipants}">
+                              <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                              <span class="slds-truncate">...Survey or Screener</span>
+                          </apex:commandLink>
+                        </li>
+                        <li class="slds-dropdown__item" role="presentation">
+                          <apex:commandLink action="{!sendEmailParticipants}">
+                              <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                              <span class="slds-truncate">...Invitation to an interview</span>
+                          </apex:commandLink>
+                        </li>
+                        <li class="slds-dropdown__item" role="presentation">
+                          <apex:commandLink action="{!sendEmailParticipants}">
+                              <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                              <span class="slds-truncate">...Follow up email</span>
+                          </apex:commandLink>
+                        </li>-->
+                          
+                          
+                      <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Qualtrics survey</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Google form</span>
+                        </apex:commandLink>
+                      </li>
+                       <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...UserTesting link</span>
+                        </apex:commandLink>
+                      </li>
+                        
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Invitation (Calendly)</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipantsNoCalendly}" status="statusSave">
+                            <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Invitation (no Calendly)</span>
+                        </apex:commandLink>
+                      </li>
+                        
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...NDA</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Follow up email</span>
+                        </apex:commandLink>
+                      </li>
+                          
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </apex:outputpanel>
+            </div>
+        </div>
+         
+	    <div class="slds-grid--nope">
+        <div class="slds-content">
+        <!--If No participant but we have CSV data then show this table- Start here-->
+          <apex:outputPanel rendered="{!showNumberofCSVBlock}">
+          <div class="slds-scrollable">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+              <thead>
+                <tr class="slds-line-height_reset">
+                  <th class="slds-text-title_caps sorter-false" scope="col">
+                    <div class="slds-truncate">&nbsp;</div>
+                  </th>
+				  <th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Contact Name</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Name' && orderAs=='desc','','none;')}"></i>
+							  <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Name' && orderAs=='asc','','none;')}"></i>
+						  </li>                      
+					  </ul>
+					  
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Email</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Email' && orderAs=='desc','','none;')}"></i>
+							  <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Email' && orderAs=='asc','','none;')}"></i>           
+						  </li>                      
+					  </ul>
+					                    
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Company Name</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Account.Name' && orderAs=='desc','','none;')}"></i>
+							  <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Account.Name' && orderAs=='asc','','none;')}"></i> 
+						  </li>                      
+					  </ul>
+					    
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">NDA</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='NDA_Send__c' && orderAs=='desc','','none;')}"></i>
+							  <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='NDA_Send__c' && orderAs=='asc','','none;')}"></i> 
+						  </li>                      
+					  </ul>
+					   
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col" style="min-width:130px;">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Status</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Research_Participant_Status__c' && orderAs=='desc','','none;')}"></i>
+							  <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Research_Participant_Status__c' && orderAs=='asc','','none;')}"></i> 
+						  </li>                      
+					  </ul>
+					  
+					  
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col" width="250">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Comment</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Sort_Comment__c' && orderAs=='desc','','none;')}"></i>
+							  <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Sort_Comment__c' && orderAs=='asc','','none;')}"></i> 
+						  </li>                      
+					  </ul>
+					  
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					   <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Recent Email</li>
+						  <li>
+							 
+						  </li>                      
+					  </ul>
+					 
+					</th> 
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="10" class="bg-grey">
+                   <!-- <div class="slds-text-heading_medium slds-m-vertical_medium">
+                        0 Participants
+                    </div>-->
+                    <div class="slds-text-heading_small slds-m-vertical_medium" style="display:{!if(isEditable==true && csvCountData>0,'','none;')}">
+                      <a href="UR_ManageCSV?projectId={!objProject.Id} ">1 CSV uploaded</a>
+                    </div>
+                    
+                    <div class="slds-text-heading_small slds-m-vertical_medium" style="display:{!if(isEditable==true && csvCountData==0,'','none;')}">
+                      	0 participants reserved
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </apex:outputPanel>
+		
+        <!--End here-->
+        <!--If participant exist then show this table- Start here-->
+        <apex:outputPanel rendered="{!!showNumberofCSVBlock}" id="frmTable">
+          <script>
+              $('#pageOverlay').removeClass('slds-hide');
+          </script>
+          <div class="slds-scrollable" style="max-height:500px; min-height:200px;">
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header">
+            <thead>
+              <tr class="slds-line-height_reset">
+                <th class="slds-text-title_caps sorter-false" scope="col" style="padding-left: 18px !important;">
+                  <div class="slds-checkbox slds-checkbox_standalone"><apex:inputcheckbox id="selectAllChkBox" styleClass="slds-checkbox" onclick="selectAllParticipant(this,'InputId'); countSelectedRecord();"/>
+                    <span class="slds-checkbox_faux"></span>
+                    </div>
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col"></th>
+                <th class="slds-text-title_caps sorter-false" scope="col" onclick="sortParticipantList('Contact__r.Name');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Contact Name</li>
+                      <li>
+                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Name' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Name' && orderAs=='asc','','none;')}"></i>
+                      </li>                      
+                  </ul>
+                  
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col" onclick="sortParticipantList('Contact__r.Email');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Email</li>
+                      <li>
+						  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Email' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Email' && orderAs=='asc','','none;')}"></i>           
+                      </li>                      
+                  </ul>
+				                    
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Contact__r.Account.Name');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Company Name</li>
+                      <li>
+						  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Account.Name' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Contact__r.Account.Name' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+                    
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col" onclick="sortParticipantList('NDA_Send__c');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">NDA</li>
+                      <li>
+						  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='NDA_Send__c' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='NDA_Send__c' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+                   
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col" style="min-width:130px;" onclick="sortParticipantList('Research_Participant_Status_Number__c');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Status</li>
+                      <li>
+						  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Research_Participant_Status_Number__c' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Research_Participant_Status_Number__c' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+                  
+                  
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col" onclick="sortParticipantList('Sort_Comment__c');" width="250">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Comment</li>
+                      <li>
+						  <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Sort_Comment__c' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Sort_Comment__c' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+				  
+                </th>
+                <th class="slds-text-title_caps sorter-false" scope="col"></th>
+                <th colspan="2" class="slds-text-title_caps sorter-false" scope="col">
+					   <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Contact History</li>
+						  <li> 
+						  </li>                      
+					  </ul>  
+				</th> 
+                  
+              </tr>
+            </thead>
+            <tbody>
+                  <apex:repeat value="{!lstContactWrapper}" var="cc">
+                    <tr class="{!if(cc.objResProject.Blacklist__c==true || cc.objResProject.Contact__r.UXResearch_Opt_Out__c==true ,'blacklist-optout','')}">                
+                      <td style="padding-left: 18px !important;">
+                          <div class="slds-checkbox slds-checkbox_standalone slds-float_left">
+                              <apex:inputcheckbox disabled="{!if(cc.objResProject.Blacklist__c==true || cc.objResProject.Contact__r.UXResearch_Opt_Out__c==true ,true,false)}" styleClass="slds-checkbox manage-checkbox {!if(cc.objResProject.Blacklist__c==true || cc.objResProject.Contact__r.UXResearch_Opt_Out__c==true ,'','ux-mp-checkbox')} " value="{!cc.selContact}"  id="InputId" style="pointer-events:{!if(selectedRecordCount >= intMaxSendEmailLimit, 'none;', 'visible;')} {!cc.objResProject.Research_Participant_Status__c} "/>
+                              <span class="slds-checkbox_faux"></span>
+                          </div>
+                      </td>
+                      <td>
+                          <div style="display:{!if(cc.objResProject.Blacklist__c==true || cc.objResProject.Contact__r.UXResearch_Opt_Out__c==true ,'block;','none;')} position: relative;" class="custom-tooltip slds-float_right">
+                              <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:#c23934"></i></a>
+                              <div style="position: absolute; bottom: 20px; left: -17px; white-space: nowrap;" class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left custom-tooltip-box" role="tooltip"  >
+                                  
+                                  <div class="slds-popover__body">
+                                      {!if(cc.objResProject.Blacklist__c==true,'BlockList','')}  {!if(cc.objResProject.Contact__r.UXResearch_Opt_Out__c==true,'Opt Out','')} 
+                                  </div>
+                              </div>
+                          </div>  
+                      </td>
+                      <td><a href="/{!cc.objResProject.Contact__r.Id}" target="_blank">{!cc.objResProject.Contact__r.Name}</a></td>
+                      <td><apex:outputText value="{!cc.objResProject.Contact__r.Email}"/></td>
+                      <td><a href="/{!cc.objResProject.Contact__r.AccountId}" target="_blank">{!cc.objResProject.Contact__r.Account.Name}</a></td>
+                      <td>
+                         <apex:outputpanel > 
+                            <label class="slds-checkbox_toggle slds-grid">
+                                <apex:inputcheckbox value="{!cc.chkNDA}" disabled="{!!isEditable}">
+                                    <apex:actionSupport event="onchange" action="{!updateNDAStatus}" rerender="frm" status="statusSave">
+                                            <apex:param name="strPartId" value="{!cc.objResProject.Id}"/>
+                                    </apex:actionSupport>
+                                </apex:inputcheckbox>
+                                <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                                    <span class="slds-checkbox_faux"></span>
+                                </span>
+                             </label>  
+                         </apex:outputpanel>
+                         <!--<apex:outputfield rendered="{!!isEditable}" value="{!cc.objResProject.NDA_Send__c}"/> -->
+                      </td>
+                      <td><apex:outputField value="{!cc.objResProject.Research_Participant_Status__c}"/></td>
+                      <td>        
+                        <div class="inline-edit" id="comment-{!cc.objResProject.Id}">
+                          <apex:outputText id="outputCommentId" value="{!cc.strComment}" /> 
+                          <a href="javascript:void(0);" style="display:{!if(isEditable==true,'','none;')}" class="link-grey edit-icon" id="editSingleBtn" onclick="editComment('{!$Component.outputCommentId}', 'edit{!cc.objResProject.Id}', '{!cc.objResProject.Id}');" ><i class="fas fa-pencil-alt"></i></a>
+                        </div>
+                        
+                        <div id="editSingle{!cc.objResProject.Id}" class="slds-popover slds-popover slds-popover_edit editSingle" role="dialog" style="position: absolute; top: 0px; left: 0; display: none;">
+                            <div class="slds-popover__body" id="dialog-body-id-1">
+                              <div class="slds-form-element slds-grid slds-wrap">
+                                <label class="slds-form-element__label slds-form-element__label_edit">
+                                </label>
+                                <div class="slds-form-element__control slds-grow">
+                                  <apex:inputText onblur="updateTextValue('{!$Component.outputCommentId}', '{!cc.objResProject.Id}', '{!cc.strComment}');" styleClass="slds-input" id="inputCommentId" value="{!cc.strComment}" />
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div id="editMultiple{!cc.objResProject.Id}" class="slds-popover slds-popover slds-popover_edit editMultiple" role="dialog" style="position: absolute; top: 0px; left: 0; display: none;">
+                            <div class="slds-popover__body" id="dialog-body-id-1">
+                              <div class="slds-form-element slds-grid slds-wrap">
+                                <label class="slds-form-element__label slds-form-element__label_edit">
+                                </label>
+                                <div class="slds-form-element__control slds-grow">
+                                    <apex:inputHidden id="participantCommentId" value="{!cc.participantCommentId}" />
+                                    <apex:inputText id="participantComment" onblur="updateMultiTextValue('{!$Component.outputCommentId}', '{!cc.objResProject.Id}');" style="resize: none;" styleClass="slds-input clear-textbox" value="{!participantComments}" html-placeholder="optional"/>
+                                </div>
+                              </div>
+
+                               <div class="slds-p-horizontal_xx-small slds-p-vertical_small">
+                                 <div class="slds-checkbox slds-checkbox_standalone" style="display: inline-block; top: 3px;">
+                                 <apex:inputcheckbox Id="isCopyToAll" styleClass="slds-checkbox" value="{!isCopyToAllComment}"/>
+                                 <span class="slds-checkbox_faux"></span>
+                                </div>
+                                <div class="show-selected-record" style="display: inline-block;">Update 0 selected participants</div>
+                               </div>
+                               
+                               <div class="slds-border_top slds-p-around_xx-small slds-text-align_right">
+                                <a href="javascript:;" class="slds-button slds-button_neutral cancel-inline-edit">Cancel</a>
+                                <button id="applyBtn{!cc.objResProject.Id}" onclick="UpdateComment('{!$Component.outputCommentId}'); return false;" class="slds-button slds-button_brand">Apply</button>  
+                               </div>
+
+                            </div>
+                          </div>
+
+                          <apex:inputcheckbox styleClass="slds-checkbox inline-edit-checkbox" value="{!cc.isEditComment}" id="editComment" style="display:none;"/>
+                      </td>
+                        
+                      <td>
+                      	<!--<div style="display:{!if(cc.objResProject.E_Mail_Status__c!=null && cc.objResProject.E_Mail_Status__c=='Fail','','none;')} position: relative;" class="custom-tooltip slds-float_right">
+                              <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:#c23934"></i></a>
+                              <div style="position: absolute; bottom: 20px; left: -17px; white-space: nowrap;" class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left custom-tooltip-box" role="tooltip"  >
+                                  
+                                  <div class="slds-popover__body">
+                                     Send Email Fail.
+                                  </div>
+                              </div>
+                          </div>
+                          <div style="display:{!if(cc.objResProject.E_Mail_Status__c!=null && cc.objResProject.E_Mail_Status__c=='Send Email','','none;')} position: relative;" class="custom-tooltip slds-float_right">
+                 				<a href="#" class="view-email-btn"><i class="fas fa-hourglass-start" title="Process Email"></i></a> 
+                          </div>-->
+                         
+                          <!--<a style="display:{!if(cc.objResProject.E_Mail_Status__c!=null && cc.objResProject.E_Mail_Status__c=='Send Email','','none;')} position: relative;" href="javascript:void(0);" class="view-email-btn"><i class="fas fa-hourglass-start" title="Process Email"></i></a> -->
+                          
+                          <span class="info-tooltip"  style="position: relative;">
+                              <a onclick="resendEmail('{!cc.objResProject.Id}');" style="display:{!if(cc.objResProject.E_Mail_Status__c!=null && cc.objResProject.E_Mail_Status__c=='Fail','','none;')} position: relative;" href="javascript:void(0);" class="view-email-btn">
+                                  <i class="fas fa-exclamation-triangle resend-email-icon" style="filter:saturate(1); opacity:1;"></i>
+                              </a>
+                          	  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -20px; width: 140px; ">
+                              <p class="slds-popover__body"> Failed, click to resend</p>
+                              </span>
+                          </span>
+                          
+                      </td>
+                      <td>
+                      		<a href="#" class="view-email-btn" onclick="initOpenViewMode('{!JSENCODE(cc.objResProject.Id)}');">
+                                <i class="fas {!cc.envStyle}" title="View Email"></i>
+                            </a>         
+                      </td>
+                      <td>
+                         {!if(cc.emailScheduleDate!=null,'Email Scheduled: ','')}
+                          <apex:outputPanel rendered="{!if(cc.emailScheduleDate!=null,true,false)}">
+                          		<apex:outputField value="{!cc.emailScheduleDate.Research_Schedule_Email__r.Schedule_Email_Date__c}"/> 
+                          		 &nbsp; 
+                             	<apex:outputField value="{!cc.emailScheduleDate.Research_Schedule_Email__r.Schedule_Email_Time__c}"/>
+                          </apex:outputPanel>
+                      </td>
+                  </tr>
+                  </apex:repeat>  
+            </tbody>
+          </table>
+        </div>
+        <script>
+              $('#pageOverlay').addClass('slds-hide');
+        </script>
+        </apex:outputPanel>
+       <!--End here--> 
+	  
+        <apex:outputpanel rendered="{!isEditable}" id="actionBtn">
+             <div style="display:{!if(showNumberofCSVBlock==true,'none;','')}" class="slds-m-top_medium slds-text-align_right">
+                  <apex:commandButton value="First" action="{!first}" rerender="frm" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand" oncomplete="uncheckedSelectAllChkBox();"/>
+                  <apex:commandButton value="Previous" action="{!previous}" rerender="frm" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand" oncomplete="uncheckedSelectAllChkBox();"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                  <apex:commandButton value="Next" action="{!next}" rerender="frm" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand" oncomplete="uncheckedSelectAllChkBox();"/>
+                  <apex:commandButton value="Last" action="{!last}" rerender="frm" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand" oncomplete="uncheckedSelectAllChkBox();"/>
+            </div> 
+            
+          <apex:outputPanel layout="block" rendered="{!!showNumberofCSVBlock}" styleClass="slds-text-align_right slds-p-top_medium">
+            <div>
+               
+               <apex:selectlist id="selectAction1" onChange="UpdateParticipantStatus(this);" styleclass="slds-select slds-m-bottom_x-small update-status custom-select" style="width: 180px;display:none;" value="{!selectedStatus}" size="1">
+                      <apex:selectOptions value="{!statusList}"/>
+               </apex:selectlist> 
+              
+               
+              <!--<button class="slds-button slds-button_text-destructive slds-m-bottom_x-small slds-m-left_x-small remove-contact-btn release-participant" style="display:none;top: 3px;" title="Release selected from project">Release selected from project</button> -->
+              
+              <div class="slds-button-group  slds-m-bottom_x-small slds-m-bottom_x-small prepare-and-send" style="display:none; font-size:inherit;" role="group">
+                <a onclick="javascript:void(0);"  class="slds-button slds-button_brand prepare-send-btn" style="min-width: 143px;">Prepare &amp; Send...</a>
+                <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-button_last prepare-send-dropdown">
+                  <a onclick="javascript:void(0);" class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn" aria-haspopup="true" title="More Actions">
+                    <i class="fas fa-sort-down" style="line-height: 25px;"></i>
+                  </a>
+                  <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions slds-dropdown_bottom" style="min-width: 174px;">
+                    <ul class="slds-dropdown__list" role="menu">
+                     <!-- <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate" style="margin: 0px auto;">...Survey or Screener</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate" style="margin: 0px auto;">...Invitation to an interview</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate" style="margin: 0px auto;">...Follow up email</span>
+                        </apex:commandLink>
+                      </li> -->
+                      
+                      <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Qualtrics survey</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Google form</span>
+                        </apex:commandLink>
+                      </li>
+                       <li class="slds-dropdown__item " role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SS" value="SS" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...UserTesting link</span>
+                        </apex:commandLink>
+                      </li>
+                        
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Invitation (Calendly)</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipantsNoCalendly}" status="statusSave">
+                            <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Invitation (no Calendly)</span>
+                        </apex:commandLink>
+                      </li>
+                        
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...NDA</span>
+                        </apex:commandLink>
+                      </li>
+                      <li class="slds-dropdown__item" role="presentation">
+                        <apex:commandLink action="{!sendEmailParticipants}" status="statusSave">
+                            <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                            <span class="slds-truncate uxr-scout-send-email" style="margin: 0px auto;">...Follow up email</span>
+                        </apex:commandLink>
+                      </li>
+                        
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="isEditComment" style="display:none;">
+                    <apex:commandButton rerender="frm" status="statusSave" styleclass="slds-button slds-button_neutral" value="Cancel" action="{!cancelEditComment}"/>
+                    <apex:commandButton rerender="frm" status="statusSave" styleclass="slds-button slds-button_outline-brand" value="Save" action="{!UpdatePartDetail}"/>
+               </div>
+              
+            </div>
+
+        </apex:outputPanel>
+       </apex:outputpanel>
+	   </div>
+	   </div>
+    </div>
+    
+    <!--body end here-->  
+       <!--generic Popup -->
+       <div class="modal-window add-generic-modal" style="display: none;">
+          <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container" style="max-width: 500px;">
+            <div class="slds-modal__header">
+              
+              <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Cannot release from project</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+              <p id="msg-content">&nbsp;</p>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_neutral close-modal" onclick="return false;">OK</button>
+                        
+            </div>
+          </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </div>
+       <!---->
+      <!-- For Popup Window -->
+       <!--Remove participant Popup Start-->
+           <div class="modal-window remove-contact-modal" style="display: none;">
+              <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+              <div class="slds-modal__container" style="max-width: 500px;">
+                <div class="slds-modal__header">
+                  
+                  <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Release project participants</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                   <p>Are you sure want to release selected participants?</p>
+                </div>
+                <div class="slds-modal__footer">
+                  <button class="slds-button slds-button_neutral close-modal" onclick="return false;">No</button>
+                  <apex:commandButton rerender="frm" status="statusSave" styleclass="slds-button slds-button_brand btn-grey" value="Yes" action="{!RemoveParticipant}"/>
+                </div>
+              </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+          </div>
+      <!--Remove participant Popup code end-->
+       
+      <!--Cancel schedule Email Popup Start-->
+           <div class="modal-window cancel-schedule-modal" style="display: none;">
+              <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+              <div class="slds-modal__container" style="max-width: 500px;">
+                <div class="slds-modal__header">
+                  
+                  <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Cancel Scheduled Email</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                   <p>Are you sure want to cancel schedule email.</p>
+                </div>
+                <div class="slds-modal__footer">
+                  <button class="slds-button slds-button_neutral close-modal" onclick="return false;">No</button>
+                  <apex:commandButton rerender="frm" status="statusSave" styleclass="slds-button slds-button_brand btn-grey" value="Yes" action="{!cancelScheduleEmail}"/>
+                </div>
+              </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+          </div>
+      <!--Cancel schedule Email code end-->
+       
+      <div class="modal-window view-email-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="max-width: 500px;">
+          <div class="slds-modal__header">
+            <h2 id="modal-heading-01" class="slds-text-heading_small slds-hyphenate">
+            <b>Email - {!objEmailMsgWraper.objEmailMessage.Subject}</b></h2>
+            <!--<b>{!objEmailMessage.CreatedDate}</b></h2> -->
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="max-height: 350px; overflow-y: auto;">
+              <apex:outputpanel layout="block" rendered="{!isEditable}" styleclass="slds-form">
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <apex:outputText style="color:green" value="{!successMsg}" escape="false" id="successMsg"/>
+                    <label class="slds-form-element__label" for="stacked-input-id-02">
+                        Reply
+                    </label>
+                    <div class="slds-form-element__control">
+                        <apex:inputTextarea styleclass="slds-textarea" value="{!emailReplyBody}"/>
+                    </div>  
+                    <div class="slds-text-align_right slds-m-top_xx-small">
+                      <apex:commandButton styleclass="slds-button slds-button_brand" value="Send" action="{!ReplyEmail}" rerender="successMsg" oncomplete="actionOnComplete();" status="statusSave"/>
+                    </div>  
+                  </div>
+              </apex:outputpanel>
+              
+              
+            <div class="slds-p-vertical_small"><a href="javascript:void(0);" title="View More"><i class="fas fa-ellipsis-h show-more-btn" style="font-size: 20px; color: #080707;"></i></a></div> 
+              <div class="more-content" style="display: none;">
+              
+                <h3 class="slds-text-body_small slds-text-align_right">
+                <b>Created on: </b>
+                    <apex:outputText value=" {0,date,M/d/yyy h:mm a}"> 
+                        <apex:param value="{!objEmailMsgWraper.objEmailMessage.CreatedDate  + dateOffset}" /> 
+                    </apex:outputText> 
+                    <!--<apex:outputText value="{0,date,dd MMM yyyy, HH:mm:ss}">
+                        <apex:param value="{!objEmailMsgWraper.objEmailMessage.CreatedDate}" /> 
+                    </apex:outputText>-->
+                </h3>
+                <p>
+                    <apex:outputText value="{!objEmailMsgWraper.emailBody}" escape="false"/>
+                  </p>
+              </div>  
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_brand close-modal" onclick="return false;">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <!-- End Pop-up window code -->
+
+      <apex:actionFunction name="initOpenViewMode" rerender="frm" action="{!UpdateReadEmailStatus}" status="statusSave" onComplete="openmodal();">
+                <apex:param value="" name="currentPartId" />
+      </apex:actionFunction>
+      
+
+    <script type="text/javascript">
+      $('.close-modal').click(function() {
+        $('.modal-window').fadeOut();
+      });
+
+      $('.show-more-btn').click(function() {
+        $('.more-content').slideToggle();
+      });
+
+      function closemodal(){
+        $('.view-email-modal').fadeOut(); 
+      }
+      
+      function openmodal(){
+        $('.view-email-modal').fadeIn(); 
+      }
+
+      $('.add-participants-btn').click(function () {
+        $('.add-participants-dropdown').toggleClass('slds-is-open');
+      });
+
+      $('.prepare-send-btn').click(function () {
+        $(this).siblings('.prepare-send-dropdown').toggleClass('slds-is-open');
+        $(this).parents('.prepare-send-dropdown').toggleClass('slds-is-open');
+      });
+
+      $(".add-participants-btn, .prepare-send-btn").click(function (e) {
+        e.stopPropagation();
+      });
+
+      $(document).click(function () {
+        $(".add-participants-dropdown, .prepare-send-dropdown").removeClass('slds-is-open');
+      });
+
+      function removeParticipant() {
+        var selectedIteam = $('.manage-checkbox:checked').length + parseInt('{!selectedRecordCount}');
+        if (selectedIteam <= 0) {
+          $('#msg-content').html('Select participants to release from project');
+          $('.add-generic-modal').fadeIn();
+          return false;
+        }
+
+        var resveredCount = parseInt('{!prevResveredCount}');
+        var unResveredCount = parseInt('{!prevUnResveredCount}');
+        $('.manage-checkbox:checked').each(function () {
+          if ($(this).attr('style').includes('Reserved')) {
+            resveredCount = resveredCount + 1;
+          } else {
+            unResveredCount = unResveredCount + 1;
+          }
+        });
+
+        if (resveredCount == 0) {
+          $('#msg-content').html('Only reserved status participants can be release from project');
+          $('.add-generic-modal').fadeIn();
+          resetActionPicklist();
+          return false;
+        }
+
+        if (unResveredCount > 0) {
+          $('#msg-content').html('Only participants with <b>"Reserved"</b> status can be released from your project.');
+          $('.add-generic-modal').fadeIn();
+          resetActionPicklist();
+          return false;
+        }
+
+        if (resveredCount > 0) {
+          $('.remove-contact-modal').fadeIn();
+          resetActionPicklist();
+        }
+        return false;
+      }
+
+      $('.cancel-schedule-email').click(function (e) {
+        $('.cancel-schedule-modal').fadeIn();
+      });
+
+      $('.view-email-detail').click(function (e) {
+        viewEmail();
+      });
+
+      $('.send-survey-btn').click(function (e) {
+        sendSurvey();
+      });
+
+      $('.invite-to-interview-btn').click(function (e) {
+        inviteToInterview();
+      });
+
+      $('.send-follow-up-btn').click(function (e) {
+        sendFollowUp();
+      });
+
+      function checkEnterKey(e) {
+        var keyCode = e.which ? e.which : e.keyCode
+        if (keyCode == 13) {
+          searchParticipant();
+        }
+      }
+
+      $(document).ready(function () {
+        var $chkboxes = $('.ux-mp-checkbox');
+        var lastChecked = null;
+        //We can use "chkboxes" css class for first multi-select table used in same VF page
+       
+        $chkboxes.click(function (e) {
+          var intMaxParticipants = parseInt('{!intMaxSendEmailLimit}');
+          console.log('---intMaxParticipants----->' + intMaxParticipants);
+          if (!lastChecked) {
+            lastChecked = this;
+            var selectedIteam = parseInt($('.ux-mp-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+            totoalSelectedRecordCount(selectedIteam);
+            return;
+          }
+
+          if (e.shiftKey) {
+            var start = $chkboxes.index(this);
+            var end = $chkboxes.index(lastChecked);
+            var minIndex = Math.min(start, end)
+            var maxIndex = Math.max(start, end) + 1;
+            console.log(minIndex + '---index----->' + maxIndex);
+            $chkboxes.slice(minIndex, maxIndex).prop('checked', lastChecked.checked);
+
+            var selectedIteam = parseInt($('.ux-mp-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+            console.log(intMaxParticipants + '---selectedIteam----->' + selectedIteam);
+            if (selectedIteam >= intMaxParticipants) {
+              var intExceededLimit = selectedIteam - intMaxParticipants;
+              if (intExceededLimit > 0) {
+                $chkboxes.slice((maxIndex - intExceededLimit), maxIndex).prop('checked', false);
+              }     
+              CheckMaxLimit(true);
+            } else {
+              CheckMaxLimit(false);
+            }
+
+          } else {
+            var selectedIteam = parseInt($('.ux-mp-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+            console.log(intMaxParticipants + '---selectedIteam11----->' + selectedIteam);
+            if (selectedIteam >= intMaxParticipants) {
+              CheckMaxLimit(true);
+            } else {
+              CheckMaxLimit(false);
+            }
+          } 
+          
+          lastChecked = this;
+
+          var selectedIteam = parseInt($('.ux-mp-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+          totoalSelectedRecordCount(selectedIteam);
+        });
+      });
+
+
+      function updateMultiTextValue(checkObj, objId) {
+        var editMultipleObj = document.getElementById('editMultiple' + objId);
+        $(editMultipleObj).css('display', 'none;');
+      }
+
+      function updateTextValue(checkObj, objId, prevValue) {
+        var commentBorderId = document.getElementById('comment-' + objId);
+        var inlineTextId = document.getElementById(checkObj);
+        var inputTextBox = document.getElementById(checkObj.replace('outputCommentId', 'inputCommentId'));
+        inlineTextId.innerHTML = inputTextBox.value;
+
+        if (prevValue != '' && inputTextBox.value == '') {
+          $(commentBorderId).attr('title', 'Deleted');
+        } else if (prevValue != inputTextBox.value) {
+          $(inlineTextId).css('color', '#ff6a00');
+          $(inlineTextId).css('font-weight', 'bold');
+          $(commentBorderId).attr('title', 'unsaved data');
+        } else {
+          $(inlineTextId).css('color', '');
+          $(inlineTextId).css('font-weight', '');
+          $(commentBorderId).attr('title', '');
+        }
+      }
+
+      function editComment(checkObj, elementId, objId) {
+        $('.editSingle').hide();
+        $('.editMultiple').hide();
+        var inlineTextId = document.getElementById(checkObj);
+        var selectedIteam = $('.manage-checkbox:checked').length + parseInt('{!selectedRecordCount}');
+        var isSlectedCheckbox = document.getElementById(checkObj.replace('outputCommentId', 'InputId'));
+        var hidenTextBox = document.getElementById(checkObj.replace('outputCommentId', 'participantCommentId'));
+        hidenTextBox.value = objId;
+
+        if (selectedIteam > 1 && $(isSlectedCheckbox).is(":checked") == true) {
+          $('.show-selected-record').html('<div style="margin-left: 5px;">Update ' + selectedIteam + ' selected participants </div>');
+          var inputObj = document.getElementById(checkObj.replace('outputCommentId', 'inputCommentId'));
+          var existingValue = $(inputObj).val();
+          $('.clear-textbox').val(existingValue);
+          var editMultiple = document.getElementById('editMultiple' + objId);
+          $(editMultiple).css('display', '');
+        } else {
+          var inputTextBox = document.getElementById(checkObj.replace('outputCommentId', 'inputCommentId'));
+          inputTextBox.value = inlineTextId.innerHTML;
+          var editSingle = document.getElementById('editSingle' + objId);
+          $(editSingle).css('display', '');
+          var editComment = document.getElementById(checkObj.replace('outputCommentId', 'editComment'));
+          $(editComment).prop('checked', true);
+        }
+        enableDisableSaveButton();
+      }
+
+      function enableDisableSaveButton() {
+        var inlineEditIteam = $('.inline-edit-checkbox:checked').length;
+        var saveBtn = document.getElementById('isEditComment');
+        if (inlineEditIteam > 0) {
+          $(saveBtn).css('display', 'block');
+        } else {
+          $(saveBtn).css('display', 'none');
+        }
+      }
+
+      function countSelectedRecord() {
+        var selectedIteam = parseInt($('.manage-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+        console.log('------> ' + selectedIteam);
+        $('.alert-mt-items').css('display', 'none');
+        var intMaxParticipants = parseInt('{!intMaxSendEmailLimit}');
+        if (selectedIteam > 0) {
+          $('.mt-items').html(selectedIteam + ' participants selected.');
+          $('.prepare-and-send').css('display', '');
+          $('.update-status').css('display', '');
+          if (selectedIteam >= intMaxParticipants) {
+            $('.mt-items').html('');
+            $('.alert-mt-items').css('display', '');
+          }
+        } else {
+          $('.mt-items').html('{!totalParticipant} total participants in project.');
+          $('.prepare-and-send').css('display', 'none');
+          $('.update-status').css('display', 'none');
+        }
+      }
+
+      function UpdateParticipantStatus(selectedObj) {
+        var action = selectedObj.options[selectedObj.selectedIndex].value;
+        if (action != '') {
+          if ('Release from project' == action) {
+            removeParticipant();
+          } else {
+            UpdateParticipants(action);
+          }
+        } else {
+          resetActionPicklist();
+        }
+      }
+
+      function resetActionPicklist() {
+        document.getElementById('mp:frm:selectAction').value = '';
+        document.getElementById('mp:frm:selectAction1').value = '';
+      }
+
+      function totoalSelectedRecordCount(selectedIteam) {
+        console.log('====>>>>' + selectedIteam);
+        try {
+          var intMaxParticipants = parseInt('{!intMaxSendEmailLimit}');
+          $('.alert-mt-items').css('display', 'none');
+          $('.mt-items').html(selectedIteam + ' participants selected');
+          if (selectedIteam > 0) {
+            $('.prepare-and-send').css('display', '');
+            $('.update-status').css('display', '');
+            if (selectedIteam >= intMaxParticipants) {
+              $('.alert-mt-items').css('display', '');
+              $('.mt-items').html('');
+            }
+          } else {
+            $('.prepare-and-send').css('display', 'none');
+            $('.update-status').css('display', 'none');
+          }
+
+        } catch (err) {}
+      }
+
+      function UpdateComment(checkObj) {
+        var isCopyToAll = document.getElementById(checkObj.replace('outputCommentId', 'isCopyToAll'));
+        var participantCommentId = document.getElementById(checkObj.replace('outputCommentId', 'participantCommentId'));
+        var participantComment = document.getElementById(checkObj.replace('outputCommentId', 'participantComment'));
+
+        if ($(isCopyToAll).is(":checked")) {
+          UpdateParticipantsComment(true, $(participantCommentId).val(), $(participantComment).val());
+        } else {
+          UpdateParticipantsComment(false, $(participantCommentId).val(), $(participantComment).val());
+        }
+      }
+
+      function showSelectedRecord() {
+        var selectedIteam = $('.manage-checkbox:checked').length + parseInt('{!selectedRecordCount}');
+        if (selectedIteam > 0) {
+          totoalSelectedRecordCount(selectedIteam);
+        } else {
+          $('.prepare-and-send').css('display', 'none');
+          $('.update-status').css('display', 'none');
+        }
+      }
+      showSelectedRecord();
+
+
+      $(".edit-icon, .slds-popover_edit").click(function (e) {
+        e.stopPropagation();
+      });
+      $(document).click(function () {
+        $('.editSingle').hide();
+        $('.editMultiple').hide();
+      });
+      $(".cancel-inline-edit").click(function () {
+        $('.editSingle').hide();
+        $('.editMultiple').hide();
+      });
+
+      function selectAllParticipant(obj, receivedInputID) {
+        var inputCheckBox = document.getElementsByTagName("input");
+        var selectedIteam = parseInt($('.manage-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+        var intMaxParticipants = parseInt('{!intMaxSendEmailLimit}');
+
+        for (var i = 0; i < inputCheckBox.length; i++) {
+          if (obj.checked) {
+            if (inputCheckBox[i].id.indexOf(receivedInputID) != -1) {
+              if (selectedIteam < intMaxParticipants) {
+                if (inputCheckBox[i].disabled == false && inputCheckBox[i].checked == false) {
+                  inputCheckBox[i].checked = obj.checked;
+                  selectedIteam = selectedIteam + 1;
+                }
+              } else {
+                if (inputCheckBox[i].disabled == false) {
+                  inputCheckBox[i].style.pointerEvents = 'none';
+                }
+              }
+            }
+          } else {
+            selectedIteam = parseInt('{!selectedRecordCount}');
+            if (inputCheckBox[i].id.indexOf(receivedInputID) != -1 && selectedIteam < intMaxParticipants) {
+              if (inputCheckBox[i].disabled == false) {
+                inputCheckBox[i].checked = obj.checked;
+                inputCheckBox[i].style.pointerEvents = 'visible';
+              }
+            }
+          }
+        }
+      }
+
+      function CheckMaxLimit(blnFlag) {
+        var inputCheckBox = document.getElementsByTagName("input");
+        for (var i = 0; i < inputCheckBox.length; i++) {
+          if (inputCheckBox[i].id.indexOf('InputId') != -1 && inputCheckBox[i].disabled == false && inputCheckBox[i].checked == false) {
+            if (blnFlag) {
+              inputCheckBox[i].style.pointerEvents = 'none';
+            } else {
+              inputCheckBox[i].style.pointerEvents = 'visible';
+            }
+          }
+        }
+      }
+
+      function uncheckedSelectAllChkBox(){
+        document.getElementById('mp:frm:selectAllChkBox').checked = false;
+      }
+
+      $('.uxr-scout-send-email').click(function() {
+          $('#pageOverlay').removeClass('slds-hide');
+          setTimeout(hideCustomHoverLink, 60000);
+      });
+
+      function hideCustomHoverLink(){
+         $('#pageOverlay').addClass('slds-hide');
+      }
+    </script>
+
+  </body>
+   </apex:form>
+</apex:page>

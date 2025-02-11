@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Auto_Reply_Email</name>
+        <label>Auto Reply Email</label>
+        <locationX>50</locationX>
+        <locationY>398</locationY>
+        <actionName>Case.Engagement_GEP_CX_Auto_Reply_Email_Alert</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Skip_Trigger</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.Engagement_GEP_CX_Auto_Reply_Email_Alert</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>This invokable method will skip CaseTriggerHelper class.</description>
+        <name>Skip_Trigger</name>
+        <label>Skip Trigger</label>
+        <locationX>182</locationX>
+        <locationY>614</locationY>
+        <actionName>CaseTriggerHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Update_objCase</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Update_objCase</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>booleanList</name>
+            <value>
+                <elementReference>blnSkipTrigger</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>CaseTriggerHelper</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <description>Initializing Fault Line details for fault paths in objExceptionLogEvent record.</description>
+        <name>Initializing_Fault_Line_Details</name>
+        <label>Initializing Fault Line Details</label>
+        <locationX>182</locationX>
+        <locationY>158</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strExceptionLogMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_if_new_Case</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update objExceptionLogMessage with Fault Line details.</description>
+        <name>Update_objCase_Failed</name>
+        <label>Update objCase Failed</label>
+        <locationX>490</locationX>
+        <locationY>854</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Check_if_new_Case</name>
+        <label>Check if new Case</label>
+        <locationX>182</locationX>
+        <locationY>278</locationY>
+        <defaultConnector>
+            <targetReference>Skip_Trigger</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>New_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objOldCase</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Auto_Reply_Email</targetReference>
+            </connector>
+            <label>New Case</label>
+        </rules>
+    </decisions>
+    <description>Helper subflow for GEP CX record type.</description>
+    <environments>Default</environments>
+    <interviewLabel>TEMPLATE: Case Helper Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case GEP CX SubFlow Helper</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>490</locationX>
+        <locationY>974</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordUpdates>
+        <description>Final DML Update</description>
+        <name>Update_objCase</name>
+        <label>Update objCase</label>
+        <locationX>182</locationX>
+        <locationY>734</locationY>
+        <faultConnector>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <inputReference>objCase</inputReference>
+    </recordUpdates>
+    <sourceTemplate>TEMPLATE_Case_Helper_Flow</sourceTemplate>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Initializing_Fault_Line_Details</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Fault Message: {!$Flow.FaultMessage}
+----
+Interview Guid: {!$Flow.InterviewGuid}
+----
+Current Record: {!$Flow.CurrentRecord}
+----
+You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.  
+https://gusto.lightning.force.com/lightning/setup/Pausedflows/home</text>
+    </textTemplates>
+    <variables>
+        <description>Boolean for skipping Case Trigger</description>
+        <name>blnSkipTrigger</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Case Object passed from Case Handler Flow.</description>
+        <name>objCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Exception Log Event Object to capture fault path details.</description>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+    <variables>
+        <description>Input variable coming from Case After Save Handler flow. Prior Values.</description>
+        <name>objOldCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

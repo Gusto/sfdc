@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pay_Date_Cancel_Sub_Reason__c</fullName>
+    <label>Pay Date Cancel Sub Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <controllingField>Pay_Date_Cancel_Reason__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>QC errors - Employee information Miskeys</fullName>
+                <default>false</default>
+                <label>QC errors - Employee information Miskeys</label>
+            </value>
+            <value>
+                <fullName>QC errors - Payroll Data Miskeys</fullName>
+                <default>false</default>
+                <label>QC errors - Payroll Data Miskeys</label>
+            </value>
+            <value>
+                <fullName>QC errors - Incorrect tax setup</fullName>
+                <default>false</default>
+                <label>QC errors - Incorrect tax setup</label>
+            </value>
+            <value>
+                <fullName>QC errors - Benefits/PTO Setup</fullName>
+                <default>false</default>
+                <label>QC errors - Benefits/PTO Setup</label>
+            </value>
+            <value>
+                <fullName>QC errors - Multiple categories</fullName>
+                <default>false</default>
+                <label>QC errors - Multiple categories</label>
+            </value>
+            <value>
+                <fullName>Failure to set up on time - Integrations not setup</fullName>
+                <default>false</default>
+                <label>Failure to set up on time - Integrations not setup</label>
+            </value>
+            <value>
+                <fullName>Failure to set up on time - Benefits/PTO</fullName>
+                <default>false</default>
+                <label>Failure to set up on time - Benefits/PTO</label>
+            </value>
+            <value>
+                <fullName>Failure to set up on time - Previous payrolls</fullName>
+                <default>false</default>
+                <label>Failure to set up on time - Previous payrolls</label>
+            </value>
+            <value>
+                <fullName>Failure to set up on time - Employee Information</fullName>
+                <default>false</default>
+                <label>Failure to set up on time - Employee Information</label>
+            </value>
+            <value>
+                <fullName>Sales Controllable Reason Selected</fullName>
+                <default>false</default>
+                <label>Sales Controllable Reason Selected</label>
+            </value>
+            <value>
+                <fullName>Sales Qualification - Using previous provider through quarter close</fullName>
+                <default>false</default>
+                <label>Sales Qualification - Using previous provider through quarter close</label>
+            </value>
+            <value>
+                <fullName>Sales Qualification - Improper vetting (Product Limitations)</fullName>
+                <default>false</default>
+                <label>Sales Qualification - Improper vetting (Product Limitations)</label>
+            </value>
+            <value>
+                <fullName>Sales Qualification - Uncommitted</fullName>
+                <default>false</default>
+                <label>Sales Qualification - Uncommitted</label>
+            </value>
+            <value>
+                <fullName>Sales Qualification - CPEO</fullName>
+                <default>false</default>
+                <label>Sales Qualification - CPEO</label>
+            </value>
+            <value>
+                <fullName>Sales Qualification - Self Onboarding</fullName>
+                <default>false</default>
+                <label>Sales Qualification - Self Onboarding</label>
+            </value>
+            <value>
+                <fullName>RFI - EIN Mismatch</fullName>
+                <default>false</default>
+                <label>RFI - EIN Mismatch</label>
+            </value>
+            <value>
+                <fullName>RFI - Manual Signatory Verification</fullName>
+                <default>false</default>
+                <label>RFI - Manual Signatory Verification</label>
+            </value>
+            <value>
+                <fullName>RFI - Unable to provide bank screenshot</fullName>
+                <default>false</default>
+                <label>RFI - Unable to provide bank screenshot</label>
+            </value>
+            <value>
+                <fullName>RFI - MRB</fullName>
+                <default>false</default>
+                <label>RFI - MRB</label>
+            </value>
+            <value>
+                <fullName>Internal Gusto Issue - System Bugs/Issues</fullName>
+                <default>false</default>
+                <label>Internal Gusto Issue - System Bugs/Issues</label>
+            </value>
+            <value>
+                <fullName>Internal Gusto Issue - Payroll Compliance Question</fullName>
+                <default>false</default>
+                <label>Internal Gusto Issue - Payroll Compliance Question</label>
+            </value>
+            <value>
+                <fullName>Internal Gusto Issue - Neg Net Pay</fullName>
+                <default>false</default>
+                <label>Internal Gusto Issue - Neg Net Pay</label>
+            </value>
+            <value>
+                <fullName>Internal Gusto Issue - Incorrect Historical Payroll Reporting</fullName>
+                <default>false</default>
+                <label>Internal Gusto Issue - Incorrect Historical Payroll Reporting</label>
+            </value>
+            <value>
+                <fullName>Customer Choice - Natural Disaster</fullName>
+                <default>false</default>
+                <label>Customer Choice - Natural Disaster</label>
+            </value>
+            <value>
+                <fullName>Customer Choice - Personal Emergency</fullName>
+                <default>false</default>
+                <label>Customer Choice - Personal Emergency</label>
+            </value>
+            <value>
+                <fullName>Customer Choice - Company Sold / Acquisition</fullName>
+                <default>false</default>
+                <label>Customer Choice - Company Sold / Acquisition</label>
+            </value>
+            <value>
+                <fullName>Customer Push - &gt; 2 months</fullName>
+                <default>false</default>
+                <label>Customer Push - &gt; 2 months</label>
+            </value>
+            <value>
+                <fullName>Internal system issue - System Bug</fullName>
+                <default>false</default>
+                <label>Internal system issue - System Bug</label>
+            </value>
+            <value>
+                <fullName>Internal system issue - Compliance issue</fullName>
+                <default>false</default>
+                <label>Internal system issue - Compliance issue</label>
+            </value>
+            <value>
+                <fullName>Previous Payroll Issue - Negative Net Pay</fullName>
+                <default>false</default>
+                <label>Previous Payroll Issue - Negative Net Pay</label>
+            </value>
+            <value>
+                <fullName>Previous Payroll Issue - Incorrect Prior Taxes</fullName>
+                <default>false</default>
+                <label>Previous Payroll Issue - Incorrect Prior Taxes</label>
+            </value>
+            <value>
+                <fullName>Unresponsive Employer</fullName>
+                <default>false</default>
+                <label>Unresponsive Employer</label>
+            </value>
+            <value>
+                <fullName>Unresponsive Customer - Migration complete</fullName>
+                <default>false</default>
+                <label>Unresponsive Customer - Migration complete</label>
+            </value>
+            <value>
+                <fullName>Requested information missing - State Tax Information</fullName>
+                <default>false</default>
+                <label>Requested information missing - State Tax Information</label>
+            </value>
+            <value>
+                <fullName>Requested information missing - Previous Payroll Details</fullName>
+                <default>false</default>
+                <label>Requested information missing - Previous Payroll Details</label>
+            </value>
+            <value>
+                <fullName>Requested information missing - Direct Deposit information</fullName>
+                <default>false</default>
+                <label>Requested information missing - Direct Deposit information</label>
+            </value>
+            <value>
+                <fullName>Requested information missing - Employee/Contractor information</fullName>
+                <default>false</default>
+                <label>Requested information missing - Employee/Contractor information</label>
+            </value>
+            <value>
+                <fullName>Requested information missing - Unable to access account</fullName>
+                <default>false</default>
+                <label>Requested information missing - Unable to access account</label>
+            </value>
+            <value>
+                <fullName>Customer pushed 2 times</fullName>
+                <default>false</default>
+                <label>Customer pushed 2 times</label>
+            </value>
+            <value>
+                <fullName>Customer Choice - Pandemic</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Customer Choice - Pandemic</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>QC errors - Employee information Miskeys</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>QC errors - Payroll Data Miskeys</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>QC errors - Incorrect tax setup</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>QC errors - Benefits/PTO Setup</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>QC errors - Multiple categories</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>Failure to set up on time - Integrations not setup</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>Failure to set up on time - Benefits/PTO</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>Failure to set up on time - Previous payrolls</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PT Controllable</controllingFieldValue>
+            <valueName>Failure to set up on time - Employee Information</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales Controllable</controllingFieldValue>
+            <valueName>Sales Controllable Reason Selected</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales Controllable</controllingFieldValue>
+            <valueName>Sales Qualification - Using previous provider through quarter close</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales Controllable</controllingFieldValue>
+            <valueName>Sales Qualification - Improper vetting (Product Limitations)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales Controllable</controllingFieldValue>
+            <valueName>Sales Qualification - Uncommitted</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales Controllable</controllingFieldValue>
+            <valueName>Sales Qualification - CPEO</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales Controllable</controllingFieldValue>
+            <valueName>Sales Qualification - Self Onboarding</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>RFI - EIN Mismatch</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>RFI - Manual Signatory Verification</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>RFI - Unable to provide bank screenshot</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>RFI - MRB</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Internal Gusto Issue - System Bugs/Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Internal Gusto Issue - Payroll Compliance Question</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Internal Gusto Issue - Neg Net Pay</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Internal Gusto Issue - Incorrect Historical Payroll Reporting</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Customer Choice - Natural Disaster</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Customer Choice - Personal Emergency</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Customer Choice - Company Sold / Acquisition</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Customer Push - &gt; 2 months</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Internal system issue - System Bug</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Internal system issue - Compliance issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Previous Payroll Issue - Negative Net Pay</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Previous Payroll Issue - Incorrect Prior Taxes</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Unresponsive Employer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Unresponsive Customer - Migration complete</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Requested information missing - State Tax Information</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Requested information missing - Previous Payroll Details</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Requested information missing - Direct Deposit information</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Requested information missing - Employee/Contractor information</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Requested information missing - Unable to access account</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Uncontrollable</controllingFieldValue>
+            <valueName>Customer pushed 2 times</valueName>
+        </valueSettings>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

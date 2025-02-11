@@ -1,0 +1,69 @@
+<apex:page standardController="LiveChatTranscript" extensions="ChatTranscriptUpdateExt">
+    <apex:includeScript value="/support/console/48.0/integration.js"/>
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script type="text/javascript">
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            var tabId = result.id;
+            var transcriptTime = "{!transcript.Auto_Close_Time__c}";
+            if(transcriptTime) {
+                sforce.console.setSidebarVisible(true,tabId,sforce.console.Region.TOP,null);
+                //delayedClose(tabId);
+                var timeLeft = 60 * 1,
+                display = document.querySelector("#time");
+                startTimer(timeLeft, display, tabId);              
+            }
+            else sforce.console.setSidebarVisible(false,tabId,sforce.console.Region.TOP,null);
+        };
+
+        function startTimer(duration, display, tab) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                if(minutes === 0 && seconds === 0) {
+                    var caseUrl = "/"+ "{!theCase.Id}";
+                    if("{!theCase.Status}" !== "Closed" || "{!theCase.Status}" !== "Solved") {
+                        sforce.console.openPrimaryTab("", caseUrl, true, "{!theCase.CaseNumber}", null, null);
+                    }
+                    sforce.console.closeTab(tab);
+                }
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                if(display){
+                    display.textContent = minutes + ":" + seconds;
+                }
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+
+            }, 1000);
+        }
+
+        window.onload = function () {
+            console.log('page start');
+            sforce.console.getEnclosingPrimaryTabId(closeSubtab);
+        };
+
+    </script>
+    <apex:outputPanel id="reloadPage">
+        <apex:outputPanel rendered="{! if(boolRefreshPage,true,false)}">
+            <script>
+                location.reload();                    
+            </script>
+        </apex:outputPanel>
+    </apex:outputPanel>
+    <apex:form >
+        <apex:actionPoller action="{!pollerRefresh}" reRender="reloadPage" id="actionFunction12" interval="5" rendered="{! if(transcript.Auto_Close_Time__c == null,true,false)}"/>
+        <apex:outputPanel rendered="{! if(transcript.Auto_Close_Time__c == null,false,true)}">
+            <h2>Chat closes in <span id="time">1:00</span></h2>
+            <br/><br/>
+            <h2>Please add confirmed case reason, notes on your case and close this out.</h2>
+        </apex:outputPanel>
+    </apex:form>
+    
+</apex:page>

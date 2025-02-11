@@ -1,0 +1,11 @@
+<apex:page standardController="User_Role__c" extensions="ChangeOOOUserRoleCtrl" action="{!changeOOOForUser}"
+           tabStyle="User_Role__c" title="Out of Office" lightningStylesheets="true" docType="HTML-5.0">
+    <apex:form >
+        <apex:pageblock rendered="{!blnHasError}">
+                <apex:pageMessages />
+                <apex:pageBlockButtons location="Bottom">
+                    <apex:commandButton action="{!backToRecord}" title="Back" value="Back" />
+                </apex:pageBlockButtons>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

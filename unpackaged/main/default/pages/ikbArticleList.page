@@ -1,0 +1,9 @@
+<apex:page controller="IkbSearchController" action="{!initAction}" sidebar="false" cache="false" showHeader="false" readOnly="true">
+    
+    <apex:repeat value="{!articleList}" var="article">
+        <a href="/ikb/apex/ikbViewArticle?articleId={!article.articleId}">{!article.subject}</a>
+        <br/>
+    
+    </apex:repeat>
+
+</apex:page>

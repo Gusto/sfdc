@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <assignments>
+        <description>Set the value to true and pass to main flow</description>
+        <name>Set_Bypass_Flows_to_True</name>
+        <label>Set Bypass Flows to True</label>
+        <locationX>50</locationX>
+        <locationY>518</locationY>
+        <assignmentItems>
+            <assignToReference>var_Bypass_Flows</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>Did the user have the permission set assigned?</description>
+        <name>Was_Permission_Set_Assignment_Found</name>
+        <label>Was Permission Set Assignment Found</label>
+        <locationX>182</locationX>
+        <locationY>398</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Permission_Set_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_ByPass_Flows_Perm_Set_Assignment.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Bypass_Flows_to_True</targetReference>
+            </connector>
+            <label>Permission Set Found</label>
+        </rules>
+    </decisions>
+    <description>Used to check for the permission set created to bypass Triggers and Flows.  Will pass back the main flow a value of True of False.  If True it will schedule the removal of the permission set 24 hours from now.</description>
+    <interviewLabel>ByPass Flows - SubFlow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ByPass Flows - SubFlow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Note: As of 6/17/22 the &quot;Bypass Triggers&quot; Permission set will be used.  However, we are investigating renaming it to &quot;Bypass Triggers and Flows&quot;</description>
+        <name>Find_ByPass_Flows_Permission_Set</name>
+        <label>Find ByPass Flows Permission Set</label>
+        <locationX>182</locationX>
+        <locationY>158</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_ByPass_Flows_Permission_Set_Assignment</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Bypass_Triggers</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>PermissionSet</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the permission set assignment for bypass flows.</description>
+        <name>Get_ByPass_Flows_Permission_Set_Assignment</name>
+        <label>Get ByPass Flows Permission Set Assignment</label>
+        <locationX>182</locationX>
+        <locationY>278</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Permission_Set_Assignment_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>AssigneeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>PermissionSetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Find_ByPass_Flows_Permission_Set.Id</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetAssignment</object>
+        <outputReference>var_ByPass_Flows_Perm_Set_Assignment</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>AssigneeId</queriedFields>
+        <queriedFields>PermissionSetId</queriedFields>
+    </recordLookups>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Find_ByPass_Flows_Permission_Set</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>List of Permission set assignments that were assigned to user before flow started.</description>
+        <name>ListofExistingPermissionSetAssignments</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>To be checked if the user has the permission set assigned that bypasses flows. 
+Note: As of 6/17/22 the &quot;Bypass Triggers&quot; Permission set will be used.  However, we are investigating renaming it to &quot;Bypass Triggers and Flows&quot;</description>
+        <name>var_Bypass_Flows</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Permissionset assignment record for the running user</description>
+        <name>var_ByPass_Flows_Perm_Set_Assignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>The running user that triggered the main flow</description>
+        <name>Var_Running_User</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+</Flow>

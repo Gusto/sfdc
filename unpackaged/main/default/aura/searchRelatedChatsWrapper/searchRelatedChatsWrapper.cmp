@@ -1,0 +1,14 @@
+<aura:component implements="force:appHostable" controller="SearchRelatedChatsController">
+    <aura:attribute name="strQuestion" type="String"/>
+    <aura:attribute name="idFocusedCase" type="String"/>
+    <aura:attribute name="idPrimaryTab" type="String"/>
+    <aura:attribute name="blnDisplayChild" type="Boolean"/>
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:utilityBarAPI aura:id="utilitybar"/>
+    <aura:handler event="lightning:tabClosed" action="{!c.onTabClosed}"/>
+    <aura:handler event="lightning:tabCreated" action="{!c.onTabCreated}"/>
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.blnDisplayChild}">
+        <c:searchRelatedChatsCmp onrowclick="{!c.openChatRecord}" strQuestion="{!v.strQuestion}"/>
+    </aura:if>
+</aura:component>

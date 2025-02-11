@@ -1,0 +1,14 @@
+<apex:page standardController="Carrier_Order__c" extensions="CarrierOrderExt" action="{!stageDenied}">
+<apex:sectionHeader title="Deny {!$ObjectType.Carrier_Order__c.label}"
+subtitle="Please provide additional details to deny {!Carrier_Order__c.Name}"/>
+<apex:form >
+<apex:pageBlock mode="edit">
+<apex:pageMessages />
+<apex:pageBlockButtons location="bottom" >
+<apex:commandButton value="{!$Label.Confirm}" action="{!save}"/>
+<apex:commandButton value="{!$Label.Discard}" action="{!cancel}"/>
+</apex:pageBlockButtons>
+<c:CarrierOrderDeny CarrierOrder="{!Carrier_Order__c}"/>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

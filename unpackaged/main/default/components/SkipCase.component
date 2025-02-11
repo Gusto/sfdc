@@ -1,0 +1,171 @@
+<apex:component allowDML="true" selfClosing="true" controller="PlayModeCaseListController">
+    <apex:attribute type="string" name="caseId"  assignTo="{!skipCaseId}" description="Page Block Section for to skip a Case" required="true"/>
+    <head>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <link rel="stylesheet" href="//jqueryui.com/dialog/resources/demos/style.css"/>
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <apex:includeScript value="/support/console/41.0/integration.js"/>
+        <script>
+            $( function() {
+                //$( "#dialog" ).dialog();
+                $( "#skipcase-confirm" ).hide();
+                getEnclosingPrimaryTabId();
+              } );
+            
+            var isFromSkipAndNext = false;
+            
+            function skipAndNextCase(){
+                skipCase();
+                isFromSkipAndNext = true;
+            }
+              
+            function skipCase(){               
+               $( "#skipcase-confirm" ).show();
+               $( "#skipcase-confirm" ).dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: "auto",
+                  modal: true,
+                  buttons: {
+                    "Skip Case": function() {
+                         var skpcmnt =  $("#skipcommentbox").val(); 
+                         var skprsn = $('.skipreason :selected').text(); 
+                         //alert(skprsn);
+                         
+                         if(isFromSkipAndNext){
+                            createSkipRecAndNext(skpcmnt,skprsn);
+                             //nextCase();
+                         }
+                         else{
+                            createSkipRec(skpcmnt,skprsn);
+                             //refreshFocusedTab();
+                         }
+                         //setTimeout(closePrimaryTab(), 3000) // we do not want to close the primary tab on skip@Aurobind
+                      $( this ).dialog( "close" );
+                    },
+                    Cancel: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+               });
+            }
+             
+            function closePrimaryTab(){          
+               sforce.console.getFocusedPrimaryTabId(closeSubtab);
+            }
+             
+            var closeSubtab = function closeSubtab(result){
+               var tabId = result.id;
+               sforce.console.closeTab(tabId);
+            }
+            // method to handle next part of the 'Save & next' functionality.
+            function nextCase() {
+	            //var caseid = jq("#caseId").val();
+	            
+	            Visualforce.remoting.Manager.invokeAction(
+	                '{!$RemoteAction.PlayModeCaseListController.getNextCase}',
+	                function(result, event){
+	                    if (event.status) { 
+	                        if(result != null && result.length>0){
+	                            $("#caseId").val(result);
+	                            getnextCaseRec();
+	                        }
+	                        else{
+	                            $(".linkCss").hide();
+	                            alert("No record found.");
+	                            //jq(".linkCss").hide();
+	                            //closePrimaryTab();
+	                        }
+	                    }                         
+	                }, 
+	                {escape: true}
+	            );
+	        };
+	        
+	        function getnextCaseRec(){
+	            sforce.console.getFocusedPrimaryTabId(nextCaseId);
+	            // use getFocusedPrimaryTabObjectId to get primary tab record id
+	        }
+	        
+	        var nextCaseId = function nextCaseId(result) 
+	        {
+	            var tabId = result.id;
+	            var caseid = $("#caseId").val();
+	            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+	            //alert();
+	            sforce.console.openPrimaryTab(tabId, "/"+caseid+"?isplay=1", true);
+	            sforce.console.refreshPrimaryTabById(tabId , true);
+	        };
+	        //===========================================
+	        
+		    //to show hide save&next button depending on whether user is in play-mode or not      
+	        var getEnclosingPrimaryTabId = function getEnclosingPrimaryTabId() {
+	            sforce.console.getFocusedPrimaryTabId(getTabLink);
+	        };
+	        
+	        var getTabLink = function getTabLink(result) {
+	            sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLink);
+	        };
+	        
+	        var showTabLink = function showTabLink(result) {
+	            var urll = result.tabLink; 
+	            //alert(' Success '+result.success+" URL: "+urll);
+	            if(urll == null || !(urll.length >0) || (urll.indexOf("isplay") == -1)){
+	                //alert(urll);
+	                $(".linkCss").hide();  
+	                //$("p").css("color", "red");
+	                //sforce.console.setCustomConsoleComponentVisible(false,refreshSuccess);               
+	            }
+	            else{
+	                $(".linkCss").show();  
+	            }
+	        };
+	        //========================================
+	        
+	        function refreshFocusedTab(){
+	            sforce.console.getFocusedPrimaryTabId(refreshTab);            
+	        }
+	        
+	        var refreshTab = function refreshTab(result){
+	            var tabId = result.id;
+	            sforce.console.refreshPrimaryTabById(result.id, true);
+	        };
+        </script>
+    </head>
+    
+    <body>
+    <apex:actionfunction action="{!skipCaseRecord}" rerender="skipreasonbox" name="createSkipRec" onComplete="refreshFocusedTab();">
+        <apex:param value="" assignto="{!skipComment}" name="par1"/>
+        <apex:param value="" assignto="{!skipReason}" name="par2"/>
+    </apex:actionfunction>
+    <apex:actionfunction action="{!skipCaseRecord}" rerender="skipreasonbox" name="createSkipRecAndNext" onComplete="nextCase();">
+        <apex:param value="" assignto="{!skipComment}" name="par1"/>
+        <apex:param value="" assignto="{!skipReason}" name="par2"/>
+    </apex:actionfunction>
+    <input id="caseId" type="hidden"/>
+        <div id="skipcase-confirm" title="Skip Case" style="vertical-align:top" >
+            <table>
+                <!-- <tr>
+                    <td>
+                        <label for="skipreasonbox" class="slds-form-element__label">Skip Reason:</label>&nbsp;        
+                    </td>
+                    <td>
+                        <apex:selectList styleclass="skipreason" size="1" id="skipreasonbox">
+			                 <apex:selectOptions value="{!caseSkipPicklist}"/>
+			             </apex:selectList>
+                    </td>
+                </tr> -->
+                <tr>
+                    <td>
+                        <label for="skipcommentbox" class="slds-form-element__label">Skip Comment:</label>&nbsp;
+                    </td>
+                    <td>
+                        <textarea id="skipcommentbox"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</apex:component>

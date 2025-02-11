@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Auto_Solve_Status_Check</fullName>
+    <active>true</active>
+    <description>This VR prevents the user from updating the case status to &apos;Awaiting Response&apos; if there is a valid auto-solve response on the case.</description>
+    <errorConditionFormula>RecordType.DeveloperName  = &apos;Engagement&apos; &amp;&amp;
+ISPICKVAL(Auto_Solve_Status__c, &apos;Eligible&apos;) &amp;&amp;  
+$Permission.CX_Labs_Custom_Permission &amp;&amp; 
+ISCHANGED(Status) &amp;&amp; 
+ISPICKVAL(Status, &apos;Awaiting Response&apos;) &amp;&amp;
+NOT(ISPICKVAL(QA_Status__c, &apos;Approved&apos;)) &amp;&amp; NOT(ISPICKVAL(QA_Status__c, &apos;Rejected&apos;)) &amp;&amp;
+ISNULL(Last_out_bound_email__c)</errorConditionFormula>
+    <errorDisplayField>Status</errorDisplayField>
+    <errorMessage>There is a valid auto-solve response on this Case that needs to be approved or rejected before you will be able to manually email the customer. To prevent losing the email you&apos;ve composed, copy it before you proceed with the auto-solve QA process.</errorMessage>
+</ValidationRule>

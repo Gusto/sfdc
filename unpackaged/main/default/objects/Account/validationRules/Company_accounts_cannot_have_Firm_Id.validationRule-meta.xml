@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Company_accounts_cannot_have_Firm_Id</fullName>
+    <active>true</active>
+    <description>Validation to prevent company accounts from having Firm Id</description>
+    <errorConditionFormula>RecordType.Name = &apos;Company&apos; &amp;&amp;  NOT(ISBLANK(ZP_Firm_ID__c)) &amp;&amp; NOT(ISNEW())</errorConditionFormula>
+    <errorMessage>Company account cannot have Accounting Firm Id</errorMessage>
+</ValidationRule>

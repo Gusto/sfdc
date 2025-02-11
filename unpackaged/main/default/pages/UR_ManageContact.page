@@ -1,0 +1,1612 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ManageContactCtrl" applyBodyTag="false" sidebar="false" id="pm">
+ <apex:form id="frmBody">
+  <script>
+        function setFocusOnLoad() {}
+  </script>
+  <style>
+    .result-count {
+      display: inline-block;
+      width: 50px;
+      margin-right: 10px;
+    }
+    .result-count:before {
+      content: "Results";
+      position: absolute;
+      right: 100%;
+      font-size: 14px;
+      line-height: 32px;
+      padding: 0 5px;
+      white-space: nowrap;
+    }
+  </style>
+  <head>
+    <title>Gusto</title>
+    <c:UR_SortingTable />
+  </head>
+
+  <body class="slds-scope">
+     <c:UR_ActionStatus /> 
+     <c:UR_MenuHeaderComponent tabName="Participants" subTabName="MP-SFDC" prjId="{!objProject.Id}"/>
+      
+     <div class="slds-p-around_small"> 
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">
+          <apex:pageMessages />
+
+          <div class="slds-text-align_right bg-grey slds-p-around_small" style="border-radius: .25rem; display:{!if(isEditable,'','none;')}">
+            
+            <apex:actionFunction name="hideAddtionalFilter"  status="statusSave" rerender="frmBody" action="{!hideAddtionalFilter}" />
+            <apex:actionFunction name="searchContact"  status="statusSave" rerender="frmBody" action="{!SearchContactList}" />
+            <!-- <apex:commandButton value="Back" action="{!BackToProjectVF}" styleClass="slds-button slds-button_outline-brand slds-float_left"/> -->
+            <apex:commandLink styleclass="slds-button slds-button_text-destructive slds-float_left" status="statusSave" reRender="frmBody" action="{!resetAll}">Reset filters</apex:commandLink>
+            <div class="slds-form-element__control result-count">
+              <apex:selectlist disabled="{!if(lstMainContactWrapper.size==0,true,false)}" id="search-result-count" onchange="resetSearchContactList(this.value);"  styleclass="slds-select search-result-count" value="{!selPageResultStr}" size="1">
+                  <apex:selectOptions value="{!selPageResultList}"/>
+               </apex:selectlist>
+            </div>
+            <apex:commandButton rendered="{!isEditable}" value="Search"  status="statusSave" rerender="frmBody" action="{!SearchContactList}" styleClass="slds-button slds-button_brand search-btn"/>
+            <apex:actionFunction rerender="frmBody" status="statusSave" name="sortParticipantList" action="{!sortSearchContactList}">
+                <apex:param name="sortby" value="" assignTo="{!sortbyFieldAPIName}"/>         
+            </apex:actionFunction> 
+              
+            <!--<span class="sortBy">{!sortbyFieldAPIName}(OffSet-{!randomOffSet})</span>-->
+            <apex:actionFunction rerender="frmBody" status="statusSave" name="selSortParticipantList" action="{!selSortManageContactList}">
+                <apex:param name="selsortby" value="" assignTo="{!selSortbyFieldAPIName}"/>                
+            </apex:actionFunction> 
+              
+            <apex:actionFunction rerender="frmBody" status="statusSave" name="resetSearchContactList" action="{!resetSearchContactList}">
+                <apex:param name="searchPageSize" value="" assignTo="{!selPageResultStr}"/>                
+            </apex:actionFunction>  
+          </div>
+            
+           <div style="display:{!if(isEditable,'','none;')}"><br/></div> 
+            
+          <div class="slds-m-vertical_x-small" style="display:{!if(filterLabel=='<< Hide Filters','none;', 'block;')}">
+            <apex:commandLink styleclass="sh-filter-btn" status="statusSave" reRender="frmBody" action="{!HideFilter}">{!filterLabel}</apex:commandLink>
+          </div>
+
+          <div>
+            <div class="slds-form">
+              <div class="slds-grid slds-wrap slds-gutters">
+              
+              <apex:outputPanel styleclass="slds-col slds-size_1-of-1 slds-large-size_4-of-12 side-filter" layout="block" id="searchPanel" rendered="{!showHide}"> 
+
+                  <div class="slds-card" style="border: 1px solid #dddbda;">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                      <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                        
+                        <div class="slds-media__body">
+                          <apex:commandLink styleclass="sh-filter-btn slds-float_right" oncomplete="showhideAction();" status="statusSave" rerender="frmBody" action="{!HideFilter}">{!filterLabel}</apex:commandLink>
+                          <h2 class="slds-card__header-title">
+                            <span>1. Set Filters and Search
+                                   <span class="info-tooltip" style="position: relative;">
+                                      <i class="fas fa-info-circle info-tooltip"></i>
+                                      <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                        <p class="slds-popover__body">To find your target participants, set filters based on account attributes below, and click Search to see results on the upper right.</p>
+                                      </span>
+                                    </span>
+                            </span>
+                          </h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="slds-card__body slds-m-bottom_none slds-m-top_none">
+                      <div class="side-filter-content">
+                        <div class="bg-gray-light slds-border_bottom slds-p-around_small">
+                          <h2 class="slds-card__header-title"><i class="fa fa-lightbulb"></i> Need help getting started?</h2>
+                          <hr class="slds-m-top_small slds-m-bottom_small" />
+                          <div class="slds-m-top_small slds-p-bsottom_small"><strong>Try starting with these:</strong></div> 
+                          <div class="slds-form-element">
+                            <div class="slds-form-element__control slds-p-left_none">
+                              <div class="slds-checkbox slds-list-item">
+                                <label class="slds-checkbox__label" for="populate_1" data-populate="Owner Jessica">
+                                  <input type="radio" name="populate" value="Owner Jessica" id="populate_1" />
+                                  <span class="slds-form-element__label">Likely to be <strong>Owner Jessica</strong></span>
+                                </label>
+                              </div>
+                              <div class="slds-checkbox slds-list-item">
+                                <label class="slds-checkbox__label" for="populate_2" data-populate="Operator Jessica">
+                                  <input type="radio" name="populate" value="Operator Jessica" id="populate_2" />
+                                  <span class="slds-form-element__label">Likely to be <strong>Operator Jessica</strong></span>
+                                </label>
+                              </div>
+                              <div class="slds-checkbox slds-list-item">
+                                <label class="slds-checkbox__label" for="populate_3" data-populate="James">
+                                  <input type="radio" name="populate" value="James" id="populate_3" />
+                                  <span class="slds-form-element__label">Likely to be <strong>James</strong></span>
+                                </label>
+                              </div>
+                              <div class="slds-checkbox slds-list-item">
+                                <label class="slds-checkbox__label" for="populate_4" data-populate="Jordan">
+                                  <input type="radio" name="populate" value="Jordan" id="populate_4" />
+                                  <span class="slds-form-element__label">Likely to be <strong>Jordan</strong></span>
+                                </label>
+                              </div>
+                              <div class="slds-checkbox slds-list-item">
+                                <label class="slds-checkbox__label" for="populate_0" data-populate="Start from scratch">
+                                  <input type="radio" name="populate" value="Start from scratch" id="populate_0" />
+                                  <span class="slds-form-element__label">Start from scratch</span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="slds-p-around_small">
+                        
+                              <!--
+                              <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">Project Name</label>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                  <a href="/apex/UR_ManageProject?id={!objProject.Id}">{!objProject.Name}</a>
+                                </div>
+                              </div>
+                              -->
+                                              
+                              
+                              <div class="slds-form-element slds-form-element_stacked" data-control="Roles to Include">
+                                <div class="slds-grid">
+                                    <div class="slds-size_1-of-2">
+                                        <label class="slds-form-element__label" for="">Roles to include</label>
+                                        <span class="info-tooltip" style="position: relative;">
+                                          <i class="fas fa-info-circle info-tooltip"></i>
+                                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                            <p class="slds-popover__body">
+                                                <strong>Include Any (OR)</strong> = will show results for contacts who meet any of the roles indicated<br />
+                                                <strong>Include All (AND)</strong> = will show results for contacts who meet all of the roles indicated
+                                            </p>
+                                          </span>
+                                        </span>
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <apex:selectlist styleclass="slds-select" value="{!selIncludeStr}" size="1">
+                                          <apex:selectOptions value="{!selInclude}"/>
+                                         </apex:selectlist> 
+                                    </div>
+                                </div>
+                                
+                               <div class="slds-form-element__control">
+                                    <div class="slds-scrollable_y slds-m-top_x-small slds-p-around_x-small" style="border: 1px solid #dddbda; border-radius: .25rem;">
+                                        <div class="list-items">
+                                            <apex:repeat value="{!includeContactRoleList}" var="include" >
+                                            <div class="list-item">
+                                              <label for="{!include.roleName}">
+                                                <span class="slds-checkbox slds-checkbox_standalone">
+                                                  <apex:inputCheckbox value="{!include.isChecked}" />
+                                                  <span class="slds-checkbox_faux"></span>
+                                                </span>
+                                                {!include.roleName}
+                                              </label>
+                                            </div>
+                                          </apex:repeat> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                              </div>
+
+                              <div>
+                                <a class="exclude-roles-btn" href="javascript:void(0);">
+                                   Exclude Roles <i class="fas fa-angle-down"></i>
+                                </a>
+
+                                <div class="slds-form-element slds-form-element_stacked exclude-roles" data-control="Roles to Exclude" style="display: none; position: relative; z-index: 1;">
+                                  <div class="slds-form-element__control">
+                                      <div class="slds-grid" >
+                                          <div class="slds-size_1-of-2">
+                                            <label class="slds-form-element__label" for="">Roles to exclude</label>
+                                            <span class="info-tooltip" style="position: relative;">
+                                              <i class="fas fa-info-circle info-tooltip"></i>
+                                              <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                                <p class="slds-popover__body">
+                                                    <strong>Exclude Any (OR)</strong> = will result in contacts who do NOT fit at least 1 of the roles indicated<br />
+                                                    <strong>Exclude All (AND)</strong> =  will result in contacts who are NOT all of the roles indicated
+                                                </p>
+                                              </span>
+                                            </span>
+
+                                          </div>
+                                          <div class="slds-size_1-of-2">
+                                              <apex:selectlist styleclass="slds-select" value="{!selExcludeStr}" size="1">
+                                                <apex:selectOptions value="{!selExclude}"/>
+                                              </apex:selectlist> 
+                                          </div>
+                                      </div>
+                                      <div class="slds-scrollable_y slds-m-top_x-small slds-p-around_x-small" style="border: 1px solid #dddbda; border-radius: .25rem;">
+                                           <div class="list-items">
+                                              <apex:repeat value="{!excludeContactRoleList}" var="exclude" >
+                                              <div class="list-item">
+                                                <label for="{!exclude.roleName}">
+                                                  <span class="slds-checkbox slds-checkbox_standalone">
+                                                    <apex:inputCheckbox value="{!exclude.isChecked}" />
+                                                    <span class="slds-checkbox_faux"></span>
+                                                  </span>
+                                                  {!exclude.roleName}
+                                                </label>
+                                              </div>
+                                            </apex:repeat> 
+                                          </div>
+                                      </div>
+
+                                  </div>
+
+                                </div>
+                              </div>
+                              
+                              
+                              <div class="slds-form-element  slds-form-element_stacked">
+                                <label class="slds-form-element__label" for="">First Payroll / Join date</label>
+                                
+                                <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">A lead is considered to have joined Gusto / becomes a "customer" only after they run their first payroll.</p>
+                                  </span>
+                                </span>                                
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                  <div class="slds-grid">
+                                      <div class="slds-size_4-of-12">
+                                        <apex:selectList id="joinDatefilter" styleclass="slds-select" onChange="ShowHideJoinDateFilter();" value="{!strJoinDateFilter}" multiselect="false" size="1">
+                                            <apex:selectOptions value="{!searchMap['Date']}"/>
+                                        </apex:selectList>    
+                                      </div>
+                                      <div class="slds-size_4-of-12 slds-p-left_small">
+                                        <div id="fromJoinDate">
+                                          <apex:inputField styleClass="slds-input" value="{!searchAccount.Joined_Date_Panda__c}"/>
+                                        </div>     
+                                      </div>
+                                      <div class="slds-size_4-of-12 slds-p-left_x-small">
+                                        <div class="slds-grid" id="toJoinDate">
+                                            <div class="slds-size_1-of-6">
+                                                to
+                                            </div>
+                                            <div class="slds-size_5-of-6">
+                                                <apex:inputField styleClass="slds-input" value="{!searchAccount1.Joined_Date_Panda__c}"/>
+                                            </div>
+                                            
+                                        </div>     
+                                      </div>
+                                  </div>
+                                </div>    
+                              </div>
+                                 
+                                                              
+                             <div class="slds-form-element">
+                                <label class="slds-form-element__label" for=""># Active Employees</label>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                    <div class="slds-grid">
+                                        <div class="slds-size_5-of-12">
+                                              <apex:inputtext onkeypress="checkEnterKey(event);" value="{!activeEmployeeFrom}" styleClass="slds-input"/>  
+                                        </div>
+                                        <div class="slds-size_2-of-12 slds-text-align_center slds-p-horizontal_small">
+                                              to 
+                                        </div>
+                                        <div class="slds-size_5-of-12">
+                                              <apex:inputtext onkeypress="checkEnterKey(event);" value="{!activeEmployeeTo}" styleClass="slds-input"/>  
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                              <!-- Contractor -->
+                              <div class="filter-group" data-group="Contractors">
+                                
+                                <div class="slds-form-element">
+                                  <label class="slds-form-element__label" for=""># Active Contractors</label>
+                                  <div class="slds-form-element__control slds-form-element_stacked">
+                                      <div class="slds-grid">
+                                          <div class="slds-size_5-of-12">
+                                                <apex:inputtext onkeypress="checkEnterKey(event);" value="{!activeContractorFrom}" styleClass="slds-input"/>  
+                                          </div>
+                                          <div class="slds-size_2-of-12 slds-text-align_center slds-p-horizontal_small">
+                                                to 
+                                          </div>
+                                          <div class="slds-size_5-of-12">
+                                                <apex:inputtext onkeypress="checkEnterKey(event);" value="{!activeContractorTo}" styleClass="slds-input"/>  
+                                          </div>
+                                      </div>
+                                  </div>
+                                </div>
+                               <div class="slds-form-element  slds-form-element_stacked">
+                                  <label class="slds-form-element__label" for="">First Contractor Payment date</label>
+                                  <div class="slds-form-element__control slds-form-element_stacked">
+                                    <div class="slds-grid">
+                                        <div class="slds-size_4-of-12">
+                                          <apex:selectList id="paymentDatefilter" styleclass="slds-select" onChange="ShowHidePaymentDateFilter();" value="{!strfirstConPaymentDateFilter}" multiselect="false" size="1">
+                                              <apex:selectOptions value="{!searchMap['Date']}"/>
+                                          </apex:selectList>    
+                                        </div>
+                                        <div class="slds-size_4-of-12 slds-p-left_small">
+                                          <div id="fromJoinDate">
+                                            <apex:inputField styleClass="slds-input" value="{!searchAccount.First_Contractor_Payment_Date__c}"/>
+                                          </div>     
+                                        </div>
+                                        <div class="slds-size_4-of-12 slds-p-left_x-small">
+                                          <div class="slds-grid" id="topaymentDate">
+                                              <div class="slds-size_1-of-6">
+                                                  to
+                                              </div>
+                                              <div class="slds-size_5-of-6">
+                                                  <apex:inputField styleClass="slds-input" value="{!searchAccount1.First_Contractor_Payment_Date__c}"/>
+                                              </div>
+                                              
+                                          </div>     
+                                        </div>
+                                    </div>
+                                    </div>    
+                                </div>
+                              </div><!-- /Contractors -->
+                              
+                              <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">If partner - number of clients (total)</label>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                    <div class="slds-grid">
+                                        <div class="slds-size_5-of-12">
+                                              <apex:inputtext onkeypress="checkEnterKey(event);" value="{!noClientFrom}" styleClass="slds-input"/>  
+                                        </div>
+                                        <div class="slds-size_2-of-12 slds-text-align_center slds-p-horizontal_small">
+                                              to 
+                                        </div>
+                                        <div class="slds-size_5-of-12">
+                                              <apex:inputtext onkeypress="checkEnterKey(event);" value="{!noClientTo}" styleClass="slds-input"/>  
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+
+                              
+                              <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">Has Gusto HI</label>
+                                <span class="info-tooltip" style="position: relative;">
+                                      <i class="fas fa-info-circle info-tooltip"></i>
+                                      <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                        <p class="slds-popover__body">Gusto is their health insurance Broker of Record (BoR).</p>
+                                      </span>
+                                </span>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                  <div class="slds-checkbox slds-checkbox_standalone">
+                                    <apex:inputfield styleClass="slds-checkbox" value="{!searchAccount.HI_Active_Benefits__c}"/>
+                                    <span class="slds-checkbox_faux"></span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">Sold through Partner</label>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                 <apex:selectlist styleclass="slds-select" value="{!searchSoldThrough}" size="1">
+                                  <apex:selectOptions value="{!selSoldThrough}"/>
+                                 </apex:selectlist> 
+                                </div>
+                              </div>
+                              
+                              <div class="slds-form-element">
+                                  <div class="slds-grid">
+                                    <div class="slds-size_1-of-2">
+                                        <label class="slds-form-element__label" for="">User Reported Industry</label>
+                                        
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <apex:selectlist styleclass="slds-select" value="{!selIndustryStr}" size="1">
+                                              <apex:selectOptions value="{!selIndustry}"/>
+                                        </apex:selectlist> 
+                                    </div>
+                                  </div>
+                                
+                                <div class="slds-form-element__control">
+                                    <div class="slds-scrollable_y slds-m-top_x-small slds-m-bottom_small slds-p-around_x-small" style="max-height: 90px; border: 1px solid #dddbda; border-radius: .25rem;">
+                                        <table>
+                                            <apex:repeat value="{!userReportedIndustryList}" var="industry" >
+                                            <tr>
+                                                <td width="20" class="slds-p-bottom_x-small">
+                                                    <span class="slds-checkbox slds-checkbox_standalone">
+                                                      <apex:inputCheckbox value="{!industry.isChecked}" />
+                                                      <span class="slds-checkbox_faux"></span>
+                                                    </span>
+                                                </td>
+                                                <td class="slds-p-bottom_x-small">
+                                                    <label>
+                                                        {!industry.industryName}
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            </apex:repeat> 
+                                        </table>
+                                        
+                                    </div>
+                                </div>
+                                
+                        
+                              </div>
+                              
+                              
+                              <div class="slds-form-element">
+                                  <label class="slds-form-element__label" for="">Partner Tier</label>
+                                   <div class="slds-form-element__control slds-form-element_stacked">
+                                      <apex:inputfield styleClass="slds-input" value="{!searchAccount.AM_Tier__c}"/>
+                                    </div>
+                               </div>
+                             
+                              
+                              <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">Company Tier</label>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                   <apex:selectlist styleclass="slds-select" value="{!searchTier}" size="1">
+                                      <apex:selectOptions value="{!selTierList}"/>
+                                    </apex:selectlist> 
+                                </div>
+                              </div>
+                          
+                          
+                          
+                              
+                              <div class="slds-grid slds-m-bottom_x-small">
+                                  <div class="slds-size_1-of-2">
+                                    <label class="slds-form-element__label" for="">
+                                        Days since last UXR contact
+                                     </label>
+                                        <span class="info-tooltip" style="position: relative;">
+                                          <i class="fas fa-info-circle info-tooltip"></i>
+                                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                            <p class="slds-popover__body">Contacts who were invited to studies in the last {!objResearch.Days_Since_Last_Contact_High_Limit__c} days will not appear in your Search results.</p>
+                                          </span>
+                                        </span>
+                                    </div>
+                                    <div class="slds-size_1-of-2 slds-p-top_xxx-small">
+                                      <apex:outputtext value="{!strDaySinceCont}"/>
+                                    </div>
+                              </div>
+                              
+                              <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">Overall Company Status</label>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                 <apex:selectlist styleclass="slds-select" value="{!overAllCompanyStatus}" size="1">
+                                  <apex:selectOptions value="{!companyStatus}"/>
+                                 </apex:selectlist> 
+                                </div>
+                              </div>
+                                                        
+                         <div class="slds-m-vertical_medium slds-p-around_xx-small bg-grey">
+                            <a href="javascript:void(0);" class="filter-2-btn">
+                              <i class="fas fa-angle-down {!if(showHideAddtionalFilter==false,'fa-angle-right','')}"></i> Additional Filters
+                            </a>
+                         </div>
+                            
+                         <div class="filter-2" style="display: {!if(showHideAddtionalFilter==false,'none;','')}"> 
+                         
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Filing State of Company</label>
+                            <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">Filing State of Company.</p>
+                                  </span>
+                            </span>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                                 <apex:selectlist styleclass="slds-select" value="{!strState}" size="1">
+                                  <apex:selectOptions value="{!selCountryList}"/>
+                                 </apex:selectlist> 
+                            </div>
+                          </div>                              
+                             
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Filing City of Company</label>
+                            <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">Filing City of Company.</p>
+                                  </span>
+                            </span>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                              <div class="slds-grid">
+                                  <div class="slds-size_4-of-12">
+                                    <apex:selectList styleclass="slds-select" value="{!strCityFilter}" multiselect="false" size="1">
+                                        <apex:selectOptions value="{!searchMap['String']}"/>
+                                     </apex:selectList>    
+                                  </div>
+                                  <div class="slds-size_8-of-12 slds-p-left_small">
+                                    <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strCity}" styleClass="slds-input"/>     
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+
+                           <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="">Exclude Companies with Open Tickets</label>
+                                <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">Unchecking this box will include Customers with OPEN care tickets in your results</p>
+                                  </span>
+                                </span>
+                                <div class="slds-form-element__control slds-form-element_stacked">
+                                  <div class="slds-checkbox slds-checkbox_standalone">
+                                     <apex:inputCheckbox value="{!excludeCompany}" />
+                                    <span class="slds-checkbox_faux"></span>
+                                  </div>
+                                </div>
+                          </div>
+                              
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Care Ticket</label>
+                            <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">if you know the care ticket number in SFDC, enter it here (1 at a time)</p>
+                                  </span>
+                            </span>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                              <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strCaseNumber}" styleClass="slds-input"/>
+                            </div>
+                          </div>
+         
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for=""># NPS Score</label>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                                <div class="slds-grid">
+                                    <div class="slds-size_5-of-12">
+                                          <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strNPSScore}" styleClass="slds-input"/>  
+                                    </div>
+                                    <div class="slds-size_2-of-12 slds-text-align_center slds-p-horizontal_small">
+                                          to 
+                                    </div>
+                                    <div class="slds-size_5-of-12">
+                                          <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strNPSScore1}" styleClass="slds-input"/>  
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                                                  
+                     
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Has Medical deductions?</label>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                               <apex:selectlist styleclass="slds-select" value="{!hasMedical}" size="1">
+                                  <apex:selectOptions value="{!yesNoOption}"/>
+                                </apex:selectlist>  
+                            </div>
+                          </div>
+                              
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Has Active WC Policy?</label>
+                            <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">WC = Workers Comp</p>
+                                  </span>
+                            </span>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                               <apex:selectlist styleclass="slds-select" value="{!hasActivePolicy}" size="1">
+                                  <apex:selectOptions value="{!yesNoOption}"/>
+                                </apex:selectlist>  
+                            </div>
+                          </div>
+                          
+
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Contact Name</label>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                              <div class="slds-grid">
+                                  <div class="slds-size_4-of-12">
+                                    <apex:selectList styleclass="slds-select" value="{!strNameFilter}" multiselect="false" size="1">
+                                        <apex:selectOptions value="{!searchMap['String']}"/>
+                                     </apex:selectList>    
+                                  </div>
+                                  <div class="slds-size_8-of-12 slds-p-left_small">
+                                    <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strName}" styleClass="slds-input"/>     
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                
+
+                          <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="">Email</label>
+                            <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">Separated by commas for more than 1 email Id.</p>
+                                  </span>
+                            </span>
+                            <div class="slds-form-element__control slds-form-element_stacked">
+                              <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strEmail}" styleClass="slds-input"/>
+                            </div>
+                          </div>
+                             
+                             <div class="slds-form-element">
+                                 <label class="slds-form-element__label" for="">Company Name</label>
+                                 <div class="slds-form-element__control slds-form-element_stacked">
+                                     <div class="slds-grid">
+                                         <div class="slds-size_4-of-12">
+                                             <apex:selectList styleclass="slds-select" value="{!strCompanyNameFilter}" multiselect="false" size="1">
+                                                 <apex:selectOptions value="{!searchMap['String']}"/>
+                                             </apex:selectList>    
+                                         </div>
+                                         <div class="slds-size_8-of-12 slds-p-left_small">
+                                             <apex:inputtext onkeypress="checkEnterKey(event);" value="{!strCompanyName}" styleClass="slds-input"/>     
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             
+															  
+							  <div class="slds-form-element slds-form-element_stacked" data-control="Roles to Include">
+									<div class="slds-grid">
+										<div class="slds-size_1-of-2">
+											<label class="slds-form-element__label" for="">Company State to include</label>
+											<span class="info-tooltip" style="position: relative;">
+											  <i class="fas fa-info-circle info-tooltip"></i>
+											  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+												<p class="slds-popover__body">
+													<strong>Include Any (OR)</strong> = will show results for Company who meet any of the state indicated<br />
+													<strong>Include All (AND)</strong>= will show results for Company who meet all of the state indicated<br />
+                                                    <strong>Multiple State</strong>= will show results for Company who exist in multiple states
+												</p>
+											  </span>
+											</span>
+										</div>
+										<div class="slds-size_1-of-2">
+											<apex:selectlist onchange="checkSlectedState(this);" styleclass="slds-select" value="{!selIncludeStateStr}" size="1">
+											  <apex:selectOptions value="{!selIncludeState}"/>
+											 </apex:selectlist> 
+										</div>
+									</div>
+									 
+									<div class="slds-form-element__control">
+										<div id="CompanyStateId" class="slds-scrollable_y slds-m-top_x-small slds-p-around_x-small" style="border: 1px solid #dddbda; border-radius: .25rem; max-height: 125px; display:{!if(selIncludeStateStr!=null && selIncludeStateStr=='Multiple','none;', '')}">
+											<div class="list-items">
+												<apex:repeat value="{!includeCompanyStateList}" var="include" >
+												<div class="list-item">
+												  <label for="{!include.strStateName}">
+													<span class="slds-checkbox slds-checkbox_standalone">
+													  <apex:inputCheckbox value="{!include.isChecked}" />
+													  <span class="slds-checkbox_faux"></span>
+													</span>
+													{!include.strStateName}
+												  </label>
+												</div>
+											  </apex:repeat> 
+											</div>
+										</div>
+									</div>   
+							  </div>
+
+							 
+						 
+                          </div>
+                          
+                          <div class="slds-text-align_right">
+                            <!--<a href="javascript:void(0);">Reset filters</a>-->
+                            <apex:commandLink rendered="{!isEditable}" styleclass="slds-button slds-button_text-destructive" status="statusSave" reRender="frmBody" action="{!resetAll}">Reset filters</apex:commandLink>&nbsp;&nbsp;&nbsp;
+                            <apex:commandButton rendered="{!isEditable}" value="Search"  status="statusSave" rerender="frmBody" action="{!SearchContactList}" styleClass="slds-button slds-button_brand search-btn"/>
+                          </div>  
+
+
+                        </div>
+                      </div>  
+                    </div>
+                    
+                  </div>
+                  
+                <!--</div>-->
+                </apex:outputPanel>
+                
+                <div class="slds-col slds-size_1-of-1  {!rightPanelStyle} right-panel">
+                  <div class="slds-card bg-grey" style="border: 1px solid #dddbda;" data-panel="choose-participants">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                      <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                        
+                        <div class="slds-media__body">
+                          <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                            <span>2. Choose Participants</span>
+                          </h2>
+                          <div class="note">Which of these contacts would you like to reserve for your project?</div>
+                        </div>
+
+                        <div class="card__header-count" style="display:{!if(lstMainContactWrapper.size>0, 'block', 'none')}">Showing <span class="count" id="count-results">{!lstMainContactWrapper.size}</span> out of <span class="count">{!totalSearchContact}</span> Search Results</div>
+                      </div>
+                    </div>
+                    <div class="slds-card__body slds-m-around_none">
+                      <div class="slds-scrollable" style="max-height: 305px; width: 100%;">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header">
+                          <thead>
+                            <tr class="slds-line-height_reset tablesorter-headerRow">
+                              <th class="slds-text-title_caps sorter-false" scope="col">
+                                  <div class="slds-checkbox slds-checkbox_standalone">
+                                      <apex:inputcheckbox id="selectAllRecord" styleClass="slds-checkbox" html-data-select="all" onclick="selectAllCheckboxes(this,'selContact'); selecteSeachContact();"/>
+                                      <span class="slds-checkbox_faux"></span>
+                                  </div>
+                              </th>
+                             <th style="width:40px;" class="slds-text-title_caps sorter-false" scope="col"></th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Name');" >
+
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Contact Name</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Name desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Name asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Account.Name');" >
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Company Name</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.Name desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.Name asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>    
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Email');" >
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Email</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Email desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Email asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>    
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('ZP_User_Id__c');" >
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">ZP User Id</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='ZP_User_Id__c desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='ZP_User_Id__c asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>    
+                              </th>
+                                
+                                
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Account.Number_of_Active_Employees__c');" >
+                                
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Company Size</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.Number_of_Active_Employees__c desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.Number_of_Active_Employees__c asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Account.BillingCity');" >
+                                
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">City</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.BillingCity desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.BillingCity asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+            
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Account.BillingState');" >
+                                
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">State</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.BillingState desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.BillingState asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+                
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col" > 
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">NPS Score</li>
+                                      <li>
+                                      </li>                      
+                                  </ul>
+                                  
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Account.Joined_Date_Panda__c');" >
+                                
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Join Date</li>
+                                       <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.Joined_Date_Panda__c desc' && orderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(sortbyFieldAPIName=='Account.Joined_Date_Panda__c asc' && orderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col" >
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate"># Studies/<br/>6 Months</li>
+                                      <li>
+                                      </li>                      
+                                  </ul>
+                                  
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  >          
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate"># Surveys/<br/>6 Months</li>
+                                      <li>
+                                      </li>                      
+                                  </ul>
+                                  
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <apex:repeat value="{!lstMainContactWrapper}" var="cnt">
+                                  <tr>                
+                                    <td>
+                                       <div class="slds-checkbox slds-checkbox_standalone">
+                                          <apex:inputcheckbox id="selContact" styleClass="slds-checkbox add-chk-box ux-checkbox" value="{!cnt.selContact}"/>
+                                           <span class="slds-checkbox_faux"></span> 
+                                        </div>
+                                    </td>
+                                    <td>
+                                      <span style="display:{!if(INT_MAX_INCENTIVE!=0 && INT_MAX_INCENTIVE <= cnt.intNewIncentive ,'block;','none;')} position: relative;" class="info-tooltip" >
+                                      <a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:yellow;"></i></a>              
+                                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 20px; left: -15px; width: 300px;">    
+                                              <p class="slds-popover__body">
+                                                  {!if(INT_MAX_INCENTIVE<=cnt.intCurrentYearIncentive,'Reached maximum incentive limit: earned $', 'Close to max incentive limit: earned $')} {!cnt.intCurrentYearIncentive}
+                                              </p>
+                                          </span>
+                                      </span>
+                                    </td>  
+                                    <td>
+                                        <a href="/{!cnt.objCon.Id}" target="_blank">{!cnt.objCon.Name}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/{!cnt.objCon.AccountId}" target="_blank">{!cnt.objCon.Account.Name}</a>
+                                    </td>
+                                    <td>{!cnt.objCon.Email}</td>
+                                    <td>{!cnt.objCon.ZP_User_Id__c}</td>
+                                    <td><apex:outputField value="{!cnt.objCon.Account.Number_of_Active_Employees__c}"/></td>
+                                    <td><apex:outputField value="{!cnt.objCon.Account.BillingCity}"/></td>
+                                    <td><apex:outputField value="{!cnt.objCon.Account.BillingState}"/></td>
+                              
+                                    <td>{!cnt.npsScore}</td>
+                                    <td><apex:outputField value="{!cnt.objCon.Account.Joined_Date_Panda__c}"/></td>
+                                    <td>
+                                        <div onclick="fetchRelatedProject('studies-{!cnt.objCon.Id}', {!cnt.noOfStudies});" style="{!if(cnt.noOfStudies>0,'cursor:pointer; color:blue;','')}">{!cnt.noOfStudies}</div>
+                                          <apex:outputPanel rendered="{!if(cnt.noOfStudies>0, true, false)}">
+                                          <div class="modal-window" id="studies-{!cnt.objCon.Id}" style="display:none;">
+                                            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+                                              <div class="slds-modal__container" style="max-width: 400px;">
+                                                <div class="slds-modal__header" style="padding: 2px; border: 0;">
+                                                  <a href="javascript:;" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" style="font-size: 40px;">
+                                                    &times;
+                                                  </a>
+                    
+                                                </div>
+                                                
+                                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                                  <p class="slds-m-bottom_medium">
+                                                    <strong>Contact Name : </strong> {!cnt.objCon.Name} <br/>
+                                                    <strong>Related UXR Scout Projects : </strong>
+                                                    <ul>
+                                                        <apex:repeat value="{!cnt.noOfStudyDetails}" var="studyObj">
+                                                            <li><a href="/{!studyObj.relProjectId}" target="_blank" class="slds-button slds-button_outline-brand slds-m-bottom_small slds-button_stretch"><span class="relatedProject">{!studyObj.Name}</span> &nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a></li>
+                                                        </apex:repeat> 
+                                                    </ul>
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div class="slds-backdrop slds-backdrop_open"></div>
+                                          </div>
+                                         </apex:outputPanel>
+                                    </td>
+                                    <td>
+                                          <div onclick="fetchRelatedProject('survey-{!cnt.objCon.Id}', {!cnt.noOfSurveys});" style="{!if(cnt.noOfSurveys>0,'cursor:pointer; color:blue;','')}">{!cnt.noOfSurveys}</div>
+                                          <apex:outputPanel rendered="{!if(cnt.noOfSurveys>0, true, false)}">
+                                          <div class="modal-window" id="survey-{!cnt.objCon.Id}" style="display:none;">
+                                            <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+                                              <div class="slds-modal__container" style="max-width: 400px;">
+                                                <div class="slds-modal__header" style="padding: 2px; border: 0;">
+                                                  <a href="javascript:;" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" style="font-size: 40px;">
+                                                    &times;
+                                                  </a>
+                    
+                                                </div>
+                                                
+                                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                                  <p class="slds-m-bottom_medium">
+                                                    <strong>Contact Name : </strong> {!cnt.objCon.Name} <br/>
+                                                    <strong>Related UXR Scout Projects : </strong>
+                                                    <ul>
+                                                        <apex:repeat value="{!cnt.noOfSurveyDetails}" var="surveyObj">
+                                                            <li><a href="/{!surveyObj.relProjectId}" target="_blank" class="slds-button slds-button_outline-brand slds-m-bottom_small slds-button_stretch"><span class="relatedProject">{!surveyObj.Name}</span>&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a></li>
+                                                        </apex:repeat> 
+                                                    </ul>
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div class="slds-backdrop slds-backdrop_open"></div>
+                                          </div>
+                                         </apex:outputPanel>
+                                    </td>
+                                  </tr>
+                               </apex:repeat>
+                        </tbody>
+                        </table>
+
+                      </div>
+                    </div>
+                    <div class="slds-card__footer slds-text-align_right slds-p-around_small slds-m-top_none" style="min-height: 57px;">
+                      <apex:outputpanel layout="block" rendered="{!isEditable}" style="display:{!if(lstMainContactWrapper.size>0 ,'','none;')}" styleclass="slds-float_left">
+                          <apex:commandButton value="<<" action="{!firstSearch}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasSearchPrevious)}" styleClass="slds-button slds-button_outline-brand"/>
+                          <apex:commandButton value="<" action="{!previousSearch}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasSearchPrevious)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!searchPageNumber} of {!SearchTotalPages}&nbsp;
+                          <apex:commandButton value=">" action="{!nextSearch}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasSearchNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                          <apex:commandButton value=">>" action="{!lastSearch}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasSearchNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                      </apex:outputpanel>
+                      <div class="slds-float_right">
+                        <apex:actionFunction status="statusSave" rerender="frmBody" name="AddContact" action="{!AddContact}"/>
+
+                        <apex:commandButton onclick="return false;" disabled="{!lstMainContactWrapper.size==0}" html-data-reserve="all" styleClass="slds-button slds-button_brand add-contact-btn add-contact-all-btn" value="Reserve Participants" title="Add all participants to your project" />
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                  <div class="slds-card bg-grey" style="border: 1px solid #dddbda;">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                      <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                          <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                             <span>3. Review Participants</span>
+                             <span class="info-tooltip" style="position: relative;">
+                                  <i class="fas fa-info-circle info-tooltip"></i>
+                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                                    <p class="slds-popover__body">If you need to remove anyone, check next to their name and "Remove selected contacts"</p>
+                                  </span>
+                              </span>
+                          </h2>
+                          <div class="note">
+                            Maximum Number of Participants Allowed: <strong>{!objProject.Number_of_Allowed_Participant__c}</strong>.
+                            <a href="#" class="approval-request-btn">Request more</a>
+                          </div>
+                        </div>
+                        <div class="card__header-count"><span class="count">{!totalSelecedParticipant}</span> Participants Reserved</div>
+                      </div>
+                    </div>
+                    <div class="slds-card__body slds-m-bottom_large">
+                      <div class="slds-scrollable" style="max-height: 305px; width: 100%;">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header">
+                          <thead>
+                            <tr class="slds-line-height_reset">
+                              <th class="slds-text-title_caps sorter-false" scope="col">
+                                <div class="slds-checkbox slds-checkbox_standalone ">
+                                    <apex:inputcheckbox id="selectAllRecord1" styleClass="slds-checkbox" html-data-select1="all" onclick="selectAllCheckboxes(this,'InputId'); selecteSeachContactSecondTable(); "/>
+                                    <span class="slds-checkbox_faux"></span>
+                                </div>
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="selSortParticipantList('Contact__r.Name');" >
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Contact Name</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Name' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Name' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+    
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="selSortParticipantList('Contact__r.Account.Name');" >
+                                
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Company Name</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Account.Name' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Account.Name' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                                  
+                                    
+                              </th>
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="selSortParticipantList('Contact__r.Email');" >
+                                
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Email</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Email' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Contact__r.Email' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                              </th>
+                              
+                              <th class="slds-text-title_caps sorter-false" scope="col"  onclick="selSortParticipantList('Sort_Comment__c');" >  
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Comment</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Sort_Comment__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Sort_Comment__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                              </th>
+                              
+                               <th class="slds-text-title_caps sorter-false" scope="col"  onclick="selSortParticipantList('Research_Participant_Status_Number__c');" >  
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate">Participants Status</li>
+                                      <li>
+                                          <i class="fas fa-arrow-down" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Research_Participant_Status_Number__c' && selOrderAs=='desc','','none;')}"></i>
+                                          <i class="fas fa-arrow-up" style="margin-left: 5px; display:{!if(selSortbyFieldAPIName=='Research_Participant_Status_Number__c' && selOrderAs=='asc','','none;')}"></i> 
+                                      </li>                      
+                                  </ul>
+                              </th>
+                              
+                              <th class="slds-text-title_caps slds-cell-wrap  sorter-false" scope="col" >          
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate"># Studies/<br/>6 Months</li>
+                                      <li>
+                                      </li>                      
+                                  </ul>
+                                  
+                              </th>
+                              <th class="slds-text-title_caps slds-cell-wrap  sorter-false" scope="col"  >
+                                  <ul class="slds-list_horizontal">
+                                      <li class="slds-truncate"># Surveys/<br/>6 Months</li>
+                                      <li>
+                                      </li>                      
+                                  </ul>
+                                  
+                              </th>
+                              
+                              
+                            </tr>
+                          </thead>
+                          <tbody>
+                              <apex:repeat value="{!lstSelectedContactWrapper}" var="cnt">
+                                 <tr>                
+                                    <td>
+                                       <div class="slds-checkbox slds-checkbox_standalone">
+                                          <apex:inputcheckbox id="InputId" styleClass="slds-checkbox add-chk-box1 chk-box {!if(cnt.chkDisabled,'','ux-checkbox1')}" disabled="{!cnt.chkDisabled}" value="{!cnt.selContact}"/>
+                                           <span class="slds-checkbox_faux"></span> 
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="/{!cnt.objCon.Id}" target="_blank">{!cnt.contactName}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/{!cnt.objCon.AccountId}" target="_blank">{!cnt.accountName}</a>
+                                    </td>
+                                    <td><apex:outputText value="{!cnt.objCon.Email}"/></td>
+                                    <td><apex:inputText style="min-width:200px;" value="{!cnt.strComment}" styleClass="slds-input"/></td>
+                                    <td>{!cnt.strPartStatus}</td>
+                                    <td>{!cnt.noOfStudies}</td>
+                                    <td>{!cnt.noOfSurveys}</td>
+                                  </tr>
+                                </apex:repeat>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <apex:outputpanel layout="block" rendered="{!isEditable}" style="min-height: 57px;display:{!if(lstSelectedContactWrapper.size>0 ,'','none;')}" styleclass="slds-card__footer slds-text-align_right slds-p-around_small slds-m-top_none">
+                        <div class="slds-float_left">
+                          <apex:commandButton value="<<" action="{!first}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>
+                          <apex:commandButton value="<" action="{!previous}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                          <apex:commandButton value=">" action="{!next}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                          <apex:commandButton value=">>" action="{!last}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+                        </div>
+						
+                        <div class="slds-float_right">						
+						  <apex:commandButton onclick="return false;"  html-data-reserve1="all" styleClass="slds-button slds-button_text-destructive remove-contact-btn" title="Remove all participants to your project" value="Remove Participants" />  							
+                        </div>
+                    </apex:outputpanel>
+                  </div>
+
+                  <div class="slds-text-align_right slds-m-vertical_medium">
+                        <apex:commandButton rendered="{!isEditable}" value="Save & Continue" action="{!SaveContact}" style="display:{!if(lstSelectedContactWrapper.size>0 ,'','none;')}" styleClass="slds-button slds-button_brand" status="statusSave" rerender="frmBody"/>
+                  </div>
+                
+                </div>
+
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    
+    </div>
+
+    
+    <!-- DialogBox component -->
+    <!-- First -->
+    <div class="modal-window add-generic-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container" style="max-width: 500px;">
+        <div class="slds-modal__header">
+          
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please select at least one record.</h2>
+        </div>
+        <!--<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+          <p>Please select contact to add.</p>
+        </div>-->
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_neutral close-modal" onclick="return false;">close</button>
+                    
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>
+  
+    <div class="modal-window generic-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container" style="max-width: 500px;">
+        <div class="slds-modal__header">
+          
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please select at least one record.</h2>
+        </div>
+        <!--<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+          <p>Please select participant to remove.</p>
+        </div>-->
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_neutral close-modal" onclick="return false;">Close</button>
+                   
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>
+  <!-- Second -->
+    <div class="modal-window remove-contact-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container" style="max-width: 500px;">
+        <div class="slds-modal__header">
+          
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove Project Participants</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+          <p>Are you sure want to remove selected participants?</p>
+        </div>
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">No</button>
+          <apex:commandButton status="statusSave" rerender="frmBody" value="Yes" action="{!RemoveContact}" styleClass="slds-button slds-button_brand"/>
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>
+  <!-- Third -->
+  <div class="modal-window approval-request-modal" style="display: none;">
+    <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+      <div class="slds-modal__container">
+        <div class="slds-modal__header">
+          
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Approval Request</h2>
+        </div>
+        
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+          <p class="slds-m-bottom_medium">You are currently able to reserve up to <b>{!objProject.Number_of_Allowed_Participant__c}</b> participants in your project. Submit a request for approval to increase this maximum.<br/>
+          <!--<i style="font-size: 12px;"><strong>Note</strong>: Once submitted, the participants you've reserved will be locked until your request has been reviewed.</i>-->
+          </p>
+          <div class="slds-form slds-form_horizontal">
+            <div class="slds-form-element">
+              <label class="slds-form-element__label" for="">How many MORE participants do you need?</label>
+              <div class="slds-form-element__control">
+                <apex:inputtext value="{!extraNOP}" styleClass="slds-input clear-textbox" maxlength="4"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_neutral close-modal" onclick="return false;">Cancel</button>
+          <apex:commandButton value="Proceed" status="statusSave" rerender="frmBody" action="{!SendApprovalRequest}" styleClass="slds-button slds-button_brand"/>
+          
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>
+  
+  <!-- Fourth -->
+  <div class="modal-window add-participant-modal" style="display: none;">
+       <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+         <div class="slds-modal__container" style="max-width: 500px;">
+           <div class="slds-modal__header">
+             
+             <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add a comment (optional)</h2>
+           </div>
+           <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+             <p class="slds-m-bottom_medium"><!--Tip: this will be visible throughout the project, so you can identify participants (Not required, but helpful if adding different user types). You can update comments later as well.-->
+                 This can help you identify participants throughout the project
+             </p>
+     
+             <apex:inputText style="resize: none;" styleClass="slds-input" value="{!participantComments}" html-placeholder="optional"/>
+             <br/>
+           </div>
+           
+           <div class="slds-modal__footer">
+             <button class="slds-button slds-button_outline-brand close-modal" rerender="frmTableBody" status="statusSave"  onclick="return false;">Cancel</button>
+             <apex:commandButton styleClass="slds-button slds-button_brand" status="statusReserveParticipant" rerender="frmBody" value="Reserve" action="{!AddContact}"/>
+             
+           </div>
+         </div>
+       </div>
+   <div class="slds-backdrop slds-backdrop_open"></div>
+ </div>
+  
+
+   <!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+   <!--<script type='text/javascript' src="{!URLFOR($Resource.UR_Assets, '/js/tableHeadFixer.js')}"></script>-->
+
+    
+    <script>
+		function getSelectedRecord(){
+        	var count = parseInt($('.ux-checkbox:checked').length);
+            if(count==0){
+                count = parseInt($('.ux-checkbox').length);
+            }
+            if(count>0){
+                $('.add-contact-btn').val('Reserve ' + count + ' Participants');
+            }
+        }
+		function selecteSeachContact(){
+          	getSelectedRecord();
+        }
+		getSelectedRecord();
+
+		$(document).ready(function() {
+            var $chkboxes = $('.ux-checkbox');
+            $chkboxes.click(function(e) {getSelectedRecord();});
+        });
+
+    </script>
+    <apex:outputpanel layout="block" rendered="{!if(lstMainContactWrapper.size!=25, true, false)}">
+      <script>$('#search-result-count').trigger('change');</script>
+    </apex:outputpanel>
+     <script type="text/javascript">
+      $('.approval-request-btn').click(function() {
+        $('.approval-request-modal').fadeIn();
+        $('.clear-textbox').val('');
+         return false;
+      });
+       
+      $('.close-modal, .slds-modal__close').click(function() {
+        $('.modal-window').fadeOut();
+      });
+    
+      /*$('.remove-contact-btn').click(function() {
+        if(!checkIfRecordSelected()){
+            $('.generic-modal').fadeIn();
+            return false;
+        }
+        $('.remove-contact-modal').fadeIn();
+        return false;
+      });*/
+	  
+      function checkIfRecordSelected(){
+        return $('.chk-box:checked').length > 0 ? true : false;
+      }
+      
+      function onReserveParticipants() {
+        if(!checkIfSelected()){
+            if(this.getAttribute('data-reserve')==='all') {
+              var $cbAll = $(this).closest('.slds-card').find('[data-select="all"]'); 
+                //Reset select All checkbox
+                document.getElementById("pm:frmBody:selectAllRecord").checked = false;
+                if(!$cbAll.is(':checked')) {
+                	$cbAll.click();
+                }
+            }
+        }
+        $('.add-participant-modal').fadeIn();
+        return false;
+      }
+
+      $('[data-reserve]:not(disabled)').click(onReserveParticipants);
+      
+      function checkIfSelected(){
+        return $('.add-chk-box:checked').length > 0 ? true : false;
+      }
+      
+      function ShowHideJoinDateFilter(){
+        var objValue = $(document.getElementById('pm:frmBody:joinDatefilter')).find(":selected").text();
+        console.log('objValue===>' + objValue);
+        if('between' == objValue){
+            $(toJoinDate).show();
+        }else{
+            $(toJoinDate).hide();
+        }
+      }
+      ShowHideJoinDateFilter();
+      
+      function ShowHidePaymentDateFilter(){
+        var objValue = $(document.getElementById('pm:frmBody:paymentDatefilter')).find(":selected").text();
+        console.log('objValue===>' + objValue);
+        if('between' == objValue){
+            $(topaymentDate).show();
+        }else{
+            $(topaymentDate).hide();
+        }
+      }
+      ShowHidePaymentDateFilter();
+      
+        
+      $('.send-survey-btn').click(function(e) {
+          blankSendSurvey();
+      });
+      $('.invite-to-interview-btn').click(function(e) {
+          blankInviteToInterview();
+      });
+      $('.send-follow-up-btn').click(function(e) {
+          blankSendFollowUp();
+      });
+       
+       
+      $('.filter-2-btn').click(function() {
+            hideAddtionalFilter();
+           // $('.filter-2').slideToggle();
+           // $('.filter-2-btn i').toggleClass('fa-angle-right');        
+      });
+      
+      
+      $('.search-btn').click(function() {
+         $("html, body").animate({ scrollTop: 0 }, "slow");
+      });
+          
+    function checkEnterKey(e){
+        if('{!isEditable}'=='true'){
+            var keyCode = e.which ? e.which : e.keyCode
+            if(keyCode==13){
+                searchContact();
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+            }
+        }
+    }
+    /*$(document).ready(function() {
+        $(".fix-header").tableHeadFixer();
+      });
+
+      function showhideAction(){
+        $(".fix-header").tableHeadFixer();
+      }*/
+      
+        /* 
+      var ua='{!underApproval}';
+      if(ua=='true'){
+      console.log('inside===>');
+         $('#hideApprovalMsg').html('');
+           $('#approvalMessage').html('<div class="slds-p-around_xx-small"  style="background-color: orange; color:#fff; border-radius: 4px;"><em>Approval request : In progress</em> </div>');
+      }*/
+      
+      function fetchRelatedProject(obj, objValue){
+          if(objValue>0){
+            var popupObj = document.getElementById(obj);
+            $(popupObj).css('display','');
+          }
+      }
+	  
+	  //Include Role
+      var iCount = 0;
+      var ownerJessicaRoleInclude = ''; 
+      var oppJessicaRoleInclude = ''; 
+      var jamesRoleInclude = ''; 
+      var jordanRoleInclude = ''; 
+      var Obj = '{!objResearch.Include_Likely_to_be_Owner_Jessica__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	ownerJessicaRoleInclude = ownerJessicaRoleInclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(ownerJessicaRoleInclude.length >0){
+          ownerJessicaRoleInclude = ownerJessicaRoleInclude.substring(0, ownerJessicaRoleInclude.length-1);
+      }
+        
+      Obj = '{!objResearch.Include_Likely_to_be_Operator_Jessica__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	oppJessicaRoleInclude = oppJessicaRoleInclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(oppJessicaRoleInclude.length >0){
+          oppJessicaRoleInclude = oppJessicaRoleInclude.substring(0, oppJessicaRoleInclude.length-1);
+      }
+        
+      Obj = '{!objResearch.Include_Likely_to_be_James__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	jamesRoleInclude = jamesRoleInclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(jamesRoleInclude.length >0){
+          jamesRoleInclude = jamesRoleInclude.substring(0, jamesRoleInclude.length-1);
+      }
+      
+      Obj = '{!objResearch.Include_Likely_to_be_Jordan__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	jordanRoleInclude = jordanRoleInclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(jordanRoleInclude.length >0){
+          jordanRoleInclude = jordanRoleInclude.substring(0, jordanRoleInclude.length-1);
+      }
+	  
+	  //Exclude Role
+	  var ownerJessicaRoleExclude = ''; 
+      var oppJessicaRoleExclude = ''; 
+      var jamesRoleExclude = ''; 
+      var jordanRoleExclude = ''; 
+      var Obj = '{!objResearch.Exclude_Likely_to_be_Owner_Jessica__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	ownerJessicaRoleExclude = ownerJessicaRoleExclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(ownerJessicaRoleExclude.length >0){
+          ownerJessicaRoleExclude = ownerJessicaRoleExclude.substring(0, ownerJessicaRoleExclude.length-1);
+      }
+        
+      Obj = '{!objResearch.Exclude_Likely_to_be_Operator_Jessica__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	oppJessicaRoleExclude = oppJessicaRoleExclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(oppJessicaRoleExclude.length >0){
+          oppJessicaRoleExclude = oppJessicaRoleExclude.substring(0, oppJessicaRoleExclude.length-1);
+      }
+        
+      Obj = '{!objResearch.Exclude_Likely_to_be_James__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	jamesRoleExclude = jamesRoleExclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(jamesRoleExclude.length >0){
+          jamesRoleExclude = jamesRoleExclude.substring(0, jamesRoleExclude.length-1);
+      }
+      
+      Obj = '{!objResearch.Exclude_Likely_to_be_Jordan__c}'.split(';');
+      for (iCount = 0; iCount < Obj.length; iCount++) {
+         	jordanRoleExclude = jordanRoleExclude + 'label[for="' + Obj[iCount] + '"]' +',';
+      }
+      if(jordanRoleExclude.length >0){
+          jordanRoleExclude = jordanRoleExclude.substring(0, jordanRoleExclude.length-1);
+      }
+
+      // filter interactions
+      $('.side-filter-content')
+        .on('click', '[data-populate]', function(e) {
+          var $includeRoles = $('[data-control="Roles to Include"]'),
+              $labels = null;
+          
+          $includeRoles.find('input[type="checkbox"]').removeAttr('checked', 'checked').prop('checked', false);
+		  $includeRoles.find('select').val('OR');
+		  
+          switch(this.getAttribute('data-populate')) {
+            case 'Owner Jessica':
+              $includeRoles.find('select').val('AND');
+              //$labels = $includeRoles.find('label[for="Primary Payroll Admin"],label[for="Signatory"]');
+              $labels = $includeRoles.find(ownerJessicaRoleInclude);
+              $labels.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+              break;
+            case 'Operator Jessica':
+              //$labels = $includeRoles.find('label[for="Secondary Admin"]');
+              $labels = $includeRoles.find(oppJessicaRoleInclude);
+              $labels.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+              break;
+            case 'James':
+              //$labels = $includeRoles.find('label[for="Accountant"]');
+              $labels = $includeRoles.find(jamesRoleInclude);
+              $labels.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+              break;
+            case 'Jordan':
+              //$labels = $includeRoles.find('label[for="Employee"]');
+              $labels = $includeRoles.find(jordanRoleInclude);
+              $labels.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+              break;
+          }if($labels) {
+            $labels.addClass('highlight');
+            setTimeout(function() {
+              $labels.removeClass('highlight');
+            }, 3500);
+          }
+		  
+		  //---------------------------
+		  var $excludeRoles = $('[data-control="Roles to Exclude"]'),
+          $labels1 = null;
+          
+          $excludeRoles.find('input[type="checkbox"]').removeAttr('checked', 'checked').prop('checked', false);
+		  $excludeRoles.find('select').val('OR');
+		  switch(this.getAttribute('data-populate')) {
+            case 'Owner Jessica':
+              $labels1 = $excludeRoles.find(ownerJessicaRoleExclude);
+              $labels1.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+			  if(ownerJessicaRoleExclude.length>13){
+				 $('.exclude-roles').slideDown();
+				 $('.exclude-roles-btn').slideUp();
+			  }
+              break;
+            case 'Operator Jessica':
+			  $labels1 = $excludeRoles.find(oppJessicaRoleExclude);
+              $labels1.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+			  if(oppJessicaRoleExclude.length>13){
+				 $('.exclude-roles').slideDown();
+				 $('.exclude-roles-btn').slideUp();
+			  }
+              break;
+            case 'James':
+              $labels1 = $excludeRoles.find(jamesRoleExclude);
+              $labels1.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+			  if(jamesRoleExclude.length>13){
+				 $('.exclude-roles').slideDown();
+				 $('.exclude-roles-btn').slideUp();
+			  }
+              break;
+            case 'Jordan':
+              $labels1 = $excludeRoles.find(jordanRoleExclude);
+              $labels1.find('input[type="checkbox"]').attr('checked', 'checked').prop('checked', true);
+			  if(jordanRoleExclude.length>13){
+				 $('.exclude-roles').slideDown();
+				 $('.exclude-roles-btn').slideUp();
+			  }
+              break;
+          }
+		  
+		  if($labels1) {
+            $labels1.addClass('highlight');
+            setTimeout(function() {
+              $labels1.removeClass('highlight');
+            }, 3500);
+          }
+		  //------------------------
+
+        })
+        .on('click', '.exclude-roles-btn', function(e) {
+          e.preventDefault();
+          $('.exclude-roles').slideToggle();
+          $('.exclude-roles-btn').slideUp();
+        });
+
+		
+//-------------------------
+	   function getSelectedRecordSecondTable(){
+        	var count = parseInt($('.ux-checkbox1:checked').length);
+            if(count==0){
+                count = parseInt($('.ux-checkbox1').length);
+            }
+            if(count>0){
+                $('.remove-contact-btn').val('Remove ' + count + ' Participants');
+            }
+        }
+		function selecteSeachContactSecondTable(){
+          	getSelectedRecordSecondTable();
+        }
+		getSelectedRecordSecondTable();
+
+		$(document).ready(function() {
+            var $chkboxes = $('.ux-checkbox1');
+            $chkboxes.click(function(e) {getSelectedRecordSecondTable();});
+        });
+
+     function onReserveParticipantsSecondTable() {
+		console.log('11=====> ' + checkIfSelected1());
+        if(!checkIfSelected1()){
+			console.log('22=====> ' + this.getAttribute('data-reserve1'));
+            if(this.getAttribute('data-reserve1')==='all') {
+              var $cbAll = $(this).closest('.slds-card').find('[data-select1="all"]'); 
+				 console.log('33=====> ' +$cbAll.is(':checked'));
+                //Reset select All checkbox
+                document.getElementById("pm:frmBody:selectAllRecord1").checked = false;
+                if(!$cbAll.is(':checked')) {
+                	$cbAll.click();
+                }
+            }
+        }
+		
+		var count = parseInt($('.ux-checkbox1:checked').length);
+		if(count==0){
+			$('.generic-modal').fadeIn(); 
+		}else{
+			$('.remove-contact-modal').fadeIn();
+		}	
+        return false;
+      }
+	  
+      $('[data-reserve1]:not(disabled)').click(onReserveParticipantsSecondTable);
+      
+      function checkIfSelected1(){
+        return $('.add-chk-box1:checked').length > 0 ? true : false;
+      }
+	  
+      function checkSlectedState(obj){
+        if('Multiple'==obj.value){
+        	document.getElementById('CompanyStateId').style.display ='none';
+        }else{
+        	document.getElementById('CompanyStateId').style.display ='';
+        }
+      } 
+     </script> 
+	</body>
+ </apex:form> 
+ </apex:page>

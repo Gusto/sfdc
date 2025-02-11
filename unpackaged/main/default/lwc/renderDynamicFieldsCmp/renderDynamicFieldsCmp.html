@@ -1,0 +1,52 @@
+<!--
+    Purpose: LWC used for rendering dynamic case output fields
+    Written by : Praveen Sethu
+    Date: 09/16/2020
+-->
+
+<template>
+
+    <!-- Shows Spinner Icon to indicate we are waiting response from apex methods -->
+    <!-- <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template> -->
+
+    <!-- shows error messages if a particular configuration is not found or if lookup does not have any value-->
+    <!-- <template if:true={blnIsErrorMessageVisible}>
+        <div class=" slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+            <h2>{strMessage}</h2>
+        </div>
+    </template> -->
+    <template if:false={blnIsErrorMessageVisible}>
+        <!-- sets default slds theme class to provide a white background-->
+        <div class="slds-theme_default">
+            <!-- blnShowLayout is set true if a particular config is found and if lookup relationship has a value. Refer to JS code on when it is set to true -->
+            <template if:true={blnShowLayout}>
+                <!-- New Lightning Record View Form = Setting parent id and object name -->
+                <lightning-record-view-form record-id={idParent} object-api-name={objectname}>
+                    <!-- Start of multiple row lightning layout -->
+                    <lightning-layout multiple-rows>
+                        <!-- list of each field names deserialized from config json -->
+                        <template for:each={lst_fieldNames} for:item="field">
+                            <!-- display each field in lightning layout based on the size configured. key is going to be the api name of the field -->
+                            <lightning-layout-item size={field.size} class="slds-p-around_xx-small" key={field.api}>
+                                <!-- strOutputFieldClass variable is dynamically set based on whether fields need to be underlined-->
+                                <div class="slds-form-element">
+                                    <div class={strOutputFieldClass}>
+                                        <!-- set variant as label-hidden on output field, use a custom override label set by the user -->
+                                        <label class="slds-form-element__label" for={field.api}>
+                                            {field.label}
+                                        </label>
+                                        <lightning-output-field id={field.api} variant="label-hidden"
+                                            field-name={field.api}>
+                                        </lightning-output-field>
+                                    </div>
+                                </div>
+                            </lightning-layout-item>
+                        </template>
+                    </lightning-layout>
+                </lightning-record-view-form>
+            </template>
+        </div>
+    </template>
+</template>

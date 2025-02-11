@@ -1,0 +1,131 @@
+<apex:page standardController="Case" extensions="MFCaseViewExtension">
+	<apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+<style> 
+    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+</style>
+        <script type="text/javascript">
+		
+	var $j = jQuery.noConflict();
+       
+       $j( document ).ready(function() { 
+            window.timer = setTimeout(function(){
+                            sforce.console.getFocusedPrimaryTabObjectId(setCCAddress);
+                            window.timer = setTimeout(function(){
+                            	sforce.console.getFocusedPrimaryTabObjectId(setCCAddress);
+             				},3000);
+             },2500);
+             
+        });
+        
+        var setCCAddress = function setCCAddress(result) {        
+                    if(result.id!=null && result.id!='' && result.id!='null'){
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.MFCaseViewExtension.getEmailCC}',
+                                    result.id,
+                                    function(result, event){
+                                        if (event.status) {
+                                        var fields = result.split('subject:');
+                                        console.log('cc email 222>>'+fields[0]+'ddddd'+fields[1]);
+                                               
+                                               Sfdc.canvas.publisher.publish({name: 'publisher.setActionInputValues', 
+                                               payload: {
+                                               actionName: 'Case.Email',
+                                               emailFields: {
+                                                    subject:{value:fields[1]},
+                                                    cc:{value:fields[0]}
+                                               }
+                                               }});
+                                        }                                          
+                                    }, 
+                                    {escape: true}
+                        );
+                        }
+    }; 
+        
+        function RefreshPrimaryTab() 
+        {
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+        };
+        
+        var refreshSuccess = function refreshSuccess(result) 
+        {
+            //Report whether refreshing the primary tab was successful
+            if (result.success == true) 
+            {
+                //alert('Email Sent');
+            } 
+            else 
+            {
+                //alert('Cannot refresh the page');
+            }
+        };   
+        
+        </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>    
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:form >
+	<div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+		<apex:commandButton action="{!SavePayrollTransferCase}" value="Save" styleclass="slds-button slds-button--neutral" />
+    </div>              
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Status: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Status}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="statusDetail">Status Detail: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Status_Detail__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>     
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Requires Action: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Requires_Action__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>  
+
+            </Table>
+            <br/><br/>
+			<label class="slds-form-element__label" for="carrier">Case Description: </label>
+            <br/>
+            <apex:outputField value="{!theCase.Description}"/>
+        </apex:form>
+    </div>
+    <script>
+    	if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+            RefreshPrimaryTab();
+        }
+    </script>
+</apex:page>

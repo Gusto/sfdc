@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Care_External_Chat_Routing</fullName>
+    <active>true</active>
+    <description>This validation rule will restrict Users from routing external chat cases to queues. Care Users have a Follow-up case process.</description>
+    <errorConditionFormula>ISCHANGED(  OwnerId ) &amp;&amp;
+BEGINS(PRIORVALUE(OwnerId), &apos;005&apos;) &amp;&amp;
+ BEGINS(OwnerId, &apos;00G&apos;) &amp;&amp;
+ ISPICKVAL( Origin , &apos;Chat&apos;) &amp;&amp;
+ (  
+   RecordType.Name = &apos;Modern Bank&apos; ||
+   RecordType.Name = &apos;Engagement&apos; 
+ )</errorConditionFormula>
+    <errorMessage>Chat Cases should not be routed to other queues. Please create a follow-up case if you need to route a case to another queue.</errorMessage>
+</ValidationRule>

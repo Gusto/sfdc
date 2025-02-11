@@ -1,0 +1,72 @@
+<apex:page standardController="Opportunity" extensions="MassAdvisorAssignmentCtrl" recordSetVar="Opportunities" id="mainPage">
+    <apex:form id="frm">
+        <apex:sectionHeader title="Update Advisor Assignment"/>
+        
+        <apex:pageBlock id="step1" title=" {!intValidOpp} out of {!intSelectedOpp} Opportunity selected." mode="edit" rendered="{!step='1'}">
+            <apex:pagemessages escape="false" id="msg"></apex:pagemessages>            
+            <apex:outputPanel >
+                <apex:outputPanel >   
+                    <div style="margin:5px;">
+                        This feature will populate the selected value in the 'Advisor Assignment' field on all selected opportunities. This will also trigger advisor assignment logic to run in the back end, so all selected opportunities will be assigned to advisors with matching skills.
+                    </div>
+                </apex:outputPanel>
+                
+                <div style="margin:5px; max-height: 500px; overflow: scroll; display:{!if(intValidOpp > 0, 'block;', 'none;')}">
+                    <apex:pageBlockSection columns="1" rendered="{!if(intValidOpp > 0, true, false)}">
+                        <apex:pageBlockTable var="obj" value="{!list_RenewalOpportunity}">
+                            <apex:column headerValue="Opportunity"><apex:outputField value="{!obj.Name}"/></apex:column>
+                            <apex:column headerValue="Account"><apex:outputField value="{!obj.Account.Name}"/></apex:column>
+                            <apex:column headerValue="Stage"><apex:outputField value="{!obj.StageName}"/></apex:column>
+                            <apex:column headerValue="Advisor Assignment"><apex:outputField value="{!obj.Advisor_Assignment__c}"/></apex:column>
+                            <apex:column headerValue="Coverage Effective Date"><apex:outputField value="{!obj.HI_Effective_Date__c}"/></apex:column>
+                            <apex:column headerValue="Owner" ><apex:outputField value="{!obj.Owner.Name}"/></apex:column>
+                            <apex:column headerValue="UW Carrier PY" ><apex:outputField value="{!obj.UW_Carrier_PY__c}"/></apex:column>
+                            <apex:column headerValue="UW State PY" ><apex:outputField value="{!obj.UW_State_PY__c}"/></apex:column>
+                            <apex:column headerValue="Benefits Current Setup Step" ><apex:outputField value="{!obj.Benefits_Current_Setup_Step__c}"/></apex:column>
+                            <apex:column headerValue="Is Multi-EIN" ><apex:outputField value="{!obj.Is_Multi_EIN__c}"/></apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </div>
+                
+                <apex:pageBlockSection title="Specify the new value for - Advisor Assignment" collapsible="false" columns="2">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Advisor Assignment"/ >
+                            <apex:inputField value="{!objOpportunity.Advisor_Assignment__c}"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    
+                    <br/><br/>
+                    
+                    <apex:outputPanel >
+                        <div style="colur:blue;">
+                            <p style="margin-left:5px; font-weight:bold; color:blue;">Notes:</p>
+                            <ul>
+                                <li>
+                                    This functionality will only work for Benefits Renewal Opportunities.
+                                </li>
+                                <li>
+                                    This functionality will not update the owner of the Opportunity if it is already owned by an Advisor.
+                                </li>
+                                <li>
+                                    If the Opportunity is marked as 'Big Desk BenOps', it cannot be assigned using this functionality.
+                                </li>
+                            </ul>
+                            
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Save" action="{!updateOpportunity}" rendered="{!if(intValidOpp > 0, true, false)}"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"  immediate="true" style="margin-left: 5px;"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+
+        <apex:pageBlock id="step2" title="Results" mode="edit" rendered="{!step='2'}">
+            <apex:pagemessages escape="false"></apex:pagemessages>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!cancel}" value="Close"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>

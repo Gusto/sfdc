@@ -1,0 +1,22 @@
+<!--
+    Description: Aura Wrapper that contains play mode LWC. It is primarily used for assigning cases
+    This component handles opening and closing of workspace tabs and utility tabs using workspace api and utility api
+    Author: Praveen Sethu
+    Date: 09/16/2020
+-->
+
+<aura:component implements="flexipage:availableForAllPageTypes">
+    <aura:attribute name="strStatuses" type="String"/>
+
+    <!-- Api Components -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:utilityBarAPI aura:id="utilitybar" />
+
+    <!-- Child LWC-->
+    <c:playModeCaseCmp 
+        onopentab="{!c.handleOpenTab}" 
+        onminimzeutility="{!c.handleMinimizeUtility}" 
+        strCaseStatuses="{!v.strStatuses}"
+    >
+    </c:playModeCaseCmp>
+</aura:component>

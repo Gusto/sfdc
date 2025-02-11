@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Apex method which will return number of Payment Invoices for given period start and end date</description>
+        <name>Get_Payment_Invoices_By_Date</name>
+        <label>Get Payment Invoices By Date</label>
+        <locationX>314</locationX>
+        <locationY>575</locationY>
+        <actionName>PaymentInvoiceQueryHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Does_Payment_Invoice_Count_Match</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Payment_Invoice_Query_Failed_Error_Message</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_InvoiceRunLogs</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>PaymentInvoiceQueryHelper</nameSegment>
+        <outputParameters>
+            <assignToReference>Payment_Invoice_Queued_Count</assignToReference>
+            <name>output</name>
+        </outputParameters>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send success notification that all invoices have been created in Salesforce</description>
+        <name>Invoice_Count_Match_Success_Message_0</name>
+        <label>Invoice Count Match Success Message</label>
+        <locationX>50</locationX>
+        <locationY>815</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Query_Invoices_Not_Linked_To_Account</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Payment_Invoice_Count_Match_Success_Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Success_Slack_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send error notification that invoice counts don&apos;t match</description>
+        <name>Invoice_No_Match_Error_Notification</name>
+        <label>Invoice No Match Error Notification</label>
+        <locationX>314</locationX>
+        <locationY>815</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Query_Invoices_Not_Linked_To_Account</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Payment_Invoice_Count_No_Match_Error_Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Slack_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send error notification that invoices are not linked to any account</description>
+        <name>Invoices_Not_Linked_To_Account</name>
+        <label>Invoices Not Linked To Account</label>
+        <locationX>182</locationX>
+        <locationY>1391</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Invoices_Linked_To_Blank_Account_Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Slack_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Post notification that querying invoices not linked to any account failed.</description>
+        <name>Payment_Invoice_Query_Blank_Account_Failed_Message</name>
+        <label>Payment Invoice Query Blank Account Failed Message</label>
+        <locationX>754</locationX>
+        <locationY>1151</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Unable_To_Query_Blank_Invoices_Error_Account</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Slack_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Post notification that payment invoice query failed</description>
+        <name>Payment_Invoice_Query_Failed_Error_Message</name>
+        <label>Payment Invoice Query Failed Error Message</label>
+        <locationX>1018</locationX>
+        <locationY>695</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Unable_To_Query_Payment_Invoices</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Slack_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <assignments>
+        <description>Assign count of invoices not linked to any account</description>
+        <name>Assign_Invoices_Error_Account_Count</name>
+        <label>Assign Invoices Blank Account Count</label>
+        <locationX>314</locationX>
+        <locationY>1151</locationY>
+        <assignmentItems>
+            <assignToReference>Invoices_Blank_Account_Count</assignToReference>
+            <operator>AssignCount</operator>
+            <value>
+                <elementReference>Query_Invoices_Not_Linked_To_Account</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Are_Invoices_Linked_to_Blank_Account</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Check if invoices are not linked to any blank account</description>
+        <name>Are_Invoices_Linked_to_Blank_Account</name>
+        <label>Are Invoices Linked to Blank Account</label>
+        <locationX>314</locationX>
+        <locationY>1271</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Blank_Invoices_Exist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Invoices_Blank_Account_Count</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Invoices_Not_Linked_To_Account</targetReference>
+            </connector>
+            <label>Blank Invoices Exist</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check if Payment Invoice created in Salesforce matches Number of Invoice field from Invoice Run Log</description>
+        <name>Does_Payment_Invoice_Count_Match</name>
+        <label>Does Payment Invoice Count Match</label>
+        <locationX>314</locationX>
+        <locationY>695</locationY>
+        <defaultConnector>
+            <targetReference>Query_Invoices_Not_Linked_To_Account</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Invoice_Count_Matches</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Payment_Invoice_Queued_Count</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Number_of_Invoice__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Invoice_Count_Match_Success_Message_0</targetReference>
+            </connector>
+            <label>Invoice Count Matches</label>
+        </rules>
+        <rules>
+            <name>Invoices_Count_Does_Not_Match</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Payment_Invoice_Queued_Count</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Number_of_Invoice__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Invoice_No_Match_Error_Notification</targetReference>
+            </connector>
+            <label>Invoices Count Does Not Match</label>
+        </rules>
+    </decisions>
+    <description>Used for sending slack notifications after Zuora has completed sending invoices</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Error_Slack_Channel</name>
+        <dataType>String</dataType>
+        <expression>{!$Label.Zuora_invoice_Error_Channel}</expression>
+    </formulas>
+    <formulas>
+        <description>Formatting data to MM-DD-YYY format.</description>
+        <name>Period_End_Formula</name>
+        <dataType>String</dataType>
+        <expression>LPAD (TEXT(MONTH({!$Record.Period_End__c})), 2, &quot;0&quot;) + &quot;-&quot; + TEXT(DAY({!$Record.Period_End__c}))+ &quot;-&quot; + TEXT(YEAR({!$Record.Period_End__c}))</expression>
+    </formulas>
+    <formulas>
+        <name>Success_Slack_Channel</name>
+        <dataType>String</dataType>
+        <expression>{!$Label.Zuora_Invoice_Success_Channel}</expression>
+    </formulas>
+    <interviewLabel>Zuora Invoice Run Log - After Save Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Zuora Invoice Run Log - After Save Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get the name of Slack channel where all error notifications will be sent!</description>
+        <name>Get_Error_Slack_Channel_Destination</name>
+        <label>Get Error Slack Channel Destination</label>
+        <locationX>314</locationX>
+        <locationY>335</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Success_Slack_Channel_Destination</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>slackv2__Channel_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Error_Slack_Channel</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the name of Slack channel where all success notifications will be sent!</description>
+        <name>Get_Success_Slack_Channel_Destination</name>
+        <label>Get Success Slack Channel Destination</label>
+        <locationX>314</locationX>
+        <locationY>455</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Payment_Invoices_By_Date</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>slackv2__Channel_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Success_Slack_Channel</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Query all Payment Invoices Linked not linked to an account for specific period start and period end date</description>
+        <name>Query_Invoices_Not_Linked_To_Account</name>
+        <label>Query Invoices Not Linked To Account</label>
+        <locationX>314</locationX>
+        <locationY>1031</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_Invoices_Error_Account_Count</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Payment_Invoice_Query_Blank_Account_Failed_Message</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Account__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Workflow_Run_Number__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Workflow_Run_Number__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Period_Start_Date__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Period_Start__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Period_End_Date__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Period_End__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Payment_Invoice__c</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Error_Slack_Channel_Destination</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>completed</stringValue>
+            </value>
+        </filters>
+        <object>Invoice_Run_Log__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Error message to notify invoices are linked to Error Account</description>
+        <name>Invoices_Linked_To_Blank_Account_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:alert: Zuora completed sending {!$Record.Number_of_Invoice__c} invoices for the workflow run number {!$Record.Workflow_Run_Number__c} for the month ending {!Period_End_Formula}.
+There are {!Invoices_Blank_Account_Count} payment invoices not linked to any account. Please check errored invoices and re-process them manually.
+Report Link: {!$Label.Zuora_Invoice_Error_Report}
+Please check this confluence article for resolution steps. https://confluence.gustocorp.com/display/BIZT/SFDC+Zuora+Integration
+cc: @biztech-on-call</text>
+    </textTemplates>
+    <textTemplates>
+        <description>Success slack message to be sent after verifying payment invoice count matches</description>
+        <name>Payment_Invoice_Count_Match_Success_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:white_check_mark: Zuora completed sending {!$Record.Number_of_Invoice__c} invoices for the workflow run number {!$Record.Workflow_Run_Number__c} for the month ending {!Period_End_Formula}.
+Payment Invoice count matches! 
+Number of Invoices received from Zuora: {!$Record.Number_of_Invoice__c}
+Number of Payment Invoices created: {!Payment_Invoice_Queued_Count}</text>
+    </textTemplates>
+    <textTemplates>
+        <description>Error notification to indicate payment invoice count does not match</description>
+        <name>Payment_Invoice_Count_No_Match_Error_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:alert: Zuora completed sending {!$Record.Number_of_Invoice__c} invoices for the workflow run number {!$Record.Workflow_Run_Number__c} for the month ending {!Period_End_Formula}.
+Payment Invoices count does not match.
+Number of Invoices received from Zuora: {!$Record.Number_of_Invoice__c}
+Number of Payment Invoices created: {!Payment_Invoice_Queued_Count}
+cc: @biztech-on-call</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Unable_To_Query_Blank_Invoices_Error_Account</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:alert: There was a problem in querying invoices not linked to any account for workflow run number: {!$Record.Workflow_Run_Number__c}. Please check Invoice Run Log record for more details</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Unable_To_Query_Payment_Invoices</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:alert: Zuora completed sending {!$Record.Number_of_Invoice__c} first month invoices for the workflow run number {!$Record.Workflow_Run_Number__c},  but there was an error in querying Payment Invoice.</text>
+    </textTemplates>
+    <variables>
+        <description>Count of Invoices linked to Error Account</description>
+        <name>Invoices_Blank_Account_Count</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <description>Variable to store invoices linked to blank account</description>
+        <name>Invoices_Linked_To_Blank_Account</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>2</scale>
+    </variables>
+    <variables>
+        <description>Number of payment invoices in Queued status for given period start and end date</description>
+        <name>Payment_Invoice_Queued_Count</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+</Flow>

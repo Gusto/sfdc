@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Number_MisMatch__c</fullName>
+    <formula>Agency_Validated_Account_Number__c !=null &amp;&amp;  Agency_Validated_Account_Number__c !=  Account_Number__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Account Number Mismatch</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

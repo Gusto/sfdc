@@ -1,0 +1,10 @@
+<aura:component implements="lightning:isUrlAddressable,force:hasRecordId,flexipage:availableForAllPageTypes" access="global">
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:navigation aura:id="navService"/>
+    <aura:attribute name="caseRecordId" type="String" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <c:mergecaselwc recordId="{!v.caseRecordId}" 
+                    onClickCaseNumber="{!c.handlePrimaryTab}" 
+                    oncloseCurrentTab="{!c.closeSubTab}"
+                    onrefpage="{c.refreshWholePage}"></c:mergecaselwc>
+</aura:component>

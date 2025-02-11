@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Integration__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Current list of integration partners.  This is a filtered lookup based on the BizDev Record type</description>
+    <inlineHelpText>Required: Please select the integration or partnership</inlineHelpText>
+    <label>Integration/Partnership</label>
+    <lookupFilter>
+        <active>true</active>
+        <booleanFilter>(1 AND NOT (2)) OR (1 AND 2 AND 3)</booleanFilter>
+        <filterItems>
+            <field>Account.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Partner</value>
+        </filterItems>
+        <filterItems>
+            <field>$Source.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>API Integration Escalation</value>
+        </filterItems>
+        <filterItems>
+            <field>Account.Type</field>
+            <operation>notEqual</operation>
+            <value>Embedded Partner</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>BD Tickets (Integration)</relationshipLabel>
+    <relationshipName>BD_Tickets</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

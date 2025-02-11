@@ -1,0 +1,63 @@
+<apex:component controller="BTAdvocateCompCtrl">
+    <apex:attribute name="cohortTab" description="This is for to make tab active." type="String" assignTo="{!strCohort}"/>
+     <apex:attribute name="openTask" description="This is for to make tab active." type="String" assignTo="{!strOpenTask}"/>
+     <apex:attribute name="OOOTab" description="This is for to make tab active." type="String" assignTo="{!strOOOTab}"/>
+     
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+ <link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+ <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script>
+  <apex:includeScript value="/support/console/45.0/integration.js"/>
+<apex:slds />
+ <c:BTCustomCSS />  
+     <c:GustoActionStatus />&nbsp;<br/>
+          <apex:outputpanel layout="block" styleclass="slds-text-align_center" rendered="{!isManager}">
+                Select team member to see Details : 
+                 <apex:selectList value="{!strLoggedInUserId}" multiselect="false" size="1">
+                     <apex:selectOptions value="{!list_NonManagerUserList}"/>
+                     <apex:actionSupport event="onchange" reRender="frmBody" status="actStatusId" action="{!UpdateUserView}"/>   
+                 </apex:selectList>
+                     <br/>&nbsp;
+       </apex:outputpanel>
+  
+        <div class="tab">
+          <a href="javascript:void(0);"  onclick="openPage('BTAdvocateMyCohortView');return false;" class="tablinks {!cohortTab}">Cohort Views</a>
+           <a href="javascript:void(0);" onclick="openPage('BTAdvocateOOOView');return false;"  class="tablinks {!OOOTab}">OOO View</a>
+          <a href="javascript:void(0);" onclick="openPage('BTAdvocateOpenTaskView');return false;"  class="tablinks {!openTask}">Open Tasks</a>
+        </div>
+        
+       <script type="text/javascript">         
+        function openPage(pagename,userid){
+           	 var uid='{!strLoggedInUserId}';
+           //alert(uid);
+             var redirectUrl = 'apex/'+pagename; 
+             if (sforce.console.isInConsole()) {
+                 //sforce.console.openPrimaryTab(undefined,redirectUrl,true);
+                window.open('/'+redirectUrl+'?isdtp=vw&userid='+uid, '_self');
+             } else {
+                 // for inline Vf
+                 window.open('/'+redirectUrl+'?userid='+uid, '_self');
+             }
+        }
+        function openSubTab(recId,label){
+            var redirectUrl = '/'+recId; 
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        console.log(primaryResult.id);
+                        if(primaryResult.id=='null'){
+                            sforce.console.openPrimaryTab(undefined,redirectUrl,true,label);
+                        }else{
+                            sforce.console.openSubtab(primaryResult.id, redirectUrl, false,label, null);
+                        }
+                    });
+                })
+            } else {
+                // for inline Vf
+                window.open(redirectUrl, '_blank');
+            }
+        }
+
+    </script>
+</apex:component>

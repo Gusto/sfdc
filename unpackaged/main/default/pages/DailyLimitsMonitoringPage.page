@@ -1,0 +1,480 @@
+<apex:page tabStyle="Daily_Org_Limits__tab" showHeader="true" sidebar="false" controller="DailyLimitsMonitoringController" standardStylesheets="false" id="MonitorPage">
+	<head>
+		<title>Salesforce Limits Manager</title>
+		<apex:slds />
+	</head>
+	<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" />
+	<apex:includeScript value="https://code.highcharts.com/highcharts.js"></apex:includeScript>
+	<apex:includeScript value="https://code.highcharts.com/highcharts-more.js"></apex:includeScript>
+	<apex:includeScript value="https://code.highcharts.com/modules/solid-gauge.js"></apex:includeScript>
+	<style>
+		.highcharts-yaxis-grid .highcharts-grid-line {
+			display: none;
+		}
+
+		.good {
+			background-color: #55bf3b;
+		}
+
+		.avg {
+			background-color: #dddf0d;
+		}
+
+		.poor {
+			background-color: #df5353;
+		}
+		.spinnerTop {
+			z-index: 1000; 
+			position: fixed; 
+			top: 0; 
+			left: 0; 
+			right: 0; 
+			bottom: 0; 
+			background-color: black; 
+			opacity: 0.25
+		}
+
+		.spinnerNest {
+			z-index: 1001; 
+			text-align: center; 
+			vertical-align: middle; 
+			position: fixed; 
+			top: 50%; 
+			left: 50%; 
+			padding: 1em; 
+			margin: -2em -10em; 
+			width: 25em; 
+			height: 50px; 
+			background: white; 
+			border-radius: 5px
+		}
+		.showSpinner {
+			display: '';
+		}
+		.removeSpinner {
+			display: none;
+		}
+	</style>
+	<script type="text/javascript">
+		
+        
+		let stagingObjectsRendered = false;
+		let exceptionLogsRendered = false;
+		
+		$(document).ready(function () {
+			showTab(1);
+			// remove spinner on load
+			let spinner = document.getElementById("spinner");
+			if (spinner) {
+				spinner.classList.add("removeSpinner");
+			}
+		});
+
+		Highcharts.setOptions({
+			lang: {
+				thousandsSep: ","
+			}
+		});
+
+		function showTab(tabIndex) {
+			console.log("showing tabindex " + tabIndex);
+			//Hide all headers
+			$("[Id*=secHeader]").hide();
+
+			//Show active header
+			$("[Id$=secHeader-" + tabIndex + "]").show();
+
+			//Deactive existing tab
+			$("li.slds-tabs_default__item").removeClass("slds-is-active");
+
+			//Hide active tab content
+			$("div.slds-tabs_default__content").removeClass("slds-show");
+
+			//Hide active tab content
+			$("div.slds-tabs_default__content").addClass("slds-hide");
+			$("#tab-default-" + tabIndex).removeClass("slds-hide");
+
+			//Activate actual tab
+			$("#tab-default-li-" + tabIndex).addClass("slds-is-active");
+			$("#tab-default-" + tabIndex).addClass("slds-show");
+
+			if (tabIndex === 7) {
+				// staging objects
+				if (stagingObjectsRendered === false) {
+					stagingObjectsRendered = true;
+
+					let loadingText = document.getElementById("loadingText");
+					let spinner = document.getElementById("spinner");
+
+					if (loadingText) {
+						loadingText.innerHTML = 'Preparing staging object dashboard..';
+					}
+					if (spinner) {
+						spinner.classList.remove("removeSpinner");
+						spinner.classList.add("showSpinner");
+					}
+
+					setStagingObjects();
+				}
+			} else if (tabIndex === 8) {
+				// exception logs
+
+				if (exceptionLogsRendered === false) {
+					exceptionLogsRendered = true;
+
+					let loadingText = document.getElementById("loadingText");
+					let spinner = document.getElementById("spinner");
+
+					if (loadingText) {
+						loadingText.innerHTML = 'Preparing exception log dashboard..';
+					}
+
+					if (spinner) {
+						spinner.classList.remove("removeSpinner");
+						spinner.classList.add("showSpinner");
+					}
+
+					setExceptionLogs();
+				}
+			}
+		}
+
+		function removeSpinner() {
+			// remove loading symbol
+			let spinner = document.getElementById("spinner");
+			if (spinner) {
+				spinner.classList.add("removeSpinner");
+				spinner.classList.remove("showSpinner");
+			}
+		}
+
+		$(function () {
+			$(".percent").each(function (index) {
+				var scale = [
+					["poor", 90],
+					["avg", 50],
+					["good", 1]
+				];
+				var score = $(this).text();
+				for (var i = 0; i < scale.length; i++) {
+					if (score >= scale[i][1]) {
+						$(this).addClass(scale[i][0]);
+					}
+				}
+			});
+		});
+	</script>
+
+	<div id="spinner">
+        <div class="spinnerTop"> 
+        </div>
+        <div class="spinnerNest">
+            <img src="/img/loading32.gif" style="vertical-align: middle; padding-right: 1em" /> <span id="loadingText"></span>
+        </div>
+    </div>
+	<apex:form >
+		<!-- function declaration to call apex method and get staging objects and exception log limits -->
+        <apex:actionFunction name="setStagingObjects" action="{!queryStagingObjectLimits}" rerender="stagingObjectsPanel"  oncomplete="removeSpinner();">
+        </apex:actionFunction>
+		<apex:actionFunction name="setExceptionLogs" action="{!queryExceptionLogLimits}" rerender="exceptionLogsPanel" oncomplete="removeSpinner();">
+        </apex:actionFunction>
+    </apex:form>
+	<body class="slds-scope" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<div class="slds-page-header slds-page-header_record-home">
+			<div class="slds-page-header__row">
+				<div class="slds-page-header__col-title">
+					<div class="slds-media">
+						<div class="slds-media__figure">
+							<span class="slds-icon_container slds-icon-standard-opportunity" title="guidance_center">
+								<svg class="slds-icon slds-page-header__icon slds-icon-standard-guidance_center" aria-hidden="true">
+									<use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#guidance_center')}"></use>
+								</svg>
+								<span class="slds-assistive-text">limits</span>
+							</span>
+						</div>
+						<div class="slds-media__body">
+							<div class="slds-page-header__name">
+								<div class="slds-page-header__name-title">
+									<h1>
+										<span class="slds-page-header__title slds-truncate" title="Salesforce Org Limits">Salesforce Org Limits</span>
+									</h1>
+								</div>
+							</div>
+							<p class="slds-page-header__name-meta">
+								<apex:outputText value="Data Last Refreshed: {!refreshTime}" />
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="slds-page-header__col-actions">
+					<div class="slds-page-header__controls">
+						<div class="slds-page-header__control">
+							<apex:form > <apex:commandButton value="Refresh" action="{!refreshPage}" styleclass="slds-button slds-button_neutral" /></apex:form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="slds-tabs_default">
+			<ul class="slds-tabs_default__nav" role="tablist">
+				<li class="slds-tabs_default__item slds-is-active" title="Main" role="presentation" id="tab-default-li-1">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(1);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="mainTab">Main</a>
+				</li>
+				<li class="slds-tabs_default__item" title="API/Apex" role="presentation" id="tab-default-li-2">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(2);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="apiApexTab">API/Apex</a>
+				</li>
+				<li class="slds-tabs_default__item" title="Analytics" role="presentation" id="tab-default-li-3">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(3);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="analyticsTab">Analytics</a>
+				</li>
+				<li class="slds-tabs_default__item" title="Platform Events" role="presentation" id="tab-default-li-4">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(4);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-4" id="peTab">Platform Events</a>
+				</li>
+				<li class="slds-tabs_default__item" title="SFDX" role="presentation" id="tab-default-li-5">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(5);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-5" id="sfdxTab">SFDX</a>
+				</li>
+				<li class="slds-tabs_default__item" title="All Limits" role="presentation" id="tab-default-li-6">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(6);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-6" id="allLimitsTab">All Limits</a>
+				</li>
+				<li class="slds-tabs_default__item" title="Staging Objects" role="presentation" id="tab-default-li-7">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(7);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-7" id="stagingObjectsTab">Staging Objects</a>
+				</li>
+				<li class="slds-tabs_default__item" title="Exception Logs" role="presentation" id="tab-default-li-8">
+					<a class="slds-tabs_default__link" href="#" onclick="showTab(8);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-8" id="exceptionLogsTab">Exception Logs</a>
+				</li>
+			</ul>
+
+			<div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="mainTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyApiRequests']}" theTitle="Daily API Requests" theSubTitle="Rolling 24 hours" id="DailyApiRequests_main" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyBulkApiBatches']}" theTitle="Daily Bulk API Batches" theSubTitle="Rolling 24 hours" id="DailyBulkApiBatches_main" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyAsyncApexExecutions']}" theTitle="Daily Asynchronous Apex Executions" theSubTitle="Rolling 24 hours" id="DailyAsyncApexExecutions_main" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyTimeBasedWorkflow']}" theTitle="Hourly Scheduled Workflow" id="HourlyTimeBasedWorkflow_main" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyWorkflowEmails']}" theTitle="Daily Workflow Emails" theSubTitle="Rolling 24 hours" id="DailyWorkflowEmails_main" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['SingleEmail']}" theTitle="Daily Single Emails sent from Apex" theSubTitle="Per Day (GMT)" id="SingleEmail_main" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['MassEmail']}" theTitle="Daily Mass Emails sent from Apex" theSubTitle="Per Day (GMT)" id="MassEmail_main" />
+					</div>
+				</div>
+			</div>
+
+			<div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="apiApexTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DataStorageMB']}" theTitle="Data Storage (MB)" theSubTitle="Org Limit" id="DataStorageMB" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['FileStorageMB']}" theTitle="File Storage (MB)" theSubTitle="Org Limit" id="FileStorageMB" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['PermissionSets']}" theTitle="Permission Sets" theSubTitle="Org Limit" id="PermissionSets" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyBulkV2QueryFileStorageMB']}"
+							theTitle="Daily Bulk V2 API Query Jobs"
+							theSubTitle="Possibly deprecated"
+							id="DailyBulkV2QueryFileStorageMB"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyBulkV2QueryJobs']}"
+							theTitle="Daily Bulk V2 API Query Result Size That Can be Stored"
+							theSubTitle="Rolling 24 hours"
+							id="DailyBulkV2QueryJobs"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyManagedContentPublicRequests']}"
+							theTitle="Hourly Managed Content Public Requests"
+							theSubTitle=""
+							id="HourlyManagedContentPublicRequests"
+						/>
+					</div>
+				</div>
+			</div>
+
+			<div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="analyticsTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['ConcurrentAsyncGetReportInstances']}"
+							theTitle="Concurrent API requests for results of asynchronous report runs"
+							theSubTitle=""
+							id="ConcurrentAsyncGetReportInstances"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['ConcurrentSyncReportRuns']}" theTitle="Concurrent synchronous report runs via API" theSubTitle="" id="ConcurrentSyncReportRuns" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyAsyncReportRuns']}" theTitle="Asynchronous report runs via API" theSubTitle="Hourly Limit" id="HourlyAsyncReportRuns" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlySyncReportRuns']}" theTitle="Synchronous report runs via API" theSubTitle="Hourly Limit" id="HourlySyncReportRuns" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyDashboardRefreshes']}" theTitle="Dashboard refreshes via API" theSubTitle="Hourly Limit" id="HourlyDashboardRefreshes" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyDashboardResults']}" theTitle="API requests for dashboard results" theSubTitle="Hourly Limit" id="HourlyDashboardResults" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyDashboardStatuses']}" theTitle="API requests for dashboard statuses" theSubTitle="Hourly Limit" id="HourlyDashboardStatuses" />
+					</div>
+				</div>
+			</div>
+
+			<div id="tab-default-4" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="peTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyPublishedPlatformEvents']}"
+							theTitle="Hourly high-volume platform event notifications published"
+							theSubTitle=""
+							id="HourlyPublishedPlatformEvents"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['HourlyPublishedStandardVolumePlatformEvents']}"
+							theTitle="Hourly standard-volume platform event notifications published"
+							theSubTitle=""
+							id="HourlyPublishedStandardVolumePlatformEvents"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyDurableGenericStreamingApiEvents']}"
+							theTitle="Generic events notifications delivered in the past 24 hours to all CometD clients for Durable Streaming"
+							theSubTitle="Rolling 24 hours"
+							id="DailyDurableGenericStreamingApiEvents"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyDurableStreamingApiEvents']}"
+							theTitle="PushTopic event notifications delivered in the past 24 hours to all CometD clients for Durable Streaming"
+							theSubTitle="Rolling 24 hours"
+							id="DailyDurableStreamingApiEvents"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyStandardVolumePlatformEvents']}"
+							theTitle="Daily standard-volume platform event notifications delivered"
+							theSubTitle="Rolling 24 hours"
+							id="DailyStandardVolumePlatformEvents"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DurableStreamingApiConcurrentClients']}"
+							theTitle="Concurrent CometD clients (subscribers) across all channels and for all event types for Durable Streaming"
+							theSubTitle="Rolling 24 hours"
+							id="DurableStreamingApiConcurrentClients"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['StreamingApiConcurrentClients']}"
+							theTitle="Concurrent CometD clients (subscribers) across all channels and for all event types"
+							theSubTitle=""
+							id="StreamingApiConcurrentClients"
+						/>
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyGenericStreamingApiEvents']}"
+							theTitle="Generic events notifications delivered in the past 24 hours to all CometD clients"
+							theSubTitle="Possibly deprecated"
+							id="DailyGenericStreamingApiEvents"
+						/>
+					</div>
+				</div>
+			</div>
+			<div id="tab-default-5" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="sfdxTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['DailyScratchOrgs']}" theTitle="Scratch Orgs Created" theSubTitle="Per Day" id="DailyScratchOrgs" />
+					</div>
+					<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+						<c:LimitsGauge ol="{!map_Limits['ActiveScratchOrgs']}" theTitle="Active Scratch Orgs" theSubTitle="Per Day" id="ActiveScratchOrgs" />
+					</div>
+				</div>
+			</div>
+			<div id="tab-default-6" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="allLimits">
+				<table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Org Limits" style="width: 50%">
+					<thead>
+						<tr class="slds-line-height_reset">
+							<th class="" scope="col">
+								<div class="slds-truncate" title="Limit Name">Limit Name</div>
+							</th>
+							<th class="" scope="col" style="text-align: right">
+								<div class="slds-truncate" title="Used">Used</div>
+							</th>
+							<th class="" scope="col" style="text-align: right">
+								<div class="slds-truncate" title="Limit">Limit</div>
+							</th>
+							<th class="" scope="col" style="text-align: center">
+								<div class="slds-truncate" title="Percent Used">Percent Used</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<apex:repeat var="ol" value="{!list_limits}">
+							<tr class="slds-hint-parent">
+								<th data-label="Limit Name" scope="row">
+									<div class="slds-truncate" title="{!ol.strLName}">{!ol.strLName}</div>
+								</th>
+								<td data-label="Used">
+									<div class="slds-truncate" style="text-align: right" title="{!ol.intLValue}">
+										<apex:outputText value="{0, number, ###,###}" id="ollimitvalue1">
+											<apex:param value="{!ol.intlvalue}" />
+										</apex:outputText>
+									</div>
+								</td>
+								<td data-label="Limit">
+									<div class="slds-truncate" style="text-align: right" title="{!ol.intLLimit}">
+										<apex:outputText value="{0, number, ###,###}" id="ollimitvalue2">
+											<apex:param value="{!ol.intllimit}" />
+										</apex:outputText>
+									</div>
+								</td>
+								<td data-label="Percent">
+									<div class="slds-truncate percent" style="text-align: center" title="{!ol.decPercent} %">{!ol.decPercent}</div>
+								</td>
+							</tr>
+						</apex:repeat>
+					</tbody>
+				</table>
+			</div>
+			<!-- Staging Objects -->
+			<apex:outputPanel id="stagingObjectsPanel">
+			<div id="tab-default-7" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="stagingObjectsTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<apex:repeat var="ol" value="{!list_StagingObjects}">
+						<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+							<c:LimitsGauge ol="{!ol}" theTitle="{!ol.strLTitle}" theSubTitle="{!ol.strLSubtitle}" />
+						</div>
+					</apex:repeat>
+				</div>
+			</div>
+			</apex:outputPanel>
+			<!-- Exception Logs -->
+			<apex:outputPanel id="exceptionLogsPanel">
+			<div id="tab-default-8" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="exceptionLogsTab">
+				<div class="slds-grid slds-wrap slds-gutters" width="100%">
+					<apex:repeat var="ol" value="{!list_ExceptionLogs}">
+						<div class="slds-col slds-size_1-of-4" style="border-width:1px;border-style:dotted;border-color:gray;">
+							<c:LimitsGauge ol="{!ol}" theTitle="{!ol.strLTitle}" theSubTitle="{!ol.strLSubtitle}" />
+						</div>
+					</apex:repeat>
+				</div>
+			</div>
+			</apex:outputPanel>
+		</div>
+	</body>
+</apex:page>

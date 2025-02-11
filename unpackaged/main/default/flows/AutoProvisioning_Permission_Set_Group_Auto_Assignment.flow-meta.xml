@@ -1,0 +1,1165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>52.0</apiVersion>
+    <assignments>
+        <description>Add Permission Set Group to the List of Permission Set Groups</description>
+        <name>Add_PSG1_To_List</name>
+        <label>Add PSG1 To List</label>
+        <locationX>842</locationX>
+        <locationY>1943</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfPermissionSetGroups</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>PermissionSetGroup1</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_PSG_Id_2</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add Permission Set Group to the List of Permission Set Groups</description>
+        <name>Add_PSG2_To_List</name>
+        <label>Add PSG2 To List</label>
+        <locationX>842</locationX>
+        <locationY>2183</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfPermissionSetGroups</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>PermissionSetGroup2</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_PSG_Id_3</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add Permission Set Group to the List of Permission Set Groups</description>
+        <name>Add_PSG3_To_List</name>
+        <label>Add PSG3 To List</label>
+        <locationX>842</locationX>
+        <locationY>2423</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfPermissionSetGroups</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>PermissionSetGroup3</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_PSG_Id_4</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add Permission Set Group to the List of Permission Set Groups</description>
+        <name>Add_PSG4_To_List</name>
+        <label>Add PSG4 To List</label>
+        <locationX>842</locationX>
+        <locationY>2663</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfPermissionSetGroups</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>PermissionSetGroup4</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_PSG_Id_5</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add Permission Set Group to the List of Permission Set Groups</description>
+        <name>Add_PSG5_To_List</name>
+        <label>Add PSG5 To List</label>
+        <locationX>842</locationX>
+        <locationY>2903</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfPermissionSetGroups</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>PermissionSetGroup5</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_PSG_Id_6</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add Permission Set Group to the List of Permission Set Groups</description>
+        <name>Add_PSG6_To_List</name>
+        <label>Add PSG6 To List</label>
+        <locationX>842</locationX>
+        <locationY>3143</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfPermissionSetGroups</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>PermissionSetGroup6</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Permission_Set_Assignments</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Add the permissionset assignment to the list of permission set assignments</description>
+        <name>Add_to_Permission_Set_Assignment_List</name>
+        <label>Add to Permission Set Assignment List</label>
+        <locationX>930</locationX>
+        <locationY>3623</locationY>
+        <assignmentItems>
+            <assignToReference>ListofPermissionSetAssignments</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>varCurrentPermissionSetAssignment</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Permission_Set_Assignments</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Permission_Set</name>
+        <label>Assign Permission Set</label>
+        <locationX>930</locationX>
+        <locationY>3503</locationY>
+        <assignmentItems>
+            <assignToReference>varCurrentPermissionSetAssignment.AssigneeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varCurrentPermissionSetAssignment.PermissionSetGroupId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Create_Permission_Set_Assignments.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_to_Permission_Set_Assignment_List</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Set New User to True</description>
+        <name>New_User_Assignment</name>
+        <label>New User Assignment</label>
+        <locationX>710</locationX>
+        <locationY>575</locationY>
+        <assignmentItems>
+            <assignToReference>varNew_User</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_HR_Worker_Information</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Check_for_Auto_Provisioning_Flow_Access</name>
+        <label>Check for Auto Provisioning Flow Access</label>
+        <locationX>1502</locationX>
+        <locationY>335</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>User_has_Auto_Provisioning_Flow_Access</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Permission.Auto_Provisioning_Permission</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>New_User_Check</targetReference>
+            </connector>
+            <label>User has Auto Provisioning Flow Access</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If HRWorker Info found, update all,  If not, update only AutoProvisioning fields</description>
+        <name>Choose_What_To_Update</name>
+        <label>Choose What To Update</label>
+        <locationX>842</locationX>
+        <locationY>4055</locationY>
+        <defaultConnectorLabel>Default</defaultConnectorLabel>
+        <rules>
+            <name>Update_All_Fields</name>
+            <conditionLogic>1 and (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>var_HR_Worker_Record_ID</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Perm_Set_Removal_User</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varNew_User</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_HR_Worker_and_AutoProvisioning_Fields</targetReference>
+            </connector>
+            <label>Update All Fields</label>
+        </rules>
+        <rules>
+            <name>Update_Only_HR_Worker_Fields</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_HR_Worker_Record_ID</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Perm_Set_Removal_User</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_HR_Worker_Fields</targetReference>
+            </connector>
+            <label>Update Only HR Worker Fields</label>
+        </rules>
+        <rules>
+            <name>Update_Only_Auto_Provisioning_Fields</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Employee_Number</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>var_Perm_Set_Removal_User</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Auto_Provisioning_Fields</targetReference>
+            </connector>
+            <label>Update Only Auto Provisioning Fields</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check to see if the get action found a group</description>
+        <name>Does_a_Group_exist</name>
+        <label>Does a Group exist ?</label>
+        <locationX>1062</locationX>
+        <locationY>3383</locationY>
+        <defaultConnector>
+            <targetReference>Create_Permission_Set_Assignments</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Group not found</defaultConnectorLabel>
+        <rules>
+            <name>Group_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Create_Permission_Set_Assignments.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Permission_Set</targetReference>
+            </connector>
+            <label>Group Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If a Call Center is assigned the Managed Package license needs to be assigned.</description>
+        <name>Is_a_Call_Center_Assigned_0</name>
+        <label>Is a Call Center Assigned</label>
+        <locationX>842</locationX>
+        <locationY>911</locationY>
+        <defaultConnector>
+            <targetReference>Update_Chat_User_Checkbox_0</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Call_Center_Assigned_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.CallCenterId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_or_Remove_Managed_Package_Licenses</targetReference>
+            </connector>
+            <label>Call Center Assigned</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Perform actions to be taken for a new user.  Created to update the HR Worker Information because the HR Worker Record can be created before the Salesforce Account</description>
+        <name>New_User_Check</name>
+        <label>New User Check</label>
+        <locationX>842</locationX>
+        <locationY>455</locationY>
+        <defaultConnector>
+            <targetReference>Is_a_Call_Center_Assigned_0</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>This_is_a_New_User</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record__Prior.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>New_User_Assignment</targetReference>
+            </connector>
+            <label>This is a New User</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Proceed only if this is a new user or the user&apos;s role has changed.</description>
+        <name>New_User_or_Role_Changed</name>
+        <label>Is Existing User?</label>
+        <locationX>842</locationX>
+        <locationY>1367</locationY>
+        <defaultConnector>
+            <targetReference>Get_Permission_Set_Config_Record</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varNew_User</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Remove_Currently_Assigned_Permission_Sets</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Overview:  This is the main flow for Updating Active Users.  It will trigger when an active user is updated. 
+* If a user has a call center assigned it will call the subflow to assign CXOne Managed Package
+* If will call the subflow to check the check the Chat User checkbox if it&apos;s required
+* If this is a new user it will update the HR Worker Information Employee ID, Team, Subteam and Status
+* If the Role or Profile has changed and Permissions Sets (Locked) is not True it will Remove all Permisssion Sets, Permission Set Groups then assign Permission Set Groups based on the Role. 
+UPDATES:
+Update on 2/23/22:  Changed the Label and API Name, moved the permission set removal to a sub-flow, set to also activate on profile change, added fault flow
+Update on 4/26/22:  Added functionality to call the flow to Assign a CXOne Managed Package License
+Update on 4/27/22 Added subflow to check the Chat User Checkbox
+Update on 11/28/22 Updated to bypass Perm Sets and Perm Set Group Removal and update Permission Set (Removed) field.</description>
+    <environments>Default</environments>
+    <interviewLabel>AutoProvisioning - Permission Set Group Auto Assignment {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisioning - Permission Set Group Auto Assignment</label>
+    <loops>
+        <description>Create list of permission sets to assign to user</description>
+        <name>Create_Permission_Set_Assignments</name>
+        <label>Create Permission Set Assignments</label>
+        <locationX>842</locationX>
+        <locationY>3263</locationY>
+        <collectionReference>ListOfPermissionSetGroups</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Does_a_Group_exist</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Create_Permission_Set_Assignment_Records</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create Permission Set Assignments</description>
+        <name>Create_Permission_Set_Assignment_Records</name>
+        <label>Create Permission Set Assignment Records</label>
+        <locationX>842</locationX>
+        <locationY>3935</locationY>
+        <connector>
+            <targetReference>Choose_What_To_Update</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Fault_Flow_for_Assigning_Permission_Set_Groups</targetReference>
+        </faultConnector>
+        <inputReference>ListofPermissionSetAssignments</inputReference>
+    </recordCreates>
+    <recordLookups>
+        <description>Get the Team, Subteam, Employee  Number and Status from the HR Working record</description>
+        <name>Get_HR_Worker_Information</name>
+        <label>Get HR Worker Information</label>
+        <locationX>710</locationX>
+        <locationY>695</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Is_a_Call_Center_Assigned_0</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Email__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Username</elementReference>
+            </value>
+        </filters>
+        <object>HR_Worker_Information__c</object>
+        <outputAssignments>
+            <assignToReference>var_Employee_Number</assignToReference>
+            <field>Employee_Id__c</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_HR_Worker_Record_ID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_Status</assignToReference>
+            <field>Status__c</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_SubTeam</assignToReference>
+            <field>Sub_Team__c</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_Team</assignToReference>
+            <field>Team__c</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordLookups>
+        <description>Search for the Config record that matches the users&apos;s role</description>
+        <name>Get_Permission_Set_Config_Record</name>
+        <label>Get Permission Set Config Record</label>
+        <locationX>842</locationX>
+        <locationY>1703</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_PSG_Id_1</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.UserRole.DeveloperName</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Permission_Set_Group_Config__mdt</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>To query the Permission Set Group object using the developer name to get the id.</description>
+        <name>Get_PSG_Id_1</name>
+        <label>Get PSG Id 1</label>
+        <locationX>842</locationX>
+        <locationY>1823</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_PSG1_To_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_Config_Record.Permission_Set_Group_1__c</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetGroup</object>
+        <outputReference>PermissionSetGroup1</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>To query the Permission Set Group object using the developer name to get the id.</description>
+        <name>Get_PSG_Id_2</name>
+        <label>Get PSG Id 2</label>
+        <locationX>842</locationX>
+        <locationY>2063</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_PSG2_To_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_Config_Record.Permission_Set_Group_2__c</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetGroup</object>
+        <outputReference>PermissionSetGroup2</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>To query the Permission Set Group object using the developer name to get the id.</description>
+        <name>Get_PSG_Id_3</name>
+        <label>Get PSG Id 3</label>
+        <locationX>842</locationX>
+        <locationY>2303</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_PSG3_To_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_Config_Record.Permission_Set_Group_3__c</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetGroup</object>
+        <outputReference>PermissionSetGroup3</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>To query the Permission Set Group object using the developer name to get the id.</description>
+        <name>Get_PSG_Id_4</name>
+        <label>Get PSG Id 4</label>
+        <locationX>842</locationX>
+        <locationY>2543</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_PSG4_To_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_Config_Record.Permission_Set_Group_4__c</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetGroup</object>
+        <outputReference>PermissionSetGroup4</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>To query the Permission Set Group object using the developer name to get the id.</description>
+        <name>Get_PSG_Id_5</name>
+        <label>Get PSG Id 5</label>
+        <locationX>842</locationX>
+        <locationY>2783</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_PSG5_To_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_Config_Record.Permission_Set_Group_5__c</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetGroup</object>
+        <outputReference>PermissionSetGroup5</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>To query the Permission Set Group object using the developer name to get the id.</description>
+        <name>Get_PSG_Id_6</name>
+        <label>Get PSG Id 6</label>
+        <locationX>842</locationX>
+        <locationY>3023</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_PSG6_To_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_Config_Record.Permission_Set_Group_6__c</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetGroup</object>
+        <outputReference>PermissionSetGroup6</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordUpdates>
+        <description>Update the Fields on the User Record</description>
+        <name>Update_Auto_Provisioning_Fields</name>
+        <label>Update Auto Provisioning Fields</label>
+        <locationX>1106</locationX>
+        <locationY>4175</locationY>
+        <faultConnector>
+            <targetReference>Fault_Flow_for_Update_Auto_Provisioning_Fields</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Permission_Sets_Last_Removed_By__c</field>
+            <value>
+                <elementReference>var_Perm_Set_Removal_User</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Last_Removed__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Update the Fields on the User Record</description>
+        <name>Update_HR_Worker_and_AutoProvisioning_Fields</name>
+        <label>Update HR Worker and AutoProvisioning Fields</label>
+        <locationX>50</locationX>
+        <locationY>4175</locationY>
+        <faultConnector>
+            <targetReference>Fault_Flow_for_Update_HR_Worker_and_AutoProvisioning_Fields</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>EmployeeNumber</field>
+            <value>
+                <elementReference>var_Employee_Number</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>HR_Worker_Information_Status__c</field>
+            <value>
+                <elementReference>var_Status</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Last_Removed_By__c</field>
+            <value>
+                <elementReference>var_Perm_Set_Removal_User</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Permission_Sets_Last_Removed__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Sub_Team__c</field>
+            <value>
+                <elementReference>var_SubTeam</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Team__c</field>
+            <value>
+                <elementReference>var_Team</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Update the Fields on the User Record</description>
+        <name>Update_HR_Worker_Fields</name>
+        <label>Update HR Worker Fields</label>
+        <locationX>578</locationX>
+        <locationY>4175</locationY>
+        <faultConnector>
+            <targetReference>Fault_Flow_for_Update_HR_Worker_Fields</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>EmployeeNumber</field>
+            <value>
+                <elementReference>var_Employee_Number</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>HR_Worker_Information_Status__c</field>
+            <value>
+                <elementReference>var_Status</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Sub_Team__c</field>
+            <value>
+                <elementReference>var_SubTeam</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Team__c</field>
+            <value>
+                <elementReference>var_Team</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>1376</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_for_Auto_Provisioning_Flow_Access</targetReference>
+        </connector>
+        <filterFormula>(ISNEW() || ISCHANGED({!$Record.UserRole.Id}) || ISCHANGED({!$Record.Profile.Id}) || {!$Record.Managed_Packages_Trigger_for_Removal__c}) &amp;&amp; {!$Record.IsActive}</filterFormula>
+        <object>User</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Add_or_Remove_Managed_Package_Licenses</name>
+        <label>Add or Remove Managed Package Licenses</label>
+        <locationX>710</locationX>
+        <locationY>1031</locationY>
+        <connector>
+            <targetReference>Update_Chat_User_Checkbox_0</targetReference>
+        </connector>
+        <flowName>AutoProvisioning_User_Manage_Package_Handler</flowName>
+        <inputAssignments>
+            <name>User_ID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varNew_User</name>
+            <value>
+                <elementReference>varNew_User</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <name>Fault_Flow_for_Assigning_Permission_Set_Groups</name>
+        <label>Fault Flow for Assigning Permission Set Groups</label>
+        <locationX>1898</locationX>
+        <locationY>4055</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Create Permission Set Assignment Records</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Assign Permission Set Groups because a User&apos;s role or Profile has changed and Permissions Sets (Locked) was false</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>AutoProvisioning - Permission Set Group Assignments</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Fault_Flow_for_Update_Auto_Provisioning_Fields</name>
+        <label>Fault Flow for Update Auto Provisioning Fields</label>
+        <locationX>1370</locationX>
+        <locationY>4295</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Update Auto Provisioning Fields</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Update Auto Provisioning Fields because this is not a new user and permissions sets were removed.</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>AutoProvisioning - Permission Set Group Assignments</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Fault_Flow_for_Update_HR_Worker_and_AutoProvisioning_Fields</name>
+        <label>Fault Flow for Update HR Worker and AutoProvisioning Fields</label>
+        <locationX>314</locationX>
+        <locationY>4295</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Update HR Worker and AutoProvisioning Fields</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Update HR Worker and AutoProvisioning Fields because user is New and Permission Sets were removed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>AutoProvisioning - Permission Set Group Assignments</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Fault_Flow_for_Update_HR_Worker_Fields</name>
+        <label>Fault Flow for Update HR Worker Fields</label>
+        <locationX>842</locationX>
+        <locationY>4295</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Update HR Worker Fields</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Update only HR Worker Fields because the user is new and permission sets were not removed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>AutoProvisioning - Permission Set Group Assignments</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <description>Remove all permission sets.  This allows the auto provisioning to be self cleaning by only allowing permissions to be assigned that relate to the current role.   If more permissions are needed consider either:
+*Adding a permission set to the permission set group for the role if all of the users in the role should have the permissions
+*Adding a permission set directly to the user.</description>
+        <name>Remove_Currently_Assigned_Permission_Sets</name>
+        <label>Remove Currently Assigned Permission Sets</label>
+        <locationX>710</locationX>
+        <locationY>1487</locationY>
+        <connector>
+            <targetReference>Get_Permission_Set_Config_Record</targetReference>
+        </connector>
+        <flowName>AutoProvisioning_Remove_Permission_Set_Assignments_Sub_Flow</flowName>
+        <inputAssignments>
+            <name>varUserRecord</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>var_Perm_Set_Removal_User</assignToReference>
+            <name>Perm_Set_Removal_User</name>
+        </outputAssignments>
+    </subflows>
+    <subflows>
+        <description>Subflow will check the Chat User checkbox if the role exists in the Chat User Roles field on the Automated Onboarding - Field Updates (Custom Metadata Type)</description>
+        <name>Update_Chat_User_Checkbox_0</name>
+        <label>Update Chat User Checkbox</label>
+        <locationX>842</locationX>
+        <locationY>1247</locationY>
+        <connector>
+            <targetReference>New_User_or_Role_Changed</targetReference>
+        </connector>
+        <flowName>AutoProvisioning_Update_Chat_User_Checkbox_SubFlow</flowName>
+        <inputAssignments>
+            <name>varUser</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <variables>
+        <description>The permissionset that doesn&apos;t have a profileid</description>
+        <name>Filtered_Permission_Set</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSet</objectType>
+    </variables>
+    <variables>
+        <description>HR Worker Informations Record</description>
+        <name>HR_Worker_Information_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>HR_Worker_Information__c</objectType>
+    </variables>
+    <variables>
+        <description>List of Permission set assignments that were assigned to user before flow started.</description>
+        <name>ListofExistingPermissionSetAssignments</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <name>ListOfFilteredPermissionSetAssignments</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>List of Permission Set Assignment records to create</description>
+        <name>ListofPermissionSetAssignments</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>Collection of all the Permission Set Groups from the config file</description>
+        <name>ListOfPermissionSetGroups</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>If Permission Sets were removed from the AutoProvisioning-Remove Permission Set Assignments flow.  This variable will store the date and time the permission sets were last removed</description>
+        <name>Perm_Set_Removal_Date_Time</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Permission set from Config record</description>
+        <name>PermissionSetGroup1</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>Permission set from Config record</description>
+        <name>PermissionSetGroup2</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>Permission set from Config record</description>
+        <name>PermissionSetGroup3</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>Permission set from Config record</description>
+        <name>PermissionSetGroup4</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>Permission set from Config record</description>
+        <name>PermissionSetGroup5</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>Permission set from Config record</description>
+        <name>PermissionSetGroup6</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetGroup</objectType>
+    </variables>
+    <variables>
+        <description>Employee Number of the HR Worker Record</description>
+        <name>var_Employee_Number</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>ID of the HR Worker Record</description>
+        <name>var_HR_Worker_Record_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>If Permission Sets were removed from the AutoProvisioning-Remove Permission Set Assignments flow.  This variable will store the running user</description>
+        <name>var_Perm_Set_Removal_User</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>HR Worker Status</description>
+        <name>var_Status</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>HR Worker Subteam</description>
+        <name>var_SubTeam</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>HR Worker Team</description>
+        <name>var_Team</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Current PermissionSetAssignment</description>
+        <name>varCurrentPermissionSetAssignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>This will be true of the user is new.</description>
+        <name>varNew_User</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>UserID of the User record that triggered the flow</description>
+        <name>varUserID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Record.Id</elementReference>
+        </value>
+    </variables>
+</Flow>

@@ -1,0 +1,17 @@
+<apex:page standardController="User">
+    <apex:includeScript value="/support/console/42.0/integration.js"/> 
+    <apex:includeLightning /> 
+    
+    <div id="LightningComponentid"></div>
+    <script type="text/javascript"> 
+            $Lightning.use("c:ChimaAIBenefitCoPilotLWCApp", function() {
+                $Lightning.createComponent("c:chimaAIBenefitCoPilotLWC",
+                                           { 
+                                           },
+                                           "LightningComponentid",
+                                           function(cmp,status) {
+                                               console.log('LWC Componenet added in VF page',status);
+                                           });
+            });
+    </script>
+</apex:page>

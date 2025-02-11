@@ -1,0 +1,374 @@
+<apex:page standardController="Case" extensions="ChimaChatInternalWidgetCtrl"  lightningStylesheets="true">
+    <apex:includeScript value="/support/console/48.0/integration.js"/>
+    
+    <apex:slds />
+    
+    <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+    
+    <style>
+        .showElement { 
+            display: block;
+        }
+    
+    	.hideElement {
+            display: none;
+        }    
+    
+    	.formContainer{
+        	padding: 10px;    
+        }
+    
+    	.button-group {
+            display: inline-flex;
+            justify-content: center;
+            width: 100%;
+        }
+    
+        .slds-scope .slds-icon-text-default{
+            fill: white;
+        }
+    
+    	.embeddedServiceSidebarButton .label:hover, .embeddedServiceSidebarButton:hover .label{
+            color: white !important;
+        }
+    
+    	.embeddedServiceSidebarButton .label:focus, .embeddedServiceSidebarButton:focus .label{
+            color: white !important;
+        }
+    
+    	.embeddedServiceSidebarButton.uiButton--inverse .label{
+            color: white !important;
+        }
+
+        .embeddedServiceHelpButton .helpButton .uiButton {
+            background-color: #0A8080;
+            font-family: "Arial", sans-serif;
+            max-width: 26em;
+        }
+
+        .slds-icon-text-default {
+            fill: white !important;
+        }
+        .slds-vf-scope .message {
+            background-color: #0A8080 !important;
+        }
+
+        span .message {
+            background-color: #0A8080 !important;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton:focus {
+            outline: 1px solid #0A8080;
+        }
+    
+    	.embeddedServiceSidebarButton{
+        	background: #0a8080 !important;    
+        }
+    
+    	.embeddedServiceSidebarButton:focus{
+        	background: #0a8080 !important;    
+        }
+
+        span .message {
+            background-color: #0A8080 !important;
+            color: white !important;
+            border-style: none !important;
+        }
+        .case-number-label{
+            font-size: 14px;
+        }
+        .case-number-text{
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+    
+    <apex:outputpanel rendered="{!objChatWrapper.strCaseRecId != null}">
+        <div class="slds-scope">
+            <button id="chatBackId" style="margin: 5px;margin-bottom: 0px;display:none;" class="slds-button slds-button_icon slds-button_icon-border" title="Back" onclick="handleChatBack();">
+                <svg class="slds-button__icon" aria-hidden="true">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#back"></use>
+                </svg>
+                <span class="slds-assistive-text">Back</span>
+            </button>
+            
+            <div id="preForm" class="formContainer">
+                <div><span class="case-number-label">Case Number: </span><span class="case-number-text">{!objChatWrapper.strCaseNumber}</span></div>
+                <div class="slds-form-element" id="hypothesisDiv">
+                    <form>
+                        <label class="slds-form-element__label" for="textarea-id-03">
+                            <abbr class="slds-required" title="required">* </abbr>What does the customer want to accomplish?
+                        </label>
+                        <div class="slds-form-element__control">
+                        <textarea id="hypothesis" onblur="handleOnBlur(event);" required="true" class="slds-textarea" placeholder="Enter the text here."></textarea>
+                        </div>
+                        <div id="hypothesisError" class="hideElement">
+                            <div class="slds-form-element__help">Please enter a value.</div>
+                        </div>
+                    </form>  
+                </div>
+                            
+                <div class="slds-form-element" id="pandaLinkDiv" style="margin-top: 5px;">
+                    <form>
+                        <label class="slds-form-element__label" for="textarea-id-03">
+                            <abbr class="slds-required" title="required">* </abbr>Panda or Hippo link for impacted employees/contractors (if applicable)
+                        </label>
+                        <div class="slds-form-element__control">
+                        <input type="url" required="true" onblur="handleOnBlur(event);" id="pandaLink" class="slds-textarea" placeholder="Enter Panda/Hippo link here."></input>
+                        </div>
+                        <div id="pandaLinkError" class="hideElement">
+                            <div class="slds-form-element__help">Please enter a value.</div>
+                        </div>
+                        <div id="URLError" class="hideElement">
+                            <div class="slds-form-element__help">Please provide Panda or Hippo link.</div>
+                        </div>
+                    </form>
+                </div>
+                            
+                <div class="slds-p-bottom_xx-small slds-p-top_xx-small button-group" style="margin-top: 20px;">
+                    <button class="slds-button slds-button_outline-brand" onclick="handleBack()">Back</button>
+                    <button id="start" class="slds-button slds-button_brand" onclick="startChat();">Next</button>
+                </div>
+            </div>
+        </div>
+    </apex:outputpanel>
+    
+    <script type='text/javascript'>
+        var isChatEnded = false;
+    	var selectedQueue = '';
+        var liveAgentSessionKey = '';
+    
+        window.addEventListener('message', function(event) {
+            if(isChatEnded && event && event.data && event.data.data && event.data.data[0] == 'ESW_IS_MINIMIZED'){
+                let parentURL = (window.location != window.parent.location)
+                ? document.referrer
+                : document.location.href;
+                let eventData = {
+                    type: 'CHAT_CLOSED',
+                    liveAgentSessionKey: liveAgentSessionKey
+                }
+                window.parent.postMessage(eventData, parentURL.substring(0, parentURL.length - 1));
+            }
+            
+            let typeOfData = typeof event.data;
+            
+            console.log('event.data### ', event.data);
+            if(event && event.data && typeOfData == "string" && event.data.startsWith('573')){
+                selectedQueue = event.data;
+            }
+        });
+    
+    	function handleBack(){
+            let parentURL = (window.location != window.parent.location)
+            ? document.referrer
+            : document.location.href;
+
+            console.log('parentURL### ', parentURL);
+
+            let eventData = {
+                type: 'CHAT_BACK'
+            }
+            window.parent.postMessage(eventData, parentURL.substring(0, parentURL.length - 1));
+        }
+    
+        function handleOnBlur(event) {
+            var elementId = event.target.id;
+            var elementValue = document.getElementById(elementId).value;
+
+            if(!elementValue){
+                document.getElementById(elementId+"Div").classList.add("slds-has-error");
+                document.getElementById(elementId+"Error").classList.add("showElement");
+                document.getElementById(elementId+"Error").classList.remove("hideElement");
+            }else{
+                document.getElementById(elementId+"Div").classList.remove("slds-has-error");
+                document.getElementById(elementId+"Error").classList.remove("showElement");
+                document.getElementById(elementId+"Error").classList.add("hideElement");    
+            }
+        }
+    
+        function validateFields(){
+            let allValid = true;
+            let elementIds = ['hypothesis', 'pandaLink'];
+            
+            for(let elementId of elementIds){
+            	let inpObj = document.getElementById(elementId);
+                
+                if(!inpObj.value){
+                    document.getElementById(elementId+"Div").classList.add("slds-has-error");
+                    document.getElementById(elementId+"Error").classList.add("showElement");
+                    document.getElementById(elementId+"Error").classList.remove("hideElement");
+                    allValid = false;
+                    continue;
+                }
+            }
+            
+            return allValid;
+        }
+    
+    	function handleChatBack(){
+            let ele = document.getElementsByClassName("embeddedServiceHelpButton");
+            if(ele && ele.length > 0){
+                ele[0].style.visibility = 'hidden';
+            }
+
+            document.getElementById('preForm').style.visibility = 'visible';
+            document.getElementById('chatBackId').style.display = 'none';
+        }
+    
+        function startChat(){
+            if(!validateFields()){
+                return;
+            }
+            
+            document.getElementById('chatBackId').style.display = 'block';
+            let helpButtons = document.getElementsByClassName("embeddedServiceHelpButton");
+            
+            if(helpButtons && helpButtons.length> 0){
+            	helpButtons[0].style.visibility = 'visible';    
+            }
+
+            document.getElementById('preForm').style.visibility = 'hidden';
+            
+            embedded_svc.settings.displayHelpButton = true; //Or false
+            embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+            embedded_svc.settings.defaultMinimizedText = 'Chat with Advanced Product Support'; //(Defaults to Chat with an Expert)
+            embedded_svc.settings.disabledMinimizedText = 'No advanced product specialists available'; //(Defaults to Agent Offline)
+            embedded_svc.settings.widgetHeight = '400px';
+            var blnIsVendor = "{!$User.Vendor__c}" !== '' && "{!$User.Vendor__c}" !== undefined
+            ? true
+            : false
+            
+            embedded_svc.settings.extraPrechatFormDetails = [{  
+                "label": "Record Type",
+                "value": "{!idChatTranscriptRecordType}",
+                "transcriptFields": [ "RecordTypeId" ],
+                "displayToAgent": false
+            },{  
+                "label": "User Id",
+                "value": "{!$User.Id}",
+                "transcriptFields": [ "Requested_By__c" ],
+                "displayToAgent": true
+            },{
+                "label": "Case Id",
+                "value": '{!objChatWrapper.strCaseRecId}',
+                "displayToAgent": true
+            }, {
+                "label": "First Name",
+                "value": "{!$User.FirstName}",
+                "displayToAgent": true
+            }, {
+                "label": "Last Name",
+                "value": "{!$User.LastName}",
+                "displayToAgent": true
+            },{
+                "label": "User Role",
+                "value": "{!$UserRole.Name}",
+                "displayToAgent": true
+            },{
+                "label": "Chat Reason",
+                "transcriptFields": [ "Chat_Reason__c" ],
+                "value": '{!objChatWrapper.strCaseReason}',
+                "displayToAgent": true
+            },{
+                "label": "Vendor",
+                "value": "{!$User.Vendor__c}",
+                "displayToAgent": true,
+            }, {
+                "label": "Panda/Hippo link",
+                "transcriptFields": [ "Panda_Hippo_link__c" ],
+                "value": '{!objChatWrapper.strPandaLink}', 
+                "displayToAgent": true
+            }, {
+                "label": "Panda Link For Employee Related Chat",
+                "transcriptFields": [ "Employee_Chat_Panda_Link__c" ],
+                "value": document.getElementById("pandaLink").value,
+                "displayToAgent": true
+            }, {
+                "label": "What does the customer want to accomplish?",
+                "transcriptFields": [ "What_is_the_customer_asking__c" ],
+                "value": document.getElementById('hypothesis').value,
+                "displayToAgent": true
+            }, {
+                "label": "Request from Vendor",
+                "transcriptFields": [ "Request_from_Vendor__c" ],
+                "value": blnIsVendor,
+                "displayToAgent": true
+            }];
+        
+            embedded_svc.settings.extraPrechatInfo = [
+                {
+                    "entityName": "Case",
+                    "saveToTranscript": "CaseId",
+                    "entityFieldMaps": [
+                        {
+                            "isExactMatch": true,
+                            "doCreate": false,
+                            "doFind": true,
+                            "label": "Case Id",
+                            "fieldName": "Id"
+                        }
+                    ]
+            	},
+                {
+                    "entityName": "Contact",
+                    "entityFieldMaps": [
+                        {
+                            "isExactMatch": false,
+                            "fieldName": "FirstName",
+                            "doCreate": false,
+                            "doFind": false,
+                            "label": "First Name"
+                        }, 
+                        {
+                            "isExactMatch": false,
+                            "fieldName": "LastName",
+                            "doCreate": false,
+                            "doFind": false,
+                            "label": "Last Name"
+                        }
+                    ]
+                }
+            ];
+            
+            embedded_svc.addEventHandler("onChatEndedByAgent", function(data) {
+                isChatEnded = true;
+                liveAgentSessionKey = data.liveAgentSessionKey;
+            });
+            
+            embedded_svc.addEventHandler("onChatEndedByChasitor", function(data) {
+                isChatEnded = true;
+                liveAgentSessionKey = data.liveAgentSessionKey;
+            });
+        
+            embedded_svc.addEventHandler("onChatEstablished", function(data) {
+                let parentURL = (window.location != window.parent.location)
+                ? document.referrer
+                : document.location.href;
+                
+                let eventData = {
+                    type: 'CHAT_ESTABLISHED',
+                    liveAgentSessionKey: data.liveAgentSessionKey
+                }
+                window.parent.postMessage(eventData, parentURL.substring(0, parentURL.length - 1));
+            });
+        
+            embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+            embedded_svc.settings.entryFeature = 'LiveAgent';
+            
+            embedded_svc.init(
+                "{!$Label.Internal_chat_org_url}",
+                "{!$Label.Internal_chat_site_url}",
+                'https://service.force.com',
+                "{!$Label.Internal_chat_org_id}",
+                'CX_Internal_Chat',
+                {
+                    baseLiveAgentContentURL: "{!$Label.Internal_chat_baseLiveAgentContentURL}",
+                    deploymentId: "{!$Label.Internal_chat_deploymentId}",
+                    buttonId: selectedQueue.substring(0, 15),
+                    baseLiveAgentURL: "{!$Label.Internal_chat_baseLiveAgentURL}",
+                    eswLiveAgentDevName: "{!$Label.Internal_chat_eswLiveAgentDevName}",
+                    isOfflineSupportEnabled: false
+                }
+            );
+        }
+    </script>
+</apex:page>

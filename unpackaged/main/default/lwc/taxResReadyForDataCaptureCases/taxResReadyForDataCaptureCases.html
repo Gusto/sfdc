@@ -1,0 +1,142 @@
+<template>
+	<div class="spinner">
+		<template if:true={blnIsLoading}>
+			<div class="slds-is-relative">
+				<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium"> </lightning-spinner>
+			</div>
+		</template>
+	</div>
+	<lightning-layout multiple-rows>
+		<lightning-layout-Item padding="around-small" size="12">
+			<div style="width: 100%; text-align: right">
+				<lightning-button variant="neutral" label="Refresh" title="Refresh Page" onclick={refreshPage} class="slds-m-left_x-small"></lightning-button>
+			</div>
+		</lightning-layout-Item>
+	</lightning-layout>
+	<div class="demo-only table-header">
+		<div class="slds-text-align_left bold-font">Filters</div>
+	</div>
+	<div class="slds-m-around_medium">
+		<lightning-layout multiple-rows>
+			<lightning-layout-item size="3" padding="around-small">
+				<lightning-input type="number" name="startAge" label="From Age" placeholder="type here..." onchange={handleFilterChange}></lightning-input>
+			</lightning-layout-item>
+			<lightning-layout-item size="3" padding="around-small">
+				<lightning-input type="number" name="endAge" label="To Age" placeholder="type here..." onchange={handleFilterChange}></lightning-input>
+			</lightning-layout-item>
+			<lightning-layout-item size="3" padding="around-small">
+				<lightning-input type="date" name="startDueDate" label="From Notice Due Date" placeholder="enter here..." onchange={handleFilterChange}></lightning-input>
+			</lightning-layout-item>
+			<lightning-layout-item size="3" padding="around-small">
+				<lightning-input type="date" name="endDueDate" label="To Notice Due Date" placeholder="enter here..." onchange={handleFilterChange}></lightning-input>
+			</lightning-layout-item>
+			<lightning-layout-item size="6" padding="around-small">
+				<lightning-combobox name="strSegment" label="Select Segment" onchange={handleFilterChange} options={list_Segments}></lightning-combobox>
+			</lightning-layout-item>
+			<lightning-layout-item size="6" padding="around-small">
+				<lightning-record-edit-form object-api-name="Case">
+					<label for="Case-Owner-Id">Case Owner</label>
+					<lightning-input-field id="Case-Owner-Id" name="strCaseOwner" field-name="Account_Specialist__C" onchange={handleFilterChange} variant="label-hidden"></lightning-input-field>
+				</lightning-record-edit-form>
+			</lightning-layout-item>
+			<lightning-layout-item size="3" padding="around-small">
+				<lightning-combobox name="blnIsOCR" label="IDP Agency" onchange={handleFilterChange} options={list_OCRValues} value={blnSelectedIsOCRValue}></lightning-combobox>
+			</lightning-layout-item>			
+			<lightning-layout-item size="6" padding="around-small">
+				<template if:true={blnShowTier}>
+					<template if:true={TierValues.data}>
+						<lightning-dual-listbox
+							name="tier"
+							label="Select Tiers:"
+							source-label="Available"
+							selected-label="Selected"
+							field-level-help="Select your preferred tiers."
+							options={TierValues.data.values}
+							onchange={handleFilterChange}
+							class="pointer-cursor"
+						>
+						</lightning-dual-listbox>
+					</template>
+				</template>
+				<template if:true={blnShowPartnerTier}>
+					<template if:true={partnerTierValues.data}>
+						<lightning-dual-listbox
+							name="partnertier"
+							label="Select Partner Tiers:"
+							source-label="Available"
+							selected-label="Selected"
+							field-level-help="Select your preferred partner tiers."
+							options={partnerTierValues.data.values}
+							onchange={handleFilterChange}
+							class="pointer-cursor"
+						>
+						</lightning-dual-listbox>
+					</template>
+				</template>
+			</lightning-layout-item>
+			<lightning-layout-item size="9" padding="around-small">
+				<div style="width: 100%; text-align: left; padding: 10px;">
+					<lightning-icon icon-name='custom:custom53' alternative-text='Partially Indexed' size='small' title='partiallyIndexed'></lightning-icon>
+					<b> = Partially Indexed</b>
+				</div>
+			</lightning-layout-item>
+			<lightning-layout-item size="3" padding="around-small" class="align-right">
+				<button class="slds-button slds-button_brand" name="openUpdateOwnerPopup" onclick={handleFilterChange}>Update Owner</button>
+			</lightning-layout-item>
+		</lightning-layout>
+	</div>
+	<div class="demo-only table-header">
+		<div class="slds-text-align_left bold-font">Available Cases</div>
+	</div>
+	<lightning-layout multiple-rows="true" horizontal-align="center">
+		<lightning-layout-Item padding="around-small" size="12">
+			<div style="height: 450px">
+				<lightning-datatable
+					key-field="id"
+					data={list_Cases}
+					columns={columns}
+					sorted-by={strSortedBy}
+					sorted-direction={strSortedDirection}
+					onsort={handleColumnSort}
+					onrowaction={handleRowAction}
+					show-row-number-column="true"
+					onloadmore={loadMoreData}
+					onrowselection={handleCaseRowSelection}
+					enable-infinite-loading
+				>
+				</lightning-datatable>
+			</div>
+		</lightning-layout-Item>
+	</lightning-layout>
+	<!--modal open when user wants to escalate the case-->
+	<template if:true={blnShowPopup}>
+		<!-- Modal/Popup Box LWC starts here -->
+		<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<!-- Modal/Popup Box LWC header here -->
+				<header class="slds-modal__header">
+					<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Owner to update</h2>
+				</header>
+				<!-- Modal/Popup Box LWC body starts here -->
+				<div class="slds-modal__content slds-p-around_medium div-height" id="modal-content-id-1">
+					<lightning-record-edit-form object-api-name="Case">
+						<lightning-input-field
+							id="case-owner-values"
+							name="case-owner-values"
+							field-name="Account_Specialist__c"
+							onchange={handleFilterChange}
+							variant="label-hidden"
+						></lightning-input-field>
+					</lightning-record-edit-form>
+					&nbsp;<br /><br /><br /><br />&nbsp;
+				</div>
+				<!-- Modal/Popup Box LWC footer starts here -->
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" name="cancelmodelBtn" onclick={handleEvent} title="Cancel">Cancel</button>
+					<button class="slds-button slds-button_brand" name="updateOwnerBtn" onclick={handleEvent} title="OK">Update Owner</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+</template>

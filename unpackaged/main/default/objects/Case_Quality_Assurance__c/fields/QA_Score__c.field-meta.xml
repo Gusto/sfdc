@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>QA_Score__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( 
+OR(Unauthorized_Release_of_PII__c = true, Deliberately_hangs_up_ondoes_not_reply__c = true,  Use_of_disparaging_or_belittling_remarks__c = True,  Verification_Steps_not_Followed__c = true, Did_not_solve_under_appropriate_reason__c = true),0,
+
+(VALUE(Text(Communication__c)) + VALUE(Text( Confidence__c )) + VALUE(Text(Issue_Diagnosis__c)) + VALUE(Text( Issue_Resolution__c )) + VALUE(Text( Product_Knowledge__c )) + VALUE(Text( Next_Issue_Avoidance__c )))/6)</formula>
+    <label>QA Score</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

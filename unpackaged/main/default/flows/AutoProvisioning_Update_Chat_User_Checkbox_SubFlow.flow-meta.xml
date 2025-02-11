@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <decisions>
+        <description>Does the user&apos;s role use the Chat User attribute?</description>
+        <name>Does_Role_Use_Chat_User</name>
+        <label>Does Role Use Chat User</label>
+        <locationX>314</locationX>
+        <locationY>278</locationY>
+        <defaultConnector>
+            <targetReference>Remove_Chat_User_Checkbox</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varRoles_for_Chat_User</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <elementReference>varUser.UserRole.DeveloperName</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_the_User</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Created to check the Chat User checkbox if the role exists in the Chat User Roles field on the Automated Onboarding - Field Updates (Custom Metadata Type)</description>
+    <environments>Default</environments>
+    <interviewLabel>AutoProvisioning - Update Chat User Checkbox (SubFlow) {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisioning - Update Chat User Checkbox (SubFlow)</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get the list of roles from the Custom Metadata type</description>
+        <name>Get_List_of_Roles_for_Chat_User</name>
+        <label>Get List of Roles for Chat User</label>
+        <locationX>314</locationX>
+        <locationY>158</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Does_Role_Use_Chat_User</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Chat_User_Roles</stringValue>
+            </value>
+        </filters>
+        <object>Automated_Onboarding_Field_Updates__mdt</object>
+        <outputAssignments>
+            <assignToReference>varRoles_for_Chat_User</assignToReference>
+            <field>Roles_for_Chat_User__c</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordUpdates>
+        <name>Remove_Chat_User_Checkbox</name>
+        <label>Remove Chat User Checkbox</label>
+        <locationX>578</locationX>
+        <locationY>398</locationY>
+        <faultConnector>
+            <targetReference>Copy_1_of_Fault_Line_for_Assign_Chat_User</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varUser.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>UserPermissionsLiveAgentUser</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>UserPermissionsLiveAgentUser</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <object>User</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Assign Chat User Permission</description>
+        <name>Update_the_User</name>
+        <label>Assign Chat User Permission</label>
+        <locationX>50</locationX>
+        <locationY>398</locationY>
+        <faultConnector>
+            <targetReference>Fault_Line_for_Assign_Chat_User</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varUser.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>UserPermissionsLiveAgentUser</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>UserPermissionsLiveAgentUser</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <object>User</object>
+    </recordUpdates>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_List_of_Roles_for_Chat_User</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Copy_1_of_Fault_Line_for_Assign_Chat_User</name>
+        <label>Fault Line for Remove Chat User</label>
+        <locationX>842</locationX>
+        <locationY>518</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Remove Chat User Permission</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Remove Chat User Permission</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>AutoProvisioning - Update Chat User Checkbox</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>varUser.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Fault_Line_for_Assign_Chat_User</name>
+        <label>Fault Line for Assign Chat User</label>
+        <locationX>314</locationX>
+        <locationY>518</locationY>
+        <flowName>Slack_Message_Fault_Flow</flowName>
+        <inputAssignments>
+            <name>varCurrentFlowAction</name>
+            <value>
+                <stringValue>Assign Chat User Permission</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFlow_Action_Description</name>
+            <value>
+                <stringValue>Assign Chat User Permission</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varObject_Name</name>
+            <value>
+                <stringValue>User</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varParent_Flow_Name</name>
+            <value>
+                <stringValue>AutoProvisioning - Update Chat User Checkbox</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRecordID</name>
+            <value>
+                <elementReference>varUser.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <variables>
+        <description>The list of roles entered in the Custom Metadata Type</description>
+        <name>varRoles_for_Chat_User</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>User to be updated</description>
+        <name>varUser</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+</Flow>

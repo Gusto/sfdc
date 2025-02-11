@@ -1,0 +1,29 @@
+h3{
+    position: relative;
+}
+
+.overflow-tip {
+    /* show hidden part outside of parent */
+    overflow-x: visible;
+    /* and with inner span */
+    span {
+        /* allow to overlap siblings */
+        position: relative;
+        /* make readable design */
+        background-color: PaleGoldenRod;
+        border: 1px solid gray;
+        padding: 3px;
+        /* compensate padding and border size to avoid jerking */
+        margin-left: -4px;
+    }
+ }
+
+ /* .title-font-size {
+     font-size: 16px;
+ }
+
+ .case-page-header {
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10);
+    border-radius: 0.25rem;
+ } */

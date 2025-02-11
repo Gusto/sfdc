@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Tax Res Automate Customer Email</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Filter_Type__c</field>
+        <value xsi:type="xsd:string">MainQuery</value>
+    </values>
+    <values>
+        <field>Filter_Value__c</field>
+        <value xsi:type="xsd:string">SELECT ID,Notice_Analyst__c,Email_Status__c,Status,Agency_Information__c,RecordTypeId, Last_out_bound_email__c, ContactId, OwnerId, (SELECT ID, ParentId, messageDate FROM EmailMessages WHERE Incoming = false AND Status =:strSent ORDER BY messageDate DESC LIMIT 1 ) FROM Case WHERE RecordTypeId =:CASE_RECORD_TYPE_ID AND Status NOT IN:set_ExcludeCase AND ContactId != null</value>
+    </values>
+    <values>
+        <field>Order_by_records__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Play_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Priority__c</field>
+        <value xsi:type="xsd:string">0</value>
+    </values>
+    <values>
+        <field>Skill_Type__c</field>
+        <value xsi:type="xsd:string">All Cases</value>
+    </values>
+    <values>
+        <field>Team__c</field>
+        <value xsi:type="xsd:string">Feature</value>
+    </values>
+</CustomMetadata>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ensure_Lead_does_not_Leave_SAL_Status</fullName>
+    <active>true</active>
+    <description>For issue encountered by Biztech Dev team were a Lead changes status.</description>
+    <errorConditionFormula>NOT(ISPICKVAL(Status, &apos;Converted&apos;))  &amp;&amp;
+  ISPICKVAL(PRIORVALUE(Status), &apos;Converted&apos;)</errorConditionFormula>
+    <errorMessage>Lead Status can not move from Converted</errorMessage>
+</ValidationRule>

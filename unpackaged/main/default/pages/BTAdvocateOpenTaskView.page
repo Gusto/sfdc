@@ -1,0 +1,187 @@
+<apex:page controller="BTAdvocateViewCtrl" sidebar="false" action="{!CallOnBTOpenTask}">
+<apex:form id="frmBody">
+    <c:BTAdvocateComp cohortTab="" OOOTab="" openTask="active"/>
+
+	        
+    <div class="slds-scope">
+    <table width="100%" style="margin-bottom: 5px;">
+        <tr>
+            <td><apex:pageMessages id="showmsg" /></td>
+        </tr>
+    </table>
+  <apex:pageblock title="Open Tasks" id="openTasks"> 
+  	<div style="text-align: right; margin-top: -40px;">
+           <apex:commandButton value="Refresh" action="{!CallOnBTOpenTask}" reRender="frmBody" status="actStatusId" styleclass="btn-blue" style="padding: 3px 8px !important;"/>
+        </div>
+      <!-- Communication Start -->
+        
+        <div class="tab">
+          <apex:commandLink action="{!ShowCustomerCommunication}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!strCustActive}" style="padding:5px 12px">Customer Communication ({!list_CustomerCommWrapper.size} Records)</apex:commandLink>
+          <apex:commandLink action="{!ShowCarrierCommunication}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!strCarrierActive}" style="padding:5px 12px">Carrier Communication ({!list_CarrierCommWrapper.size} Records)</apex:commandLink>
+          <apex:commandLink action="{!ShowCustomerCommunicationMoreThan5Days}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!strCustActiveMoreThan5Days}" style="padding:5px 12px">Customer Communication More Than 5 days ({!list_CustomerCommWrapperMoreThan5Days.size} Records)</apex:commandLink>
+        </div>
+        <br/>
+        <div class="tabcontent">
+            <!-- Customer Communication Start -->
+            <apex:outputPanel rendered="{!if(strCustActive=='active',true,false)}" id="custPanel">
+            <table id="customerCommunication" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th >Days since email received</th>
+                  <th data-orderable="false" >Benefit Order name</th>
+                  <th data-orderable="false">Benefit Order status</th>
+                  <th data-orderable="false">Case # </th>
+                  <th>Renewal Date </th>
+                  <th data-orderable="false">Contact Name</th>
+                  <th data-orderable="false">Action Required</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!list_CustomerCommWrapper}" var="objCC">
+                <tr>
+                  <td>{!objCC.intDaySinceLastReceived}</td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Benefit_Order__c}','{!objCC.objCase.Benefit_Order__r.Name}');return false;">{!objCC.objCase.Benefit_Order__r.Name}</a></td>
+                  <td><apex:outputlabel value="{!objCC.objCase.Benefit_Order__r.Order_Status__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Id}','{!objCC.objCase.CaseNumber}');return false;">{!objCC.objCase.CaseNumber}</a></td>
+                  <td><apex:outputfield value="{!objCC.objCase.Benefit_Order__r.Renewal_Date__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.ContactId}','{!objCC.objCase.Contact.Name}');return false;">{!objCC.objCase.Contact.Name}</a></td>
+                  <td>
+                    <label class="slds-checkbox_toggle slds-grid">
+                        <apex:inputcheckbox value="{!objCC.objCase.Requires_Action__c}">
+                            <apex:actionSupport event="onchange" action="{!updateRequireStatus}" reRender="frmBody" status="actStatusId">
+                                    <apex:param name="strCaseId" value="{!objCC.objCase.Id}"/>
+                            </apex:actionSupport>
+                        </apex:inputcheckbox>
+                        <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                            <span class="slds-checkbox_faux"></span>
+                        </span>
+                     </label>  
+                  </td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+            </apex:outputPanel>
+            <!-- Customer Communication End -->
+            <!-- Carrier Communication Start -->
+            <apex:outputPanel rendered="{!if(strCarrierActive=='active',true,false)}" id="carrierPanel">
+                <table id="carrierCommunication" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Days since email received</th>
+                  <th data-orderable="false">Carrier Order name</th>
+                  <th>Implementation Stage</th>
+                  <th data-orderable="false">Benefit Order name</th>
+                  <th data-orderable="false">Case # </th>
+                  <th>Effective date </th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!list_CarrierCommWrapper}" var="objCC">
+                <tr>
+                  <td>{!objCC.intDaySinceLastReceived}</td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Carrier_Order__c}','{!objCC.objCase.Carrier_Order__r.Name}');return false;">{!objCC.objCase.Carrier_Order__r.Name}</a></td>
+                  <td><apex:outputfield value="{!objCC.objCase.Carrier_Order__r.Implementation_Stage__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Benefit_Order__c}','{!objCC.objCase.Benefit_Order__r.Name}');return false;">{!objCC.objCase.Benefit_Order__r.Name}</a></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Id}','{!objCC.objCase.CaseNumber}');return false;">{!objCC.objCase.CaseNumber}</a></td>
+                  <td><apex:outputfield value="{!objCC.objCase.Benefit_Order__r.Renewal_Date__c}"/></td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+            </apex:outputPanel>
+            <!-- Carrier Communication End -->
+            <!-- Customer Communication More Than 5 Days Start -->
+            <apex:outputPanel rendered="{!if(strCustActiveMoreThan5Days=='active',true,false)}" id="custPanelMoreThan5days">
+            <table id="customerCommunication5days" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th data-orderable="false">Days since Last email sent</th>
+                  <th data-orderable="false" >Benefit Order name</th>
+                  <th data-orderable="false">Benefit Order status</th>
+                  <th data-orderable="false">Case # </th>
+                  <th>Renewal Date </th>
+                  <th data-orderable="false">Contact Name</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!list_CustomerCommWrapperMoreThan5Days}" var="objCC">
+                <tr>
+                  <td><apex:outputfield value="{!objCC.objCase.Days_since_last_email_to_customer__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Benefit_Order__c}','{!objCC.objCase.Benefit_Order__r.Name}');return false;">{!objCC.objCase.Benefit_Order__r.Name}</a></td>
+                  <td><apex:outputlabel value="{!objCC.objCase.Benefit_Order__r.Order_Status__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.Id}','{!objCC.objCase.CaseNumber}');return false;">{!objCC.objCase.CaseNumber}</a></td>
+                  <td><apex:outputfield value="{!objCC.objCase.Benefit_Order__r.Renewal_Date__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openSubTab('{!objCC.objCase.ContactId}','{!objCC.objCase.Contact.Name}');return false;">{!objCC.objCase.Contact.Name}</a></td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+            </apex:outputPanel>
+            <!-- Customer Communication More Than 5 Days End -->
+        </div>
+        <!-- Communication End -->
+        <!-- Tickets section Start -->
+        <br/>
+        <apex:outputpanel id="ticketPanel">
+	         <div class="tab">
+	          <apex:commandLink action="{!ShowTicketCreatedByMe}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!strCreatedActive}" style="padding:5px 12px">Tickets Created by Me ({!intNoOfTicketCreated} Records)</apex:commandLink>
+	          <apex:commandLink action="{!ShowTicketOwnedByMe}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!strOwnedActive}" style="padding:5px 12px">Tickets Assigned to Me ({!intNoOfTicketOnwed} Records)</apex:commandLink>
+	          <apex:commandLink action="{!ShowClosedTicket}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!strClosedActive}" style="padding:5px 12px">Tickets Closed Within Past Week ({!intNoOfTicketClosed} Records)</apex:commandLink>
+	        </div>
+	         <br/>
+	        <div class="tabcontent">
+	        	<!-- Ticket Created By me Start -->
+		            <table id="TicketTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+		              <thead>
+		                <tr>
+		                  <th>Days since ticket created</th>
+		                  <th data-orderable="false">Benefit/Carrier order name</th>
+		                  <th>Ticket Status</th>
+		                  <th>Ticket Reason</th>
+		                  <th>Ticket reason detail</th>
+		                  <th data-orderable="false">Ticket # </th>
+		                  <th>Effective date </th>
+		                  <th data-orderable="false">Description</th>
+		                  <th data-orderable="false">Reporting team</th>
+		                   <th data-orderable="false">Last modified date</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              <apex:repeat value="{!list_TicketWrapper}" var="tkt">
+		                <tr>
+		                  <td>{!tkt.intDaySinceLastCreated}</td>
+		                  <td><a href="javascript:void(0);" onclick="openSubTab('{!tkt.objTicket.Benefit_Order__c}','{!tkt.objTicket.Benefit_Order__r.Name}');return false;">{!tkt.objTicket.Benefit_Order__r.Name}</a></td>
+		                  <td><apex:outputlabel value="{!tkt.objTicket.Status__c}"/></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason__c}"/></td>
+		                   <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason_Detail__c}"/></td>
+		                  <td><a href="javascript:void(0);" onclick="openSubTab('{!tkt.objTicket.Id}','{!tkt.objTicket.Name}');return false;">{!tkt.objTicket.Name}</a></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Benefit_Order__r.Renewal_Date__c}"/></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Description__c}"/></td>
+		                  <td><apex:outputfield value="{!tkt.objTicket.Reporting_Team__c}"/></td>
+		                  <td>
+		                  	<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+							    <apex:param value="{!tkt.objTicket.LastModifieddate}" />
+							</apex:outputText>
+		                  </td>
+		                </tr>
+		              </apex:repeat>
+		              </tbody>
+		            </table>
+	            </div>
+        	</apex:outputpanel>
+      </apex:pageblock>
+        </div>
+        <!-- Tickets section End -->
+        <script>
+            $(function() {
+              $("#customerCommunication").DataTable({"aaSorting": []});
+              $("#customerCommunication5days").DataTable({"aaSorting": []});
+              $("#carrierCommunication").DataTable({"aaSorting": []});
+              $("#TicketTable").DataTable({"aaSorting": []});
+            });
+       </script> 
+     
+      
+</apex:form>
+</apex:page>

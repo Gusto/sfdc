@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <assignments>
+        <name>Update_Benefits_Class</name>
+        <label>Update Benefits Class</label>
+        <locationX>402</locationX>
+        <locationY>431</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Benefits_Class__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Class 1</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_User_Role</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Workflow Actions:
+1. Clear Department
+2. Clear Division
+3. Clear Title</description>
+        <name>Update_Department_Division_Title</name>
+        <label>Update Department, Division &amp; Title</label>
+        <locationX>270</locationX>
+        <locationY>767</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Department</assignToReference>
+            <operator>Assign</operator>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Division</assignToReference>
+            <operator>Assign</operator>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Title</assignToReference>
+            <operator>Assign</operator>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Deactivated_User_to_OOO</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Workflow Actions:
+1. Parse User Role::Department
+2. Parse User Role::Division
+3.  Parse User Role::Title
+4.  Set Company</description>
+        <name>Update_Department_Division_Title_Company</name>
+        <label>Update Department, Division, Title &amp; Company</label>
+        <locationX>534</locationX>
+        <locationY>767</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Department</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strDepartmentFromUserRole</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Division</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strDivisionFromUserRole</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Title</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strTitleFromUserRole</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.CompanyName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Gusto</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Deactivated_User_to_OOO</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Workflow Action: Set to OOO</description>
+        <name>Update_Out_of_Office</name>
+        <label>Update Out of Office</label>
+        <locationX>402</locationX>
+        <locationY>1103</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Out_Of_Office__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_Operation</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Workflow Actions:
+1. Class 1 PRC
+2. Update Benefits Class</description>
+        <name>Update_Payroll_Benefits_Classes</name>
+        <label>Update Payroll &amp; Benefits Classes</label>
+        <locationX>50</locationX>
+        <locationY>1559</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Class_Queue__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Class 1</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Benefits_Class__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Class 1</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <description>Workflow Actions:
+1. Class 1 PRC</description>
+        <name>Update_Payroll_Class</name>
+        <label>Update Payroll Class</label>
+        <locationX>314</locationX>
+        <locationY>1559</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Class_Queue__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Class 1</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Check_Operation</name>
+        <label>Check Operation</label>
+        <locationX>534</locationX>
+        <locationY>1319</locationY>
+        <defaultConnectorLabel>Is Update</defaultConnectorLabel>
+        <rules>
+            <name>Is_Create</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnIsCreateOperation</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Verify_User_Profile</targetReference>
+            </connector>
+            <label>Is Create</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Work flow Rules
+1. User Role is Blank
+2.  User Role is Not Blank</description>
+        <name>Check_User_Role</name>
+        <label>Check User Role</label>
+        <locationX>534</locationX>
+        <locationY>647</locationY>
+        <defaultConnector>
+            <targetReference>Update_Deactivated_User_to_OOO</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Is User Role Not Changed</defaultConnectorLabel>
+        <rules>
+            <name>Is_Have_No_User_Role</name>
+            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.UserRoleId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnIsCreateOperation</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.UserRoleId</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Department_Division_Title</targetReference>
+            </connector>
+            <label>Is Have No User Role</label>
+        </rules>
+        <rules>
+            <name>Is_Have_User_Role</name>
+            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.UserRoleId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnIsCreateOperation</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.UserRoleId</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Department_Division_Title_Company</targetReference>
+            </connector>
+            <label>Is Have User Role</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Move_to_Full_Stack</name>
+        <label>Move to Full Stack</label>
+        <locationX>534</locationX>
+        <locationY>311</locationY>
+        <defaultConnector>
+            <targetReference>Check_User_Role</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_User_Benefits_Care_Class_is_Empty</name>
+            <conditionLogic>1 AND 2 AND (3 OR 4 OR 5)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Profile.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits Care</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Benefits_Class__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnIsCreateOperation</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ProfileId</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Benefits_Class__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Benefits_Class</targetReference>
+            </connector>
+            <label>Is Benefits Care user &amp; Class is Empty</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Workflow : Update Deactivated User to OOO</description>
+        <name>Update_Deactivated_User_to_OOO</name>
+        <label>Update Deactivated User to OOO</label>
+        <locationX>534</locationX>
+        <locationY>983</locationY>
+        <defaultConnector>
+            <targetReference>Check_Operation</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_User_Deactivated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.IsActive</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Out_of_Office</targetReference>
+            </connector>
+            <label>Is User Deactivated</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Class 1 FSC</description>
+        <name>Verify_User_Profile</name>
+        <label>Verify User Profile</label>
+        <locationX>314</locationX>
+        <locationY>1439</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Benefits_Care</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Profile.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits Care</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Payroll_Benefits_Classes</targetReference>
+            </connector>
+            <label>Is Benefits Care</label>
+        </rules>
+        <rules>
+            <name>Is_Payroll_Care</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Profile.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll Care</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Payroll_Class</targetReference>
+            </connector>
+            <label>Is Payroll Care</label>
+        </rules>
+    </decisions>
+    <description>Converted from 6 Workflow Rules.
+
+Class 1 FSC
+Class 1 PRC
+Move to Full Stack
+Update Deactivated User to OOO
+User Role is Blank
+User Role is Not Blank</description>
+    <formulas>
+        <name>blnIsCreateOperation</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <formulas>
+        <description>Workflow Action: Parse User Role::Department</description>
+        <name>strDepartmentFromUserRole</name>
+        <dataType>String</dataType>
+        <expression>IF(CONTAINS({!$Record.UserRole.Name},&apos;exec&apos;),&apos;Executive&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;sales&apos;),&apos;Sales&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;ops&apos;),&apos;Operations&apos;,
+&apos;&apos;)))</expression>
+    </formulas>
+    <formulas>
+        <description>Workflow Action: Parse User Role::Division</description>
+        <name>strDivisionFromUserRole</name>
+        <dataType>String</dataType>
+        <expression>IF(CONTAINS({!$Record.UserRole.Name},&apos;mm&apos;),&apos;Middle Market&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;partner&apos;),&apos;Partner&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;sb&apos;),&apos;Small Business&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;ben&apos;),&apos;Benefits&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;mig&apos;),&apos;Migrations&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;mdr&apos;),&apos;Market Development&apos;,
+&apos;&apos;))))))</expression>
+    </formulas>
+    <formulas>
+        <description>Workflow Action: Parse User Role::Title</description>
+        <name>strTitleFromUserRole</name>
+        <dataType>String</dataType>
+        <expression>TRIM(IF(CONTAINS({!$Record.UserRole.Name},&apos;fs&apos;), &apos;Full Stack Advisor&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;np&apos;), &apos;New Plan Advisor&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;pr&apos;), &apos;Payroll Rep&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;ib&apos;), &apos;Inbound Rep&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;ob&apos;), &apos;Outbound Rep&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;am&apos;), &apos;Account Manager&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;ae&apos;), &apos;Account Executive&apos;,
+IF(CONTAINS({!$Record.UserRole.Name},&apos;admin&apos;), &apos;Administrator&apos;,
+&apos;&apos;)))))))) +
+IF(CONTAINS({!$Record.UserRole.Name},&apos;mgr&apos;), &apos; Manager&apos;,&apos;&apos;))</expression>
+    </formulas>
+    <interviewLabel>Record Trigger: User Before Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: User Before Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>408</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Move_to_Full_Stack</targetReference>
+        </connector>
+        <object>User</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

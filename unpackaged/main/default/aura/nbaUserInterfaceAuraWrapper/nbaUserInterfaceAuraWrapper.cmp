@@ -1,0 +1,6 @@
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,force:hasRecordId,force:hasSObjectName">
+	<lightning:workspaceAPI aura:id="workspace" />
+	<aura:attribute name="blnLoaded" type="Boolean" />
+	<!-- embedding lwc component that has business logic -->
+	<c:nbaUserInterfaceCmp onsettablabel="{!c.setTabLabel}" aura:id="nbaUserInterfaceCmp"></c:nbaUserInterfaceCmp>
+</aura:component>

@@ -1,0 +1,37 @@
+<template>
+	<template lwc:if={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<template lwc:else>
+		<lightning-quick-action-panel header="Approve/Audit Order">
+			<lightning-record-edit-form record-id={recordId} object-api-name="Carrier_Order__c">
+				<lightning-combobox
+					style="padding: 10px"
+					label="Implementation Stage"
+					value={selectedStage}
+					placeholder="Select Implementation Stage"
+					options={impStageOpts}
+					onchange={handleImpStageChange}
+				>
+				</lightning-combobox>
+				<template lwc:if={blnHasTadaOrder}>
+					<lightning-combobox
+						style="padding: 10px"
+						label="Implementation Stage Detail"
+						value={selectedStageDetail}
+						placeholder="Select Implementation Stage Detail"
+						options={impStageDetailOpts}
+						onchange={handleImpStageDetailChange}
+					>
+					</lightning-combobox>
+				</template>
+				<lightning-input-field name="notes" field-name="Approval_Notes__c" style="padding: 10px"> </lightning-input-field>
+				<lightning-input-field name="method" field-name="Approval_Method__c" style="padding: 10px"> </lightning-input-field>
+			</lightning-record-edit-form>
+			<div slot="footer">
+				<lightning-button variant="neutral" label="Discard" onclick={closeQuickAction}></lightning-button>
+				<lightning-button variant="brand" label="Confirm" onclick={save} class="slds-m-left_x-small"></lightning-button>
+			</div>
+		</lightning-quick-action-panel>
+	</template>
+</template>

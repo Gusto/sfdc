@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Detail_Button_Block_JS</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Block</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/39.0/connection.js&quot;)}
+
+try {
+	var update_Task = new sforce.SObject(&quot;Task&quot;); 
+        update_Task.Description = prompt(&apos;Please provide Blocked reason.&apos;, &apos;{!Task.Description}&apos; );
+	update_Task.ID = &apos;{!Task.Id}&apos;; 
+	update_Task.Status = &apos;Blocked&apos;; 
+        update_Task.Status_Detail__c = &apos;None&apos;; 
+	result = sforce.connection.update([update_Task]); 
+	window.location.reload();
+} 
+catch(er) {
+    alert(er);
+}</url>
+</WebLink>

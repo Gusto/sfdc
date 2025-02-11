@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sbiz_EE_Size_Eligible__c</fullName>
+    <description>Field used to define the employee size of the company that will be worked by the small business team.</description>
+    <formula>Opportunity__r.NumberOfEmployees__c &gt;= 1 &amp;&amp; Opportunity__r.NumberOfEmployees__c &lt; 25</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Field used to define the employee size of the company that will be worked by the small business team.</inlineHelpText>
+    <label>Sbiz EE Size Eligible</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

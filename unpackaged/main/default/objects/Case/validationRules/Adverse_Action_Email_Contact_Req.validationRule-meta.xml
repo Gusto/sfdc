@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Adverse_Action_Email_Contact_Req</fullName>
+    <active>true</active>
+    <description>Adverse Action Email alerts are sent through a flow for Financial Product team. These emails are a compliance requirement for our Banking Partner. Contact is required to send email notice on Modern Bank Case.</description>
+    <errorConditionFormula>ISPICKVAL(  Status, &apos;Solved&apos; ) &amp;&amp;
+ISBLANK(  ContactId ) &amp;&amp;
+CONTAINS( RecordType.Name  , &apos;Modern Bank&apos; )  &amp;&amp;
+(NOT( CONTAINS( Additional_Auto_Email_Sent__c, &apos;Adverse Action&apos; ) )  || ISBLANK(  Additional_Auto_Email_Sent__c)) &amp;&amp;
+(  SuppliedEmail != &apos;support@guideline.com&apos; )   &amp;&amp;
+NOT( ISBLANK( TEXT(  Confirm_Case_Reason__c )) ) &amp;&amp;
+( CONTAINS(  TEXT( Confirm_Case_Reason__c) ,  &apos;ID Failure AAN&apos;)   || CONTAINS(  TEXT( Confirm_Case_Reason__c ) ,  &apos;Bankruptcy AAN&apos;) )</errorConditionFormula>
+    <errorMessage>Adverse Action email can not be sent if there is no contact on the Case. Please add a contact to this case before Adverse Action email can be sent and the case can be solved.</errorMessage>
+</ValidationRule>

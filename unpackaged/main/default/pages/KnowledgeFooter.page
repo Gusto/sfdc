@@ -1,0 +1,649 @@
+<apex:page controller="TaxOpsTaskKnowledgeFooterExtension"   id="thePage" showHeader="false" lightningStyleSheets="true" docType="html-5.0">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.jqueryscroller, '/Scroller-master/jquery.fs.scroller.js')}"  />
+    <apex:stylesheet value="{!URLFOR($Resource.jqueryscroller, '/Scroller-master/jquery.fs.scroller.css')}"  />     
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>  
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />    
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+  
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        
+        $j( document ).ready(function() {
+            setCaseId();
+            
+            // setting the search box text
+            $j("input[alt]").each(function(){
+                $j(this).attr("placeholder",$j(this).attr("alt"));
+            });
+        });
+        
+        function setCaseId() {
+            // get focussed object id
+            //console.log(" set case id ");
+            sforce.console.getFocusedPrimaryTabObjectId(showObjectId);
+        }
+        
+        var showObjectId = function showObjectId(result) {
+            // set subject and get response
+            if(result.id!=null){
+                var focussedId = result.id;
+                getKnowledgeRecords(focussedId);
+            }else{
+                //$j("#answers_container").html('No answers found');
+            }
+        };
+        
+        timedFunction = function(func) {
+             window.timed_function = setTimeout(function(){
+                func();
+             },3000);
+        }
+        clearTimedOutFunction = function(){
+            clearTimeout(window.timed_function);
+        }
+        
+        function showHideSortList(){
+            if($j(".subfilter.sortFields.zen-select").hasClass("zen-open")){
+                $j(".subfilter.sortFields.zen-select").removeClass("zen-open");
+            }
+            else{
+                $j(".subfilter.sortFields.zen-select").addClass("zen-open");
+            }
+        }
+        
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+        };
+
+
+        // this method is opening up the first article for TaxOpsTask Records. 
+        function openFirstArticle(){
+            $j("a.articletitle").each(function(){                
+                var tech = getUrlParameter('id');
+                var times = 0;
+
+                if(tech.indexOf("500") == '-1' && times == 0){
+                    //console.log('@@## PR: ');
+                    var thisIdd = this;
+                    setTimeout(function(){ openDescription(null, thisIdd);}, 1000);                     
+                    times = 1;    // decreasing the all around margin to display article body. 
+                    $j("#showDescriptionModalDiv").css({"margin":"0 1rem","padding":"1rem 0"});
+                    $j(".hideForTaxOpstask").addClass("slds-hide");
+                }
+
+                if(tech.indexOf("500") != '-1'){
+                    $j(".showForTaxOpstask").addClass("slds-hide");
+                }
+            });
+        }
+        
+        function editArticle(articleIdd, articleTitle) {
+            if(articleIdd == null && articleTitle == null){
+                articleIdd = selectedArticleRecId;
+                articleTitle = selectedArticleExternalId;
+            }
+
+            var selectedArticleIdd = String(articleIdd);
+            var selectedArticleTitle = String(articleTitle);
+            
+            //First find the ID of the primary tab to put the new subtab in
+            selectedArticleTitle = selectedArticleTitle.replace(/ /g, "-");
+            sforce.console.openPrimaryTab(null, '/articles/Help/'+selectedArticleTitle+'?id='+selectedArticleIdd, true);
+        }
+        
+        /*var openAccountSubtab = function openAccountSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            console.log('@@### PR edit article> '+selectedArticleTitle);
+            
+        };*/
+
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if(result.success==true){
+                sforce.console.focusSubtabById(result.id);
+                }
+        };
+
+        // we are saving selected Article ExternalId and Id, so that we can use these var to open Edit
+        //article page.
+        var selectedArticleExternalId;
+        var selectedArticleRecId;
+
+        // this method open the article body in a model
+        function openDescription(e, thisvar){
+            if($j('#showDescriptionModal').is(':hidden')){
+                $j('#showDescriptionModal').removeClass("slds-hide");
+                $j('#showDescriptionModal').find('.addEmail').removeClass('slds-hide');
+                var id = '#'+$j(thisvar).attr('id')+' + span';
+                var text = $j(thisvar).attr('clipboard-text');
+                var body = $j(id).html();
+                
+                if(id != null){
+                    var idarr = id.split("_");
+                    selectedArticleExternalId = idarr.slice(1,2);
+                    selectedArticleRecId = idarr.slice(2,3);
+                    var tempArr = String(selectedArticleRecId).split(" ").slice(0,1);
+                    selectedArticleRecId = tempArr;
+                }
+
+                console.log('@@## selectedArticleExternalId> '+selectedArticleExternalId);
+                console.log('@@## selectedArticleRecId> '+selectedArticleRecId);
+                //console.log('@@## thisvar> '+thisvar);
+                //console.log('@@## body '+body+' -Text> '+text+' -id> '+id);
+
+               // body=body.replace(/^'/, "");
+                //body=body.replace(/'$/, "")
+                
+                $j('#showDescriptionModal p').html(body);
+                $j('#showDescriptionModal .slds-moadal__content').scrollTop();                
+                if(body.indexOf("<ol>") != '-1'){
+                    console.log('@@!! PR: in definitely in');
+                    $j('#showDescriptionModal p').find('ol').css({"list-style":"decimal","list-style-position":"inside"});
+                   // $j('#showDescriptionModal p').find('ol').css("list-style","number");
+                }
+                if(e != null){
+                    e.preventDefault();
+                }                
+            }
+        }
+        
+
+        $j(function(){            
+            
+            $j('body').on('keypress','form.searchForming input',function(e){
+                if ( e.keyCode == 13 ) {
+                    setCaseId();
+                    e.preventDefault();
+                    return false;
+                }
+          
+            });
+            
+             $j('body').on('keypress','form.searchForming div',function(e){
+                if ( e.keyCode == 27 ) {
+                    $j('#emailModal').addClass("slds-hide");
+                    $j('#showDescriptionModal').addClass("slds-hide");
+                    return false;
+                }
+                
+            });           
+            
+            // get search input and search
+            $j('.detailList').on('change','.input-field select',function(){
+                //console.log('here 5');
+                /*if ( typeof(window.timer) != "undefined" ) {
+                    clearTimeout(window.timer);
+                }*/
+                var search_val = $j('div[data-field-name="search"] input').val();
+                //console.log('@@## '+search_val);
+                resultLength = 0;
+                //getNanoResponse();
+            });
+            
+            //copy link functionality-------------starts
+            $j(document).on('click', 'a.copyLink', function(e) {                
+                var id = '#'+$j(this).attr('id')+' + span';
+                var text = $j(this).attr('clipboard-text');
+                emailArticle(text);
+                e.preventDefault();
+            });
+        
+            function emailArticle(content) { 
+                sforce.console.setCustomConsoleComponentVisible(false);  
+                Sfdc.canvas.publisher.publish({name: 'publisher.selectAction', 
+                payload: { actionName: 'Case.Email'}}); 
+                Sfdc.canvas.publisher.publish({name: 'publisher.setActionInputValues', 
+                payload: {
+                    actionName: 'Case.Email',
+                    emailFields: { body: { value:content, format:'richtext', insert: true}}
+                }});
+            }
+            //copy link functionality-------------ends
+            
+            $j(document).on('click', 'a.articletitle', function(e) {
+                //console.log('@@##PR e '+e);
+                //console.log('@@##PR this '+this);
+                openDescription(e, this);
+            });
+            
+            
+            //Cancel copy artical modal-------------starts
+            $j(document).on('click', '.close-showDescriptionModal', function(e) {
+                $j('#showDescriptionModal').addClass("slds-hide");
+                return false;
+            });
+            
+                        
+            
+            //copy Artical functionality-------------starts
+            $j(document).on('click', 'a.copyText', function(e) {
+                if($j('#emailModal').is(':hidden')){
+                    $j('#emailModal').removeClass("slds-hide");
+                    $j('#emailModal').find('.addEmail').removeClass('slds-hide');
+                    var id = '#'+$j(this).attr('id')+' + span';
+                    var text = $j(this).attr('clipboard-text');
+                    var body = $j(id).html();
+                    
+                   // body=body.replace(/^'/, "");
+                    //body=body.replace(/'$/, "")
+                    
+                    $j('#emailModal p').html(body);
+                    $j('#emailModal div.linkdetails').html(text);
+                    $j('#emailModal .slds-moadal__content').scrollTop();
+                    e.preventDefault();
+                }
+            });
+            
+            //Cancel copy artical modal-------------starts
+            $j(document).on('click', '.close-emailModal', function(e) {
+                $j('#emailModal').addClass("slds-hide");
+                return false;
+            });
+            
+            $j(document).on('click', '.addEmail', function(e) {
+                var body = $j('#emailModal p').html();
+                emailArticle(body);
+                $j('#emailModal').addClass("slds-hide");
+                $j('div[data-field-name="search"] input').val('');
+                return false;
+            });
+            
+            $j(document).on('click', '.copyLinkDetail', function(e) {
+                var body = $j('#emailModal div.linkdetails').html();
+                emailArticle(body);
+                $j('#emailModal').addClass("slds-hide");
+                $j('div[data-field-name="search"] input').val('');
+                return false;
+            });
+            
+        });
+        
+        //Open Subtab on Article click functionality-------------starts
+        var slectedArticleExternalId;
+        function openArticle(articleExternalId) {
+            //First find the ID of the primary tab to put the new subtab in
+            //console.log('@@## articleExternalId on top '+articleExternalId);
+            slectedArticleExternalId = articleExternalId;
+            sforce.console.getFocusedPrimaryTabId(openArticleInSubtab);
+        }
+        
+        var openArticleInSubtab = function openArticleInSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/articles/Help/'+slectedArticleExternalId, true, 
+                                      'Knowledge Article', null, openSuccess, 'salesforceKnowledgeArticleSubTab');
+        };
+        
+        var openSuccess = function openSuccess(result) {};
+        //Open Subtab on Article click functionality-------------Ends
+        
+        //====================================
+
+        
+    </script>  
+    
+    <style>
+        
+        .optionlinks{
+            color:black !important;
+        }
+        .actionarrow{
+            background: url("/static/186/img/support/servicedesk/console_sprite.png") no-repeat scroll -145px 7px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            height: 18px;
+            width: 17px;
+            float: left;        
+        }
+        
+        .articletitle{
+            color: #2891d4;
+            font-family: "Salesforce Sans", Arial, sans-serif;
+            font-size: 0.8125rem;
+            line-height: 16px;
+            text-decoration: none; 
+        }
+        
+        .popup-search {
+            width: 100px;
+            font-family: "Salesforce Sans", Arial, sans-serif;
+            border: 1px solid #ddd;
+            padding: 2px 10px;
+            background: #f9f9f9;
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            z-index: 999;
+            display: none;
+            font-size: 12px;
+            line-height: 16px;
+            margin-top: -27px;
+        }
+        
+        .list-links .list-hover:hover .popup-search {
+        display: inline;
+        /* white-space: nowrap; */
+        width: 100px;
+        }
+        
+        .list-links .list-hover, .list-links .list-hover:hover, .list-links .list-hover:focus {
+        color: #77859e;
+        text-decoration: none;  
+        position: relative;
+        cursor:pointer;
+        position: relative;
+        top: 0px;
+        font-size: 20px;
+        }
+        .list-links .list-hover:hover {
+        color: #09567e; 
+        } 
+        
+        .input-field[data-field-name="search"] input { font-size:16px; font-family: 'Open Sans';  font-weight: 300; }
+        .input-field[data-field-name="search"] input::-webkit-input-placeholder { font-style: italic; color: #788d99; font-size:16px; font-family: 'Open Sans';  font-weight: 300; }
+        .input-field[data-field-name="search"] input::-ms-input-placeholder { font-style: italic; color: #788d99; font-size:16px; font-family: 'Open Sans';  font-weight: 300; }
+        .input-field[data-field-name="search"] input::-moz-placeholder { font-style: italic; color: #788d99; font-size:16px; font-family: 'Open Sans';  font-weight: 300; }
+        
+        
+        .input-field.zeroed { width: 0px; height: 0px; margin-right: 0px; }
+        .input-field.zeroed.deleter { position:relative;right:20px;}
+        .input-field input[type="text"] {  padding-left:5px; border:0px;width:100%; color: #505e66;margin-right:45px; border: 1px solid #dddbda; border-color: rgb(169, 169, 169); }        
+        
+        .sortFields a.zen-trigger {
+            display: inline;
+            padding-left: 5px;
+            padding-right: 2px;
+        }
+        
+        .zen-options {
+            position: absolute;
+            top: 100%;
+            left: 3px;
+            right: 3px;
+            display: none;
+            overflow: hidden;
+        }
+        
+        a.zen-trigger span.sortDropdownArrow {
+            background: url("/img/knowledge/kb2/knowledgeone-sprite.png?192") no-repeat scroll 0 -162px;
+            float: right;
+            width: 8px;
+            height: 8px;
+            margin-top: 3px;
+        }
+        
+        .sortFields .sortbox {
+            right: 0;
+            left: auto;
+            padding: 8px;
+            background-color: #fff;
+            border: 1px solid #b6b6b6;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            -webkit-box-shadow: 0 2px 5px #a0a6ab;
+            -moz-box-shadow: 0 2px 5px #a0a6ab;
+            box-shadow: 0 2px 5px #a0a6ab;
+            white-space: nowrap;
+        }
+        
+        .zen-select.zen-open {
+            z-index: 100;
+        }
+        
+        .zen-open .zen-options {
+            display: block;
+        }
+        
+        .sortFields {
+            font-weight: normal;
+            font-size: .917em;
+            position: relative;
+            padding-left: 10px;
+            min-width: 130px;
+        }
+        
+        /* This is for the full screen DIV */
+        .popupBackground {
+            /* Background color */
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+        
+            /* Dimensions */
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 998;
+            position: absolute;
+            
+            /* Mouse */
+            cursor:wait;
+        }
+     
+        /* This is for the message DIV */
+        .PopupPanel {
+            /* Background color */
+            border: solid 1px black;
+            background-color: white;
+     
+            /* Dimensions */
+            left: 50%;
+            width: 200px;
+            margin-left: -100px;
+            top: 50%;
+            height: 50px;
+            margin-top: -25px;
+            z-index: 999;
+            position: fixed;
+            
+            /* Mouse */
+            cursor:pointer;
+        }
+    
+    </style> 
+    
+     
+    <div class="gusto" >
+        <apex:pageMessages escape="false"></apex:pageMessages>
+        <apex:outputPanel id="mainPanel">
+            <apex:actionStatus id="statusSave" stopText="">
+                <apex:facet name="start">
+                    <div>
+                        <div class="popupBackground" />
+                        <div class="PopupPanel" >
+                            <table border="0" width="100%" height="100%" >
+                                <tr>
+                                    <td align="center"><b>Please Wait</b></td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><img src="{!$Resource.loading_image}"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:form id="mainForm" styleclass="searchForming">
+                <apex:actionfunction name="getKnowledgeRecords" action="{!populateArticleDetails}" rerender="mainPanel" status="statusSave" oncomplete="openFirstArticle();">
+                    <apex:param name="caseId" value="" assignTo="{!primaryCaseId}"/>
+                </apex:actionFunction>
+                
+                <apex:actionfunction name="getSortedKnowledgeRecords" action="{!populateArticleDetails}" rerender="mainPanel,search-box" status="statusSave">
+                    <apex:param name="caseId" value="" assignTo="{!selectedSortFilter}"/>
+                </apex:actionFunction>
+            
+                <table class="table.spacing" style="margin-left: 2%; margin-top:1%;position:relative; width:100%; display:block;">   
+                    <tr>
+                        <td>
+                            <div class="input-field" data-field-name="search">
+                                <apex:inputtext id="search-box" value="{!searchStr}" alt="Search for knowledge" list="{!aticlesTitleList}" style="cursor:pointer;" html-autocomplete="off"/>                             
+                            </div>
+                        </td>
+                        <td>
+                            <div id="sortfilter:sortfields" class="subfilter sortFields zen-select">
+                                Sort by:<a class="sortclick zen-trigger" id="sortlist" href="javascript:void(0);" onclick="showHideSortList();" >{!selectedSortFilter}<span class="sortDropdownArrow"></span></a>
+                                <!--javascript: document.getElementById('sortfilter:sortfields').classList.add('zen-open');-->
+                                <div class="sortbox zen-options">
+                                    <ul>
+                                            <!--<li><a id="articleList_kbOneTab:sortFields_LastPublishedDate" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('Published Date');">Published Date</a></li>
+                                            <li><a id="articleList_kbOneTab:sortFields_HighestRated" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('Best Rating');">Best Rating</a></li>
+                                            <li><a id="articleList_kbOneTab:sortFields_MostViewed" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('Most Viewed');">Most Viewed</a></li> -->
+                                            <li><a id="articleList_kbOneTab:sortFields_External" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('External');">External</a></li>
+                                            <li><a id="articleList_kbOneTab:sortFields_Internal" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('Internal');">Internal</a></li>
+                                            <li><a id="articleList_kbOneTab:sortFields_Alphabetical" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('Title: A to Z');">Title: A to Z</a></li>
+                                            <li><a id="articleList_kbOneTab:sortFields_AlphabeticalRev" class="sortField" href="javascript:void(0);" onclick="showHideSortList();getSortedKnowledgeRecords('Title: Z to A');">Title: Z to A</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>                    
+                    </tr>
+                </table>
+                <br/>
+                <div style="height:300px;overflow-y:auto;overflow-x:hidden;">
+                    <table class="table.spacing" style="margin-left: 2%">                      
+                        <apex:repeat value="{!articleKnowledgeDetailList}"  var="article">
+                            <tr>
+                                <td>
+                                <apex:outputPanel rendered="{! if(article.articleCategory == 'Internal',true,false)}" layout="none">
+                                    <div class='list-links'>
+                                        <span class='list-hover' style="position: relative;top: 5px;">
+                                            <span class='slds-button slds-button_icon' style="color: #7ccf60">
+                                                <a class=" actionarrow" />
+                                            </span>
+                                            <span class="popup-search" style="top:100%">
+                                                <a target="_blank" class="optionlinks ikbLink" href="{!$Label.Article_Prefix_Internal}/{!article.externalId}" >Open In IKB</a>
+                                                <a class="optionlinks knowledgeEdit hideForTaxOpstask" onclick="editArticle('{!article.recId}','{!article.externalId}');" >Open Article</a>
+                                            </span>
+                                        </span> 
+                                        <a class="articletitle" id="internalarticletitle_{!article.externalId}_{!article.recId}" style="color:#7ccf60;" href="#" clipboard-text="{!$Label.Article_Prefix_Internal}/{!article.externalId}">{!article.title}</a>                                    
+                                        <apex:outputText escape="false" style="display:none" value="<b>{!article.title}</b><br/><br/>{!article.description}"/>
+                                    </div>
+                                </apex:outputPanel>
+                                <apex:outputPanel styleclass="{!article.articleCategory}" rendered="{! if(article.articleCategory != 'Internal',true,false)}" layout="none">
+                                    <div class='list-links'>
+                                        <span class='list-hover' style="position: relative;top: 5px;">
+                                            <span class='slds-button slds-button_icon'>
+                                                <a class=" actionarrow" />
+                                            </span>
+                                            <span class="popup-search" style="width: auto;overflow: visible;white-space: nowrap;" >
+                                                <a class="copyLink optionlinks" clipboard-text="<a href={!$Label.Article_Prefix_External}/{!article.externalId}>{!article.title}</a>">Copy Link</a>
+                                                <br/>
+                                                <a id="copyText{!article.externalId}" class="copyText optionlinks" clipboard-text="{!$Label.Article_Prefix_External}/{!article.externalId}">Copy Article</a>
+                                                <apex:outputText escape="false" style="display:none" value="<b>{!article.title}</b><br/><br/>{!article.description}"></apex:outputText>
+                                                <br/>
+                                                <a target="_blank" class="optionlinks" href="{!$Label.Article_Prefix_External}/{!article.externalId}" >Open in External Help Center</a>
+                                            </span>
+                                        </span> 
+                                        <a class="copyText articletitle" id="copyText{!article.externalId}" href="#" clipboard-text="<a href={!$Label.Article_Prefix_External}/{!article.externalId}>{!article.title}</a>">{!article.title}</a><!-- onclick="openArticle('{!article.externalId}')" -->
+                                        <apex:outputText escape="false" style="display:none" value="<b>{!article.title}</b><br/><br/>{!article.description}"/>
+                                    </div>
+                                </apex:outputPanel>
+                                </td>
+                            </tr>                                            
+                        </apex:repeat>
+                        <tr>
+                            <td>
+                            <div style="text-align:center"> Total Records Found: {!articleController.resultSize} &nbsp;&nbsp;
+                                <apex:image url="/img/search_prevarrow_disabled.gif" styleClass="prevArrow" rendered="{!NOT(articleController.HasPrevious)}"/> 
+                                <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!articleController.HasPrevious}"/> 
+                                <apex:commandLink action="{!Previous}" title="Previous Page" value="Previous Page" rendered="{!articleController.HasPrevious}" rerender="mainPanel" status="statusSave"/> 
+                                <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(articleController.HasPrevious)}">Previous Page</apex:outputPanel>
+                                &nbsp;&nbsp;          
+                                <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(articleController.HasNext)}">Next Page</apex:outputPanel>          
+                                <apex:commandLink title="Next Page" value="Next Page" rendered="{!articleController.HasNext}" action="{!Next}" rerender="mainPanel" status="statusSave"/>&nbsp; 
+                                <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!articleController.HasNext}"/> 
+                                <apex:image url="/img/search_nextarrow_disabled.gif" rendered="{!NOT(articleController.HasNext)}"/>
+                                <img src="/s.gif" title="Last Page" alt="Last Page" class="last"/>        
+                            </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="emailModal" class="slds-hide">
+                    <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <header class="slds-modal__header slds-modal__header--empty">
+                                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse close-emailModal" title="Close">
+                                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                        <use xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href="{!URLFOR($Resource.SLDS,'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+                                    </svg>
+                                   <span class="slds-assistive-text">Close</span>
+                                </button>
+                            </header>
+                            <div class="slds-modal__content slds-p-around--medium" id="modal-content-id-1" style="overflow:auto;">
+                                <p>i am test</p>
+                                <div class="linkdetails" style="display:none;"></div>
+                            </div>
+                            <footer class="slds-modal__footer">
+                                <button class="slds-button slds-button--neutral close-emailModal">Cancel</button>
+                                <button class="slds-button slds-button--brand copyLinkDetail">Copy Link</button>
+                                <button class="slds-button slds-button--brand addEmail">Copy to Email</button>
+                            </footer>
+                        </div>
+                    </section>                    
+                    <div class="slds-backdrop slds-backdrop_open" style="opacity:2;visibility:visible;"></div>
+                </div>
+                <div id="showDescriptionModal" class="slds-hide click">
+                    <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open click">
+                        <div class="slds-modal__container click" id="showDescriptionModalDiv">
+                            <header class="slds-modal__header slds-modal__header--empty click">
+                                <button class="click slds-button slds-button_icon slds-modal__close slds-button_icon-inverse close-showDescriptionModal hideForTaxOpstask" title="Close">
+                                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                        <use xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href="{!URLFOR($Resource.SLDS,'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+                                    </svg>
+                                   <span class="slds-assistive-text">Close</span>
+                                </button>
+                            </header>
+                            <div class=" click slds-modal__content slds-p-around--medium" id="modal-content-id-2" style="overflow:auto;">
+                                <p>i am test</p>
+                            </div>
+                            <footer class="slds-modal__footer"> 
+                                <button class="slds-button slds-button--neutral close-showDescriptionModal showForTaxOpstask" onclick="editArticle(null,null);">Edit Article</button>
+                                <button class="slds-button slds-button--neutral close-showDescriptionModal">Cancel</button>
+                            </footer>
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open" style="opacity:2;visibility:visible;"></div>
+                </div>
+            </apex:form>
+        </apex:outputPanel>
+        
+        
+    </div>
+    <script>
+        /* $j( document ).ready(function() {
+            
+            var classname = 'selected';
+            
+            $j('div.gusto').delegate('section', 'click', function (){
+                
+                console.log('@@## ');
+                console.log('@@## this id >'+$j(this).attr('id'));
+                console.log('@@## this class  >'+$j(this).attr('class'));
+                //$j(this).addClass(classname).siblings().removeClass(classname);
+            });
+            
+             $j(".gusto div").bind('click', function() {
+                console.log('@@## ');
+                console.log('@@## this id >'+$j(this).attr('id'));
+                console.log('@@## this class  >'+$j(this).attr('class'));
+            }); 
+        }); */
+    
+    </script>    
+
+</apex:page>

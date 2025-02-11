@@ -1,0 +1,88 @@
+<apex:page controller="BTFacilitator2PlayModeCtrl" action="{!checkStatusOfCarrierOrders}">
+<apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+<apex:includeScript value="/support/console/45.0/integration.js" />
+    <style>
+        .btn-custom{
+            background-repeat: no-repeat !important;
+            background-position: 4px -261px !important;
+            height: 21px;
+            width: 29px;
+            background-image: url('/img/support/servicedesk/serviceDeskListReskin-sprite.png') !important;
+         }    
+    </style>
+    <script type="text/javascript">
+    var eventHandler = function (result) {
+        refreshPage();
+    };
+    sforce.console.onCustomConsoleComponentButtonClicked(eventHandler); 
+    
+    function playConfirmOrder(cnt,avlOrder){
+        if(avlOrder >= 5){
+            //document.getElementById('assignedOrderDiv').style.display = '';
+            return;
+        }
+        if(cnt == 0){
+            alert('No order available to assign.');
+            return;
+        }
+        playConfirmation();
+    }
+    function openCoTab(orderIds){
+            if(orderIds =='' || orderIds.length == 0){
+                 return;
+            }else{
+                console.log(orderIds);
+                var orderIdArr = orderIds.split(',');
+                console.log(orderIdArr);
+                for(var i = 0; i< orderIdArr.length; i++ ){
+                    //alert(orderIdArr[i]);
+                    sforce.console.openPrimaryTab(null,'/'+orderIdArr[i],true);
+                 }
+               refreshPage(); 
+            }
+            sforce.console.setCustomConsoleComponentVisible(false);
+        
+                    //sforce.console.openPrimaryTab(null,'/a0m0j000000drDW',true);
+        }
+        
+        var tempIdd;
+        function openRec(recid){
+            
+            if(recid !=''){
+                tempIdd = recid;
+                sforce.console.getFocusedPrimaryTabId(openAccountSubtab123);
+                sforce.console.setCustomConsoleComponentVisible(false);
+
+            }
+         }    
+        
+        var openAccountSubtab123 = function openAccountSubtab123(result) {
+            var tabIdd = result.id;
+            console.log('@@## tabIdd >'+tabIdd);
+            console.log('@@## tempIdd >'+tempIdd );
+            sforce.console.openPrimaryTab(null,'/'+tempIdd,true);
+        };
+        
+        var openSuccess = function openSuccess(result){
+        
+        }
+        
+        function refreshPage(){
+            location.reload();
+        }
+        
+    </script>
+    <c:GustoActionStatus />
+    <apex:form id="frm">
+    <apex:pageMessages escape="false"/>
+        
+        <apex:outputPanel id="countSection" rendered="{!NOT(blnShowMyCOPanel) && blnShowPlayModePanel}">
+            <apex:commandButton value="Play My Carrier Orders"  action="{!playMyOrders}" onComplete="openCoTab('{!strProcessedCOIds}');" reRender="frm" status="actStatusId" style="margin-right:8px;"/>            
+            <apex:commandButton value="Play New Carrier Orders"  action="{!playNewOrders}" onComplete="openCoTab('{!strPlayedCOIds}');" rerender="frm" status="actStatusId" style="margin-right:8px;"/> 
+            <input type="button" class="btn btn-custom" title="Refresh" onclick="refreshPage();" status="actStatusId"/>
+            <apex:outputText >
+                <!--<p>Your Total Actionable Orders Are : {!totalReadyOrders}</p>-->
+            </apex:outputText>   
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

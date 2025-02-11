@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>Add_log_and_decrement_counter</name>
+        <label>Add log and decrement counter</label>
+        <locationX>279</locationX>
+        <locationY>604</locationY>
+        <assignmentItems>
+            <assignToReference>ThousandLogs</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>loop_all_logs</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varRecordLimit</assignToReference>
+            <operator>Subtract</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>loop_all_logs</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>get_total</name>
+        <label>get total</label>
+        <locationX>532</locationX>
+        <locationY>48</locationY>
+        <assignmentItems>
+            <assignToReference>countoflogs</assignToReference>
+            <operator>AssignCount</operator>
+            <value>
+                <elementReference>logs</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>display_count</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Check_counter</name>
+        <label>Check counter</label>
+        <locationX>89</locationX>
+        <locationY>303</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>More_Than_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varRecordLimit</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_log_and_decrement_counter</targetReference>
+            </connector>
+            <label>More Than 0</label>
+        </rules>
+        <rules>
+            <name>Less_Than_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varRecordLimit</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <numberValue>1.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>loop_all_logs</targetReference>
+            </connector>
+            <label>Less Than 1</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Delete_or_Not_to_Delete</name>
+        <label>Delete or Not to Delete</label>
+        <locationX>833</locationX>
+        <locationY>50</locationY>
+        <defaultConnectorLabel>Exit</defaultConnectorLabel>
+        <rules>
+            <name>Delete_All_is_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Delete_All</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Logs_have_been_found</targetReference>
+            </connector>
+            <label>Delete All is True</label>
+        </rules>
+        <rules>
+            <name>Delete_N_is_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Delete_1000</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Logs_have_been_found_0</targetReference>
+            </connector>
+            <label>Delete N is True</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Logs_have_been_found</name>
+        <label>Logs have been found</label>
+        <locationX>1083</locationX>
+        <locationY>56</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Number_of_logs_greater_than_zer0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>countoflogs</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>delete_all_logs</targetReference>
+            </connector>
+            <label>Number of logs &gt; 0</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Logs_have_been_found_0</name>
+        <label>Logs have been found</label>
+        <locationX>799</locationX>
+        <locationY>297</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Number_of_logs_greater_than_zer0_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>countoflogs</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>loop_all_logs</targetReference>
+            </connector>
+            <label>Number of logs &gt; 0</label>
+        </rules>
+    </decisions>
+    <description>v2 - Added functionality to delete first 1000(N) logs
+Clear all Apex Debug Logs</description>
+    <interviewLabel>Clear All Debug Logs {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Clear All Debug Logs</label>
+    <loops>
+        <name>loop_all_logs</name>
+        <label>loop all logs</label>
+        <locationX>426</locationX>
+        <locationY>307</locationY>
+        <collectionReference>logs</collectionReference>
+        <iterationOrder>Desc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_counter</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Delete_N_records</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordDeletes>
+        <name>delete_all_logs</name>
+        <label>delete all logs</label>
+        <locationX>1096</locationX>
+        <locationY>326</locationY>
+        <connector>
+            <targetReference>success_message</targetReference>
+        </connector>
+        <inputReference>logs</inputReference>
+    </recordDeletes>
+    <recordDeletes>
+        <name>Delete_N_records</name>
+        <label>Delete N records</label>
+        <locationX>571</locationX>
+        <locationY>543</locationY>
+        <connector>
+            <targetReference>success_message_0</targetReference>
+        </connector>
+        <inputReference>ThousandLogs</inputReference>
+    </recordDeletes>
+    <recordLookups>
+        <name>get_logs</name>
+        <label>get logs</label>
+        <locationX>390</locationX>
+        <locationY>48</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>get_total</targetReference>
+        </connector>
+        <object>ApexLog</object>
+        <outputReference>logs</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <screens>
+        <name>display_count</name>
+        <label>display count</label>
+        <locationX>683</locationX>
+        <locationY>48</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>Delete_or_Not_to_Delete</targetReference>
+        </connector>
+        <fields>
+            <name>logs_found</name>
+            <fieldText>&lt;p&gt;&lt;b style=&quot;font-family: verdana;&quot;&gt;{!countoflogs} &lt;/b&gt;&lt;span style=&quot;font-family: verdana;&quot;&gt;Total Apex Debug Logs are found.  &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Delete_All</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Delete All</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Delete_1000</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Delete first N</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Instructions</name>
+            <fieldText>&lt;p&gt;Check Delete All and click Next to remove all logs.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;color: rgb(15, 73, 212);&quot;&gt;Close the window to abort.&lt;/b&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>success_message</name>
+        <label>success message</label>
+        <locationX>1097</locationX>
+        <locationY>461</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>Success</name>
+            <fieldText>&lt;p&gt;&lt;b style=&quot;font-size: 18px; color: rgb(10, 51, 26);&quot;&gt;All Logs Deleted&lt;/b&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>success_message_0</name>
+        <label>success message</label>
+        <locationX>789</locationX>
+        <locationY>536</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>Success_0</name>
+            <fieldText>&lt;p&gt;&lt;b style=&quot;font-size: 18px; color: rgb(10, 51, 26);&quot;&gt;First N Logs Deleted&lt;/b&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>get_logs</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>countoflogs</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>Debug_Logs</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>ApexLog</objectType>
+    </variables>
+    <variables>
+        <name>logs</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>ApexLog</objectType>
+    </variables>
+    <variables>
+        <name>ThousandLogs</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>ApexLog</objectType>
+    </variables>
+    <variables>
+        <description>single log used in loop</description>
+        <name>varLog</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>ApexLog</objectType>
+    </variables>
+    <variables>
+        <name>varRecordLimit</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>500.0</numberValue>
+        </value>
+    </variables>
+</Flow>

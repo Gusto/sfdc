@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Schedule_Completed_Date__c</fullName>
+    <description>Roll up Summary. This is a read-only field sourced from the Opportunity object and used in Qualified for sales chat routing</description>
+    <inlineHelpText>This is a read-only field sourced from the Opportunity object and used in Qualified for sales chat routing.</inlineHelpText>
+    <label>Payroll Schedule Completed Date</label>
+    <summarizedField>Opportunity.Payroll_Schedule_Completed_Date__c</summarizedField>
+    <summaryFilterItems>
+        <field>Opportunity.Payroll_Schedule_Completed_Date__c</field>
+        <operation>notEqual</operation>
+        <value />
+    </summaryFilterItems>
+    <summaryForeignKey>Opportunity.AccountId</summaryForeignKey>
+    <summaryOperation>max</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

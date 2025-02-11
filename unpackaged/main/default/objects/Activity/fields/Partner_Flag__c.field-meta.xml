@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Partner_Flag__c</fullName>
+    <description>Populated if activity is logged on a reseller lead, reseller account, company account with sold/referred by or opportunity with sold/referred by.</description>
+    <formula>IF( 
+  OR( 
+/*reseller*/ 
+    Account.RecordTypeId = &apos;01216000000WdSg&apos;, 
+/*company*/ 
+    AND( 
+      Account.RecordTypeId = &apos;012G0000001B3nz&apos;, 
+      OR( 
+      NOT(ISBLANK(Account.Sold_By__c)), 
+      NOT(ISBLANK(Account.Referred_By__c)) 
+      ) 
+    ),
+    AND(
+      NOT(ISBLANK(Opportunity__r.Referred_By__c)),
+      NOT(ISBLANK(Opportunity__r.Sold_By__c))
+    ),
+/*reseller*/ 
+    Lead__r.RecordTypeId = &apos;01216000000WdT5&apos; 
+  ), TRUE, FALSE 
+)</formula>
+    <inlineHelpText>Populated if activity is logged on a reseller lead, reseller account, company account with sold/referred by or opportunity with sold/referred by.</inlineHelpText>
+    <label>Partner Flag</label>
+    <type>Checkbox</type>
+</CustomField>

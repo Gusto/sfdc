@@ -1,0 +1,138 @@
+<template>
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+
+    <!-- Title -->
+    <!-- <div class="slds-text-heading_medium slds-align_absolute-center slds-var-p-top_medium">QA Play Routing</div>
+    <br/> -->
+
+    <!-- Show Success, Error or Warning Messages -->
+    <template if:true={blnIsMessageVisible}>
+        <div class={strMessageClass}>
+            <span class="slds-assistive-text">warning</span>
+            <h2>{strMessage}</h2>
+        </div>
+    </template>
+    <template if:true={blnShowUser}>
+        <div class="slds-p-top_x-small slds-m-horizontal_none">
+            <!-- Lightning Layout Structure Begins Here -->
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="12" padding="horizontal-small">
+                    <lightning-input type="toggle" value={blnDirectReport} label="Direct Reports" onchange={handleDirectReportChange} message-toggle-active="My team" message-toggle-inactive="All users" name="directReport" class="directReport" disabled={blnDisabled}></lightning-input>
+                    <c-custom-lookup
+                        searchterm={userSelected}
+                        objectlabel="User"  
+                        boolrecordfound={blnIsUserFound} 
+                        onfilterselected={handleFilterSelected}
+                        onselectrecord={handleRecordSelected} 
+                        onfilterrecord={handleFilterRecords} 
+                        listrecords={list_FilteredUsers}
+                        lookupicon="standard:user"
+                        blndisabled={blnDisabled} ></c-custom-lookup>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small">
+                    <div class="slds-text-title">Filters:</div>
+                    <template if:true={blnDatesSelected}>
+                        <div class="slds-text-body_small">Closed Date range: {dtFrom} to {dtTo}</div>
+                    </template>
+                    <template if:true={blnClassSelected}>
+                        <div class="slds-text-body_small">Class: {strClass}</div>
+                    </template>
+                    <template if:true={blnRecordTypeSelected}>
+                        <div class="slds-text-body_small">Record Type: {strRecordType}</div>
+                    </template>
+                    <template if:true={blnCaseReasonSelected}>
+                        <div class="slds-text-body_small">Case Reason: {strCaseReason}</div>
+                    </template>
+                    <template if:true={blnOriginSelected}>
+                        <div class="slds-text-body_small">Origin: {strOrigin}</div>
+                    </template>
+                    <template if:true={blnCSATSelected}>
+                        <div class="slds-text-body_small">CSAT: {strCSAT}</div>
+                    </template>
+                    <div class="slds-text-body_small">{strAllOrEscalated}</div>
+                </lightning-layout-item>
+                <template if:true={blnIsCaseListVisible}>
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="slds-text-align_center">
+                                <div class="slds-align_absolute-center slds-var-p-top_medium">
+                                    <lightning-button label="Previous" disabled={blnIsPreviousButtonDisabled} onclick={handlePrevious} ></lightning-button> &nbsp; &nbsp;
+                                    <lightning-button label="Next" disabled={blnIsNextButtonDisabled} onclick={handleNext} ></lightning-button> &nbsp; &nbsp;
+                                </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12">
+                        <div class="slds-align_absolute-center slds-var-p-top_xxx-small">
+                            <lightning-button variant="brand" icon-name="utility:stop" label="End QA" onclick={handleEndQA} ></lightning-button>
+                        </div>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </div>
+        <template if:false={blnQAInProgress}>
+            <div class="slds-align_absolute-center">
+                <div class="slds-p-horizontal_xx-small">
+                    <lightning-button label="Filters" variant="neutral" onclick={handleShowFilters} ></lightning-button>
+                </div>
+                <div class="slds-p-horizontal_xx-small">
+                    <lightning-button label="Start QA" variant="brand" disabled={blnStartButtonDisabled} icon-name="utility:play" onclick={handleStart} ></lightning-button>
+                </div>
+            </div>
+        </template>
+    </template>
+    <template if:false={blnShowUser}>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="6" padding="horizontal-small">
+                <lightning-input type="date" name="FromDate" label="From" value={dtFrom} onchange={handleFromChange} required></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" padding="horizontal-small">
+                <lightning-input type="date" name="ToDate" label="To" value={dtTo} onchange={handleToChange} required></lightning-input>    
+            </lightning-layout-item>
+            <lightning-layout-item size="12" padding="horizontal-small">
+                <lightning-combobox
+                    name="class"
+                    label="Class"
+                    value={strClass}
+                    placeholder="Select Class"
+                    options={list_ClassOptions}
+                    onchange={handleClassChange}
+                    required ></lightning-combobox>
+                <lightning-combobox
+                    name="recordType"
+                    label="Record Type"
+                    value={strRecordType}
+                    placeholder="Select Record Type"
+                    options={list_RecordTypeOptions}
+                    onchange={handleRecordTypeChange}
+                    required ></lightning-combobox>
+                <c-case-reason-group-auto-complete-cmp strcasereason={strCaseReason}
+                    blncasereasonfound={blnIsCaseReasonFound} onselectcasereason={handleCaseReasonSelected}
+                    onfiltercasereason={handleFilterCaseReason} mapcasereason={map_caseReasonToGroupMap}
+                    strlabel="Confirm Case Reason"></c-case-reason-group-auto-complete-cmp>
+                <lightning-combobox
+                    name="origin"
+                    label="Origin"
+                    value={strOrigin}
+                    placeholder="Select Origin"
+                    options={list_OriginOptions}
+                    onchange={handleOriginChange} 
+                    required></lightning-combobox>
+                <lightning-combobox
+                    name="csat"
+                    label="CSAT"
+                    value={strCSAT}
+                    placeholder="Select CSAT"
+                    options={list_CSATOptions}
+                    onchange={handleCSATChange} 
+                    required></lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" padding="around-small">
+                <lightning-input type="toggle" value={blnEscalated} label="Escalated" onchange={handleEscalatedChange} message-toggle-active="Escalated" message-toggle-inactive="All Cases" name="escalatedCases" class="escalatedCases" disabled={blnDisabled}></lightning-input>
+            </lightning-layout-item>
+        </lightning-layout>
+        <div class="slds-align_absolute-center slds-p-top_x-small">
+            <lightning-button label="Save filters" variant="neutral" onclick={handleSaveFilters} ></lightning-button>
+        </div>
+    </template>
+</template>

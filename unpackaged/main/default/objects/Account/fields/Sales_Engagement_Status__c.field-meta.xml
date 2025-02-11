@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Engagement_Status__c</fullName>
+    <description>Populates only for Reseller RT.
+Prospective = Populates on account creation.
+Active = Populates when cohort date is not null
+Churned = Populates when number of Active Clients goes from &gt;0 to 0 and previous status was Active.
+Unqualified = Populates when firm has been merged using the merge tool or domain name matches an existing account.</description>
+    <inlineHelpText>Prospective - new firm that has not run any clients’ payroll through Gusto
+Active - currently is managing at least one client on Gusto
+Churned - no longer managing any clients on Gusto
+Unqualified - duplicate or bad data</inlineHelpText>
+    <label>Sales Engagement Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>False SAL</fullName>
+                <default>true</default>
+                <label>False SAL</label>
+            </value>
+            <value>
+                <fullName>Working SAL</fullName>
+                <default>false</default>
+                <label>Working SAL</label>
+            </value>
+            <value>
+                <fullName>Ramp</fullName>
+                <default>false</default>
+                <label>Ramp</label>
+            </value>
+            <value>
+                <fullName>Grow</fullName>
+                <default>false</default>
+                <label>Grow</label>
+            </value>
+            <value>
+                <fullName>Nurture</fullName>
+                <default>false</default>
+                <label>Nurture</label>
+            </value>
+            <value>
+                <fullName>Unqualified</fullName>
+                <default>false</default>
+                <label>Unqualified</label>
+            </value>
+            <value>
+                <fullName>Prospective</fullName>
+                <default>false</default>
+                <label>Prospective</label>
+            </value>
+            <value>
+                <fullName>Active</fullName>
+                <default>false</default>
+                <label>Active</label>
+            </value>
+            <value>
+                <fullName>Churned</fullName>
+                <default>false</default>
+                <label>Churned</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

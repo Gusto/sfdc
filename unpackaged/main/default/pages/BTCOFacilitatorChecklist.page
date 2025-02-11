@@ -1,0 +1,122 @@
+<apex:page controller="BTCOFacilitatorChecklistCtrl" tabStyle="Carrier_Order__c">
+    <apex:includeScript value="/support/console/45.0/integration.js" />
+    <apex:slds />
+     <c:BTCustomCSS />
+    <apex:form id="frmId">
+    <c:GustoActionStatus />
+    <apex:sectionHeader title="Checklist" subtitle="Details" />
+    <apex:pageBlock id="PageBlock">
+    <body>
+    
+    <apex:pageMessages id="showmsg" />
+    <div style="font-size: 24px;">Check List</div>
+    <hr style="margin: 10px 0px;"/>
+    <table cellpadding="5" cellspacing="0" width="100%" class="custom-table">
+      <thead>
+        <th class="head-th">TASK</th>
+        <apex:repeat value="{!set_BenefitTypeName}" var="benfitHeader"> 
+            <th class="head-th">{!benfitHeader}</th>
+        </apex:repeat>
+        <th class="head-th">Notes</th>
+      </thead>
+      
+      <tbody>
+        <apex:repeat rendered="{!intChecklistExit>0}" value="{!set_DocCategory}" var="DocCategory">
+            <tr>
+                <th style="text-align: center;">{!DocCategory}</th>
+                <apex:repeat value="{!set_BenefitTypeName}" var="benfitType">
+                    <th></th>
+                </apex:repeat>
+                <th></th>
+            </tr>
+            <apex:repeat value="{!map_DocCategory[DocCategory]}" var="DocName">
+            <tr>
+              <td>{!DocName} </td>
+              <apex:repeat value="{!set_BenefitTypeName}" var="benfitType">
+                <td>
+                    <div class="{!if(blnDisableCheckList==true,'disable-checkbox','')}">
+                        <apex:inputField value="{!map_ChecklistWrapper[DocName].map_ChecklistWithBenefitType[benfitType].IsCheckPointImplemented__c}"/>
+                    </div>
+                </td>
+              </apex:repeat>
+              <td>
+                <apex:inputTextarea value="{!map_ChecklistWrapper[DocName].strFacilitatorNotes}" rows="2" cols="56" />
+              </td> 
+            </tr>
+            </apex:repeat>
+        </apex:repeat>
+      </tbody>
+    </table>
+    <table width="100%" cellspacing="0" cellpadding="5" style="margin: 20px 0px;" class="padding-table">
+      <tr>
+        <td width="25%" style="text-align: right;">Facilitator 2 Plan Build</td>
+        <td width="25%">
+            <apex:outputPanel layout="block" styleclass="requiredInput">
+            <div class="requiredBlock"></div>
+             <apex:inputField value="{!objCarrierOrder.Facilitator_2_Plan_Build__c}" />
+            </apex:outputPanel>
+         </td> 
+        <td width="25%" style="text-align: right;"></td> 
+        <td width="25%"></td>
+      </tr>
+      <tr>
+        <td style="text-align: right;">Resign Required</td>
+        <td><apex:inputField value="{!objCarrierOrder.Resign_Required__c}" /></td>
+        <td style="text-align: right;">Resign Required Reason</td>
+        <td><apex:inputField value="{!objCarrierOrder.Resign_Required_Reason__c}" /></td>
+      </tr>
+    </table>
+    <apex:outputpanel layout="block" style="text-align: center;" rendered="{!!blnDisableCheckList}">
+        <apex:commandButton action="{!saveDocument}" styleClass="btn-blue" value="Save & Close"  oncomplete="javascript:closeTab();"  status="actStatusId" reRender="PageBlock, frmId" />
+        <!--<apex:commandButton action="{!saveDocument}" styleClass="btn-blue" value="Save & Close Temp" status="actStatusId" reRender="PageBlock, frmId" />-->
+    </apex:outputpanel>
+    
+  </body>
+  <script type="text/javascript">
+        function closeTab() {
+            //First find the ID of the current tab to close it
+            var error='{!isErrorExist}';
+            var parent='{!blnIsParent}';
+            var incompleteCOCheckList = '{!blnIncompleteCheckList}'
+            var openTicket='{!blnOpenTicketExist}';
+            var planBuild='{!isFacilitator2PlanBuildRequired}';
+            var enrollmentReview='{!isChecklistForEnrollmentReview}';
+            //alert('incompleteCOCheckList---->' + incompleteCOCheckList +'---openTicket---->' + openTicket + '--parent-->' + parent + '--planBuild--->' + planBuild + '------>' + enrollmentReview);
+            if (error=='false') {
+                if(openTicket=='true' && (planBuild=='true' || enrollmentReview=='true')){
+                    alert('The following order has on open ticket which should be closed before you submit the checklist.');
+                } 
+                if(parent=='true' && openTicket=='false' && incompleteCOCheckList=='true'){
+                    if(planBuild=='true' || enrollmentReview=='true'){
+                     	alert('Please complete pending checklist on child orders.');
+                     }
+                     /* if(planBuild=='true' && enrollmentReview=='false'){
+                           alert('Complete Plan review checklist on child orders.');
+                       }
+                       if(planBuild==true && enrollmentReview=='true'){
+                           alert('Complete Enrollment Review checklist on child orders.');
+                       }*/
+                  }
+                
+                 sforce.console.getEnclosingTabId(closeSubtab);
+                 sforce.console.getFocusedPrimaryTabId(showTabId);
+            }
+        }
+
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(tabId , true, null);
+        };
+    </script>
+    
+  </apex:pageBlock>    
+  </apex:form>
+      
+    
+</apex:page>

@@ -1,0 +1,268 @@
+<!--**************************************************************************************************************************/
+    This page is developed to send mass email to customers affected by Large Scale Issues
+****************************************************************************************************************************/-->
+<apex:page controller="TaxResCaseMassEmailCtrl" id="thePage" tabstyle="Case" docType="html-5.0" showHeader="true" >
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:slds />
+    <style>
+        .bPageBlock .pbBody .pbSubheader{
+            background-color:#f45d48;
+        }
+        .pbSubheader h3{ display:inline;}
+        .oPanel {
+            width: 50%;
+        }
+
+        #templateNameSec {
+            margin-bottom: 20px;
+        }
+        
+        .PopupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+        .custPopup {
+            background-color: white; 
+            border-width: 2px; 
+            border-style: solid; 
+            z-index: 9999; 
+            left: 50%; 
+            padding:11px; 
+            position: absolute; 
+            width: 600px; 
+            margin-left: -240px; 
+            top:100px;
+        } 
+        .page-disable {
+            position: relative;
+            opacity:.6;
+        }
+        .page-disable:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+        }
+    
+    </style>
+    <script type="text/javascript">
+        //collapse email template section on load
+        //set default owner search to queue
+        $(document).ready(function() {
+            twistSection(document.getElementById('thePage:theForm:pb:emailTemplateSection').getElementsByTagName('img')[0]);
+        });
+        $j = jQuery.noConflict();
+        function setCKEditorValues(){
+            //here we assign to our hidden textarea the value of the visible one  
+            $j("[id$='thePage:theForm:pb:pbs2:hidden_text_area_field']").val(CKEDITOR.instances[$j("[id$='thePage:theForm:pb:pbs2:text_area_field']").attr('id')].getData());                          
+        } 
+        function selectUnselect() {
+            var checkboxes = document.getElementsByClassName('caseCheckboxes');
+            if($j('#mainCheckBoxId').is(":checked")) {
+                for (var i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+
+        function disableOnClick() {
+            var button = document.getElementById("thePage:theForm:pb:pbs2:buttonSecItem:sendEmailBtnId");
+            button.disabled = true;
+            button.classList.add("btnDisabled");
+        }
+
+    </script>
+    <div class="slds-scope" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        
+    <apex:form id="theForm">
+   
+        <apex:actionFunction name="closePopupMessage" action="{!clearMassEmailMessage}" status="statusSave" reRender="msgId"/>
+        <apex:outputPanel styleClass="slds-float_left" id="csvUploadStatus">
+            <span class="slds-badge badge-custom slds-badge_inverse" style="background-color:green; top: 0px; margin-left: 10px; margin-top: 5px; display:{!if(blnIsMassEmailBatchRunning==true,'','none;')} ">
+                <strong>Send email in progress</strong>
+            </span>
+            <apex:image style="margin-left: 10px; display:{!if(blnIsMassEmailBatchRunning==true,'','none;')}" url="{!URLFOR($Resource.ux_svg, 'ajax-loader.gif')}"/>  
+            <br/><br/>
+        </apex:outputPanel>
+        <apex:actionPoller id="actionPollerId" rendered="{!blnIsMassEmailBatchRunning}" action="{!checkIsMassEmailBatchRunning}" reRender="theForm" interval="10"/>
+
+       <apex:outputpanel id="msgId" layout="block">
+            <apex:outputpanel rendered="{!if(strMassEmailMessage=='',false,true)}" layout="block">
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning slds-m-vertical_small" role="alert">
+              <span class="slds-assistive-text"></span>
+              <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+              </span>
+              <h2>{!strMassEmailMessage}</h2>
+              <div class="slds-notify__close"> 
+                <apex:commandLink style="font-size:25px; text-decoration:none;"  action="{!clearMassEmailMessage}" status="statusSave" reRender="msgId" styleClass="slds-button slds-button_icon slds-button_icon-small" title="Close">
+                  &times;
+                </apex:commandLink>
+              </div>
+            </div> 
+            </apex:outputpanel>
+        </apex:outputpanel>
+        
+        
+        <c:ActionStatus />
+        <apex:pageMessages id="pageMsg"/>
+        <div class="{!if(blnIsMassEmailBatchRunning==true,'page-disable','')}">
+        <apex:pageBlock title="Mass Email for Cases" mode="detail" tabStyle="Case" id="pb">
+            <apex:pageBlockSection title="Case Filters" columns="2" id="pbs">
+                <apex:pageBlockSectionItem >  
+                    <apex:outputText value="Large Scale Issue"/>
+                    <apex:selectList value="{!strSelectLSIName}" size="1" id="lsi">
+                        <apex:selectOptions value="{!list_LargeScaleIssueName}" />
+                        <apex:actionSupport event="onchange" action="{!fetchLSICases}" reRender="pbs3, pageMsg" id="searchBtnId" status="statusSave"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="" for="searchBtnId"/>
+                    <apex:outputPanel styleClass="oPanel">
+                    <apex:commandButton action="{!fetchLSICases}" value="Refresh" reRender="pbs3, pageMsg" id="searchBtnId" status="statusSave"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>            
+            <apex:pageBlockSection title="Choose Template" columns="1" id="pbs2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select Folder" for="Email_Folder"/>
+                    <apex:selectList value="{!strSelectedEmailFolder}" size="1" id="Email_Folder">
+                        <apex:selectOptions value="{!EmailTemplateFolderOpts}"/>
+                        <apex:actionsupport action="{!fetchEmailTemplatesByFolderName}" status="statusSave" event="onchange" reRender="Email_Template,pageMsg"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel id="selectemailTemplateSection" value="Email Templates" for="select_template"/>
+                    <apex:outputPanel id="Email_Template">
+                        <apex:selectList id="select_template" value="{!strSelectedEmailTemplate}" size="1" rendered="{!IF(strSelectedEmailFolder != '',true,false)}">
+                            <apex:selectOptions value="{!list_emailTemplatesByFolderName}"/>
+                            <apex:actionsupport action="{!displayEmailTemplate}" event="onchange" status="statusSave" reRender="emailTemplateSection,pageMsg,sendEmailBtnId,emailButtons"/>
+                        </apex:selectList> 
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Template Preview" columns="1" id="emailTemplateSection">
+                <apex:outputPanel id="emailTemplateSection" style="width:50%;" >
+                    <apex:outputPanel id="templateNameSec" rendered="{!EmailTemplateRec != null}">
+                        <apex:outputLabel style="padding-right: 1em; font-weight: bold;" value="Template Name" for="templateName"/>
+                        <apex:outputText value="{!strMassEmailName}" id="templateName"/>
+                    </apex:outputPanel>
+                   
+                    <apex:outputText value="{!strHtmlBody}" escape="false" style="overflow-y:scroll; height:280px; display:block;"/>
+                </apex:outputPanel> 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Cases" columns="1" id="pbs3">
+                <apex:outputPanel id="casesSection" rendered="{!IF(list_CaseWrappers.size>0, true, false)}">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr class="slds-text-title slds-line-height_reset">
+                                <th>
+                                    <apex:inputCheckbox id="mainCheckBoxId" value="{!blnSelectAll}">
+                                        <apex:actionSupport event="onchange" action="{!selectUnselectAllCase}" status="statusSave" rerender="mainCheckBoxId,pageMsg,casesSection,sendEmailSection"></apex:actionSupport>
+                                    </apex:inputCheckbox>
+                                </th>
+                                <th>Case Number</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Next Steps</th>
+                                <th>Mass Email Step</th>
+                                <th>Agency Information</th>
+                                <th>Contact Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!list_CaseWrappers}" var="caseWrap" id="caseTable">
+                                <tr class="slds-text-title slds-line-height_reset">
+                                    <td>
+                                        <apex:inputCheckbox value="{!caseWrap.blnSelected}" styleClass="caseCheckboxes" id="caseRowId">
+                                            <apex:actionSupport event="onchange" action="{!selectCase}" status="statusSave" rerender="pageMsg,caseRowId,sendEmailSection">
+                                                <apex:param name="caseIndex" value="{!caseWrap.indx}" assignTo="{!intSelectedCaseIndx}"/>
+                                            </apex:actionSupport>
+                                        </apex:inputCheckbox>
+                                    </td>
+                                    <td>
+                                        <apex:outputLink value="/{!caseWrap.objCase.Id}">
+                                            <apex:outputField value="{!caseWrap.objCase.CaseNumber}"/>
+                                        </apex:outputLink>
+                                    </td>
+                                    <td> <apex:outputField value="{!caseWrap.objCase.Subject}"/></td>
+                                    <td> <apex:outputField value="{!caseWrap.objCase.Status}"/></td>
+                                    <td>
+                                        <apex:outputField value="{!caseWrap.objCase.Next_Steps__c}"/>
+                                    </td>
+                                   
+                                    <td>
+                                        <apex:outputField value="{!caseWrap.objCase.Mass_Email_Step__c}"/>
+                                    </td>
+                                    <td>
+                                        <apex:outputLink value="/{!caseWrap.objCase.Agency_Information__c}">
+                                            <apex:outputField value="{!caseWrap.objCase.Agency_Information__c}"/>
+                                        </apex:outputLink>
+                                    </td>
+                                    <td>
+                                        <apex:outputLink value="/{!caseWrap.objCase.ContactId}">
+                                            <apex:outputField value="{!caseWrap.objCase.Contact.Name}"/>
+                                        </apex:outputLink>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                            <tr>
+                                <td><apex:commandLink value="First" reRender="pbs3" action="{!first}" status="statusSave" /></td>
+                                <td><apex:commandLink value="Previous" rerender="pbs3" action="{!previous}" rendered="{!hasPrevious}" status="statusSave"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;</td>
+                                <td><apex:commandLink value="Next" rerender="pbs3" action="{!next}" status="statusSave" rendered="{!hasNext}"/></td>
+                                <td><apex:commandLink value="Last" rerender="pbs3" action="{!last}" status="statusSave"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </apex:outputPanel>
+                
+                    <apex:outputPanel rendered="{!IF(list_CaseWrappers.size == 0, true, false)}">
+                        <div>There are no cases for the selected filters.</div>
+                    </apex:outputPanel>    
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Send Email" columns="2" id="sendEmailSection" >
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Mass_Email_Step__c}" rendered="{!blnOneOrMoreCasesSelected}">
+                        <apex:actionSupport rerender="sendEmailSection" event="onchange"/>
+                </apex:inputField>
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Next_Steps__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c != 'Resolution' && objDummyCaseResolutionEmail.Mass_Email_Step__c != '' && blnOneOrMoreCasesSelected}"/>
+                <apex:pageBlockSectionItem rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c != 'Resolution' && objDummyCaseResolutionEmail.Mass_Email_Step__c != '' && blnOneOrMoreCasesSelected}"></apex:pageBlockSectionItem>
+                <!--<apex:inputField value="{!objDummyCaseResolutionEmail.Status}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Routing_Case_Reason__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Type}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Confirm_Case_Reason__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Notice_Period__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Customer_Journey__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Root_Cause__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Sub_Root_Cause__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Area_Impacted__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/>
+                <apex:inputField value="{!objDummyCaseResolutionEmail.Large_Scale_Issue__c}" rendered="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = 'Resolution' && blnOneOrMoreCasesSelected}"/> -->
+                <apex:pageBlockSectionItem id="buttonSecItem" rendered="{!blnOneOrMoreCasesSelected}">
+                    <apex:outputLabel value="" for="sendEmailBtnId"/>
+                    <apex:outputPanel styleClass="oPanel" id="emailButtons">
+                        <apex:commandButton action="{!sendEmail}" value="Send Email" id="sendEmailBtnId" reRender="theForm" status="statusSave" disabled="{!objDummyCaseResolutionEmail.Mass_Email_Step__c = '' || strSelectedEmailTemplate = ''}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>               
+        </div>
+    </apex:form>
+    </div>
+</apex:page>

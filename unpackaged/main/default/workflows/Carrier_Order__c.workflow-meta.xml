@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Carrier_Order_s_Order_type_Missing</fullName>
+        <ccEmails>onboarding-qualification@gusto.com</ccEmails>
+        <description>Carrier Order: Order type Missing</description>
+        <protected>false</protected>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>New_Plan_Case_Email_Templates/Order_Type_is_Missing</template>
+    </alerts>
+    <outboundMessages>
+        <fullName>Carrier_Order_Census_Export_Request</fullName>
+        <apiVersion>56.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Carrier_Order__c&amp;org_id=00DG0000000hKQi&amp;name=carrier_order_census_export_request</endpointUrl>
+        <fields>Application_Id__c</fields>
+        <fields>Application_Type__c</fields>
+        <fields>Id</fields>
+        <fields>ZP_Company_Id__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Carrier Order Census Export Request</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Publish_Career_Order_To_Kafka</fullName>
+        <apiVersion>56.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Carrier_Order__c&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Application_Id__c</fields>
+        <fields>Application_Type__c</fields>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Publish Career Order To Kafka</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+</Workflow>

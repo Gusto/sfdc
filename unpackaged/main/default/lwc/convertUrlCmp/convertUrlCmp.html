@@ -1,0 +1,30 @@
+<template>
+    <div style="width:95%; margin: 15px !important;">
+        <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+        <template if:true={blnIsLoading}>
+            <lightning-spinner alternative-text="Please wait..." size="small" variant="brand"></lightning-spinner>
+        </template>
+
+        <div class="slds-m-top_medium slds-m-bottom_medium">
+            <div style="font-weight: bold; margin-bottom:5px;">
+                Enter Salesforce Lightning/Classic URL : 
+                <div class="slds-float_right">
+                    <lightning-button label="Convert Current Page URL" onclick={convertCurrentPageURL} variant="brand"></lightning-button>
+                    <lightning-button style="margin-left:5px;" label="Convert Copy/Paste URL" onclick={convertCopyPasteURL} variant="brand"></lightning-button>
+                </div>
+            </div> 
+            <lightning-input type="text" label="" name="inputurl"></lightning-input>
+        </div>
+
+        <div class="slds-m-top_medium slds-m-bottom_medium">
+            <div style="font-weight: bold;">
+                Converted URL :
+            </div> 
+        </div>
+
+        <div class="slds-m-top_medium slds-m-bottom_medium">
+            <lightning-button-icon if:true={blnValidUrl} icon-name={strIconName} size="medium" alternative-text={strAltText} onclick={copyClipBoard} class="slds-p-around_x-small"></lightning-button-icon>
+            <lightning-formatted-url value={strOutputURL} label={strOutputURL} target="_blank" ></lightning-formatted-url>   
+        </div>
+    </div>
+</template>

@@ -1,0 +1,168 @@
+<apex:page standardController="Benefit_Order__c" extensions="BenefitCarrierTableExtension" docType="html-5.0" sidebar="false" tabStyle="Benefit_and_Carrier_Orders__tab" title="BenefitCarrierTable" id="mainPg">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <apex:sectionHeader title="Benefit and Carrier Order Details"/> 
+    <apex:form id="frm">
+        <Script>
+        function setFocusOnLoad() {}        
+        
+        function setDivClass(sortordervalue, sortdir){
+        	if(sortordervalue != null && sortordervalue != 'name' && sortordervalue != null){
+        		var className = '.'+sortordervalue;
+        		if(sortdir == 'ASC'){
+        			$(className).addClass( "arrow-up" );
+        			$(className).removeClass( "arrow-down" );        			
+        		}
+        		else if(sortdir != null){
+        			$(className).addClass( "arrow-down" );
+        			$(className).removeClass( "arrow-up" );   
+        		}
+        	}
+        }
+        </Script>
+        <style>
+        .ct{
+            text-align:center;
+        }
+        .list .headerRow th {
+            white-space: normal;
+        }
+        .arrow-up {
+		  width: 0; 
+		  height: 0; 
+		  border-left: 5px solid transparent;
+		  border-right: 5px solid transparent;
+		  
+		  border-bottom: 5px solid black;
+		  display: inline-block;
+		  margin-left: 2px;
+		}
+		
+		.arrow-down {
+		  width: 0; 
+		  height: 0; 
+		  border-left: 5px solid transparent;
+		  border-right: 5px solid transparent;
+		  
+		  border-top: 5px solid black;
+		  display: inline-block;
+		  margin-left: 2px;
+		}
+        </style>
+        <apex:pageBlock id="pgb1">
+            <div align="center" draggable="false">
+                
+
+                <apex:outputPanel >                      
+                    <apex:actionStatus id="fetchStatus2" >
+                        <apex:facet name="start" >
+                            <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>   
+            </div>
+            <apex:pageBlockButtons >
+            	<apex:commandButton styleClass="buttonStyle" style="font-weight:bold;" id="BenefitOrderView" action="{!benefitOrderView}" value="{!$Label.BenefitOrdersView}"/>                 
+                <apex:commandButton styleClass="buttonStyle" style="font-weight:bold;" id="RefreshOrder" action="{!refreshOrders}" value="{!$Label.RefreshOrders}" reRender="pbId" status="fetchStatus2"/>
+            	<apex:commandButton value="Search" action="{!refreshOrders}"/>
+            </apex:pageBlockButtons>
+            <apex:PageBlockSection columns="2">					
+            		<apex:inputField value="{!userRecord.Coverage_Effective_Date__c}" />
+            		<apex:inputText value="{!userRecord.Carrier_Name__c}" />
+		            <c:MultiselectPicklist leftLabel="Benefit Order Status"
+		                leftOption="{!benefitOrderStatus}"
+		                rightLabel=""
+		                rightOption="{!selectedBenefitOrderStatus}"
+		                size="3"
+		                width="150px"/>
+		            <c:MultiselectPicklist leftLabel="Carrier Order Stage"
+		                leftOption="{!carrierOrderStatus}"
+		                rightLabel=""
+		                rightOption="{!selectedCarrierOrderStatus}"
+		                size="3"
+		                width="150px"/>
+            </apex:PageBlockSection>            
+        </apex:pageBlock>
+        <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pbId"/>
+        <apex:actionFunction name="sortPageOrderByBenefitOrder" action="{!sortbyBenefitOrderField}" status="fetchStatus2" reRender="pbId" onComplete="setDivClass('{!benefitOrderSortOrder}','{!sortDirection}');">
+			<apex:param value="" assignTo="{!benefitOrderSortOrder}" name="sBenefit"/>
+		</apex:actionFunction>
+        <apex:pageBlock id="pbId">
+            <apex:pageMessages />  
+            <div align="center" draggable="false"> 
+                <apex:commandButton action="{!saveme}" id="saveButton" value="Save" style="display:none"/>  
+                <apex:commandButton id="cancelButton" reRender="pbId" value="Cancel" style="display:none"/>
+            </div>  
+            <apex:pageblockTable value="{!benefitOrders}" var="benefitRec" rendered="{!benefitOrders.size>0}" id="table">             	
+                <apex:column >
+                	<apex:facet name="header"> 
+			           <a style="cursor:pointer;display: inline-block;" onclick="sortPageOrderByBenefitOrder('name');"  status="fetchStatus2">Benefit Order Name  <div  class="{!IF(benefitOrderSortOrder=='name',IF(sortDirection='ASC','arrow-up','arrow-down'),'')}" /></a>			           
+			        </apex:facet>
+                        <apex:outputLink value="/{!benefitRec.Id}" >{!benefitRec.Name} </apex:outputLink>
+                </apex:column>
+                <apex:repeat value="{!benefitOrderFields}" var="benefitFld">
+                    <apex:column style="width:70px;" id="column2">
+                    	<apex:facet name="header">   
+				           <a style="cursor:pointer;display: inline-block;width:50px;" onclick="sortPageOrderByBenefitOrder('{!$ObjectType['Benefit_Order__c'].fields[benefitFld].Name}');" status="fetchStatus2" >{!$ObjectType['Benefit_Order__c'].fields[benefitFld].Label} <div  style="margin-bottom:8px;" class="{!$ObjectType['Benefit_Order__c'].fields[benefitFld].Name}" /></a>
+				       </apex:facet>
+                        <apex:actionRegion >
+                            <apex:outputField value="{!benefitRec[benefitFld.fieldPath]}">
+                                <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton"/>
+                            </apex:outputField>
+                        </apex:actionRegion>
+                    </apex:column>
+                </apex:repeat>
+                <apex:column headerValue="Related Case" headerClass="ct" style="width:50px;">
+                     <apex:PageblockTable value="{!benefitRec.Cases__r}" var="caseRec" rendered="{!benefitRec.Cases__r.size!=0}" columns="1" >
+                        <apex:column >
+                            <apex:outputLink value="/{!caseRec.Id}"> {!caseRec.CaseNumber} </apex:outputLink>
+                        </apex:column> 
+                        <apex:column >
+                            <apex:outputField value="{!caseRec.Requires_Action__c}"> </apex:outputField>
+                        </apex:column> 
+                     </apex:PageblockTable>
+                </apex:column>
+                <apex:column headerValue="Carrier Order Records" headerClass="ct" style="width:500px;">
+                    <apex:PageblockTable value="{!benefitRec.Carrier_Orders__r}" var="carrierRec" rendered="{!benefitRec.Carrier_Orders__r.size!=0}" columns="7" columnsWidth="14%,14%,14%,14%,14%,14%,14%">
+                        <apex:column headerValue="Carrier Order Name">
+                            <apex:outputLink value="/{!carrierRec.Id}"> {!carrierRec.Name} </apex:outputLink>
+                        </apex:column>            
+                        <apex:repeat value="{!CarrierOrderFields}" var="carrierFld">
+                            <apex:column headerValue="{!$ObjectType['carrier_Order__c'].fields[carrierFld].Label}">
+                                <apex:actionRegion >
+                                    <apex:outputField value="{!carrierRec[carrierFld.fieldPath]}">
+                                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton"/>
+                                    </apex:outputField>
+                                </apex:actionRegion>
+                            </apex:column>                            
+                        </apex:repeat>                                
+                    </apex:PageblockTable>
+              </apex:column>          
+            </apex:pageblockTable> 
+            <apex:pageBlockSection rendered="{!benefitOrders.size==0}">No Records found</apex:pageBlockSection>  
+            <apex:panelGrid columns="8"> 
+                 
+                <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();">
+                    <apex:selectOptions value="{!paginationSizeOptions}"/>
+                </apex:selectList>
+                 
+                <apex:commandButton status="fetchStatus" reRender="pbId" value="First" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/> 
+                <apex:commandButton status="fetchStatus" reRender="pbId" value="Previous" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/>  
+                <apex:commandButton status="fetchStatus" reRender="pbId" value="Next" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/>   
+                <apex:commandButton status="fetchStatus" reRender="pbId" value="Last" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/> 
+  
+                <apex:outputText >{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+                     (setCon.pageNumber * size))} of {!noOfRecords}
+                </apex:outputText> 
+                       
+                <apex:outputPanel >                      
+                    <apex:actionStatus id="fetchStatus" >
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel> 
+  
+            </apex:panelGrid>               
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

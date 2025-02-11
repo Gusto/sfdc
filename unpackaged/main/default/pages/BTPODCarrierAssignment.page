@@ -1,0 +1,210 @@
+<apex:page controller="BTPODCarrierAssignmentCls" tabStyle="Carrier__c" docType="HTML-5.0" title="Carrier POD Assignment">
+  <style>
+    .fix-header th {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #fff;
+    }
+  </style>
+  <apex:includeScript value="/support/console/45.0/integration.js"/>
+  <apex:form id="frmId">
+    <c:GustoActionStatus />
+    <apex:sectionHeader title="POD Assignment" subtitle="Detials"/>
+    <apex:pageBlock id="PageBlock">
+      <apex:pageBlockSection columns="1" title="POD Assignment Search">
+          <apex:pageMessages id="showmsg" />
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Select Facilitator 1 POD Assignment"></apex:outputLabel>
+          <apex:selectList value="{!strSelectedPOD}" multiselect="false" size="1">
+              <apex:selectOptions value="{!lst_PODNames}"></apex:selectOptions>
+              <apex:actionSupport action="{!selectPOD}" event="onchange" reRender="frmId" status="actStatusId"/>
+          </apex:selectList>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem helpText="For Multiple Carriers, Separate the Carrier Name with Comma(,)"  rendered="{!(strSelectedPOD != '')}">
+            <apex:outputLabel value="Carrier Name"/>
+            <apex:inputText list="{!lst_CarrierNamesAutoPopulate}"  value="{!strSearchName}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!(strSelectedPOD != '')}">
+            <apex:outputlabel >State</apex:outputlabel>
+            <apex:outputPanel >
+            <c:MultiselectPicklist leftLabel=""
+                leftOption="{!lst_UnselectedStateValues}"
+                rightLabel=""
+                rightOption="{!lst_SelectedStateValues}"
+                size="5"
+                width="300px"
+                showUpDownButtons="false"/>
+              </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem />
+        <apex:pageblockSectionItem labelStyle="text-align: center;" dataStyle="text-align: center;"  rendered="{!(strSelectedPOD != '')}">
+            <apex:outputPanel >
+              <apex:commandButton action="{!resetSearch}" value="Reset" reRender="frmId" status="actStatusId"></apex:commandButton>&nbsp;&nbsp;
+              <apex:commandButton action="{!searchCarrier}" value="Search" reRender="frmId" status="actStatusId"></apex:commandButton>
+            </apex:outputPanel>
+        </apex:pageblockSectionItem>
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:pageBlock id="ShowCarrier" rendered="{!(strSelectedPOD != '')}">
+      <apex:pageBlockSection columns="1" title="Unassigned Carrier(s)">
+        <apex:pageBlockSectionItem rendered="{!(lst_UnassignedCarrier.size>0)}" >
+          <apex:outputlabel >Unassigned Carrier(s)</apex:outputlabel>
+          <apex:outputPanel >
+              <div style="text-align: right;padding-bottom: 10px;">
+                <apex:outputLabel value="Total Unassigned Record:- " style="font-weight: bold;"/>
+                <apex:outputText value=" {!map_CountAndTotalComplexity['Unassigned']['TotalRecord']}"/> &nbsp;&nbsp;
+                <apex:outputLabel value="Total Complexity Score:- " style="font-weight: bold;"/>
+                <apex:outputText value="{!map_CountAndTotalComplexity['Unassigned']['SumOfComplexity']}"/>
+              </div>
+              <div class="slds-scrollable" style="max-height: 305px; width: 100%; overflow:auto" >
+                  <apex:pageBlockTable id="allCarriers"  value="{!lst_UnassignedCarrier}"  var="carr"  style="word-break: break-word;" styleclass="outBorder fix-header" >
+                    <apex:column styleclass="inBorder" width="5%">
+                        <apex:facet name="header">
+                            <apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'selUnassignedCarrier')"/>
+                        </apex:facet>
+                        <apex:inputcheckbox id="selUnassignedCarrier" styleClass="slds-checkbox add-chk-box" value="{!carr.isChecked}"/>
+                    </apex:column>
+                    <apex:column width="25%">
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!searchCarrier}" value="Carrier Name {!IF(objUnassignedCarrierPagination.strFieldNameToSort=='Name',IF(objUnassignedCarrierPagination.strDirectionToSort='ASC','▼','▲'),'')}" reRender="ShowCarrier" status="actStatusId">
+                              <apex:param value="Name" name="column" assignTo="{!objUnassignedCarrierPagination.strFieldNameToSort}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputLink value="/{!carr.objCarrier.Id}">{!carr.objCarrier.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column width="25%">
+                        <apex:facet name="header">State </apex:facet>
+                        <apex:outputText value="{!carr.objCarrier.State__c}" ></apex:outputText>
+                    </apex:column>
+                    <apex:column width="45%">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!searchCarrier}" value="Complexity Score{!IF(objUnassignedCarrierPagination.strFieldNameToSort=='BoR_Complexity__c',IF(objUnassignedCarrierPagination.strDirectionToSort='ASC','▼','▲'),'')}" reRender="ShowCarrier" status="actStatusId">
+                          <apex:param value="BoR_Complexity__c" name="column" assignTo="{!objUnassignedCarrierPagination.strFieldNameToSort}" ></apex:param>
+                        </apex:commandLink>
+                      </apex:facet>
+                      <apex:outputText value="{!carr.objCarrier.BoR_Complexity__c}"></apex:outputText>
+                    </apex:column>
+                  </apex:pageBlockTable>
+              </div>
+              <apex:outputPanel id="pagination" >
+                <div style="display:{!if((strSelectedPOD != ''),'inline','none')};" >
+                  <table width="100%">
+                    <tr>
+                      <td> 
+                          <apex:commandButton value="First" action="{!objUnassignedCarrierPagination.first}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objUnassignedCarrierPagination.hasPrevious)}"/>
+                          <apex:commandButton value="Previous" action="{!objUnassignedCarrierPagination.previous}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objUnassignedCarrierPagination.hasPrevious)}"/>
+                      </td>
+                      <td style="text-align:center"> 
+                          <apex:commandButton value="Add Carrier(s) to POD" action="{!addCarriersToPOD}" rerender="ShowCarrier,showmsg" status="actStatusId"  rendered="{!(strSelectedPOD !='Unassigned')}"/>
+                      </td>
+                      <td  style="text-align:right"> 
+                          &nbsp;Page {!objUnassignedCarrierPagination.pageNumber} of {!objUnassignedCarrierPagination.totalPages}&nbsp;
+                        <apex:commandButton value="Next" action="{!objUnassignedCarrierPagination.next}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objUnassignedCarrierPagination.hasNext)}"/>
+                        <apex:commandButton value="Last" action="{!objUnassignedCarrierPagination.last}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objUnassignedCarrierPagination.hasNext)}"/>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!!(lst_UnassignedCarrier.size>0)}" dataStyle="text-align: center;">
+          <apex:outputText value="Unassigned Carrier(s) are not available"/>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection columns="1" title="Selected Carrier(s)"  id="AssignedCarrier" rendered="{!(strSelectedPOD !='Unassigned')}" >
+        <apex:pageBlockSectionItem rendered="{!(lst_SelectedAssignedCarrier.size>0)}" >
+          <apex:outputlabel >Selected Carrier(s)</apex:outputlabel>
+          <apex:outputPanel >
+            <div style="text-align: right;padding-bottom: 10px;">
+              <apex:outputLabel value="Total {!strSelectedPOD} Record:- " style="font-weight: bold;"/>
+              <apex:outputText value=" {!map_CountAndTotalComplexity[strSelectedPOD]['TotalRecord']}"/> &nbsp;&nbsp;
+              <apex:outputLabel value="Total Complexity Score:- " style="font-weight: bold;"/>
+              <apex:outputText value="{!map_CountAndTotalComplexity[strSelectedPOD]['SumOfComplexity']}"/>
+            </div>
+              <div class="slds-scrollable" style="max-height: 305px; width: 100%; overflow:auto" >
+                  <apex:pageBlockTable id="allCarriers"  value="{!lst_SelectedAssignedCarrier}" style="word-break: break-word;" rendered="{!(lst_SelectedAssignedCarrier.size>0)}" var="assignedCarrier" styleclass="outBorder fix-header" >
+                    <apex:column styleclass="inBorder" width="5%">
+                        <apex:facet name="header">
+                            <apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'selRemoveCarrier')"/>
+                        </apex:facet>
+                        <apex:inputcheckbox id="selRemoveCarrier" styleClass="slds-checkbox add-chk-box" value="{!assignedCarrier.isChecked}"/>
+                    </apex:column>
+                    <apex:column width="25%">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!selectPOD}" value="Carrier Name {!IF(objAssignedCarrierPagination.strFieldNameToSort=='Name',IF(objAssignedCarrierPagination.strDirectionToSort='ASC','▼','▲'),'')}" reRender="ShowCarrier" status="actStatusId">
+                          <apex:param value="Name" name="column" assignTo="{!objAssignedCarrierPagination.strFieldNameToSort}" ></apex:param>
+                        </apex:commandLink>
+                      </apex:facet>
+                      <apex:outputLink value="/{!assignedCarrier.objCarrier.Id}">{!assignedCarrier.objCarrier.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column width="25%">
+                        <apex:facet name="header">State</apex:facet>
+                        <apex:outputText value="{!assignedCarrier.objCarrier.State__c}" ></apex:outputText>
+                    </apex:column>
+                    <apex:column width="25%">
+                      <apex:facet name="header">POD </apex:facet>
+                      <apex:outputText value="{!assignedCarrier.objCarrier.BT_Facilitator_POD__c}"></apex:outputText>
+                    </apex:column>
+                    <apex:column width="20%">
+                      <apex:facet name="header">
+                        <apex:commandLink action="{!selectPOD}" value="Complexity Score {!IF(objAssignedCarrierPagination.strFieldNameToSort=='BoR_Complexity__c',IF(objAssignedCarrierPagination.strDirectionToSort='ASC','▼','▲'),'')}" reRender="ShowCarrier" status="actStatusId">
+                          <apex:param value="BoR_Complexity__c" name="column" assignTo="{!objAssignedCarrierPagination.strFieldNameToSort}" ></apex:param>
+                        </apex:commandLink>
+                      </apex:facet>
+                      <apex:outputText value="{!assignedCarrier.objCarrier.BoR_Complexity__c}"></apex:outputText>
+                    </apex:column>
+                  </apex:pageBlockTable>
+              </div>
+              <apex:outputPanel id="pagination" >
+                <div style="display:{!if((strSelectedPOD != ''),'inline','none')};" >
+                  <table width="100%">
+                    <tr>
+                      <td> 
+                        <apex:commandButton value="First" action="{!objAssignedCarrierPagination.first}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objAssignedCarrierPagination.hasPrevious)}"/>
+                        <apex:commandButton value="Previous" action="{!objAssignedCarrierPagination.previous}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objAssignedCarrierPagination.hasPrevious)}"/>
+                      </td>
+                      <td style="text-align:center"> 
+                        <apex:commandButton value="Remove Carrier(s) From POD" action="{!removeCarriersFromPOD}" rerender="ShowCarrier,showmsg" status="actStatusId" />
+                      </td>
+                      <td  style="text-align:right"> 
+                        &nbsp;Page {!objAssignedCarrierPagination.pageNumber} of {!objAssignedCarrierPagination.totalPages}&nbsp;
+                        <apex:commandButton value="Next" action="{!objAssignedCarrierPagination.next}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objAssignedCarrierPagination.hasNext)}"/>
+                        <apex:commandButton value="Last" action="{!objAssignedCarrierPagination.last}" rerender="ShowCarrier" status="actStatusId"  disabled="{!NOT(objAssignedCarrierPagination.hasNext)}"/>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!!(lst_SelectedAssignedCarrier.size>0)}" dataStyle="text-align: center;">
+          <apex:outputText value="{!strSelectedPOD} Does not have any selected carrier"/>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script type="text/javascript">
+      function selectAllCheckboxes(obj,receivedInputID){
+          var inputCheckBox = document.getElementsByTagName("input");
+          for(var i=0; i<inputCheckBox.length; i++){
+              if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){ 
+                  inputCheckBox[i].checked = obj.checked;
+              }
+          }
+      }
+      function SetTabTitle() {
+          sforce.console.setTabTitle('Facilitator 1 Pod Assignment');
+      }
+      var pageLoad = window.onload;
+      window.onload = function() {
+            if (pageLoad) {
+                    pageLoad();
+            }
+              SetTabTitle();
+      }
+  </script>
+</apex:page>

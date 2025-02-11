@@ -1,0 +1,87 @@
+<apex:page standardController="Benefit_Order__c" extensions="BTCarrierOrderCreateEditExtension" showHeader="false" sidebar="false">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+    <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script> 
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <style> 
+        .text-center {
+          text-align: center !important;
+        }
+        .text-right {
+          text-align: right !important;
+        }
+        .text-hide{
+            display: none;
+        }
+    </style>
+    <script type="text/javascript">
+		        
+       function RefreshPrimaryTab(){
+	        sforce.console.getFocusedPrimaryTabId(showTabId);
+	    }
+	    
+	    var showTabId = function showTabId(result){
+	        var tabId = result.id;
+	        //alert('Primary Tab IDs: primaryTabId ' + tabId );
+	        sforce.console.refreshPrimaryTabById(tabId , true);
+	    };
+    </script>
+    <c:BTCustomCSS />
+    <apex:form id="frm1">        
+        <apex:actionFunction name="getPartner" action="{!checkTAdAType}" status="actStatusId" rerender="frm1"/>
+        <apex:actionFunction name="bringBT" action="{!getBenefitType}" status="actStatusId" rerender="frm1"/>
+        <apex:pageBlock id="pgBlock1">
+            <c:GustoActionStatus />
+            <div style="font-size: 24px;">Manage Orders</div>
+            <hr />
+            <apex:pageMessages />
+            <table cellpadding="5" cellspacing="0" width="100%" class="custom-table" id="table-01">
+                <thead>
+                    <th>Carrier Name</th>
+                    <th>Renewal Date</th>
+                    <th width="300">Benefit Type</th>
+                    <th>Remove</th>
+                </thead>
+                <tbody>                    
+                    <apex:variable var="list_count" value="{!0}"/>
+                    <apex:repeat value="{!list_CarrierOrderDetails}" var="carrierDetail">
+                        <tr>
+                            <td>
+                                <apex:outputField styleClass="normal-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id != null,true,false)}"/>
+                                <apex:inputField styleClass="edit-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id == null,true,false)}" onchange="getPartner();" />
+                            </td>
+                            <td>
+                                <apex:outputField styleclass="normal-mode" value="{!carrierDetail.objCarrierOrder.Renewal_Date__c}" rendered="{!if(carrierDetail.objCarrierOrder.Id != null && !carrierDetail.blnIsTada,true,false)}"/>
+                                <apex:inputField styleclass="edit-mode" value="{!carrierDetail.objCarrierOrder.Renewal_Date__c}" rendered="{!if(carrierDetail.objCarrierOrder.Id == null || carrierDetail.blnIsTada,true,false)}" onchange="bringBT();"/>
+                            </td>
+                            <td>                            
+                                <apex:selectList value="{!carrierDetail.list_SelectedBenefitType}" multiselect="true">
+                                    <apex:selectOptions value="{!carrierDetail.list_UnSelectedBenefitType}"/>
+                                </apex:selectList>
+                            </td> 
+                            <td>
+                                <apex:commandLink action="{!removeNewRow}"  status="actStatusId" rerender="frm1" immediate="true" value="x" style="font-size: 24px; color: red; text-decoration: none; margin-top: -10px;" styleClass="{!IF(carrierDetail.objCarrierOrder.Id !=null,'text-hide','')}">
+                                    <apex:param name="todeleteNewCO" assignTo="{!strRowToDelete}" value="{!list_count}"/>
+                                </apex:commandLink>
+                            </td>                           
+                        </tr>
+                        <apex:variable var="list_count" value="{!list_count+1}"/>
+                    </apex:repeat>
+                </tbody>
+            </table>
+            <div style="margin-top: 5px;"><apex:commandButton styleclass="btn-blue white add-row" value="Add" action="{!addNewRow}" status="actStatusId" rerender="frm1"/></div>
+            <div class="text-center" style="margin: 10px 0px;">
+                <apex:commandButton action="{!syncCarrierOrders}" styleClass="btn-blue" value="Update" status="actStatusId" rerender="frm1" oncomplete="RefreshPrimaryTab();return false" />
+                <apex:commandButton action="{!Cancel}" styleClass="btn-blue" value="Back" status="actStatusId" rerender="frm1"/>
+            </div>
+        </apex:pageBlock>
+        <script type="text/javascript">
+            $(function() {
+                $('select[multiple]').multiselect();
+            });
+
+        </script>
+    </apex:form>
+    
+</apex:page>

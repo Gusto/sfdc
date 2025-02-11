@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MOps_Required_Fields_on_Close</fullName>
+    <active>true</active>
+    <description>BBO-1156, Submission_Case__c or Carrier_Order__c must be populated on tickets prior to close for specific Escalation_Reason_Details__c</description>
+    <errorConditionFormula>RecordType.DeveloperName ==&apos;Member_Operations&apos; &amp;&amp;
+(
+(
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Incorrect Enrollment (open MOps case)&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Incorrect Enrollment (closed MOps case)&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Missed/Incorrect Enrollment (open MOps case)&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Missed/Incorrect Enrollment (closed MOps case)&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Missed/Incorrect Termination (closed MOps case)&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Missed/Incorrect Termination (open MOps case)&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Missed/Incorrect Enrollments and Terminations&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Missed Group Termination&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Plan Mismatch&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Contribution Scheme Discrepancy or Change&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Termination policy discrepancy&apos;) ||
+ISPICKVAL(Escalation_Reason_Detail__c, &apos;Waiting period discrepancy&apos;)
+) &amp;&amp;
+(
+(
+(ISCHANGED(Status__c) &amp;&amp; TEXT(Status__c) == &apos;Closed&apos;)
+) &amp;&amp;
+(ISBLANK(Submission_Case__c) &amp;&amp; ISBLANK(Carrier_Order__c))
+)
+||
+(
+(ISCHANGED(Submission_Case__c) || ISCHANGED(Carrier_Order__c)) &amp;&amp;
+TEXT(Status__c) == &apos;Closed&apos; &amp;&amp;
+(ISBLANK(Submission_Case__c) || ISBLANK(Carrier_Order__c))
+)
+)</errorConditionFormula>
+    <errorMessage>To close this ticket you must populate either the Submission Case or Carrier Order field to identify where the error originated</errorMessage>
+</ValidationRule>

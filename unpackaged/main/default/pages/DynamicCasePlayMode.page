@@ -1,0 +1,251 @@
+<apex:page controller="QualifyingLifeCasePlayModeController" id="mainpg" showHeader="false" sidebar="false">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    
+    <script>
+        var $jq = jQuery.noConflict();
+    </script>
+    
+    <style>
+        
+        .list-header{
+            text-align:center !important;           
+        }
+        
+        td{
+           /* width:33.3%;*/
+        }
+        
+        .btn-custom{
+            background-repeat: no-repeat !important;
+            background-position: 4px -257px !important;
+            height: 27px;
+            width: 29px;
+            background-image: url('/img/support/servicedesk/serviceDeskListReskin-sprite.png') !important;
+         }
+        
+    </style>
+    
+    <div class="gusto">
+	    <apex:form id="frm">
+	       <apex:pageblock id="pgblock" > 
+	           <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:450px;">
+	               <tr class="slds-hint-parent">
+	                   <td valign="top">
+	                       <div class="slds-select_container">
+		                       <apex:selectList styleclass="selected-list slds-select" value="{!selectedCaseTypeStr}" size="1" required="true" >
+                                    <apex:selectOptions value="{!CaseTypeSelectList}"/>
+                                    <apex:actionSupport event="onchange" rerender="pgblock"/>
+		                        </apex:selectList>
+	                        </div>
+	                   </td>
+	                   <td id="carrierDetails" valign="top">
+                            <apex:outputPanel id="carrierListPanel" rendered="{!AND(selectedCaseTypeStr != 'QSEHRA',selectedCaseTypeStr != '')}">
+                                <div class="slds-select_container">
+                                    <apex:selectList styleclass="selected-list slds-select" value="{!selectedCarrierStr}" size="1" required="true" >
+                                            <apex:selectOptions value="{!CarrierDetailSelectList}"/>
+                                    </apex:selectList>
+                                </div>    
+                            </apex:outputPanel>                       
+                       </td>
+	                   <td valign="top">
+	                       <div id="bulkDetails" style="display:none;white-space:nowrap;" class="slds-select_container" ><!-- style="display:none;margin-left:50px;" -->
+                              <apex:selectList id="bulkSize_picklist" styleclass="selected-list slds-select" label="Number to Serve Up" value="{!selectedBulkSize}" size="1">
+                                   <apex:selectOption itemValue="0" itemLabel="Number to Serve Up" />
+                                   <apex:selectOption itemValue="1" itemLabel="1" />
+                                   <apex:selectOption itemValue="2" itemLabel="2" />
+                                   <apex:selectOption itemValue="3" itemLabel="3" />
+                                   <apex:selectOption itemValue="4" itemLabel="4" />
+                                   <apex:selectOption itemValue="5" itemLabel="5" />
+                                   <apex:selectOption itemValue="6" itemLabel="6" />
+                                   <apex:selectOption itemValue="7" itemLabel="7" />
+                                   <apex:selectOption itemValue="8" itemLabel="8" />
+                                   <apex:selectOption itemValue="9" itemLabel="9" />
+                                   <apex:selectOption itemValue="10" itemLabel="10" />
+                               </apex:selectList>
+                           </div>
+	                   </td>
+	               </tr>
+	               <tr>
+	                   <td id="sortDetails" valign="top" colspan="2" style="max-width:200px;word-break: inherit;white-space: normal;"></td>
+	                   <td valign="top">
+	                       <input class="btn" type="button" value="Case Play" onclick="startPlayList();" />
+	                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	                       <input type="button" class="btn btn-custom" title="Refresh" onclick="refreshPage();"/>
+	                   </td>
+	               </tr>
+	           </table>
+	       </apex:pageblock>
+	    </apex:form>
+    </div>
+    
+    <script>
+        
+        var sortingStr;
+        var playTypeStr;
+        
+        $jq(document).on('change', '.selected-list', function(e) {
+            
+            // we do not want to run the following functionality on change of bulk size picklist
+            var idd = $jq(this).attr('id');
+            if(idd != null && idd.indexOf("bulkSize_picklist") > -1){
+                return false;
+            }
+            
+            // getting all the picklist field values present on page
+            var selected = [];            
+            $jq('.selected-list :selected').map(function(i, el) {
+			    selected.push($jq(el).val());
+			});
+            
+            // emptying out sortdetails div value
+            $jq('#sortDetails').html('');
+            console.log('@@## selected to get oldest details '+selected);
+            
+		    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.QualifyingLifeCasePlayModeController.getSortingDetails}',
+                                                      selected[0],
+                                                      selected[1],
+                                                      function(result, event){
+                                                        if (event.statusCode == '200') {
+                                                            console.log('remote result= '+result); 
+                                                            console.log('remote result statuscode= '+event.statusCode);                                                       
+                                                            
+                                                            var resultStr = result;                                                            
+                                                            var semicolonIndex;
+                                                            if(resultStr !== null && resultStr !== 'null'){
+                                                                semicolonIndex = resultStr.indexOf('!*!');
+                                                            }
+                                                            else{
+                                                                semicolonIndex = -1;
+                                                            }
+                                                             
+                                                            
+                                                            /* we are getting result in string formatted as <string!*!string>
+                                                                First part contains oldest Sorting field value and field name
+                                                                second string contains case play type
+                                                            */
+                                                            if(semicolonIndex > -1){
+                                                                sortingStr = resultStr.substring(0,semicolonIndex);
+                                                                playTypeStr = resultStr.substring(semicolonIndex+3);
+                                                            }
+                                                            else{
+                                                                sortingStr = null;
+                                                                playTypeStr = null;
+                                                            }
+                                                            
+                                                            console.log('sortingStr '+sortingStr);   
+                                                            console.log('playTypeStr '+playTypeStr);   
+                                                             
+                                                             // checking for ** if fitler field is present in the custom setting but no record found.
+                                                            if(sortingStr !== null && sortingStr !== 'null' && sortingStr.trim().length > 0 && sortingStr.indexOf("**") == "-1"){                        
+                                                                $jq('#sortDetails').html($jq('<div />').html(sortingStr).text());
+                                                            }
+                                                            else{
+                                                                $jq('#sortDetails').html('No record found.');
+                                                            }
+                                                            
+                                                            // following code is checking for platype to render the fields accordingly
+                                                            if(playTypeStr !== null && playTypeStr !== 'null'){
+                                                                $jq('#sortDetails').css('color','black');
+                                                                if(playTypeStr == 'Contact Play Mode'){
+                                                                    $jq('#carrierDetails').css('display','table-column');
+                                                                    $jq('#bulkDetails').css('display','none');
+                                                                }
+                                                                else if(playTypeStr == 'Select Number of Cases Play Mode'){ 
+                                                                    $jq('#carrierDetails').css('display','block');                                                                   
+                                                                    $jq('#bulkDetails').css('display','inline');
+                                                                }
+                                                                else{
+                                                                   $jq('#bulkDetails').css('display','none'); 
+                                                                   $jq('#carrierDetails').css('display','block'); 
+                                                                }
+                                                            }   
+                                                        }
+                                                        
+                                                        // following code is handling backend exceptions.
+                                                        if (event.statusCode == '400') {
+                                                            $jq('#sortDetails').html('In-complete information, please check configuration.');
+                                                        }
+                                                      }, 
+                                                      {escape: true}
+                                                     );                                                        
+		    
+		});
+        
+        function startPlayList(){
+            
+            var selected = [];
+            $jq('.selected-list :selected').map(function(i, el) {
+                selected.push($jq(el).val());
+            });
+            
+            console.log('@@ '+selected);
+            if(selected.length == 2){
+                selected.splice(1, 0, "");
+            }
+            /*if((selected[0] == '0' || selected[1] == '0') && playTypeStr != 'Contact Play Mode'){
+                $jq('#sortDetails').html('Please select Case and Carrier type. Required fields.');
+                $jq('#sortDetails').css('color','red');
+                return false;
+            }*/
+            
+            if(playTypeStr == 'Select Number of Cases Play Mode' && selected[2] == '0'){
+                $jq('#sortDetails').html('Please select "Number to Serve Up" field value. Required field.');
+                $jq('#sortDetails').css('color','red');
+                return false;
+            }
+            
+            if($jq('#sortDetails').html() == 'No record found.'){
+                $jq('#sortDetails').css('color','red');
+                return false;
+            }
+            
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.QualifyingLifeCasePlayModeController.executePlay}',
+                selected[0],
+                selected[1],
+                selected[2],
+                function(result, event){
+                    if (event.statusCode == '200') {
+					       console.log('remote result '+result); 
+					       console.log('remote result statuscode '+event.statusCode);                                                       
+					    
+					    if(result == null || result == 'null' || result.length == 0){
+					       $jq('#sortDetails').html('No more records in the queue. Please change the filters or refresh the page and try again. If error persists please contact system admin.');
+					       $jq('#sortDetails').css('color','red');
+					       return false;
+					    }
+					       
+                        var i;
+						for (i = 0; i < result.length; i++) {
+                            console.log('@@## caseIdd '+result[i]);
+							openRec(result[i]); 
+                        }
+                        sforce.console.setCustomConsoleComponentVisible(false);  
+                    }
+					          
+				    if (event.statusCode == '400') {
+				       $jq('#sortDetails').html('In-complete information, please check configuration.');
+				    }
+				 }, 
+				 {escape: true}
+            );
+        }
+        
+        function openRec(caseid){  
+            if(playTypeStr == 'Normal Play Mode'){
+                sforce.console.openPrimaryTab(null, "/"+caseid+'?isMFplay=1', true);
+            } 
+            else{
+                sforce.console.openPrimaryTab(null, "/"+caseid, true);
+            }     
+            
+        }
+        
+        function refreshPage(){
+            location.reload();
+        }
+    
+    </script>
+    
+</apex:page>

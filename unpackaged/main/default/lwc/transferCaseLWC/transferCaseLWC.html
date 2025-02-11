@@ -1,0 +1,23 @@
+<template>
+	<lightning-spinner if:true={blnSpinner} alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+
+	<lightning-layout multiple-rows style="height: 300px">
+		<lightning-layout-item size="12" class="slds-modal__header">
+			<h1 class="slds-modal__title slds-hyphenate">Transfer Case</h1>
+		</lightning-layout-item>
+
+		<lightning-layout-item size="12" class="slds-var-p-around_medium slds-var-m-bottom_large">
+			<lightning-layout multiple-rows>
+				<lightning-layout-item size="6">
+					<lightning-combobox name="route" label="Route To" options={list_CaseTypeOptions} onchange={handleCaseTypeChange} data-name="Route To" placeholder="Select a Queue" required>
+					</lightning-combobox>
+				</lightning-layout-item>
+			</lightning-layout>
+		</lightning-layout-item>
+
+		<lightning-layout-item size="12" class="slds-modal__footer slds-align-bottom">
+			<lightning-button variant="Neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+			<lightning-button class="slds-var-p-left_small" variant="brand" label="Transfer Case" onclick={handleTransferCase}></lightning-button>
+		</lightning-layout-item>
+	</lightning-layout>
+</template>

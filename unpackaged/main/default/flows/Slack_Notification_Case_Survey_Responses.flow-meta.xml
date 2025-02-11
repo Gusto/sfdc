@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Post the tnps score to the #all-tnps-bot slack channel.</description>
+        <name>Post_to_All_TNPS_Bot_Channel</name>
+        <label>Post to All TNPS Bot Channel</label>
+        <locationX>242</locationX>
+        <locationY>492</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>PostMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Message_Destination_Records.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>59.0</apiVersion>
+    <decisions>
+        <description>Check if the message destination record was found.</description>
+        <name>Check_Message_Destination_Records</name>
+        <label>Check Message Destination Records</label>
+        <locationX>374</locationX>
+        <locationY>384</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Message_Destination_Records_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Message_Destination_Records</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Post_to_All_TNPS_Bot_Channel</targetReference>
+            </connector>
+            <label>Message Destination Records Found</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Slack Notification - Case Survey Responses {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Slack Notification - Case Survey Responses</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get the message destination record for TNPS bot channel.</description>
+        <name>Get_Message_Destination_Records</name>
+        <label>Get Message Destination Records</label>
+        <locationX>374</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Message_Destination_Records</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>All TNPS Bot</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>TNPS__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Case_Survey_Response__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Message_Destination_Records</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Content of the post that will be sent.</description>
+        <name>PostMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Case Survey Response Created:
+Case: {!$Record.Case__r.CaseNumber}
+Business Name/Email: {!$Record.Case__r.Account.Name}
+Admin Type: {!$Record.Case__r.Contact.ZP_User_Role__c}
+Plan Type: {!$Record.Case__r.Account.Tier__c}
+Active Employee: {!$Record.Case__r.Account.Number_of_Active_Employees__c}
+Industry: {!$Record.Case__r.Account.Industry}
+IC Name: {!$Record.Case__r.Case_Owner_Name__c}
+PE Name: {!$Record.Direct_PE__c}
+TNPS: {!$Record.TNPS__c}/10
+CSAT: {!$Record.How_satisfied_are_you_with_service__c}/5
+ISR: {!$Record.IC_Resolved_Issue__c}
+Comment: {!$Record.How_can_we_serve_you_better__c}</text>
+    </textTemplates>
+</Flow>

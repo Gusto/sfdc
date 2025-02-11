@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>53.0</apiVersion>
+    <assignments>
+        <description>No email, so we clear the unique email field</description>
+        <name>Clear_Unique_Email</name>
+        <label>Clear Unique Email</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Unique_Email_Address_Contact__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Clear_Unique_Email_field</name>
+        <label>Clear Unique Email field</label>
+        <locationX>578</locationX>
+        <locationY>791</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Unique_Email_Address_Contact__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <description>Copy Email to Unique Email, and fail silently if there is already a Contact with that unique email</description>
+        <name>Copy_Email_to_Unique_Email</name>
+        <label>Copy Email to Unique Email</label>
+        <locationX>314</locationX>
+        <locationY>791</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Unique_Email_Address_Contact__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Email</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Count_queried_records</name>
+        <label>Count queried records</label>
+        <locationX>446</locationX>
+        <locationY>551</locationY>
+        <assignmentItems>
+            <assignToReference>ExistingRecordsCount</assignToReference>
+            <operator>AssignCount</operator>
+            <value>
+                <elementReference>Find_Existing_Unique_Email</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Look_for_existing_email</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>If Email is null, clear the unique email field</description>
+        <name>Check_Email</name>
+        <label>Check Email</label>
+        <locationX>248</locationX>
+        <locationY>311</locationY>
+        <defaultConnector>
+            <targetReference>Find_Existing_Unique_Email</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Email is populated</defaultConnectorLabel>
+        <rules>
+            <name>Email_is_null</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Email</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Email</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Clear_Unique_Email</targetReference>
+            </connector>
+            <label>Email is null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Look_for_existing_email</name>
+        <label>Look for existing email</label>
+        <locationX>446</locationX>
+        <locationY>671</locationY>
+        <defaultConnector>
+            <targetReference>Clear_Unique_Email_field</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Email exists</defaultConnectorLabel>
+        <rules>
+            <name>No_existing_records</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ExistingRecordsCount</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_Email_to_Unique_Email</targetReference>
+            </connector>
+            <label>No existing records</label>
+        </rules>
+    </decisions>
+    <description>Copy Email to Unique Email field</description>
+    <interviewLabel>Contact - Email to Unique Email {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Contact - Email to Unique Email</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Query for existing record</description>
+        <name>Find_Existing_Unique_Email</name>
+        <label>Find Existing Unique Email</label>
+        <locationX>446</locationX>
+        <locationY>431</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Count_queried_records</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Copy_Email_to_Unique_Email</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Unique_Email_Address_Contact__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Email</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Id</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Contact</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Email</queriedFields>
+        <queriedFields>Unique_Email_Address_Contact__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>122</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Email</targetReference>
+        </connector>
+        <object>Contact</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+    <variables>
+        <name>ExistingRecordsCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+</Flow>

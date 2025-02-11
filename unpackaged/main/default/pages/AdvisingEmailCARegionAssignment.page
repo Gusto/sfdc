@@ -1,0 +1,301 @@
+<apex:page controller="AdvisingEmailCARegionAssignmentCtrl" tabStyle="Opportunity" docType="html-5.0" title="CA Opportunity Assignment">
+
+    <apex:slds />
+    <c:ActionStatus />
+    <style>
+        #region_stats_panel td {
+            border: 1px solid black;
+            padding: 8px;            
+        }
+
+        #region_stats_panel tr:hover {background-color: #ddd;}
+
+        #region_stats_panel th {
+            padding-top: 12px;
+            padding-bottom: 12px;    
+            text-align: center;        
+        }
+        .data_cell{
+            text-align: center !important;   
+        }
+
+        /*css for help text*/
+        #unassigned:hover .unassigned_text{
+            display: inline !important;
+        }
+        /*css for help text*/
+        #unassignedca:hover .unassignedca_text{
+            display: inline !important;
+        }
+        /*css for help text*/
+        #unassignedrfd:hover .unassignedrfd_text{
+            display: inline !important;
+        }
+        .info-icon {
+            width: 15px;
+            height: 15px;
+            line-height: 15px;
+            background: #ccc;
+            display: inline-block;
+            text-align: center;
+            border-radius: 30px;
+        }
+    </style>
+    <script>
+
+        var previousOnload = window.onload;        
+        window.onload = function() { 
+            resetCACount();
+        }        
+
+        function assignRegionToOpp() {
+
+            document.getElementById("errorNumericOnly").style.display = "none"; 
+            var intEastCACount = document.getElementById("ca_east_assignment").value;
+            var intWestCACount = document.getElementById("ca_west_assignment").value;
+            var intCentralCACount = document.getElementById("ca_central_assignment").value;
+            var isUnassignment = document.getElementById("ca_is_unassign").checked;
+            var isReadyForDefaultAssignOnly = document.getElementById("readyfordefaultca").checked;
+
+            //alert('intEastCACount>'+intEastCACount+'..intWestCACount'+intWestCACount+'..intCentralCACount'+intCentralCACount);
+            //alert('isUnassignment>'+isUnassignment+'__isReadyForDefaultAssignOnly>'+isReadyForDefaultAssignOnly);
+            if(intEastCACount == '' || intWestCACount == '' || intCentralCACount == ''){
+                document.getElementById("errorNumericOnly").style.display = "block";
+            }
+            else{
+                assignRegionToOppCntrl(intEastCACount,intWestCACount,intCentralCACount,isUnassignment,isReadyForDefaultAssignOnly);
+            }
+            
+        }
+
+        function resetCACount(){
+            document.getElementById("ca_east_assignment").value = 0;
+            document.getElementById("ca_west_assignment").value = 0;
+            document.getElementById("ca_central_assignment").value = 0;
+        }
+
+        function toggleRadioButtonDisplay(){
+            var isUnassignment = document.getElementById("ca_is_unassign").checked;
+            if(isUnassignment){
+                document.getElementById("allca").style.display = "none";
+                document.getElementById("readyfordefaultca").style.display = "none";
+            }
+            else{
+                document.getElementById("allca").style.display = "revert";
+                document.getElementById("readyfordefaultca").style.display = "revert";
+            }
+        }
+     </script>
+
+    <apex:form id="mainfrm">        
+        <apex:actionFunction name="reCalculateStatsOnMonthChange" id="reCalculateStatsOnMonthChange" action="{!getRegionDetails}" status="statusSave" rerender="mainfrm" oncomplete="resetCACount()"/>
+        <apex:actionFunction name="assignRegionToOppCntrl" action="{!saveAssignRegionToOpportunities}" status="statusSave" rerender="mainfrm" oncomplete="resetCACount()">
+            <apex:param name="eastOppCount" assignTo="{!intCAEastAdditionaRegion}" value=""/>
+            <apex:param name="westOppCount" assignTo="{!intCAWestAdditionaRegion}" value=""/>
+            <apex:param name="centralOppCount" assignTo="{!intCACentralAdditionaRegion}" value=""/>
+            <apex:param name="unassignbln" assignTo="{!blnIsUnassigned}" value=""/>
+            <apex:param name="onlyreadttodefault" assignTo="{!blnAssignRFDOnly}" value=""/>
+        </apex:actionFunction>
+        <apex:outputPanel id="actionPollerPanel">
+            <apex:actionPoller rendered="{! idAssignmentBatchJob != null}" interval="5" action="{!checkBatchJobStatus}" rerender="showmsg,actionPollerPanel"/>
+        </apex:outputPanel>
+
+        <div class="tabcontent slds-scope">
+            <apex:pageBlock id="regionStats" title="Opportunity Region Assignment For California">
+                <div style="text-align: right;margin-bottom:10px;">
+                    <label for="months">Select month: </label>                    
+                    <apex:selectList id="months" value="{!strSelectedMonth}" size="1" onchange="reCalculateStatsOnMonthChange();">
+                        <apex:selectOption itemValue="1" itemLabel="January"/>
+                        <apex:selectOption itemValue="2" itemLabel="February"/>
+                        <apex:selectOption itemValue="3" itemLabel="March"/>
+                        <apex:selectOption itemValue="4" itemLabel="April"/>
+                        <apex:selectOption itemValue="5" itemLabel="May"/>
+                        <apex:selectOption itemValue="6" itemLabel="June"/>
+                        <apex:selectOption itemValue="7" itemLabel="July"/>
+                        <apex:selectOption itemValue="8" itemLabel="August"/>
+                        <apex:selectOption itemValue="9" itemLabel="September"/>
+                        <apex:selectOption itemValue="10" itemLabel="October"/>
+                        <apex:selectOption itemValue="11" itemLabel="November"/>
+                        <apex:selectOption itemValue="12" itemLabel="December"/>
+                    </apex:selectList> 
+                    <label for="years">Select year: </label>
+                    <apex:selectList id="years" size="1" value="{!strSelectedYear}" onchange="reCalculateStatsOnMonthChange();">
+                        <apex:selectOptions value="{!list_Years}" />
+                    </apex:selectList>
+                </div>
+                <div><apex:pageMessages id="showmsg" /></div>
+                <apex:pageBlockSection columns="1" collapsible="false" title="Region Stats">                     
+                    <table id="region_stats_panel" class="tablesorter-blue custom-table" style="margin: 0px;border-collapse: collapse;" width="100%">
+                        <thead>
+                            <tr>
+                                <th data-orderable="false"></th>
+                                <th data-orderable="false">Region #</th>
+                                <th data-orderable="false">Region Closed #</th>
+                                <th data-orderable="false">CA</th>
+                                <th data-orderable="false">CA Closed</th>
+                                <th data-orderable="false">Total Opportunities</th>
+                                <th data-orderable="false">Opp in Ready for Default</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EAST</td>
+                                <td class="data_cell">{!objRegionDetails.intEastTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intEastClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCAEastTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCAEastClosedTotal}</td>
+                                <td class="data_cell">{! objRegionDetails.intEastTotal + objRegionDetails.intEastClosedTotal + 
+                                                        objRegionDetails.intCAEastTotal + objRegionDetails.intCAEastClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intEastRFDTotal}</td>
+                            </tr>
+                            <tr>
+                                <td>WEST</td>
+                                <td class="data_cell">{!objRegionDetails.intWestTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intWestClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCAWestTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCAWestClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intWestTotal + objRegionDetails.intWestClosedTotal +
+                                                    objRegionDetails.intCAWestTotal + objRegionDetails.intCAWestClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intWestRFDTotal}</td>
+                            </tr>
+                            <tr>
+                                <td>CENTRAL</td>
+                                <td class="data_cell">{!objRegionDetails.intCentralTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCentralClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCACentralTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCACentralClosedTotal}</td>
+                                <td class="data_cell">{! objRegionDetails.intCentralTotal + objRegionDetails.intCentralClosedTotal +
+                                                        objRegionDetails.intCACentralTotal + objRegionDetails.intCACentralClosedTotal}</td>
+                                <td class="data_cell">{!objRegionDetails.intCentralRFDTotal}</td>
+                            </tr>
+                            <tr>
+                                <td>TOTAL</td>
+                                <td class="data_cell">{! objRegionDetails.intEastTotal+objRegionDetails.intWestTotal+objRegionDetails.intCentralTotal }</td>
+                                <td class="data_cell">{! objRegionDetails.intEastClosedTotal+objRegionDetails.intWestClosedTotal+objRegionDetails.intCentralClosedTotal }</td>
+                                <td class="data_cell">{! objRegionDetails.intCAEastTotal+objRegionDetails.intCAWestTotal+objRegionDetails.intCACentralTotal}</td>
+                                <td class="data_cell">{! objRegionDetails.intCAEastClosedTotal+objRegionDetails.intCAWestClosedTotal+objRegionDetails.intCACentralClosedTotal}</td>
+                                <td class="data_cell">{! objRegionDetails.intEastTotal+objRegionDetails.intWestTotal+objRegionDetails.intCentralTotal+
+                                                        objRegionDetails.intEastClosedTotal+objRegionDetails.intWestClosedTotal+objRegionDetails.intCentralClosedTotal+
+                                                        objRegionDetails.intCAEastClosedTotal+objRegionDetails.intCAWestClosedTotal+objRegionDetails.intCACentralClosedTotal+
+                                                        objRegionDetails.intCAEastTotal+objRegionDetails.intCAWestTotal+objRegionDetails.intCACentralTotal}</td>
+                                <td class="data_cell">{! objRegionDetails.intEastRFDTotal+objRegionDetails.intWestRFDTotal+objRegionDetails.intCentralRFDTotal}</td>
+                            </tr>
+                        </tbody>                     
+                    </table>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="caRegionStats" title="Opportunities to be assigned"  columns="1" collapsible="false">
+                    <table id="ca_mod_panel" class="tablesorter-blue custom-table" style="margin: 0px;border-collapse: collapse;border:none;" width="100%">
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td width="2%" style="padding-right: 18px;"></td>
+                                        <td>
+                                            Total CA : {! objRegionDetails.intCAEastTotal+objRegionDetails.intCAWestTotal+objRegionDetails.intCACentralTotal+objRegionDetails.intCATotalUnassignedRegion} 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="2%"  >
+                                            <input type="radio" id="allca" name="typeOfCA" checked="true"/>
+                                        </td>
+                                        <td >
+                                            Total Unassigned CA 
+                                            
+                                            <span id="unassignedca" style="display:inline;">
+                                                <span class="info-icon">&#8505;</span>
+                                                <span style="position: relative;display:none;" class="unassignedca_text">
+                                                        <span class="slds-popover slds-popover_tooltip" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px; width: 300px; background: #444;">
+                                                        <p class="slds-popover__body"># of CA UW State opportunities that have not been assigned to a regional team. Use this to assign all CA groups to a regional team.</p>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                            
+                                            : {!objRegionDetails.intCATotalUnassignedRegion}
+                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="2%" >
+                                            <input type="radio" id="readyfordefaultca" name="typeOfCA"/> 
+                                        </td>
+                                        <td >
+                                            Total Unassigned Ready for Default CA
+                                            
+                                            <span id="unassignedrfd" style="display:inline;">
+                                                <span class="info-icon">&#8505;</span>
+                                                <span style="position: relative;display:none;" class="unassignedrfd_text">
+                                                        <span class="slds-popover slds-popover_tooltip" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px; width: 300px; background: #444;">
+                                                        <p class="slds-popover__body"># of RFD CA opportunities that have not been assigned to a regional team. Use this to assign only RFD CA groups to a regional team.</p>
+                                                    </span>
+                                                </span>
+                                            </span>   
+                                            
+                                            : {!objRegionDetails.intCATotalUnassignedReadyForDefault}
+                                                                                                                                 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="2%" >
+                                            <input type="radio" id="ca_is_unassign" name="typeOfCA"/>
+                                        </td>
+                                        <td>
+                                            Unassign CA Opportunities 
+                                            <div id="unassigned" style="display:inline;">
+                                                <span class="info-icon">&#8505;</span>
+                                                <span style="position: relative;display:none;" class="unassigned_text">
+                                                        <span class="slds-popover slds-popover_tooltip " role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px; width: 300px; background: #444;">
+                                                        <p class="slds-popover__body">Use this to unassign groups from a regional team and move back to ‘Total Unassigned CA’ bucket.</p>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>                                
+                            </td>
+                            <td>
+                                <table cellspacing="4" cellpadding="2">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:30%;">
+                                                CA EAST
+                                            </td>
+                                            <td>
+                                                <input id="ca_east_assignment" type="number" min="0" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==4) return false;" size="4"/>
+                                                <!--<apex:input id="ca_east_assignment" value="{!intCAEastAdditionaRegion}" type="number"   html-min="0" html-max="9999" html-pattern="^[0-9]*$" onKeyPress="if(this.value.length==4) return false;"/> -->
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:30%;">
+                                                CA WEST
+                                            </td>
+                                            <td>
+                                                <input id="ca_west_assignment" type="number" min="0" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==4) return false;" size="4"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:30%;">
+                                                CA CENTRAL
+                                            </td>
+                                            <td>                                        
+                                                <input id="ca_central_assignment" type="number" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==4) return false;" size="4"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">                                        
+                                                <div id="errorNumericOnly" style="display:none;color:red;">Please inset only numeric values.</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>                        
+                    </table>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons location="bottom" >
+                    <input type="button" class="btn" onclick="assignRegionToOpp()" value="Save"/>
+                    <input type="button" class="btn" onclick="location.reload();" value="Refresh"/><!--resetCACount() -->
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </div>
+    </apex:form>
+</apex:page>

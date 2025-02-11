@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>X30_Day_CE_Email_Alert</name>
+        <label>30 Day CE Email Alert</label>
+        <locationX>50</locationX>
+        <locationY>360</locationY>
+        <actionName>agentsync__License__c.X30_Day_CE_Email_Alert</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>agentsync__License__c.X30_Day_CE_Email_Alert</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>X60_Day_CE_Email_Alert</name>
+        <label>60 Day CE Email Alert</label>
+        <locationX>314</locationX>
+        <locationY>360</locationY>
+        <actionName>agentsync__License__c.X60_Day_CE_Email_Alert</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>agentsync__License__c.X60_Day_CE_Email_Alert</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>X90_Day_CE_Email_Alert</name>
+        <label>90 Day CE Email Alert</label>
+        <locationX>578</locationX>
+        <locationY>360</locationY>
+        <actionName>agentsync__License__c.X90_Day_CE_Email_Alert</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>agentsync__License__c.X90_Day_CE_Email_Alert</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>61.0</apiVersion>
+    <decisions>
+        <description>Checks whether the resident license expires in 30/60/90 Days or none of the above</description>
+        <name>X30_60_90_Days_to_Expiration</name>
+        <label>30/60/90 Days to Expiration</label>
+        <locationX>446</locationX>
+        <locationY>252</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>X30_Days_Expiration</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>X30DayCheck</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>X30_Day_CE_Email_Alert</targetReference>
+            </connector>
+            <label>30 Days Expiration</label>
+        </rules>
+        <rules>
+            <name>X60_Days_Expiration</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>X60DayCheck</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>X60_Day_CE_Email_Alert</targetReference>
+            </connector>
+            <label>60 Days Expiration</label>
+        </rules>
+        <rules>
+            <name>X90_Days_Expiration</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>X90DayCheck</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>X90_Day_CE_Email_Alert</targetReference>
+            </connector>
+            <label>90 Days Expiration</label>
+        </rules>
+    </decisions>
+    <description>Send an automated Email Reminder when a producer&apos;s license is 30/60/90 Days from expiration</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>X30DayCheck</name>
+        <dataType>Boolean</dataType>
+        <expression>({!$Record.agentsync__DATE_EXPIRE_LICENSE__c} - 30) = TODAY()</expression>
+    </formulas>
+    <formulas>
+        <name>X60DayCheck</name>
+        <dataType>Boolean</dataType>
+        <expression>({!$Record.agentsync__DATE_EXPIRE_LICENSE__c} - 60) = TODAY()</expression>
+    </formulas>
+    <formulas>
+        <name>X90DayCheck</name>
+        <dataType>Boolean</dataType>
+        <expression>({!$Record.agentsync__DATE_EXPIRE_LICENSE__c} - 90) = TODAY()</expression>
+    </formulas>
+    <interviewLabel>Resident License Expiration (CE) Reminder Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Resident License Expiration (CE) Reminder Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>320</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>X30_60_90_Days_to_Expiration</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>agentsync__ACTIVE__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Yes</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>agentsync__Related_Producer_Tracking__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Active</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>agentsync__RESIDENCY_STATUS__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>R</stringValue>
+            </value>
+        </filters>
+        <object>agentsync__License__c</object>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2024-08-02</startDate>
+            <startTime>06:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

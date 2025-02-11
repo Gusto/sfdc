@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Type_is_Required</fullName>
+    <active>true</active>
+    <description>To make the field read-only on the page layout, we do not make it required at the field definition, but we make it required with a validation rule.</description>
+    <errorConditionFormula>ISPICKVAL(  Discount_Type__c , &quot;&quot;)</errorConditionFormula>
+    <errorDisplayField>Discount_Type__c</errorDisplayField>
+    <errorMessage>Discount Type is required.</errorMessage>
+</ValidationRule>

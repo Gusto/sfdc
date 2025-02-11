@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Penalties_Interest_Assessed_Indicator__c</fullName>
+    <description>Green: $0-500
+Yellow: $501-1000
+Red: $1000+</description>
+    <externalId>false</externalId>
+    <formula>IMAGE(&apos;/img/samples/color_green.gif&apos;,&apos;*&apos;,9,9)
++
+IF(TEXT(Penalties_Interest_Assessed__c) = &apos;$0-500&apos;,IMAGE(&apos;/img/samples/color_green.gif&apos;,&apos;*&apos;,9,9),&apos;&apos;)
++
+IF(TEXT(Penalties_Interest_Assessed__c) = &apos;$501-1000&apos;,IMAGE(&apos;/img/samples/color_yellow.gif&apos;,&apos;*&apos;,9,9),&apos;&apos;)
++
+IF(TEXT(Penalties_Interest_Assessed__c) = &apos;$1000+&apos;,IMAGE(&apos;/img/samples/color_red.gif&apos;,&apos;*&apos;,9,9),&apos;&apos;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Green: $0-500
+Yellow: $501-1000
+Red: $1000+</inlineHelpText>
+    <label>Penalties &amp; Interest Assessed Indicator</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

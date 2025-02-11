@@ -1,0 +1,97 @@
+<template>
+	<div class="slds-is-relative">
+		<div class={setCssOnMultipleSelectTrue}>
+			<template if:false={isLabelHidden}>
+				<label class="slds-form-element__label slds-no-flex">
+					<template if:true={isRequired}>
+						<abbr title="required" class="slds-required">*</abbr>
+					</template>
+					{labelFor}
+				</label>
+				<lightning-helptext if:true={fieldLevelHelpText} content={fieldLevelHelpText}></lightning-helptext>
+			</template>
+
+			<div class="">
+				<div>
+					<template if:true={showCombobox}>
+						<div class="slds-combobox-group" data-field-wrap-list={categoryOptions.length}>
+							<div class="slds-combobox_object-switcher slds-combobox-addon_start" onmouseenter={handleMouseEnter} onmouseleave={handleMouseleave}>
+								<div class="slds-combobox_container slds-has-icon-only">
+									<div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" data-combobox-name="category-combobox">
+										<div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_left-right" role="none">
+											<img
+												if:true={lookupIcon}
+												src={lookupIcon}
+												class="slctdImgStyle slds-icon_container slds-icon-utility-apex slds-input__icon slds-input__icon_left"
+												style={bgColor}
+											/>
+
+											<lightning-icon
+												if:false={lookupIcon}
+												icon-name="standard:picklist_type"
+												size="small"
+												class="slctdImgStyle slds-icon-utility-apex slds-input__icon slds-input__icon_left"
+												alternative-text="Record"
+											></lightning-icon>
+											&nbsp;
+											<input
+												type="text"
+												class="slds-input slds-combobox__input slds-combobox__input-value"
+												autocomplete="off"
+												onclick={openDropDownList}
+												onblur={handleBlur}
+												style="padding-left: 1.65rem"
+											/>
+											<lightning-icon
+												icon-name="utility:down"
+												size="xx-small"
+												class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right"
+											></lightning-icon>
+										</div>
+										<div class="slds-dropdown slds-dropdown_left slds-dropdown_x-small slds-dropdown_length-with-icon-7">
+											<ul class="slds-listbox slds-listbox_vertical" role="presentation" onmouseenter={handleMouseEnter} onmouseleave={handleMouseleave}>
+												<template for:each={categoryOptions} for:item="item">
+													<li role="presentation" class="slds-listbox__item" key={item.Id} onclick={handleSelection} data-value={item.value}>
+														<div aria-checked="true" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected">
+															<span class="slds-truncate">
+																<span class="slds-icon slds-icon_xx-small slds-icon-text-default slds-var-m-right_x-small" aria-hidden="true">
+																	<img if:true={item.url} src={item.url} class="imgStyle" style={item.bgColor} />&nbsp;
+																	<lightning-icon
+																		if:false={item.url}
+																		icon-name="standard:picklist_type"
+																		size="small"
+																		class=""
+																		alternative-text="Record"
+																	></lightning-icon>
+																	&nbsp;
+																</span>
+																{item.label}
+															</span>
+														</div>
+													</li>
+												</template>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="slds-combobox_container slds-combobox-addon_end">
+								<lightning-combobox
+									name={labelFor}
+									label={labelFor}
+									variant="label-hidden"
+									value={selOption}
+									options={dropdownOptions}
+									onchange={handleDropdownChange}
+									required={isRequired}
+									disabled={isComboboxDisabled}
+									data-combobox-name="options-combobox"
+								></lightning-combobox>
+							</div>
+						</div>
+					</template>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

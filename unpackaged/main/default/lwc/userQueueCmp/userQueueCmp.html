@@ -1,0 +1,334 @@
+<!--
+  @File Name          : userQueueComponent.html
+  @Description        : 
+  @Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Group              : 
+  @Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Last Modified On   : 7/19/2020, 11:40:55 PM
+  @Modification Log   : 
+  Ver       Date            Author      		    Modification
+  1.0    7/9/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<template>
+    <lightning-layout class="flexipageHeader uiBlock slds-page-header oneAnchorHeader">
+        <lightning-layout-item size="2">
+            <p style="font-size: large;">USER QUEUE</p>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="2" class="slds-p-around_xxx-small" style="margin-top: 30px;">
+            <lightning-input type="checkbox" label="Direct Reports" onchange={handleDirectReports}>
+            </lightning-input>
+        </lightning-layout-item>  
+
+        <lightning-layout-item size="2" class="slds-p-around_xxx-small">
+            <div if:true={strUserErrorMsg}>
+                <p style="color: red;">{strUserErrorMsg}</p>
+            </div>
+            <div class="slds-form-element">
+                <div class="slds-form-element__control">
+                    <lightning-input type="text" label="Search Users" onchange={handleUserInput} onkeyup={handleDynamicSearch}> 
+                    </lightning-input>
+                </div>
+            </div>
+        </lightning-layout-item>
+        <lightning-layout-item size="2" style={strStyleUser} class="slds-p-around_xxx-small">
+            <lightning-button label="Search" variant="brand" onclick={handleSearch}></lightning-button>
+        </lightning-layout-item>
+        <lightning-layout-item size="2" class="slds-p-around_xxx-small">
+            <div if:true={strRoleErrorMsg}>
+                <p style="color: red;">{strRoleErrorMsg}</p>
+            </div>
+            <div class="slds-form-element">
+                <div class="slds-form-element__control">
+                    <lightning-input type="text" label="Search Roles" onchange={handleRoleInput} onkeyup={handleDynamicRoleSearch}>
+                    </lightning-input>
+                </div>
+            </div>
+        </lightning-layout-item>
+        <lightning-layout-item size="2" class="slds-p-around_xxx-small" style={strStyleRole}>
+            <lightning-button label="Search" variant="brand" onclick={handleSearchRole}></lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+        </lightning-spinner>
+    </template>
+   <!-- <template if:false={isEditClicked}>
+        <lightning-card>
+            <lightning-layout>
+                <lightning-layout-item size="6">
+                    <div if:true={userErrorMsg} style="margin-left:15px;">
+                        <p style="color: red;">{userErrorMsg}</p>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="6">
+                    <div if:true={roleErrorMsg} style="margin-left:15px;">
+                        <p style="color: red;">{roleErrorMsg}</p>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+
+
+            <lightning-layout multiple-rows="true" vertical-align="end">
+                <lightning-layout-item size="3" padding="around-small">
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <lightning-input type="text" label="Search Users" onchange={handleUserInput} onkeyup={handleDynamicSearch}> 
+                            </lightning-input>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="3" padding="around-small">
+                    <lightning-button label="Search" variant="brand" onclick={handleSearch}></lightning-button>
+                </lightning-layout-item>
+
+
+
+                <lightning-layout-item size="3" padding="around-small">
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <lightning-input type="text" label="Search Roles" onchange={handleRoleInput} onkeyup={handleDynamicRoleSearch}>
+                            </lightning-input>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="3" padding="around-small">
+                    <lightning-button label="Search" variant="brand" onclick={handleSearchRole}></lightning-button>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="3" padding="around-small">
+                    <lightning-input type="checkbox" label="Direct Reports" onchange={handleDirectReports}>
+                    </lightning-input>
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+        </lightning-card>
+    </template>-->
+
+
+    <lightning-layout>
+
+        <lightning-layout-item size={intLayoutSize} padding="around-small">
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-line-height_reset slds-table_col-bordered">
+                        <!-- <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="Selection">Selection</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="Action">Action</div>
+                        </th> -->
+                        <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="First Name">First Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="Last Name">Last Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="Class/Queue">Class/Queue</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="Benefits Class">Benefits Class
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate slds-text-align_left" title="Out of Office">Out of Office
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={lst_usersCopy} for:item="user">
+                        <tr class="slds-line-height_reset hover-area"   key={user.Id}>
+                            <!-- <td>
+                                <lightning-input type="checkbox" onchange={handleChange}></lightning-input>
+                            </td>
+                            <td><a data-id={user.Id} data-userfirstname={user.FirstName}
+                                    data-userlastname={user.LastName} onclick={handleEditClick}>Edit</a></td> -->
+                            <td data-id={user.Id} data-userfirstname={user.FirstName}
+                            data-userlastname={user.LastName} onclick={handleEditClick}>{user.FirstName}</td>
+                            <td data-id={user.Id} data-userfirstname={user.FirstName}
+                            data-userlastname={user.LastName} onclick={handleEditClick}>{user.LastName}</td>
+                            <td>
+                                <div>
+                                    <lightning-combobox variant="label-hidden" data-id={user.Id}
+                                        data-benefitclass={user.Benefits_Class__c} data-checked={user.Out_Of_Office__c}
+                                        name="progress" label={user.Class_Queue__c} value={user.Class_Queue__c}
+                                        options={strClassQueueValues} onchange={handleClassChange}>
+                                    </lightning-combobox>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div>
+                                    <lightning-combobox variant="label-hidden" data-id={user.Id}
+                                        data-classqueue={user.Class_Queue__c} data-checked={user.Out_Of_Office__c}
+                                        name="progress" label={user.Benefits_Class__c} value={user.Benefits_Class__c}
+                                        options={strBenefitsValues} onchange={handleBenefitChange}>
+                                    </lightning-combobox>
+                                </div>
+                            </td>
+                            <td style="width:0.5px">
+                                <lightning-input type="checkbox" data-id={user.Id} data-classqueue={user.Class_Queue__c}
+                                    data-benefitclass={user.Benefits_Class__c} checked={user.Out_Of_Office__c}
+                                    onchange={handleOfficeChange}>
+                                </lightning-input>
+                            </td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td colspan="2">
+                            <lightning-button variant="base" label="« Previous" title="« Previous"
+                                onclick={handlePrevious} class="slds-m-left_x-small">
+                            </lightning-button>
+                            <lightning-button variant="base" label="Next »" title="Next »" onclick={handleNext}
+                                class="slds-m-left_x-small"></lightning-button>
+                        </td>
+                        <td>
+                            <lightning-combobox variant="label-hidden" value="20" options={options} dropdown-alignment="bottom-left"
+                                onchange={handleNumberOfRecords}></lightning-combobox>
+                        </td>
+                    </tr>
+
+                    <template if:true={blnShowSaveCancel}>
+                        <div class="slds-docked-form-footer">
+                            <button type="button" class="slds-button slds-button_brand" onclick={onSave}>
+                                Save
+                            </button>
+                            <button type="button" class="slds-button slds-button_neutral" onclick={onCancel}>
+                                Cancel
+                            </button>
+                        </div>
+                    </template>
+                </tbody>
+            </table>
+        </lightning-layout-item>
+
+        <template if:true={blnIsEditClicked}>
+
+
+            <lightning-layout-item size="6" padding="around-small">
+
+                <div class="slds-box slds-theme_default">
+                    
+                   <!-- <lightning-record-form record-id={redirectUserId} object-api-name="User" fields={fields} onsuccess={handleUpdate} 
+                    oncancel={handleReset} mode="edit">
+
+                    </lightning-record-form> -->
+                    <lightning-record-edit-form record-id={strRedirectUserId} object-api-name="User" density="compact" onsuccess={handleUpdate}> 
+                        <div class="headerfixed" style="font-size:20px ;padding:0.5rem;background:#f4f6f9"><p style="float:left">{strUserName}</p>
+                        
+                            <p style="text-align: end;">   <lightning-button class="slds-m-top_small slds-p-right_small" style="font-size:10px;text-align:end;"
+                                       variant="brand" type="submit" name="update" label="Save">
+                                   </lightning-button>
+       
+                                   <lightning-button class="slds-m-top_small" onclick={handleReset} variant="neutral" style="font-size:10px;text-align:end;"
+                                       type="reset" name="cancel" label="Cancel">
+                                   </lightning-button>
+                           </p>
+                               
+                       </div>
+                        <lightning-input-field class="slds-form-element_1-col" style="text-align:center" onchange={handleInputField}
+                            field-name="All_Queues__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" style="text-align:center" onchange={handleInputField}
+                            field-name="Individual_Queues__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col"  onchange={handleInputField} field-name="Class_Queue__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} field-name="Benefits_Class__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} field-name="PRC_Homeroom_Start_Date__c">
+                        </lightning-input-field>	
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} field-name="On_The_Floor_Date_Care__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} 
+                            field-name="On_The_Floor_Date_PRC_Class_2__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField}
+                            field-name="On_The_Floor_Date_PRC_Class_3__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} field-name="FSC_Homeroom_Start_Date__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} field-name="On_The_Floor_Date_FSC__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} 
+                            field-name="On_The_Floor_Date_FSC_Class_2__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col"
+                            field-name="On_The_Floor_Date_FSC_Class_3__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField} field-name="On_The_Floor_Date_DSP__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField}
+                            field-name="On_The_Floor_Date_DSP_Class_2__c">
+                        </lightning-input-field>
+                        <lightning-input-field class="slds-form-element_1-col" onchange={handleInputField}
+                            field-name="On_The_Floor_Date_DSP_Class_3__c">
+                        </lightning-input-field>
+
+                        <template if:true={blnOpenModal}>
+                            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                                <div class="slds-modal__container slds-align_absolute-center">
+                                    <header class="slds-modal__header">
+                                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                            title="Close" onclick={closeModalForChange}>
+                                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                                size="small"></lightning-icon>
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                        
+                                    </header>
+                                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                                        <p>Your changes have not been saved. Please save and continue.</p>
+                                    </div>
+                                    <footer class="slds-modal__footer" style=" height: 40px; width: 370px;">
+                                        <button class="slds-button slds-button_brand" type="submit" style="margin-top: -10px">Save</button>
+                    
+                                        <button class="slds-button slds-button_neutral" type="reset" style="margin-top: -10px" onclick={handleReset}>Cancel</button>
+                                    </footer>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open"></div>
+                        </template>
+                    </lightning-record-edit-form> 
+                    <!-- <lightning-dual-listbox name="languages"
+                                        label="All Queues:"
+                                        variant="label-inline"
+                                        source-label="Available"
+                                        selected-label="Selected"
+                                        options={allqueueValues}
+                                        onchange={handleChange}></lightning-dual-listbox>
+                    
+                    <lightning-dual-listbox name="languages"
+                                        label="Individual Queues:"
+                                        variant="label-inline"
+                                        source-label="Available"
+                                        selected-label="Selected"
+                                        options={individualqueueValues}
+                                        onchange={handleChange}></lightning-dual-listbox>
+        
+                    <lightning-combobox name="queue" variant="label-inline" label="Class/Queue:" value={value} dropdown-alignment="" placeholder="" options={classQueueValues} onchange={handleChange} ></lightning-combobox>
+                    <lightning-combobox name="queue" variant="label-inline" label="Benefits Class:" value={value} dropdown-alignment="" placeholder="" options={benefitsValues} onchange={handleChange} ></lightning-combobox>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (PRC Class 1):" ></lightning-input>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (PRC Class 2):" ></lightning-input>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (PRC Class 3):" ></lightning-input>
+                    <br/>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (FSC Class 1):" ></lightning-input>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (FSC Class 2):" ></lightning-input>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (FSC Class 3):" ></lightning-input>
+                    <br/>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (DSP Class 1):" ></lightning-input>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (DSP Class 2):" ></lightning-input>
+                    <lightning-input type="date" name="input1" variant="label-inline" label="On The Floor Date (DSP Class 3):" ></lightning-input> -->
+                </div>
+
+            </lightning-layout-item>
+        </template>
+    </lightning-layout>
+    
+</template>

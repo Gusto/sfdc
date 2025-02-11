@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property label="Task RecordTypes" name="strTaskRecordTypes" type="String" description="Comma separated Task RecordTypes, for eg. Standard,Call,Email"/> 
+            <property label="Task RecordType To Icon Name" name="strTaskRecordTypeToIconName" type="String" description="Field contains RecordType Developer Names and their corresponding icons, where each RecordType and its icon are separated by semicolons, and different RecordType-icon pairs are separated by a comma, for eg. Call;utility:call,Chat;utility:chat"/>
+            <objects>
+                <object>Ticket__c</object>
+            </objects>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

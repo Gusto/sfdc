@@ -1,0 +1,27 @@
+<apex:page standardController="Opportunity" sidebar="false" showHeader="false" extensions="PayrollAdminController">
+
+<apex:includeScript value="/support/console/20.0/integration.js"/>
+ <apex:form >
+ <style>
+     .table-custom td, .table-custom th {
+         word-wrap: break-word;
+         word-break: break-word;
+     }
+ </style>
+ <div style="overflow: auto; height: 100%; width: 100%;" class="table-custom">
+    <table cellpadding="5" cellspacing="0" width="100%" style="margin: 0px auto;">
+       <th width="30%"><apex:outputLabel >Name</apex:outputLabel> </th>
+       <th width="80%"><apex:outputLabel >Email</apex:outputLabel> </th>  
+             
+    <apex:repeat value="{!Userroles}" var="user">
+       <tr>
+       <td><apex:outputText style="{! if(user.isPrimary == true,'background-color:yellow','')}" value="{!user.firstName +' '+ user.lastName}"></apex:outputText></td>
+       <td><apex:outputText value="{!user.email1}"/></td>
+       </tr>
+              
+   </apex:repeat>
+  </table>
+</div>
+ </apex:form>
+    
+</apex:page>

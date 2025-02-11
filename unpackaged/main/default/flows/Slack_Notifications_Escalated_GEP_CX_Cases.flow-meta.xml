@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Slack_Post_Message_Escalated_GEP_CX_Case</name>
+        <label>Slack Post Message : Escalated GEP CX Case</label>
+        <locationX>242</locationX>
+        <locationY>600</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>GepCXCaseText</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Message_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>53.0</apiVersion>
+    <decisions>
+        <name>Slack_If_Case_is_Escalated_and_GEP_CX</name>
+        <label>Slack If Case is Escalated and GEP CX</label>
+        <locationX>374</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Send_Slack_Post_to_GEP_CX_Escalated_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>GEP CX</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Message_Destination</targetReference>
+            </connector>
+            <label>Send Slack Post to GEP CX Escalated Case</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>ownerNameQueueAndUser</name>
+        <dataType>String</dataType>
+        <expression>IF(BEGINS({!$Record.OwnerId},&apos;005&apos;) , {!$Record.Owner:User.FirstName}+ &apos; &apos; + {!$Record.Owner:User.LastName} , {!$Record.Owner:Group.Name})</expression>
+    </formulas>
+    <interviewLabel>Slack Notifications - Escalated GEP CX Cases {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Slack Notifications - Escalated GEP CX Cases</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Case_Related_Contact</name>
+        <label>Case Related Contact</label>
+        <locationX>242</locationX>
+        <locationY>492</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Slack_Post_Message_Escalated_GEP_CX_Case</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.ContactId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contact</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Message_Destination</name>
+        <label>Get Message Destination</label>
+        <locationX>242</locationX>
+        <locationY>384</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Case_Related_Contact</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>emb_cx_escalated_cases</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>IsEscalated</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Slack_If_Case_is_Escalated_and_GEP_CX</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>GepCXCaseText</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Case {!$Record.CaseNumber} is escalated.
+
+*Details:*
+*1. Case Number:*                      {!$Record.CaseNumber}
+*2. Case Status:*                         {!$Record.Status}
+*3. Created Date:*                      {!$Record.CreatedDate}
+*4. Case Owner:*                        {!ownerNameQueueAndUser}
+*5. Contact Name:*                    {!Case_Related_Contact.Name}      
+*6. Contact Email Address:*      {!Case_Related_Contact.Email}      
+*7. Contact Phone Number:*    {!Case_Related_Contact.Phone}
+*8. Case Reason:*                       {!$Record.Reason}</text>
+    </textTemplates>
+    <variables>
+        <name>newRecordsBulk</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <name>objectName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue>Case</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>oldRecordsBulk</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

@@ -1,0 +1,181 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ViewCalendarCtrl" 
+applyBodyTag="false" sidebar="false" action="{!eventdata}">
+<apex:form id="frm">
+    <head>
+	<script type='text/javascript' src="{!URLFOR($Resource.UR_Assets, '/fullCalendar/moment.min.js')}"></script>
+  	<script type='text/javascript' src="{!URLFOR($Resource.UR_Assets, '/fullCalendar/jquery.min.js')}"></script>
+    <script type='text/javascript' src="{!URLFOR($Resource.UR_Assets, '/fullCalendar/fullcalendar.min.js')}"></script>
+    <title>Gusto</title>
+	<link href="{!URLFOR($Resource.UR_Assets, '/fullCalendar/fullcalendar.css')}" rel="stylesheet" />
+    <link href="{!URLFOR($Resource.UR_Assets, '/fullCalendar/fullcalendar.print.css')}" rel="stylesheet" media="print"  />
+  	
+  </head>
+
+  <body class="slds-scope">
+    <c:UR_ActionStatus />
+	<c:UR_MenuHeaderComponent tabName="Calendar" subTabName="" prjId="{!objProject.Id}"/>
+  
+    <!--body start here-->  
+    <div class="slds-p-around_small"> 
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">    
+		<apex:outputPanel id="notePanel">
+          <div class="slds-text-align_left bg-grey slds-p-around_small" style="border-radius: .25rem;">
+            <div class="slds-grid slds-wrap wd-100">
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12">
+                <div class="slds-m-top_xx-small">
+                  <div class="slds-text-heading_medium"><strong>Notes</strong></div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12">
+                <apex:outputpanel layout="block" rendered="{!if(objNote.id!=null,true,false)}" styleclass="slds-m-top_x-small text-grey">Last updated at &nbsp;<apex:outputField value="{!objNote.LastModifiedDate}"/> by &nbsp;<apex:outputField value="{!objNote.LastModifiedBy.Name}"/></apex:outputpanel>
+              </div>
+              <div class="slds-size_1-of-1 slds-medium-size_4-of-12 slds-text-align_right">
+                  <apex:outputpanel rendered="{!isEditable}">
+	                  <apex:commandLink rendered="{!addNote}" rerender="notePanel" status="statusSave" value="Cancel" action="{!CancelNote}" styleclass="slds-button slds-button_outline-brand"/>&nbsp;&nbsp;&nbsp;&nbsp;
+	        		  <apex:commandButton rendered="{!addNote}" rerender="notePanel" status="statusSave" value="Save notes" action="{!SaveNotes}" styleclass="slds-button slds-button_brand"/>
+	                  <apex:commandButton rendered="{!!addNote}" rerender="notePanel" status="statusSave" value="Add notes" action="{!AddNote}" styleclass="slds-button slds-button_brand"/>
+                 	  <apex:actionFunction name="updateViewCalendarDate" action="{!updateViewCalendarDate}" status="statusSave" reRender="frm"/>   
+         
+                   </apex:outputpanel>
+             </div>
+            </div>
+          </div>
+               
+          <apex:outputpanel rendered="{!!addNote}" layout="block" styleclass="slds-p-around_small slds-m-bottom_medium slds-scrollable_y" style="max-height: 150px;">
+              <em><apex:outputField value="{!objNote.Body}"/></em>
+          </apex:outputpanel>
+          <apex:outputpanel rendered="{!addNote}" layout="block" styleclass="slds-m-bottom_medium">
+              <apex:inputField value="{!objNote.Body}" styleClass="slds-textarea" style="height: 80px;width: 100%"/>
+          </apex:outputpanel>  
+        </apex:outputPanel>
+          <div class="slds-text-align_left bg-grey slds-p-around_small" style="border-radius: .25rem;">
+            <div class="slds-media slds-media_center">
+              <div class="slds-media__body">
+                <div class="slds-text-heading_medium"><strong>Calendar</strong></div>
+              </div>
+               <apex:outputpanel rendered="{!isEditable}">
+	              <apex:outputPanel rendered="{!if(objProject.Primary_calendly_URL__c!=null,true,false)}" styleclass="slds-media__figure slds-media__figure_reverse slds-m-left_large">
+	                <a href="{!objProject.Primary_calendly_URL__c}" target="_blank" class="slds-button slds-button_brand btn-grey">Open Calend.ly</a>
+	              </apex:outputPanel>
+	           </apex:outputpanel>
+            </div>
+          </div>
+
+          <div class="slds-m-top_large">
+           <!-- Calendar Start -->
+            <apex:actionFunction name="eventdataAF" action="{!eventdata}" rerender="panel" oncomplete="getEventData();"/>
+            <apex:outputPanel id="panel">
+                 <script type="text/javascript"> 
+                    var startDateTime1;
+                    
+                    function tConvert (time) {
+                      // Check correct time format and split into components
+                      time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+                    
+                      if (time.length > 1) { // If time format correct
+                        time = time.slice (1);  // Remove full string match value
+                        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                        time[0] = +time[0] % 12 || 12; // Adjust hours
+                      }
+                      return time.join (''); // return adjusted time or original string
+                    }
+                      
+                      function getEventData() {         
+                       $('[id$=calendar]').fullCalendar({       // html element and library name
+                           header: {
+                               left: 'prev,next today',
+                               center: 'title',
+                               right: 'month,agendaWeek,agendaDay'
+                           },
+                           hiddenDays: [],
+                           minTime: '5:00',
+                           maxTime: '23:30',
+                           height: 490,
+                           defaultView: 'month',
+                           editable: false,
+                           defaultTimedEventDuration: '24:00:00',
+                        events:
+                        [
+                            <apex:repeat value="{!events}" var="e">
+                                {
+                                    title: "{!e.userName} {!e.title}",
+                                    start: '{!e.startString}',
+                                    end: '{!e.endString}',
+                                    url: '{!e.url}',
+                                    className: '{!e.className}',
+                                    id:'{!e.strId}'
+                                },
+                            </apex:repeat>
+                        ],
+                        eventClick:function(item,jsEvent,view){
+                        	//alert(item.id);
+                        	initOpenViewMode(item.id);
+                        }
+                       }) 
+                      
+                    }
+                    $(document).ready(function() {
+                        getEventData();
+                    });
+                </script>
+                <div id="calendar" class="slds-m-top_medium"></div>
+            </apex:outputPanel>
+       		<!-- Calendar End -->
+          </div>
+      </div>
+    </div>
+  </div>                        
+<!--body end here--> 
+
+        <apex:outputPanel rendered="{!isUpdateLastViewDate}" id="surveyViewDate">
+            <script>
+                $( window ).ready(function() {
+                     updateViewCalendarDate();
+                });
+            </script>
+        </apex:outputPanel>
+
+<!--Model Popup Start here-->
+<div class="modal-window-cal view-email-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <apex:outputPanel layout="block" id="frmBody" styleClass="slds-modal__container" style="max-width: 500px;">
+          <div class="slds-modal__header">
+            <h2 id="modal-heading-01" class="slds-text-heading_small slds-hyphenate"><b>Event - {!objEventWrapper.objEvent.subject}</b></h2>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <p>Participant Name - &nbsp; <apex:outputtext value="{!objEventWrapper.contactName}"/></p>
+          	<p>Company Name -  &nbsp; <apex:outputtext value="{!objEventWrapper.companyName}"/></p>
+            <p>Start Time -  &nbsp; <apex:outputfield value="{!objEventWrapper.objEvent.StartDateTime}"/></p>
+            <p>End Time -  &nbsp; <apex:outputfield value="{!objEventWrapper.objEvent.EndDateTime}"/></p>
+            <!--<p><a href="/{!objEventWrapper.contactId}" target="_blank">More Detail</a></p>-->
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_brand close-modal" onclick="return closemodal();">Ok</button>
+          </div>
+      	</apex:outputPanel>
+      </div>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+<!--Model Popup End here-->    
+      <apex:actionFunction name="initOpenViewMode" reRender="frmBody" onComplete="openmodal()">
+                <apex:param value="" name="currentEventId" />
+       </apex:actionFunction>
+    
+      
+      <script type="text/javascript">
+           $('.close-modal').click(function() {
+            $('.modal-window-cal').hide();
+           });
+        
+           function closemodal(){
+            $('.modal-window-cal').hide(); 
+            return false;
+           }
+           function openmodal(item){
+            $('.modal-window-cal').show(); 
+           }
+     </script> 
+  </body>
+ </apex:form>             
+</apex:page>

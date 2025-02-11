@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TADA_Status__c</fullName>
+    <description>Benefit Transfer - Show Checklist based on TADA CO status</description>
+    <label>TADA Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Collecting Documents</fullName>
+                <default>false</default>
+                <label>Collecting Documents</label>
+            </value>
+            <value>
+                <fullName>Implementing TAdA Plans</fullName>
+                <default>false</default>
+                <label>Implementing TAdA Plans</label>
+            </value>
+            <value>
+                <fullName>Ready for Balance Collection</fullName>
+                <default>false</default>
+                <label>Ready for Balance Collection</label>
+            </value>
+            <value>
+                <fullName>Balance Collection</fullName>
+                <default>false</default>
+                <label>Balance Collection</label>
+            </value>
+            <value>
+                <fullName>Transferring Balances</fullName>
+                <default>false</default>
+                <label>Transferring Balances</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

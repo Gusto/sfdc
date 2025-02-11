@@ -1,0 +1,414 @@
+<apex:component access="public" allowDML="true" controller="CaseContactSearchController" id="mainpg">
+	
+	<apex:attribute name="key" type="String" description="receives Key parameter value from phone ANI" required="required" assignTo="{!initialPhone}"/>
+    <apex:attribute name="casId" type="String" description="receive case Id for which we are rendering the page" assignTo="{!openCaseId}"/>
+    <apex:attribute name="authval" type="String" description="receive logged in user authentication status from PC" assignTo="{!userAuth}"/>
+    <apex:attribute name="authemail" type="String" description="receive logged in user authentication email from PC" assignTo="{!authUserEmail}"/>    
+    <apex:attribute name="authcolor" type="String" description="receive logged in user authentication email from PC" assignTo="{!userAuthColor}"/>
+    
+
+	<apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    
+    <!--<apex:includeScript value="{!URLFOR($Resource.autocomplete, 'autocomplete/jquery-ui.js')}" /> -->
+    <script  src="//code.jquery.com/ui/1.8.24/jquery-ui.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.autocomplete, 'autocomplete/autocomplete.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.autocomplete, 'autocomplete/jquery-ui-1.8.16.custom.css')}" />    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+
+    <style>
+    	.contactDetail{
+    		max-height:100px;
+    		overflow-y:scroll;
+    	}
+
+        .permissionDiv {
+            display: none;
+            position: absolute;
+            bottom: 25px;
+            z-index: 999999;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 5px;
+            right: 0px;
+            left: -68%;
+            max-width: 30%;
+            margin: 0px auto;
+        }
+
+        a.nametag:hover + div {
+          display: inline-block;
+        }
+
+        a.nametag {
+            -webkit-transition-duration: 0.4s; 
+            transition-duration: 0.4s;
+        }
+
+        .outer {
+            width: 100% !important;
+            overflow-x: auto; 
+            overflow-y:hidden; 
+            white-space:nowrap;
+        }
+        .inner {
+            width:85%;
+            display:inline-block;
+            /*font-size:14px;*/
+            text-align:right;
+        }
+
+        .zoom:hover {
+          transform: scale(1.5) !important;
+        }
+
+	</style>
+    <script>
+
+        var j$ = jQuery.noConflict();
+    
+        j$(document).ready(function(){ 
+            //bindUsersAutocomplete(j$('.searchByContact'));
+            searchContacts();
+        }); 
+
+        function RefreshPrimaryTab(){
+           sforce.console.getFocusedPrimaryTabId(showTabId);
+       }
+       
+       var showTabId = function showTabId(result) 
+       {
+           var tabId = result.id;
+           //alert('Primary Tab IDs: primaryTabId ' + tabId );
+           sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+       };
+
+
+       var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               //alert('Email Sent');
+           } 
+           else 
+           {
+               //alert('Cannot refresh the page');
+           }
+       };
+        function openCompanyInPanda(firmIdd, companyIdd){
+            var finalURL;
+
+            if(firmIdd != null && firmIdd.length > 0){
+                finalURL = "accounting_firms/"+firmIdd;
+            }
+            else if(companyIdd != null && companyIdd.length > 0){
+                finalURL = "companies/"+companyIdd;
+            }
+            if((firmIdd == null || firmIdd.length == 0) && (companyIdd == null || companyIdd.length == 0)){
+                alert('Firm and Company info missing from selected Account.');
+            }
+            window.open("https://app.gusto.com/panda/"+finalURL,"_blank");
+        }
+
+    </script>
+
+    <div>
+    	<div class="gusto" style="line-height:1.25;">
+    		<apex:form id="searchForm">
+                <apex:actionstatus id="status_page">
+                    <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                            <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                                <img class="waitingImage" src="/img/loading.gif"  />
+                                <span class="waitingDescription">Loading...</span>
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionstatus>
+                <apex:actionFunction name="searchContacts" action="{!searchContact}" reRender="contactOutput,pgMsg" status="status_page"/> 
+                <apex:actionFunction name="updateCaseWithContact" action="{!updateCaseWithContact}" status="status_page" onComplete="RefreshPrimaryTab();">
+                    <apex:param name="CCSpar1" value="" assignTo="{!selectedContactId}"/>
+                </apex:actionFunction> 
+                <apex:actionFunction name="callAddUser" action="{!addUserPopulateField}" reRender="contactInfoPanels" status="status_page">
+                    <apex:param assignTo="{!selectedContactAccount}" name="addUserpar1" value=""/>
+                </apex:actionFunction> 
+                <apex:actionFunction name="cancelcallAddUser" reRender="contactInfoPanels" status="status_page" immediate="true">
+                    <apex:param assignTo="{!newContact.AccountId}" name="addUserpar2" value=""/>
+                </apex:actionFunction>
+
+    			<div class="slds-form slds-m-left--small" style="width: 30%;float: left;"> 
+                    <apex:pageMessages id="pgMsg"/>
+                    <h3 class="slds-section__title slds-theme--shade">
+                        <span class="slds-truncate slds-p-horizontal_small" >Search Contact({!initialPhone}) {!if(callbackSource!='','Callback Source :: '+callbackSource,'')}</span>
+                    </h3>
+                    <table>  
+                        <!-- <tr>
+                            <td style="padding: 1px;">
+                                <label class="slds-form-element__label" for="status">Search Filter: </label>
+                            </td>
+                            <td style="padding-right: 1px;">
+                                <apex:selectList styleClass="filterSel" value="{!selectedContactFilterFieldStr}" size="1">
+                                    <apex:selectOptions value="{!contactSearchFilters}"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>    -->                   
+                        <tr>
+                            <td style="padding-right: 1px;" >
+                                <apex:inputtext styleclass="slds-input searchByContact contactEmail" value="{!searchStr}" onkeypress="return enterEvent(event);"/>
+                                <!-- autocomplete -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <apex:commandButton styleclass="btn slds-button slds-button--neutral" value="Unknown Caller" action="{!handleUnknowUser}" onComplete="RefreshPrimaryTab();" status="status_page"/>
+                            </td>                            
+                        </tr>
+                    </table>
+                    <br/> 
+                    <!-- <apex:commandButton Id="btnSearch" styleclass="slds-button slds-button--neutral" action="{!searchContact}" rerender="contactOutput" status="status_page" title="Search" value="Search"></apex:commandButton> -->
+                </div> 
+                <div class="slds-form slds-m-left--small" style="width: 65%;float: left;font-size:12px;"> 
+                    <apex:outputPanel id="contactInfoSec">
+                        <h3 class="slds-section__title slds-theme--shade" style="background:{!userAuthColor}">                        
+                            <span class="slds-truncate slds-p-horizontal_small outer" >Contact Info:  <span class="inner">{!userAuth}&#8594;{!if(userAuth == 'Token Match','    Verify email address: '+authUserEmail,'')}</span></span>                        
+                            <!-- &nbsp;{!if(userAuth == 'Token match','Verify email address: '+authUserEmail,'')} -->
+                        </h3>
+                    </apex:outputPanel>
+                    <div style="max-height: 100px; overflow-y: scroll;">
+                        <apex:outputPanel id="contactInfoPanels">
+                            <apex:outputPanel id="contactOutput" rendered="{! if(newContact.AccountId != null,false,true)}">
+                                <table >
+                                    <tr>
+                                    	<th>
+                                            <label class="slds-form-element__label" for="status">Name</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" for="status">Email</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" >Company Name</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" >SSN</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" >DOB</label>
+                                        </th>        
+                                	</tr>
+                                	<apex:repeat value="{!contactSearchList}" var="con2Dis">
+        	                        	<tr>                                
+        	                                <td>
+                                                <div class="slds-form-element__control">
+                                                    <a onClick="updateCaseWithContact('{!con2Dis.id}');" HREF="#" class="nametag">      <apex:outputText escape="true" value="{!con2Dis.Firstname} {!con2Dis.lastname}" />
+                                                    </a>
+                                                    <div class="permissionDiv"><apex:outputText value="{!conIdAccountRelationshipDetailMap[con2Dis.id]}" escape="false"/></div>
+                                                </div>
+                                            </td>                                
+        	                                <td>
+        	                                    <div class="slds-form-element__control">
+        	                                        <!-- <input Type="email" readonly="true" value="{!con2Dis.Email}"/> -->
+                                                    <apex:outputText value="{!con2Dis.Email}"/>
+        	                                    </div>
+        	                                </td> 
+                                            <td>
+                                                <div class="slds-form-element__control">
+                                                    <a onclick="openCompanyInPanda('{!con2Dis.Account.ZP_Firm_ID__c}','{!con2Dis.Account.ZP_Company_ID__c}');">
+                                                        <apex:outputText escape="true" value="{!con2Dis.Account.Name}" />
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-form-element__control">
+                                                    <apex:outputField value="{!con2Dis.SSN_Last_4__c}"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-form-element__control">
+                                                    <apex:outputField value="{!con2Dis.Birthdate}"/>
+                                                </div>
+                                            </td> 
+                                            <!-- <td>
+                                                <div class="slds-form-element__control">
+                                                    <image class="zoom" src="{!URLFOR($Resource.icon_adduser)}" alt="Add user" height="10" width="10" onclick="callAddUser('{!con2Dis.AccountId}');" style="cursor: pointer;"/>
+                                                </div>
+                                            </td>  -->                   
+        	                            </tr> 
+                                	</apex:repeat>
+                                </table>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="addUser" rendered="{! if(newContact.AccountId != null,true,false)}">
+                                <table >
+                                    <tr>
+                                        <th>
+                                            <label class="slds-form-element__label" for="status">First Name</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" for="status">Last Name</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" for="status">Email</label>
+                                        </th>
+                                        <th>
+                                            <label class="slds-form-element__label" for="status">Company</label>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="slds-form-element__control">
+                                                <apex:inputfield value="{!newContact.Firstname}"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-form-element__control">
+                                                <apex:inputfield value="{!newContact.Lastname}" required="true"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-form-element__control">
+                                                <apex:inputfield value="{!newContact.Email}"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-form-element__control">
+                                                <apex:inputfield value="{!newContact.Accountid}"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            <apex:commandButton styleclass="btn slds-button slds-button--neutral" value="Create/Assign User" action="{!createAssignContact}" onComplete="RefreshPrimaryTab();" status="status_page"/>
+                                            &nbsp;
+                                            <input Type="button" class="btn slds-button slds-button--neutral" value="Cancel" onclick="cancelcallAddUser('');"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                	</div>
+                </div>
+    		</apex:form>
+		</div>
+	</div>
+    <script>
+
+
+
+        /*j$("a.nametag").hover(function() {
+                console.log('@@## in');
+            var tempstr = j$(this).siblings(".permissionDiv").text();
+            console.log('@@## tempstr '+tempstr);
+            if(tempstr != null && tempstr.trim().length > 0){
+                j$(this).siblings(".permissionDiv").css("display","inline-block");
+            }  
+        
+          //$jq(".permissionDiv").css("display","inline-block");
+        }, function() {
+            j$(".permissionDiv").css("display","none");
+        });*/
+
+        function enterEvent(ev)  {
+            if ((window.event && window.event.keyCode == 13) || ev.which == 13) {
+                searchContacts();
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        /*
+         * help method autocomplete
+        */
+        function bindUsersAutocomplete(obj) {
+            var keyword;
+            j$(obj).autocomplete({
+                minLength: 0,
+                source: function(request, response) {
+                    // last string after comma needs to be sent as keyword
+                    var _arr = request.term.split(",");
+                    keyword = "";
+                    keyword = j$.trim(_arr[_arr.length - 1]);
+                    
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.CaseContactSearchController.getPotentialContacts}',
+                        keyword,
+                        function(result, event){
+                            if (result && !result.length) {
+                                // add current entry as new inventor
+                                result.push(
+                                    {
+                                        email:'No records found.', 
+                                        //phone:'No records found.',
+                                        //firstname:'No records found.'
+                                    }
+                                );
+                            }
+                            response(result);
+                        }, 
+                        {escape: true}
+                    );              
+                },
+                focus: function( event, ui ) {
+                    return false;
+                },
+                select: function( event, ui ) {
+                    
+                    console.log('@@## email> '+ui.item.email);
+
+                    j$(".contactEmail").val(ui.item.email); 
+                    searchContacts();
+                                    
+                    return false;
+                },
+                open: function(event, ui){
+                    j$(obj ).autocomplete("widget").css("width","auto");
+                    j$(obj ).autocomplete("widget").css("max-height","55px");  
+                    j$(obj ).autocomplete("widget").css("overflow-y","scroll");  
+                    j$(obj ).autocomplete("widget").css("overflow-x","hidden");                       
+                }               
+            })
+            .data( "autocomplete" )._renderItem = function( ul, item ) {
+                
+                var liValue;
+                liValue = item.email;
+                if(item.email != null && item.email.length >0){
+                    liValue = item.email; 
+                }                
+
+                if(item.accname != null && item.accname.length >0){
+                    if(liValue != null && liValue != undefined && liValue.length > 0){
+                        liValue += " | "+item.accname;
+                    }
+                    else{
+                        liValue = item.accname;
+                    } 
+                }
+
+                if(item.name != null && item.name.length >0){
+                    if(liValue != null && liValue != undefined && liValue.length > 0){
+                        liValue += " | "+item.name;
+                    }
+                    else{
+                        liValue = item.name;
+                    } 
+                }
+                
+                liValue = boldString(liValue, keyword);
+                
+                return j$( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a>" + liValue +  "</a>" )
+                    .appendTo( ul );
+            };          
+        };
+
+        function boldString(str, find){
+            var re = new RegExp(find, 'ig');
+            //var tempStr = String(str);
+            return str.replace(re, '<b>'+find+'</b>');
+        }
+    </script>
+
+
+</apex:component>

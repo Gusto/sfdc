@@ -1,0 +1,16 @@
+<apex:page showHeader="false" tabStyle="Opportunity">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:listViews type="Opportunity"/>
+    <script type="text/javascript">
+        jQuery('a').each(
+            function(){
+                if(this.className.indexOf('listItem') == -1)
+                    this.target = '_blank';
+            }
+        );  
+        navigateToUrl =
+            function(a){
+                window.top.location.href = a;
+            };        
+    </script>
+</apex:page>

@@ -1,0 +1,24 @@
+<template>
+	<template lwc:if={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<lightning-quick-action-panel header="QLE RFI">
+		<div>
+			<p>
+				Entering information on this screen and clicking 'Send First RFI' will trigger a series of automated emails to the customer requesting valid proof. First, identify the Event Type for
+				the RFI by selecting from the QLE RFI Type list. Next, specify the Type of information needed from the RFI Type List. Finally, include the reason documentation is considered invalid.
+				Documentation provided is insufficient because: (explanation inserted here).
+			</p>
+		</div>
+		<lightning-record-edit-form object-api-name="Case" record-id={recordId} onload={handleOnLoad}>
+			<lightning-input-field field-name="QLE_RFI_Type__c" name="QLE_RFI_Type__c" onchange={validateFields}> </lightning-input-field>
+			<lightning-input-field field-name="RFI_Type__c" name="RFI_Type__c" onchange={validateFields}> </lightning-input-field>
+			<lightning-input-field field-name="Insufficient_Proof_Reason__c" name="Insufficient_Proof_Reason__c" onchange={validateFields}> </lightning-input-field>
+		</lightning-record-edit-form>
+		<div slot="footer">
+			<lightning-button variant="neutral" label="Close" onclick={handleCancelClick}></lightning-button>
+			<lightning-button variant="brand" label="Save" onclick={handleSave} class="slds-m-left_x-small"></lightning-button>
+			<lightning-button variant="brand" label="Send First RFI" onclick={handleSend} disabled={blnIsDisabled} class="slds-m-left_x-small"></lightning-button>
+		</div>
+	</lightning-quick-action-panel>
+</template>

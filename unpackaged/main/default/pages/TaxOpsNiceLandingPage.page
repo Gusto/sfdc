@@ -1,0 +1,32 @@
+<apex:page controller="TaxOpsNiceLandingPageController">    
+
+    <h1><center>You have a call waiting from {!strPhoneNumber} <br/>Go Available in agent console within
+    <span id="counter">45</span> seconds...</center></h1> <br/> 
+
+    <script>
+        document.onload = init() 
+        $elem = document.getElementById("counter");
+        var timer = $elem.innerHTML;
+
+        function init() {
+            var interval = setInterval(function() {
+                timer = timer-1;
+                $elem.innerHTML = timer;
+
+                if(timer == 0) {  
+                    alert('Time to pick up the call expired!!!');
+                    clearInterval(interval);
+                }
+            },1000);
+        }
+    </script>
+    <style>
+        h1 {
+            font-size: 30px;
+            text-align: center;
+            color: red;
+            text-style: bold;
+
+        }
+    </style>
+</apex:page>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Benefit_Order_for_NP_and_Renewal</fullName>
+    <active>true</active>
+    <description>Require Benefit Order for NP and Renewal</description>
+    <errorConditionFormula>ISNULL( Benefit_Order__c ) &amp;&amp;  $Profile.Name=&apos;Care&apos; &amp;&amp; ( RecordType.Name =&apos;Benefits New Plan Case&apos; || RecordType.Name =&apos;Benefits Renewal Case&apos;)</errorConditionFormula>
+    <errorMessage>Benefit Order is required</errorMessage>
+</ValidationRule>

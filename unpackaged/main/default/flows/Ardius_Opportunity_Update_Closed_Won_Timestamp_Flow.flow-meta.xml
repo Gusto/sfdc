@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Update_Close_Won_Timestamp</name>
+        <label>Update Close Won Timestamp</label>
+        <locationX>50</locationX>
+        <locationY>395</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Close_Won_Timestamp__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>This will check if the field Close Won Timestamp needs to be updated when opportunity is Closed Won</description>
+        <name>Check_Stage_To_Update_Timestamp</name>
+        <label>Check Stage To Update Timestamp</label>
+        <locationX>182</locationX>
+        <locationY>287</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Closed_Won</name>
+            <conditionLogic>(1 OR 2) AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>isInsertOperation</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Won</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Close_Won_Timestamp</targetReference>
+            </connector>
+            <label>Is Closed Won</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>isInsertOperation</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>Ardius Opportunity {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Ardius Opportunity Update Closed Won Timestamp Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Stage_To_Update_Timestamp</targetReference>
+        </connector>
+        <filterFormula>NOT({!$Permission.Bypass_Flows}) 
+&amp;&amp; NOT({!$Permission.Bypass_Flow_Opportunity})
+&amp;&amp; {!$Record.RecordType.DeveloperName} == &quot;Tax_Credits&quot;</filterFormula>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

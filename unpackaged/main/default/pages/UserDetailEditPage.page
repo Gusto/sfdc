@@ -1,0 +1,53 @@
+<apex:page standardController="User" extensions="UserDetailExtension" showHeader="false" sidebar="false" id="page">
+  <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <apex:includeScript value="/support/console/42.0/integration.js"/>
+  <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>  
+  
+<div class="gusto" >
+	<apex:actionstatus id="status">
+		<apex:facet name="start">
+			<div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+	        	<div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+	            	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+	                <span class="waitingDescription">Loading...</span>
+	           	</div>
+	        </div>
+	    </apex:facet>
+	</apex:actionstatus>
+	<apex:form id="frm">
+		<div class="slds-section">
+			<h4 class="slds-section__title slds-theme--shade">
+			    <span class="slds-truncate slds-p-horizontal_small" title="Section Title">My Details</span>
+		  </h4>&nbsp;&nbsp;
+	    	<apex:pageMessages />
+        	<div class="slds-form-element__row" style="padding: 2px;">
+		       <div class="slds-form-element">
+		          <label class="slds-checkbox">
+                      <span class="slds-form-element__label">Out Of Office</span>
+		                <apex:inputcheckbox id="outOfOffice" styleclass="slds-input" value="{!userFooterRec.Out_Of_Office__c}" />
+		                <span class="slds-checkbox--faux"></span>
+		                
+		          </label>
+		       </div>
+            <br/>
+                            <apex:outputpanel rendered="{!$ObjectType.Advocate_State__c.accessible}">
+                <div class="slds-form-element">
+		          <label class="slds-textbox">
+                      <span class="slds-form-element__label">State</span>
+		                <apex:inputField id="state" styleclass="slds-input" value="{!advocate.State__c}" />
+		                <span class="slds-textbox--faux"></span>
+		                
+		          </label>
+		       </div>
+            
+                            </apex:outputpanel> 
+		    <apex:commandButton Id="btnSubmit" styleclass="slds-button_neutral" style="padding: 2px 3px !important;" action="{!updateUserFooterRecord}" rerender="none" status="status" title="Update" value="Update"></apex:commandButton>
+			</div>
+		</div>
+	</apex:form>
+</div>
+<script>
+
+
+</script>
+</apex:page>

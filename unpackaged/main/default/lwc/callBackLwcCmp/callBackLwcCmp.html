@@ -1,0 +1,110 @@
+<template>
+    <lightning-card>
+        <template if:true={blnShowSpinner}>
+            <lightning-spinner alternative-text="Loading" size="medium" variant='brand' class='spinnerPosition'></lightning-spinner>
+        </template>
+        <template if:false={blnIsSuccess}>
+            <div style="background-color: white;padding-bottom:75px">
+                <div class="slds-m-bottom_xx-small slds-align_absolute-center" 
+                    style="display:flex; background-color:white;">
+                    <div class="slds-m-right_large">
+                        <lightning-button label="Submit Callback"
+                                            variant='brand'
+                                            onclick={handleSubmit}
+                                            disabled={blnDisableButton}></lightning-button>
+                    </div>                
+                </div>
+                    
+                <div class="slds-grid slds-wrap slds-align_absolute-center">
+                    <div class="slds-col slds-size_4-of-12 slds-p-left_large slds-box divSpacing">
+                        <div class="slds-form-element slds-m-top_x-small slds-m-bottom_x-small">
+                            <lightning-combobox
+                                    name="CaseType"
+                                    label="Queue"
+                                    value={strQueueId}
+                                    placeholder="Select"
+                                    options={strQueueOption}
+                                    onchange={handleQueueChange}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-form-element slds-m-top_x-small slds-m-bottom_x-small">
+                            <span class="slds-form-element__label">Phone</span>
+                            <div class="slds-form-element__control">
+                                <input type="text" 
+                                        id="phoneInput"
+                                        class="slds-input" 
+                                        value={strPhone}
+                                        onchange={handlePhoneChange}
+                                        onkeypress={handleKeyPress}/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-m-top_x-small slds-m-bottom_x-small">
+                            <span class="slds-form-element__label">Name</span>
+                            <div class="slds-form-element__control">
+                                <input type="text" 
+                                        class="slds-input" 
+                                        value={strName}
+                                        onchange={handleNameChange}/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-m-top_x-small slds-m-bottom_x-small">
+                            <lightning-input type="date" 
+                                            label="Requested Date" 
+                                            value={dtRequestedDate}
+                                            disabled>
+                            </lightning-input>
+                            
+                        </div>
+                        <div class="slds-form-element slds-m-top_x-small slds-m-bottom_x-small">
+                            <span class="slds-form-element__label">Route Callback to me</span>
+                            <template if:true={blnEnableRoute}>
+                                <div class="slds-form-element__control">
+                                    <lightning-input type="checkbox" checked={blnUserCallBack} onchange={handleCheckboxChange}></lightning-input>
+                                </div>
+                            </template>
+                            <template if:false={blnEnableRoute}>
+                                <div class="slds-form-element__control">
+                                    <lightning-input type="checkbox" checked={blnUserCallBack} disabled></lightning-input>
+                                </div>
+                            </template>
+                        </div>                   
+                    </div>
+                    
+                    <div class="slds-col slds-size_4-of-12 slds-p-right_large">
+                        <div class="slds-box innerDivSpacing">
+                            <h1 style="font-size: 15px;font-weight: 600;">Case Info</h1>
+                            <div class="slds-form-element slds-form-element_readonly slds-m-top_x-small slds-m-bottom_x-small">
+                                <span class="slds-form-element__label">Web Phone</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{strWebPhone}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-box">
+                            <h1 style="font-size: 15px;font-weight: 600;">Case Contact Info</h1>
+                            <div class="slds-form-element slds-form-element_readonly slds-m-top_x-small slds-m-bottom_x-small">
+                                <span class="slds-form-element__label">Phone</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static"></div>
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-form-element_readonly slds-m-top_x-small slds-m-bottom_x-small">
+                                <span class="slds-form-element__label">Mobile</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static"></div>
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-m-top_x-small slds-m-bottom_x-small">
+                                <span class="slds-form-element__label">Home Phone</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static"></div>
+                                </div>
+                            </div>
+                        </div>                                     
+                    </div>
+                </div>
+                
+            </div> 
+        </template>  
+    </lightning-card>
+</template>

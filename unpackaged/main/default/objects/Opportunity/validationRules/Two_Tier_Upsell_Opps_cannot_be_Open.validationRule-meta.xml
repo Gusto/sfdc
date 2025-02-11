@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Two_Tier_Upsell_Opps_cannot_be_Open</fullName>
+    <active>true</active>
+    <description>Error on creating another tier upsell opp when one is open or non-invoiced.</description>
+    <errorConditionFormula>ISNEW() &amp;&amp; Text(Type) != &apos;Cross Sell&apos; &amp;&amp; (RecordType.DeveloperName = &apos;Tier_Upsell_Opportunity&apos; &amp;&amp; (((TEXT(Account.Upsell_Tier_Opps_Open__c) == &apos;Tier Upsell&apos; || TEXT(Account.Upsell_Tier_Opps_Open__c) == &apos;Employer of Record and Tier Upsell&apos; ) &amp;&amp; NOT(TEXT(Upsell_Tier__c) == &apos;Employer of Record&apos;)) || ((TEXT(Account.Upsell_Tier_Opps_Open__c) == &apos;Employer of Record and Tier Upsell&apos; || TEXT(Account.Upsell_Tier_Opps_Open__c) == &apos;Employer of Record&apos;) &amp;&amp; TEXT(Upsell_Tier__c) == &apos;Employer of Record&apos; )) &amp;&amp; $User.Exempt_from_Validation_Rules__c=FALSE)</errorConditionFormula>
+    <errorMessage>Two tier upsell opportunities with the same type of Upsell Tier cannot be open/ non-invoiced at the same time.</errorMessage>
+</ValidationRule>

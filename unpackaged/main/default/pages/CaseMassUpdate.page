@@ -1,0 +1,144 @@
+<apex:page standardController="case" extensions="CaseMassUpdateController" recordSetVar="caseList" docType="html-5.0">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        function setTabTitle() {
+            //Set the current tab's title
+            sforce.console.setTabTitle('Related Case List');
+        }
+        var pageLoad = window.onload;
+        window.onload = function() {
+            setTabTitle();
+        }
+        
+        function openRecInNewTab(caseid){
+              // alert(caseid);        
+            sforce.console.openPrimaryTab(null, "/"+caseid, true);
+        }
+    </script>
+    <style>
+        .slds-scope.main th, .slds-scope.main td {
+           white-space: normal !important;
+        }
+    </style>
+    <div class="gusto" >
+        <apex:form >
+            <apex:outputPanel >                      
+	            <apex:actionStatus id="fetchStatus" >
+	                <apex:facet name="start">
+	                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+	                               height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+	                            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+	                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+	                                <span class="waitingDescription">Please Wait...</span> 
+	                            </div>
+	                        </div>
+	                    </apex:facet>
+	            </apex:actionStatus>
+	        </apex:outputPanel>
+            <apex:pageMessages />            
+            <apex:outputPanel id="editPanel" rendered="{! if(isRecordSelected == true && massUpdateSuccessful == false && recordTypeSupported == true,true,false)}"> 
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <apex:pageMessages />
+                <table class="slds-table slds-table--bordered slds-table_cell-buffer">
+                        <tr>
+                        <th scope="col">
+                            <div class="slds-truncate">{!$ObjectType.Case.fields.RecordTypeId.Label}</div>
+                        </th>
+                        <td>
+                            <apex:selectList value="{!selectedRecordType}" multiselect="false" size="1" id="rectypepanel">
+                                <apex:actionSupport event="onchange" rerender="editPanel,lsiPanel" status="fetchStatus"  action="{!populateFieldNameList}"/>
+                                <apex:selectOptions value="{!recordTypeOptionList}"> </apex:selectOptions>
+                            </apex:selectList>
+                        </td>
+                        </tr>
+                    <apex:repeat var="f" value="{!fieldsApiNameList}">
+                        <tr>
+	                        <th scope="col" style="width:25%">
+	                            <div class="slds-truncate">{!f.label}</div>
+	                        </th>
+	                        <td>
+	                            <apex:outputPanel layout="none" rendered="{! if(f != 'Routing_Case_Reason__c' && f != 'Confirm_Case_Reason__c' && f != 'Large_Scale_Issue__c',true,false )}" >
+	                                <apex:inputField value="{!toUpdateCase[f]}"/>
+	                            </apex:outputPanel>
+	                            <apex:outputPanel layout="none" rendered="{! if(f == 'Routing_Case_Reason__c' || f == 'Confirm_Case_Reason__c',true,false )}" >
+	                                <apex:inputText value="{!toUpdateCase[f]}" list="{!CaseReasons}" html-autocomplete="off"/>
+	                            </apex:outputPanel>
+	                            <apex:outputPanel layout="none" rendered="{! if(f == 'Large_Scale_Issue__c',true,false )}" >
+	                                <apex:inputText value="{!toUpdateCase[f]}" list="{!lsiList}" html-autocomplete="off"/>
+	                            </apex:outputPanel>
+	                        </td>
+                        </tr>
+                    </apex:repeat>                 
+                    <tr class="slds-text-title">
+                        <td colspan="2">
+                            <apex:commandButton action="{!massUpdate}" value="Update Records" /> 
+                            &nbsp;&nbsp;
+                            <apex:commandButton action="{!massUpdateAndRoute}" value="Update & Route" />                           
+                            &nbsp;&nbsp;
+                            <apex:commandButton action="{!cancel}" value="Cancel" />
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{! if(recordTypeSupported==false && isRecordSelected==true,true,false)}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <div class="slds-scoped-notification slds-media slds-media_center" role="status">
+                  <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-info" title="information">
+                      <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#info" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                      </svg>
+                      <span class="slds-assistive-text">information</span>
+                    </span>
+                  </div>
+                  <div class="slds-media__body">
+                    <p>RecordType not supported for mass update.&nbsp; <apex:commandButton action="{!cancel}" value="Back" styleclass="slds-button slds-button_neutral"/></p>
+                  </div>
+                </div> 
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!isRecordSelected}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <div class="slds-scoped-notification slds-media slds-media_center" role="status">
+				  <div class="slds-media__figure">
+				    <span class="slds-icon_container slds-icon-utility-info" title="information">
+				      <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+				        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#info" xmlns:xlink="http://www.w3.org/1999/xlink" />
+				      </svg>
+				      <span class="slds-assistive-text">information</span>
+				    </span>
+				  </div>
+				  <div class="slds-media__body">
+				    <p>Please select at least one record.&nbsp; <apex:commandButton action="{!cancel}" value="Back" styleclass="slds-button slds-button_neutral"/></p>
+				  </div>
+				</div>                
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!massUpdateSuccessful}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <div class="slds-scoped-notification slds-media slds-media_center" role="status">
+                  <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-info" title="information">
+                      <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#info" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                      </svg>
+                      <span class="slds-assistive-text">information</span>
+                    </span>
+                  </div>
+                  <div class="slds-media__body">
+                    <p>Records successfully updated.&nbsp; <apex:commandButton action="{!cancel}" value="Back" styleclass="slds-button slds-button_neutral"/></p>
+                  </div>
+                </div> 
+            </apex:outputPanel>
+        </apex:form>
+    </div>    
+</apex:page>

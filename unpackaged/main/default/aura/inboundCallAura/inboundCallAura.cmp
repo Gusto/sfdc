@@ -1,0 +1,11 @@
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,force:hasRecordId,force:hasSObjectName">
+   
+    <!-- Attribute to refresh the component -->
+    <aura:attribute name="blnLoaded" type="Boolean" default="true"></aura:attribute>
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" description="Handler for valueInit event fired when the component has been initialised"/>
+    <aura:if isTrue="{!v.blnLoaded}">
+        <c:inboundCall recordId="{!v.recordId}" objectApiName="{!v.sObjectName}" 
+        onopenrecord="{!c.handleOpenRecord}" onrefreshcomponent="{!c.handleRefresh}" /> 
+    </aura:if>
+</aura:component>

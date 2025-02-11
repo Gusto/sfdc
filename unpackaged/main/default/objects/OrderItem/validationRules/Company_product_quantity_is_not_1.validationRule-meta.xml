@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Company_product_quantity_is_not_1</fullName>
+    <active>true</active>
+    <errorConditionFormula>Product2.Name = &apos;Company&apos; &amp;&amp;
+Quantity != 1</errorConditionFormula>
+    <errorDisplayField>Quantity</errorDisplayField>
+    <errorMessage>Company product quantity cannot be changed.</errorMessage>
+</ValidationRule>

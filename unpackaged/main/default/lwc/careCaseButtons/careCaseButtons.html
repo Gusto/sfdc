@@ -1,0 +1,29 @@
+<template>
+  <button class="slds-button slds-button_neutral slds-button_first" onclick={goToPandaURL} >View Company in Panda</button>
+  <button class="slds-button slds-button_neutral slds-button_middle">Test 2</button>
+  <div class="slds-dropdown-trigger slds-dropdown-trigger_hover">
+      <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_last" aria-haspopup="true" title="Show More">
+          <lightning-icon icon-name="utility:down" size="x-small"></lightning-icon>
+        <span class="slds-assistive-text">Show More</span>
+      </button>
+      <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions">
+        <ul class="slds-dropdown__list" role="menu">
+          <li class="slds-dropdown__item" role="presentation">
+            <a href="javascript:void(0);" role="menuitem" tabindex="0">
+              <span class="slds-truncate" title="Overflow Item One">Overflow Item One</span>
+            </a>
+          </li>
+          <li class="slds-dropdown__item" role="presentation">
+            <a href="javascript:void(0);" role="menuitem" tabindex="-1">
+              <span class="slds-truncate" title="Overflow Item Two">Overflow Item Two</span>
+            </a>
+          </li>
+          <li class="slds-dropdown__item" role="presentation">
+            <a href="javascript:void(0);" role="menuitem" tabindex="-1">
+              <span class="slds-truncate" title="Overflow Item Three">Overflow Item Three</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</template>

@@ -1,0 +1,15 @@
+<template>
+	<template if:false={isAgent}>
+		<div class="chat-content chasitor">
+			<lightning-formatted-rich-text value={messageContent.value}> </lightning-formatted-rich-text>
+		</div>
+	</template>
+	<template if:true={isAgent}>
+		<div class="chat-content agent">
+			<lightning-formatted-rich-text value={content}> </lightning-formatted-rich-text>
+		</div>
+	</template>
+	<template if:true={blnChiliPiper}>
+		<iframe id="chilipiper" class="frame" width="255" height="500" src={chilipiperLink} title="ChiliPiper Scheduler" frameborder="0" scrolling="no"></iframe>
+	</template>
+</template>

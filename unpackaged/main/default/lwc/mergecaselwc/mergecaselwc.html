@@ -1,0 +1,119 @@
+<template>
+    <div class="slds-theme_default">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </template>
+        <div class="slds-page-header slds-page-header_vertical slds-page--header-fixed" style="background-color: rgb(243, 242, 242);">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon size="small" icon-name="standard:case" alternative-text="case" title="case"></lightning-icon>
+                        </div> 
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                            <h2>
+                                <span class="slds-text-heading_small"><b><h2>Current Case {currentCaseNumber}</h2></b></span>
+                            </h2> 
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control" style="display:inline-flex;">
+                            <lightning-input type="text" placeholder="Search Case" value={str_caseNumber}
+                                            label="Enter some text" variant="label-hidden"
+                                            onchange={handleCaseNumberChange}></lightning-input>
+                        </div>                                
+                        &nbsp;&nbsp;&nbsp;
+                        <label class="slds-form-element__label" for="form-element-01">Open Cases</label>
+                        <div class="slds-form-element__control" style="display:inline-flex;">
+                            <lightning-input type="checkbox" label="Basic option" checked={str_InputChecked}
+                                            name="input1" variant="label-hidden"
+                                            onchange={handleInputChange}></lightning-input>
+                        </div> 
+                    </div>                    
+                </div>
+            </div>
+        </div> 
+        <div if:true={hasData} class="slds-p-around_x-small slds-text-align_center" style="vertical-align: top;">
+            <div style="text-align: center; display: inline-block;">
+                <lightning-button label="Merge and Close Selected Case" disabled={disableMergeAndCloseSelectedCaseButton} title="Merge and Close Selected Case" onclick={handleMergeAndCloseSelectedCase} class="slds-m-left_x-small"></lightning-button> 
+                <br/>{selectedCaseNumbers}
+            </div> 
+            <div style="vertical-align: top; display: inline-block;">
+                <lightning-button label={MergeandCloseCaseLabel} disabled={disableMergeAndCloseCurrentCaseButton} title="Merge and Close Current Case" onclick={handleMergeAndCloseCurrentCase} class="slds-m-left_x-small"></lightning-button>                 
+            </div>
+        </div>
+        
+        <table if:true={hasData} class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout">    
+            <thead>
+                <tr class="slds-line-height_reset" style="text-align: center;">
+                    <th class="" scope="col"  style="width: 10%;">
+                        <div class="slds-truncate" title="Action">Action</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Case Number">Case Number</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Case Record Type">Case Record Type</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Contact Name">Contact Name</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Subject">Subject</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Status">Status</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Case Owner">Case Owner</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={data} for:item="caseRecord">
+                    <tr class="slds-hint-parent" key={caseRecord.Id} style="text-align: center;">
+                        <td scope="row">
+                            <div class="slds-truncate" title="CaseNumber">
+                                <input type="checkbox" 
+                                        name="input1"
+                                        value={caseRecord.Id}
+                                        class="slds singleCheckbox"
+                                        data-casenumber={caseRecord.CaseNumber}
+                                        data-caserecord={caseRecord}
+                                        data-id="checkbox"
+                                        onchange={handleSelectedCases}/>
+                            </div>
+                        </td> 
+                        <td>
+                            <a onclick={handleUrlclick} 
+                                data-id={caseRecord.Id}
+                                data-casenumber={caseRecord.CaseNumber}> 
+                                {caseRecord.CaseNumber}
+                            </a>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title={caseRecord.RecordTypeName}>{caseRecord.RecordTypeName}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title={caseRecord.ContactName}>{caseRecord.ContactName}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title={caseRecord.Subject}>{caseRecord.Subject}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title={caseRecord.Status}>{caseRecord.Status}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title={caseRecord.OwnerName}>{caseRecord.OwnerName}</div>
+                        </td>
+                    </tr>
+                </template> 
+            </tbody>
+        </table>
+    </div>
+    
+</template>

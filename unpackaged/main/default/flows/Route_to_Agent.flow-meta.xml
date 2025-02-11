@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Route_to_Case_Owner</name>
+        <label>Route to Case Owner</label>
+        <locationX>314</locationX>
+        <locationY>950</locationY>
+        <actionName>routeWork</actionName>
+        <actionType>routeWork</actionType>
+        <faultConnector>
+            <targetReference>Initialize_Fault_Path_Details</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>serviceChannelId</name>
+            <value>
+                <stringValue>0N98Y00000115jUSAQ</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>serviceChannelLabel</name>
+            <value>
+                <stringValue>Case</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>serviceChannelDevName</name>
+            <value>
+                <stringValue>Case</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>routingType</name>
+            <value>
+                <stringValue>Agent</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>routingConfigId</name>
+            <value>
+                <elementReference>RoutingConfigurationId</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>routingConfigLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>queueId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentId</name>
+            <value>
+                <elementReference>strOwnerId</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>agentLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isAgentRequired</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>queueLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>skillOption</name>
+        </inputParameters>
+        <inputParameters>
+            <name>skillRequirementsResourceItem</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isAgentVariable</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>botId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>botLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isQueueVariable</name>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isRoutingConfigVariable</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>routeWork</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <assignments>
+        <description>Assign the &quot;Engagement Alert Cases&quot; routing config Id to RoutingConfigurationId.</description>
+        <name>Assign_Engagement_Alert_Id</name>
+        <label>Assign Engagement Alert Id</label>
+        <locationX>50</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>RoutingConfigurationId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Alert_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Case_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the &quot;Engagement Case Offline&quot; routing config Id to RoutingConfigurationId.</description>
+        <name>Assign_Offline_Id</name>
+        <label>Assign Offline Id</label>
+        <locationX>314</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>RoutingConfigurationId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Cases_Offline_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Case_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the &quot;Engagement Case Route Prior Agent&quot; routing config Id to RoutingConfigurationId.</description>
+        <name>Assign_Prior_Agent_Routing_Id</name>
+        <label>Assign Prior Agent Routing Id</label>
+        <locationX>842</locationX>
+        <locationY>350</locationY>
+        <assignmentItems>
+            <assignToReference>RoutingConfigurationId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Case_Route_Prior_Agent_ID__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Case_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign the &quot;Engagement Case Offline&quot; routing config Id to RoutingConfigurationId.</description>
+        <name>Copy_1_of_Assign_Offline_Id</name>
+        <label>Copy 1 of Assign Offline Id</label>
+        <locationX>578</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>RoutingConfigurationId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Cases_Offline_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Case_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Initialize_Fault_Path_Details</name>
+        <label>Initialize Fault Path Details</label>
+        <locationX>578</locationX>
+        <locationY>1058</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strExceptionLogMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Route case only when status is Open or In Progress</description>
+        <name>Check_Case_Status</name>
+        <label>Check Case Status</label>
+        <locationX>578</locationX>
+        <locationY>842</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Open_or_In_Progress</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Case_Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Open</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Case_Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>In Progress</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Route_to_Case_Owner</targetReference>
+            </connector>
+            <label>Open or In Progress</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Identify Owner as a User or Queue</description>
+        <name>Owner_Identity</name>
+        <label>Owner Identity</label>
+        <locationX>1106</locationX>
+        <locationY>242</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>User</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Boolean_OwnerIsaUser</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Prior_Agent_Routing_Id</targetReference>
+            </connector>
+            <label>User?</label>
+        </rules>
+        <rules>
+            <name>Queue</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Boolean_OwnerIsaQueue</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Omni_Vendor_OOS_Flow</targetReference>
+            </connector>
+            <label>Queue?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Validate_Routing</name>
+        <label>Validate Routing</label>
+        <locationX>578</locationX>
+        <locationY>134</locationY>
+        <defaultConnector>
+            <targetReference>Owner_Identity</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Engagement_Alert</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>EngagementAlert</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>EngagementAlert</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Engagement_Alert_Id</targetReference>
+            </connector>
+            <label>Engagement Alert?</label>
+        </rules>
+        <rules>
+            <name>Route_Priority_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnPriority0</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Offline_Id</targetReference>
+            </connector>
+            <label>Route Priority 0</label>
+        </rules>
+        <rules>
+            <name>Manual_Owner_Change</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnManualOwnerChange</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Copy_1_of_Assign_Offline_Id</targetReference>
+            </connector>
+            <label>Manual Owner Change?</label>
+        </rules>
+    </decisions>
+    <description>PLEASE make changes on top of this version going forward
+
+- Removed references to Prior_Agent__c and removed multiple decisions as they are no longer needed.
+- Added Engagement Alert routing
+- Added fault paths
+- Added Empty string check on Specialization and queried specialization in Tier 1 scenario
+- Added Specialization changes
+- Manual Owner Change prioritization 
+- Calling Omni Vendor OOS Flow
+- Adding new conditions for Engagement Closed Cases
+- Added Manual RecordType Changes Routing
+- Replaced Route to Queue component with SubFlow Omni Vendor OOS Flow</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Boolean set to true if the case is owned by a Queue</description>
+        <name>Boolean_OwnerIsaQueue</name>
+        <dataType>Boolean</dataType>
+        <expression>BEGINS({!strOwnerId},&quot;00G&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Boolean set to true if the case is owned by a User</description>
+        <name>Boolean_OwnerIsaUser</name>
+        <dataType>Boolean</dataType>
+        <expression>BEGINS({!strOwnerId},&quot;005&quot;)</expression>
+    </formulas>
+    <formulas>
+        <name>IsEngagementAlertPresent</name>
+        <dataType>Boolean</dataType>
+        <expression>IF(ISBLANK({!EngagementAlert}), false, true)</expression>
+    </formulas>
+    <interviewLabel>Route to Agent {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Route to Agent</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>RoutingFlow</processType>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>578</locationX>
+        <locationY>1166</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_Case_Record</name>
+        <label>Get Case Record</label>
+        <locationX>578</locationX>
+        <locationY>734</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Case_Status</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>452</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Validate_Routing</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Omni_Vendor_OOS_Flow</name>
+        <label>Omni Vendor OOS Flow</label>
+        <locationX>1106</locationX>
+        <locationY>350</locationY>
+        <flowName>Omni_Vendor_OOS_Flow</flowName>
+        <inputAssignments>
+            <name>blnDefaultPriorityOneRouting</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>CaseRecord</name>
+            <value>
+                <elementReference>CaseUpdatedRecord</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;p&gt;Fault Message: {!$Flow.FaultMessage}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Interview Guid: {!$Flow.InterviewGuid}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Current Record: {!$Flow.CurrentRecord}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.&amp;nbsp;&amp;nbsp;&lt;/p&gt;&lt;p&gt;https://gusto.lightning.force.com/lightning/setup/Pausedflows/home&lt;/p&gt;</text>
+    </textTemplates>
+    <variables>
+        <description>If the owner of a case has manually been changed from one advocate to antoth</description>
+        <name>blnManualOwnerChange</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Highest reroute priority</description>
+        <name>blnPriority0</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>CaseUpdatedRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Gets Engagement Alert skill from case</description>
+        <name>EngagementAlert</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>This will be used to store the Routing Configuration Id that should be used for Omni routing.</description>
+        <name>RoutingConfigurationId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>strOwnerId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

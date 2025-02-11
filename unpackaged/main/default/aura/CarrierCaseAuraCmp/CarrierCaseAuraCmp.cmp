@@ -1,0 +1,13 @@
+<!-- 
+    Purpose : Calling CarrierCase LWC Component 
+    Written By : Lakshey Mendiratta
+    Date : 09/16/2020
+-->
+<aura:component implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForAllPageTypes">
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:attribute name="blnOpenModal" type="Boolean" default="false" />
+    <aura:attribute name="strRecordId" type="String" default=" " />
+    <aura:registerEvent name="carrierEvent" type="c:closeModalHandler"/>
+    <c:carrierCaseCmp strRecordId="{!v.strRecordId}" blnOpenModal="{!v.blnOpenModal}"  onclosemodal="{!c.handleCarrierModal}" onopenprimarytab="{!c.handlePrimaryTab}"/>
+    
+</aura:component>

@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride" controller="RecordCreateController" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <c:recordCreateCmp recordid = "{!v.recordId}"></c:recordCreateCmp>
+</aura:component>

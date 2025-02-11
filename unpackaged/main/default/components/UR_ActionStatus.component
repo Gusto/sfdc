@@ -1,0 +1,80 @@
+<apex:component >
+
+    <apex:actionStatus id="statusSave" stopText="">
+        <apex:facet name="start">
+            <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                    <span class="slds-assistive-text">Loading...</span> 
+                    <div class="slds-spinner__dot-a"></div> 
+                    <div class="slds-spinner__dot-b"></div>   
+                </div> 
+                <div class="loading-img-text"></div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus> 
+    
+    <apex:actionStatus id="statusReserveParticipant" stopText="">
+        <apex:facet name="start">
+            <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                    <span class="slds-assistive-text">Loading...</span> 
+                    <div class="slds-spinner__dot-a"></div> 
+                    <div class="slds-spinner__dot-b"></div>   
+                </div> 
+                <div class="loading-img-text">Please wait while Scout reserves participants for your study</div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus> 
+    
+    <apex:actionStatus id="statusSendEmail" stopText="">
+        <apex:facet name="start">
+            <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                    <span class="slds-assistive-text">Loading...</span> 
+                    <div class="slds-spinner__dot-a"></div> 
+                    <div class="slds-spinner__dot-b"></div>   
+                </div> 
+                <div class="loading-img-text">Please wait while Scout is sending your email</div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus> 
+    
+    <apex:actionStatus id="statusScheduleEmail" stopText="">
+        <apex:facet name="start">
+            <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                    <span class="slds-assistive-text">Loading...</span> 
+                    <div class="slds-spinner__dot-a"></div> 
+                    <div class="slds-spinner__dot-b"></div>   
+                </div> 
+                <div class="loading-img-text">Please wait while Scout is scheduling your email</div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+	
+   <apex:actionStatus id="statusTestEmail" stopText="">
+        <apex:facet name="start">
+            <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                    <span class="slds-assistive-text">Loading...</span> 
+                    <div class="slds-spinner__dot-a"></div> 
+                    <div class="slds-spinner__dot-b"></div>   
+                </div> 
+                <div class="loading-img-text">Scout is sending you a test email</div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+    
+    <apex:actionStatus id="statusDraftEmail" stopText="">
+        <apex:facet name="start">
+            <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                    <span class="slds-assistive-text">Loading...</span> 
+                    <div class="slds-spinner__dot-a"></div> 
+                    <div class="slds-spinner__dot-b"></div>   
+                </div> 
+                <div class="loading-img-text">Draft Saved</div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+</apex:component>

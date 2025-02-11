@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Base WHERE Clause</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Filter_Type__c</field>
+        <value xsi:type="xsd:string">Base WHERE Clause</value>
+    </values>
+    <values>
+        <field>Filter_Value__c</field>
+        <value xsi:type="xsd:string">WHERE 
+  RecordType.Name = &apos;Benefits Renewal&apos; AND 
+  HI_Effective_Date__c != NULL AND 
+  UW_Carrier_Previous_Year__c != NULL AND 
+  (
+    StageName = &apos;Ready for Default Package&apos; OR 
+    StageName = &apos;Alignment Complete&apos;
+  ) AND 
+  (
+    Benefits_Current_Setup_Step__c = &apos;Awaiting Offerings&apos; OR 
+    HI_Effective_Date__c = NEXT_N_DAYS:90
+  ) AND 
+  (
+    (
+      UW_Carrier_Previous_Year__r.Q1_Rates_not_Available__c = FALSE AND 
+      UW_Carrier_Previous_Year__r.Q2_Rates_not_Available__c = FALSE AND 
+      UW_Carrier_Previous_Year__r.Q3_Rates_not_Available__c = FALSE AND 
+      UW_Carrier_Previous_Year__r.Q4_Rates_not_Available__c = FALSE
+    ) OR 
+    (
+      (
+        UW_Carrier_Previous_Year__r.Q1_Rates_not_Available__c = FALSE AND 
+        CALENDAR_Quarter(HI_Effective_Date__c) = 1
+      ) OR 
+      (
+        UW_Carrier_Previous_Year__r.Q2_Rates_not_Available__c = FALSE AND 
+        CALENDAR_Quarter(HI_Effective_Date__c) = 2
+      ) OR 
+      (
+        UW_Carrier_Previous_Year__r.Q3_Rates_not_Available__c = FALSE AND 
+        CALENDAR_Quarter(HI_Effective_Date__c) = 3
+      ) OR 
+      (
+        UW_Carrier_Previous_Year__r.Q4_Rates_not_Available__c = FALSE AND 
+        CALENDAR_Quarter(HI_Effective_Date__c) = 4
+      )
+    )
+  ) AND 
+  Benefits_Designer__c = NULL AND 
+  Parent_Opportunity__c = NULL AND 
+  UW_State_PY__c IN :set_States AND 
+  Advising_Blocked_Reason__c = NULL AND
+  Owner_Role_Name__c != &apos;Advisor&apos;</value>
+    </values>
+    <values>
+        <field>Role_Name__c</field>
+        <value xsi:type="xsd:string">Benefits Designer</value>
+    </values>
+</CustomMetadata>

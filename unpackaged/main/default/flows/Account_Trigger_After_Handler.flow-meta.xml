@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Account_P2P_Email_Notification</name>
+        <label>Account P2P Email Notification</label>
+        <locationX>50</locationX>
+        <locationY>408</locationY>
+        <actionName>Account.Account_P2P_Email_Notification</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Account.Account_P2P_Email_Notification</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>Account_P2P_Referral_Check</name>
+        <label>Account P2P Referral Check</label>
+        <locationX>182</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Account_P2P_Referral_Requested</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.P2P_Referral_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Requested</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.P2P_Referral_Status__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Account_P2P_Email_Notification</targetReference>
+            </connector>
+            <label>Account P2P Referral Requested</label>
+        </rules>
+    </decisions>
+    <description>- Added Bypass flow logic.
+- Deleted scheduled path since Ramp nurture opt out is being deprecated</description>
+    <environments>Default</environments>
+    <interviewLabel>Account After Trigger Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Account Trigger After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>254</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Account_P2P_Referral_Check</targetReference>
+        </connector>
+        <filterFormula>(NOT({!$Permission.Bypass_Flow_Account})
+&amp;&amp; NOT({!$Permission.Bypass_Flows}))
+&amp;&amp; TEXT({!$Record.P2P_Referral_Status__c}) = &apos;Requested&apos;</filterFormula>
+        <object>Account</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

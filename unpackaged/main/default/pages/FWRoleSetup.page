@@ -1,0 +1,68 @@
+<apex:page controller="FWRoleSetupCtrl">
+    <c:GustoActionStatus />
+    <apex:form id="frmBody" >
+        <apex:pageMessages id="showmsg" />
+    	<apex:pageBlock title="Manage Setup Criteria">
+        	 <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Select Team"/>
+                <apex:inputField value="{!objRegionPOD.Team__c}"/>
+               </apex:pageBlockSectionItem>
+                 
+                <apex:pageBlockSectionItem id="pageBlockItem1">
+            	  <apex:outputLabel value="Select Skill Type"/>
+               	  <apex:selectlist value="{!strSkillType}" size="1">
+                      <apex:selectOptions value="{!list_SkillType}"/>
+                    </apex:selectlist> 	
+              </apex:pageBlockSectionItem>
+              
+            </apex:pageBlockSection>
+             <apex:pageBlockSection columns="1">
+                 <apex:pageBlockSectionItem >
+                     <apex:outputlabel >Select Setup Criteria </apex:outputlabel>
+                     <c:MultiselectPicklist leftLabel=""
+                                            leftOption="{!list_UnselectedSetupCriteria}"
+                                            rightLabel=""
+                                            rightOption="{!list_SelectedSetupCriteria}"
+                                            size="5"
+                                            width="300px"
+                                            showUpDownButtons="false"/>
+                 </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="Bottom">
+                <apex:commandButton value="Save" action="{!SaveSetup}" reRender="frmBody" status="actStatusId"/>
+                <apex:commandButton value="Reset" action="{!ResetValue}" reRender="frmBody" status="actStatusId"/>
+            </apex:pageBlockButtons>
+            
+        </apex:pageBlock>
+        <apex:pageBlock title="Setup Criteria List">
+        	<apex:pageBlockTable value="{!list_RoleSetupWrapper}" var="role">
+                <apex:column headerValue="Action">
+                    <apex:commandLink value="Edit" action="{!updateSetup}" reRender="frmBody" status="actStatusId">
+                        <apex:param value="{!role.objSkillRollSetup.Id}" name="setupId"/>
+                    </apex:commandLink>&nbsp;|&nbsp;
+                    <apex:commandLink value="Delete" onclick="return confirmDelete();" action="{!deleteSetup}">
+                        <apex:param value="{!role.objSkillRollSetup.Id}" name="setupId"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Team">
+                    {!role.objSkillRollSetup.Team__c}
+                </apex:column>
+                <apex:column headerValue="Skill Type">
+                    {!role.objSkillRollSetup.Skill_Type__c}
+                </apex:column>
+                <apex:column headerValue="Setup Criteria">
+                    {!role.objSkillRollSetup.Filter_Criteria__c}
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+     <script language="javascript">
+        function confirmDelete(){
+            if(confirm('Are you sure you want to delete?')){
+                return true;
+            }
+            return false;
+        }
+    </script>
+</apex:page>

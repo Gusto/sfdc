@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rules_per_execution_greater_than_0</fullName>
+    <active>true</active>
+    <description>Please ensure Rules per Execution is between 1 and 50.</description>
+    <errorConditionFormula>Rules_per_Execution__c &lt;= 0 || Rules_per_Execution__c &gt; 50</errorConditionFormula>
+    <errorMessage>Please ensure Rules per Execution is between 1 and 50.</errorMessage>
+</ValidationRule>

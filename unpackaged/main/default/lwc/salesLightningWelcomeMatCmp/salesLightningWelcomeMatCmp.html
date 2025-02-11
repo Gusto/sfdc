@@ -1,0 +1,155 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<template if:true={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+
+	<template if:true={blnShowMat}>
+		<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="welcome-mat-100-label" class="slds-modal slds-fade-in-open slds-modal_small">
+			<div class="slds-modal__container">
+				<div class="slds-clearfix" style="filter: brightness(3.5)">
+					<div class="slds-float_right">
+						<lightning-button-icon icon-name="utility:close" onclick={hideWelcomeMat} size="large" alternative-text="Settings" title="Settings"> </lightning-button-icon>
+					</div>
+				</div>
+				<div class="slds-modal__header slds-modal__header_empty"></div>
+				<div class="slds-modal__content" id="welcome-mat-100-content">
+					<div class="slds-welcome-mat slds-welcome-mat_info-only">
+						<div class="slds-welcome-mat__content slds-grid">
+							<div class="slds-welcome-mat__info slds-size_1-of-2">
+								<div class="slds-welcome-mat__info-content">
+									<template if:true={objConfig.Marquee_Disabled__c}>
+										<h2 class="slds-welcome-mat__info-title" id="welcome-mat-100-label-1">{objConfig.Left_Panel_Title__c}</h2>
+									</template>
+
+									<template if:false={objConfig.Marquee_Disabled__c}>
+										<marquee behavior="alternate" scrollamount="8">
+											<h2 class="slds-welcome-mat__info-title" id="welcome-mat-100-label-2">{objConfig.Left_Panel_Title__c}</h2>
+										</marquee>
+									</template>
+									<div class="slds-welcome-mat__info-description slds-text-longform">
+										<p>{objConfig.Left_Panel_Content__c}</p>
+									</div>
+									<div class="slds-welcome-mat__info-actions">
+										<lightning-button variant="brand" label="Learn More" title="Learn More" onclick={handleLearnMore}> </lightning-button>
+										<div class="slds-m-top_large">
+											<div class="slds-form-element">
+												<div class="slds-form-element__control">
+													<div class="slds-checkbox">
+														<lightning-input type="checkbox" label="Don't show this again" onchange={handlePreferenceChange} name="input1"> </lightning-input>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<ul class="slds-welcome-mat__tiles slds-size_1-of-2 slds-welcome-mat__tiles_info-only">
+								<li class="slds-welcome-mat__tile slds-welcome-mat__tile_info-only">
+									<div class="slds-media">
+										<div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
+											<div class="slds-welcome-mat__tile-figure">
+												<div class="slds-welcome-mat__tile-icon-container">
+													<lightning-icon icon-name={objConfig.Right_Panel_Section_1_Icon__c} alternative-text="Approved" size="medium" title="Approved"> </lightning-icon>
+												</div>
+											</div>
+										</div>
+										<div class="slds-media__body">
+											<div class="slds-welcome-mat__tile-body">
+												<h3 class="slds-welcome-mat__tile-title">{objConfig.Right_Panel_Section_1_Title__c}</h3>
+												<p class="slds-welcome-mat__tile-description">{objConfig.Right_Panel_Section_1_Content__c}</p>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li class="slds-welcome-mat__tile slds-welcome-mat__tile_info-only">
+									<div class="slds-media">
+										<div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
+											<div class="slds-welcome-mat__tile-figure">
+												<div class="slds-welcome-mat__tile-icon-container">
+													<lightning-icon icon-name={objConfig.Right_Panel_Section_2_Icon__c} alternative-text="Approved" size="medium" title="Approved"> </lightning-icon>
+												</div>
+											</div>
+										</div>
+										<div class="slds-media__body">
+											<div class="slds-welcome-mat__tile-body">
+												<h3 class="slds-welcome-mat__tile-title">{objConfig.Right_Panel_Section_2_Title__c}</h3>
+
+												<template if:true={objConfig.Right_Panel_Section_2_Content__c}>
+													<p class="slds-welcome-mat__tile-description">{objConfig.Right_Panel_Section_2_Content__c}</p>
+												</template>
+
+												<template if:false={objConfig.Right_Panel_Section_2_Content__c}>
+													<template if:true={blnIsSales}>
+														<p class="slds-welcome-mat__tile-description">
+															Stop by Slack in <a href="https://gustohq.slack.com/archives/C04R9RM50J0" target="_blank"> #tmp_hi_sales_lightning_go_live </a> for
+															general questions and feedback. There will also be a log for you to provide feedback as you explore more
+														</p>
+													</template>
+													<template if:true={blnIsPT}>
+														<p class="slds-welcome-mat__tile-description">
+															<a href="https://gustohq.slack.com/archives/C04E5U9KNER" target="_blank"> #tmp_pt__lightning_golive </a> Slack channel for general
+															questions and feedback (look for the spreadsheet bookmarked in the channel to provide your enhancement requests).
+														</p>
+													</template>
+												</template>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li class="slds-welcome-mat__tile slds-welcome-mat__tile_info-only">
+									<div class="slds-media">
+										<div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
+											<div class="slds-welcome-mat__tile-figure">
+												<div class="slds-welcome-mat__tile-icon-container">
+													<lightning-icon icon-name={objConfig.Right_Panel_Section_3_Icon__c} alternative-text="Approved" size="medium" title="Approved"> </lightning-icon>
+												</div>
+											</div>
+										</div>
+										<div class="slds-media__body">
+											<div class="slds-welcome-mat__tile-body">
+												<h3 class="slds-welcome-mat__tile-title">{objConfig.Right_Panel_Section_3_Title__c}</h3>
+												<p class="slds-welcome-mat__tile-description">{objConfig.Right_Panel_Section_3_Content__c}</p>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li class="slds-welcome-mat__tile slds-welcome-mat__tile_info-only">
+									<div class="slds-media">
+										<div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
+											<div class="slds-welcome-mat__tile-figure">
+												<div class="slds-welcome-mat__tile-icon-container">
+													<lightning-icon icon-name={objConfig.Right_Panel_Section_4_Icon__c} alternative-text="Approved" size="medium" title="Approved"> </lightning-icon>
+												</div>
+											</div>
+										</div>
+										<div class="slds-media__body">
+											<div class="slds-welcome-mat__tile-body">
+												<h3 class="slds-welcome-mat__tile-title">{objConfig.Right_Panel_Section_4_Title__c}</h3>
+												<template if:true={objConfig.Right_Panel_Section_4_Content__c}>
+													<p class="slds-welcome-mat__tile-description">{objConfig.Right_Panel_Section_4_Content__c}</p>
+												</template>
+												<template if:false={objConfig.Right_Panel_Section_4_Content__c}>
+													<iframe
+														width="300"
+														height="145"
+														src="https://www.youtube.com/embed/s_sHeac3gfo"
+														title="YouTube video player"
+														frameborder="0"
+														allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+														allowfullscreen
+													></iframe>
+												</template>
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+	</template>
+</template>

@@ -1,0 +1,56 @@
+<apex:page showHeader="false" sidebar="false">
+ <apex:includeScript value="/support/console/41.0/integration.js"/>
+
+
+
+
+ <apex:form >
+ 
+ <apex:outputLabel ><b>2018 UNDERWRITING GUIDES</b></apex:outputLabel><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1CrrqhvS3POMoDKlP9I8cgRyr32fXXJRKIbvqM2A36WM/edit#gid=0');return false" >Ancillary- National</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1eeBl5i2tfr6O9nQHD7K5XiB51DiYlahmWU8CTfRtQi4/edit#gid=739128059');return false" >Arizona</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1SKkXlH9tMUX9CTJYa9Vbvgo6KHwoUv08t0BMfQRZvJ4/edit#gid=1315410924');return false" >California</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1s5g24FQub1vNgljqX8CEh9SpxUdKM0YNOcrrro81wPY/edit#gid=1440587854');return false" >Colarado</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1Z7oUqJ6ebr-kTwMdQ0Q5RdHHeCRxWMfB1X8x7ndpKsw/edit#gid=1374374499');return false" >Florida</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/16_1qRVFY1m8PWBWMn-OEKHYAvuk0gdvaUFCCHFqFRtI/edit#gid=136079279');return false" >Georgia</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1BLjKITWfOepSVykQI7z-dcSpp4r_4wSIL0PLfKbXJ9c/edit#gid=1307271254');return false" >Illinois</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1jQGhnv7lig3MnG-6bw-eKFj7dKAxoDiRy5gle4dcNNA/edit#gid=1407369975');return false" >Maryland</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1OygqcWogXtoYVI2cbXP3lyNMip0q1usp887iSmJm95U/edit#gid=1864856400');return false" >Massachusetts</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1Rg2iV0fRV-wekXR1o6JjVY1nOpv3N6meBCupGTAVEFI/edit#gid=553131347');return false" >Michigan</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1RmIrKxq3TLZHrZ8dLiAHDwyI8ilPXS3v9O-Dv-zQX5w/edit#gid=1403244060');return false" >New Jersey</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1ufxZNVIp2n9Vgf6acvq482dUUQU1spzt85KU7fwqjrQ/edit#gid=376881344');return false" >New York</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1YVbo4145y9Ohrr_zhUqZVmV1a1QZ2wCXeucZXYLAbJs/edit#gid=1251648706');return false" >Ohio</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1y9Czdfkfx_060HqiwgUfQGSDlvwf5OIS9KsG5zfFWz4/edit#gid=688227266');return false" >Oregon</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1w_ELqrSpGYukodX-Ta59ea0o2oswmSiHo7-fRb6bt04/edit#gid=869693266');return false" >Pennsylvania</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/15_Wx9Igw3XOqumUSLDq2NFo_73jxhB5Fk8ZeKDje43w/edit#gid=0');return false" >Tennessee</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1hbveGVC0JPUK1NNQ0Jos8rfflNtuhl90LCT022lYR_M/edit#gid=2014056114');return false" >Texas</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/10OOimjXDKGWtW35y81kjCJ_W-9GN5wNj_J-Z4cESa_w/edit#gid=1523140221');return false" >Virginia</apex:outputLink><br></br><br></br>
+ <apex:outputLink onclick="openGoogleDoc('//docs.google.com/spreadsheets/d/1B9-lOecTTZSJP8wninTbogoqEmqkxYnpWP9P3Jac0ms/edit#gid=1844411131');return false" >Washington</apex:outputLink><br></br><br></br>
+
+
+<!--<a href="#" onClick="opt();return false">
+         Arizona</a>-->
+ 
+ </apex:form>
+ <script type="text/javascript">
+
+function openGoogleDoc(gDocUrl){
+ if (sforce.console.isInConsole()){ 
+     window.open(gDocUrl,"_blank");
+  //sforce.console.openPrimaryTab(undefined,'//docs.google.com/spreadsheets/d/1eeBl5i2tfr6O9nQHD7K5XiB51DiYlahmWU8CTfRtQi4/edit#gid=739128059', true, 'Arizona');
+  }else{
+      window.top.location.href = gDocUrl;
+  }
+}
+
+
+var openSuccess = function openSuccess(result) {
+            //Report whether opening the new tab was successful
+            if (result.success == true) {
+               alert('Primary tab successfully opened');
+            } else {
+                alert('Primary tab cannot be opened');
+            }
+        };
+</script>
+</apex:page>

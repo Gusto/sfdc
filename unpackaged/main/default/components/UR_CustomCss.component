@@ -1,0 +1,760 @@
+<apex:component >
+ <style>
+     .resend-email-icon{
+     	color: #c23934;
+     }
+	 .resend-email-icon:hover{
+        color:yellow;
+     	//color: #be4bdb;
+        //color: #a220c3;
+     }
+     
+     /* Tabs */
+     .slds-scope .slds-tabs_default__item {
+         font-size: 16px;
+         margin-left: 12px;
+     }
+     .slds-scope .slds-tabs_default__item:first-child {
+     	margin-left: 0;
+     }
+    .slds-scope .slds-tabs_default__item .slds-badge {
+      position: relative;
+      top: -5px;
+      font-size: 0.6rem;
+    }
+
+    .slds-scope .slds-tabs_default__item .slds-badge.text {
+    }
+
+    /* alerts */
+    .slds-scope .slds-notify--alert {
+      display: flex;
+      border-radius: 0.25em;
+      font-size: 14px;
+      font-weight: 400;
+      width: auto;
+    }
+    .slds-scope .slds-notify--alert p a {
+      text-decoration: underline !important;
+    }
+    .slds-scope .slds-notify--alert .slds-notify__close {
+      color: #fff;
+      opacity: 0.8;
+      transition: color 0.15s ease-in-out;
+    }
+    .slds-scope .slds-notify--alert .slds-notify__close:hover {
+      opacity: 1.0;
+    }
+
+    .slds-scope .slds-notify--alert.scout-notify--scheduled {
+    	justify-content: flex-start;
+    	padding: .65rem;
+    	background-color:rgb(202, 230, 241); /* welcome_mat */
+    	color:rgb(0, 57, 107); /* welcome_mat */
+    	border-color: #6f8d98;
+    	margin-bottom: 4px;
+        margin-top: 4px;
+    }
+
+     /* header component */
+
+      .slds-scope .project-title {
+        display: flex;
+        /*justify-content: space-between;*/
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+      }
+
+      .slds-scope .project-title:after {
+        content: attr(data-project-id);
+        position: absolute;
+        top: 100%;
+        font-size: 12px;
+        left: 0;
+        font-weight: bold;
+        font-family: Monaco, monospace;
+        color: #666;
+      }
+
+      .slds-scope .tab-buttons {
+        justify-content: flex-end;
+        min-width: 50%;
+      }
+     
+      .slds-button-group {
+          font-size: 1rem;
+          padding: 0;
+      }
+      .slds-button-group-row {
+          border-radius: 0.25em;
+          overflow: hidden;
+      }
+      .slds-scope .slds-button__icon_large, .slds-scope .slds-button__icon--large {
+          min-width: 1.5rem;
+          min-height: 1.5rem;
+          width: auto;
+          height: auto;
+      }
+      .slds-scope .slds-button__icon_large abbr, .slds-scope .slds-button__icon--large abbr {
+        font-size: 12px;
+        min-height: 30px;
+        max-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: max-width 1s ease-in-out 2s;
+      }
+      .slds-scope.expand .slds-button__icon_large abbr,
+      .slds-scope.expand .slds-button__icon--large abbr,
+      .slds-scope .scout-internal-nav .slds-button abbr,
+      .slds-scope .project-actions .slds-button abbr,
+      .slds-scope .slds-button abbr.ex {
+        max-width: 200px;
+        margin-left: 10px;
+        font-weight: 600;
+      }
+      .slds-scope .slds-button abbr.ex {
+        margin-right: 0.5rem;
+      }
+      .slds-scope .slds-button-group .slds-button_brand {
+          border-right-width: 2px;
+          border-right-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .slds-button-group .slds-button_brand:last-child {
+          border-right: 0;
+      }
+      .slds-button-group .slds-button .fas {
+          font-size: 1rem;
+          min-width: 12px;
+          transition: margin-right 1s ease-in-out 2s;
+      }
+      .slds-scope.expand .slds-button .fas {
+        margin-right: 5px;
+      }
+      .slds-scope .slds-button.slds-is-active {
+        background: #133b6c;
+      }
+      .slds-scope .slds-button.slds-is-active abbr {
+        font-weight: bold;
+      }
+
+     /* - - - - - - - - - - - - - - */
+     .dateFormat, .hide {
+          display: none;  
+      }
+      .multiSelectPicklistRow td {
+          width: 45%;
+      }
+      .multiSelectPicklistRow td.multiSelectPicklistCell {
+          width: 10%;
+      }
+     
+     .slds-scope .slds-popover {
+        background: #f2f2f2;
+      }
+      .slds-scope .slds-popover_tooltip {
+        background: #fcfcfc;
+      }
+      .slds-scope .slds-popover_tooltip .slds-popover__body, .slds-scope .slds-popover--tooltip .slds-popover__body {
+        color: #000;
+        padding: 10px;
+      }
+      .slds-scope .slds-popover_tooltip .slds-popover__body a, .slds-scope .slds-popover--tooltip .slds-popover__body a {
+        text-decoration: underline;
+      }
+      .slds-scope .slds-form-element {
+        margin-bottom: 10px;
+      }
+
+      .slds-scope .slds-input {
+        height: 32px;
+      }
+
+      .slds-scope textarea.slds-input {
+        height: 32px;
+        resize: none;
+      }
+
+      .slds-scope select optgroup {
+        background: #f2f2f2;
+        padding: 1px 2px;
+        margin-bottom: 1px;
+      }
+      .slds-scope select[multiple] option {
+        background: #fff;
+        padding-left: 15px;
+
+      }
+      .slds-scope select[multiple] optgroup option {
+        padding-left: 0;
+      }
+     
+     /* Send Survey/Screener */
+        .slds-scope .slds-popover_tooltip {
+          display: none;
+          background: #fcfcfc;
+          text-align: left;
+        }
+        .slds-scope .slds-popover_tooltip .slds-popover__body, .slds-scope .slds-popover--tooltip .slds-popover__body {
+          color: #000;
+          padding: 10px;
+        }
+        .slds-scope .slds-popover_tooltip .slds-popover__body a, .slds-scope .slds-popover--tooltip .slds-popover__body a {
+          text-decoration: underline;
+        }
+
+        .scout-toolbar .slds-form-element {
+          display: inline-flex;
+          align-items: baseline;
+        }
+        .slds-scope .slds-input__icon {
+          color: rgb(176, 173, 171);
+        }
+        .slds-scope .scout-toolbar .slds-input-has-icon .slds-input__icon:not(button) {
+          pointer-events: all;
+        }
+        .scout-toolbar .slds-input {
+          width: auto;
+          margin-right: 5px;
+          font-size: 12px;
+        }
+        .scout-toolbar .slds-input--large {
+          width: 225px;
+          transition: width 0.25s ease-in-out ;
+        }
+        .scout-toolbar .slds-input--large:focus, .scout-toolbar .slds-input--large:active {
+          width: 500px;
+        }
+        .scout-toolbar .slds-button {
+          margin-left: 5px;
+        }
+
+        .scout-toolbar .slds-form-element .slds-input-has-icon .slds-popover_tooltip {
+          left: -15px;
+          bottom: 210%;
+          min-width: 100px;
+          white-space: nowrap;
+          width: auto;
+          position: absolute;
+          max-width: none;
+        }
+        .scout-toolbar .slds-form-element .slds-input__icon:hover .slds-popover_tooltip,
+        .scout-toolbar .slds-form-element.slds-is-changed.slds-has-error .slds-popover_tooltip,
+        .scout-toolbar .slds-form-element.slds-is-changed.slds-has-success .slds-popover_tooltip {
+          display: block;
+        }
+
+        .slds-scope .slds-has-success .slds-input:focus,.slds-scope .slds-has-success .slds-input:active{
+            border-color:rgb(2, 126, 70);
+        }
+        .slds-scope .slds-has-success .slds-input__icon{
+            fill:rgb(2, 126, 70);
+            color:rgb(2, 126, 70);
+        }
+
+     /* Project Detail */
+    .slds-scope .control-pair {
+      display: grid;
+      grid-template-columns: 30% 70%;
+      padding: 0.75rem;
+    }
+
+    .slds-scope .control-single {
+      display: block;
+      padding: 0.75rem; 
+    }
+
+    .slds-scope .striped-and-flexed .control-pair:nth-child(even), .slds-scope .striped-and-flexed .control-single:nth-child(even) {
+      background: #f1f1f1;
+    }
+
+    .slds-scope .slds-heading_orange, .slds-scope .slds-heading_blue { /* not orange, obviously */
+      background: rgba(0,112,210,0.05) !important;
+      border-top: 1px solid #c1c1c1;
+      border-bottom: 1px solid #c1c1c1;
+    }
+    .slds-scope .slds-card .border-orange, .slds-scope .slds-card .border-blue {
+      border-color: #0070D2;
+      border-bottom-width: 3px;
+    }
+    .slds-scope .slds-card__body {
+      margin: 0;
+    }
+    .slds-scope .slds-media {
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .slds-scope .slds-media .slds-media__figure {
+      margin-top: 5px;
+    }       
+     
+    /* ManageContact */
+      .dateInput {
+        white-space: normal;
+      }
+      .dateFormat, .sortBy {
+        display: none;
+      }
+      .highlight {
+        background: #ffffcc;
+      }
+      .slds-scope .slds-popover_tooltip {
+        background: #fcfcfc;
+      }
+      .slds-scope .slds-popover_tooltip .slds-popover__body, .slds-scope .slds-popover--tooltip .slds-popover__body {
+        color: #000;
+        padding: 10px;
+      }
+      .slds-scope .slds-popover_tooltip .slds-popover__body a, .slds-scope .slds-popover--tooltip .slds-popover__body a {
+        text-decoration: underline;
+      }
+      .slds-scope .slds-media_bottom {
+        align-items: flex-end;
+      }
+      .slds-media__body div.note {
+        color: #4a4a56;
+        letter-spacing: -0.01em;
+        font-size: 12px;
+      }
+      .side-filter-content .bg-gray-light {
+        background: #fafafa;
+      }
+      .side-filter-content .slds-card__header-title .fa {
+        color: #0d70d2;
+        font-size: 1.25em;
+        margin-right: 5px;
+      }
+      .slds-form-element .slds-form-element__label {
+        font-size: 13px;
+      }
+      .slds-list-item {
+        padding: 0;
+        margin: 0;
+      }
+      .slds-list-item input {
+        margin: 0 5px;
+      }
+      .slds-list-item .slds-checkbox__label {
+        line-height: 2;
+      }
+      .list-items {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .list-items .list-item {
+        white-space: nowrap;
+        width: 50%;
+      }
+      .list-items .list-item label {
+        display: flex;
+        align-items: center;
+        line-height: 2;
+        padding: 0 0 0 0.5rem;
+        margin: 2px 0.5rem 0 0;
+        transition: background 1s ease-in-out;
+      }
+      .card__header-count {
+        font-style: italic;
+      }
+      .card__header-count .count {
+        margin: 0 1px 0 2px;
+        font-size: 1.15em;
+        font-weight: 600;
+        color: #1b5297;
+      }
+      .exclude-roles-btn {
+        display: block;
+        padding: 2px;
+        margin: 0 10px 10px;
+      }
+     .chevrondownImage{
+        width: 15px; 
+     }
+     .arrowdownImage{
+        width: 15px;
+     }
+     .arrowupImage{
+        width: 15px;
+     }
+     .tablesorter thead .sorter-false {
+        padding: .25rem 10px !important;
+     }
+      
+     .relatedProject{
+        max-width: 300px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+     }
+     @media (min-width: 768px){
+        .mt-items {
+            margin-top: -30px;
+        }
+    }
+
+    /* ManageParticipants */
+      .slds-scope .slds-cell--comment {
+        min-width: 200px; 
+      }
+      .slds-scope .slds-cell--contact-history {
+      }
+
+      .slds-scope .slds-table tbody tr {
+        transition: background 0.5s ease-in-out;
+      }
+      .slds-scope .slds-table tbody tr.slds-highlight {
+        background: #ffffdc;
+      }
+
+      .slds-scope .slds-table th {
+        z-index: 5;
+      }
+      .slds-scope .slds-table .thead th {
+        background-color: rgb(250, 250, 249);
+        color: rgb(81, 79, 77);
+        padding: .25rem .5rem;
+        font-weight: 700;
+        line-height: normal;
+      }
+
+      .slds-scope .slds-table .row-group-header>td:first-child {
+        padding-left: 1.5em !important;
+
+      }
+
+      .slds-scope .slds-table .cell--name {
+        padding-left: 10px !important;
+      }
+
+      .slds-scope .row-group-header .row-heading {
+        padding-left: 1.5rem !important;
+      }
+
+      .slds-scope .row-group-header .row-heading strong {
+        font-style: italic;
+        font-size: 1.25em;
+        margin: 0 3px;
+        color: #1b5297;
+      }
+
+      .slds-scope .row-group-header .row-details {
+
+      }
+
+      .slds-scope .slds-table tr .slds-row-actions.tablesorter-header * {
+        display: none;
+
+      }
+
+      .slds-scope .slds-table tr td.slds-row-actions {
+        text-align: right;
+        font-size: 1em;
+        padding-right: 0.5rem;
+      }
+
+      .slds-scope .slds-table.table--emails tr .slds-row-actions {
+        border-right: 20px solid rgb(206, 228, 246);
+      }
+
+      .slds-scope .slds-table.table--emails .row-group-header .slds-row-actions,
+      .slds-scope .slds-table.table--emails .slds-table-header .slds-row-actions {
+        border-right-color: transparent;
+      }
+
+      .slds-scope .slds-table tr td.slds-row-actions li {
+        display: block;
+      }
+
+      .slds-scope .row-group-header .slds-row-actions {
+        font-size: 1em;
+        padding-right: 0.5rem;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+
+      .slds-scope .row-group-header .slds-row-actions a {
+        display: inline-block;
+        opacity: 0.5;
+        vertical-align: middle;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .slds-scope .row-group-header:hover .slds-row-actions a {
+        opacity: 0.75;
+      }
+
+      .slds-scope .row-group-header .slds-row-actions a:hover,
+      .slds-scope .row-group-header .slds-row-actions a.row-toggle {
+        text-align: right;
+        opacity: 1.0;
+      }
+      .slds-scope .row-group-header .slds-row-actions a.row-toggle {
+        position: relative;
+        margin-left: 19px;
+        top: -3px;
+      }
+
+      .slds-scope .row-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-right: 54px;
+      }
+
+      .slds-scope .slds-row-actions a {
+        display: inline-block;
+        //font-size: 1.25rem;
+        font-size:inherit;
+        line-height: 1;
+        padding: 2px 5px;
+        width: 30px;
+        margin: 0 0 0 10px;
+     	//text-align: center;
+      }
+
+      .slds-scope .row-actions a i {
+        filter: saturate(0.25);
+        opacity: 0.5;
+        transition: all 0.15s ease-in-out;
+      }
+     
+      .slds-scope .row-actions a:hover i {
+        filter: saturate(1.0);
+        opacity: 1.0;
+      }
+
+      .slds-scope .row-actions a.read:hover i {
+        filter: saturate(0.75);
+      }
+
+      .slds-scope .row-group-header.expanded th {
+        background: rgba(0, 112, 210, 0.15) !important;
+        position: sticky !important;
+      }
+      .slds-scope .row-group-header.expanded .slds-row-actions {
+        opacity: 1.0;
+      }
+      .slds-scope .row-group-header.expanded .row-toggle {
+        opacity: 0.85;
+        transform: rotate(180deg);
+      }
+
+      .slds-scope .slds-table tr .slds-cell--name {
+        padding-left: 10px !important;
+      }
+
+      .slds-scope .slds-table.table--emails tr .slds-cell--name {
+        border-left: 20px solid rgb(206, 228, 246);
+      }
+    
+		.slds-scope .scout-internal-header {
+			justify-content: space-between;
+		}
+
+		.slds-scope .scout-internal-nav {
+			flex: 1;
+		}
+
+    /* HELP */
+    .slds-scope .slds-help-link {
+      color: #999;
+      font-size: 12px;
+      margin-left: 1em;
+    }
+
+    .slds-scope .slds-help-link:hover {
+      text-decoration: underline;
+    }
+
+    .slds-scope .contextual-help {
+    	flex: 1 auto;
+      background: rgba(0,112,210,0.05);
+      border: 2px solid rgba(0,112,210,0.5);
+      border-radius:3px;
+      position: relative;
+    }
+
+    .slds-scope .contextual-help h3 {
+      font-size: 18px;
+      margin-bottom: 1rem;
+    }
+
+    .slds-scope .contextual-help h4 {
+      font-size: 16px;
+      margin-bottom: 0.75rem;
+    }
+
+    .slds-scope .contextual-help ul {
+      margin: 0;
+      padding: 0;
+    }
+
+    .slds-scope .contextual-help ul li {
+      margin-left: 1.5rem;
+      list-style: disc;
+    }
+
+    .slds-scope .contextual-help p, .slds-scope .contextual-help li {
+      font-size: 14px;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .slds-scope .contextual-help .close-help {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 10px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .slds-scope .slds-badge.scout-badge {
+      min-width: 15px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 5px;
+    }
+
+
+    .slds-scope .slds-table .row-menu {
+    	text-align: right;
+    }
+    
+    .slds-scope .slds-table th.row-menu-header,
+    .slds-scope .slds-table td.row-menu {
+      max-width: 50px;
+      width: 50px;
+      padding-right: 1rem !important;
+    }
+
+    .slds-scope .slds-table .cell--swag,
+    .slds-scope .slds-table .cell--blacklist,
+    .slds-scope .slds-table .cell--incentive {
+    	width: 150px;
+    	white-space: nowrap !important;
+    	justify-content: center;
+    }
+
+    .slds-scope .slds-table .cell--incentive input[type="text"] {
+      width: 5rem;
+    }
+
+    .slds-scope .slds-table .cell--incentive .slds-grid {
+      align-items: center;
+    }
+
+    .slds-scope .slds-table .cell--swag .slds-list_horizontal,
+    .slds-scope .slds-table .cell--blacklist .slds-list_horizontal,
+    .slds-scope .slds-table .cell--swag .slds-checkbox_toggle,
+    .slds-scope .slds-table .cell--blacklist .slds-checkbox_toggle {
+    	 justify-content: center;
+    }
+
+		.slds-scope .slds-table .cell--blacklist [type="checkbox"]:checked + .slds-checkbox_faux_container .slds-checkbox_faux.fas {
+			border-color: rgb(4, 25, 51);
+			background-color: rgb(5, 25, 49);
+		}
+		/*.slds-scope .slds-table .cell--blacklist [type="checkbox"]:checked + .slds-checkbox_faux_container .slds-checkbox_faux.fas:before {
+			color: #fff;
+			content: "\f00d";
+		}*/
+		.slds-scope .slds-table .cell--blacklist [type="checkbox"]:checked + .slds-checkbox_faux_container .slds-checkbox_faux.fas:after {
+	    font-size: 14px;
+	    border: none;
+	    content: "\f00d";
+	    border: 0;
+	    transform: none;
+	    color: #fff;
+		}
+
+		/* Manage Emails */
+      .scout-sidebar {
+        min-height: 100px;
+        background: #f6f7f9;
+        min-width: 25vw;
+        position: absolute;
+        left: calc(100% - 24.1vw);
+        bottom: 0;
+        top: -40px;
+        z-index: 242;
+        box-shadow: -1px 1px 3px rgba(21, 21, 21, 0.5);
+        border: 1px solid #1b5297;
+        display: none;
+      }
+
+      .view-email-btn .fa-envelope-open {
+          opacity: .5;
+      }
+      .blacklist-optout td, .blacklist-optout:hover td, .blacklist-optout:focus td{
+          background-color: #f8d7da !important;
+      }
+      .custom-tooltip .custom-tooltip-box {
+          display: none;
+      }
+      .custom-tooltip a:hover + .custom-tooltip-box {
+          display: block;
+      }
+      .chevrondownImage{
+          width: 15px;
+       }​
+       .arrowdownImage{
+          width: 15px;
+       }​
+       .arrowupImage{
+          width: 15px;
+       }
+        .tablesorter thead .sorter-false {
+          padding: .25rem 10px !important;
+        }
+      .slds-button--medium {
+      }
+      .slds-button--medium .abbr {
+        height: 30px;
+        font-size: 12px;
+        color: #fff;
+        max-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: max-width 1s ease-in-out 2s;
+      }
+
+		.slds-scope .scout-toolbar--email {
+	    display: grid;
+	    white-space: nowrap;
+	    grid-template-columns: 250px 220px 220px calc(100% - 710px);
+	    grid-gap: 10px;
+	    align-items: center;
+		}
+
+		.slds-scope .scout-toolbar--email .slds-form-element {
+			display: flex;
+			margin: 0;
+		}
+
+		.slds-scope .scout-toolbar--email .slds-form-element .slds-form-element__control {
+    	flex: 1;
+    	max-width: 180px;
+		}
+
+    /* DRAGONS */
+    .dragons-modal .slds-backdrop {
+      display: none;
+    }
+    .dragons-modal .slds-modal {
+      transform: scale(0, 0);
+      transition: all 0.25s ease-in-out;
+      transform-origin: 50% 50%;
+    }
+    .dragons-modal.show .slds-backdrop {
+      display: block;
+    }
+    .dragons-modal.show .slds-modal {
+      transform: scale(1.0, 1.0);
+    }
+
+  </style>
+  
+</apex:component>

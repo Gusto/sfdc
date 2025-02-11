@@ -1,0 +1,380 @@
+<apex:component controller="UR_MenuHeaderComponentCtrl" allowDML="true">
+    <c:UR_CustomCss />
+    <c:UR_HeaderComponent />
+    <style type="text/css">
+    </style>
+
+    <apex:attribute name="tabName" assignTo="{!mainTab}" description="This is for to make tab active." type="String" required="true"/>
+    <apex:attribute name="subTabName" assignTo="{!subTab}" description="This is for to make sub tab active" type="String" required="true"/>
+    <apex:attribute name="prjId" description="This is for to make sub tab active" type="String" required="true" assignTo="{!projectId}"/>
+    <apex:actionFunction name="blankSendSurvey" action="{!blankSendSurvey}" />
+    <apex:actionFunction name="blankInviteToInterview" action="{!blankInviteToInterview}"/>
+    <apex:actionFunction name="blankSendFollowUp" action="{!blankSendFollowUp}" />
+    <apex:actionFunction action="{!fetchProjectDetails}" name="fetchProjectDetails" reRender="completePanel" onComplete="onCompleteProjectBtn();" />
+    <apex:actionFunction action="{!fetchProjectDetails}" name="fetchCloseProjectDetails" reRender="completePanel" onComplete="onCompletereOpenBtn();" />
+    <apex:actionFunction action="{!closeScheduleErrorMessage}" name="closeScheduleErrorMessage" reRender="scheduleErrorMsg"/>
+    <apex:actionFunction action="{!closeSendEmailErrorMessage}" name="closeSendEmailErrorMessage" reRender="scheduleErrorMsg"/>
+    
+    <apex:actionFunction action="{!closeCSVErrorMessage}" name="closeCSVErrorMessage" reRender="scheduleErrorMsg"/>
+    
+    <!--header start here-->
+    <div class="slds-p-top_small" id="scout-header" data-project-id="{!objProject.Id}">
+	  <div id="customURL" class="slds-spinner_container slds-is-fixed slds-hide"> 
+           <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+               <span class="slds-assistive-text">Loading...</span> 
+               <div class="slds-spinner__dot-a"></div> 
+               <div class="slds-spinner__dot-b"></div>   
+           </div> 
+           <div class="loading-img-text"></div>
+       </div>
+        
+      <div class="slds-media__body slds-p-around_medium ">
+        <div class="slds-text-heading_large slds-m-bottom_small project-title" data-project-id="">
+            <strong>{!objProject.Name}</strong>
+              <apex:outputpanel id="apStatus">
+                <span id="hideApprovalMsg">
+              
+                <span class="slds-badge badge-custom {!if(objProject.Project_Status__c=='Complete','slds-badge_lightest completed',if(objProject.Project_Status__c=='In-Progress','slds-badge_inverse', 'initiated'))} " style="left: 10px;"><strong>{!objProject.Project_Status__c}</strong></span>
+                <apex:outputpanel rendered="{!if(objProject.Additional_Participant_Status__c!=null,true,false)}" styleclass="slds-media__right approval-msg">
+                  <span class="slds-badge badge-custom {!if(objProject.Additional_Participant_Status__c=='Approved','slds-badge_inverse', 'initiated')} " style="left: 10px;">
+                     <!-- <span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip" style="color: {!if(objProject.Additional_Participant_Status__c=='Approved','#fff;','#706E6B;')}"></i>&nbsp;
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px; width: 310px;">
+                          <p class="slds-popover__body">Request for more participants in study pending</p>
+                        </span>
+                      </span>-->
+                      <strong>More Participants {!objProject.Additional_Participant_Status__c}</strong>
+                      &nbsp; &nbsp;<apex:commandlink rendered="{!if(objProject.Additional_Participant_Status__c!='In progress',true,false)}" styleclass="{!if(objProject.Additional_Participant_Status__c=='' || objProject.Additional_Participant_Status__c!='Approved','link-grey', 'link-white')}"  status="statusSave" rerender="apStatus" action="{!resetApproval}"><i class="fas fa-times"></i></apex:commandlink>
+                  </span>
+                 </apex:outputpanel>
+                    
+                 <apex:outputpanel rendered="{!if(objProject.Incentive_Approval_Status__c!=null,true,false)}" styleclass="slds-media__right approval-msg">
+                  <span class="slds-badge badge-custom {!if(objProject.Incentive_Approval_Status__c=='Approved','slds-badge_inverse', 'initiated')} " style="left: 10px;">
+                      <!--<span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip" style="color: {!if(objProject.Incentive_Approval_Status__c=='Approved','#fff;','#706E6B;')}"></i>&nbsp;
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px; width: 310px;">
+                          <p class="slds-popover__body">Request for Incentive amount</p>
+                        </span>
+                      </span>-->
+                      <strong>Incentives {!objProject.Incentive_Approval_Status__c}</strong>
+                      &nbsp; &nbsp;<apex:commandlink rendered="{!if(objProject.Incentive_Approval_Status__c!='In progress',true,false)}" styleclass="{!if(objProject.Incentive_Approval_Status__c=='' || objProject.Incentive_Approval_Status__c!='Approved','link-grey', 'link-white')}"  status="statusSave" rerender="apStatus" action="{!resetIncentiveApproval}"><i class="fas fa-times"></i></apex:commandlink>
+                  </span>
+                 </apex:outputpanel>
+               </span>
+                <span id="approvalMessage"></span>
+            </apex:outputpanel>
+        </div>
+      </div>
+    
+      <div class="slds-grid slds-wrap slds-m-top_medium">
+        <div class="slds-col slds-size_1-of-1 slds-order_2 slds-large-order_1">
+          <div class="slds-tabs_default slds-m-bottom_smal slds-p-left_small slds-border_bottom slds-grid slds-grid_align-spread" style="position: relative;">
+            <ul class="slds-tabs_default__nav project-nav" role="tablist" style="margin-bottom: -1px; flex: 1;">
+              <li class="slds-tabs_default__item {!activePD}">
+                <a class="slds-tabs_default__link slds-button uxr-scout-url" href="UR_ProjectDetail?id={!objProject.Id}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-1" id="tab-default-1__item" data-tab-index="1" data-tab="details">Project Details <span class="slds-badge slds-badge_inverse"></span></a>
+              </li>
+              <li class="slds-tabs_default__item {!activePart}">
+                <a class="slds-tabs_default__link slds-button uxr-scout-url" href="UR_ManageParticipant?Id={!objProject.Id}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" data-tab-index="2" data-tab="participants">Participants <span class="slds-badge slds-badge_inverse"></span></a>
+              </li>
+              <li class="slds-tabs_default__item project-actions {!activeEmail}"> 
+                <a class="slds-tabs_default__link uxr-scout-url slds-button {!if(isEmailExist,'','disablelink')}" href="UR_ViewEmail?projectId={!objProject.Id}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" data-tab-index="3" data-tab="emails">Emails <span class="slds-badge slds-badge_inverse">{!if(unreadEmailCount!=null && unreadEmailCount>0,unreadEmailCount,'')}</span></a>
+              </li>
+              <li class="slds-tabs_default__item project-actions {!activeCal}">
+                <a class="slds-tabs_default__link uxr-scout-url slds-button {!if(isEventExist,'','disablelink')}" href="UR_ViewCalendar?projectId={!objProject.Id}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-4" id="tab-default-4__item" data-tab-index="4" data-tab="calendar">Calendar <span class="slds-badge slds-badge_inverse">{!if(newEventCount!=null && newEventCount>0,newEventCount,'')}</span></a>
+              </li>
+               <li class="slds-tabs_default__item {!activeResults}">
+                <a class="slds-tabs_default__link uxr-scout-url slds-button {!if(isParticipantExist,'','disablelink')}" href="UR_ProjectCloser?projectId={!objProject.Id}" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-5" id="tab-default-5__item" data-tab-index="5" data-tab="results">Results <span class="slds-badge slds-badge_inverse">{!if(newSurveyCount!=null && newSurveyCount>0,newSurveyCount,'')}</span></a>
+              </li>
+              <li>
+                <a style="display:{!if(helpTextValue='','none;','block;')}"  class="slds-tabs_default__link slds-help-link slds-m-right_small scout-help" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" data-help="Manage Participants|Not Contacted"><span class="slds-show_x-large">Need a little</span> help?</a> 
+              </li>
+            </ul>
+            <ul class="slds-tabs_default__nav slds-p-left_small slds-p-right_medium tab-buttons" role="tablist" style="margin-bottom: -1px; flex: 1; min-width:auto;">
+              
+              <li class="slds-button-group slds-button-group-row">
+                <apex:commandLink style="min-height:32px;" title="Scout Search" status="statusSave" action="{!addParticipantsSearch}" styleClass="{!cssGroupButtonOutline} uxr-scout-url">                  
+                  <span class="slds-show_x-large"><abbr class="ex">Scout Search</abbr></span> 
+                  <i class="fas fa-search-plus"></i>
+                  
+                </apex:commandLink>
+                <apex:commandLink style="min-height:32px;" title="{!if(csvUploadedCount==0,'Upload a CSV','Add from CSV')}" status="statusSave" action="{!addParticipantsCSV}" styleClass="{!cssGroupButtonOutline} uxr-scout-url">
+                  <span class="slds-show_x-large"><abbr class="ex">{!if(csvUploadedCount!=null && csvUploadedCount==0,'Upload a CSV','Add from CSV')}</abbr></span>
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  
+                </apex:commandLink>
+              </li>
+              <li style="display:{!if(subTab!='RA' && isEditable==true && objProject.Project_Status__c!='Complete','', 'none;')}" class="slds-button-group slds-button-group-row are-you-ready-button">
+                <a style="min-height:32px;" href="javascript:void(0);" onclick="readytoCloseProject();" title="Ready to Close" class="slds-button slds-button__icon--large slds-button-group-item slds-button_text-destructive" data-toggle="modal" data-modal="are-you-ready">
+                    <span class="slds-show_x-large"><abbr class="ex">Ready to Close</abbr></span>
+                    <i class="fas fa-door-open"></i>
+                </a>
+              </li>
+              <li style="display:{!if(subTab=='RA' && isEditable==true && objProject.Project_Status__c!='Complete','', 'none;')}" class="slds-button-group slds-button-group-row are-you-ready-button">
+                <a style="min-height:32px;" href="javascript:void(0);" title="Close Project" class="slds-button slds-button__icon--large slds-button-group-item slds-button_destructive mark-project-complete" data-toggle="modal" data-modal="are-you-ready">
+                  <span class="slds-show_x-large"><abbr class="ex">Close project</abbr></span>
+                  <i class="fas fa-door-open"></i>
+                </a>
+              </li>
+			  <li style="display:{!if(objProject.Project_Status__c=='Complete' && isProjectEditAccess==true,'', 'none;')}" class="slds-button-group slds-button-group-row are-you-ready-button">
+				<a style="min-height:32px;" href="javascript:void(0);" title="Re-open project" class="slds-button slds-button__icon--large slds-button-group-item slds-button_outline-brand slds-truncate re-open-btn" data-toggle="modal" data-modal="are-you-ready">
+                  <span class="slds-show_x-large"><abbr class="ex">Re-open project</abbr></span>
+                  <i class="fas fa-door-closed"></i>
+                </a>
+			  </li>
+              <li class="slds-button-group slds-button-group-row {!activeHelp}">
+                  <a title="FAQ" class="{!cssGroupButton} help-button" href="https://sites.google.com/gusto.com/uxr-toolkit/resources/tools/scout-help-page#h.p_W4qGW4E-oVG2"  target="_blank" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-4" id="tab-default-4__item">
+                    <i class="fas fa-question-circle"></i>
+                    <abbr><!--Help--></abbr>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+	  
+	  <apex:outputpanel rendered="{!if(mainTab!='ScheduleEmails' && intTotalScheduleEmail!=null && intTotalScheduleEmail>0,true,false)}"  layout="block"> 
+            <div class="slds-notify--alert slds-m-around_small slds-m-top_small scout-notify--scheduled schedule-email">
+                <p>You have <strong>{!intTotalScheduleEmail}</strong> email(s) currently scheduled. <a class="uxr-scout-url" href="UR_ViewScheduleEmail?projectId={!objProject.Id}">Click here to view or modify.</a></p>
+            </div>
+      </apex:outputpanel>
+
+      <apex:outputpanel styleClass="close-schedule-panel" id="scheduleErrorMsg" rendered="{!if(intFailScheduleEmail!=null && intFailScheduleEmail>0 && objProject.Closed_Schedule_Email_Error_Message__c==false,true,false)}" layout="block">
+          	<div style="background-color: #FFB75D !important;" class="slds-notify--alert slds-m-around_small slds-m-top_small scout-notify--scheduled schedule-email">
+                <span class="close-schedule-error" style="position: absolute; right: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-times"></i></span>	   		 
+                <span style="position: absolute; left: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-exclamation-triangle" style="color:#080707"></i></span>  
+                <p style="text-align:left; padding-left:30px; padding-right:30px; color:#080707;"> <a class="uxr-scout-url" href="UR_ViewScheduleEmail?projectId={!objProject.Id}">{!intFailScheduleEmail} email(s) in the scheduled batch failed.</a> Contact your UXR Scout administrator if you have questions, or <a  href="javascript:void(0);" class="submit-feedback">submit feedback.</a></p>
+            </div>
+      </apex:outputpanel>
+      
+      <apex:outputpanel styleClass="close-schedule-job-panel" id="scheduleJobErrorMsg" rendered="{!if(intFailScheduleJob!=null && intFailScheduleJob>0, true, false)}" layout="block">
+          	<div style="background-color: #FFB75D !important;" class="slds-notify--alert slds-m-around_small slds-m-top_small scout-notify--scheduled schedule-email">    		 
+                <span style="position: absolute; left: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-exclamation-triangle" style="color:#080707"></i></span>  
+                <p style="text-align:left; padding-left:30px; padding-right:30px; color:#080707;"> <a class="uxr-scout-url" href="UR_ViewScheduleEmail?projectId={!objProject.Id}">{!intFailScheduleJob} Scheduled emails job failed.</a> Please rescheduled it, or contact your UXR Scout administrator if you have questions, or <a  href="javascript:void(0);" class="submit-feedback">submit feedback.</a></p>
+            </div>
+      </apex:outputpanel>
+        
+      <apex:outputpanel styleClass="close-csverror-panel" id="csvErrorMsg" rendered="{!if(objProject.CSV_Error__c!='',true,false)}" layout="block">
+          	<div style="background-color: #FFB75D !important;" class="slds-notify--alert slds-m-around_small slds-m-top_small scout-notify--scheduled schedule-email">
+                <span class="close-csverror-error" style="position: absolute; right: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-times"></i></span>	   		 
+                <span style="position: absolute; left: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-exclamation-triangle" style="color:#080707"></i></span> 
+                <p style="text-align:left; padding-left:30px; padding-right:30px; color:#080707;">Upload CSV failed. Contact your UXR Scout administrator or <a  href="javascript:void(0);" class="submit-feedback">submit feedback</a> or fix the following: <br/> {!objProject.CSV_Error__c}</p>
+            </div>
+      </apex:outputpanel>
+        
+      <apex:outputpanel rendered="{!if(subTab!='VSR' && newSurveyCount!=null && newSurveyCount>0,true,false)}"  layout="block">
+            <div class="slds-notify--alert slds-m-around_small slds-m-top_small scout-notify--scheduled schedule-email">
+                <p><span class="slds-text-heading_small">Survey Results:</span> <strong>{!newSurveyCount}</strong> survey results. <a class="uxr-scout-url" href="UR_ViewSurveyResponse?Id={!objProject.Id}">Click here to view.</a></p>
+            </div>
+      </apex:outputpanel>
+      <apex:outputpanel styleClass="close-sendemail-panel" rendered="{!if(objProjectDetail!=null && objProjectDetail.E_Mail_Status__c=='Fail' && objProject.Closed_Send_Email_Error_Message__c==false,true,false)}"  layout="block">
+            <div style="background-color: #FFB75D !important;" class="slds-notify--alert slds-m-around_small slds-m-top_small scout-notify--scheduled schedule-email"> 
+                <span class="close-send-error" style="position: absolute; right: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-times"></i></span>	   		 
+                <span style="position: absolute; left: 10px; top: 10px; color:#080707; font-size: 18px;"><i class="fas fa-exclamation-triangle" style="color:#080707"></i></span> 
+                <p style="text-align:left; padding-left:30px; padding-right:30px; color:#080707;">
+                    <!--{!intFailSendEmail} email(s) failed. Contact your UXR Scout administrator if you have questions, or <a  href="javascript:void(0);" class="submit-feedback">submit feedback.</a> -->
+                    {!intFailSendEmail} email(s) failed to send. To attempt a resend, search for “fail” in the search bar and look for <i class="fas fa-exclamation-triangle resend-email-icon" style="filter:saturate(1); opacity:1;"></i> under Contact History column.
+                </p>
+            </div>
+      </apex:outputpanel>
+    </div>
+    
+
+    <!--Complete Project Popup Start-->
+    <apex:outputPanel id="loading">
+        <apex:actionStatus id="statusSave1" stopText="">
+            <apex:facet name="start">
+              <div class="slds-spinner_container slds-is-fixed"> 
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand"> 
+                  <span class="slds-assistive-text">Loading</span> 
+                  <div class="slds-spinner__dot-a"></div> 
+                  <div class="slds-spinner__dot-b"></div> 
+                </div> 
+              </div>
+            </apex:facet>
+        </apex:actionStatus> 
+    </apex:outputPanel>
+    
+
+     <div class="modal-window complete-project-modal" style="display: none;">
+        <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="max-width: 500px;">
+          <div class="slds-modal__header">
+            <a class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse complete-close-modal" title="Close">
+              <span class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                <i class="fa fa-times" style="font-size: 24px;"></i>
+              </span>
+              
+            </a>
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Ready to close your project?</h2>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+             <apex:outputPanel id="completePanel">
+             <p>
+                 You have reported:<br/>
+                 {!totalAttended} Attended<br/>
+                 {!totalNoShowed} No Show<br/>
+                 {!totalBlacklisted} Blocklist<br/>
+                 <div style="display:{!if(surveyCompleted!=null && surveyCompleted>0,'','none;')}">{!surveyCompleted} Surveys Completed <br/></div>
+                 <br/>
+                 Once you close your project, any reserved participants will be released back into the pool for other Gusties to recruit.
+             </p>
+                 </apex:outputPanel>
+          </div>
+          <div class="slds-modal__footer">
+            <!--<a href="#" class="slds-button slds-button_outline-brand complete-close-modal" onclick="return false;">Cancel</a>-->
+            <apex:commandButton styleclass="slds-button slds-button_outline-brand header-btn" action="{!RedirectToAttendance}" value="No, update attendance" status="statusSave1" reRender="loading"/>
+            <apex:commandButton styleclass="slds-button slds-button_brand btn-blue header-btn" action="{!markProjectCompleted}" value="Yes, close project" status="statusSave1" reRender="loading"/>
+            
+          </div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+     
+    
+    <div class="modal-window ready-complete-modal" style="display: none;">
+        <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="max-width: 500px;">
+          <div class="slds-modal__header">
+            <a class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse ready-complete-close-modal" title="Close">
+              <span class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                <i class="fa fa-times" style="font-size: 24px;"></i>
+              </span>
+              
+            </a>
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Ready to Review</h2>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+             <apex:outputPanel id="completePanel1">
+             <p>
+                 it's important review your project's results.<br/><br/>
+                 Are you ready to do that?
+             </p>
+             </apex:outputPanel>
+          </div>
+          <div class="slds-modal__footer">
+            <a href="#" class="slds-button slds-button_outline-brand ready-complete-close-modal" onclick="return false;">No</a>
+            <a href="UR_ProjectCloser?projectId={!objProject.Id}" class="slds-button slds-button_brand btn-blue header-btn" >Yes</a>
+
+          </div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    
+    <!--Re-open project Popup Start-->
+     <div class="modal-window re-open-modal" style="display: none;">
+        <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="max-width: 500px;">
+          <div class="slds-modal__header">
+            
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Re-Open Project</h2>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+             <p>Are you sure want to Re-open project?</p>
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_outline-brand re-open-close-btn" onclick="return false;">No</button>
+            <apex:commandButton styleclass="slds-button slds-button_brand header-btn" value="Yes" action="{!ReOpenProject}" status="statusSave1" reRender="loading"/>
+          </div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+	
+	
+    <div id="contextual-help" class="scout-help-text" style="display:{!if(helpTextRequired==true, 'block;','none;')}">
+		<div class="contextual-help slds-p-left_medium slds-p-right_medium slds-p-top_small slds-p-bottom_small slds-m-right_small slds-m-left_small slds-m-top_x-small slds-m-bottom_x-small">
+		  <span class="close-help slds-m-top_small slds-m-right_medium" data-dismiss="help"><i class="fas fa-times"></i></span>
+		  <div class="help-text">
+			  <apex:outputText value="{!helpTextValue}" escape="false"  />
+		  </div>
+		</div>
+	</div>
+	  
+  <script type="text/javascript">
+	
+    function readytoCloseProject(){	
+        $('.ready-complete-modal').show();
+    }
+     $('.ready-complete-close-modal').click(function() {
+      $('.ready-complete-modal').hide();
+      return false;
+    });
+    
+    
+    function onCompleteProjectBtn(){
+      $('.complete-project-modal').show();
+    }
+
+    $('.complete-close-modal').click(function() {
+      $('.complete-project-modal').hide();
+      return false;
+    });
+
+    function onCompletereOpenBtn(){
+      $('.re-open-modal').show(); 
+    }
+    $('.re-open-close-btn').click(function() {
+      $('.re-open-modal').hide();
+      return false;
+    });
+	
+	 $('.close-help').click(function() {
+		$('.scout-help-text').hide();
+        $('.scout-help').show();
+		return false;
+	 });
+	  
+	 $('.scout-help').click(function() {
+		console.log('----');
+		$('.scout-help-text').show();
+        $('.scout-help').hide();
+		return false;
+	 });
+    
+    function checkHelpList(){ 
+        if('{!helpTextRequired}'=='true'){
+            $('.scout-help').hide();
+        }
+    }
+    checkHelpList();
+    
+    $('.mark-project-complete').click(function() {
+        fetchProjectDetails();
+    });
+    $('.re-open-btn').click(function() {
+        fetchCloseProjectDetails();
+    });
+    
+    $('.submit-feedback').click(function() {
+        window.open('{!$Label.UR_FeedbackURL}');
+    });
+    
+    $('.uxr-scout-url').click(function() {
+        $('#customURL').removeClass('slds-hide');
+        setTimeout(hideCustomHover, 7000);
+    });
+    
+    
+    $('.close-schedule-error').click(function() {
+         $('.close-schedule-panel').hide();
+         closeScheduleErrorMessage();  
+    });
+    
+    $('.close-csverror-error').click(function() {
+         $('.close-csverror-panel').hide();
+         closeCSVErrorMessage();
+    });
+
+	$('.close-send-error').click(function() {
+         $('.close-sendemail-panel').hide();
+         closeSendEmailErrorMessage();
+    });
+                                     
+    function hideCustomHover(){
+         $('#customURL').addClass('slds-hide');
+    }
+  </script>
+    
+</apex:component>

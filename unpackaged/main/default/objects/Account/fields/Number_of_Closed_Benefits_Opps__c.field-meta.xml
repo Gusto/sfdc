@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Closed_Benefits_Opps__c</fullName>
+    <inlineHelpText>The total count of Benefits BoR, Benefits New Plan, and Benefits Renewal that are Closed for this Account.</inlineHelpText>
+    <label># Closed Benefits Opportunities</label>
+    <summaryFilterItems>
+        <field>Opportunity.RecordTypeId</field>
+        <operation>equals</operation>
+        <value>Benefits New Plan, Benefits BoR, Benefits Renewal</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Opportunity.IsClosed</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Opportunity.AccountId</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

@@ -1,0 +1,38 @@
+<apex:page title="Privacy Request Portal" controller="PrivacyRequestsPortalEntranceCtrl" lightningStylesheets="true" showHeader="false" docType="html-5.0">
+    <apex:slds />
+    <div class="slds-scope">
+        <div class="slds-grid">
+            <div class="slds-col">
+                <div class="slds-m-around_large">
+                    <a href="https://gusto.com/" target="_blank">
+                        <apex:image url="{!URLFOR($Resource.GustoLogo)}" width="92" height="36"/>
+                    </a>
+                </div>
+                <div class="slds-box slds-m-around_large">
+                    <apex:form >
+                        <apex:pageMessages />
+                        <div class="slds-text-heading_large">Welcome to the California Consumer Privacy Act Request Portal!</div>
+                        <div class="slds-form-element slds-p-top_small">
+                            <label class="slds-form-element__label">Email address</label>
+                            <div class="slds-form-element__control">
+                                <apex:input styleClass="slds-input" value="{!strEmail}"/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-p-top_small">
+                            <label class="slds-form-element__label">{!$ObjectType.Case.Fields.Confirmation_Code__c.Label}</label>
+                            <div class="slds-form-element__control">
+                                <apex:inputSecret styleClass="slds-input" value="{!strConfirmationCode}"/>
+                            </div>
+                        </div>
+                        <div class="slds-text-align_right slds-p-top_small">
+                            <apex:commandButton styleClass="slds-button slds-button_brand" action="{!submit}" value="Login"/>
+                        </div>
+                    </apex:form>
+                </div>
+                <div class="slds-docked-form-footer">
+                    <div class="slds-text-heading_small slds-text-align_center">This website uses cookies. By logging in you consent to our use of these cookies.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</apex:page>

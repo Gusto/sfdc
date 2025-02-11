@@ -1,0 +1,32 @@
+<!--
+ - Created by brent.johnson on 11/14/16.
+ -->
+
+<apex:page id="Cancel_Benefit_Order" standardController="Benefit_Order__c" extensions="BenefitOrderCancelExt" action="{!setOrderStatusToCanceled}">
+    <apex:variable value="{!Benefit_Order__c}" var="ben"/>
+    <apex:sectionHeader title="Cancel a {!$ObjectType.Benefit_Order__c.label}"
+                        subtitle="Please provide the details and cancel {!ben.Name}"/>
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Submit Cancellation" action="{!cancelBenefitOrder}" rendered="{! if(blnBORPermissionError,false,true)}"/>
+                <apex:commandButton value="Return to Benefit Order" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" rendered="{! if(blnBORPermissionError,false,true)}">
+                <apex:inputField value="{!ben.Order_Status__c}" required="true" />
+                <apex:inputField value="{!ben.Status_Detail__c}" required="true"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" rendered="{! if(blnBORPermissionError,false,true)}">
+                <apex:inputField value="{!ben.Additional_Details__c}" style="width:60%;"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        window.document.onload = new function(){
+            if('{!blnNewPlanOrRenewalOrder}' == 'true'){
+                alert("Before Canceling, please check all COs to confirm they have not been submitted. Ensure terminations have been sent to the carrier if applicable.");
+            }
+        }
+    </script>
+</apex:page>

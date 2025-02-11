@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Skip_Case_Trigger</name>
+        <label>Skip Case Trigger</label>
+        <locationX>50</locationX>
+        <locationY>1571</locationY>
+        <actionName>CaseTriggerHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Update_Cases</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>booleanList</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>CaseTriggerHelper</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>60.0</apiVersion>
+    <assignments>
+        <name>Add_Case_to_List</name>
+        <label>Add Case to List</label>
+        <locationX>402</locationX>
+        <locationY>1271</locationY>
+        <assignmentItems>
+            <assignToReference>list_UpdatedCases</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_over_Cases</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_over_Cases</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_WorkItemId_to_CaseIds_Collection</name>
+        <label>Add WorkItemId to CaseIds Collection</label>
+        <locationX>402</locationX>
+        <locationY>755</locationY>
+        <assignmentItems>
+            <assignToReference>CaseIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_over_Agent_Works.WorkItemId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_over_Agent_Works</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assigning Fault Line details for fault paths in objExceptionLogEvent record.</description>
+        <name>Assign_Fault_Line_Details</name>
+        <label>Assign Fault Line Details</label>
+        <locationX>314</locationX>
+        <locationY>1787</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strExceptionLogMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update the Case status to &apos;Open&apos;</description>
+        <name>Update_Status_to_Open</name>
+        <label>Update Status to Open</label>
+        <locationX>402</locationX>
+        <locationY>1163</locationY>
+        <assignmentItems>
+            <assignToReference>Loop_over_Cases.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Loop_over_Cases.isCaseInPlay__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_Case_to_List</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Check if there are AgentWork records found.</description>
+        <name>AgentWorks_Found</name>
+        <label>AgentWorks Found?</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <defaultConnector>
+            <targetReference>Loop_over_Agent_Works</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>No_AgentWorks</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Agent_Work</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>No AgentWorks</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>This checks if agent has gone offline in Omni</description>
+        <name>Check_if_Agent_is_Offline</name>
+        <label>Check if Agent is Offline</label>
+        <locationX>446</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Offline_Agent</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.ServicePresenceStatus.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Available_Email</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.StatusEndDate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StatusEndDate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsCurrentState</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Agent_Work</targetReference>
+            </connector>
+            <label>Offline Agent</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Checks if case list is empty or not before updating.</description>
+        <name>Is_Case_List_Empty</name>
+        <label>Is Case List Empty</label>
+        <locationX>314</locationX>
+        <locationY>1463</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Case_List_Not_Empty</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>list_UpdatedCases</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Skip_Case_Trigger</targetReference>
+            </connector>
+            <label>Case List Not Empty</label>
+        </rules>
+    </decisions>
+    <description>After-save record-triggered flow on UserServicePresence object.</description>
+    <environments>Default</environments>
+    <interviewLabel>UserServicePresence AfterSave Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>UserServicePresence AfterSave Handler</label>
+    <loops>
+        <name>Loop_over_Agent_Works</name>
+        <label>Loop over Agent Works</label>
+        <locationX>314</locationX>
+        <locationY>647</locationY>
+        <collectionReference>Get_Agent_Work</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Add_WorkItemId_to_CaseIds_Collection</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Cases</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_over_Cases</name>
+        <label>Loop over Cases</label>
+        <locationX>314</locationX>
+        <locationY>1055</locationY>
+        <collectionReference>Get_Cases</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Update_Status_to_Open</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Is_Case_List_Empty</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Create_Exception_Log_Event</name>
+        <label>Create Exception Log Event</label>
+        <locationX>314</locationX>
+        <locationY>1895</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordLookups>
+        <description>Query the AgentWork records under the User who logged out.</description>
+        <name>Get_Agent_Work</name>
+        <label>Get Agent Work</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>AgentWorks_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>UserId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.UserId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Opened</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>AgentWork</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>WorkItemId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get case records based on the agent work.</description>
+        <name>Get_Cases</name>
+        <label>Get Cases</label>
+        <locationX>314</locationX>
+        <locationY>947</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_over_Cases</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>In</operator>
+            <value>
+                <elementReference>CaseIds</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>Update Case records</description>
+        <name>Update_Cases</name>
+        <label>Update Cases</label>
+        <locationX>50</locationX>
+        <locationY>1679</locationY>
+        <faultConnector>
+            <targetReference>Assign_Fault_Line_Details</targetReference>
+        </faultConnector>
+        <inputReference>list_UpdatedCases</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>320</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_if_Agent_is_Offline</targetReference>
+        </connector>
+        <object>UserServicePresence</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Fault Message: {!$Flow.FaultMessage}
+----
+Interview Guid: {!$Flow.InterviewGuid}
+----
+Current Record: {!$Flow.CurrentRecord}
+----
+You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.  
+https://gusto.lightning.force.com/lightning/setup/Pausedflows/home</text>
+    </textTemplates>
+    <variables>
+        <description>Collection of Case Ids</description>
+        <name>CaseIds</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>list_UpdatedCases</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Exception Log Event Object to capture fault path details.</description>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+</Flow>

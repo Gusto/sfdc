@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Call Invocable Apex Method that checks for any open opportunities and unconverted leads and re-assigns them to Account Owner.</description>
+        <name>Send_Callout_To_Workato</name>
+        <label>Send Callout To Workato</label>
+        <locationX>308</locationX>
+        <locationY>288</locationY>
+        <actionName>AccountOwnerRouter</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>AccountId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>AccountName</name>
+            <value>
+                <elementReference>$Record.Name</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>AccountOwnerRole</name>
+            <value>
+                <elementReference>$Record.Account_Owner_Role__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>OwnerFullName</name>
+            <value>
+                <elementReference>Account_Owner_Full_Name</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>OwnerId</name>
+            <value>
+                <elementReference>$Record.Owner.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>RecordTypeId</name>
+            <value>
+                <elementReference>$Record.RecordTypeId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>AccountOwnerRouter</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>56.0</apiVersion>
+    <description>Auto-launched flow that fires whenever Owner on Account changes and runs asynchronously to send custom callouts to Workato which will re-assign all child opportunities, accounts, and Leads.</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Formula field that grabs the full name of the Account Owner</description>
+        <name>Account_Owner_Full_Name</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Owner.FirstName} + &apos; &apos; + {!$Record.Owner.LastName}</expression>
+    </formulas>
+    <formulas>
+        <description>Name of slack channel where all error messages needs to be sent.</description>
+        <name>Slack_Channel_Error</name>
+        <dataType>String</dataType>
+        <expression>{!$Setup.RingLead_Routing_Credentials__c.Error_Slack_Channel__c}</expression>
+    </formulas>
+    <interviewLabel>Account Owner Change Router {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Account Owner Change Router</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OwnerId</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Account</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Send_Callout_To_Workato</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Send error message to slack channel that callout to Workato failed</description>
+        <name>Send_Call_Out_To_Workato_Failed</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&quot;{!$Record.Name}&quot; recently changed Owner and there was an error sending this account to Workato for re-assigning child opportunities and leads. Check the &quot;Account Owner Change Router&quot; flow to understand more about the error.</text>
+    </textTemplates>
+</Flow>

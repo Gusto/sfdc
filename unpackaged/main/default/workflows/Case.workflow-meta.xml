@@ -1,0 +1,1818 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Alert_2243_Auto_Response_Email</fullName>
+        <description>Alert 2243 - Auto Response Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>wallet@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>All/Alert_2243_Auto_Response_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Auto_Email_1</fullName>
+        <description>Auto Email 1</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Mission_Transition_Payroll_Care/Alex_TEST</template>
+    </alerts>
+    <alerts>
+        <fullName>Auto_Email_From_Case_Reason</fullName>
+        <description>Auto Email From Case Reason</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Auto_Generic_Email_Custom_Template</template>
+    </alerts>
+    <alerts>
+        <fullName>Autoresponse_Email_Alert_for_Tax_Res_Case_if_High_Volume</fullName>
+        <description>Autoresponse Email Alert for Tax Res Case if High Volume</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/High_Volume_Tax_Res</template>
+    </alerts>
+    <alerts>
+        <fullName>Autoresponse_Email_Alert_for_Tax_Res_Case_if_Low_Volume</fullName>
+        <description>Autoresponse Email Alert for Tax Res Case if Low Volume</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Low_Volume_Tax_Res</template>
+    </alerts>
+    <alerts>
+        <fullName>BOR_Transfer_Send_Survey</fullName>
+        <description>BOR Transfer Send Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>benefits-onboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>CX_Survey_Templates/Benefit_Transfer_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefit_Care_Survey_when_case_is_resolved</fullName>
+        <description>Benefit Care Survey when case is resolved</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/CSAT_CES_Payroll_Care</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefit_Transfer_CSAT_Qualtrics_Survey</fullName>
+        <description>Benefit Transfer CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/Benefit_Transfer_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefits_BYB_Case_CES_CSAT_Survey</fullName>
+        <description>Benefits BYB Case CES/CSAT Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Lasha/Benefits_BYB_Case_CES_CSAT_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefits_Transfer_Intro_Email_for_Concierge</fullName>
+        <description>Benefits Transfer: Intro Email for Concierge</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>benefits-onboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>BOR/BT_Concierge_Intro_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefits_Transfer_Intro_Email_for_Concierge_TaDa</fullName>
+        <description>Benefits Transfer: Intro Email for Concierge TaDa</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>benefits-onboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>BOR/BT_Concierge_Intro_Email_TaDa</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefits_Transfer_Intro_Email_for_Core_Complete</fullName>
+        <description>Benefits Transfer: Intro Email for Core/Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>benefits-onboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>BOR/BT_Core_or_Complete_Intro_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Benefits_Transfer_Intro_Email_for_Core_Complete_TADA</fullName>
+        <description>Benefits Transfer: Intro Email for Core Or Complete TADA</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>benefits-onboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>BOR/BT_Core_Complete_TaDa_Intro_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Email_legal_approval_for_privacy_request</fullName>
+        <ccEmails>privacy@gusto.com</ccEmails>
+        <description>Email legal approval for privacy request</description>
+        <protected>false</protected>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Privacy_Request_Email_Templates/Privacy_Request_Ready_for_Legal</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Ben_Care_Send_UnAuthorized_Email_Notification</fullName>
+        <description>Engagement BenCare Send UnAuthorized Email Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/BenCare_User_unauthenticated</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_CSAT_Qualtrics_Survey</fullName>
+        <description>Engagement CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/Engagement_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_GEP_CX_Auto_Reply_Email_Alert</fullName>
+        <description>Engagement GEP CX Auto Reply Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Partner_Email/Engagement_GEP_CX_Auto_Reply_Template</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Modern_Bank_Savings_Acknowledgement_Email</fullName>
+        <description>Engagement Modern Bank Savings Acknowledgement Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>wallet@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Notify_requester_of_received_request</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Modern_Bank_Send_Case_Acknowledgement_Email</fullName>
+        <description>Engagement Modern Bank Send Case Acknowledgement Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>wallet@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Notify_requester_of_received_request</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Modern_Bank_Send_UnAuthorized_Email_Notification</fullName>
+        <description>Engagement Modern Bank Send UnAuthorized Email Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Care_User_unauthenticated</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Notifiy_customers_40_hours_after_the_case_is_responded</fullName>
+        <description>Engagement - Notifiy customers 40 hours after the case is responded</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Solve_ticket_after_4_days_of_pending</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Payroll_Taxres_Send_UnAuthorized_Email_Notification</fullName>
+        <description>Engagement Payroll And TaxRes Send UnAuthorized Email Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Care_User_unauthenticated</template>
+    </alerts>
+    <alerts>
+        <fullName>Engagement_Send_Case_Acknowledgement_Email</fullName>
+        <description>Engagement Send Case Acknowledgement Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Notify_requester_of_received_request_COVID_19</template>
+    </alerts>
+    <alerts>
+        <fullName>Intro_Email_Exception_Request_Alert</fullName>
+        <description>Intro Email - Exception Request Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Intro_Email_Exception_Request</template>
+    </alerts>
+    <alerts>
+        <fullName>New_Benefits_CSAT_Qualtrics_Survey</fullName>
+        <description>New Benefits CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/New_Benefits_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>New_Hire_CSAT_Qualtrics_Survey</fullName>
+        <description>New Hire CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/New_Hire_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>New_Plan_Send_Survey</fullName>
+        <description>New Plan Send Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>newplans@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>CX_Survey_Templates/New_Plan_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Advising_60_Days_Prior_to_Renewal_Date</fullName>
+        <description>Notify Advising 60 Days Prior to Renewal Date</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>renewals@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Advising_Automated_Email_60_days_before_Renewal_Date</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_COBRA_Customer_Closed_Case</fullName>
+        <description>Notify COBRA Customer Closed Case</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Lasha/Closed_COBRA_Case</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_COBRA_MOps_Customer</fullName>
+        <description>Notify COBRA MOps Customer</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>cobra-ops@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/CobraMOps_Notify_requester_of_received_request</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Cobra_Customer</fullName>
+        <description>Notify COBRA Customer</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>cobra-ops@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/CobraMOps_Notify_requester_of_received_request</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Customer_of_Benefits_Onboarding_Cancelled</fullName>
+        <description>Notify Customer of Benefits Onboarding Cancelled</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>benefits@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Mission_Transition_Benefits_Care/Benefits_Onboarding_Cancelled</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Customer_of_Benefits_Onboarding_Complete</fullName>
+        <description>Notify Customer of Benefits Onboarding Complete</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>benefits@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Mission_Transition_Benefits_Care/Benefits_Onboarding_Complete</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_Email</fullName>
+        <description>Notify Email</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Notifications/Case_Requires_Action</template>
+    </alerts>
+    <alerts>
+        <fullName>Parent_Case_Closing_Email_Alert</fullName>
+        <description>Parent Case Closing Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Case_Compliance/Parent_Case_Closing_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>Parent_Case_Reopening_Email_Alert</fullName>
+        <description>Parent Case Reopening Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Case_Compliance/Parent_Case_Reopening_Alert</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Care_Survey_when_case_is_resolved</fullName>
+        <description>Payroll Care Survey when case is resolved</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/CSAT_CES_Payroll_Care</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_CSAT_Qualtrics_Survey</fullName>
+        <description>Payroll Transfer CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/Payroll_Transfer_Feedback_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Employees_Onboarded_Email_Alert</fullName>
+        <description>Payroll Transfer: Employees Onboarded Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Employees_Onboarded</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Final_Step_Not_Completed_Email_Alert</fullName>
+        <description>Payroll Transfer: Final Step Not Completed Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Final_Steps_not_complete</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Handoff_To_Care_Email_Alert</fullName>
+        <description>Payroll Transfer: Handoff To Care Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Handoff_to_Care</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Handoff_To_Concierge_Email_Alert</fullName>
+        <description>Payroll Transfer: Handoff To Concierge Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Handoff_to_Concierge</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Intro_Email_ADP_Run_Alert</fullName>
+        <description>Payroll Transfer: Intro Email - ADP Run Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Archived/Payroll_Transfer_Intro_Email_ADP_Run</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Intro_Email_Alert</fullName>
+        <description>Payroll Transfer: Intro Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Intro_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Intro_Email_IOP_QBOI_Alert</fullName>
+        <description>Payroll Transfer: Intro Email - IOP/QBOI Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Customer Contact</recipient>
+            <type>caseTeam</type>
+        </recipients>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Intro_Email_IOP_QBO_2</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Payroll_History_Email_Alert</fullName>
+        <description>Payroll Transfer: Payroll History Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Payroll_History</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Post_Risk_Approval_Email_Alert</fullName>
+        <description>Payroll Transfer: Post Risk Approval Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Post_Risk_Approval</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Run_Payroll_Email_Alert</fullName>
+        <description>Payroll Transfer: Run Payroll Email  Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfer_Case_Emails/Payroll_Transfer_Reminder_to_run_payroll_on_run_date</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Send_Survey</fullName>
+        <description>Payroll Transfer Send Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>payrollonboarding@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Payroll_Transfer_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Privacy_Request_Email_Alert_for_Submission_Denial</fullName>
+        <description>Privacy Request Email Alert for Submission, Denial</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Privacy_Requester_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Privacy_Request_Email_Templates/Privacy_Request_Disclosure_Approval</template>
+    </alerts>
+    <alerts>
+        <fullName>Privacy_Request_Identity_Denial</fullName>
+        <description>Privacy Request Identity Denial</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Privacy_Requester_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Privacy_Request_Email_Templates/Privacy_Request_Email_ID_Denial</template>
+    </alerts>
+    <alerts>
+        <fullName>Privacy_Request_Location_Denial</fullName>
+        <description>Privacy Request Location Denial</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Privacy_Requester_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Privacy_Request_Email_Templates/Privacy_Request_Email_Location_Denial</template>
+    </alerts>
+    <alerts>
+        <fullName>Privacy_Request_Submission</fullName>
+        <description>Privacy Request Submission</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Privacy_Requester_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Privacy_Request_Email_Templates/Privacy_Request_Email_for_Submission</template>
+    </alerts>
+    <alerts>
+        <fullName>QLE_CSAT_Qualtrics_Survey</fullName>
+        <description>QLE CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/QLE_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>R_D_Tax_Credits_Qualtrics_Survey</fullName>
+        <description>R&amp;D Tax Credits Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/R_D_Tax_Credits_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Renewals_Send_Survey</fullName>
+        <description>Renewals Send Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>renewals@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>CX_Survey_Templates/Renewal_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Renewed_Benefits_CSAT_Qualtrics_Survey</fullName>
+        <description>Renewed Benefits CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/Renewed_Benefits_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Risk_CSAT_Qualtrics_Survey</fullName>
+        <description>Risk CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/Risk_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>SB_Phone_Survey_for_Lead_Email</fullName>
+        <description>SB Phone Survey for Lead Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>success@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>SMB_OB/SB_Phone_Survey_for_Lead_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Sales_Chat_Survey_Email</fullName>
+        <description>Sales Chat Survey Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>success@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>SMB_OB/SB_Chat_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Sales_Chat_Survey_Email_for_Web_Email</fullName>
+        <description>Sales Chat Survey Email for Web Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>success@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>SMB_OB/SB_Chat_Survey_for_Web_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Sales_Phone_Survey_Email_for_Contact_Email</fullName>
+        <description>Sales Phone Survey Email for Contact Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>success@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>SMB_OB/SB_Phone_Survey_for_Contact_Email</template>
+    </alerts>
+    <alerts>
+        <fullName>Send_Suspension_Email</fullName>
+        <description>Send Suspension Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Suspension_Callback_Autoresponse</template>
+    </alerts>
+    <alerts>
+        <fullName>TaxRes_Transparency_Email_Notification</fullName>
+        <description>TaxRes: Transparency Email Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>Order_AE_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Tax_Res_Automation_Macro/TaxRes_TWC_Notice_Update</template>
+    </alerts>
+    <alerts>
+        <fullName>Tax_Res_CSAT_Qualtrics_Survey</fullName>
+        <description>Tax Res CSAT Qualtrics Survey</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>automated@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Qualtrics_Survey/Tax_Res_CSAT_Qualtrics_Survey</template>
+    </alerts>
+    <alerts>
+        <fullName>Tax_Res_Notify_SLA_to_customer</fullName>
+        <description>Tax Res - Notify SLA to customer</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Notices_Pilot_Auto_Response_Trigger</template>
+    </alerts>
+    <alerts>
+        <fullName>Tax_Res_Open_Case_Final_Reminder_Case</fullName>
+        <description>Tax Res Open Case Final Reminder Case</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Mission_Transition_Tax_Res/Tax_Res_Open_Case_Final_Reminder</template>
+    </alerts>
+    <alerts>
+        <fullName>Tax_Res_Open_Case_First_Reminder_Case</fullName>
+        <description>Tax Res Open Case First Reminder Case</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Mission_Transition_Tax_Res/Tax_Res_Open_Case_First_Reminder</template>
+    </alerts>
+    <alerts>
+        <fullName>Tax_Res_Open_Case_Second_Reminder_Case</fullName>
+        <description>Tax Res Open Case Second Reminder	Case</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Mission_Transition_Tax_Res/Tax_Res_Open_Case_Second_Reminder</template>
+    </alerts>
+    <alerts>
+        <fullName>Test_Email_alert_to_validate_PT_survey_email</fullName>
+        <description>Test Email alert to validate PT survey email</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>workato.integration@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Renewal_Advising_Email_Templates/Survey_Reminder_Email1</template>
+    </alerts>
+    <alerts>
+        <fullName>Unauthorized_Email</fullName>
+        <description>Unauthorized Email</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Care_User_unauthenticated</template>
+    </alerts>
+    <alerts>
+        <fullName>Vitals_Risk_Send_Survey_One_hour_after_Resolved</fullName>
+        <description>Vitals Risk Send Survey 1 hour after Resolved</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactEmail</field>
+            <type>email</type>
+        </recipients>
+        <recipients>
+            <field>SuppliedEmail</field>
+            <type>email</type>
+        </recipients>
+        <senderAddress>support@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/CSAT_CES_Payroll_Care</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Assign_Case_to_Renewal_Case_Queue</fullName>
+        <description>Assign Case to Renewal Case Queue</description>
+        <field>OwnerId</field>
+        <lookupValue>Renewal_Benefits_Operations</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Assign Case to Renewal Case Queue</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Increment_Followup_Date_Change_count</fullName>
+        <description>Increments the followup date change count every time the date is changed.</description>
+        <field>Followup_Date_Change_Count__c</field>
+        <formula>IF(ISBLANK(Followup_Date_Change_Count__c),0, Followup_Date_Change_Count__c) + 1</formula>
+        <name>Increment Followup Date Change count</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Pending_StatusSLA_Indicator_to_Orange</fullName>
+        <description>MF-Pending StatusSLA Indicator to Orange</description>
+        <field>Pending_Status_SLA_Indicator__c</field>
+        <literalValue>Orange</literalValue>
+        <name>MF-Pending StatusSLA Indicator to Orange</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Pending_StatusSLA_Indicator_to_Red</fullName>
+        <description>MF-Pending StatusSLA Indicator to Red</description>
+        <field>Pending_Status_SLA_Indicator__c</field>
+        <literalValue>Red</literalValue>
+        <name>MF-Pending StatusSLA Indicator to Red</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Pending_StatusSLA_to_Violated</fullName>
+        <description>MF-Pending StatusSLA  to Violated</description>
+        <field>Pending_Status_SLA__c</field>
+        <literalValue>Violated</literalValue>
+        <name>MF-Pending StatusSLA  to Violated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Pending_Status_SLA_Status_To_Pendi</fullName>
+        <description>MF-Pending Status SLA Status To Pendi</description>
+        <field>Pending_Status_SLA__c</field>
+        <literalValue>Pending</literalValue>
+        <name>MF-Pending Status SLA Status To Pendi</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Pending_Status_SLA_Status_to_Met</fullName>
+        <field>Pending_Status_SLA__c</field>
+        <literalValue>Met</literalValue>
+        <name>MF-Pending Status SLA Status to Met</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Update_Submission_DateTm_Termination</fullName>
+        <field>Submission_Action_Date_Time__c</field>
+        <formula>IF(RecordType.Name ==&apos;MF Termination&apos; ,
+IF(  Termination_Date__c  &gt; TODAY() , DATETIMEVALUE(TEXT(YEAR(Termination_Date__c)) &amp; &apos;-&apos; &amp; TEXT(MONTH(Termination_Date__c)) &amp; &apos;-&apos; &amp; TEXT(DAY(Termination_Date__c)) &amp; &apos; 05:00:00&apos; ) ,NOW() ),
+ Submission_Action_Date_Time__c 
+)</formula>
+        <name>MF-Update Submission DateTm-Termination</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Update_Submission_DateTm_Update_Audit</fullName>
+        <field>Submission_Action_Date_Time__c</field>
+        <formula>IF(OR( RecordType.Name ==&apos;MF Member/Group Updates&apos;, RecordType.Name ==&apos;MF Audit&apos;),
+NOW(),
+ Submission_Action_Date_Time__c 
+)</formula>
+        <name>MF-Update Submission DateTm-Update/Audit</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Update_Submission_Date_Time_NHE_QLE</fullName>
+        <description>Update Submission Date time for NHE/QLE</description>
+        <field>Submission_Action_Date_Time__c</field>
+        <formula>IF(OR( RecordType.Name ==&apos;MF NHE&apos;, RecordType.Name ==&apos;MF QLE&apos;),
+IF( Anticipated_Effective_Date__c &gt; TODAY() , DATETIMEVALUE(TEXT(YEAR(Anticipated_Effective_Date__c)) &amp; &apos;-&apos; &amp; TEXT(MONTH(Anticipated_Effective_Date__c)) &amp; &apos;-&apos; &amp; TEXT(DAY(Anticipated_Effective_Date__c)) &amp; &apos; 05:00:00&apos; ) ,NOW() ),
+ Submission_Action_Date_Time__c 
+)</formula>
+        <name>MF-Update Submission DateTm-NHE/QLE</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_Update_automation_date_when_status</fullName>
+        <description>MF - Update automation date when status</description>
+        <field>MF_Automation_Submitted_Date__c</field>
+        <formula>NOW()</formula>
+        <name>MF - Update automation date when status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Priority_is_Low</fullName>
+        <field>Priority</field>
+        <literalValue>Low</literalValue>
+        <name>Priority is Low</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Priority_set_High</fullName>
+        <field>Priority</field>
+        <literalValue>High</literalValue>
+        <name>Priority set High</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Case_Subject_For_NHE_QLE_Termination</fullName>
+        <description>Set Case Subject For NHE,QLE,Termination, Updates</description>
+        <field>Subject</field>
+        <formula>If( NOT(ISNULL(AccountId)),  Account.Name  &amp;&quot; : &quot; ,&quot;&quot; )
+&amp;
+If( NOT(ISNULL(ContactId)),   Contact.FirstName &amp; &quot; &quot; &amp; Contact.LastName &amp;&quot; : &quot; ,&quot;&quot; )
+&amp;
+If( NOT(ISNULL(Carrier__c)),  Carrier__r.Name  &amp;&quot; : &quot; ,&quot;&quot; )
+&amp;
+TEXT(Type)</formula>
+        <name>Set Case Subject For NHE,QLE,Termination</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_RFI_Status_to_RFI_Violated</fullName>
+        <description>Set RFI Status to RFI Violated</description>
+        <field>RFI_Status__c</field>
+        <literalValue>RFI Violated</literalValue>
+        <name>Set RFI Status to RFI Violated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Requires_Action_to_True</fullName>
+        <description>Set Requires Action to True</description>
+        <field>Requires_Action__c</field>
+        <literalValue>1</literalValue>
+        <name>Set Requires Action to True</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Submission_SLA_Indicator_To_Orange</fullName>
+        <description>Set Submission SLA Indicator To Orange</description>
+        <field>SLA_Indicator__c</field>
+        <literalValue>Orange</literalValue>
+        <name>Set Submission SLA Indicator To Orange</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Submission_SLA_Indicator_To_Red</fullName>
+        <field>SLA_Indicator__c</field>
+        <literalValue>Red</literalValue>
+        <name>Set Submission SLA Indicator To Red</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Submission_SLA_To_Met</fullName>
+        <field>SLA__c</field>
+        <literalValue>Met</literalValue>
+        <name>Set Submission SLA  To Met</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Submission_SLA_To_Violated</fullName>
+        <field>SLA__c</field>
+        <literalValue>Violated</literalValue>
+        <name>Set Submission SLA To Violated</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Status_to_New</fullName>
+        <field>Status</field>
+        <literalValue>New</literalValue>
+        <name>Status to New</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Auto_Email_SentCare</fullName>
+        <field>Automated_Email_Sent__c</field>
+        <formula>&quot;Fulfillment to Care Auto Response - Unauthorized (WF)&quot;</formula>
+        <name>Update Auto Email SentCare</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Case_Owner_to_New_Plan_Queue</fullName>
+        <field>OwnerId</field>
+        <lookupValue>New_Plan_Benefits_Operations</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update Case Owner to New Plan Queue</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Case_Play_filter</fullName>
+        <description>We are unchecking the filter, if the filter is not unchecked within 1 hour.</description>
+        <field>isCaseInPlay__c</field>
+        <literalValue>0</literalValue>
+        <name>Update Case Play filter</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Case_Record_Type_to_Payroll_Care</fullName>
+        <description>Update Case Record Type to Payroll Care</description>
+        <field>RecordTypeId</field>
+        <lookupValue>Payroll_Care</lookupValue>
+        <lookupValueType>RecordType</lookupValueType>
+        <name>Update Case Record Type to Payroll Care</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Case_Status_to_New</fullName>
+        <description>Updates the case status to New</description>
+        <field>Status</field>
+        <literalValue>New</literalValue>
+        <name>Update Case Status to New</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Case_Type_To_Payroll_Care</fullName>
+        <description>Update Case Type To Payroll Care</description>
+        <field>Type</field>
+        <literalValue>Payroll Care</literalValue>
+        <name>Update Case Type To Payroll Care</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_First_Response_Start_Time_To_Toda</fullName>
+        <field>First_Response_Start_Time__c</field>
+        <formula>NOW()</formula>
+        <name>Update First Response Start Time To Toda</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Owner_to_Risk_Unauthorized</fullName>
+        <field>OwnerId</field>
+        <lookupValue>Risk_Unauthorized_Queue</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>Update Owner to Risk Unauthorized</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Priority_To_High</fullName>
+        <description>Update Priority To High</description>
+        <field>Priority</field>
+        <literalValue>High</literalValue>
+        <name>Update Priority To High</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Priority_To_Medium</fullName>
+        <description>Update Priority To Medium</description>
+        <field>Priority</field>
+        <literalValue>Medium</literalValue>
+        <name>Update Priority To Medium</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Status_to_Open</fullName>
+        <field>Status</field>
+        <literalValue>Open</literalValue>
+        <name>Update Status to Open</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <outboundMessages>
+        <fullName>IVR_call_time_ob</fullName>
+        <apiVersion>49.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Genesys_Call_Id__c</fields>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>workato.integration@gusto.com</integrationUser>
+        <name>IVR call time ob</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Outbound_message_to_Forethought</fullName>
+        <apiVersion>44.0</apiVersion>
+        <endpointUrl>https://app.forethought.ai/salesforce/case-created</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>true</includeSessionId>
+        <integrationUser>agatha.answers@gusto.com</integrationUser>
+        <name>Outbound message to Forethought</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Publish_Case_Info_To_Kafka</fullName>
+        <apiVersion>42.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Publish Case Info To Kafka</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Publish_Case_info_to_APIntego</fullName>
+        <apiVersion>42.0</apiVersion>
+        <description>Publish Case info to APIntego</description>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Id</fields>
+        <fields>Partner_Record_Id__c</fields>
+        <fields>Shared_With__c</fields>
+        <fields>Status</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Publish Case info to APIntego</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Qualtrics_SB_Survey_Contact</fullName>
+        <apiVersion>45.0</apiVersion>
+        <endpointUrl>https://gusto.az1.qualtrics.com/WRQualtricsServer/sfApi.php?r=outboundMessage&amp;u=UR_3RhdLdxJH3bDIQR&amp;s=SV_1Sm1kG5UdVYN2CN&amp;t=TR_eyfnGibSe8aurSl</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>qualtrics.integration@gusto.com</integrationUser>
+        <name>Qualtrics SB Survey - Contact</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Qualtrics_SB_Survey_Lead</fullName>
+        <apiVersion>45.0</apiVersion>
+        <endpointUrl>https://gusto.az1.qualtrics.com/WRQualtricsServer/sfApi.php?r=outboundMessage&amp;u=UR_3RhdLdxJH3bDIQR&amp;s=SV_1Sm1kG5UdVYN2CN&amp;t=TR_cOXcksZTvqB6zWd</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>qualtrics.integration@gusto.com</integrationUser>
+        <name>Qualtrics SB Survey - Lead</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Send_Case_to_Calendar</fullName>
+        <apiVersion>43.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>AccountId</fields>
+        <fields>CaseNumber</fields>
+        <fields>Company_Name__c</fields>
+        <fields>Id</fields>
+        <fields>Panda_Company_URL__c</fields>
+        <fields>Routing_Case_Reason__c</fields>
+        <fields>Suspension_Call_Scheduled_Date_Time__c</fields>
+        <fields>Suspension_Contact_Number__c</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Send Case to Calendar</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Update_IVR_log_Case</fullName>
+        <apiVersion>47.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Update IVR log Case</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <rules>
+        <fullName>Alert For RFI Reminder v1</fullName>
+        <active>true</active>
+        <criteriaItems>
+            <field>Case.RFI_Status__c</field>
+            <operation>equals</operation>
+            <value>Requested</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Status</field>
+            <operation>notEqual</operation>
+            <value>Closed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MF QLE,MF NHE,MF Termination,MF Member/Group Updates,Member Fulfillment Emails,MF Audit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Historical_Data__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Sets requires action when RFI information is not received</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Set_Requires_Action_to_True</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Case.RFI_3rd_Business_Day__c</offsetFromField>
+            <timeLength>5</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Set_Requires_Action_to_True</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Case.RFI_6th_Business_Day__c</offsetFromField>
+            <timeLength>5</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Set_RFI_Status_to_RFI_Violated</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Set_Requires_Action_to_True</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Case.RFI_9th_Business_Day__c</offsetFromField>
+            <timeLength>5</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Engagement%3AUpdate Case Record Type to Payroll Care</fullName>
+        <actions>
+            <name>Update_Case_Record_Type_to_Payroll_Care</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_Case_Type_To_Payroll_Care</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <formula>Ischanged(OwnerId)  &amp;&amp;  Owner:Queue.QueueName =&quot;Payroll Care Routing&quot; &amp;&amp;  NOT(Contains(RecordType.Name ,&quot;Payroll Care&quot;) ) &amp;&amp;  $User.Data_Migration_Validation__c = false</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>MF - Update automation date when status updated</fullName>
+        <actions>
+            <name>MF_Update_automation_date_when_status</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <booleanFilter>1 OR 2</booleanFilter>
+        <criteriaItems>
+            <field>Case.Automation_Status__c</field>
+            <operation>equals</operation>
+            <value>Failed,Completed,Submitted</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Automation_Status_Follow_Up__c</field>
+            <operation>equals</operation>
+            <value>Failed,Completed</value>
+        </criteriaItems>
+        <description>MF - Update automation date when status is updated</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>NHE Update First Response Start Time %3C30</fullName>
+        <active>true</active>
+        <description>NHE Update First Response Start Time when a case is created
+
+IF(
+ISChanged(OwnerId)&amp;&amp;
+   Owner:User.Id !=null, True,</description>
+        <formula>ISPICKVAL(Status ,&quot;Draft&quot;) &amp;&amp;   OR(   RecordType.Name=&quot;MF NHE&quot; ) &amp;&amp; IF(Anticipated_Effective_Date__c &lt;= TODAY()+30 &amp;&amp; ISNULL( First_Response_Start_Time__c ), True ,  IF(Termination_Date__c  &lt;= TODAY()+30 &amp;&amp; ISNULL( First_Response_Start_Time__c ), True , False  )  ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
+        <triggerType>onCreateOnly</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Update_Case_Status_to_New</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Update_First_Response_Start_Time_To_Toda</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <timeLength>24</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>New Case Set Requires Action</fullName>
+        <actions>
+            <name>Set_Requires_Action_to_True</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Recovery Cases,Benefits BoR - NHE,Benefits BoR - QLE,Benefits BoR - Termination</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Historical_Data__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Set requires action to true for new Cases</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>New Plan Case - Assign</fullName>
+        <actions>
+            <name>Update_Case_Owner_to_New_Plan_Queue</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Assign new plan case</description>
+        <formula>Owner:User.Profile.Name =&apos;Benefits Care&apos; &amp;&amp;  RecordType.Name=&apos;Benefits New Plan Case&apos; &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Notify Customer of Closed Continuation Case</fullName>
+        <actions>
+            <name>Notify_COBRA_Customer_Closed_Case</name>
+            <type>Alert</type>
+        </actions>
+        <active>true</active>
+        <booleanFilter>(1 AND 2) OR (3 AND 4 ) AND 5 AND 6</booleanFilter>
+        <criteriaItems>
+            <field>Case.Type</field>
+            <operation>equals</operation>
+            <value>Continuation Enrollment</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MF NHE</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Type</field>
+            <operation>equals</operation>
+            <value>Continuation Termination</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MF Termination</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Status</field>
+            <operation>equals</operation>
+            <value>Closed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Requires_Action__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>Notifies Customers that their continuation enrollment or termination case has been closed if they respond</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>Publish Case Enrollment Information  to Kafka</fullName>
+        <actions>
+            <name>Publish_Case_Info_To_Kafka</name>
+            <type>OutboundMessage</type>
+        </actions>
+        <active>true</active>
+        <description>Publish Case Enrollment Information  to Kafka</description>
+        <formula>NOT(ISBLANK(Enrollment_Id__c) )  &amp;&amp; (        ISPICKVAL( Type ,&quot;NHE&quot;)        ||        ISPICKVAL( Type ,&quot;QLE&quot;)     )  &amp;&amp;  NOT(ISNEW())  &amp;&amp; ISCHANGED( Status ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Renewal Case and Change Case - Assign</fullName>
+        <actions>
+            <name>Assign_Case_to_Renewal_Case_Queue</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Assign Renewal and Benefit change case</description>
+        <formula>Owner:User.Profile.Name =&apos;Benefits Care&apos; &amp;&amp;  (RecordType.Name=&apos;Benefits Renewal Case&apos; || RecordType.Name=&apos;Benefits Change Case&apos;) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>TaxOps PTS Errors priority is Low</fullName>
+        <actions>
+            <name>Priority_is_Low</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <formula>(RecordType.Name=&apos;Tax Ops&apos;||RecordType.Name=&apos;Tax Ops - Read Only&apos;)  &amp;&amp; Owner:Queue.QueueName =&apos;PTS Errors Queue&apos; &amp;&amp;  $User.Data_Migration_Validation__c = false</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Track Followup Date Change Count</fullName>
+        <actions>
+            <name>Increment_Followup_Date_Change_count</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Track Followup Date Change Count</description>
+        <formula>NOT(ISNEW()) &amp;&amp; ISCHANGED( Follow_Up_Date__c ) &amp;&amp; NOT (ISBLANK( PRIORVALUE(Follow_Up_Date__c) )) &amp;&amp;  OR(RecordType.Name=&quot;MF Audit&quot; , RecordType.Name=&quot;MF Member/Group Updates&quot;,RecordType.Name=&quot;MF NHE&quot;,RecordType.Name=&quot;MF QLE&quot;,RecordType.Name=&quot;MF Termination&quot;,RecordType.Name=&quot;Member Fulfillment Emails&quot;,RecordType.Name=&quot;MF Group Updates&quot;) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update Case Play filter</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>Case.isCaseInPlay__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <description>Updating the filter used in case play functionality  in case user left the flow in between.</description>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Update_Case_Play_filter</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Hours</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Update First Response Start Time %3C30</fullName>
+        <actions>
+            <name>Update_Case_Status_to_New</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>Update_First_Response_Start_Time_To_Toda</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Update First Response Start Time when a case is created
+
+IF(
+ISChanged(OwnerId)&amp;&amp;
+   Owner:User.Id !=null, True,</description>
+        <formula>ISPICKVAL(Status ,&quot;Draft&quot;) &amp;&amp;   OR(   RecordType.Name=&quot;MF QLE&quot;,   RecordType.Name=&quot;MF Termination&quot;,   RecordType.Name=&quot;MF Member/Group Updates&quot; ) &amp;&amp; IF(Anticipated_Effective_Date__c &lt;= TODAY()+30 &amp;&amp; ISNULL( First_Response_Start_Time__c ), True ,  IF(Termination_Date__c  &lt;= TODAY()+30 &amp;&amp; ISNULL( First_Response_Start_Time__c ), True , False  )  ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;) &amp;&amp; IF((CONTAINS(Integration_Key__c,&quot;BASIC&quot;)),False,True)</formula>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Update First Response Start Time %3E 30</fullName>
+        <active>true</active>
+        <description>Update First Response Start Time when a case is created</description>
+        <formula>ISPICKVAL(Status ,&quot;Draft&quot;)  &amp;&amp;  OR(  RecordType.Name=&quot;MF NHE&quot;,  RecordType.Name=&quot;MF QLE&quot;,  RecordType.Name=&quot;MF Termination&quot;,  RecordType.Name=&quot;MF Member/Group Updates&quot;  )   &amp;&amp;   IF(Anticipated_Effective_Date__c &gt; TODAY()+30 &amp;&amp; ISNULL( First_Response_Start_Time__c ), True ,  IF(Termination_Date__c  &gt; TODAY()+30 &amp;&amp; ISNULL( First_Response_Start_Time__c ), True , False  )  ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)  &amp;&amp; IF((CONTAINS(Integration_Key__c,&quot;BASIC&quot;)),False,True)</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Update_Case_Status_to_New</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Update_First_Response_Start_Time_To_Toda</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Case.Anticipated_Effective_Date__c</offsetFromField>
+            <timeLength>-30</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Update_Case_Status_to_New</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <actions>
+                <name>Update_First_Response_Start_Time_To_Toda</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Case.Termination_Date__c</offsetFromField>
+            <timeLength>-30</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>Vitals Expedite Case to Priority High</fullName>
+        <actions>
+            <name>Priority_set_High</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Payroll Compliance,Tax Ops,Risk Assurance</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Subject</field>
+            <operation>contains</operation>
+            <value>expedite</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>User.Data_Migration_Validation__c</field>
+            <operation>equals</operation>
+            <value>False</value>
+        </criteriaItems>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>Vitals-Risk-ClosedCaseToRiskAutoClose</fullName>
+        <actions>
+            <name>Update_Owner_to_Risk_Unauthorized</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Case.OwnerId</field>
+            <operation>equals</operation>
+            <value>System</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Status</field>
+            <operation>equals</operation>
+            <value>Closed</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Risk Assurance,Risk Assurance - Read Only</value>
+        </criteriaItems>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+</Workflow>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>false</active>
+    <allowRecall>true</allowRecall>
+    <allowedSubmitters>
+        <type>owner</type>
+    </allowedSubmitters>
+    <approvalPageFields>
+        <field>Name</field>
+        <field>Owner</field>
+        <field>Number_of_Allowed_Participant__c</field>
+        <field>Number_of_Expected_Participant__c</field>
+    </approvalPageFields>
+    <approvalStep>
+        <allowDelegate>false</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>UR_Admin_Approver_Queue</name>
+                <type>queue</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <label>Send Email to Admin</label>
+        <name>Send_Email_to_Admin</name>
+    </approvalStep>
+    <description>Number of Participants to Add if selected contact limit got exceeded.</description>
+    <emailTemplate>UX_Research/UXR_Admin_Notification_Approval_Request</emailTemplate>
+    <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
+    <entryCriteria>
+        <criteriaItems>
+            <field>Research_Project_Master__c.Name</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+    </entryCriteria>
+    <finalApprovalActions>
+        <action>
+            <name>Approval_Email</name>
+            <type>Alert</type>
+        </action>
+    </finalApprovalActions>
+    <finalApprovalRecordLock>false</finalApprovalRecordLock>
+    <finalRejectionActions>
+        <action>
+            <name>Rejection_Email</name>
+            <type>Alert</type>
+        </action>
+    </finalRejectionActions>
+    <finalRejectionRecordLock>false</finalRejectionRecordLock>
+    <label>Number of Participants to Add In project</label>
+    <processOrder>1</processOrder>
+    <recordEditability>AdminOnly</recordEditability>
+    <showApprovalHistory>true</showApprovalHistory>
+</ApprovalProcess>

@@ -1,0 +1,414 @@
+<apex:page standardController="Case" extensions="EngagementCaseViewExtension"  action="{!initBenefitsCompliance}" docType="html-5.0" id="mainPage" showHeader="false">
+	<apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/canvas/sdk/js/publisher.js"/>
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+        .message .messageText a {
+            margin: 0px;
+        }
+    </style>
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+      
+      $j( document ).ready(function() { 
+          window.timer = setTimeout(function(){
+              updateCaseStatus();              
+          },2000);
+      });
+
+       function RefreshPrimaryTab() 
+       {
+           sforce.console.getFocusedPrimaryTabId(showTabId);
+       }
+       
+       var showTabId = function showTabId(result) 
+       {
+           var tabId = result.id;
+           //alert('Primary Tab IDs: primaryTabId ' + tabId );
+           sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+       };
+       
+       var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               //alert('Email Sent');
+           } 
+           else 
+           {
+               //alert('Cannot refresh the page');
+           }
+       };
+    
+    //================================================
+      function takeIt(){
+          acceptCase();
+          RefreshPrimaryTab();
+          return false;
+      }
+    
+      function route(){
+          routeCase();
+          RefreshPrimaryTab();
+          return false;
+      }
+    
+        function reopenTab(){
+            caseRecIdd = '{!theCase.id}';
+          if(caseRecIdd != null && caseRecIdd.length > 0){ 
+            //sforce.console.getFocusedPrimaryTabId(reopenTabById);
+            sforce.console.getFocusedPrimaryTabId(getTabLink1);
+          }
+          else{
+            return false;
+          }
+        }
+        
+        var currentTabId;
+        var getTabLink1 = function getTabLink1(result) {
+            //console.log("@@1"+result.id);
+            currentTabId = result.id;
+            sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY, result.id, showTabLink1);
+        };
+        
+        var showTabLink1 = function showTabLink1(result) {
+             var urll = result.tabLink; 
+             //console.log("@@2 "+result.id);
+             //alert(" Success "+result.success+" URL: "+urll);
+             if(urll != null && urll.length >0 && urll.indexOf("isplay") > -1){
+                 sforce.console.openPrimaryTab(currentTabId, "/{!theCase.id}?isplay=1", true);              
+             }
+             else{
+               sforce.console.openPrimaryTab(currentTabId ,'/{!theCase.id}' ,true);  
+             }
+         };
+        
+        var reopenTabById = function reopenTabById(result) 
+        {
+            var tabId = result.id;
+            //console.log("@@");
+            //alert(tabId);
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.openPrimaryTab(tabId ,'/{!theCase.id}' ,true);
+        };
+    
+        function openAccount() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openAccountSubtab);
+        }
+        
+        var openAccountSubtab = function openAccountSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/{!theCase.AccountId}', false, 
+                'Account', null, openSuccess, 'salesforceAccountSubtab');
+        };
+    
+        function openCallback() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openCallbackSubtab);
+        }
+        
+        var openCallbackSubtab = function openCallbackSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/apex/SubmitCallback?caseId={!theCase.Id}', false, 
+                'Callback', null, openSuccess, 'salesforceCallbackSubtab');
+        };
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if(result.success==true){
+                sforce.console.focusSubtabById(result.id);
+                }
+        };
+    
+        function openContact() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openContactSubtab);
+        }
+        
+        var openContactSubtab = function openContactSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/{!theCase.ContactId}', false, 
+                'Contact', null, openSuccess, 'salesforceContactSubtab');
+        };
+	      function openProductUpsell() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openProductUpsellSubtab);
+        }
+        
+        var openProductUpsellSubtab = function openContactSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            //window.$Label = window.$Label || {};
+            var caseNo = '{!thecase.CaseNumber}';
+            var url = '{!JSENCODE($Label.Product_Upsell_URL)}';
+            var caseId = '{!thecase.Id}';
+            caseId = encodeURI(caseId)
+            url = url.replace('CASENO','{!thecase.CaseNumber}');
+            url = url.replace('CASEID1',caseId);
+            url = url.replace('CASEID2','%2F' + caseId);
+            //alert(url);
+            console.log(url);
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , url, false, 
+                'New Product Upsell', null, openSuccess, 'salesforceProductUpsellSubtab');
+        };
+        //=============================
+        function processExternalLinks(urll){
+          if(urll != null && urll != undefined && urll.length > 0){
+            if(urll.indexOf('apex') == -1){
+                window.open(urll);
+            }
+            if(urll.indexOf('apex') > -1){
+              openGivenPage(urll);
+            }
+          }
+          return false;  
+        }
+        //=====================open given page name in subtab================
+        var pageNameVar;
+        function openGivenPage(pageName) {
+          pageNameVar = pageName;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openPageInSubtab);
+        }
+        
+        var openPageInSubtab = function openPageInSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            if(pageNameVar != undefined && pageNameVar != null){
+              sforce.console.openSubtab(primaryTabId , pageNameVar+'?id={!theCase.id}', true, 
+                '{!theCase.CaseNumber}', null, openSuccess, 'salesforceSubtab');
+            }
+            
+        };
+    //=================open page as it is=========
+        function openGivenPage_v2(pageName) {
+          pageNameVar = pageName;
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openPageInSubtab_v2);
+        }
+        
+        var openPageInSubtab_v2 = function openPageInSubtab_v2(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            if(pageNameVar != undefined && pageNameVar != null){
+              sforce.console.openSubtab(primaryTabId , pageNameVar, true, 
+                '{!theCase.CaseNumber}', null, openSuccess, 'salesforceSubtab');
+            }            
+        };
+
+        //======================
+        
+        function openUnassignedCase(cseId){
+            //alert(cseId);
+            var urll = '/'+cseId;
+            sforce.console.openPrimaryTab(null,urll,true);
+        }
+      
+      //=============Following code is placed to listen for the "Call Pickup/Connect" event ==============================  
+      var phonepickuplistener = function(result){ 
+        console.log('@@## listener Data> '+JSON.stringify(result));
+        assignCaseToRep1();
+      }; 
+        function trackConversationJS(){
+            openProductUpsell();
+            updateCount('TrackConversation');
+        }
+        function notApplicableJS(){
+            updateCount('NotApplicable');
+        }
+        
+        
+      sforce.console.addEventListener('inin.salesforce.constants.consoleevent.pc.INTERACTION_CONNECTED', phonepickuplistener);
+      //=====================================
+        
+    </script>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <div class="gusto" style="margin-left: 5px;">
+        <apex:pageMessages id="pgMsg" escape="false"></apex:pageMessages>
+        <apex:outputPanel rendered="{!theCase.status!='Closed'}" id="mainPanel">
+           
+            <apex:form id="routeToForm">
+                
+              <apex:outputPanel id="reloadPage">
+                <apex:outputPanel rendered="{! if(refreshPage,true,false)}">
+                  <script>
+                      location.reload();                    
+                  </script>
+                </apex:outputPanel>
+              </apex:outputPanel>
+
+                <apex:actionstatus id="status_page">
+                    <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                            <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                                <img class="waitingImage" src="/img/loading.gif"  />
+                                <span class="waitingDescription">Loading...</span>
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionstatus>
+                <apex:actionFunction action="{!routeCase}" name="routeCase" rerender="routeToPannel,pgMsg" id="routeCase" oncomplete="reopenTab(); " status="status_page"></apex:actionFunction>
+
+                <apex:actionFunction action="{!assignUserOnCallPickup}" name="assignCaseToRep1" rerender="pgMsg" id="assignCaseToRep1" oncomplete="location.reload(true);" status="status_page"/>
+                <apex:actionFunction name="updateCount" action="{!updateCount}" reRender="parentPanel"  >
+                    <apex:param name="operation" assignTo="{!operation}" value="" />
+                </apex:actionFunction>  
+                <apex:outputPanel >
+                  <div class="slds-button-group" role="group">                    
+                    <button class="slds-button slds-button_brand prepare-send-btn slds-button--neutral" style="min-width: 143px;"  
+                            onclick="processExternalLinks('https://app.gusto.com/panda/{!theCase.Panda_Company_URL__c}');return false;">View Company In Panda</button>
+                    <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-button_last prepare-send-dropdown">
+                      <button class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn slds-button--neutral" aria-haspopup="true" title="Show More" onclick="return false;" style="border-radius: 0 0.25rem 0.25rem 0;">                        
+                          <img src="{!URLFOR($Resource.sldsicons, '/icons/arrow.png')}"/>  
+                          <span class="slds-assistive-text">Show More</span>                     
+                      </button>
+                      <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions" style="min-width: 174px;">
+                        <ul class="slds-dropdown__list" role="menu">                          
+                          <li class="slds-dropdown__item" role="presentation">
+                            <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/{!theCase.Panda_Company_URL__c}');">
+                              <span class="slds-truncate" title="View Company In Panda">View Company In Panda</span>
+                            </a>
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/employees/{!theCase.Contact_Employee_Id__c}');">
+                              <span class="slds-truncate" title="View Employee In Panda">View Employee In Panda</span>
+                            </a>
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('https://app.gusto.com/panda/users/{!theCase.Contact_User_Id__c}');">
+                              <span class="slds-truncate" title="View User In Panda">View User In Panda</span>
+                            </a>
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('/apex/CaseMergeListViewPage');">
+                              <span class="slds-truncate" title="Merge Case">Merge Case</span>
+                            </a>
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="processExternalLinks('/apex/CaseFeatureRequestPage');">
+                              <span class="slds-truncate" title="Feature Request">Feature Request</span>
+                            </a>
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="openGivenPage_v2('/500?rlid=RelatedChildCaseList&hierarchy=1&fromroot=1&id={!theCase.Id}');">
+                              <span class="slds-truncate" title="View Case Hierarchy">View Case Hierarchy</span>
+                            </a>
+                          </li>                            
+                        </ul>
+                      </div>
+                    </div>
+                  </div> 
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}" id="routeToPannel">
+                    Route To: 
+                    <apex:selectList value="{!caseType}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!caseTypeOption}"> </apex:selectOptions>
+                    </apex:selectList>
+                    <apex:commandButton onClick="routeCase()" rerender="routeToPannel" value=">>" styleclass=""   />
+                </apex:outputPanel>                
+            </apex:form>
+            <apex:form id="acceptCaseFrom">
+                <apex:actionFunction name="acceptCase" action="{!acceptCase}" immediate="true" reRender="secondaryPanel" id="acceptCaseAction"/>
+            </apex:form>
+            <apex:form id="mainForm">
+                <!--<c:SkipCase caseId="{!theCase.id}" />
+                <c:CaseEscalation caseId="{!theCase.id}" /> -->
+                <!-- <apex:actionPoller action="{!checkCaseTaskFromPoller}" reRender="reloadPage,pgMsg" id="actionFunction12" interval="5" rendered="{! if(theCase.OwnerId == phoneRoutingId,true,false)}"/> -->
+                <apex:actionFunction name="updateCaseStatus" action="{!checkCaseStatus}" reRender="statusChanged1,statusChanged2,statusChanged3,statusChanged4,statusChanged5" />
+                <apex:actionFunction name="saveCaseRec" action="{!saveCaseRecord}" reRender="routeToForm"/>
+                <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                    <apex:commandButton action="{!SaveBenefitsComplianceCase}" value="Save" styleclass="slds-button slds-button--neutral" />
+                    <!-- <apex:commandButton action="{!SaveBenefitsComplianceCase}"  value="Save & Next" styleclass="slds-button slds-button--neutral linkCss" onComplete="nextCase();return false" /> -->
+                    
+                    <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}">
+                        <apex:actionRegion immediate="true" renderRegionOnly="true">
+                            <!--<input type="submit" value="Take It" class="slds-button slds-button--neutral" rerender="secondaryPanel" onclick="takeIt();"/>-->
+                            <apex:commandButton action="{!acceptCase}" immediate="true" value="Take It" styleclass="slds-button slds-button--neutral" />
+                        </apex:actionRegion>
+                    </apex:outputPanel>
+                </div>	
+            </apex:form>
+	</apex:outputPanel>
+	<apex:outputPanel id="secondaryPanel">
+        <apex:form >
+		<apex:outputPanel >
+        	<table class="table.spacing">
+                <tr>
+                	<td><label class="slds-form-element__label" for="status">Owner: </label></td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:inputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId==$User.Id}"> 
+                                
+                            </apex:inputField>
+                            <apex:outputField value="{!theCase.OwnerId}" rendered="{!theCase.ownerId!=$User.Id}"> 
+                                
+                            </apex:outputField>
+                        </div> 
+                        
+                    </td>
+                </tr>
+                <tr>
+                	<td><label class="slds-form-element__label" for="status">Status: </label></td>
+                    <td>
+                        <apex:outputPanel id="statusChanged1">
+                            <div class="slds-form-element__control">
+                                <apex:selectList value="{!theCase.Status}"  multiselect="false" size="1" > 
+                                    <apex:actionSupport event="onchange" action="{!statusChangeEvent}" reRender="none"/>
+                                    <apex:selectOptions value="{!caseStatusOption}"/>
+                                    <!--<apex:inlineEditSupport event="ondblClick" /> -->
+                                </apex:selectList>
+                                <apex:commandLink action="{!moveToInprogress}" immediate="true" value="Start Progess"   rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status!='In Progress'}"/>
+                                <apex:commandLink action="{!moveToOpen}" immediate="true" value="Move to Open"  rendered="{!theCase.OwnerId==$User.Id && theCase.Status!='Closed' && theCase.Status=='In Progress'}"/>
+                            </div>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+                <tr>
+                	<td><label class="slds-form-element__label" for="status">Account: </label></td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <a HREF="#" onClick="openAccount();return false">{!theCase.Account.name}</a>
+                            <!--<apex:outputField value="{!theCase.AccountId}"> </apex:outputField>-->
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                	<td><label class="slds-form-element__label" for="status">Contact: </label></td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <a HREF="#" onClick="openContact();return false">{!theCase.Contact.name}</a>
+                            <!--<apex:outputField value="{!theCase.ContactId}"> </apex:outputField>-->
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                	<td><label class="slds-form-element__label" for="status">Process step: </label></td>
+                    <td>
+                    	<div class="slds-form-element__control">
+                            <apex:inputField value="{!theCase.Process_Step__c}"/>
+                        </div>    
+                    </td>
+                </tr>
+                <tr>
+                	<td><label class="slds-form-element__label" for="status">Average FTE: </label></td>
+                    <td>
+                    	<div class="slds-form-element__control">
+                            <apex:inputField value="{!theCase.Average_FTE__c}"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </apex:outputPanel>
+        </apex:form>    
+	</apex:outputPanel>
+</div>
+        
+        
+        
+</apex:page>

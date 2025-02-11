@@ -1,0 +1,376 @@
+<apex:page standardController="Transition_to_Fulfillment__c" extensions="CreateEditPayrollTransferTTFCtrl" sidebar="false" title="EditTransitionToFulfilment">
+    <head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:slds />
+    <style>
+        textarea{width:75%;}
+        .pbSubheader h3{ display:inline;}
+        .ms-options-wrap{
+            width:75%;
+        }
+        .readOnly{
+            pointer-events:none;
+        }
+
+        tr.multiSelectPicklistRow td:first-child {
+            width: 40% !important;
+        }
+
+        tr.multiSelectPicklistRow td:last-child {
+            width: 40% !important;
+        }
+
+        tr.multiSelectPicklistRow td:nth-child(2) {
+            padding: 0 20px !important;
+        }
+
+        tr.multiSelectPicklistRow td:first-child select {
+            width: 100% !important;
+        }
+
+        tr.multiSelectPicklistRow td:last-child select {
+            width: 100% !important;
+        }
+    </style>
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+
+    </head>
+    <div class="slds-scope">
+    <apex:form id="payrollTTFForm">
+        <apex:pageMessages escape="false" id="messages"/>
+        <c:ActionStatus />
+        <apex:pageBlock rendered="{!!blnRenderTTFBlock}" mode="detail" id="ttfBlockReadonly" title="Transition To Fulfillment Edit">
+           		<p style="color:red"> Please fill the Order First Check Date 
+                 <apex:outputLink onclick="openSubTab('{!objTTFOrder.Id}','{!JSENCODE(objTTFOrder.OrderNumber)}');return false;">
+              		 Click here
+            	</apex:outputLink>
+                     </p>
+            </apex:pageBlock>
+        <apex:pageBlock rendered="{!blnRenderTTFBlock}" mode="detail" id="ttfBlock" title="Transition To Fulfillment Edit">
+          
+            <apex:pageblockbuttons >
+                <apex:commandButton value="Save" disabled="{!blnDisableSave}" action="{!savePayrollTTF}" status="statusSave" reRender="payrollTTFForm"/>
+                <apex:commandButton value="Cancel" action="{!cancelPayrollTTF}" status="statusSave" reRender="payrollTTFForm"/>
+            </apex:pageblockbuttons>
+            <apex:pageBlockSection columns="2" id="SystemInformation" collapsible="true">
+                <apex:inputField value="{!ttfRecord.Opportunity__c}"/>
+                <apex:inputField value="{!ttfRecord.Account__c}"/>
+                <apex:inputField value="{!ttfRecord.TTF_Status__c}"/>
+                <apex:inputField value="{!ttfRecord.Order__c}"/>
+                
+                <apex:outputField value="{!ttfRecord.OwnerId}"/>
+                <apex:outputField value="{!ttfRecord.recordTypeId}"/>
+                
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" id="requiredInformation" collapsible="true" title="Required Information">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Is Demo Complete?"/>
+                    <apex:outputPanel layout="block" styleclass="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!ttfRecord.Demo_Complete__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!ttfRecord.Documents_Uploaded_to_Panda__c}"/>
+                <apex:inputField value="{!ttfRecord.Documents_Collected__c}"/>
+                <!--Commented by AKS dated 6th Nov 2020- Not require to recalculate PayrollRunDate-->
+                <!--<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.PT_Contractors_paid_on_first_pay_date}"/>
+                    <apex:outputPanel layout="block" styleclass="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!ttfRecord.Contractors_paid_on_first_pay_date__c}">
+                        	<apex:actionSupport status="statusSave" event="onchange" action="{!recalculatePayrollRunDate}" rerender="exceptionInfo"/>
+                       	</apex:inputField>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>-->
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Previous Payroll Provider"/>
+                    <apex:outputPanel layout="block" styleclass="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!ttfRecord.Previous_Payroll_Provider__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" id="additionalPOCSection" title="Opportunity Contact Roles" collapsible="true">
+                <apex:outputPanel rendered="{!AND(NULL != lstOpptyContactRole , lstOpptyContactRole.size > 0)}" id="contactRoleSection">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr class="slds-text-title slds-line-height_reset">
+                                <th scope="col">Contact Name</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Check Primary POC</th>
+                                <th scope="col">Check Additional POC</th>
+                            </tr>                        
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!lstPOCWrapper}" var="cRole">
+                                <tr class="slds-text-title detailRow">
+                                    <td><apex:outputText value="{!cRole.objContactRole.Contact.FirstName} {!cRole.objContactRole.Contact.LastName}"/></td>
+                                    <td><apex:outputField value="{!cRole.objContactRole.Role}"/></td>
+                                    <td>
+                                        <apex:inputCheckbox value="{!cRole.boolChkPrimary}">
+                                            <apex:actionSupport event="onchange" action="{!selectPrimary}" rerender="additionalPOCSection" status="statusSave">
+                                                <apex:param value="{!cRole.objContactRole.Id}" name="roleId" assignTo="{!idPrimaryRole}"/>
+                                            </apex:actionSupport>
+                                        </apex:inputCheckbox>
+                                    </td>
+                                    <td>
+                                        <apex:inputField value="{!cRole.objContactRole.Check_Additional_POC__c}">
+                                            <apex:actionSupport event="onchange" action="{!selectSecondary}" rerender="additionalPOCSection" status="statusSave">
+                                                <apex:param value="{!cRole.objContactRole.Id}" name="roleId" assignTo="{!idSecRole}"/>
+                                            </apex:actionSupport>
+                                        </apex:inputField>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!OR(NULL == lstOpptyContactRole, lstOpptyContactRole.size == 0)}">
+                    There are no Contact Roles on opportunity.
+                </apex:outputPanel>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Primary Point of Contact"/>
+                    <apex:outputPanel layout="block" styleclass="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!ttfRecord.Contact__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:outputPanel id="exceptionInfo">
+                <apex:pageBlockSection columns="1" collapsible="true" title="Exception Information">
+                    <!-- <apex:pageMessage severity="Warning" summary="{!strWarningMsgForExceptionReq}" strength="1" rendered="{!strWarningMsgForExceptionReq != ''}"/> -->
+                    <apex:inputField value="{!ttfRecord.Exception_Request__c}" rendered="{!OR(NOT(bool_IsExceptionRequest),bool_ExceptionOverride)}">
+                        <apex:actionSupport event="onchange" rerender="exceptionInfo" status="statusSave"/>
+                    </apex:inputField>
+                    <apex:outputField value="{!ttfRecord.Exception_Request__c}" rendered="{!AND(bool_IsExceptionRequest,NOT(bool_ExceptionOverride))}"/>
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}" id="excepReason">
+                        <apex:outputLabel value="Reason for Exception Request?"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                <apex:inputField value="{!ttfRecord.Reason_for_exception_request__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSection >
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}">
+                        <apex:outputLabel value="{!$Label.PT_Doesnot_require_2_factor_Authentication}"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!ttfRecord.Doesnot_require_2_factor_Authentication__c}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}">
+                        <apex:outputLabel value="No contractors paid on first check date?"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!ttfRecord.No_contractors_paid_on_first_check_date__c}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}">
+                        <apex:outputLabel value="{!$Label.PT_Companies_denied_based_on_the_payroll_provider}"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!ttfRecord.Payroll_provider_not_ADP_WrkFrc_Paychex__c}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}">
+                        <apex:outputLabel value="{!$Label.PT_Payroll_Transfer_will_not_accept_Exception}"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!ttfRecord.Payroll_Transfer_not_accept_the_excep__c}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}">
+                        <apex:outputLabel value="{!$Label.PT_Requires_Reverse_Wire_to_be_setup}"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!ttfRecord.Requires_Reverse_Wire_to_be_setup__c}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!IF(ttfRecord.Exception_Request__c == 'Yes',true,false)}">
+                        <apex:outputLabel value="{!$Label.PT_Customer_aware_of_shorter_timeline}"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputTextArea value="{!ttfRecord.Customer_Aware_of_Shorter_timeline__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['Customer_Aware_of_Shorter_timeline__c']}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <!-- <apex:inputField label="{!$Label.PT_Has_Sales_PE_Approved}" value="{!ttfRecord.Has_Sales_PE_Approved__c}"/> -->
+                    </apex:pageBlockSection>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            <apex:pageBlockSection columns="2" id="additionalInformation" collapsible="true" title="Additional Information">
+                <apex:inputField value="{!ttfRecord.Type_of_Migration__c}"/>
+                <apex:inputTextArea value="{!ttfRecord.Provide_Partial_Migration_Steps__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['Provide_Partial_Migration_Steps__c']}"/>
+                <apex:inputField value="{!ttfRecord.Benefits_enforced_timeline__c}"/>
+                <apex:inputField value="{!ttfRecord.Select_Benefits__c}"/>
+                <apex:inputField value="{!ttfRecord.Does_customer_have_integrated_deductions__c}"/>
+                <apex:inputTextArea value="{!ttfRecord.how_will_the_handle_moving_forward__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['how_will_the_handle_moving_forward__c']}"/>
+                <apex:inputField value="{!ttfRecord.Bulk_Deal__c}" id="bulkDeal">
+                    <apex:actionSupport event="onchange" status="statusSave" rerender="multiEIN,sameLogin,addCompanySection" action="{!validateMultiEINSameLoginBulkDeal}">
+                        <apex:param name="selectedField" value="Bulk Migration" assignTo="{!strTypeBulkDealSelected}"/>
+                    </apex:actionSupport>
+                </apex:inputField>
+                <apex:inputTextArea value="{!ttfRecord.Link_to_Spreadsheet__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['Link_to_Spreadsheet__c']}"/>
+                <apex:inputField value="{!ttfRecord.Transferring_PTO_Sick_policies_to_Gusto__c}"/>
+                <apex:inputField value="{!ttfRecord.Reviewed_Login_Info__c}"/>
+                <apex:inputField value="{!ttfRecord.Multi_EIN__c}" id="multiEIN">
+                    <apex:actionSupport event="onchange" status="statusSave" rerender="bulkDeal,sameLogin,addCompanySection" action="{!validateMultiEINSameLoginBulkDeal}">
+                        <apex:param name="selectedField" value="Multi-EIN" assignTo="{!strTypeBulkDealSelected}"/>
+                    </apex:actionSupport>
+                </apex:inputField>
+                <apex:inputField value="{!ttfRecord.Sales_Follow_Up_Reason__c}" />
+                
+                <apex:inputTextArea value="{!ttfRecord.Notes_for_implementation__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['Notes_for_implementation__c']}"/>
+                
+                <apex:inputTextArea value="{!ttfRecord.Sales_Follow_Up__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['Sales_Follow_Up__c']}"/>
+                <apex:inputField value="{!ttfRecord.Same_Login__c}" id="sameLogin" >
+                    <apex:actionSupport event="onchange" status="statusSave" rerender="bulkDeal,multiEIN,addCompanySection" action="{!validateMultiEINSameLoginBulkDeal}">
+                        <apex:param name="selectedField" value="Same Login" assignTo="{!strTypeBulkDealSelected}"/>
+                    </apex:actionSupport>
+                </apex:inputField>
+
+                <apex:inputField value="{!ttfRecord.Number_Of_Pay_Schedules__c}" label="How many pay schedules do you have?"/>
+                <apex:inputField value="{!ttfRecord.Last_Expected_Pay_Date__c}" label="When is your last expected pay day with your current payroll provider?"/>
+                <apex:inputField value="{!ttfRecord.Direct_Deposit_Speed__c}" label="What direct deposit speed do you want to use on Gusto?"/>
+                <apex:inputField value="{!ttfRecord.Has_Remote_Employees__c}" label="Do any of your employees work remotely?"/>
+                <apex:inputField value="{!ttfRecord.Registered_As_Employer_In_Work_States__c}" label="Is your company registered as an employer in the state(s) above?"/>
+                <apex:inputField value="{!ttfRecord.Employee_Payment_Method__c}" label="Are your employees paid by direct deposit, check, or a mix of both?"/>
+                <apex:inputField value="{!ttfRecord.Employees_With_Multiple_Tax_Jurisdiction__c}" label="Have any of your employees moved to a new city or state in 2021?"/>
+                <apex:inputField value="{!ttfRecord.Invite_Employees_Via_Email__c}" label="When would you like us to invite your current employees to Gusto?"/>
+                <apex:inputField value="{!ttfRecord.Invite_Dismissed_Employees_Via_Email__c}" label="Would you like us to invite your dismissed employees to Gusto?"/>
+                <apex:inputField value="{!ttfRecord.Employees_With_Tax_Exemptions__c}" label="Have any of your employees claimed tax exemptions for 2021?"/>
+                <apex:inputField value="{!ttfRecord.Pay_Contractors_With_Payroll_Provider__c}" label="Do you pay contractors through your current payroll provider?"/>
+                <apex:inputField value="{!ttfRecord.Contractor_Payment_Method__c}" label="Are your contractors paid by direct deposit, check, or a mix of both?"/>
+                <apex:inputField value="{!ttfRecord.Pay_International_Contractors__c}" label="Does your company need to pay contractors outside the United States?"/>
+                <apex:inputField value="{!ttfRecord.Contractor_Countries__c}" label="Which countries are your contractors located in?"/>
+                <apex:inputField value="{!ttfRecord.Invite_Contractors_Via_Email__c}" label="When would you like us to invite your contractors to Gusto?"/>
+                <apex:inputField value="{!ttfRecord.Time_Off_Offered__c}" label="Does your company offer time off to your W-2 employees?"/>
+                <apex:inputField value="{!ttfRecord.Track_PTO_Policies__c}" label="Do you keep track of PTO policies and balances in your payroll account?"/>
+                <apex:inputField value="{!ttfRecord.New_Health_Benefits__c}" label="Are you looking to set up new health benefits with Gusto?"/>
+
+            </apex:pageBlockSection>
+            <apex:outputPanel id="addCompanySection">
+                <apex:pageBlockSection title="Select Companies" columns="1" rendered="{!OR(ttfRecord.Bulk_Deal__c == 'Y' ,ttfRecord.Multi_EIN__c == 'Y',ttfRecord.Same_Login__c == 'Y')}">
+                    <apex:pageblockSectionItem >
+                        <apex:outputPanel id="accountsSearch">
+                            <table>
+                                <tr>
+                                    <td> <apex:outputLabel for="searchAcc" value="Account Name"/> </td>
+                                    <td><apex:inputText id="searchAcc" value="{!strAccName}"/></td>
+                                    <td><apex:outputLabel for="searchZP" value="ZP Company Id"/></td>
+                                    <td><apex:inputText id="searchZP" value="{!strZPCompanyId}"/></td>
+                                    <td>
+                                        <apex:commandButton value="Search" status="statusSave" action="{!searchAccounts}" rerender="accountsSection"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageBlockSection columns="2">
+                        <apex:pageblockSectionItem >
+                            <apex:outputPanel id="accountsSection">
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                    <thead>
+                                        <tr class="slds-text-title slds-line-height_reset">
+                                            <th>Select</th>
+                                            <th>Name</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!lstAccWrapper}" var="aWrap" id="accTable">
+                                            <tr class="slds-text-title slds-line-height_reset">
+                                                <td>
+                                                    <apex:inputCheckbox value="{!aWrap.isSelected}">
+                                                    	<apex:actionSupport event="onchange" action="{!selectCompany}" status="statusSave" rerender="selectedAccountSection">
+                                                    		<apex:param name="companyIndex" value="{!aWrap.intIndex}" assignTo="{!selectedCompanyIndx}"/>
+                                                    	</apex:actionSupport>
+                                                    </apex:inputCheckbox>
+                                                </td>
+                                                <td>
+                                                    <apex:outputField value="{!aWrap.objAccount.name}"/>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </apex:repeat>
+                                        <tr>
+                                            <td><apex:commandLink value="First" reRender="accountsSection,selectedAccountSection" action="{!first}" status="statusSave"/></td>
+                                            <td><apex:commandLink value="Previous" rerender="accountsSection,selectedAccountSection" action="{!previous}" status="statusSave"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;</td>
+                                            <td><apex:commandLink value="Next" rerender="accountsSection,selectedAccountSection" action="{!next}" status="statusSave"/></td>
+                                            <td><apex:commandLink value="Last" rerender="accountsSection,selectedAccountSection" action="{!last}" status="statusSave"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </apex:outputPanel>
+                                </apex:pageblockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                <apex:outputPanel id="selectedAccountSection">
+                                <h2><strong>Selected Companies</strong></h2>
+                                <table title="Selected Companies" class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                        <tbody>
+                                            <apex:repeat value="{!mapSelectedAccounts}" var="key" >
+                                                <tr class="slds-text-title slds-line-height_reset">
+                                                    <td>
+                                                        <apex:commandLink value="X" status="statusSave" action="{!removeAccount}" rerender="selectedAccountSection,accountsSection">
+                                                            <apex:param name="idAcc" value="{!key}" assignTo="{!idAcccountToBeRemoved}"></apex:param>
+                                                        </apex:commandLink>
+                                                    </td>
+                                                    <td>
+                                                        <apex:outputField value="{!mapSelectedAccounts[key].objAccount.name}"/>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </tbody>
+                                    </table>
+                                    </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+        </apex:pageBlock>
+        <script>
+            
+            function setTabTitle() {
+                //Set the current tab's title
+                sforce.console.setTabTitle('{!ttfRecord.Name}');
+                
+            }
+        //Chaitanya Kurra 09-25-2020 - TTF Issue
+           function openSubTab(recId,recName){
+                 if (sforce.console.isInConsole()) {
+                    sforce.console.getEnclosingTabId(function(enclosingResult){
+                        sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                            closeTab();
+                            sforce.console.openSubtab(primaryResult.id, recId, true, recName, null,null,recName);
+                        });
+                    });
+
+                } else {
+                    // for inline Vf
+                    window.open('/'+recId, '_blank');
+                }
+            }
+
+            function closeTab() {
+                sforce.console.getFocusedSubtabId(callCloseTab);
+            }
+            var callCloseTab= function callCloseTab(result){
+                sforce.console.closeTab(result.id);
+            } 
+                
+            var pageLoad = window.onload;
+              window.onload = function() {
+                    if (pageLoad) {
+                            pageLoad();
+                    }
+                      setTabTitle();
+              }
+        </script>
+    </apex:form>
+    </div>
+</apex:page>

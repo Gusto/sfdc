@@ -1,0 +1,18 @@
+<template>
+	<div class="slds-col slds-size_1-of-3">
+		<lightning-card variant="Narrow" title="Below Tolerance Threshold" icon-name="standard:account">
+			<p class="slds-p-horizontal_small">
+				<lightning-input type="number" label="Total Amount Due Threshold Value" value={belowToleranceThresholdValue} onchange={handleChange} disabled={disabled}></lightning-input>
+			</p>
+			<p slot="footer">
+				<template lwc:if={disabled}>
+					<lightning-button variant="brand" label="Edit" title="Edit" onclick={handleClick}></lightning-button>
+				</template>
+                <template lwc:else>
+                    <lightning-button variant="brand" label="Save" title="Save" onclick={handleClick}></lightning-button>&nbsp;
+					<lightning-button label="Cancel" title="Cancel" onclick={handleClick}></lightning-button>
+                </template>
+			</p>
+		</lightning-card>
+	</div>
+</template>

@@ -1,0 +1,16 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName">
+	<!-- Attribute to refresh the component -->
+	<aura:attribute name="blnLoaded" type="Boolean" default="true"></aura:attribute>
+    <lightning:utilityBarAPI aura:id="utilitybar" />
+	<lightning:workspaceAPI aura:id="workspace" />
+
+	<aura:if isTrue="{!v.blnLoaded}">
+		<c:logSmartCallingLwcCmp
+			recordId="{!v.recordId}"
+			objectApiName="{!v.sObjectName}"
+			onopenrecord="{!c.handleOpenRecord}"
+			onrefreshcomponent="{!c.handleRefresh}"
+			onopenutility="{!c.openUtility}"
+		/>
+	</aura:if>
+</aura:component>

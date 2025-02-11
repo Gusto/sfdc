@@ -1,0 +1,337 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ViewScheduleEmailCtrl" applyBodyTag="false" sidebar="false" id="sJob">
+    <apex:form id="frmBody">
+ <head>
+    <title>Gusto</title>
+	<style>     
+        .datePicker{
+            position: fixed;
+            z-index:10001;
+        }
+        .tablesorter thead .sorter-false {
+       		padding: .25rem 10px !important;
+        }
+        .failScheduleJob{
+        	color: #f1b75b !important;
+        	cursor: pointer;
+        }
+	</style>
+     <script>
+        function setFocusOnLoad() {}
+      </script>
+    <c:UR_SortingTable />
+ </head>
+  <body class="slds-scope">
+     <c:UR_ActionStatus />
+	 <c:UR_MenuHeaderComponent tabName="ScheduleEmails" subTabName="" prjId="{!objProject.Id}"/>
+      <!--body start here-->  
+      	
+     <apex:actionFunction rerender="frmBody" status="statusSave" name="cancelSchedulejob" action="{!cancelSchedulejob}">
+     	<apex:param name="scheduleJobId" value="" assignTo="{!scheduleJobId}"/>
+     </apex:actionFunction>
+     <apex:actionFunction rerender="frmBody" status="statusSave" name="removeParticipant" action="{!removeParticipant}">
+     	<apex:param name="participantJobId" value="" assignTo="{!participantJobId}"/>
+     </apex:actionFunction>
+     <apex:actionFunction rerender="frmBody" status="statusSave" name="showEmailBody" action="{!showEmailBody}" oncomplete="openViewEmail();">
+     	<apex:param name="viewTemplateId" value="" assignTo="{!viewTemplateId}"/>
+     </apex:actionFunction>
+     <apex:actionFunction rerender="frmBody" status="statusSendEmail" name="resendEmail" action="{!resendEmail}">
+       <apex:param name="strPartId" value=""/>
+     </apex:actionFunction> 
+       
+    <apex:outputPanel rendered="{!if(scheduleJobList.size>0, true, false)}">
+    <div class="slds-p-around_medium">
+        <apex:pageMessages />
+        
+        <div class="slds-grid slds-wrap slds-gutters">
+            <div class="slds-col slds-size_1-of-1" id="survey-results">
+                <div class="slds-card slds-m-bottom_small">
+                    <div class="slds-card__header slds-grid slds-border_bottom slds-p-around_small slds-m-bottom_none bg-grey border-orange">
+                        <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                            <div class="slds-media__body">
+                                <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                                    <strong>Scheduled Emails</strong>
+                                </h2>
+                                <p class="note"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-card__body slds-p-around_none slds-m-around_none">
+                        <div class="slds-form slds-form_horizontal striped-and-flexed">
+                            <div class="slds-scrollable slds-scrollable--dynamic" style="max-height:600px; min-height:80px;">
+                                
+                               <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header tablesorter tablesorter-jui table--emails" role="grid">
+                                   <thead>
+                                       <tr style="height:35px;" class="slds-table-header"><!-- 9 -->
+                                           <th width="40%" class="slds-color__background_gray-4 sorter-false">Subject</th>
+                                           <th class="slds-color__background_gray-4 sorter-false">Recipients</th>
+                                           <th class="slds-color__background_gray-4 row-details sorter-false" style="white-space: nowrap !important;">Scheduled For</th>
+                                           <th class="slds-color__background_gray-4 row-details sorter-false">Created</th>
+                                           <th class="slds-color__background_gray-4 row-details sorter-false" style="white-space: nowrap !important;">Created By</th>
+                                           <th class="slds-color__background_gray-4 slds-row-actions sorter-false">&nbsp;</th>
+                                       </tr>
+                                   </thead>
+                                   
+                                   <tbody aria-live="polite" aria-relevant="all">
+                                       <apex:repeat value="{!scheduleJobList}" var="scObj">
+                                       <tr class="row-group-header slds-heading_blue odd" role="row">
+                                           <td class="slds-p-top_medium slds-p-bottom_medium"><em class="email-subject">{!scObj.emailSubject}</em></td>
+                                           <td class="slds-p-top_medium slds-p-bottom_medium row-details">{!scObj.totoalContact}</td>
+                                           <td class="slds-p-top_medium slds-p-bottom_medium row-details" style="white-space: nowrap !important;">
+                                           		<span class="{!if(scObj.blnJobFail==true && scObj.failEmail==0,'info-tooltip failScheduleJob','')}"  style="position: relative;">
+                                               		<apex:outputField value="{!scObj.scheduleJob.Schedule_Email_Date__c}"/> &nbsp; <apex:outputField value="{!scObj.scheduleJob.Schedule_Email_Time__c}"/>
+                                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 16px; left: -10px; width: 140px; white-space: normal !important;">
+                                                       <p class="slds-popover__body">Job failed, <span style="color: blue; text-decoration: underline;" onclick="rescheduleEmail('{!scObj.scheduleJob.Id}');">click here</span> to reschedule</p>
+                                                   </span>
+                                               </span>
+                                           </td>
+                                           <td class="slds-p-top_medium slds-p-bottom_medium row-details" style="white-space: nowrap !important;"><apex:outputField value="{!scObj.scheduleJob.createddate}"/></td>
+                                           <td class="slds-p-top_medium slds-p-bottom_medium row-details">{!scObj.scheduleJob.createdby.Name}</td>
+                                           <td class="slds-p-top_medium slds-p-bottom_medium slds-row-actions" style="white-space: nowrap !important;">
+                                               <span class="{!if(scObj.blnJobFail==true && scObj.failEmail==0,'info-tooltip','')}"  style="position: relative;">
+                                               	   <a style="display:{!if(scObj.blnJobFail==true && scObj.failEmail==0,'','none;')}" data-context="row" data-highlight="row" data-toggle="modal" href="javascript:void(0);" ><span style="background-color: rgb(241 183 91) !important;" class="slds-badge slds-theme_error">{!scObj.scheduleJob.Total_Scheduled_Email__c}</span></a>
+                                                   <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 16px; left: -10px; width: 140px; white-space: normal !important;">
+                                                       <p class="slds-popover__body">Job failed, <span style="color: blue; text-decoration: underline;" onclick="rescheduleEmail('{!scObj.scheduleJob.Id}');">click here</span> to reschedule</p>
+                                                   </span>
+                                               </span>
+                                               
+                                               <span class="{!if(scObj.failEmail>0,'info-tooltip','')}"  style="position: relative;">
+                                               	   <a style="display:{!if(scObj.failEmail>0,'','none;')}" data-context="row" data-highlight="row" data-toggle="modal" href="javascript:void(0);" ><span class="slds-badge slds-theme_error">{!scObj.failEmail}</span></a>
+                                                   <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 20px; left: 0px; width: 140px; ">
+                                                       <p class="slds-popover__body">{!scObj.failEmail} Email failed</p>
+                                                   </span>
+                                               </span>
+                                               
+                                               <span class="info-tooltip"  style="position: relative;">
+                                               	    <a class="view-email-btn read" onclick="showEmailBody('{!scObj.emailTemplateId}')" href="javascript:void(0);" data-highlight="row" data-context="row" data-toggle="modal" data-modal="view-email"><i class="fas fa-envelope-open"></i></a>
+                                               		<span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 20px; left: 0px; width: 100px; ">
+                                                       <p class="slds-popover__body">View Email</p>
+                                                   </span>
+                                               </span>
+                                               
+                                               <span class="info-tooltip"  style="position: relative;">
+                                               	    <a class="email-cancel" onclick="deleteScheduleJob('{!scObj.scheduleJob.Id}');" data-context="group" data-modal="cancel-email" data-toggle="modal"  href="javascript:void(0);"><i class="fas fa-minus-circle slds-button_icon-error"></i></a>
+                                               		<span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 15px; left: 0px; width: 120px; white-space: normal !important; ">
+                                                       <p class="slds-popover__body">Cancel scheduled email job</p>
+                                                   </span>
+                                               </span> 
+                                               <a class="row-toggle show-contact" data-toggle="group" href="javascript:void(0);"><i class="fas fa-chevron-down slds-color__text_gray-9"></i></a>
+                                           </td>
+                                       </tr>
+                                       <tr class="slds-line-height_reset tablesorter-headerRow thead" role="row" style="display:none; height:35px;">
+                                           <th style="border-top: 0px;" class="slds-color__background_gray-5 slds-cell--name">Contact Name</th>
+                                           <th style="border-top: 0px;" class="slds-color__background_gray-5">Email</th>
+                                           <th style="border-top: 0px;" class="slds-color__background_gray-5">Company Name</th>
+                                           <th style="border-top: 0px;" class="slds-color__background_gray-5 slds-cell--contact-history slds-row-actions" colspan="3"></th>
+                                       </tr>
+                                       <apex:repeat value="{!scObj.participantList}" var="participantObj">
+                                           <tr class="odd" data-email="{!participantObj.Contact_Email__c}" role="row" style="display:none;">
+                                               <td class="slds-cell--name"><a href="/{!participantObj.Contact_Id__c}"  target="_blank">{!participantObj.Contact_Name__c}</a></td>
+                                               <td>{!participantObj.Contact_Email__c}</td>
+                                               <td><a href="/{!participantObj.Company_Id__c}"  target="_blank">{!participantObj.Company_Name__c}</a></td>
+                                               <td class="slds-cell--contact-history slds-row-actions" colspan="3">
+                                                   <ul class="contact-history row-actions">
+                                                       <li>
+                                                              <span class="info-tooltip"  style="position: relative;">
+                                                                  <a onclick="resendEmail('{!participantObj.Id}');" style="display:{!if(participantObj.Schedule_Email_Status__c=='Fail','','none;')}" class="email-cancel" data-context="row" data-highlight="row" data-modal="fail-email" data-toggle="modal" href="javascript:void(0);" ><i class="fas fa-exclamation-triangle resend-email-icon" style="filter:saturate(1); opacity:1;"></i></a>  
+ 														   		  <a style="display:{!if(participantObj.Schedule_Email_Status__c=='Success','','none;')}" class="email-cancel" data-context="row" data-highlight="row" data-modal="fail-email" data-toggle="modal" href="javascript:void(0);" ><i class="fas fa-check" style="color:green"></i></a>  
+
+                                                                  <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: 0px; width: 140px; ">
+                                                                    <p class="slds-popover__body">
+                                                                        {!if(participantObj.Schedule_Email_Status__c=='Fail','Failed, click to resend','')}
+                                                                        {!if(participantObj.Schedule_Email_Status__c=='Success','Successfully send.','')}
+                                                                    </p>
+                                                                  </span>
+                                                               </span>
+                                                           
+                                                               <span class="info-tooltip"  style="position: relative;">
+                                                                   <a class="email-cancel" onclick="canelEmail('{!participantObj.Id}')" data-context="row" data-highlight="row" data-modal="cancel-email" data-toggle="modal" href="javascript:void(0);"><i class="fas fa-minus-circle slds-button_icon-error"></i></a>  
+                                                      			   <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 20px; left: 0px; width: 100px;">
+                                                                       <p class="slds-popover__body">Cancel Email</p>
+                                                                   </span>
+                                                               </span> 
+                                                         </li>
+                                                   </ul>
+                                               </td>
+                                           </tr>
+                                       </apex:repeat>
+                                       <!--<tr class="odd" role="row" style="display:none; background-color:rgb(211, 227, 247);">
+                                       		<td height="15" colspan="6" style="border-top: 0px !important;"></td>
+                                       </tr>-->
+                                       </apex:repeat>
+                                   </tbody>
+                                </table>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </apex:outputPanel>  
+   
+            
+   <!--Schedule Model start -->
+    <div class="modal-window remove-schedule-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container" style="max-width: 500px;">
+        <div class="slds-modal__header">
+          
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove Schedule Email</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <p> Are you sure want to remove schedule email? <input type="hidden" id="deleteJobId"/> </p>
+        </div>
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">No</button>
+		  <button class="slds-button slds-button_brand cancel-job">Yes</button>
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>  
+  <!-- Model End -->
+      
+  <!--Schedule Model start -->
+    <div class="modal-window remove-participant-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container" style="max-width: 500px;">
+        <div class="slds-modal__header">
+          
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove Participant</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <p> Are you sure want to remove participant from schedule email job? <input type="hidden" id="removeParticipantId"/> </p>
+        </div>
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">No</button>
+		  <button class="slds-button slds-button_brand cancel-email">Yes</button>
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>  
+  <!-- Model End -->
+      
+   <!--Schedule Model start -->
+    <div class="modal-window view-schedule-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container" style="max-width: 800px;">
+        <div class="slds-modal__header ">    
+            <h2 class="slds-text-heading_small slds-text-align_left slds-hyphenate" id="emailSubject"><b> <apex:outputText value="{!viewEmailSubject}" escape="false" /> </b> </h2>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <p id="emailBody"><apex:outputText value="{!viewEmailBody}" escape="false"/> </p>
+        </div>
+        <div class="slds-modal__footer">
+          <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>  
+  <!-- Model End -->
+  
+  <!--Schedule Model start -->
+    <div class="modal-window email-reschedule-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-schedule-send" aria-modal="true" aria-describedby="modal-heading-schedule-send" class="slds-modal slds-fade-in-open">
+               <div class="slds-modal__container" style="max-width: 500px;">
+                   <div class="slds-modal__header">
+                       <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="return false;">
+                           <i class="fas fa-times" style="font-size: 24px;"></i>
+                           <span class="slds-assistive-text">Close</span>
+                       </button>
+                       <h2 id="modal-heading-schedule-send" class="slds-text-heading_medium slds-hyphenate">
+                           <strong>Reschedule Email</strong>
+                       </h2>
+                   </div>
+                   <div class="slds-modal__content slds-top_small slds-p-bottom_small" style="min-height: 100px; overflow: visible;">
+                       <div class="survey-schedule slds-m-top_small">
+                           <h4 class="slds-text-heading_small slds-m-bottom_x-small slds-m-top_large slds-m-left_medium">Schedule For:</h4>
+                           <div class="slds-form slds-grid slds-grid--inline-form slds-p-left_medium slds-p-top_small slds-border--top slds-m-bottom_medium">
+                               <input id="schedule-send-recipient-count" type="hidden" value="" data-label="Recipient Count" class="scout-form-data" />
+                               <div class="slds-form-element slds-form-element--with-datepicker">
+                                   <label class="slds-form-element__label" for="schedule-send-date-input-id">Date</label>
+                                   <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                       <apex:inputField styleClass="slds-input" value="{!scheduleEmail.Schedule_Email_Date__c}" /> 
+                                   </div>
+                               </div>
+                               
+                               <div class="slds-form-element"  style="margin-left:10px; min-width: 150px;">
+                                   <label class="slds-form-element__label" for="schedule-send--time-input-id">Time</label>
+                                   <div class="slds-form-element__control">
+                                       <apex:inputField styleclass="slds-select" value="{!scheduleEmail.Schedule_Email_Time__c}" />
+                                   </div>
+                               </div>
+                               <apex:inputHidden id="emailRescheduleId" value="{!reScheduleJobId}"/>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="slds-modal__footer">
+                       <button type="button" class="slds-button slds-button_outline-brand slds-float_left close-modal" onclick="return false;">Cancel</button>
+                       <apex:commandButton styleclass="slds-button slds-button_brand" value="Reschedule Email" action="{!reScheduleEmail}" status="statusScheduleEmail" rerender="frmBody"/>          
+                   </div>
+               </div>
+           </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>  
+  <!-- Model End -->
+      
+    <script type="text/javascript">
+          $('.close-modal, .slds-modal__close').click(function() {
+              $('.modal-window').fadeOut();
+          });
+      
+          function openViewEmail(){
+              $('.view-schedule-modal').fadeIn(); 
+          }
+      
+      	  $('.show-contact').click(function() {
+                console.log('---------');
+                var $group = $(this).closest('.row-group-header');
+                $group.toggleClass('expanded');
+                if($group.hasClass('expanded')) {
+                	$group.nextUntil('.row-group-header').show();
+                }
+                else {
+                	$group.nextUntil('.row-group-header').hide();
+                }
+          });
+      		
+          function deleteScheduleJob(obj){
+              if('{!isEditable}'=='true'){
+                  document.getElementById('deleteJobId').value = obj;
+                  $('.remove-schedule-modal').fadeIn();
+              }
+          }
+			
+      
+          $('.cancel-job').click(function() {
+              cancelSchedulejob(document.getElementById('deleteJobId').value);
+              //document.getElementById('deleteJobId').value = '';
+          });
+          
+          function canelEmail(obj){
+              if('{!isEditable}'=='true'){
+                  document.getElementById('removeParticipantId').value = obj;
+                  $('.remove-participant-modal').fadeIn();
+              }
+          }
+          
+          
+          $('.cancel-email').click(function() {
+              removeParticipant(document.getElementById('removeParticipantId').value);
+              //document.getElementById('removeParticipantId').value = '';
+          });
+      
+      	  function rescheduleEmail(obj){
+              if('{!isEditable}'=='true'){
+                  document.getElementById('sJob:frmBody:emailRescheduleId').value = obj;
+                  $('.email-reschedule-modal').fadeIn();
+              }
+          }
+     </script> 
+      
+    </body>
+    </apex:form>   
+</apex:page>

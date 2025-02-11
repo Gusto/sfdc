@@ -1,0 +1,10 @@
+<apex:page controller="CreateCompanyMigrationCaseController" action="{!createCase}">
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!cancelAction}" value="Back To Order"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

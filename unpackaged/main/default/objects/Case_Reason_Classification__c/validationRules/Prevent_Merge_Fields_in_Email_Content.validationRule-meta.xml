@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Merge_Fields_in_Email_Content</fullName>
+    <active>true</active>
+    <description>Prevents users from entering merge fields in Email Content. Causes Auto Email Flow to throw errors.</description>
+    <errorConditionFormula>CONTAINS(Email_Content__c, &quot;{!&quot;)</errorConditionFormula>
+    <errorDisplayField>Email_Content__c</errorDisplayField>
+    <errorMessage>Please remove any merge fields ({!FIELD NAME}) before saving.</errorMessage>
+</ValidationRule>

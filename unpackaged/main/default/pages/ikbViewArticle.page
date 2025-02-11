@@ -1,0 +1,9 @@
+<apex:page controller="IkbSearchController" title="{!articleTitle} | IKB" action="{!viewArticle}"  sidebar="false" cache="false" showHeader="false">
+    <div>
+        
+    <h1>
+        {!articleTitle} | IKB       
+    </h1>
+    </div>
+    <apex:outputText value="{!articleDescription}" escape="false"/> 
+</apex:page>

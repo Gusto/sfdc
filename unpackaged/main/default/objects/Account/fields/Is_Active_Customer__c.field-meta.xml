@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Active_Customer__c</fullName>
+    <formula>NOT(ISBLANK(Joined_Date_Panda__c)) &amp;&amp;
+NOT(ISBLANK(ZP_Company_ID__c))</formula>
+    <label>Active Customer</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

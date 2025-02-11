@@ -1,0 +1,86 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 07-27-2022
+  @last modified by  : Nigam Goyal
+-->
+<template>
+
+    <div class="slds-form-element">
+        <label class="slds-form-element__label" for="combobox-id-10">{objectlabel}</label>
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                    aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none"
+                        onmouseleave={handleFocusOut} onmouseover={handleChange}>
+                        <lightning-input type="text" variant="label-hidden" value={searchterm} onfocus={handleChange}
+                            autocomplete="off" onchange={handleChange} disabled={blndisabled}></lightning-input>
+
+                        <template if:true={blnIsvisible}>
+                            <template if:true={boolrecordfound}>
+                                <div id="listbox-id-3" class="slds-dropdown slds-dropdown_fluid" role="listbox"
+                                    style="max-height: 200px;overflow: scroll;">
+                                    <ul class="slds-listbox slds-listbox_vertical">
+                                        <template for:each={listrecords} for:item="rec">
+                                            <li key={rec.label} role="presentation" data-value={rec.value}
+                                                data-api={rec.label} class="selectable-option">
+                                                <div data-value={rec.value} onclick={handleSelected}
+                                                    data-api={rec.label}
+                                                    class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small selectable-option"
+                                                    role="option">
+                                                    <span data-value={rec.value} data-api={rec.label}
+                                                        class="slds-media__figure slds-listbox__option-icon">
+                                                        <span data-value={rec.value} data-api={rec.label}
+                                                            class="slds-icon_container slds-icon-utility-anchor">
+                                                            <lightning-icon data-value={rec.value} data-api={rec.label}
+                                                                icon-name={lookupicon} size="x-small"></lightning-icon>
+                                                        </span>
+                                                    </span>
+                                                    <span data-value={rec.value} data-api={rec.label}
+                                                        class="slds-media__body">
+                                                        <span data-value={rec.value} data-api={rec.label}
+                                                            class="slds-truncate">
+                                                            <lightning-formatted-rich-text data-value={rec.value}
+                                                                data-api={rec.label} value={rec.label}>
+                                                            </lightning-formatted-rich-text>
+                                                            <span data-value={rec.value} data-api={rec.label}
+                                                                class="slds-listbox__option-meta slds-listbox__option-meta_entity">{rec.subtext}</span>
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </template>
+                            <template if:false={boolrecordfound}>
+                                <div class="slds-dropdown slds-dropdown_fluid" role="listbox">
+                                    <ul class="slds-listbox slds-listbox_vertical" role="group" aria-label="Group Two">
+                                        <li role="presentation">
+                                            <div id="option5"
+                                                class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                                role="option">
+                                                <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <span class="slds-icon_container slds-icon-utility-anchor">
+                                                        <lightning-icon icon-name="standard:first_non_empty"
+                                                            size="x-small"></lightning-icon>
+                                                    </span>
+                                                </span>
+                                                <span class="slds-media__body">
+                                                    <span class="slds-truncate" title="None">No {objectlabel}s
+                                                        found.</span>
+                                                </span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

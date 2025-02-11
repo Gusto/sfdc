@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Outbound_PRE__c</fullName>
+    <description>Populated manually if advising team identifies that action is required from the outbound team. 
+If adding values to this picklist you must also update Outbound PRE formula on case.</description>
+    <label>Outbound PRE</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Recert</fullName>
+                <default>false</default>
+                <label>Recert</label>
+            </value>
+            <value>
+                <fullName>Address Change</fullName>
+                <default>false</default>
+                <label>Address Change</label>
+            </value>
+            <value>
+                <fullName>SIC Code</fullName>
+                <default>false</default>
+                <label>SIC Code</label>
+            </value>
+            <value>
+                <fullName>0 enrollees</fullName>
+                <default>false</default>
+                <label>0 enrollees</label>
+            </value>
+            <value>
+                <fullName>Termination</fullName>
+                <default>false</default>
+                <label>Termination</label>
+            </value>
+            <value>
+                <fullName>BOR away</fullName>
+                <default>false</default>
+                <label>BOR away</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>5</visibleLines>
+</CustomField>

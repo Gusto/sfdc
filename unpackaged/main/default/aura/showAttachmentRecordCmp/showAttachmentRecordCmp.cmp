@@ -1,0 +1,19 @@
+<!--
+    Purpose: Aura Wrapper component for File Previews. 
+            Users can preview the attachments and open the files record in a new tab.
+    Written by : Dhir Kumar
+    Date: 09/15/2020
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId" access="global" >
+    <!-- Workspace API -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+
+    <aura:attribute name="idRecord" type="String" default=""></aura:attribute>
+    <aura:attribute name="strUrl" type="String" default=""></aura:attribute>
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <!-- recordId = the case record Id on which the files needs to be previewed -->
+    <!-- ontabOpen = when the user clicks on this the attachment record opens in a new Sub tab -->
+    <c:showAttachmentRecordLwcCmp recordId="{!v.idRecord}" attachurl="{!v.strUrl}"></c:showAttachmentRecordLwcCmp>
+</aura:component>

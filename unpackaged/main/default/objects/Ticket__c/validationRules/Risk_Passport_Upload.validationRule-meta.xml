@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Passport_Upload</fullName>
+    <active>true</active>
+    <description>&quot;Manual Signatory Verification&quot; Risk Ticket Reason required fields when submitting ticket.</description>
+    <errorConditionFormula>RecordType.DeveloperName = &apos;Risk_Assurance&apos; &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason__c, &apos;Company Onboarding&apos;) &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason_Detail__c, &apos;Manual Signatory Verification&apos;) &amp;&amp;
+ Sig_s_passport_uploaded_to_secure_URL__c = FALSE</errorConditionFormula>
+    <errorDisplayField>Sig_s_passport_uploaded_to_secure_URL__c</errorDisplayField>
+    <errorMessage>Please assist the customer in uploading a color picture of the signatory’s passport to their Gusto account.</errorMessage>
+</ValidationRule>

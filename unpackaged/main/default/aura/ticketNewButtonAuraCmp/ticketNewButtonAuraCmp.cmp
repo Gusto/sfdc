@@ -1,0 +1,11 @@
+<!--
+	Purpose: Ticket object New Button override by component to skip for a few profiles
+	Written by : Pradeep Chary
+	Date: 12/21/2023
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:actionOverride" access="global" >
+    
+    <lightning:workspaceAPI aura:id="workspace"/> 
+    <c:ticketNewButtonCmp oncloseclicked="{!c.handleTabClose}"></c:ticketNewButtonCmp>
+    
+</aura:component>

@@ -1,0 +1,29 @@
+<template>
+	<template if:false={showOptions}>
+		<br />
+		<div class="slds-var-p-around_medium slds-align_absolute-center animate-flicker">{strMessage}</div>
+		<br />
+	</template>
+	<template if:true={showOptions}>
+		<div class="slds-box">
+			<div class="slds-grid slds-wrap">
+				<div class="slds-size_3-of-3">
+					<lightning-combobox
+						name="strTypeOfHI"
+						label="Select Type of HI (If no value is selected, System chooses Type)"
+						value={strTypeOfHI}
+						placeholder="Select Type of HI"
+						options={options}
+						onchange={handleChange}
+					></lightning-combobox>
+				</div>
+			</div>
+			<br />
+			<div class="slds-grid slds-wrap">
+				<div class="slds-size_3-of-3 slds-align_absolute-center">
+					<lightning-button icon-name="utility:save" variant="brand" label="Submit" title="Submit" onclick={handleRender}></lightning-button>
+				</div>
+			</div>
+		</div>
+	</template>
+</template>

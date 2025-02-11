@@ -1,0 +1,53 @@
+<apex:page controller="OfficeFunctionalityCtrl" showHeader="false" sidebar="false" id="page">
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+    <script type="text/javascript">
+        var eventHandler = function (result) {
+            refreshPage();
+        };
+        sforce.console.onCustomConsoleComponentButtonClicked(eventHandler);
+        function refreshPage(){
+            location.reload();
+        }    
+    </script>
+    
+    <div class="gusto">
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                    <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+        <apex:form id="frm">
+            <div class="slds-section">
+                <h4 class="slds-section__title slds-theme--shade">
+                    <span class="slds-truncate slds-p-horizontal_small" title="Section Title">My Details</span>
+                </h4>&nbsp;&nbsp;
+                <apex:pageMessages />
+                <div class="slds-form-element__row" style="padding: 2px;">
+                    <div class="{!if(sectionMessage==null,'slds-form-element','hide')}">
+                        <label class="slds-checkbox">
+                            <span class="slds-form-element__label">Out Of Office</span>
+                            <apex:inputcheckbox id="outOfOffice" styleclass="slds-input" value="{!outOfOffice}" rendered="{!sectionMessage==NULL}" />
+                            <span class="slds-checkbox--faux"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="{!if(sectionMessage!=null,'slds-form-element','hide')}">
+                        <label class="slds-checkbox">
+                            <apex:outputText value="{!sectionMessage}" styleClass="slds-form-element__label" rendered="{!sectionMessage!=NULL}"/>
+                        </label>
+                    </div>
+                    <br/>
+                    <apex:commandButton Id="btnSubmit" styleclass="slds-button_neutral" style="padding: 2px 3px !important;" action="{!outOfOfficeSelection}" rerender="none" status="status" title="Update" value="Update"/>
+                </div>
+            </div>
+        </apex:form>
+    </div>
+</apex:page>

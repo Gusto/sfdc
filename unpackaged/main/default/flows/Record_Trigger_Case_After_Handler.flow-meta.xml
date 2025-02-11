@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <decisions>
+        <name>Benefit_BoR_Intro_Email</name>
+        <label>Benefit BoR Intro Email</label>
+        <locationX>776</locationX>
+        <locationY>383</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>BT_Intro_Email_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits BoR</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Contact.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BT_Notification__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Intro Email</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Carrier_Order__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.BT_Notification__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>BT_Intro_Email</targetReference>
+            </connector>
+            <label>BT Intro Email Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Validate_Close_Customer_Cases</name>
+        <label>Validate Close Customer Cases</label>
+        <locationX>1115</locationX>
+        <locationY>146</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Validate_Close_Customer_Case</name>
+            <conditionLogic>1 AND 2 AND 3 AND (4 OR 5 OR 6 OR 7 OR 8) AND 9</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Integration_Id__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Integration_Id__c</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>hippo-</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits New Plan Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits Renewal Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits Change Case</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits BoR</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits BYB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Onboarding_Close_DateTime__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Case_Status_as_Closed</targetReference>
+            </connector>
+            <label>Validate Close Customer Case</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Record Trigger:  Case After Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger:  Case After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Case_Status_as_Closed</name>
+        <label>Update Case Status as Closed</label>
+        <locationX>1377</locationX>
+        <locationY>148</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>650</locationX>
+        <locationY>48</locationY>
+        <connector>
+            <targetReference>Benefit_BoR_Intro_Email</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Benefits BoR</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Benefits New Plan Case</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Benefits Renewal Case</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Benefits Change Case</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Benefits BYB</stringValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Close_Customer_Case</name>
+            <connector>
+                <targetReference>Validate_Close_Customer_Cases</targetReference>
+            </connector>
+            <label>Close Customer Case</label>
+            <offsetNumber>0</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Onboarding_Close_DateTime__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <subflows>
+        <name>BT_Intro_Email</name>
+        <label>BT Intro Email</label>
+        <locationX>785</locationX>
+        <locationY>590</locationY>
+        <flowName>SubFlow_BT_Intro_Email</flowName>
+        <inputAssignments>
+            <name>RecordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+</Flow>

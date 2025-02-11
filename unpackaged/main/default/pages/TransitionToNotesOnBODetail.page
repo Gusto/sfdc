@@ -1,0 +1,137 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 04-29-2024
+  @last modified by  : Nigam Goyal
+-->
+<apex:page standardController="Benefit_Order__c" extensions="TransitionToNotesOnBODetailExt" showHeader="false" sidebar="false" >
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <style>
+        .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
+        }
+    </style>
+    <script type="text/javascript">   
+        // refresh primary tab
+        function refreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(tabId , false,true);
+        };
+    //for opening QA Sheet
+    function openSubTabQASheet(recId){
+        console.log('recid-->'+recId);
+        var redirectUrl3 = '/'+recId;
+        console.log('redirectUrl3-->'+redirectUrl3);
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl3, true,'QA Sheet', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl3, '_blank');
+        }
+    }
+        
+    //for opening TTIA vf
+    function openSubTab(recId){
+        var redirectUrl = '/apex/DisplayEditTTIA?BOid='+recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl, true,'TTIA', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl, '_blank');
+        }
+    } 
+    // for opening TTQ
+    function openTTFQTab(recId){
+        var redirectUrl1 = '/apex/CreateModifyTranstionToFulfilment?id='+recId;
+        //var redirectUrl1 = recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl1, true,'TTQ', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl1, '_blank');
+        }
+    }       
+    // for opening TTS
+    function openTTSTab(recId){
+        var redirectUrl4 = '/apex/DisplayEditTTS?BOid='+recId;
+        //var redirectUrl1 = recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl4, true,'TTS', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl4, '_blank');
+        }
+    }  
+    // for opening TTCare
+    function openTTCareTab(recId){
+        var redirectUrl6 = '/apex/DisplayEditTTCare?BOid='+recId;
+        //var redirectUrl1 = recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl6, true,'TTCare', null);
+                });
+            });
+            windowClose();
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl6, '_blank');
+        }
+    }
+    </script>
+    <apex:form >
+        <c:GustoActionStatus />
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Transition To Notes" columns="1">
+                <table>
+                    <tr>
+                        <td><b>Transition To Qualification:</b>  <a href="javascript:void(0);" onclick="openTTFQTab('{!TtqObj.id}');return false;">Open TTQ</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>QA Sheet:</b>
+                            <span style="display:{!if(QAObj.Benefit_Order__r.Account__c=='', '','none;')}">This Benefit Order is not associated to an Account. Please confirm that this is the correct Benefit Order to work from. If it is, please reach out to BizTech to have the Account associated</span>
+                            <a style="display:{!if(strHippoURL!='', '','none;')}" href="javascript:void(0);" onclick ="window.open('{!strHippoURL}');return false;">Open QA</a>
+                            <!-- <a style="display:{!if(strHippoURL=='', '','none;')}" href="javascript:void(0);" onclick ="openSubTabQASheet('{!QAObj.id}');return false;">Open QA</a> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Transition To Submission:</b>  <a href="javascript:void(0);" onclick="openTTSTab('{!QAObj.Benefit_Order__c}');return false;">Open TTS</a></td>
+                    </tr>
+                </table> 
+           </apex:pageBlockSection>
+           <apex:commandButton id="coverageEmailBtn" rerender="pageMsgs,coverageEmailBtn" 
+                                value="Send Final Email and Fulfill" action="{!invokeConfirmationEmail}" 
+                                rendered="{!blnShowConfirmationEmailBtn && $Permission.Button_Access_Send_Final_Email_and_Fulfill_Button}" oncomplete="refreshPrimaryTab();"
+                                status="actStatusId"/>
+            <apex:pageBlockSection title="Warnings" columns="1">
+                <apex:pageMessages id="pageMsgs"></apex:pageMessages>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

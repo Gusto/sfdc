@@ -1,0 +1,12 @@
+<apex:page standardController="Benefit_Order__c" extensions="UnblockBenefitOrderExt" action="{!unblockBenefitOrder}">
+    <apex:variable value="{!Benefit_Order__c}" var="objBenefitOrder" />
+    <apex:sectionHeader title="Unblock a {!$ObjectType.Benefit_Order__c.label}" subtitle="Unblock {!objBenefitOrder.Name}" />
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Return to Benefit Order" action="{!cancel}" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

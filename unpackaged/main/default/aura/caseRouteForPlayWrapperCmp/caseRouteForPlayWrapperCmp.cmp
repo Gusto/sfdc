@@ -1,0 +1,28 @@
+<!--
+    Description: This Aura component is mainly used by Captains/PEs to route cases
+    Author: Praveen Sethu
+    Date: 09/16/2020
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId" controller="RoutingCaseController">
+    <lightning:workspaceAPI aura:id="workspace"/> 
+    <lightning:utilityBarAPI aura:id="utilitybar"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:attribute name="blnCanQA" type="Boolean" default="false" />
+    <aura:attribute name="blnCaseDetailPlay" type="Boolean" default="false" />
+
+    <!-- Opens Cases for Captains and PEs to start routing -->
+    <lightning:tabset>
+        <aura:if isTrue="{!v.blnCaseDetailPlay}">
+            <lightning:tab label="Case Detail Play">
+                <c:caseRouterForPlayCmp onopencase="{!c.handleOpenCaseTab}" ></c:caseRouterForPlayCmp>      
+            </lightning:tab>
+        </aura:if>
+        <aura:if isTrue="{!v.blnCanQA}">
+            <lightning:tab label="QA Play">
+                <c:qaPlayCmp onopenqacase="{!c.handleOpenCaseTab}"></c:qaPlayCmp>
+            </lightning:tab>
+        </aura:if>
+    </lightning:tabset>
+</aura:component>

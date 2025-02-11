@@ -1,0 +1,382 @@
+<apex:page standardController="Tax_Ops_Task__c" extensions="TaxOpsTaskPageExtension" id="mainPage">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/> 
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+        .page-disable {
+            position: relative;
+            opacity:.6;
+        }
+        .page-disable:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+        }        
+    </style>    
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+
+        window.onload = function(e){            
+            if('{!Tax_Ops_Task__c.Status__c}' == 'Open' || '{!Tax_Ops_Task__c.Status__c}' == 'New'){
+                //udpateRecStatus();
+            }
+                     
+        }
+
+        //====================refresh primary tab code======================
+        function RefreshPrimaryTab() 
+       {
+           sforce.console.getFocusedPrimaryTabId(showTabId);
+       }
+       
+       var showTabId = function showTabId(result) 
+       {
+           var tabId = result.id;
+           //alert('Primary Tab IDs: primaryTabId ' + tabId );
+           sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+           //location.href = location.href;
+       };
+       //====================refresh primary tab and reload TaxOpsTaskPage code======================
+        function RefreshPrimaryTab1() 
+       {
+           sforce.console.getFocusedPrimaryTabId(showTabId1);
+       }
+       
+       var showTabId1 = function showTabId1(result) 
+       {
+           var tabId = result.id;
+           //alert('Primary Tab IDs: primaryTabId ' + tabId );
+           sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+           location.href = location.href;
+       };
+       
+       
+       //==============================================
+       var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               //alert('Email Sent');
+           } 
+           else 
+           {
+               //alert('Cannot refresh the page');
+           }
+       };
+       //===================tab close event listener=======================
+       var onPrimaryTabClose = function onPrimaryTabClose (result) {
+            saverec();
+        };
+        
+        //Add a listener to handle the closing of the primary tab 
+        sforce.console.getFocusedPrimaryTabId(function (result) { 
+            if (result.id) {
+                sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB,
+                onPrimaryTabClose, { tabId : result.id });
+            } else {
+                alert('Could not find an enclosing primary TAB!');
+            }
+        });
+       //==============Open "Tax Ops Task - Mass Update" functionality code====================
+       function openMassUpdateOnDetailTab() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(massUpdateSubtab);
+        }
+        
+        var massUpdateSubtab = function massUpdateSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            var processStep = '{!Tax_Ops_Task__c.Process_step__c}';
+            var processStepval;
+            if(processStep != null && processStep.indexOf('Filing') > -1){
+                processStepval = 'ff';
+            }
+            else{
+                processStepval = 'fp';
+            }
+            sforce.console.openSubtab(primaryTabId , '/apex/TaxOpsFailedRecordMassUpdate?syncrec=1&id={!Tax_Ops_Task__c.Id}&rtnm='+processStepval, true, 
+                '{!Tax_Ops_Task__c.Process_Step__c}',null,refreshSuccess,'salesforceSubTab');
+        }; 
+        //============save & refresh page on process step change===============
+
+    </script>
+    
+    <div class="gusto" >
+        <!-- <apex:pageMessages ></apex:pageMessages> -->
+                  
+            
+        <apex:form id="frm" >
+
+            <apex:outputPanel id="checkScript">
+                <script>
+                    /*function refreshPageonCondition(){
+                        if('{!message}' == '0'){
+                            var delayInMilliseconds = 5000; //1 second
+
+                            setTimeout(function() {
+                            //your code to be executed after 2 second
+                            }, location.reload());
+                        }
+                    }*/
+
+
+                </script>
+            </apex:outputPanel>
+
+
+            <apex:actionStatus id="fetchStatus" >
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                               height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Please Wait...</span> 
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:actionfunction name="saverec1" action="{!saveRec}" oncomplete="RefreshPrimaryTab();" status="fetchStatus" reRender="msg"/> 
+            <apex:actionfunction name="udpateRecStatus" action="{!updateTaskStatus}" oncomplete="RefreshPrimaryTab();"  status="fetchStatus" reRender="msg"/> 
+            <apex:outputPanel id="csvprocessing" rendered="{!Tax_Ops_Task__c.CSV_File_Processing__c == true}" >
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                                                                     height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                    <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Please Wait...</span> 
+                    </div>
+                </div>
+            </apex:outputPanel>
+            <apex:actionPoller id="actionPollerId" rendered="{!if(csvFileBody != null || isUploadInprogress==true || Tax_Ops_Task__c.CSV_File_Processing__c==true,true,false)}" action="{!checkUploadInprogress}" reRender="frm" interval="5" onsubmit="RefreshPrimaryTab()" status="fetchStatus" />
+
+            <apex:outputPanel id="detailpanel" rendered="{!Tax_Ops_Task__c.CSV_File_Processing__c == false}" > <!-- rendered="{! if(Tax_Ops_Task__c.Status__c != 'Completed',true,false)}" -->
+                <apex:pageMessages id="msg"></apex:pageMessages>
+                <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                    <apex:commandButton action="{!saveRec}" value="Save" styleclass="slds-button slds-button--neutral" status="fetchStatus" reRender="msg"/>
+                    <apex:commandButton action="{!saveRec}" value="Update Problem Companies" styleclass="slds-button slds-button--neutral" oncomplete="openMassUpdateOnDetailTab();" status="fetchStatus" reRender="msg"/>
+                     <!-- <input type="button"  value="Update Problem Companies" class="btn slds-button slds-button--neutral" onclick="saverec1();" oncomplete="openMassUpdateOnDetailTab();" />  -->
+                </div>
+                <Table class="table.spacing">    
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="ownerf">Owner: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField value="{!taxOpsTaskRec.OwnerId}">
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="slds-form-element__label">Process Step: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:inputField styleclass="pstep" value="{!taxOpsTaskRec.Process_Step__c}" onchange="saverec1();">
+                                </apex:inputField>
+                            </div>
+                        </td>                    
+                    </tr>
+                    <!-- <tr>
+                        <td>
+                            <label class="slds-form-element__label">FEIN/Account Number: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:inputField styleclass="pstep" value="{!Tax_Ops_Task__c.FEIN_Account_Number__c}" >
+                                </apex:inputField>
+                            </div>
+                        </td>                    
+                    </tr> -->
+                    <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Payment_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Payments',true,false)}">
+                        <!-- <apex:outputPanel rendered="{! if((Tax_Ops_Task__c.FEIN_Account_Number__c == 'Account Number' && f == 'Failed_Payment_FEINs__c') || ((Tax_Ops_Task__c.FEIN_Account_Number__c == null || Tax_Ops_Task__c.FEIN_Account_Number__c == 'FEIN') && f == 'Failed_Payment_Account_Numbers__c'), false,true)}"> -->
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!taxOpsTaskRec[f]}">  </apex:inputField>
+                                        <apex:outputPanel rendered="{! if(f.Label == 'Status',true,false)}">
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" status="fetchStatus" value="Start Progress" oncomplete="javascript:location.reload();"  rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" status="fetchStatus" value="Pause Progress" oncomplete="javascript:location.reload();" rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c=='In Progress'}"/>
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>                    
+                            </Tr> 
+                        <!-- </apex:outputPanel>    -->
+                    </apex:repeat>
+                    <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Filing_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Filing',true,false)}">
+                       <!--  <apex:outputPanel rendered="{! if((Tax_Ops_Task__c.FEIN_Account_Number__c == 'Account Number' && f == 'Failed_Filing_FEINs__c') || ((Tax_Ops_Task__c.FEIN_Account_Number__c == null || Tax_Ops_Task__c.FEIN_Account_Number__c == 'FEIN') && f == 'Failed_Filing_Account_Numbers__c'), false,true)}"> -->
+                            <Tr>
+                                <td>
+                                    <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                                </td>
+                                <td>
+                                    <div class="slds-form-element__control">
+                                        <apex:inputField value="{!taxOpsTaskRec[f]}"></apex:inputField>
+                                        <apex:outputPanel rendered="{! if(f.Label == 'Status',true,false)}" id="parentPanel">
+                                            <apex:commandLink action="{!moveToInprogress}" immediate="true" status="fetchStatus" value="Start Progress" oncomplete="javascript:location.reload();" rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c!='In Progress'}"/>
+                                            <apex:commandLink action="{!moveToOpen}" immediate="true" status="fetchStatus" value="Pause Progress" oncomplete="javascript:location.reload();" rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c=='In Progress'}"/>
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>                    
+                            </Tr>
+                        <!-- </apex:outputPanel> -->    
+                    </apex:repeat>
+                    <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Failed_Filing_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Failed Filing',true,false)}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!taxOpsTaskRec[f]}">
+                                    </apex:inputField>
+                                    <apex:outputPanel rendered="{! if(f.Label == 'Status',true,false)}">
+                                        <apex:commandLink action="{!moveToInprogress}" immediate="true" status="fetchStatus" value="Start Progress" oncomplete="javascript:location.reload();"  rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c!='In Progress'}"/>
+                                        <apex:commandLink action="{!moveToOpen}" immediate="true" status="fetchStatus" value="Pause Progress" oncomplete="javascript:location.reload();" rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c=='In Progress'}"/>
+                                    </apex:outputPanel>
+                                </div>
+                            </td>                    
+                        </Tr>    
+                    </apex:repeat>
+                    <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Confirmation_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Confirmation',true,false)}">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!taxOpsTaskRec[f]}">
+                                    </apex:inputField>
+                                    <apex:outputPanel rendered="{! if(f.Label == 'Status',true,false)}">
+                                        <apex:commandLink action="{!moveToInprogress}" immediate="true" status="fetchStatus" value="Start Progress"  oncomplete="javascript:location.reload();" rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c!='In Progress'}"/>
+                                        <apex:commandLink action="{!moveToOpen}" immediate="true" status="fetchStatus" value="Pause Progress" oncomplete="javascript:location.reload();" rendered="{!Tax_Ops_Task__c.OwnerId==$User.Id && Tax_Ops_Task__c.Status__c!='Completed' && Tax_Ops_Task__c.Status__c=='In Progress'}"/>
+                                    </apex:outputPanel>
+                                </div>
+                            </td>                    
+                        </Tr>    
+                    </apex:repeat>
+                </Table>
+            </apex:outputPanel>
+                
+            <!-- readonly section -->
+            <!-- <apex:outputPanel rendered="{! if(Tax_Ops_Task__c.Status__c == 'Completed',true,false)}">
+                <Table class="table.spacing"> 
+                    <Tr>
+                         <td>
+                             <label class="slds-form-element__label" for="ownerf">Owner: </label>
+                         </td>
+                         <td>
+                             <div class="slds-form-element__control">
+                                 <apex:outputField value="{!Tax_Ops_Task__c.OwnerId}">
+                                 </apex:outputField>
+                             </div>
+                         </td>                    
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label">Process Step: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                                <apex:outputField styleclass="pstep" value="{!Tax_Ops_Task__c.Process_Step__c}">
+                                </apex:outputField>
+                            </div>
+                        </td>                    
+                    </Tr>
+                     <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Payment_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Payments',true,false)}">
+                         <Tr>
+                             <td>
+                                 <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                             </td>
+                             <td>
+                                 <div class="slds-form-element__control">
+                                     <apex:outputField value="{!Tax_Ops_Task__c[f]}">
+                                     </apex:outputField>
+                                 </div>
+                             </td>                    
+                         </Tr>    
+                     </apex:repeat>
+                     <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Filing_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Filing',true,false)}">
+                         <Tr>
+                             <td>
+                                 <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                             </td>
+                             <td>
+                                 <div class="slds-form-element__control">
+                                     <apex:outputField value="{!Tax_Ops_Task__c[f]}">
+                                     </apex:outputField>
+                                 </div>
+                             </td>                    
+                         </Tr>    
+                     </apex:repeat>
+                     <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Failed_Filing_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Failed Filing',true,false)}">
+                         <Tr>
+                             <td>
+                                 <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                             </td>
+                             <td>
+                                 <div class="slds-form-element__control">
+                                     <apex:outputField value="{!Tax_Ops_Task__c[f]}">
+                                     </apex:outputField>
+                                 </div>
+                             </td>                    
+                         </Tr>    
+                     </apex:repeat>
+                     <apex:repeat value="{!$ObjectType.Tax_Ops_Task__c.FieldSets.Confirmation_Detail_Page_Fields}" var="f" rendered="{!if(Tax_Ops_Task__c.Process_Step__c == 'Confirmation',true,false)}">
+                         <Tr>
+                             <td>
+                                 <label class="slds-form-element__label" for="pstep">{!f.Label}: </label>
+                             </td>
+                             <td>
+                                 <div class="slds-form-element__control">
+                                     <apex:outputField value="{!Tax_Ops_Task__c[f]}">
+                                     </apex:outputField>
+                                 </div>
+                             </td>                    
+                         </Tr>    
+                     </apex:repeat>
+                </Table>
+            </apex:outputPanel> -->
+           
+        </apex:form>
+        <apex:form id="frm2"  rendered="{! if(Tax_Ops_Task__c.Process_Step__c == 'Filing' || Tax_Ops_Task__c.Process_Step__c == 'Failed Filing',true,false)}">
+            <script>
+                function processCSV(){
+                   window.setTimeout(RefreshPrimaryTab(), 6000);
+                }
+            </script>
+            <apex:actionFunction action="{!uploadFailedRecCsv}" name="uploadcsv" status="fetchStatus"/>
+            <apex:pageMessages id="msg2"></apex:pageMessages>
+            <Table class="table.spacing"> 
+                <tr>
+                    <td>
+                         <label class="slds-form-element__label" for="ownerf">Upload File: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:inputFile value="{!csvFileBody}"/>                        
+                        </div>
+                    </td>                                        
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="button" onclick="uploadcsv(); return false;" value="Upload" styleclass="slds-button slds-button--neutral"/>  
+                    </td>
+                </tr>    
+            </Table>
+            <!-- <apex:pageMessages/> -->
+        </apex:form>
+    </div>
+         
+</apex:page>

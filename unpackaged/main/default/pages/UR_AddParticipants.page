@@ -1,0 +1,207 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ManageCSVCtrl" applyBodyTag="false" sidebar="false" id="rsProject" action="{!CheckParticipant}">
+  <apex:form id="frm">
+  <head>
+    <title>Gusto</title>
+	<style>
+          .chevrondownImage{
+            width: 15px; 
+         }
+         .arrowdownImage{
+            width: 15px;
+         }
+         .arrowupImage{
+            width: 15px;
+         }
+	</style>
+  </head>
+
+  <body class="slds-scope">
+    <c:UR_ActionStatus />
+	<c:UR_MenuHeaderComponent tabName="Participants" subTabName="MP-BLANK" prjId="{!ProjectMasterObj.Id}"/>
+    <apex:actionFunction status="statusSave" name="addParticipants" action="{!addParticipants}">
+		<apex:param value="" assignTo="{!selIncludeParticipant}" />
+	</apex:actionFunction>
+	
+	
+	<div class="slds-p-around_small slds-p-top_none">        
+		<apex:pageMessages id="msg"/>
+	
+		<div class="slds-grid slds-wrap" style="align-items: flex-end; justify-content: space-between">
+            <div class="slds-col slds-size_1-of-1 slds-size_1-of-1 slds-medium-size_2-of-6">
+                <div class="slds-text-heading_medium slds-m-vertical_medium">
+                  <strong>Project Participants</strong>
+                </div>
+              <div class="slds-grid slds-m-bottom_x-small" style="align-items: center">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-m-right_small">
+                    <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                      <i class="fas fa-search"></i>
+                    </span>
+                  
+					 <input disabled="disabled" type="text" id="text-input-id-1" placeholder=" Search this list" class="slds-input" />
+                </div>
+                <div id="recordCount" class="slds-m-around_none mt-items">
+                     <div style="display:{!if(isEditable==true,'none;','block;')}"><br/></div>0 participants
+                </div>
+              </div>
+            </div>
+        </div>
+		
+		
+        <!--If No participant but we have CSV data then show this table- Start here-->
+          <div class="slds-scrollable">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+              <thead>
+				<tr class="slds-line-height_reset">
+                  <th class="slds-text-title_caps sorter-false" scope="col">
+                     <div class="slds-checkbox slds-checkbox_standalone">
+                       <input type="checkbox" name="default" id="" value=""/>
+                       <span class="slds-checkbox_faux"></span>
+                     </div>
+                  </th>
+				  <th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Contact Name</li>
+						  <li>
+							  <i class="fas fa-arrow-down" style="margin-left: 5px;"></i>
+						  </li>                      
+					  </ul>
+					  
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Email</li>
+						  <li>           
+						  </li>                      
+					  </ul>
+					                    
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Company Name</li>
+						  <li>
+							 
+						  </li>                      
+					  </ul>
+					    
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">NDA</li>
+						  <li>
+							 
+						  </li>                      
+					  </ul>
+					   
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Status</li>
+						  <li>
+							 
+						  </li>                      
+					  </ul>
+					  
+					  
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col" width="250">
+					  <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Comment</li>
+						  <li>
+							  
+						  </li>                      
+					  </ul>
+					  
+					</th>
+					<th class="slds-text-title_caps sorter-false" scope="col">
+					   <ul class="slds-list_horizontal">
+						  <li class="slds-truncate">Recent Email</li>
+						  <li>
+							 
+						  </li>                      
+					  </ul>
+					 
+					</th> 
+                </tr>
+              </thead>
+            </table>
+          </div>
+    </div>
+	
+
+    <div class="modal-window upload-list-modal" style="display: none;">
+    <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+      <div class="slds-modal__container slds-text-align_center" style="max-width: 600px;">
+        <div class="slds-modal__header">
+          <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+            <i onclick="return false;" class="fas fa-times" style="font-size: 24px;"></i>
+            <span class="slds-assistive-text">Close</span>
+          </button>
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Upload a CSV file in the required format</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium">
+          <p>
+            <apex:actionRegion > 
+                Please make sure your file’s initial columns match those shown in this &nbsp;<a href="{!$Label.UR_SampleCSV_URL}" target="_blank">example CSV file</a>
+            </apex:actionRegion> 
+          </p>
+          <div class="slds-m-vertical_large">
+            <apex:inputFile value="{!csvFileBody}" filename="{!csvFileName}"/>
+          </div>
+        </div>
+        <div class="slds-modal__footer">
+          <button onclick="return false;" class="slds-button slds-button_outline-brand close-modal">Cancel</button>
+          <apex:commandButton value="Upload & Continue" style="border: 1px solid #dddbda" action="{!importCSVFile}" styleClass="slds-button slds-button_brand"/> 
+        </div>
+      </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>
+
+     
+     <script type="text/javascript">
+       
+      $('.add-info-btn').click(function() {
+        $('.add-info').slideToggle();
+        $('.add-info-btn i').toggleClass('fa-angle-right');        
+      });
+      $('.add-info-btn-01').click(function() {
+        $('.add-info-01').slideToggle();
+        $('.add-info-btn-01 i').toggleClass('fa-angle-right');        
+      });
+      $('.other-permissions-btn').click(function() {
+        $('.other-permissions').slideToggle();
+        $('.other-permissions-btn i').toggleClass('fa-angle-right');        
+      });
+      $('.close-modal, .slds-modal__close').click(function() {
+        $('.modal-window').fadeOut();
+      });
+      $('.upload-list-btn').click(function() {
+        $('.upload-list-modal').fadeIn();
+      });
+
+      
+      $('.send-survey-btn').click(function(e) {
+          blankSendSurvey();
+      });
+      $('.invite-to-interview-btn').click(function(e) {
+          blankInviteToInterview();
+      });
+      $('.send-follow-up-btn').click(function(e) {
+          blankSendFollowUp();
+      });
+      
+	  function uploadParticipants(obj){
+		if(obj=='From CSV'){
+			$('.upload-list-modal').fadeIn();
+		}else if(obj=='Add participants'){
+            //do Nothing
+		}else{
+			addParticipants(obj);
+		}
+	  }	  
+     </script> 
+    
+  </body>
+  </apex:form>
+  
+</apex:page>

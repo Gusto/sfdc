@@ -1,0 +1,170 @@
+<apex:page standardController="Order" extensions="OrderDetailsExtension" docType="html-5.0" id="mainPage" showHeader="false">
+
+
+    <div class="gusto" style="margin-left: 5px;">
+    	<b>Opportunity Info : </b><br/>
+        <table class="table.spacing">   
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Owner: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.Owner.Name}"/>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Stage: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.StageName}"/>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Description: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputText title="{!theOrderObj.Opportunity.Description}" value="{!IF(LEN(theOrderObj.Opportunity.Description) > 100, LEFT(theOrderObj.Opportunity.Description, 97) + '...', theOrderObj.Opportunity.Description)}"/>
+                    </div>
+                </td>                    
+            </tr>
+        </table>
+        <br/>
+        <br/>
+        <b>Onboarding Steps : </b><br/>
+        <table class="table.spacing">   
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Add Company Addresses: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Add_Company_Addresses__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Add Employees: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Add_Employees__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Set Up Federal Taxes: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Set_Up_Federal_Taxes__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Set Up State Taxes: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Set_Up_State_Taxes__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Set Up Bank Account: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Set_Up_Bank_Account__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Select a Payroll Schedule: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Select_a_Payroll_Schedule__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Report Previous Paystubs: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Report_Previous_Paystubs__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+        </table>
+        <br/>
+        <br/>
+        <b>Final Stages :</b><br/>
+        <table>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Add Signatory: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Add_Signatory__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Sign Company Forms: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Sign_Company_Forms__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Verify Company Bank Account: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Verify_Company_Bank_Account__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+            <tr>
+                <td>
+                    <label class="slds-form-element__label" for="status">Enter Unpaid Tax Liabilities: </label>
+                </td>
+                <td>
+                    <div class="slds-form-element__control">
+                        <apex:outputField value="{!theOrderObj.Opportunity.ZP_Enter_Unpaid_Tax_Liabilities__c}" > 
+                        </apex:outputField>
+                    </div>
+                </td>                    
+            </tr>
+        </table>
+    </div>
+</apex:page>

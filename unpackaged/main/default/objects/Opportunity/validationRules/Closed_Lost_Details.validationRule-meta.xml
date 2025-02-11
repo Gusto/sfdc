@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closed_Lost_Details</fullName>
+    <active>true</active>
+    <description>Closed Lost Details is required when Stage Detail is selected as &apos;Other&apos;</description>
+    <errorConditionFormula>ISPICKVAL (StageName, &apos;Closed Lost&apos;) &amp;&amp; ISPICKVAL (Stage_Detail__c, &apos;Other&apos;) &amp;&amp; ISBLANK (Closed_Lost_Detail__c) &amp;&amp;($User.Exempt_from_Validation_Rules__c = FALSE)</errorConditionFormula>
+    <errorMessage>Closed Lost Details required if &apos;Other&apos; for Stage Detail is selected</errorMessage>
+</ValidationRule>

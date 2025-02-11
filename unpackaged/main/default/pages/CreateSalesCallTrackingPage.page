@@ -1,0 +1,221 @@
+<apex:page id="pg" standardController="Sales_Call_Tracking__c" extensions="CreateSalesCallTrackingController" tabStyle="Sales_Call_Tracking__c" docType="html-5.0" sidebar="false">
+    <apex:includeScript value="/support/console/44.0/integration.js"/>
+    <apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js" />	
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        var eventHandler = function (result) {
+            refreshPage();
+        };
+       	sforce.console.onCustomConsoleComponentButtonClicked(eventHandler);
+  
+    	function refreshPage(){
+        	location.reload();
+    	}   
+    
+        function OpenRecordInPrimaryTab(id, name, genesysid, phoneNumber) {
+            var genid = document.getElementById('pg:frm:integrationId').value;
+
+            if (sforce.console.isInConsole()) {
+                if(id != '' && id != null) {
+                    if(genesysid == undefined || genesysid == null){
+                        genesysid = '';
+                    }
+                    if(phoneNumber == undefined || phoneNumber == null){
+                        phoneNumber = '';
+                    }
+                    var redirectUrl = '/'+id+'?o=1'+'&id='+id+'&genid='+genesysid+'&phone='+phoneNumber; 
+
+                    sforce.console.openPrimaryTab(null,redirectUrl ,true,name);  
+                    closeTab();
+                    //alert('Please enter information in the Log a call section and save the call as inbound call.'); 
+                } else {
+                    console.log('genid: '+genid);
+                    var callTypeInput = document.getElementById('pg:frm:callType');
+                    var showCmp = true;
+                    if(callTypeInput != undefined && callTypeInput != null && callTypeInput.value != null && callTypeInput.value != undefined
+                        && callTypeInput.value.toLowerCase() == 'outbound'){
+                        showCmp = false;
+                    }
+                    sforce.console.setCustomConsoleComponentVisible(showCmp);
+                } 
+            }	else {
+                window.top.location.href = '/' + id;
+            }
+        } 
+        function openParentTab(recId, label, genesysid, phoneNumber){
+            document.getElementById('pg:frm:phoneNumber').value = phoneNumber;
+            document.getElementById('pg:frm:integrationId').value = genesysid;    
+            if(genesysid == undefined || genesysid == null){
+                genesysid = '';
+            }
+            if(phoneNumber == undefined || phoneNumber == null){
+                phoneNumber = '';
+            }
+            var redirectUrl = '/'+recId+'?o=1'+'&id='+recId+'&genid='+genesysid+'&phone='+phoneNumber; 
+            console.log('ParentTab::genesysid: '+genesysid);
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        sforce.console.openPrimaryTab(undefined,redirectUrl,true,label);
+
+                    });
+                })
+            } else {
+                // for inline Vf
+                window.open(redirectUrl, '_blank');
+            }
+        }  
+    
+    	function closeConsoleComponent(){
+        	sforce.console.setCustomConsoleComponentVisible(false);	
+    	}       
+
+    	function closeTab() {
+        	sforce.console.getEnclosingTabId(callCloseTab);
+		}
+    
+        var callCloseTab = function callCloseTab(result) {
+            sforce.console.closeTab(result.id);
+        }  
+        
+        var getFocusedPrimaryTabId = function getFocusedPrimaryTabId() {
+            //sforce.console.getEnclosingPrimaryTabId(getTabLink);
+            sforce.console.getFocusedPrimaryTabId(getTabLink);
+        } 
+        var getTabLink = function getTabLink(result) {
+            sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY,
+                                      result.id, showTabLink);
+        }
+        var showTabLink = function showTabLink(result) {
+            var link = result.tabLink;
+            var decoded = decodeURIComponent(link);
+            var phoneNumberlink = getUrlParameter('phone',decoded);
+            var genesysidlink = getUrlParameter('genid',decoded);
+            var recordIdLink = getUrlParameter('id',decoded);
+            console.log('decoded::' + decoded);
+            console.log('phoneNumberlink::' + phoneNumberlink);
+            console.log('genesysidlink::' + genesysidlink);
+            console.log('recordIdLink::' + recordIdLink); 
+            document.getElementById('pg:frm:phoneNumber').value = phoneNumberlink;
+            document.getElementById('pg:frm:integrationId').value = genesysidlink;
+            document.getElementById('pg:frm:recordId').value = recordIdLink;
+        };
+    
+        var getUrlParameter = function getUrlParameter(sParam,decodedLink) {
+            var sPageURL = decodedLink,
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+            
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+                
+                if (sParameterName[0] == sParam) {
+                    return sParameterName[1];
+                }
+            }
+        };
+    
+    	window.onload = function(){  
+        	getFocusedPrimaryTabId;  
+            callEvent();
+    	}  
+    </script>
+
+
+    <apex:form id="frm">   
+    	<c:GustoActionStatus /> 
+        <apex:actionFunction name="callEvent" action="{!callEvent}" reRender="mainpb,openBOSection,searchForBOSection"  status="waiting" oncomplete="OpenRecordInPrimaryTab('{!objBO.id}','{!objBO.name}','{!strIntegrationId}','{!strPhoneNumber}');closeTab();">
+        </apex:actionFunction>	
+        <apex:actionFunction name="callEnd" action="{!onCallEnd}" reRender="mainpb"  status="waiting">
+            <apex:param name="activeRecordId" value=""/>
+        </apex:actionFunction>
+        <strong><apex:outputText rendered="{!NOT(blnIsAuthorizedUser)}" value="You are not authorized to view this content!"/></strong>
+        <apex:pageBlock mode="edit" title="Log A Call" id="mainpb" rendered="{!blnIsAuthorizedUser}"> 
+			<apex:pageMessages id="msgId"></apex:pageMessages>	
+            <apex:pageBlockSection id="openBOSection" title="All Open Benefit Orders">
+            	<apex:outputPanel rendered="{!list_OpenBenefitOrders !=NULL && list_OpenBenefitOrders.size>0}" >
+                    <table id="ownedBOTable">
+                        <thead>
+                            <tr>
+                                <th>Benefit Order Name</th>
+                                <th>Account Name</th>
+                                <th>Coverage Effective Date</th>
+                                <th>Renewal Date</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!list_OpenBenefitOrders}" var="order">
+                                <tr>
+                                    <td>
+                                        <apex:outputLink onclick="openParentTab('{!order.Id}','{!JSENCODE(order.Name)}','{!strIntegrationId}','{!strPhoneNumber}');closeConsoleComponent();">
+                                            {!order.Name}
+                                        </apex:outputLink>   
+                                    </td>                         
+                                <td><apex:outputField value="{!order.Account__r.Name}"/></td>
+                                <td><apex:outputField value="{!order.Coverage_Effective_Date__c}"/></td>
+                                <td><apex:outputField value="{!order.Renewal_Date__c}"/></td>
+                                <td><apex:outputField value="{!order.Cases__r[0].ContactId}"/></td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                    <script>
+                        $("#ownedBOTable").DataTable({"aaSorting": [],pageLength:10,destroy: true});
+                    </script>
+                </apex:outputPanel>
+            </apex:pageBlockSection> 
+            
+            <h1>If you are still not able to find the correct BO, you can search for one by putting in the Group Name below</h1>
+             
+            <apex:pageBlockSection id="searchForBOSection" title="Search for a Benefit Order">
+                <apex:inputField value="{!objCallTracking.Account__c}"/>  
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection id="searchedBOSection" rendered="{!blnShowSearchedBOSection}">
+                <apex:outputPanel rendered="{!list_SearchedBenefitOrders !=NULL && list_SearchedBenefitOrders.size>0}" title="All Open Benefit Orders">
+                    <table id="searchedBOTable">
+                        <thead>
+                            <tr>
+                                <th>Benefit Order Name</th>
+                                <th>Account Name</th>
+                                <th>Coverage Effective Date</th>
+                                <th>Renewal Date</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!list_SearchedBenefitOrders}" var="order">
+                                <tr>
+                                    <td>
+                                        <apex:outputLink onclick="openParentTab('{!order.Id}','{!JSENCODE(order.Name)}');return false;closeConsoleComponent();"> 
+                                        {!order.Name}
+                                        </apex:outputLink>                            
+                                    </td>
+                                    <td><apex:outputField value="{!order.Account__r.Name}"/></td>
+                                    <td><apex:outputField value="{!order.Coverage_Effective_Date__c}"/></td>
+                                    <td><apex:outputField value="{!order.Renewal_Date__c}"/></td>
+                                    <td><apex:outputField value="{!order.Cases__r[0].ContactId}"/></td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                    <script>
+                        $("#searchedBOTable").DataTable({"aaSorting": [],pageLength:10});
+                    </script>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Search" action="{!searchForBenefitOrders}" rerender="frm,msgId" status="actStatusId" oncomplete="OpenRecordInPrimaryTab('{!objBO.id}','{!JSENCODE(objBO.Name)}','{!strIntegrationId}','{!strPhoneNumber}');"/>            
+            </apex:pageBlockButtons>   
+        </apex:pageBlock> 
+        
+        <apex:inputHidden id="phoneNumber" value="{!strPhoneNumber}" html-readonly="true"   />
+		<apex:inputHidden id="integrationId" value="{!strIntegrationId}" html-readonly="true"   />
+        <apex:inputHidden id="recordId" value="{!strCurrentPageRecord}" html-readonly="true"   />      
+        <apex:inputHidden id="callType" value="{!strCallType}" html-readonly="true"  />     
+    </apex:form>
+</apex:page>

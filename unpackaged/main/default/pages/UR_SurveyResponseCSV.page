@@ -1,0 +1,9 @@
+<apex:page sidebar="false" showHeader="false" standardController="Research_Project_Master__c" 
+           extensions="UR_ManageParticipantCtrl" readonly="true" contentType="text/csv#SurveyResponse.csv" 
+           standardStylesheets="false">Contact Name,Status,Comment,<apex:repeat value="{!mapSurveyQuestion}" var="sQuest">"{!mapSurveyQuestion[sQuest]}",</apex:repeat>Recorded Date
+    		<apex:repeat value="{!lstSurveyResponseWrapper}" var="res">
+    		{!res.objResearchSurvey.Research_Project_Detail__r.Contact__r.Name},"{!res.objResearchSurvey.Research_Project_Detail__r.Research_Participant_Status__c}","{!res.objResearchSurvey.Research_Project_Detail__r.Comment__c}",<apex:repeat value="{!res.objResearchSurvey.Research_Survey_Responses__r}" var="resAns">"{!resAns.Survey_Answers__c}",</apex:repeat><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                                   <apex:param value="{!res.objResearchSurvey.Recorded_Date__c}" /> 
+                                               </apex:outputText>		
+    		</apex:repeat>
+</apex:page>

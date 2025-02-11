@@ -1,0 +1,68 @@
+<!--
+    Purpose : To create A Contact Carrier Case 
+    Written By : Lakshey Mendiratta
+    Date : 09/16/2020
+-->
+<template>
+  
+    <template if:true={blnOpenModal}>
+      
+    <lightning-layout>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container slds-align_absolute-center">
+            <header class="slds-modal__header">
+               <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                    title="Close" onclick={handleCancel}> 
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                        size="small"></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button> 
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Carrier Contact Case</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="modal-content-id-3">
+              <template if:true={blnIsLoading}>
+                <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+            </template>
+            <p> Subject : {strSubject} </p>
+
+                  <br/>
+                  <lightning-layout>
+                    <lightning-layout-item size='8'>
+                        <c-carrier-contact-look-up-cmp id-account={strAccountId} onselectedcontact={handleSelectedContact}></c-carrier-contact-look-up-cmp>
+    
+                      </lightning-layout-item>
+
+                      <lightning-layout-item size="4" padding="around-small" style="margin-top:-10px">
+                        <div>
+                            <lightning-input type="text" label="Email" value={strContactEmail} disabled></lightning-input>
+                        </div>
+                    </lightning-layout-item>
+                  </lightning-layout>
+
+                 
+                  
+                  <br/>
+                  <div>
+                      <lightning-layout>
+                          <lightning-layout-item style="margin-left:700px">
+                            <lightning-button variant="brand" label="Cancel" onclick={handleCancel} class="slds-m-left_x-small"></lightning-button>
+
+                          </lightning-layout-item>
+                          <lightning-layout-item>
+                               <lightning-button onclick={handleCreate} variant="brand" label="Create" class="slds-m-left_x-small"></lightning-button>
+                           
+                          </lightning-layout-item>
+                      </lightning-layout>
+
+                  </div>
+
+            </div>
+        </div>
+    </div>
+    </section>
+</lightning-layout>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+</template>

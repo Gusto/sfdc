@@ -1,0 +1,6 @@
+<aura:component implements="lightning:isUrlAddressable,force:hasRecordId,flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="caseRecordId" type="String" default=""/>
+    <lightning:navigation aura:id="navService"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <c:unmergecaselwc recordId="{!v.caseRecordId}" onhandleUnMergeCase="{!c.refreshPage}"></c:unmergecaselwc>
+</aura:component>

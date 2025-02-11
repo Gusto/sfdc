@@ -1,0 +1,18 @@
+<template>
+	<template lwc:if={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<template lwc:else>
+		<lightning-quick-action-panel header="Move To Confirmation">
+			<lightning-record-edit-form record-id={recordId} object-api-name="Carrier_Order__c">
+				<lightning-input-field field-name="Submission_Completion_Notes__c" onchange={handleTextAreaChange}
+					style="padding: 10px"> </lightning-input-field>
+			</lightning-record-edit-form>
+			<div slot="footer">
+				<lightning-button variant="neutral" label="Discard" onclick={handleCancelClick}></lightning-button>
+				<lightning-button variant="brand" label="Confirm" onclick={handleSave}
+					class="slds-m-left_x-small"></lightning-button>
+			</div>
+		</lightning-quick-action-panel>
+	</template>
+</template>

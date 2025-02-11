@@ -1,0 +1,336 @@
+<template>
+	<div class="spinner">
+		<template if:true={blnIsLoading}>
+			<div class="slds-is-relative">
+				<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium"> </lightning-spinner>
+			</div>
+		</template>
+	</div>
+	<template if:true={blnShowServiceResourcesSummary}>
+		<lightning-card title="IR Skill Assignment" icon-name="standard:account">
+			<div class="slds-m-around_medium">
+				<lightning-layout multiple-rows="true" horizontal-align="center">
+					<lightning-layout-item size="6" padding="around-small" if:true={blnIsAgencyFound}>
+						<label class="slds-form-element__label slds-form-element__legend" for="input"> Resource: </label>
+						<c-multi-select-pick-list-cmp
+							name="resourceFilter"
+							multi-select="true"
+							onselectoption={handleSelectOptionList}
+							options={list_ResourceNameFiltered}
+							selected-values={selectedValueList}
+						></c-multi-select-pick-list-cmp>
+					</lightning-layout-item>
+					<lightning-layout-item size="6" padding="around-small" if:true={blnIsAgencyFound}>
+						<label class="slds-form-element__label slds-form-element__legend" for="input"> Select preferred agencies: </label>
+						<c-multi-select-pick-list-cmp
+							name="agencyFilter"
+							multi-select="true"
+							onselectoption={handleSelectOptionList}
+							options={list_AgencyNameOptions}
+							selected-values={selectedValueList}
+						></c-multi-select-pick-list-cmp>
+					</lightning-layout-item>
+					<lightning-layout-item size="6" padding="around-small" if:true={blnIsAgencyFound}>
+						<label class="slds-form-element__label slds-form-element__legend" for="input"> Select Debit/Credit: </label>
+						<c-multi-select-pick-list-cmp
+							name="debitCreditFilter"
+							multi-select="true"
+							onselectoption={handleSelectOptionList}
+							options={list_UserSkillDebitCreditOptions}
+							selected-values={selectedValueList}
+						></c-multi-select-pick-list-cmp>
+					</lightning-layout-item>
+					<lightning-layout-item size="6" padding="around-small" if:true={blnIsAgencyFound}>
+						<label class="slds-form-element__label slds-form-element__legend" for="input"> Select Tier: </label>
+						<c-multi-select-pick-list-cmp
+							name="tierFilter"
+							multi-select="true"
+							onselectoption={handleSelectOptionList}
+							options={list_UserSkillTierOptions}
+							selected-values={selectedValueList}
+						></c-multi-select-pick-list-cmp>
+					</lightning-layout-item>
+					<lightning-layout-item size="12" padding="around-small">&nbsp;</lightning-layout-item>
+					<lightning-layout-item size="6" padding="around-small"> </lightning-layout-item>
+					<lightning-layout-item size="6" padding="around-small" class="textAlignRight">
+						<lightning-button variant="brand" label="Report with All Skills" icon-name="utility:service_report" name="openReportButton" onclick={openReport}></lightning-button>
+						&nbsp;
+						<lightning-button variant="brand" label="Add Skills" icon-name="utility:add" onclick={addRow} disabled={blnRowsSelectedForDeletion}></lightning-button>
+					</lightning-layout-item>
+					<lightning-layout-item size="12" padding="around-small">
+						<div style="height: 500px">
+							<lightning-datatable
+								class="wrapped-header-datatable"
+								data={visibleData}
+								columns={columns}
+								key-field="strUniqueId"
+								onrowaction={handleRowAction}
+								onrowselection={handleResourceRowSelection}
+								sorted-by={strSortedBy}
+								sorted-direction={strSortedDirection}
+								onsort={handleColumnSort}
+								show-row-number-column="true"
+								onloadmore={loadMoreData}
+								enable-infinite-loading
+								hide-checkbox-column
+							>
+							</lightning-datatable>
+						</div>
+						<br />
+						<div><b>Total records count:</b> {intTotalRecordCount}</div>
+					</lightning-layout-item>
+				</lightning-layout>
+			</div>
+		</lightning-card>
+	</template>
+
+	<!-- modal start add Rows-->
+	<template if:true={blnAddNewRows}>
+		<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+			<div class="slds-modal__container slds-is-relative">
+				<!-- modal header start -->
+				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeAddRow}>
+					<lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+					<span class="slds-assistive-text">Close</span>
+				</button>
+				<div class="slds-modal__header">
+					<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate displayInlineClass">Assign skills</h2>
+					<lightning-button slot="actions" class="slds-float_right displayInlineClass" variant="brand" label="Add Rows" icon-name="utility:add" onclick={addRow}></lightning-button>
+				</div>
+
+				<!-- modal body start -->
+				<div class="slds-modal__content slds-p-around_medium scrollxClass" id="modal-content-id-1">
+					<table style="width: 100%" class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+						<thead>
+							<tr class="slds-line-height_reset">
+								<th class="" scope="col">
+									<div class="slds-truncate" title="User Name">User Name</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Backup User">Backup User</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Agency Name">Agency Name</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Agency Complexity">Agency Complexity</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Tax Notice Type">Tax Notice Type</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Form Number Complexity">Form Number Complexity</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Debit/Credit">Debit/Credit</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="$ Threshold">$ Threshold</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Tier">Tier</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Partner Tier">Partner Tier</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Multi Year Y/N">Multi Year Y/N</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Stage">Action</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<template for:each={newData} for:item="row" for:index="index">
+								<tr class="inputRows" key={row.strUniqueId}>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Service Resource Name" scope="row">
+										<div style="width: 150px">
+											<lightning-record-edit-form object-api-name="Case">
+												<lightning-input-field
+													data-id={row.strUniqueId}
+													value={row.strAgentName}
+													name="strAgentName"
+													field-name="Account_Specialist__c"
+													onchange={updateValues}
+													variant="label-hidden"
+													disabled={blnIsEditSkill}
+												></lightning-input-field>
+											</lightning-record-edit-form>
+										</div>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Backup Resource Name" scope="row">
+										<div style="width: 150px">
+											<lightning-record-edit-form object-api-name="Case">
+												<lightning-input-field
+													data-id={row.strUniqueId}
+													value={row.strBAgentName}
+													name="strBAgentName"
+													field-name="Account_Specialist__c"
+													onchange={updateValues}
+													variant="label-hidden"
+												></lightning-input-field>
+											</lightning-record-edit-form>
+										</div>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Agency Name">
+										<div style="width: 200px">
+											<c-multi-select-pick-list-cmp
+												data-id={row.strUniqueId}
+												name="strAgencyName"
+												onselectoption={updateValues}
+												options={list_AgencyNameOptions}
+												selected-value={row.strAgencyName}
+											></c-multi-select-pick-list-cmp>
+										</div>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Agency Complexity">
+										<lightning-combobox
+											if:true={agencyRecord}
+											name="strAgencyComplexity"
+											variant="label-hidden"
+											placeholder="Select Complexity"
+											data-id={row.strUniqueId}
+											value={row.strAgencyComplexity}
+											options={complexityOptions}
+											onchange={updateValues}
+											disabled="true"
+										></lightning-combobox>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Tax Notice Type">
+										<c-multi-select-pick-list-cmp
+											name="strNoticeType"
+											multi-select="true"
+											onselectoption={updateValues}
+											options={list_NoticeTypeOptions.data.values}
+											selected-values={row.selectedNoticeTypes}
+											data-id={row.strUniqueId}
+											if:true={blnIsAgencyFound}
+										></c-multi-select-pick-list-cmp>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Form Number Complexity">
+										<lightning-combobox
+											name="strFormNumberComplexity"
+											variant="label-hidden"
+											placeholder="Select Complexity"
+											data-id={row.strUniqueId}
+											value={row.strFormNumberComplexity}
+											options={complexityOptions}
+											onchange={updateValues}
+										></lightning-combobox>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Debit/Credit">
+										<c-multi-select-pick-list-cmp
+											name="strDebitCredit"
+											multi-select="true"
+											onselectoption={updateValues}
+											options={debitCreditOptions}
+											selected-values={row.selectedDebitTypes}
+											data-id={row.strUniqueId}
+											if:true={blnIsAgencyFound}
+										></c-multi-select-pick-list-cmp>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="$ Threshold">
+										<lightning-combobox
+											name="strThreshold"
+											variant="label-hidden"
+											placeholder="Select Threshold"
+											data-id={row.strUniqueId}
+											value={row.strThreshold}
+											options={thresholdOptions}
+											onchange={updateValues}
+										></lightning-combobox>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Tier">
+										<c-multi-select-pick-list-cmp
+											name="strTier"
+											multi-select="true"
+											onselectoption={updateValues}
+											options={list_TierOptions}
+											selected-values={row.selectedTiers}
+											data-id={row.strUniqueId}
+											if:true={blnIsAgencyFound}
+										></c-multi-select-pick-list-cmp>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Partner Tier">
+										<c-multi-select-pick-list-cmp
+											name="strPartnerTier"
+											multi-select="true"
+											onselectoption={updateValues}
+											options={list_PartnerTierOptions}
+											selected-values={row.selectedPartnerTiers}
+											data-id={row.strUniqueId}
+											if:true={blnIsAgencyFound}
+										></c-multi-select-pick-list-cmp>
+									</td>
+									<td class="data-validation" data-rowid={row.strUniqueId} data-label="Multi Year Y/N">
+										<lightning-combobox
+											name="strMultiYear"
+											variant="label-hidden"
+											placeholder="Select Type"
+											data-id={row.strUniqueId}
+											value={row.strMultiYear}
+											options={multiYearOptions}
+											onchange={updateValues}
+										></lightning-combobox>
+									</td>
+
+									<td data-label="Action">
+										<lightning-button-icon icon-name="action:delete" alternative-text="Delete" title="Delete" data-id={row.strUniqueId} onclick={deleteRow}></lightning-button-icon>
+									</td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+				</div>
+				<!-- modal footer start-->
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" onclick={closeAddRow}>Cancel</button>
+					<button class="slds-button slds-button_brand" name="saveButton" onclick={handleDMLActions}>Save</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+	<!-- modal end -->
+
+	<!-- modal start Show Agency Skills-->
+	<template if:true={blnShowAgencySkills}>
+		<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-02" aria-modal="true" aria-describedby="modal-content-id-2" class="slds-modal slds-fade-in-open slds-modal_large">
+			<div class="slds-modal__container slds-is-relative">
+				<!-- modal header start -->
+				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeAgencySkills}>
+					<lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+					<span class="slds-assistive-text">Close</span>
+				</button>
+				<div class="slds-modal__header">
+					<h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate displayInlineClass">Skill Details</h2>
+				</div>
+
+				<!-- modal body start -->
+				<div class="slds-modal__content slds-p-around_medium scrollxClass" id="modal-content-id-2">
+					<div class="dynamicSizeClass">
+						<lightning-datatable
+							class="wrapped-header-datatable1"
+							data={userSkillsData}
+							columns={agencySkillColumns}
+							key-field="strUniqueId"
+							onrowaction={handleRowAction}
+							onrowselection={handleResourceRowSelection}
+							show-row-number-column="true"
+						>
+						</lightning-datatable>
+					</div>
+				</div>
+				<!-- modal footer start-->
+				<footer class="slds-modal__footer">
+					<lightning-button variant="brand" label="Delete Skills" icon-name="utility:delete" name="deleteButton" onclick={handleDMLActions}></lightning-button>
+					&nbsp;
+					<button class="slds-button slds-button_neutral" onclick={closeAgencySkills}>Cancel</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+	<!-- modal end -->
+</template>

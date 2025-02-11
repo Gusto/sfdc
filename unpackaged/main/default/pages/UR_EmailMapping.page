@@ -1,0 +1,62 @@
+<apex:page controller="UR_EmailMappingCtrl" sidebar="true">
+   <apex:form id="frmBody">
+            <head>
+                <title>Gusto</title>
+                <c:UR_HeaderComponent />
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
+                <c:UR_SortingTable />
+            </head>
+            <body class="slds-scope">
+                      <c:UR_ActionStatus />
+                     <div class="slds-p-around_small">
+                        <apex:pageMessages />
+                        <hr class="slds-m-vertical_small" />
+                        <div class="slds-grid slds-wrap slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-6">
+                                <label class="slds-form-element__label">Status</label>
+                                <apex:selectlist styleclass="slds-select" value="{!selectedStatus}" size="1">
+                                <apex:actionSupport event="onchange" action="{!selectstatus}"  status="statusSave" rerender="frmBody"/>
+                                    <apex:selectOptions value="{!PopulateCTAStatusPicklist}"/>
+                                </apex:selectlist>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                                <div class="slds-m-top_large slds-show_medium"></div>
+                                <apex:commandButton value="Update" action="{!CreateStatusTemplate}" status="statusSave" rerender="frmBody" styleclass="slds-button slds-button_brand slds-m-bottom_small"/>
+                                &nbsp;&nbsp;<apex:commandLink action="{!CreateNewTemplate}" value="Create New Template"/> 
+                            </div>
+                        </div>
+                        </div>
+                    <div class="slds-p-around_small"> <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout custom-table" id="casetable">
+                            <thead>
+                                
+                                <tr class="slds-line-height_reset">
+                                    <th class="slds-text-title_caps sorter-false" scope="col" style="width: 6px;">
+                                        <div class="slds-checkbox slds-checkbox_standalone"><apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'InputId')"/>
+                                            <span class="slds-checkbox_faux"></span>
+                                        </div>
+                                    </th>
+                                    <th class="slds-text-title_caps" scope="col" style="width: 180px;">
+                                        <div class="slds-truncate" scope="col" title="EmailTemplate Name">
+                                            Email Template Name</div>
+                                    </th>
+                                    </tr>
+                                    </thead>
+                            <tbody>
+                                <apex:repeat value="{!EmailTemplateWrapperList}" var="res">
+                                    <tr class="slds-hint-parent">
+                                        <td>
+                                            <div class="slds-checkbox slds-checkbox_standalone">
+                                                <apex:inputcheckbox styleClass="slds-checkbox" value="{!res.selct}" id="InputId" />
+                                                <span class="slds-checkbox_faux"></span>
+                                            </div>
+                                        </td>
+                                       <td><div class="slds-truncate"> <a href="/{!res.etemplate.Id}" target="_blank">{!res.etemplate.name}</a></div></td>
+                                       
+                                        </tr>
+                                </apex:repeat> 
+                            </tbody>
+                        </table>
+                    </div>
+            </body>
+       </apex:form>   
+</apex:page>

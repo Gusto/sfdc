@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Public_comment_to_APIntego</name>
+        <label>Public comment to APIntego</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>Zendesk_Integration_Queue__c.Public_comment_to_APIntego</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Zendesk_Integration_Queue__c.Public_comment_to_APIntego</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>60.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>Zendesk Integration Queue After Save Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Zendesk Integration Queue After Save Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Public_comment_to_APIntego</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>1 AND ( 2 OR 3 OR 4 )</filterLogic>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Queued</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Object_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Email</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Object_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Chatter</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Object_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Status Change</stringValue>
+            </value>
+        </filters>
+        <object>Zendesk_Integration_Queue__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+</Flow>

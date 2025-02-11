@@ -1,0 +1,59 @@
+<apex:page standardController="Opportunity" extensions="ViewOppRenewalCaseExtension">
+<style> 
+    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+</style>
+        <script type="text/javascript">
+
+        
+        function RefreshPrimaryTab() 
+        {
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+        };
+        
+        var refreshSuccess = function refreshSuccess(result) 
+        {
+            //Report whether refreshing the primary tab was successful
+            if (result.success == true) 
+            {
+                //alert('Email Sent');
+            } 
+            else 
+            {
+                //alert('Cannot refresh the page');
+            }
+        };   
+
+        function OpenPrimaryTab(recordId,caseNumber) {
+            if (sforce.console.isInConsole()) {
+            //Open a new primary tab with the salesforce.com home page in it
+            sforce.console.openPrimaryTab(null, '/'+recordId, false, 
+                caseNumber, openSuccess, caseNumber);
+                } else {
+                    window.top.location.href='/'+recordId;
+                    }
+        }
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether opening the new tab was successful
+            if (result.success == true) {
+                //alert('Primary tab successfully opened');
+            } else {
+                //alert('Primary tab cannot be opened');
+            }
+        };    
+        </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>    
+    <div class="gusto" >
+		<a onClick="OpenPrimaryTab('{!renewalCase.id}','{!renewalCase.CaseNumber}')">{!renewalCase.caseNumber}</a>
+    </div>
+
+</apex:page>

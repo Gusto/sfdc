@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>in_Koala__c</fullName>
+    <formula>IF(of_Failed_Filings__c&gt; 0,Failed_Filings_in_Koala__c/ Unique_Failed_Filing_Records__c ,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>% in Koala</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

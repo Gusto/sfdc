@@ -1,0 +1,138 @@
+<apex:component >
+     <apex:attribute name="actionTab" description="This is for to make tab active." type="String" />
+     <apex:attribute name="cohortTab" description="This is for to make tab active." type="String" />
+     <apex:attribute name="businessTab" description="This is for to make tab active." type="String" />
+     <!-- <apex:attribute name="terminatedCoTab" description="This is for to make tab active." type="String" /> -->
+     
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    
+    
+   <style> 
+        .tab {
+          overflow: hidden;
+        }
+        
+        .tab .tablinks {
+          background: #ddd;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 10px 15px;
+          transition: 0.3s;
+          font-size: 13px;
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px 2px 0px 0px;
+          font-weight: bold;
+        }
+        
+        .tab .tablinks:hover {
+          background: #ccc;
+          text-decoration: none;
+          color: #444;
+        }
+        
+        .tab .tablinks.active {
+          background: #1797c0;
+          color: #fff;
+        }
+        
+        .tabcontent {
+          padding: 15px;
+          border: 1px solid #ddd;
+        }
+        
+        .message {
+            margin: 0px;
+        }
+        .messageTable {
+            width: auto !important;
+        }
+        .subTabLinks.active{
+            background:#666 !important;
+        }
+        .showMorePanel{
+            text-align: center;
+            padding-top: 4px;
+        }
+        
+        table.tablesorter-blue thead th, table.tablesorter-blue tbody td {
+            border-bottom: 1px solid #ccc;
+            padding: 5px 10px;
+             background: #fff;
+        }
+        table.tablesorter-blue thead th {
+            white-space: normal;
+            background: #99bfe6;
+            padding-right: 15px;
+        }
+        .dataTables_length {
+            margin-bottom: 10px;
+        }
+         .redColor{
+        	background:#e51c24 !important;
+        	color:#ffffff !important;
+        }
+        .greenColor{
+        	background:#4cb050 !important;
+        	color:#ffffff !important;
+        }
+        .yellowColor{
+        	background:#ffca2e !important;
+        }
+        .txt-truncate{
+        	text-overflow: ellipsis;
+       	    overflow: hidden;
+		    white-space: nowrap;
+		    width: 160px;
+        }
+        
+        </style>
+        &nbsp;<br/>
+        <div class="tab">
+          <a href="javascript:void(0);"  onclick="openPage('OnboardingAdvocateActionView');return false;" class="tablinks {!actionTab}">Action Required</a>
+          <a href="javascript:void(0);" onclick="openPage('OnboardingAdvocateCohortView');return false;"  class="tablinks {!cohortTab}">Cohort Views</a>
+          <a href="javascript:void(0);" onclick="openPage('OnboardingAdvocateBusinessView');return false;"  class="tablinks {!businessTab}">Book of Business Views</a>
+        </div>
+        <script type="text/javascript">
+                function openPage(pagename){
+                    var redirectUrl = 'apex/'+pagename; 
+                    if (sforce.console.isInConsole()) {
+                        //sforce.console.openPrimaryTab(undefined,redirectUrl,true);
+                       window.open('/'+redirectUrl+'?isdtp=vw', '_self');
+                    } else {
+                        // for inline Vf
+                        window.open('/'+redirectUrl, '_self');
+                    }
+                    
+                   
+
+                }       
+                
+                 function openRecord(recId,label){
+                    var redirectUrl = '/'+recId; 
+                    if (sforce.console.isInConsole()) {
+                        sforce.console.getEnclosingTabId(function(enclosingResult){
+                            sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                                console.log(primaryResult.id);
+                                if(primaryResult.id=='null'){
+                                    sforce.console.openPrimaryTab(undefined,redirectUrl,false,label);
+                                }else{
+                                    sforce.console.openSubtab(primaryResult.id, redirectUrl, false,label, null);
+                                }
+                            });
+                        })
+                    } else {
+                        // for inline Vf
+                        window.open(redirectUrl, '_blank');
+                    }
+                }
+        </script>
+        
+          <apex:slds />
+        <c:ActionStatus />
+</apex:component>

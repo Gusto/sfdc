@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_to_Company_Creation__c</fullName>
+    <externalId>false</externalId>
+    <formula>ZP_Company_Created_Date__c - DATEVALUE(CreatedDate)</formula>
+    <inlineHelpText>Days between &quot;Created Date&quot; and &quot;Company Created Date&quot;. If no company is created (i.e. lead is manually converted) then this field will be blank.</inlineHelpText>
+    <label>Days to Company Creation</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

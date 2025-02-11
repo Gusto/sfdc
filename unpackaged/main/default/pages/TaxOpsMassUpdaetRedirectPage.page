@@ -1,0 +1,25 @@
+<apex:page standardController="Tax_Ops_Failed_Record__c" extensions="TaxOpsFailedRecordsCreationController" recordsetvar="failedRecs">
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/> 
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <!-- <script>
+        var j$ = jQuery.noConflict();
+        var pageLoad = window.onload;
+        window.onload = function() {
+            setTabTitle();
+        }
+        
+        function getParamURL(){
+            
+            var url_str = window.location.href;
+            var urll = new URL(url_str);
+            var recordTypeName = urll.searchParams.get("rtnam");
+            console.log(recordTypeName);
+        }
+        
+        function redirectpage(){
+            if (sforce.console.isInConsole()) {
+            
+            
+        }
+    </script> -->
+</apex:page>

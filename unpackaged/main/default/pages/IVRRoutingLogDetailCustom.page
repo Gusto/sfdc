@@ -1,0 +1,313 @@
+<apex:page controller="IVRRoutingLogDetailCustomController" title="IVR Records" sidebar="false" id="mainpg" docType="html-5.0"  standardStylesheets="false"> 
+    <head>
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        
+        <apex:includeScript value="/support/console/42.0/integration.js"/>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+        <style>
+            .btnhide{
+                display:none; 
+            
+            }
+            .table-container{
+                 overflow:auto;
+                 max-height:100%;
+                 width:100%;
+             }
+             
+             .label-div{                
+                width:20%;
+             }
+             .gusto .slds-table th, .gusto .slds-table td {
+                white-space: normal !important;
+             }
+        
+        </style>
+        <script>
+            $(document).ready(function(){
+                $("select.queueList").change(function(){            
+                    var selectedQueueId = $(".queueList option:selected").val();            
+                    alert("You have selected the queue - " + selectedQueueId);          
+                }); 
+                
+                hidedetailPanel();   
+            });
+            
+            function showdetailPanel(){
+                $("#detailrow").show();
+            }
+            
+            function hidedetailPanel(){
+                $("#detailrow").hide();
+            }
+            
+        </script>
+        
+    </head>
+    
+    <div class="gusto">
+        <apex:outputPanel >                      
+            <apex:actionStatus id="fetchStatus" >
+                <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                               height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                                <span class="waitingDescription">Please Wait...</span> 
+                            </div>
+                        </div>
+                    </apex:facet>
+            </apex:actionStatus>
+        </apex:outputPanel>  
+        
+        <apex:outputPanel id="ivrlist" layout="block">
+            <table>
+                <tr style="vertical-align:top;">
+                    <td width="60%">
+                        <div  style="overflow: auto; width: 650px;">
+
+                            <apex:form >
+                            <apex:pagemessages />
+                            <apex:actionfunction action="{!getIVRDetail}" name="openRec" rerender="ivrlist" status="fetchStatus" >
+                                <apex:param name="pr1" value="" assignTo="{!currentIVRRLogId}"/> 
+                            </apex:actionfunction>
+                            
+                            <table>
+                                <tr>
+                                    <td>
+                                       <apex:selectList styleClass="filterSel" value="{!selectedQueueId}" size="1"  style="margin-bottom:10px;width:50%;" styleclass="slds-select"> 
+                                            <apex:actionSupport event="onchange" rerender="ivrlist" status="fetchStatus" action="{!getIVRs}"/>
+                                            <apex:selectOptions value="{!IVRQueueList}"/>
+                                        </apex:selectList>
+                                        &nbsp;
+                                        <apex:commandButton value="Play" rendered="{! !isPlay}" styleclass="btn slds-button slds-button--neutral" action="{!startPlay}" status="fetchStatus" rerender="ivrlist" />        
+                                    </td>
+                                </tr>
+                                <tr>
+                                   <td class="slds-scope section" >
+                                       <apex:outputPanel id="detailrow" styleclass="table-container" layout="block" rendered="{! if(selectedIVRRLog.id != null,true,false)}">
+                                        <Table class="table.spacing" style="padding-left:10px;" >
+                                                <tr>
+                                                    <td colspan="2" style="text-align:left;padding:25px;">
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save" action="{!saveIVRRecord}" id="saveButtonTop" status="fetchStatus" rerender="ivrlist" />    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save & Next" action="{!saveNextRecord}" id="saveNextButtonTop" status="fetchStatus" rerender="ivrlist" rendered="{! if(isPlay==true,true,false)}"/>    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Skip" action="{!skipAndSave}" id="skipSaveButtonTop" status="fetchStatus" rerender="ivrlist" rendered="{! if(isPlay==true,true,false)}"/>    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Cancel" id="cancelButtonTop" action="{!cancelUpdate}" rerender="ivrlist" status="fetchStatus" />
+                                                    </td>
+                                                </tr> 
+                                            <tr>
+                                                <td class="label-div">Review Intent <br/><br/>
+                                            </td>
+                                            </tr>
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="IVRName">IVR Name: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="transcript">
+                                                            <apex:outputLink value="{!selectedIVRRLog.id}">{!selectedIVRRLog.Name}</apex:outputLink>
+                                                        </div>
+                                                    </td>                               
+                                                </Tr>                                            
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="transcript">Transcript: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="transcript">
+                                                            <apex:outputField value="{!selectedIVRRLog.Lex_Transcript__c}" />
+                                                        </div>
+                                                    </td>
+                                                </Tr>
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="IVRIntentGrouping">Intent Grouping: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="IVRIntentGrouping">
+                                                            <apex:outputField value="{!selectedIVRRLog.IVR_Intent_Grouping__c }" />
+                                                        </div>
+                                                    </td>
+                                                </Tr>
+                                                <Tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="CaseReason">Case Reason: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="CaseReason">
+                                                            <apex:outputField value="{!selectedIVRRLog.Case_Reason__c}" />
+                                                        </div>
+                                                    </td>
+                                                </Tr>                                            
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="CorrectIntentGrouping">{!$ObjectType.IVR_Routing_Log__c.fields.Correct_Intent_Grouping__c.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <apex:inputText value="{!currentIntentGrouping}" list="{!intentGroupings}" id="CorrectIntentGrouping" html-autocomplete="off">
+                                                            <!-- <apex:inlineEditSupport event="ondblClick"  showOnEdit="saveButton"/> -->
+                                                        </apex:inputText>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label-div">
+                                                        <label class="slds-form-element__label" for="CallRecording">{!$ObjectType.IVR_Routing_Log__c.fields.Call_Recording__c.Label}: </label>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-form-element__control" id="CallRecording">
+                                                            <apex:outputField value="{!selectedIVRRLog.Call_Recording__c}" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <tr>
+                                                <td class="label-div"><br/> Create Utterance <br/><br/>
+                                            </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="label-div">
+                                                    <label class="slds-form-element__label" for="utterance">Utterance: </label>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-form-element__control" id="utterance">
+                                                        <apex:inputField value="{!selectedIVRRLog.Utterance__c }" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="label-div">
+                                                    <label class="slds-form-element__label" for="approved">Approved: </label>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-form-element__control" id="approved">
+                                                        <apex:inputField value="{!selectedIVRRLog.Approved__c  }" />
+                                                    </div>
+                                                </td>
+                                            </tr> 
+                                            <tr>
+                                                    <td colspan="2" style="text-align:left;padding:25px;">
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save" action="{!saveIVRRecord}" id="saveButton" status="fetchStatus" rerender="ivrlist" />    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Save & Next" action="{!saveNextRecord}" id="saveNextButton" status="fetchStatus" rerender="ivrlist" rendered="{! if(isPlay==true,true,false)}"/>    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Skip" action="{!skipAndSave}" id="skipSaveButton" status="fetchStatus" rerender="ivrlist" rendered="{! if(isPlay==true,true,false)}"/>    
+                                                        <apex:commandButton styleclass="slds-button slds-button--neutral" value="Cancel" id="cancelButton" action="{!cancelUpdate}" rerender="ivrlist" status="fetchStatus" />
+                                                    </td>
+                                                </tr>
+                                            </Table>
+                                         </apex:outputPanel>
+                                         <apex:outputPanel rendered="{! if(isPlayEmpty==true,true,false)}">
+                                            All the records has been traversed for the selected queue.
+                                            Please select a different queue.
+                                         </apex:outputPanel>  
+                                   </td>
+                                </tr>
+                                
+                            </table>
+                        </apex:form>  
+                            
+                        </div>
+                    </td>
+                    <td style="width:40%;padding-top:3%;">
+                        <apex:outputPanel id="feedPanel" styleclass="table-container" layout="block">
+                            <apex:outputPanel rendered="{! if(selectedIVRRLog.Case__c == null,false,true)}">        
+                               <chatter:feed entityId="{!selectedIVRRLog.Case__c}"  /> 
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="vertical-align:top;overflow:auto;" >
+                        <apex:outputPanel id="casedataList" styleclass="table-container" layout="block">
+                            <table class="slds-table slds-table--bordered slds-table_cell-buffer">
+                                <thead>
+                                    <tr class="slds-text-title">
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="intentgrouping">Intent Grouping</div>
+                                        </th>  
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="transcript">Transcript</div>
+                                        </th> 
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="skill">Skill</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="caseskill">Case Skill</div>
+                                        </th>                                          
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Case">Case</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="IVR Routing Log">IVR Routing Log</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="CIP Auth">CIP Auth</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="CIP Queue Name">CIP Queue Name</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="ConversationId">ConversationId</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Type">Type</div>
+                                        </th>  
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="CreatedDate">CreatedDate</div>
+                                        </th>           
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat id="recTable" value="{!IVRRecords}" var="ivrRec"   >
+                                        <tr>
+                                            <td>
+                                                {!ivrRec.IVR_Intent_Grouping__r.Name}
+                                            </td>     
+                                            <td>
+                                                {!ivrRec.Lex_Transcript__c}
+                                            </td>                                              
+                                            <td>
+                                                {!ivrRec.Skill__c}
+                                            </td> 
+                                            <td>
+                                                {!ivrRec.Case_Skill__c}
+                                            </td>                                             
+                                            <td>
+                                                <a href="#" onclick="openRec('{!ivrRec.id}');return false" style="cursor: pointer;text-decoration: underline;">{!ivrRec.Case__r.CaseNumber}</a>
+                                            </td>
+                                            <td>
+                                                {!ivrRec.Name}
+                                            </td>                                   
+                                            <td>
+                                                {!ivrRec.CIP_Auth__c}
+                                            </td> 
+                                            <td>
+                                                {!ivrRec.CIP_Queue_Name__c}
+                                            </td>  
+                                            <td>
+                                                {!ivrRec.ConversationId__c}
+                                            </td>  
+                                            <td>
+                                                {!ivrRec.Type__c}
+                                            </td> 
+                                            <td>
+                                                {!ivrRec.CreatedDate}
+                                            </td>                                               
+                                        </tr>
+                                    </apex:repeat>
+                    
+                                    <tr>
+                                        <td colspan="6">
+                                            <apex:outputPanel rendered="{!IF(IVRRecords.size == null ||IVRRecords.size == 0, true,false)}" layout="block">
+                                                No record found for the selected queue.
+                                            </apex:outputPanel> 
+                                        </td>
+                                    </tr>
+                                    
+                                </tbody>                          
+                            </table>
+                        </apex:outputPanel>                                             
+                    </td>                    
+                </tr> 
+            </table>
+        </apex:outputPanel>    
+    </div>
+</apex:page>

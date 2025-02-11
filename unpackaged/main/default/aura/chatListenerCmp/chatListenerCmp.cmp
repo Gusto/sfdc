@@ -1,0 +1,11 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId">
+    <lightning:conversationToolkitAPI aura:id="conversationKit" />
+    <aura:attribute name="strURL" type="String" default=""/>
+    <aura:handler event="lightning:conversationCustomEvent" action="{!c.onCustomEvent}" />
+    <aura:handler event="lightning:conversationNewMessage" action="{!c.onNewMessage}" />
+    <lightning:card title="Customer's current page:">
+        <p class="slds-p-horizontal_small">
+            {!v.strURL}
+        </p>
+    </lightning:card>
+</aura:component>

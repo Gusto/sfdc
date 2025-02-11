@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>61.0</apiVersion>
+    <assignments>
+        <name>PT_TaskUs_Assignements</name>
+        <label>PT TaskUs Assignements</label>
+        <locationX>50</locationX>
+        <locationY>503</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Previous_Payroll_Provider__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>PreviousPayrollProvider</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Link_Company__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CompanyPandaLink</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Record_Type</name>
+        <label>Ticket Record Type</label>
+        <locationX>314</locationX>
+        <locationY>287</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>PT_TaskUs</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>PT_TaskUs</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Order_Details</targetReference>
+            </connector>
+            <label>PT TaskUs</label>
+        </rules>
+        <rules>
+            <name>Solutions_Engineer</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Solution_Engineer_Request</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varIsNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_SE_Queue</targetReference>
+            </connector>
+            <label>Solutions Engineer</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>CompanyPandaLink</name>
+        <dataType>String</dataType>
+        <expression>IF( ISBLANK({!$Record.Link_Company__c}) , (&apos;https://app.gusto.com/panda/companies/&apos;&amp;{!Get_Order_Details.Zp_Company_ID__c}&amp;&apos;/transfer&apos;) , {!$Record.Link_Company__c})</expression>
+    </formulas>
+    <formulas>
+        <name>PreviousPayrollProvider</name>
+        <dataType>String</dataType>
+        <expression>IF( ISBLANK(TEXT({!$Record.Previous_Payroll_Provider__c})) ,TEXT({!Get_Order_Details.Previous_Payroll_Provider__c}) , TEXT({!$Record.Previous_Payroll_Provider__c}) )</expression>
+    </formulas>
+    <formulas>
+        <description>Variable to check if Ticket record is being created.</description>
+        <name>varIsNew</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>Record Trigger: Ticket Before Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Ticket Before Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Order_Details</name>
+        <label>Get Order Details</label>
+        <locationX>50</locationX>
+        <locationY>395</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>PT_TaskUs_Assignements</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Order__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Order</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_SE_Queue</name>
+        <label>Get SE Queue</label>
+        <locationX>314</locationX>
+        <locationY>395</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Update_Owner</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>PT_Solutions_Engineer_Queue</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Group</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>Update Owner to Queue</description>
+        <name>Update_Owner</name>
+        <label>Update Owner</label>
+        <locationX>314</locationX>
+        <locationY>503</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>Get_SE_Queue.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Record_Type</targetReference>
+        </connector>
+        <object>Ticket__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

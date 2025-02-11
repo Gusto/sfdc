@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <assignments>
+        <description>Setup new exception Log Record</description>
+        <name>Assign_Exception_Logs_Fields</name>
+        <label>Assign Exception Logs Fields</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <assignmentItems>
+            <assignToReference>New_Exception_Log_Record.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varRecordID</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Exception_Log_Record.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Message</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Exception_Log_Record.Class_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Class_Name_For_New_Exception_Log</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_New_Exception_Log</targetReference>
+        </connector>
+    </assignments>
+    <description>Flow to be referenced in other flows to post an error message with details to the biztech-backend-system-notifications channel.   
+NOTE: At minimum you must send the Id of the record that triggered the parent flow.</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Build the Class Name for the New Exception Log</description>
+        <name>Class_Name_For_New_Exception_Log</name>
+        <dataType>String</dataType>
+        <expression>&quot;Salesforce Flow: &quot; &amp; {!varParent_Flow_Name}</expression>
+    </formulas>
+    <interviewLabel>Slack Message Fault Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Slack Message Fault Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create Exception log for this Fault</description>
+        <name>Create_New_Exception_Log</name>
+        <label>Create New Exception Log</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <inputReference>New_Exception_Log_Record</inputReference>
+    </recordCreates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Assign_Exception_Logs_Fields</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>The body of the slack message</description>
+        <name>Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Message from Slack Message Fault Flow:An error has occurred during the operation of a flow.  
+Here are the details.
+Current Flow: {!varParent_Flow_Name}
+Source Of Error: {!varCurrentFlowAction}
+Name of Object Being Updated: {!varObject_Name}
+ID of record being updated: {!varRecordID}</text>
+    </textTemplates>
+    <variables>
+        <description>Create Exception Log for this issue</description>
+        <name>New_Exception_Log_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Exception_Log__c</objectType>
+    </variables>
+    <variables>
+        <description>The name of the flow action that received the error.</description>
+        <name>varCurrentFlowAction</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>The description of the flow action that encountered the error.</description>
+        <name>varFlow_Action_Description</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>The name of the Object being Updated</description>
+        <name>varObject_Name</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>The name of the flow that called this Fault Flow</description>
+        <name>varParent_Flow_Name</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>Salesforce ID of the record being updated or the Record that triggered the flow.</description>
+        <name>varRecordID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+</Flow>

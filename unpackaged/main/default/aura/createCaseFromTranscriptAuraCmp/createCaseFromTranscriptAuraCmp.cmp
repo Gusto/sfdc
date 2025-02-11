@@ -1,0 +1,14 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" controller="EngagementCaseViewExtension_LEX">
+
+    <lightning:workspaceAPI aura:id="workspace" />
+
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="blnShowCase" type="Boolean" />
+    <aura:attribute name="strMessage" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:if isTrue="{!v.blnShowCase}">
+        <div class="slds-align_absolute-center blink_me">{!v.strMessage}</div>
+    </aura:if>
+
+</aura:component>

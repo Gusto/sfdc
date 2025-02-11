@@ -1,0 +1,319 @@
+<apex:page id="linkAccountPage" controller="LinkAccountWithEmailsCtrl" action="{!linkSelectedEmail}" doctype="HTML-5.0">
+	<apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+	<apex:slds />
+	<link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script>
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+	<style>
+            .custom-table th, .custom-table td {
+                 padding: 5px;
+                 white-space: normal; 
+                 vertical-align: top;  
+            }
+            .ms-options-wrap > button:focus, .ms-options-wrap > button {
+               background: #fff;
+               max-width: 408px;
+            }
+            .ms-options-wrap {
+                position: relative;
+            }
+            .pbSubheader h3{
+            	display: inline;
+            }
+	</style>
+    <apex:form id="linkAccountForm">
+        <c:ActionStatus /> 
+		<apex:pageMessages id="msgSec"/>
+        <apex:actionFunction name="attachEmail" status="statusSave"  action="{!attachEmailToCase}" reRender="linkAccountSection,msgSec">
+	  		<apex:param name="caseToAttachEmailTo" value="" assignTo="{!idSelectedCase}"></apex:param>
+	 	</apex:actionFunction>
+	 	<apex:actionFunction name="attachEmailToExisting" status="statusSave" action="{!attachEmailToExistingCase}" reRender="linkAccountSection,msgSec">
+	  		<apex:param name="accToAttachEmailTo" value="" assignTo="{!idSelectedAccount}"></apex:param>
+	 	</apex:actionFunction>        
+        <div class="tabcontent slds-scope">
+		    <apex:outputPanel id="linkAccountSection" rendered="{!bool_ShowEmailLinkSection}">
+		    	<apex:pageblock title="Link Email with Cases">
+		    		<apex:pageBlockSection title="Email and Linked Account Details">
+			    		<apex:outputPanel id="AccountAndEmailInfo" rendered="{!IF(null != objEmailToLink ,true,false)}">
+			    			<table >
+                                <thead>
+                                    <tr >
+                                        <th scope="col" style="padding-bottom:2%;">Email Info</th>
+                                    </tr>
+                                </thead>
+            					<tbody>
+            						<tr>
+            							<th>Subject:</th>
+				              			<td >
+				              				<apex:commandLink value="{!objEmailToLink.obj_Message.Subject__c}" action="{!showSelectedEmail}" onComplete="openmodal();" status="statusSave" rerender="popupSection">
+		                						<apex:param name="index" value="{!objEmailToLink.indx}" assignTo="{!intSelectedEmail}"/>
+		                					</apex:commandLink>
+		                					<a href="javascript:void(0);" onClick="openRecord('{!objEmailToLink.obj_Message.Id}','{!objEmailToLink.obj_Message.Name}',false, false);">
+			                					<i class="material-icons">open_in_new</i>
+			                				</a>
+                                            <apex:commandLink value="" action="{!archiveSelectedEmail}" onClick="return confirm('Are you sure, you want to archive this email?');" status="statusSave" >
+                                                <apex:param name="index" value="{!objEmailToLink.indx}" assignTo="{!intSelectedEmail}"/>
+                                                <i class="material-icons">archive</i>
+                                            </apex:commandLink>                                            
+		                				</td>                                     
+            						</tr>
+            					</tbody>
+           					</table>
+       						<table style="margin-top:2%;">
+       							<thead>
+       								<tr><th scope="col" style="padding-bottom:2%;">Linked Account(s) Info</th></tr>
+       							</thead>
+       							<tbody>
+				    				<apex:repeat value="{!objEmailToLink.map_LinkedAccounts}" var="accId" rendered="{!IF(null != objEmailToLink.obj_Message.Linked_Accounts__c,true,false)}">
+					              		<tr>
+					              			<th style="padding: 0px 7px;"><apex:commandLink value="X" status="statusSave" action="{!deLinkAccount}" onclick="return confirm('Do you want to delink this Account?');">
+                                                <apex:param name="rowToBeDeLink" value="{!accId}" assignTo="{!accIdToBeDeLink}"></apex:param>
+                                            </apex:commandLink> Account Name	:</th>
+					              			<td style="padding: 0px 7px;">
+					              				<a href="javascript:void(0);" onClick="openRecord('{!accId}','{!objEmailToLink.map_LinkedAccounts[accId].Name}',false, false);">
+					              					<apex:outputText value="{!objEmailToLink.map_LinkedAccounts[accId].Name}"/>
+				              					</a>
+			              					</td >
+					              			<th style="padding: 0px 7px;">Company Id	:</th>
+					              			<td style="padding: 0px 7px;"><apex:outputText value="{!objEmailToLink.map_LinkedAccounts[accId].ZP_Company_ID__c}"/></td >
+					              			<th style="padding: 0px 7px;">Company Overall Status	:</th>
+					              			<td style="padding: 0px 7px;"><apex:outputText value="{!objEmailToLink.map_LinkedAccounts[accId].ZP_Company_Overall_Status__c}"/></td >
+					              			<th style="padding: 0px 7px;">Joined Date	:</th>
+					              			<td style="padding: 0px 7px;"><apex:outputField value="{!objEmailToLink.map_LinkedAccounts[accId].Joined_Date_Panda__c}"/></td >
+					              			<td>
+		        								<apex:commandButton value="New Case" status="statusSave"  action="{!attachEmailToExistingCase}" onComplete="if({!isError} == false){openRecord('{!objExistingCase.Id}','{!objExistingCase.caseNumber}',true, false);}" reRender="linkAccountSection,msgSec">
+		        									<apex:param name="accToAttachEmailTo" value="{!accId}" assignTo="{!idSelectedAccount}"></apex:param>
+		        								</apex:commandButton>
+		        							</td>
+				              			</tr>
+			              			</apex:repeat>
+       								<tr>
+       									<td><apex:outputText value="No Account records are linked with this email." rendered="{!IF(null == objEmailToLink.obj_Message.Linked_Accounts__c,true,false)}"/></td>
+     								</tr>
+       							</tbody>
+       						</table>
+       						<table style="display:table;width:125%;">
+       							<tr style=""> 
+        							<th style="display:table-cell;text-align:center;">Select Account : 
+        								<apex:inputField value="{!objOrd.AccountId}">
+        									<apex:actionSupport event="onchange" action="{!linkNewAccount}" status="statusSave" rerender="linkAccountSection,carrierOrderCases"/>
+        								</apex:inputField>
+                                    </th><!--//padding: 7px 40px;margin-top:2%-->
+                                    <th style="display:table-cell;text-align:center;">OR</th> 
+        							<th style="display:table-cell;text-align:center;">Select Contact : 
+        								<apex:inputField value="{!objOrd.CustomerAuthorizedById}">
+        									<apex:actionSupport event="onchange" action="{!linkNewAccount}" status="statusSave" rerender="linkAccountSection,carrierOrderCases"/>
+        								</apex:inputField>
+        							</th>  
+       							</tr>
+       							<tr>
+        							<th style="padding: 7px 0px;">Possible Account Matches : </th>
+       							</tr>
+         							
+              					<apex:repeat value="{!objEmailToLink.map_Accounts}" var="relAccId">
+              						<tr>
+              							<td style="padding: 7px 0px;">
+              								<apex:inputCheckbox value="{!objEmailToLink.map_SelectedAccounts[relAccId]}"> 
+              									<apex:actionSupport event="onchange" action="{!linkPossibleMatchAccount}" status="statusSave" rerender="linkAccountSection,carrierOrderCases">
+              										 <apex:param name="accToLinkOrDeLink" value="{!relAccId}" assignTo="{!accIdToBeDeLink}"></apex:param>
+             									</apex:actionSupport>
+              								</apex:inputCheckbox>&nbsp;
+              								<a href="javascript:void(0);"  onclick="openRecord('{!relAccId}','{!objEmailToLink.map_Accounts[relAccId].Name}',false, false);return true;">{!objEmailToLink.map_Accounts[relAccId].Name}</a>
+              							</td>
+              						</tr>
+              					</apex:repeat>
+       						</table>
+			    		</apex:outputPanel>
+		    		</apex:pageBlockSection>
+			    	<apex:pageBlockSection title="Cases with Carrier Order">
+			    		<apex:outputPanel id="noCase" rendered="{!IF(NULL == lstCasesWithCarrier || lstCasesWithCarrier.size = 0,true,false)}">
+			    			There are no cases associated.
+			    		</apex:outputPanel>
+			    		<apex:outputPanel id="carrierOrderCases" rendered="{!IF(NULL != lstCasesWithCarrier && lstCasesWithCarrier.size > 0,true,false)}">
+					    	<table class="slds-table slds-table_cell-buffer slds-table_bordered" >
+			           			<thead>
+			            			<tr class="slds-text-title slds-line-height_reset">
+			            				<th scope="col">Benefit Order</th>
+			            				<th scope="col">Carrier Order</th>
+			            				<th scope="col">Carrier</th>
+			            				<th scope="col">Implementation Stage</th>
+			            				<th scope="col">Coverage Effective Date</th>
+				             			<th scope="col">Case Number</th>
+				             			<th scope="col">Case Subject</th>
+				             			<th scope="col">Case Type</th>
+				             			<th scope="col">Case Status</th>
+				             			<th></th>
+				             		</tr>
+			            		</thead>
+			            		<tbody>
+			              			<apex:repeat value="{!lstCasesWithCarrier}" var="case">
+					              		<tr class="slds-text-title slds-line-height_reset">
+					              			<td style="white-space: break-spaces !important;">
+					              				<a href="javascript:void(0);" onClick="openRecord('{!case.Carrier_Order__r.Benefit_Order__c}','{!case.Carrier_Order__r.Benefit_Order__r.Name}',false, false);">
+					              					<apex:outputText value="{!case.Carrier_Order__r.Benefit_Order__r.Name}"/>
+					              				</a>
+				              				</td >
+				              				<td style="white-space: break-spaces !important;">
+					              				<a href="javascript:void(0);" onClick="openRecord('{!case.Carrier_Order__c}','{!case.Carrier_Order__r.Name}',false, false);">
+					              					<apex:outputText value="{!case.Carrier_Order__r.Name}"/>
+					              				</a>
+				              				</td >
+					              			<td style="white-space: break-spaces !important;"><apex:outputText value="{!case.Carrier_Order__r.Carrier__r.Name}"/></td>
+					              			<td><apex:outputText value="{!case.Carrier_Order__r.Implementation_Stage__c}"/></td>
+					              			<td><apex:outputField value="{!case.Carrier_Order__r.Benefit_Order__r.Coverage_Effective_Date__c}"/></td>
+					              			<td ><a href="javascript:void(0);" onClick="openRecord('{!case.Id}','{!case.CaseNumber}',false, false);"><apex:outputText value="{!case.CaseNumber}"/></a></td >
+					              			<td><apex:outputText value="{!case.Subject}"/></td>
+					              			<td><apex:outputText value="{!case.Type}"/></td>
+					              			<td ><apex:outputText value="{!case.Status}"/></td>
+					              			<td >
+					              				<apex:outputPanel rendered="{!IF(map_CaseToStdEmail[case.Id],false,true)}">
+					              				<a href="javascript:void(0);" onClick="callAttachEmail('{!case.Id}','{!case.CaseNumber}');">Attach Email</a>
+					              				</apex:outputPanel>
+					              			</td>
+					              		</tr>
+			              			</apex:repeat>
+			              		</tbody>
+			               	</table>
+		               	</apex:outputPanel>
+	               	</apex:pageBlockSection>
+	               	<apex:pageBlockSection title="Member Fulfillment Cases">
+	               		<apex:outputPanel id="noMFCase" rendered="{!IF(NULL== lstCasesMemberFulfilment || lstCasesMemberFulfilment.size = 0,true,false)}">
+			    			There are no cases associated.
+			    		</apex:outputPanel>
+			    		<apex:outputPanel id="MFCases" rendered="{!IF(NULL != lstCasesMemberFulfilment && lstCasesMemberFulfilment.size > 0,true,false)}">
+					    	<table class="slds-table slds-table_cell-buffer slds-table_bordered" >
+			           			<thead>
+			            			<tr class="slds-text-title slds-line-height_reset">
+			            				<th scope="col">Case Number</th>
+				             			<th scope="col">Case Subject</th>
+				             			<th scope="col">Case Type</th>
+				             			<th scope="col">Case Status</th>
+				             			<th></th>
+				             		</tr>
+			            		</thead>
+			            		<tbody>
+			              			<apex:repeat value="{!lstCasesMemberFulfilment}" var="case">
+					              		<tr class="slds-text-title slds-line-height_reset">
+					              			<td ><a href="javascript:void(0);" onClick="openRecord('{!case.Id}','{!case.CaseNumber}',false);"><apex:outputText value="{!case.CaseNumber}"/></a></td >
+					              			<td><apex:outputText value="{!case.Subject}"/></td>
+					              			<td><apex:outputText value="{!case.Type}"/></td>
+					              			<td ><apex:outputText value="{!case.Status}"/></td>
+					              			<td >
+					              				<apex:outputPanel rendered="{!IF(map_CaseToStdEmail[case.Id], false,true)}">
+					              				
+					              				<a href="javascript:void(0);" onClick="callAttachEmail('{!case.Id}','{!case.CaseNumber}');">Attach Email</a>
+					              				</apex:outputPanel>
+				              				</td>
+					              		</tr>
+			              			</apex:repeat>
+			              		</tbody>
+			               	</table>
+		               	</apex:outputPanel>
+	               	</apex:pageBlockSection>
+	               	<!--<table class="slds-table slds-table_cell-buffer slds-table_bordered" >
+	              		<tr class="slds-text-title slds-line-height_reset">
+	              			<td >
+	              				<apex:commandbutton value="Back to Emails" action="{!showAllEmails}" rerender="mainForm"/>
+	              			</td >
+              			</tr>
+           			</table>-->
+             	</apex:pageblock>
+             	<script>
+             		isError = '{!isError}';
+             		console.log(isError);
+             	</script>
+		    </apex:outputPanel>        
+		    <apex:outputPanel id="popupSection">
+		        <!-- For Popup Window -->
+				<div class="modal-window view-email-modal" style="display: none;">
+		      		<div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+		        		<div class="slds-modal__container" style="max-width: 50%;">
+		          			<div class="slds-modal__header">
+		            			<h2 id="modal-heading-01" class="slds-text-heading_small slds-hyphenate">
+		            			<b>Email - {!objEmailToLink.obj_Message.Subject__c}</b></h2>
+		          			</div>
+		             		<div class="slds-modal__content slds-p-around_medium slds-scrollable" id="modal-content-id-1"> <!--style="max-height: 350px; overflow-y: auto;"-->
+								<h3 class="slds-text-body_small slds-text-align_right">
+									<b>From: </b>
+									<apex:outputText value="{!objEmailToLink.obj_Message.From_Addresses__c}"/>
+								</h3>
+								<h3 class="slds-text-body_small slds-text-align_right">
+									<b>To: </b>
+									<apex:repeat value="{!objEmailToLink.lst_ToAddresses}" var="toAddr">
+	                					<apex:outputText value="{!toAddr}"/><br/>
+	               					</apex:repeat>
+								</h3>
+								<h3 class="slds-text-body_small slds-text-align_right">
+									<b>Created on: </b>
+									<apex:outputText value="{!objEmailToLink.createdDateTime}"/>
+								</h3>
+								<p>
+									<apex:outputField value="{!emailMessageRecord.Text_Body__c}"/>
+                                </p>
+			          		</div>
+			          	<div class="slds-modal__footer">
+			          		<apex:repeat value="{!objEmailToLink.obj_Message.attachments}" var="att">
+					            <apex:panelgrid columns="2">
+					            	<!--<a href="javascript:void(0);" onClick="openRecord('{!att.Id}','{!att.Name}',false)">{!att.Name}</a>-->
+					                <a href="/servlet/servlet.FileDownload?file={!att.Id}" target="_blank">{!att.Name}</a> 
+					            </apex:panelgrid>
+							</apex:repeat>
+			          		
+			            	<button class="slds-button slds-button_brand close-modal" onclick="closemodal();return false;">Close</button>
+			          	</div>
+		        	</div>
+		     		</div>
+		     		<div class="slds-backdrop slds-backdrop_open"></div>
+				</div>
+		    	<!-- End Pop-up window code -->
+	    	</apex:outputPanel>
+        </div>
+    	<script>
+    		$('select[multiple]').multiselect();
+    	</script>        
+    </apex:form>
+    <script>
+    	var isError;
+            $(function() {
+                $('select[multiple]').multiselect();
+            });
+            
+            $('.close-modal').click(function() {
+	            $('.modal-window').fadeOut();
+	           });
+           function closemodal(){
+            	$('.view-email-modal').fadeOut(); 
+           	}
+           function openmodal(){
+            $('.view-email-modal').fadeIn(); 
+           }
+           function openRecord(recId,label,isActive,isAttach){
+                    var redirectUrl = '/'+recId; 
+                    if (sforce.console.isInConsole()) {
+                        sforce.console.getEnclosingTabId(function(enclosingResult){
+                            sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                                console.log(primaryResult.id);
+                                if(primaryResult.id=='null' || isAttach==true){
+                                    sforce.console.openPrimaryTab(undefined,redirectUrl,isActive,label);
+                                } else{
+                                console.log(isActive);
+                                    sforce.console.openSubtab(primaryResult.id, redirectUrl, isActive,label, null);
+                                }
+                            });
+                        })
+                    } else {
+                        // for inline Vf
+                        window.open(redirectUrl, '_blank');
+                    }
+                }
+                
+			function callAttachEmail(caseId,caseNumber){
+				attachEmail(caseId);
+				if(isError == 'false')
+					openRecord(caseId,caseNumber,true,true);
+			}
+    </script>    
+    
+</apex:page>

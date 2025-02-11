@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Del_Only_PT_PE_Can_Change_CE_Reason</fullName>
+    <active>false</active>
+    <description>Only payroll transfer PEs select clerical error as extension reason.  Updated for specific user for Jira: BT-4671</description>
+    <errorConditionFormula>AND( 
+  $User.Exempt_from_Validation_Rules__c  &lt;&gt; TRUE,
+ ISPICKVAL(Pay_Date_Extension_Reason__c, &quot;Clerical Error&quot;), 
+ ISCHANGED(Pay_Date_Extension_Reason__c),
+NOT(ISPICKVAL( PRIORVALUE(Pay_Date_Extension_Reason__c), &quot;Clerical Error&quot;)  ),
+NOT($User.Exempt_from_Validation_Rules__c),
+$User.User_Id_18_Digit__c  &lt;&gt;  &quot;00516000005Aj32AAC&quot;,
+NOT($UserRole.Name = &apos;Payroll Transfer Fulfillment&apos;)
+)</errorConditionFormula>
+    <errorDisplayField>Pay_Date_Extension_Reason__c</errorDisplayField>
+    <errorMessage>Only Payroll Transfer PEs can update the clerical reason as the Extension reason</errorMessage>
+</ValidationRule>

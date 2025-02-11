@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>This invokable method will skip CaseTriggerHelper class.</description>
+        <name>Skip_Trigger</name>
+        <label>Skip Trigger</label>
+        <locationX>50</locationX>
+        <locationY>638</locationY>
+        <actionName>CaseTriggerHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Was_Case_Updated</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>booleanList</name>
+            <value>
+                <elementReference>blnSkipTrigger</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>CaseTriggerHelper</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <description>Initializing Fault Line details for fault paths in objExceptionLogEvent record.</description>
+        <name>Initializing_Fault_Line_Details</name>
+        <label>Initializing Fault Line Details</label>
+        <locationX>710</locationX>
+        <locationY>158</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strExceptionLogMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>MF_Termination_Route</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update objExceptionLogMessage with Fault Line details.</description>
+        <name>Update_objCase_Failed</name>
+        <label>Update objCase Failed</label>
+        <locationX>314</locationX>
+        <locationY>1130</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>MF_Termination_Route</name>
+        <label>MF Termination Route</label>
+        <locationX>710</locationX>
+        <locationY>278</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Termination_Date_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objCase.Termination_Date__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>objOldCase.Termination_Date__c</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Historical_Data__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Case_for_Termination_Date_Change</targetReference>
+            </connector>
+            <label>Termination Date Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Skip_Case_Trigger_Add_Logic_above_this_node</name>
+        <label>Skip Case Trigger? (Add Logic above this node)</label>
+        <locationX>314</locationX>
+        <locationY>518</locationY>
+        <defaultConnector>
+            <targetReference>Was_Case_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>blnSkipTrigger_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnSkipTrigger</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Skip_Trigger</targetReference>
+            </connector>
+            <label>blnSkipTrigger True</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Was_Case_Updated</name>
+        <label>Was Case Updated?</label>
+        <locationX>314</locationX>
+        <locationY>890</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>list_Cases_is_not_Empty</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>list_Cases</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_list_Cases</targetReference>
+            </connector>
+            <label>list_Cases is not Empty</label>
+        </rules>
+    </decisions>
+    <description>Helper subflow for MF Termination Case record type.</description>
+    <environments>Default</environments>
+    <interviewLabel>TEMPLATE: Case Helper Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case MF Termination SubFlow Helper</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Case_for_Termination_Date_Change</name>
+        <label>Create Case for Termination Date Change</label>
+        <locationX>314</locationX>
+        <locationY>398</locationY>
+        <connector>
+            <targetReference>Skip_Case_Trigger_Add_Logic_above_this_node</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>objCase.AccountId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>BusinessHoursId</field>
+            <value>
+                <elementReference>objCase.BusinessHoursId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ContactId</field>
+            <value>
+                <elementReference>objCase.ContactId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <stringValue>Termination date changed for employee</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <stringValue>00G16000005SE5X</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>RecordTypeId</field>
+            <value>
+                <elementReference>objCase.RecordTypeId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Related_Case__c</field>
+            <value>
+                <elementReference>objCase.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>New</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Termination_Date__c</field>
+            <value>
+                <elementReference>objCase.Termination_Date__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <elementReference>objCase.Type</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>314</locationX>
+        <locationY>1250</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordUpdates>
+        <description>Final DML Update</description>
+        <name>Update_list_Cases</name>
+        <label>Update list_Cases</label>
+        <locationX>50</locationX>
+        <locationY>1010</locationY>
+        <faultConnector>
+            <targetReference>Update_objCase_Failed</targetReference>
+        </faultConnector>
+        <inputReference>list_Cases</inputReference>
+    </recordUpdates>
+    <sourceTemplate>TEMPLATE_Case_Helper_Flow</sourceTemplate>
+    <start>
+        <locationX>584</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Initializing_Fault_Line_Details</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Fault Message: {!$Flow.FaultMessage}
+----
+Interview Guid: {!$Flow.InterviewGuid}
+----
+Current Record: {!$Flow.CurrentRecord}
+----
+You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.  
+https://gusto.lightning.force.com/lightning/setup/Pausedflows/home</text>
+    </textTemplates>
+    <variables>
+        <description>Boolean for skipping Case Trigger</description>
+        <name>blnSkipTrigger</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>list_Cases</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Case Object passed from Case Handler Flow.</description>
+        <name>objCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <description>Exception Log Event Object to capture fault path details.</description>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+    <variables>
+        <description>Input variable coming from Case After Save Handler flow. Prior Values.</description>
+        <name>objOldCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

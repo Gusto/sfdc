@@ -1,0 +1,15 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 07-29-2022
+  @last modified by  : Nigam Goyal
+-->
+<template>
+    <a href="#" onclick={onClickHandler} class="slds-p-right_small slds-text-link slds-text-link_reset">{objRecordName}</a>
+<template if:true={blnRowRecordIdBlank}>
+    <lightning-button-icon onclick={onClickHandler} variant="brand" icon-name="action:new_opportunity"  alternative-text="opportunities" title="opportunities">
+    </lightning-button-icon>
+</template>
+   
+</template>

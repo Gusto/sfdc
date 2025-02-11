@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_Plan_Name__c</fullName>
+    <description>GSO-79
+Converts payment plan code into a humanized name.</description>
+    <externalId>false</externalId>
+    <formula>Case(LOWER(Payment_Plan__c),
+  &apos;a&apos;, &apos;$20 Base, $5, $1.5, $1&apos;,    /* $20+$5/$1.5/$1 */
+  &apos;b&apos;, &apos;$25 Base, $4: 10, $1: 11+&apos;,   /* $25+$4/$1 */
+  &apos;c&apos;, &apos;$25 Base, $4: 10, $2: 11+&apos;,   /* $25+$4/$2 */
+  &apos;d&apos;, &apos;$25 Base, $4: 1+&apos;,        /* $25+$4 */
+  &apos;e&apos;, &apos;$29 Base, $6: 1+&apos;,        /* $29+$6 */
+  &apos;f&apos;, &apos;$39 Base, $6: 1+&apos;,        /* $39+$6 */
+  &apos;complete&apos;, &apos;$39 Base, $12: 1+&apos;,        /* $39 Base, $12: 1+ */
+  &apos;concierge&apos;, &apos;$149 Base, $12: 1+&apos;, /*$ 149 Base, $12: 1+ */
+  &apos;core&apos;, &apos;$39 Base, $6: 1+&apos;, /* $39 Base, $6: 1+ */
+  &apos;simple&apos;, &apos;$40 Base, $6: 1+&apos;, /*$ 40 Base, $6: 1+ */
+  &apos;plus&apos;, &apos;$80 Base, $12: 1+&apos;, /* $80 Base, $12: 1+ */
+  &apos;premium&apos;, &apos;$0 Base, $34 PEPM: Legacy&apos;, /* $0 Base, $34: 25+ */
+  &apos;select&apos;, &apos;$0 Base, $34: 25+&apos;, /*$0 Base, $34: 25+ */
+  &apos;contractor_only&apos;, &apos;$0 Base, $6: 1+&apos;,
+  &apos;contractor_only&apos;, &apos;$35 Base, $6: 1+&apos;,
+  &apos;contractor&apos;, &apos;$35 Base, $6: 1+&apos;,
+  &apos;core (owner-only s-corp)&apos;, &apos;$25 Base (S-Corp)&apos;, 
+  &apos;basic&apos;, &apos;$19 Base, $6: 1+&apos;,
+  &apos;premium v20240501&apos;, &apos;$180 Base, $22 PEPM&apos;,
+  &apos;premium for cannabis related business&apos;, &apos;$0 Base, $34 PEPM: CRB&apos;, /* $0 Base, $34: 25+ */
+  &apos;premium multi-ein&apos;, &apos;$0 Base, $34 PEPM: Multi-Ein&apos;, /* $0 Base, $34: 25+ */
+  &apos;wholesale&apos;, &apos;$0 Base, $20 PEPM&apos;,
+null)</formula>
+    <label>Payment Plan Name</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

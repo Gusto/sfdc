@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Activity_Days_Ago__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF ( LastActivityDate &lt;DATEVALUE (Completed__c) ,  ( DATEVALUE (Completed__c) - LastActivityDate),
+     
+     IF (LastActivityDate = DATEVALUE (Completed__c) ,1, 
+     
+     IF (LastActivityDate &gt; DateValue (Completed__c),  1000000000,
+     
+     0)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>For Hila - To analyze behavior of sales touches on NP closes</inlineHelpText>
+    <label>Last Activity Before Completed Dat</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

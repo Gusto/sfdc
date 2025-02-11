@@ -1,0 +1,213 @@
+<apex:page standardController="Case" extensions="EngagementCaseViewExtension" action="{!initTaxResHighlightsPanel}" docType="html-5.0">
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+    </style>
+    <script type="text/javascript">
+    
+    
+    function RefreshPrimaryTab() 
+    {
+        sforce.console.getFocusedPrimaryTabId(showTabId);
+    }
+    
+    var showTabId = function showTabId(result) 
+    {
+        var tabId = result.id;
+        //alert('Primary Tab IDs: primaryTabId ' + tabId );
+        sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+    };
+    
+    var refreshSuccess = function refreshSuccess(result) 
+    {
+        //Report whether refreshing the primary tab was successful
+        if (result.success == true) 
+        {
+            //alert('Email Sent');
+        } 
+        else 
+        {
+            //alert('Cannot refresh the page');
+        }
+    };   
+    
+    </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/> 
+    
+
+    <c:CaseContactSearch key="{!theCase.SuppliedPhone}" casId="{!theCase.id}" rendered="{! if(theCase.ContactId != null,false,true)}"/>
+    <apex:outputPanel id="highLightBody" rendered="{! if(theCase.ContactId != null,true,false)}">
+        <div style="background-color:#d9dbe0;width:100%;">
+            <div class="gusto" >
+                <!-- <apex:pageMessages ></apex:pageMessages> -->
+                <apex:form >
+                    <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                    </div>              
+                    <Table class="table.spacing">
+                        <Tr>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Case Number: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theCase.CaseNumber}"> 
+                                    </apex:outputField>
+                                </div>                        
+                            </td>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Status: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theAccount.Account_Status__c}"> 
+                                    </apex:outputField>
+                                </div>                        
+                            </td>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Type: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theAccount.Account_Type__c}"> 
+                                    </apex:outputField>
+                                </div>                         
+                            </td>  
+                            <td>
+                                <label class="slds-form-element__label" for="status">Current Year Notices: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputText value="{!currentYearNotices}"> 
+                                    </apex:outputText>
+                                </div>                         
+                            </td>
+                            <!-- <td>
+                                <label class="slds-form-element__label" for="status">Customer CSAT: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputText value="{!contactScore}%" rendered="{!contactScore>0}"></apex:outputText>
+                                </div>                         
+                            </td> -->
+                            <apex:outputPanel rendered="{!theCase.Origin=='Email'}">
+                            <td>                                
+                                <label class="slds-form-element__label" for="status">Authorized Contact: </label>
+                                <div class="slds-form-element__control" style="color:{!if(theCase.Authorized_User__c=='Yes','Green','Red')}">
+                                    <!--<c:SatisfactionRating score="{!if(theCase.Satisfaction_Score__c==null,0,theCase.Satisfaction_Score__c)}"/>-->
+                                    <b>{!theCase.Authorized_User__c}</b>
+                                </div> 
+                            </td>
+                            </apex:outputPanel>
+                            
+                            <td>
+                                <label class="slds-form-element__label" for="status">Permission Level: </label>
+                                <div class="slds-form-element__control" style="background-color:{!if(isFullAccess,'#d9dbe0','Yellow')}">
+                                    <apex:outputText value="Limited Access" rendered="{! !isFullAccess}"/> 
+                                    <apex:outputText value="Full Access" rendered="{! isFullAccess}"/>                                
+                                </div>                         
+                            </td>
+                            <td rowSpan="2" >
+                                <label class="slds-form-element__label" for="status">Account LSI's: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputText value="{!LSIs}">  
+                                    </apex:outputText>
+                                </div>                         
+                            </td>
+                            <td rowspan="2">
+                                <label class="slds-form-element__label" for="status">Account Notes:  
+                                    <apex:outputText value="{0,date, MM/dd/yyyy hh:mm:ss}">
+                                        <apex:param value="{!theAccount.CX_Company_Notes_Last_Updated__c}"/>
+                                    </apex:outputText>
+                                </label>
+                                <div class="slds-form-element__control" >
+                                    <apex:inputField value="{!theAccount.CX_Company_Notes__c}" style="width:80%;"/>
+                                    <apex:commandButton value="Save" action="{!saveAccountNotes}" styleClass="slds-button slds-button--neutral" oncomplete="location.reload();" style="vertical-align: top;"/>
+                                </div>                         
+                            </td>                       
+                        </Tr>
+                        <Tr>
+                            <!-- <td>
+                                <label class="slds-form-element__label" for="status">Partner Tier: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theAccount.AM_Tier__c}"> 
+                                    </apex:outputField>
+                                </div>                        
+                            </td> -->
+                            <td>
+                                <label class="slds-form-element__label" for="status">States: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputField value="{!theAccount.States__c}"> 
+                                    </apex:outputField>
+                                </div>                         
+                            </td>  
+                            <td>
+                                <label class="slds-form-element__label" for="status">Total Notices: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputText value="{!totalNotices}"> 
+                                    </apex:outputText>
+                                </div>                         
+                            </td>
+                           <!--  <td>
+                                <label class="slds-form-element__label" for="status">Company CSAT: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputText value="{!accountScore}%" rendered="{!accountScore>0}"></apex:outputText>
+                                </div>                         
+                            </td> -->
+                            <td>
+                                <apex:outputPanel rendered="{! if(theAccount.RecordType.Name != 'Company',true,false)}">
+                                    <label class="slds-form-element__label" for="status">Partner Tier: </label>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theAccount.AM_Tier__c}"> 
+                                        </apex:outputField>
+                                    </div>  
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{! if(theAccount.RecordType.Name == 'Company',true,false)}">
+                                    <label class="slds-form-element__label" for="status">Tier: </label>
+                                    <div class="slds-form-element__control">
+                                        <apex:outputField value="{!theAccount.Tier__c}"> 
+                                        </apex:outputField>
+                                    </div>
+                                </apex:outputPanel>                      
+                            </td>
+                            <td>
+                                <label class="slds-form-element__label" for="status">Case Count: </label>
+                                <div class="slds-form-element__control">
+                                    <div style="background-color:{!IF(caseStatus.NewCases>0,'#ff5a1e','grey')};width:30px;float:left;">
+                                        <b>N</b>:{!caseStatus.NewCases}
+                                    </div>
+                                    <div style="background-color:{!IF(caseStatus.OpenCases>0,'#ff5a1e','grey')};;width:30px;float:left;">
+                                        <b>O</b>:{!caseStatus.OpenCases}
+                                    </div><div style="background-color:#ededed;width:30px;float:left;">
+                                        <b>S</b>:{!caseStatus.SolvedCases}
+                                    </div><div style="background-color:#ededed;width:30px;float:left;">
+                                        <b>C</b>:{!caseStatus.ClosedCases}
+                                    </div>
+                                </div>                       
+                            </td>
+                            <!-- <td>
+                                <label class="slds-form-element__label" for="status">Tier: </label>
+                                <div class="slds-form-element__control">
+                                    <apex:outputText value="{!theAccount.Tier__c}">
+                                    </apex:outputText>
+                                </div>                         
+                            </td>
+                            <td></td> -->
+                            <!--<td>
+    <label class="slds-form-element__label" for="status">Pricing: </label>
+    <div class="slds-form-element__control">
+    <apex:outputField value="{!theAccount.Pricing__c}"> 
+    </apex:outputField>
+    </div>                         
+    </td>-->
+                            <!-- <td>
+                                <label class="slds-form-element__label" for="status">Days Since Last Upsell: </label>
+                                <div class="slds-form-element__control" style="background-color:{!if(theAccount.Days_Since_Last_Upsell_Conversation__c == null || theAccount.Days_Since_Last_Upsell_Conversation__c>60,'green','#d9dbe0')}">
+                                    <apex:outputField value="{!theAccount.Days_Since_Last_Upsell_Conversation__c}"> 
+                                    </apex:outputField>
+                                </div>                         
+                            </td> -->
+                            <td></td>
+                        </Tr>
+                    </Table>
+                    <br/>
+                </apex:form>
+            </div>
+        </div>
+    </apex:outputPanel>
+    <script>
+    if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+        RefreshPrimaryTab();
+    }
+    </script>
+</apex:page>

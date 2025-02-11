@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OrderSubmissionPrimaryContact</fullName>
+    <active>true</active>
+    <description>Primary Contact should be selected before submitting Order for approval.</description>
+    <errorConditionFormula>AND( ISBLANK(Bulk_Migration__c), ISCHANGED(Status), ISPICKVAL( Status , &apos;Sales Submitted&apos;), ISBLANK( Primary_Contact__c ) )</errorConditionFormula>
+    <errorDisplayField>Primary_Contact__c</errorDisplayField>
+    <errorMessage>Please select a Primary Point of Contact in the &quot;Opportunity Contact Roles&quot; section on the right before submitting Order for approval.</errorMessage>
+</ValidationRule>

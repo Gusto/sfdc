@@ -1,0 +1,5 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId">
+	<lightning:utilityBarAPI aura:id="chimaAIUtilityBar" />
+
+	<c:chimaAISupportLWC ondisplaycopilot="{!c.disableUtility}" recId="{!v.recordId}" />
+</aura:component>

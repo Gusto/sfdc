@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DemoEvent</fullName>
+    <active>true</active>
+    <description>used to schedule Demos</description>
+    <label>Demo Event</label>
+    <picklistValues>
+        <picklist>Event_Status__c</picklist>
+        <values>
+            <fullName>Attempt</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Canceled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Connect</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Scheduled</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Feature_Request_Type__c</picklist>
+        <values>
+            <fullName>BYB %28Benefits%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Comms %28emails%2Ftodo notifications%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gusto Managed Benefits %28Benefits%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hiring %2F Dismissing tools</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Payroll%2C Expenses%2FReimbursements</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Performance tools</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Permissions%2C Org chart%2C Departments</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reporting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Time Tracking %2F PTO</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Partner_Sales_Task_Type__c</picklist>
+        <values>
+            <fullName>Account Handoff</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Client Demo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Conversion Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Demo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Firm Free Payroll discussion</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Growth Opportunities</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HI Intro %26 Overview</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New Client Commit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New Partner Onboarding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Qualification Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quarterly Business Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sam Partnership Development</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tier Upsell</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>X-Functional Case</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Primary_Call_Objective__c</picklist>
+        <values>
+            <fullName>Onboarding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales - Budget</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales - Decision Maker</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales - Discovery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales - Pain Funnel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales - Recommendation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales - Upfront Contract</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Primary_Call_Reason__c</picklist>
+        <values>
+            <fullName>Onboarding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transfer</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Reason_for_Call__c</picklist>
+        <values>
+            <fullName>Access%2FTech Issue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Adding TAdA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ancillary Upsell</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Change Deductible%2FOOPM Reset</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Change Renewal Date</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Changing TAdA Contribution</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contribution</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Custom Quote</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Deadline Extension</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ER Flow Walkthrough</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Moving States</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Network Questions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rate Change</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recert</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Removing TAdA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Review More Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SBC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trying To Reach Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trying To Reach Dedicated Advisor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trying To Reach MYBC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trying To Reach OA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WP</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Secondary_Call_Reason__c</picklist>
+        <values>
+            <fullName>Add Accountant</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Add Employees %7C Add Contractors</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bank Account %7C Verify Bank Account</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Choose A Plan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Company%E2%80%99s Address</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Discover App%2C Integration%2C or Partner</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Explore Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>R%26D Tax Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Report Previous Paystubs</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Select A Payroll Schedule</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Set Up Federal Taxes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Set Up State Taxes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sign Documents %7C Add Signatory</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unpaid Tax Liabilities</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Workers Compensation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Served_Other_Rules__c</picklist>
+        <values>
+            <fullName>APD at Risk Bottom of Funnel - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>APD at Risk Top of Funnel - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>After Hours - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Catch all - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Lost Re Engage - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 2 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 30 Stalled in Onboarding - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 4 Stalled in Onboarding - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 7 Stalled in Onboarding - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 10 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 14 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 3 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 5 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 7 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Event Lead - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed APD - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed APD Not Ready to Run - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed APD Ready to Run - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Second Day Call - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stalled in current onboarding step - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Started Previous Payroll - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upcoming APD - SBOB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Served_Up_Rule__c</picklist>
+        <values>
+            <fullName>APD at Risk Bottom of Funnel - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>APD at Risk Top of Funnel - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>After Hours - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Catch all - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Lost Re Engage - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 2 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 30 Stalled in Onboarding - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 4 Stalled in Onboarding - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day 7 Stalled in Onboarding - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 10 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 14 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 3 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 5 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Direct SDR Day 7 - dSDR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Event Lead - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lead Nurture - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed APD - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed APD Not Ready to Run - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed APD Ready to Run - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Second Day Call - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stalled in current onboarding step - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Started Previous Payroll - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upcoming APD - SBOB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sub_Type__c</picklist>
+        <values>
+            <fullName>Automation Error</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Clarification Requested</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Missing Submission Document%28s%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Requested Additional Document%28s%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Form Mapping Issue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Plan Selected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Waiting Period Selected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LoC Termination Missed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed Dependent Enrollment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed Employee Enrollment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed Pending Item</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing Proof of Completed Group App</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing Proof of Correctly Submitted Enrollments</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing Proof of Group Level Changes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submission Form Incomplete%2FNeeds Correction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unprocessed Selections</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Waiting on Expected Pending Item</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Subject</picklist>
+        <values>
+            <fullName>Demo</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TC_Task_Description__c</picklist>
+        <values>
+            <fullName>Amendment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Calculation Model</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Claimed Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Credit Approval</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Credit Reapproval</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Data Change</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Data Load</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Data Request</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Download Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EPD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Extension</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Invoice Past Due</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Join TTQ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Notes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PIQ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pricing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pull Through Funnel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transfer</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TC_Task_Sub_Description__c</picklist>
+        <values>
+            <fullName>CPA Support</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Confirm</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Discount - Campaign</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Discount - Escalation or Pricing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Discount - Nav or Pricing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doc Type%3A Expense - Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doc Type%3A Expense - Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doc Type%3A TR - Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doc Type%3A TR - Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doc Type%3A Wage - Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Doc Type%3A Wage - Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First-Year R%26D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First-Year R%26D Analysis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First-Year Revenue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First-Year Revenue Analysis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Follow up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Follow up - Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Follow up - Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound - Meeting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inc Date</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inc Date Analysis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manual Declaration</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Meeting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outbound - Meeting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Qual - Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Qual - Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quant - Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quant - Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Send</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unpublish</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Year End Date</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Year End Date Analysis</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type</picklist>
+        <values>
+            <fullName>Conversion</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Demo</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>JBR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upsell</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>X-F Case</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type__c</picklist>
+        <values>
+            <fullName>Correct Alignment Issue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Correct Missing%2FIncorrect Enrollment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Correct Plan%2FWaiting Period</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Enter Missing Group%2FPolicy Number</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Process Unprocessed Selections</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upload Missing Proof to Gdrive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upload Pending Item</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

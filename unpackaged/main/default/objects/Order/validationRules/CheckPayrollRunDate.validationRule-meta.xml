@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CheckPayrollRunDate</fullName>
+    <active>true</active>
+    <description>Checks if Payroll Run Date is &lt;12 Days away, the Exception Request field must be True in order to submit the order.</description>
+    <errorConditionFormula>AND(  ISPICKVAL( Status , &apos;Sales Submitted&apos;), ISBLANK( Bulk_Migration__c ), NOT(Exception_Request__c), ((Payroll_Run_Date__c - TODAY()) &lt; 12 ))</errorConditionFormula>
+    <errorDisplayField>Exception_Request__c</errorDisplayField>
+    <errorMessage>If Payroll Run Date is &lt;12 Days away, the Exception Request field must be True in order to submit the order.</errorMessage>
+</ValidationRule>

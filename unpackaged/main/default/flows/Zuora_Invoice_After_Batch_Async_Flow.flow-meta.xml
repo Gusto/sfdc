@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Message to post when Batch job fails</description>
+        <name>Batch_Failed_Post_Message_0</name>
+        <label>Batch Failed Post Message</label>
+        <locationX>1106</locationX>
+        <locationY>600</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Batch_Job_Processing_Error_Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Post message that error or queued invoices still exist</description>
+        <name>Error_Or_Queued_Invoices_Exist_Action</name>
+        <label>Error Or Queued Invoices Exist Action</label>
+        <locationX>50</locationX>
+        <locationY>816</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Error_Queued_Invoices_Exist_Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Get Payment Invoices Count without Join Date</description>
+        <name>Get_Payment_Invoices_Count_without_Join_Date</name>
+        <label>Get Payment Invoices Count without Join Date</label>
+        <locationX>314</locationX>
+        <locationY>816</locationY>
+        <actionName>PaymentInvoiceSlackMessageQueryHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Post_Success_Notification</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_InvoiceRunLogs</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>PaymentInvoiceSlackMessageQueryHelper</nameSegment>
+        <outputParameters>
+            <assignToReference>Invoice_Count_WO_Join_Date</assignToReference>
+            <name>output</name>
+        </outputParameters>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Calling apex method to query queued and error invoices for a specific period start and end date</description>
+        <name>Get_Pending_Invoices_By_Date</name>
+        <label>Get Pending Invoices By Date</label>
+        <locationX>314</locationX>
+        <locationY>600</locationY>
+        <actionName>PaymentInvoiceQueryHelper</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Any_Error_or_Queued_Invoice_Exist</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Problem_In_Querying_Invoices</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_InvoiceRunLogs</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>PaymentInvoiceQueryHelper</nameSegment>
+        <outputParameters>
+            <assignToReference>Number_of_Error_Invoices</assignToReference>
+            <name>output</name>
+        </outputParameters>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Post success slack notification that all invoices are processed</description>
+        <name>Post_Success_Notification</name>
+        <label>Post Success Notification</label>
+        <locationX>314</locationX>
+        <locationY>924</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>All_Invoices_Processed_Success_Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Success_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send a slack notification and notify there is an error in querying invoices</description>
+        <name>Problem_In_Querying_Invoices</name>
+        <label>Problem In Querying Invoices</label>
+        <locationX>842</locationX>
+        <locationY>708</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Unable_To_Query_Payment_Invoices</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>Get_Error_Channel_Destination.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <description>Decision to check if any payment invoice exist in error or queued status</description>
+        <name>Any_Error_or_Queued_Invoice_Exist</name>
+        <label>Any Error or Queued Invoice Exist</label>
+        <locationX>314</locationX>
+        <locationY>708</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Error_Invoice_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Number_of_Error_Invoices</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Error_Or_Queued_Invoices_Exist_Action</targetReference>
+            </connector>
+            <label>Error Invoice Exists</label>
+        </rules>
+        <rules>
+            <name>No_Error_Invoice_Exist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Number_of_Error_Invoices</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Payment_Invoices_Count_without_Join_Date</targetReference>
+            </connector>
+            <label>No Error Invoice Exist</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Action to be triggered after batch job is processed</description>
+        <name>Is_Batch_Job_Processed</name>
+        <label>Is Batch Job Processed</label>
+        <locationX>842</locationX>
+        <locationY>492</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Batch_Processed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Batch_Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Processed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Pending_Invoices_By_Date</targetReference>
+            </connector>
+            <label>Batch Processed</label>
+        </rules>
+        <rules>
+            <name>Batch_Error</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Batch_Processing_State__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Batch_Failed_Post_Message_0</targetReference>
+            </connector>
+            <label>Batch Error</label>
+        </rules>
+    </decisions>
+    <description>Used for sending slack notifications after payment invoice batch job is completed</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Error_Slack_Channel</name>
+        <dataType>String</dataType>
+        <expression>{!$Label.Zuora_invoice_Error_Channel}</expression>
+    </formulas>
+    <formulas>
+        <description>Date formatted to MM-DD-YYY format.</description>
+        <name>Period_End_Formula</name>
+        <dataType>String</dataType>
+        <expression>LPAD (TEXT(MONTH({!$Record.Period_End__c})), 2, &quot;0&quot;) + &quot;-&quot; + TEXT(DAY({!$Record.Period_End__c}))+ &quot;-&quot; + TEXT(YEAR({!$Record.Period_End__c}))</expression>
+    </formulas>
+    <formulas>
+        <name>Success_Slack_Channel</name>
+        <dataType>String</dataType>
+        <expression>{!$Label.Zuora_Invoice_Success_Channel}</expression>
+    </formulas>
+    <interviewLabel>Zuora Invoice - After Batch Async Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Zuora Invoice - After Batch Async Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get name of slack channel where all error notifications will be sent</description>
+        <name>Get_Error_Channel_Destination</name>
+        <label>Get Error Channel Destination</label>
+        <locationX>842</locationX>
+        <locationY>384</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Is_Batch_Job_Processed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>slackv2__Channel_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Error_Slack_Channel</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get name of slack channel where all success notifications will be sent</description>
+        <name>Get_Success_Channel_Destination</name>
+        <label>Get Success Channel Destination</label>
+        <locationX>842</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Error_Channel_Destination</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>slackv2__Channel_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Success_Slack_Channel</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Batch_Processing_State__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Invoice_Run_Log__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Success_Channel_Destination</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Success message to post when all invoices have been processed</description>
+        <name>All_Invoices_Processed_Success_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:white_check_mark: Payment Invoice Batch completed to attach invoice to related opportunities. All payment invoices for the workflow number {!$Record.Workflow_Run_Number__c} for the month ending {!Period_End_Formula} have been successfully processed!
+Total number of invoices are processed without join date: {!Invoice_Count_WO_Join_Date}</text>
+    </textTemplates>
+    <textTemplates>
+        <description>Template to be used when batch job fails</description>
+        <name>Batch_Job_Processing_Error_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:alert: Zuora Payment Invoice Batch for the workflow run number {!$Record.Workflow_Run_Number__c} failed. Please find error message below.
+{!$Record.Batch_Message__c}  
+cc: @biztech-on-call</text>
+    </textTemplates>
+    <textTemplates>
+        <description>Slack notification to indicate error invoices exist</description>
+        <name>Error_Queued_Invoices_Exist_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:alert: Payment Invoice Batch completed to attach invoice to related opportuniites.There are {!Number_of_Error_Invoices} payment invoices in Error or Queued status
+Please check errored invoices for the workflow number {!$Record.Workflow_Run_Number__c} for the month ending {!Period_End_Formula}
+Report Link: {!$Label.Zuora_Invoice_Error_Report}
+cc: @biztech-on-call</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Unable_To_Query_Payment_Invoices</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;span style=&quot;color: rgb(68, 68, 68); background-color: rgb(255, 255, 255);&quot;&gt;:alert:&amp;nbsp;Error occurred in querying payment invoice &lt;/span&gt;for the workflow number {!$Record.Workflow_Run_Number__c}&amp;nbsp;&lt;span style=&quot;color: rgb(68, 68, 68); background-color: rgb(255, 255, 255);&quot;&gt;Please check flow and resolve this error.&lt;/span&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>Invoice_Count_WO_Join_Date</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>Number_of_Error_Invoices</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+</Flow>

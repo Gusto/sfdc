@@ -1,0 +1,266 @@
+<apex:page standardController="Case" extensions="MFCaseViewExtension">
+<apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+    <style> 
+        table.spacing { border-spacing: 30px; border-collapse: separate; } 
+    </style>
+    <script type="text/javascript">
+    
+    var $j = jQuery.noConflict();
+       
+       $j( document ).ready(function() { 
+            window.timer = setTimeout(function(){
+                        //console.log('c');
+                            sforce.console.getFocusedPrimaryTabObjectId(setCCAddress);
+             },3000);
+        });
+        
+        var setCCAddress = function setCCAddress(result) {        
+                    if(result.id!=null && result.id!='' && result.id!='null'){
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.MFCaseViewExtension.getEmailCC}',
+                                    result.id,
+                                    function(result, event){
+                                        if (event.status) {
+                                        var fields = result.split('subject:');
+                                        console.log('cc email 222>>'+fields[0]+'ddddd'+fields[1]);
+                                               /* Sfdc.canvas.publisher.publish({name: 'publisher.selectAction', 
+                                               payload: { actionName: 'Case.Email'}});  */
+                                               Sfdc.canvas.publisher.publish({name: 'publisher.setActionInputValues', 
+                                               payload: {
+                                               actionName: 'Case.Email',
+                                               emailFields: {
+                                                    subject:{value:fields[1]},
+                                                    cc:{value:fields[0]}
+                                               }
+                                               }});
+                                        }                                          
+                                    }, 
+                                    {escape: true}
+                        );
+                        }
+        };    
+    
+    
+    function RefreshPrimaryTab() 
+    {
+        sforce.console.getFocusedPrimaryTabId(showTabId);
+    }
+    
+    var showTabId = function showTabId(result) 
+    {
+        var tabId = result.id;
+        //alert('Primary Tab IDs: primaryTabId ' + tabId );
+        sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+    };
+    
+    var refreshSuccess = function refreshSuccess(result) 
+    {
+        //Report whether refreshing the primary tab was successful
+        if (result.success == true) 
+        {
+            //alert('Email Sent');
+        } 
+        else 
+        {
+            //alert('Cannot refresh the page');
+        }
+    };   
+    
+    function reopenTab() 
+        {
+            
+            sforce.console.getFocusedPrimaryTabId(reopenTabById); 
+        }
+        
+        var reopenTabById = function reopenTabById(result) 
+        {
+            var tabId = result.id;
+            //alert(tabId);
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.openPrimaryTab(tabId ,'/{!theCase.id}' ,true);
+        }; 
+        
+        function OpenPrimaryTab(recId) {
+            //Open a new primary tab with the salesforce.com home page in it
+            sforce.console.openPrimaryTab(null, "/"+recId, true);
+        }
+    </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/> 
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:form id="routeToForm">
+        <apex:actionFunction action="{!routeCase}" name="routeCase" rerender="routeToPannel" id="routeCase" oncomplete="reopenTab();"/>
+                <apex:outputPanel rendered="{!$Profile.Name!='Vendor CX'}" id="routeToPannel">
+                    Route To: 
+                    <apex:selectList value="{!caseType}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!caseTypeOption}"> </apex:selectOptions>
+                    </apex:selectList> 
+                    <apex:commandButton onClick="routeCase();" rerender="routeToPannel" value=">>" styleclass=""   />
+                    
+                </apex:outputPanel>
+                
+            </apex:form>      
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:form >
+            
+            <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                <apex:commandButton action="{!SaveNewPlanCase}" value="Save" styleclass="slds-button slds-button--neutral" /> 
+            </div>              
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Opportunity: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Opportunity__c}"> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>    
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Benefit Order: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:commandLink onclick="OpenPrimaryTab('{!theCase.Benefit_Order__c}');return false;">{!theCase.Benefit_Order__r.Name}</apex:commandLink>
+                            <!-- <apex:outputField value="{!theCase.Benefit_Order__c}"> 
+                            </apex:outputField> -->
+                        </div>
+                    </td>                    
+                </Tr>                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Status: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Status}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="statusDetail">Status Detail: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Status_Detail__c}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Submission Deadline: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Benefit_Order_Submission_Deadline__c}"> 
+                                <!---<apex:inlineEditSupport event="ondblClick" />---> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                 <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Open Enrollment Start: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Open_Enrollment_Start__c}"> 
+                                <!---<apex:inlineEditSupport event="ondblClick" />---> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Open Enrollment End: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Open_Enrollment_End__c}"> 
+                                <!---<apex:inlineEditSupport event="ondblClick" /> --->
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Requires Action: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Requires_Action__c}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>  
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Related Incident: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Related_to_Incident__c}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Covid-19 Notes: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Covid_19_Note_s__c}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Follow Up Date: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Follow_Up_Date__c}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                
+            </Table>
+            <br/><br/>
+            <label class="slds-form-element__label" for="carrier">Case Description: </label>
+            <br/>
+            <apex:outputField value="{!theCase.Description}"/>
+            <br/>
+            &nbsp;
+            <label class="slds-form-element__label" for="status">Permission Level: </label>
+            <div class="slds-form-element__control" style="background-color:{!if(isFullAccess,'','Yellow')}">
+                <apex:outputText value="Limited Access" rendered="{! !isFullAccess}"/> 
+                <apex:outputText value="Full Access" rendered="{! isFullAccess}"/>                                
+            </div>
+        </apex:form>
+        <c:ContactUserInformation usrId="{!theCase.Contact.ZP_User_Id__c}" emlId="{!theCase.SuppliedEmail}" cseId="{!theCase.id}"/>
+    </div>
+    <script>
+    if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+        RefreshPrimaryTab();
+    }
+    </script>
+</apex:page>

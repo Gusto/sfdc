@@ -1,0 +1,39 @@
+<aura:component implements="lightningsnapin:prechatUI">
+    <!-- You must implement "lightningsnapin:prechatUI" for this component to appear in the "Pre-chat Component" customization dropdown in the Embedded Service setup -->
+    <ltng:require 
+        styles="{!$Resource.SLDSAlex +
+            '/styles/salesforce-lightning-design-system.min.css'}" />
+    <!-- Pre-chat field components to render -->
+    <aura:attribute name="prechatFieldComponents" type="List" description="An array of objects representing the pre-chat fields specified in pre-chat setup."/>
+    <aura:attribute name="selectedChatReason" type="String" default="General Question"/>
+    <aura:attribute name="options" type="List" default="[{'label': 'General Question', 'value': 'General Question'}]"/>
+    <!-- {'label': 'Choose one...', 'value': ''}, ,{'label': 'Escalation', 'value': 'Escalation'}] -->
+    <!-- Handler for when this component is initialized -->
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <!--<aura:handler name="change" value="{!v.selectedChatReason}" action="{!c.handleReasonChange}"/>-->
+
+    <!-- For Aura performance -->
+    <aura:locator target="startButton" description="Pre-chat form submit button."/>
+    
+    <!-- Contains methods for getting pre-chat fields, starting a chat, and validating fields -->
+    <lightningsnapin:prechatAPI aura:id="prechatAPI"/>
+
+    
+    <div class="prechatUI">
+        <div class="prechatContent">
+            <div class="slds-text-heading_small slds-m-top_x-large">Chat Reason</div>
+            <lightning:combobox name="Chat Reason" value="{!v.selectedChatReason}"  options="{!v.options}" onchange="{!c.chatReasonChange}"/>
+            <!--<lightning:select aura:id="chatReasonSelect" name="chatReasonSelect" label="Chat Reason" required="true" value="{!v.selectedChatReason}" onchange="{!c.chatReasonChange}">
+                <option value=""></option>
+                <option value="General Question"></option>
+                <option value="Escalation"></option>
+            </lightning:select>-->
+            <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:LiveChatTranscript" value="Chat_Reason__c" />
+        </div>
+        <div class="startButtonWrapper">
+            <br/>
+            <!--<ui:button aura:id="startButton" class="slds-button slds-button_brand" label="{!$Label.LiveAgentPrechat.StartChat}" press="{!c.handleStartButtonClick}"/>-->
+            <lightning:button class="brandButton" variant="brand" label="{!$Label.LiveAgentPrechat.StartChat}" title="{!$Label.LiveAgentPrechat.StartChat}" onclick="{!c.handleStartButtonClick}" />
+        </div>
+    </div>
+</aura:component>

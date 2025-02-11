@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Company_Opportunity_Owner_Notification_Alert</fullName>
+        <description>Company Opportunity Owner Notification Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Notifications/Opportunity_Owner_Notification</template>
+    </alerts>
+    <alerts>
+        <fullName>MM_Notification_Transfer_to_Partner</fullName>
+        <description>MM Notification - Transfer to Partner</description>
+        <protected>false</protected>
+        <recipients>
+            <field>OldOwner_Email__c</field>
+            <type>email</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Notifications/MM_Transfer_to_Partner</template>
+    </alerts>
+    <alerts>
+        <fullName>O_Alert_for_Unapproved_Large_Deal_Closed</fullName>
+        <description>O: Alert for Unapproved Large Deal Closed</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>margaux.carpenter@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>victoria.chiang@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Notifications/O_unapproved_large_deal</template>
+    </alerts>
+    <alerts>
+        <fullName>O_Blocked_BoR</fullName>
+        <description>O: Blocked BoR</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Notifications/OBlockedBoR</template>
+    </alerts>
+    <alerts>
+        <fullName>O_ROE_Email_Notification_HI</fullName>
+        <description>O: ROE Email Notification - HI</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_mm_b4_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_mm_br_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_mm_fs_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_mm_np_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_sb_br_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_sb_np_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Notifications/O_HI_ROE_to_Managers</template>
+    </alerts>
+    <alerts>
+        <fullName>O_ROE_Email_Notification_PR</fullName>
+        <description>O: ROE Email Notification - PR</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Small_Biz_PE_ROE_Email_Support_Team</recipient>
+            <type>group</type>
+        </recipients>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <recipient>sales_partner_xx_xx_mgr</recipient>
+            <type>role</type>
+        </recipients>
+        <recipients>
+            <recipient>allie.bray@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <field>LastModifiedById</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Notifications/O_HI_ROE_to_Managers</template>
+    </alerts>
+    <outboundMessages>
+        <fullName>Customer_Success_Survey_Qualtrics</fullName>
+        <apiVersion>52.0</apiVersion>
+        <description>Send outbound message to qualtrics to trigger survey from Opportunity to primary contact.</description>
+        <endpointUrl>https://sjc1.qualtrics.com/triggers/api/v1/event?eventType=SalesforceOutboundMessage&amp;s=SV_1U0nt7jyunA0pw2&amp;u=UR_8ptD0NJecqyTm5v&amp;t=OC_YQa3npWEi0B3HcB&amp;b=gusto</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>qualtrics.integration@gusto.com</integrationUser>
+        <name>Customer Success Survey (Qualtrics)</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>OB_Opp_Slack_Notifications</fullName>
+        <apiVersion>49.0</apiVersion>
+        <description>OB Message [Workato] for slack notifications post Routing/Lead conversion.</description>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Opportunity&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>workato.integration@gusto.com</integrationUser>
+        <name>OB Opp Slack Notifications</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+    <outboundMessages>
+        <fullName>Send_Slack_OB_for_NP</fullName>
+        <apiVersion>45.0</apiVersion>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Opportunity&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <fields>Id</fields>
+        <includeSessionId>false</includeSessionId>
+        <integrationUser>heroku@gusto.com</integrationUser>
+        <name>Send Slack OB for NP</name>
+        <protected>false</protected>
+        <useDeadLetterQueue>false</useDeadLetterQueue>
+    </outboundMessages>
+</Workflow>

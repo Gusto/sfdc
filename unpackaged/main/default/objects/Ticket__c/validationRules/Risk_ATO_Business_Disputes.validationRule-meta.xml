@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_ATO_Business_Disputes</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL( Escalation_Reason__c , &quot;Business Dispute&quot;),
+ISBLANK( Additional_Comments__c ))</errorConditionFormula>
+    <errorDisplayField>Additional_Comments__c</errorDisplayField>
+    <errorMessage>Additional comments are required - please include all affected parties</errorMessage>
+</ValidationRule>

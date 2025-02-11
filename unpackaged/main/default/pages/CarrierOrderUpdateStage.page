@@ -1,0 +1,50 @@
+<apex:page standardController="Carrier_Order__c" recordSetVar="carrierOrders" extensions="UpdateOrderStatusExt">
+    <apex:form id="frmId">
+        <c:GustoActionStatus />
+        <apex:sectionHeader title="{!$ObjectType.Carrier_Order__c.label}"
+                            subtitle="Update the Implementation Stage"/>
+        <apex:pageBlock mode="edit">
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="{!$Label.Confirm}" action="{!updateStatus}" status="actStatusId" reRender="frmId" rendered="{!!blnHasError}"/>
+                <apex:commandButton value="{!$Label.Discard}" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:outputPanel rendered="{!!blnHasError}">
+                <apex:pageBlockSection title="Select the new Non TADA Implementation Stage" columns="1" id="nonTadaSection" collapsible="false" rendered="{!blnIsNonTadaCarrierOrder && !blnIsBoR}">
+                    <apex:inputField value="{!objNonTadaCO.Implementation_Stage__c}" required="true" >
+                        <apex:actionSupport event="onchange" reRender="nonTadaSection"/>
+                    </apex:inputField>
+                    <apex:inputField value="{!objNonTadaCO.Stage_Detail__c}" rendered="{!objNonTadaCO.Implementation_Stage__c=='Canceled'}"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Select the new TADA Implementation Stage" columns="1" collapsible="false" rendered="{!blnIsTadaCarrierOrder && !blnIsBoR}">
+                    <apex:inputField value="{!objTadaCO.Implementation_Stage__c}" required="true"/>
+                    <!--Reason:- Added the Stage detail field which is mandetory in some cases where Implemetation Stage 
+                        (Approved,Canceled) -->
+                    <apex:inputField value="{!objTadaCO.Stage_Detail__c}" required="true"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Select the new Non TADA Implementation Stage" columns="1" id="nonTadaSectionBOR" collapsible="false" rendered="{!blnIsNonTadaCarrierOrder  && blnIsBoR}">
+                    <apex:selectlist value="{!objNonTadaCO.Implementation_Stage__c}" size="1"  label="Implementation Stage" >
+                        <apex:selectOptions value="{!list_NonTadaImplementationStageBor}"/>
+                        <apex:actionSupport event="onchange" reRender="nonTadaSectionBOR" action="{!GetNonTadaStageDetail}" status="actStatusId"/>
+                    </apex:selectlist>
+                    <apex:selectlist value="{!objNonTadaCO.Stage_Detail__c}" size="1"  label="Implementation Stage Detail" rendered="{!list_NonTadaImplementationStageDetail.size>0}">
+                        <apex:selectOptions value="{!list_NonTadaImplementationStageDetail}"/>
+                    <apex:actionSupport event="onchange" reRender="nonTadaSectionBOR" status="actStatusId"/>
+                    </apex:selectlist>
+                    <apex:inputField value="{!objNonTadaCO.Additional_Details__c}" rendered="{!objNonTadaCO.Stage_Detail__c = 'Other'}"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Select the new TADA Implementation Stage" columns="1" collapsible="false" id="TadaSectionBOR" rendered="{!blnIsTadaCarrierOrder  && blnIsBoR}">
+                    <apex:selectlist value="{!objTadaCO.Implementation_Stage__c}" size="1" label="Implementation Stage" >
+                        <apex:selectOptions value="{!list_TadaImplementationStageBor}"/>
+                        <apex:actionSupport event="onchange" reRender="TadaSectionBOR" action="{!GetTadaStageDetail}" status="actStatusId"/>
+                    </apex:selectlist>
+                    <apex:selectlist value="{!objTadaCO.Stage_Detail__c}" size="1"  label="Implementation Stage Detail" rendered="{!list_TadaImplementationStageDetail.size>0}" >
+                        <apex:selectOptions value="{!list_TadaImplementationStageDetail}"/>
+                     <apex:actionSupport event="onchange" reRender="TadaSectionBOR" status="actStatusId"/>
+                    </apex:selectlist> 
+                    <apex:inputField value="{!objTadaCO.Additional_Details__c}" rendered="{!objTadaCO.Stage_Detail__c = 'Other'}"/>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,1343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <processMetadataValues>
+            <name>postTargetUserType</name>
+            <value>
+                <stringValue>REFERENCE</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Ticket__c].OwnerId}]  this ticket is assigned to you. Please review and take action-  https://gusto.my.salesforce.com/{![Ticket__c].Id} .&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_1_A1</name>
+        <label>Create a chatter post when ticket assigned</label>
+        <locationX>100</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <connector>
+            <targetReference>myRule_1_A2</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.OwnerId}]  this ticket is assigned to you. Please review and take action-  https://gusto.my.salesforce.com/{!myVariable_current.Id} .</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+            <value>
+                <stringValue>USER</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Owner:User.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Ticket__c].Owner:User.Id}] , {![Ticket__c].Name} is awaiting your action.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_3_A1</name>
+        <label>2 Day chatter notification</label>
+        <locationX>300</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Owner:User.Id}] , {!myVariable_current.Name} is awaiting your action.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Ticket__c].Owner:User.Id}] , {![Ticket__c].Name} is awaiting your action.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_5_A1</name>
+        <label>4 Day chatter notification</label>
+        <locationX>500</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.Owner:User.Id}] , {!myVariable_current.Name} is awaiting your action.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>postTargetUserType</name>
+            <value>
+                <stringValue>REFERENCE</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;{![Ticket__c].Owner:User.FirstName} {![Ticket__c].Owner:User.LastName} this ticket is assigned to you. Please review and take action- {![Ticket__c].Name}.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_7_A1</name>
+        <label>Create Chatter Post</label>
+        <locationX>700</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>{!myVariable_current.Owner:User.FirstName} {!myVariable_current.Owner:User.LastName} this ticket is assigned to you. Please review and take action- {!myVariable_current.Name}.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+            <value>
+                <stringValue>USER</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Owner:User.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <processMetadataValues>
+            <name>textJson</name>
+            <value>
+                <stringValue>{&quot;mentions&quot;:[],&quot;message&quot;:&quot;@[{![Ticket__c].CreatedById}] Ticket has been updated status to {![Ticket__c].Status__c}.&quot;}</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>myRule_9_A1</name>
+        <label>Post to BO</label>
+        <locationX>900</locationX>
+        <locationY>200</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>@[{!myVariable_current.CreatedById}] Ticket has been updated status to {!myVariable_current.Status__c}.</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>type</name>
+        </inputParameters>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>chatterPost</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <name>myWaitAssignment_myWait_myRule_1</name>
+        <label>myWaitAssignment_myWait_myRule_1</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>cancelWaits</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>myWait_myRule_1</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>myDecision</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>myWaitEvent_myWait_myRule_1_event_0_postWaitExecutionAssignment</name>
+        <label>myWaitEvent_myWait_myRule_1_event_0_postWaitExecutionAssignment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>myWaitEvent_myWait_myRule_1_event_0_postActionExecutionVariable</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>myWait_myRule_1</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>myWaitEvent_myWait_myRule_1_event_1_postWaitExecutionAssignment</name>
+        <label>myWaitEvent_myWait_myRule_1_event_1_postWaitExecutionAssignment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>myWaitEvent_myWait_myRule_1_event_1_postActionExecutionVariable</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>myWait_myRule_1</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>isChangedDecision10_myRule_9_Status_c</name>
+        <label>isChangedDecision10_myRule_9_Status_c</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myPreWaitDecision_myWait_myRule_1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>isChangedRule_10_myRule_9_Status_c</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>myVariable_old</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>myVariable_old.Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>myVariable_current.Status__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myPreWaitDecision_myWait_myRule_1</targetReference>
+            </connector>
+            <label>isChangedRule_10_myRule_9_Status_c</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>0.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision</name>
+        <label>myDecision</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision2</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_pmetdec</targetReference>
+            </connector>
+            <label>Ticket is assigned</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision2</name>
+        <label>myDecision2</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision4</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_3</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_3</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_3_A1</targetReference>
+            </connector>
+            <label>2 Day Ticket Chatter notification</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>2.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision4</name>
+        <label>myDecision4</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision6</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_5</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_5</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_5_A1</targetReference>
+            </connector>
+            <label>4 Day Chatter notification</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>3.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision6</name>
+        <label>myDecision6</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myDecision8</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_7</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_7</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_7_A1</targetReference>
+            </connector>
+            <label>Ticket is assigned - Advising Fulfillment</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <processMetadataValues>
+            <name>index</name>
+            <value>
+                <numberValue>4.0</numberValue>
+            </value>
+        </processMetadataValues>
+        <name>myDecision8</name>
+        <label>myDecision8</label>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myRule_9</name>
+            <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
+            <conditions>
+                <processMetadataValues>
+                    <name>inputDataType</name>
+                    <value>
+                        <stringValue>Boolean</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideType</name>
+                    <value>
+                        <stringValue>Picklist</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>operatorDataType</name>
+                    <value>
+                        <stringValue>String</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>rightHandSideType</name>
+                    <value>
+                        <stringValue>Boolean</stringValue>
+                    </value>
+                </processMetadataValues>
+                <leftValueReference>isChangedRule_10_myRule_9_Status_c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <processMetadataValues>
+                    <name>inputDataType</name>
+                    <value>
+                        <stringValue>Picklist</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideType</name>
+                    <value>
+                        <stringValue>Picklist</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>operatorDataType</name>
+                    <value>
+                        <stringValue>String</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>rightHandSideType</name>
+                    <value>
+                        <stringValue>Picklist</stringValue>
+                    </value>
+                </processMetadataValues>
+                <leftValueReference>myVariable_current.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <processMetadataValues>
+                    <name>inputDataType</name>
+                    <value>
+                        <stringValue>Boolean</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideReferenceTo</name>
+                    <value>
+                        <stringValue>Benefit_Order__c</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideType</name>
+                    <value>
+                        <stringValue>ID</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>operatorDataType</name>
+                    <value>
+                        <stringValue>String</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>rightHandSideType</name>
+                    <value>
+                        <stringValue>Boolean</stringValue>
+                    </value>
+                </processMetadataValues>
+                <leftValueReference>myVariable_current.Benefit_Order__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <processMetadataValues>
+                    <name>inputDataType</name>
+                    <value>
+                        <stringValue>Boolean</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideReferenceTo</name>
+                    <value>
+                        <stringValue>Carrier_Order__c</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideType</name>
+                    <value>
+                        <stringValue>ID</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>operatorDataType</name>
+                    <value>
+                        <stringValue>String</stringValue>
+                    </value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>rightHandSideType</name>
+                    <value>
+                        <stringValue>Boolean</stringValue>
+                    </value>
+                </processMetadataValues>
+                <leftValueReference>myVariable_current.Carrier_Order__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_9_A1</targetReference>
+            </connector>
+            <label>Ticket Is Closed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myPostWaitDecision_myWaitEvent_myWait_myRule_1_event_0</name>
+        <label>myPostWaitDecision_myWaitEvent_myWait_myRule_1_event_0</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myWaitEvent_myWait_myRule_1_event_0_postWaitExecutionAssignment</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myPostWaitRule_myWaitEvent_myWait_myRule_1_event_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>myVariable_current.CreatedDate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myWaitEvent_myWait_myRule_1_event_0_SA1</targetReference>
+            </connector>
+            <label>myPostWaitRule_myWaitEvent_myWait_myRule_1_event_0</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myPostWaitDecision_myWaitEvent_myWait_myRule_1_event_1</name>
+        <label>myPostWaitDecision_myWaitEvent_myWait_myRule_1_event_1</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myWaitEvent_myWait_myRule_1_event_1_postWaitExecutionAssignment</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myPostWaitRule_myWaitEvent_myWait_myRule_1_event_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>myVariable_current.CreatedDate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myWaitEvent_myWait_myRule_1_event_1_SA1</targetReference>
+            </connector>
+            <label>myPostWaitRule_myWaitEvent_myWait_myRule_1_event_1</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myPreWaitDecision_myWait_myRule_1</name>
+        <label>myPreWaitDecision_myWait_myRule_1</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>myWaitAssignment_myWait_myRule_1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>default</defaultConnectorLabel>
+        <rules>
+            <name>myPreWaitRule_myWait_myRule_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myDecision</targetReference>
+            </connector>
+            <label>myPreWaitRule_myWait_myRule_1</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>myRule_1_pmetdec</name>
+        <label>Previously Met Decision</label>
+        <locationX>100</locationX>
+        <locationY>100</locationY>
+        <defaultConnector>
+            <targetReference>myRule_1_A1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Previously Met</defaultConnectorLabel>
+        <rules>
+            <name>myRule_1_pmetnullrule</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>myVariable_old</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myRule_1_A1</targetReference>
+            </connector>
+            <label>Previously Met - Null</label>
+        </rules>
+        <rules>
+            <name>myRule_1_pmetrule</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>formula_myRule_1_pmetrule</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Previously Met - Prev</label>
+        </rules>
+    </decisions>
+    <description>Functions for ticket workflow</description>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND(
+[Ticket__c].OwnerId != $User.Id,
+AND(
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment_Care&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Payroll_Sales_Escalation&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Benefits_Compliance&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Ardius&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS([Ticket__c].OwnerId, &quot;005&quot;)),
+AND(
+   ISCHANGED([Ticket__c].OwnerId),
+    BEGINS([Ticket__c].OwnerId, &quot;005&quot;),NOT([Ticket__c].Owner:User.Profile.Name = &apos;Benefits Compliance&apos;))
+ 
+),
+
+NOT(ISPICKVAL([Ticket__c].Status__c ,&apos;Closed&apos;))
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(
+{!myVariable_current.OwnerId} != {!$User.Id},
+AND(
+{!myVariable_current.RecordType.DeveloperName} != &apos;Advising_Fulfillment&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Advising_Fulfillment_Care&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Payroll_Sales_Escalation&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Benefits_Compliance&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Ardius&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;)),
+AND(
+   ISCHANGED({!myVariable_current.OwnerId}),
+    BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;),NOT({!myVariable_current.Owner:User.Profile.Name} = &apos;Benefits Compliance&apos;))
+ 
+),
+
+NOT(ISPICKVAL({!myVariable_current.Status__c} ,&apos;Closed&apos;))
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND(
+[Ticket__c].OwnerId != $User.Id,
+AND(
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment_Care&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Payroll_Sales_Escalation&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Benefits_Compliance&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Ardius&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS([Ticket__c].OwnerId, &quot;005&quot;)),
+AND(
+   ISCHANGED([Ticket__c].OwnerId),
+    BEGINS([Ticket__c].OwnerId, &quot;005&quot;),NOT([Ticket__c].Owner:User.Profile.Name = &apos;Benefits Compliance&apos;))
+ 
+),
+
+NOT(ISPICKVAL([Ticket__c].Status__c ,&apos;Closed&apos;))
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_1_pmetrule</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(
+{!myVariable_old.OwnerId} != {!$User.Id},
+AND(
+{!myVariable_old.RecordType.DeveloperName} != &apos;Advising_Fulfillment&apos;,
+{!myVariable_old.RecordType.DeveloperName} != &apos;Advising_Fulfillment_Care&apos;,
+{!myVariable_old.RecordType.DeveloperName} != &apos;Payroll_Sales_Escalation&apos;,
+{!myVariable_old.RecordType.DeveloperName} != &apos;Benefits_Compliance&apos;,
+{!myVariable_old.RecordType.DeveloperName} != &apos;Ardius&apos;,
+{!myVariable_old.RecordType.DeveloperName} != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS({!myVariable_old.OwnerId}, &quot;005&quot;)),
+AND(
+   ISCHANGED({!myVariable_old.OwnerId}),
+    BEGINS({!myVariable_old.OwnerId}, &quot;005&quot;),NOT({!myVariable_old.Owner:User.Profile.Name} = &apos;Benefits Compliance&apos;))
+ 
+),
+
+NOT(ISPICKVAL({!myVariable_old.Status__c} ,&apos;Closed&apos;))
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND(
+[Ticket__c].OwnerId != $User.Id,
+AND(
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment_Care&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Payroll_Sales_Escalation&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Benefits_Compliance&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Ardius&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS([Ticket__c].OwnerId, &quot;005&quot;)),
+AND(
+    NOT(ISCHANGED([Ticket__c].OwnerId)),
+    BEGINS([Ticket__c].OwnerId, &quot;005&quot;),
+    NOT([Ticket__c].Owner:User.Profile.Name = &apos;Benefits Compliance&apos;))
+ 
+),
+AND(
+  NOT(ISPICKVAL([Ticket__c].Status__c ,&apos;Closed&apos;)),
+  ISPICKVAL([Ticket__c].Scheduled_Action_Notification__c , &apos;2 Day&apos;))
+
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_3</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(
+{!myVariable_current.OwnerId} != {!$User.Id},
+AND(
+{!myVariable_current.RecordType.DeveloperName} != &apos;Advising_Fulfillment&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Advising_Fulfillment_Care&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Payroll_Sales_Escalation&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Benefits_Compliance&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Ardius&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;)),
+AND(
+    NOT(ISCHANGED({!myVariable_current.OwnerId})),
+    BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;),
+    NOT({!myVariable_current.Owner:User.Profile.Name} = &apos;Benefits Compliance&apos;))
+ 
+),
+AND(
+  NOT(ISPICKVAL({!myVariable_current.Status__c} ,&apos;Closed&apos;)),
+  ISPICKVAL({!myVariable_current.Scheduled_Action_Notification__c} , &apos;2 Day&apos;))
+
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND(
+[Ticket__c].OwnerId != $User.Id,
+AND(
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Advising_Fulfillment_Care&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Payroll_Sales_Escalation&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Benefits_Compliance&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;Ardius&apos;,
+[Ticket__c].RecordType.DeveloperName != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS([Ticket__c].OwnerId, &quot;005&quot;)),
+AND(
+    NOT(ISCHANGED([Ticket__c].OwnerId)),
+    BEGINS([Ticket__c].OwnerId, &quot;005&quot;),
+    NOT([Ticket__c].Owner:User.Profile.Name = &apos;Benefits Compliance&apos;))
+ 
+),
+
+AND(
+  NOT(ISPICKVAL([Ticket__c].Status__c ,&apos;Closed&apos;)),
+  ISPICKVAL([Ticket__c].Scheduled_Action_Notification__c , &apos;4 Day&apos;))
+ 
+)</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_5</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(
+{!myVariable_current.OwnerId} != {!$User.Id},
+AND(
+{!myVariable_current.RecordType.DeveloperName} != &apos;Advising_Fulfillment&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Advising_Fulfillment_Care&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Payroll_Sales_Escalation&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Benefits_Compliance&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;Ardius&apos;,
+{!myVariable_current.RecordType.DeveloperName} != &apos;API_Integration_Escalation&apos;
+),
+OR(
+AND(ISNEW(),BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;)),
+AND(
+    NOT(ISCHANGED({!myVariable_current.OwnerId})),
+    BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;),
+    NOT({!myVariable_current.Owner:User.Profile.Name} = &apos;Benefits Compliance&apos;))
+ 
+),
+
+AND(
+  NOT(ISPICKVAL({!myVariable_current.Status__c} ,&apos;Closed&apos;)),
+  ISPICKVAL({!myVariable_current.Scheduled_Action_Notification__c} , &apos;4 Day&apos;))
+ 
+)</expression>
+    </formulas>
+    <formulas>
+        <processMetadataValues>
+            <name>originalFormula</name>
+            <value>
+                <stringValue>AND(
+OR(
+   [Ticket__c].RecordType.DeveloperName = &apos;Advising_Fulfillment&apos;,
+   [Ticket__c].RecordType.DeveloperName = &apos;Advising_Fulfillment_Care&apos;),
+[Ticket__c].OwnerId != $User.Id
+
+,OR(
+AND(ISNEW(),BEGINS([Ticket__c].OwnerId, &quot;005&quot;)),
+AND(
+   ISCHANGED([Ticket__c].OwnerId),
+    BEGINS([Ticket__c].OwnerId, &quot;005&quot;))
+ 
+),
+
+NOT(ISPICKVAL([Ticket__c].Status__c ,&apos;Closed&apos;))
+)
+</stringValue>
+            </value>
+        </processMetadataValues>
+        <name>formula_myRule_7</name>
+        <dataType>Boolean</dataType>
+        <expression>AND(
+OR(
+   {!myVariable_current.RecordType.DeveloperName} = &apos;Advising_Fulfillment&apos;,
+   {!myVariable_current.RecordType.DeveloperName} = &apos;Advising_Fulfillment_Care&apos;),
+{!myVariable_current.OwnerId} != {!$User.Id}
+
+,OR(
+AND(ISNEW(),BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;)),
+AND(
+   ISCHANGED({!myVariable_current.OwnerId}),
+    BEGINS({!myVariable_current.OwnerId}, &quot;005&quot;))
+ 
+),
+
+NOT(ISPICKVAL({!myVariable_current.Status__c} ,&apos;Closed&apos;))
+)</expression>
+    </formulas>
+    <interviewLabel>Ticket_Handler-25_InterviewLabel</interviewLabel>
+    <label>Ticket Handler</label>
+    <processMetadataValues>
+        <name>ObjectType</name>
+        <value>
+            <stringValue>Ticket__c</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>ObjectVariable</name>
+        <value>
+            <elementReference>myVariable_current</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OldObjectVariable</name>
+        <value>
+            <elementReference>myVariable_old</elementReference>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>TriggerType</name>
+        <value>
+            <stringValue>onAllChanges</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Workflow</processType>
+    <recordUpdates>
+        <processMetadataValues>
+            <name>evaluationType</name>
+            <value>
+                <stringValue>always</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>extraTypeInfo</name>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>isChildRelationship</name>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>reference</name>
+            <value>
+                <stringValue>[Ticket__c]</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>referenceTargetField</name>
+        </processMetadataValues>
+        <name>myRule_1_A2</name>
+        <label>Clear Scheduled Notification field</label>
+        <locationX>100</locationX>
+        <locationY>300</locationY>
+        <connector>
+            <targetReference>myWait_myRule_1</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <processMetadataValues>
+                <name>implicit</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </processMetadataValues>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Scheduled Action Notification</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>GlobalConstant</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Scheduled_Action_Notification__c</field>
+        </inputAssignments>
+        <object>Ticket__c</object>
+    </recordUpdates>
+    <recordUpdates>
+        <processMetadataValues>
+            <name>evaluationType</name>
+            <value>
+                <stringValue>always</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>extraTypeInfo</name>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>isChildRelationship</name>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>reference</name>
+            <value>
+                <stringValue>[Ticket__c]</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>referenceTargetField</name>
+        </processMetadataValues>
+        <name>myWaitEvent_myWait_myRule_1_event_0_SA1</name>
+        <label>2 Day Notification Field update</label>
+        <locationX>100</locationX>
+        <locationY>200</locationY>
+        <connector>
+            <targetReference>myWaitEvent_myWait_myRule_1_event_0_postWaitExecutionAssignment</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <processMetadataValues>
+                <name>implicit</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </processMetadataValues>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Scheduled Action Notification</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Scheduled_Action_Notification__c</field>
+            <value>
+                <stringValue>2 Day</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Ticket__c</object>
+    </recordUpdates>
+    <recordUpdates>
+        <processMetadataValues>
+            <name>evaluationType</name>
+            <value>
+                <stringValue>always</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>extraTypeInfo</name>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>isChildRelationship</name>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>reference</name>
+            <value>
+                <stringValue>[Ticket__c]</stringValue>
+            </value>
+        </processMetadataValues>
+        <processMetadataValues>
+            <name>referenceTargetField</name>
+        </processMetadataValues>
+        <name>myWaitEvent_myWait_myRule_1_event_1_SA1</name>
+        <label>4 Day Notification Field update</label>
+        <locationX>100</locationX>
+        <locationY>200</locationY>
+        <connector>
+            <targetReference>myWaitEvent_myWait_myRule_1_event_1_postWaitExecutionAssignment</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <processMetadataValues>
+                <name>implicit</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </processMetadataValues>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>myVariable_current.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <processMetadataValues>
+                <name>dataType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isRequired</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideLabel</name>
+                <value>
+                    <stringValue>Scheduled Action Notification</stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>leftHandSideReferenceTo</name>
+                <value>
+                    <stringValue></stringValue>
+                </value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>rightHandSideType</name>
+                <value>
+                    <stringValue>Picklist</stringValue>
+                </value>
+            </processMetadataValues>
+            <field>Scheduled_Action_Notification__c</field>
+            <value>
+                <stringValue>4 Day</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Ticket__c</object>
+    </recordUpdates>
+    <startElementReference>isChangedDecision10_myRule_9_Status_c</startElementReference>
+    <status>Obsolete</status>
+    <variables>
+        <name>cancelWaits</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>myVariable_current</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Ticket__c</objectType>
+    </variables>
+    <variables>
+        <name>myVariable_old</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Ticket__c</objectType>
+    </variables>
+    <variables>
+        <name>myWaitEvent_myWait_myRule_1_event_0_postActionExecutionVariable</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>myWaitEvent_myWait_myRule_1_event_1_postActionExecutionVariable</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <waits>
+        <name>myWait_myRule_1</name>
+        <label>myWait_myRule_1</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>defaultLabel</defaultConnectorLabel>
+        <waitEvents>
+            <processMetadataValues>
+                <name>inputParameterType</name>
+                <value>
+                    <stringValue>referenced</stringValue>
+                </value>
+            </processMetadataValues>
+            <name>myWaitEvent_myWait_myRule_1_event_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>myWaitEvent_myWait_myRule_1_event_0_postActionExecutionVariable</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myPostWaitDecision_myWaitEvent_myWait_myRule_1_event_0</targetReference>
+            </connector>
+            <eventType>DateRefAlarmEvent</eventType>
+            <inputParameters>
+                <name>TimeTableColumnEnumOrId</name>
+                <value>
+                    <stringValue>Ticket__c</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>EntityObjectId</name>
+                <value>
+                    <elementReference>myVariable_current.Id</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeOffsetUnit</name>
+                <value>
+                    <stringValue>Days</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeOffset</name>
+                <value>
+                    <numberValue>2.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeFieldColumnEnumOrId</name>
+                <value>
+                    <stringValue>CreatedDate</stringValue>
+                </value>
+            </inputParameters>
+            <label>myWaitEvent_myWait_myRule_1_event_0</label>
+        </waitEvents>
+        <waitEvents>
+            <processMetadataValues>
+                <name>inputParameterType</name>
+                <value>
+                    <stringValue>referenced</stringValue>
+                </value>
+            </processMetadataValues>
+            <name>myWaitEvent_myWait_myRule_1_event_1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>myWaitEvent_myWait_myRule_1_event_1_postActionExecutionVariable</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>myPostWaitDecision_myWaitEvent_myWait_myRule_1_event_1</targetReference>
+            </connector>
+            <eventType>DateRefAlarmEvent</eventType>
+            <inputParameters>
+                <name>TimeTableColumnEnumOrId</name>
+                <value>
+                    <stringValue>Ticket__c</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>EntityObjectId</name>
+                <value>
+                    <elementReference>myVariable_current.Id</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeOffsetUnit</name>
+                <value>
+                    <stringValue>Days</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeOffset</name>
+                <value>
+                    <numberValue>4.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>TimeFieldColumnEnumOrId</name>
+                <value>
+                    <stringValue>CreatedDate</stringValue>
+                </value>
+            </inputParameters>
+            <label>myWaitEvent_myWait_myRule_1_event_1</label>
+        </waitEvents>
+    </waits>
+</Flow>

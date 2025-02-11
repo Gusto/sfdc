@@ -1,0 +1,891 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div class="slds-theme_default custom-container">
+		<!-- Header Section Start -->
+		<div class="slds-p-around_small slds-media slds-media_center">
+			<div class="slds-media__figure">
+				<lightning-icon icon-name="standard:call" size="medium" alternative-text="Log a Call" title="Log a Call"> </lightning-icon>
+			</div>
+			<div class="slds-media__body">
+				<div class="slds-page-header__name">
+					<div class="slds-page-header__name-title">
+						<span class="slds-page-header__title slds-truncate" title="Log a Call">Log a Call</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Header Section End -->
+
+		<!-- Spinner START -->
+		<lightning-spinner if:true={blnSpinner} alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+		<!-- Spinner END -->
+
+		<div>
+			<div class="slds-p-bottom_x-small" style="max-height: 200px; overflow: auto">
+				<table class="slds-table slds-table_bordered slds-table_fixed-layout" role="grid">
+					<thead>
+						<tr class="slds-line-height_reset">
+							<th aria-label="Contact Name" class="slds-border_right" scope="col">
+								<div class="slds-text-link_reset" tabindex="0">
+									<span class="slds-cell-wrap" title="Contact Name">Contact Name</span>
+								</div>
+							</th>
+							<th aria-label="Phone" class="slds-border_right" scope="col">
+								<div class="slds-text-link_reset" tabindex="0">
+									<span class="slds-truncate" title="Phone">Phone</span>
+								</div>
+							</th>
+							<th if:true={objAllSmartCalling.Show_Roles__c} aria-label="Roles" class="slds-border_right" scope="col">
+								<div class="slds-text-link_reset" tabindex="0">
+									<span class="slds-truncate" title="Roles">Roles</span>
+								</div>
+							</th>
+							<th if:true={objAllSmartCalling.Show_Cases__c} aria-label="Cases" scope="col" style="width: 60px">
+								<div class="slds-text-link_reset" tabindex="0">
+									<span class="slds-truncate" title="Cases">Cases</span>
+								</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<template for:each={list_ContactRoles} for:item="contact">
+							<tr key={contact.id} aria-selected="false" class="slds-hint-parent">
+								<th scope="row">
+									<div class="slds-cell-wrap" title={contact.name}>
+										<a href="#" tabindex="0" data-id={contact.id} onclick={handleOpenRecord}>{contact.name}</a>
+									</div>
+									<div class="slds-cell-wrap" data-contact-id={contact.id} title={contact.email}>{contact.email}</div>
+								</th>
+								<td role="gridcell">
+									<div if:true={contact.phone} class="slds-var-p-vertical_small">
+										<lightning-click-to-dial data-contact-id={contact.id} class="slds-cell-wrap" value={contact.phone} onclick={onClickToDial}> </lightning-click-to-dial>
+									</div>
+									<div if:true={contact.mobile} class="slds-border_top slds-var-p-vertical_small">
+										<lightning-click-to-dial data-contact-id={contact.id} class="slds-cell-wrap" value={contact.mobile} onclick={onClickToDial}> </lightning-click-to-dial>
+									</div>
+									<div if:true={contact.zpphone} class="slds-border_top slds-var-p-vertical_small">
+										<lightning-click-to-dial data-contact-id={contact.id} class="slds-cell-wrap" value={contact.zpphone} onclick={onClickToDial}> </lightning-click-to-dial>
+									</div>
+									<div if:true={contact.secondaryPhone} class="slds-border_top slds-var-p-vertical_small">
+										<lightning-click-to-dial data-contact-id={contact.id} class="slds-cell-wrap" value={contact.secondaryPhone} onclick={onClickToDial}> </lightning-click-to-dial>
+									</div>
+								</td>
+								<td if:true={objAllSmartCalling.Show_Roles__c} role="gridcell">
+									<div class="slds-cell-wrap" title={contact.role} data-contact-id={contact.id} onclick={setContactId}>{contact.role}</div>
+								</td>
+								<td if:true={objAllSmartCalling.Show_Cases__c} role="gridcell" class="slds-text-align_center">
+									<lightning-button-icon
+										if:false={contact.blnDisplay}
+										icon-name="utility:expand"
+										variant="bare"
+										size="small"
+										alternative-text="Display"
+										data-id={contact.id}
+										onclick={handleDisplayCase}
+									>
+									</lightning-button-icon>
+
+									<lightning-button-icon
+										if:true={contact.blnDisplay}
+										icon-name="utility:contract"
+										variant="bare"
+										size="small"
+										alternative-text="Display"
+										data-id={contact.id}
+										onclick={handleHideCase}
+									>
+									</lightning-button-icon>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Cases -->
+			<template if:true={blnDisplayCase}>
+				<div class="slds-p-vertical_x-small">
+					<table class="slds-table slds-table_bordered slds-table_fixed-layout" role="grid">
+						<thead>
+							<tr class="slds-line-height_reset">
+								<th aria-label="Case Number" class="slds-border_right" scope="col">
+									<div class="slds-text-link_reset" tabindex="0">
+										<span class="slds-cell-wrap" title="Case Number">Case Number</span>
+									</div>
+								</th>
+								<th aria-label="Case Type" class="slds-border_right" scope="col">
+									<div class="slds-text-link_reset" tabindex="0">
+										<span class="slds-cell-wrap" title="Case Type">Case Type</span>
+									</div>
+								</th>
+								<th aria-label="Case Status" class="slds-border_right" scope="col">
+									<div class="slds-text-link_reset" tabindex="0">
+										<span class="slds-cell-wrap" title="Case Status">Case Status</span>
+									</div>
+								</th>
+								<th aria-label="Case Description" scope="col">
+									<div class="slds-text-link_reset" tabindex="0">
+										<span class="slds-cell-wrap" title="Case Description">Case Description</span>
+									</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<template for:each={objContactRoleDisplayed.list_Cases} for:item="objCase">
+								<tr class="slds-hint-parent" key={objCase.Id}>
+									<th scope="row">
+										<div class="slds-cell-wrap" title={objCase.CaseNumber}>
+											<a onclick={handleOpenRecord} data-id={objCase.Id} tabindex="-1">{objCase.CaseNumber}</a>
+										</div>
+									</th>
+									<td role="gridcell" title={objCase.Type}>
+										<div class="slds-cell-wrap">{objCase.Type}</div>
+									</td>
+									<td role="gridcell" title={objCase.Status}>
+										<div class="slds-cell-wrap">{objCase.Status}</div>
+									</td>
+									<td role="gridcell" title={objCase.Description}>
+										<div class="slds-cell-wrap">{objCase.Description}</div>
+									</td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+				</div>
+			</template>
+
+			<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+				<lightning-layout multiple-rows>
+					<lightning-layout-item if:true={blnShowContactName} size="12" large-device-size="12" medium-device-size="12" small-device-size="12" class="slds-var-p-around_x-small">
+						<lightning-combobox
+							name="Contact Name"
+							data-name="Contact Name"
+							label="Contact Name"
+							placeholder="Select Contact"
+							options={list_PointOfContact}
+							onchange={handleContactNameChange}
+							value={objParameters.strWhoId}
+						>
+						</lightning-combobox>
+					</lightning-layout-item>
+
+					<lightning-layout-item if:true={blnShowRelatedTo} size="12" large-device-size="12" medium-device-size="12" small-device-size="12" class="slds-var-p-around_x-small">
+						<c-com-select
+							label-for="Related To"
+							onselectoptionchange={handleSelectOptionChange}
+							is-required
+							s-object-name={selSObjectName}
+							sel-option={objParameters.strWhatId}
+							picklist-option-map={picklistOptionMap}
+							category-options={categoryOptions}
+							data-name="Related To"
+							field-level-help-text={strRelatedToHelpText} 
+							recordtype={accRecordType}
+						></c-com-select>
+					</lightning-layout-item>
+
+					<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-var-p-around_x-small">
+						<lightning-combobox
+							name="Disposition"
+							label="Disposition"
+							data-name="disposition"
+							placeholder="Select Disposition"
+							options={list_DispositionOptions}
+							onchange={handleDispositionChange}
+							field-level-help={strDispositionHelpText}
+							required
+						>
+						</lightning-combobox>
+					</lightning-layout-item>
+
+					<lightning-layout-item if:true={blnShowTaskTypeSection} size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-var-p-around_x-small">
+						<lightning-combobox name="Type" label="Source" data-name="type" placeholder="Select Type"
+							options={list_TaskTypeOptionsByProfile} value={objParameters.strTaskType} onchange={handleTaskTypeChange}>
+						</lightning-combobox>
+					</lightning-layout-item>
+
+					<lightning-layout-item
+						if:true={objAllSmartCalling.Show_Call_Objective__c}
+						size="12"
+						large-device-size="6"
+						medium-device-size="6"
+						small-device-size="12"
+						class="slds-var-p-around_x-small"
+					>
+						<lightning-combobox
+							name="callObjective"
+							label="Call Objective"
+							data-name="callObjective"
+							placeholder="Call Objective"
+							field-level-help={strCallObjectiveHelpText}
+							value={objParameters.strCallObjective}
+							options={list_ObjectiveOptions}
+							onchange={handleObjectiveChange}
+							required={blnObjectiveRequired}
+						>
+						</lightning-combobox>
+					</lightning-layout-item>
+				</lightning-layout>
+			</div>
+
+			<lightning-layout multiple-rows if:true={blnShowPartnerSalesType}>
+					
+
+				<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+					<lightning-combobox
+						name="partnerSalesType"
+						label="Partner Sales Task Type"
+						data-name="partnerSalesType"
+						placeholder="Partner Sales Task Type"
+						value={objParameters.strPartnerSalesTaskType}
+						options={list_PartnerSalesTypeOptions}
+						onchange={handlePartnerSalesTypeChange}
+						disabled={blnDisablePartnerSalesType}
+					>
+					</lightning-combobox>
+				</lightning-layout-item>
+			</lightning-layout>
+
+			<lightning-layout multiple-rows>
+				<lightning-layout-item if:true={objAllSmartCalling.Show_Subject__c} size="12" class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="text" name="subject" label="Subject" value={objParameters.strTaskSubject} onchange={handleTaskSubjectChange}> </lightning-input>
+				</lightning-layout-item>
+
+				<lightning-layout-item size="12" class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-textarea name="notes" label="Notes" onchange={handleNotesChange} value={objParameters.strNotes}></lightning-textarea>
+				</lightning-layout-item>
+
+				<lightning-layout-item if:true={objAllSmartCalling.Show_Feature_Request__c} size="12" class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-textarea name="featurerequest" label="Feature Request" onchange={handleFeatureRequestChange}></lightning-textarea>
+					<lightning-combobox
+							name="featurerequesttype"
+							label="Feature Request Type"
+							data-name="Feature Request Type"
+							placeholder="Feature Request Type"
+							value={objParameters.strFeatureRequestType}
+							options={list_FeatureRequestTypeOptions}
+							onchange={handleFeatureRequestTypeChange}
+						></lightning-combobox>
+				</lightning-layout-item>
+			</lightning-layout>
+
+			<template if:true={objAllSmartCalling.Show_Retention_Notes__c}>
+				<lightning-record-edit-form density="comfy" object-api-name={objectApiName} record-id={recordId}>
+					<lightning-messages> </lightning-messages>
+					<lightning-layout multiple-rows>
+						<lightning-layout-item size="6" large-device-size="6" medium-device-size="12" small-device-size="12" class="slds-p-vertical_x-small slds-p-horizontal_medium">
+							<lightning-input-field id={FIELD_API.LIKELIHOOD_TO_STAY_WITH_GUSTO} field-name={FIELD_API.LIKELIHOOD_TO_STAY_WITH_GUSTO} onchange={handleObjectDetailFields}>
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="6" large-device-size="6" medium-device-size="12" small-device-size="12" class="slds-var-p-around_x-small">
+							<lightning-input-field id={FIELD_API.GUSTO_RETENTION_NOTES} field-name={FIELD_API.GUSTO_RETENTION_NOTES} onchange={handleObjectDetailFields}>
+							</lightning-input-field>
+						</lightning-layout-item>
+					</lightning-layout>
+				</lightning-record-edit-form>
+			</template>
+
+			<template if:true={blnShowInboundCall}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="checkbox" label="Inbound Call" name="Inbound Call" onchange={handleInboundCallChange}> </lightning-input>
+				</div>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<template if:true={blnShowOutboundEmail}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="checkbox" label="Outbound Email" name="Outbound Email" onchange={handleOutboundEmailChange}> </lightning-input>
+				</div>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<lightning-layout if:true={objAllSmartCalling.Follow_Up__c} multiple-rows class="slds-p-vertical_x-small slds-p-horizontal_medium">
+				<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-var-p-around_x-small">
+					<lightning-input type="date" name="Follow Up Date" label="Follow Up Date" value={objParameters.strFollowUpDate} onchange={handleFollowUpDateChange} field-level-help={strFolloupDateHelpText}></lightning-input>
+				</lightning-layout-item>
+				<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-var-p-around_x-small">
+					<lightning-input type="text" label="Subject" value={objParameters.strFollowUpSubject} onchange={handleFollowUpSubjectChange} field-level-help={strFolloupSubjectHelpText}> </lightning-input>
+				</lightning-layout-item>
+			</lightning-layout>
+
+			<template if:true={objAllSmartCalling.Do_Not_Call__c}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="checkbox" label="Do Not Call" name="Do Not Call" onchange={handleDoNotCallChange} class="slds-var-p-around_x-small" field-level-help={strDoNotCallHelpText}> </lightning-input>
+				</div>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<!-- Add product Interest-->
+			<template if:true={objAllSmartCalling.Product_Interest__c}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="checkbox" value={blnProductInterest} label="Add Product Interest" name="Add Product Interest" onchange={handleAddProductInterest}></lightning-input>
+				</div>
+				<template if:true={blnProductInterest}>
+					<lightning-accordion allow-multiple-sections-open active-section-name="Add Product Interest">
+						<lightning-accordion-section name="Add Product Interest" label="Add Product Interest">
+							<lightning-layout multiple-rows>
+								<lightning-layout-item class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="Product Interest"
+										label="Product Interest"
+										data-name="product-interest"
+										options={list_ProductInterestValues}
+										value={strProductInterestToShow}
+										onchange={handleProductInterest}
+									></lightning-combobox>
+								</lightning-layout-item>
+							</lightning-layout>
+							<template if:true={blnShowProductInterestCountries}>
+								<lightning-dual-listbox name="Product_Interest_Countries" label="Product Interest Countries" source-label="Available"
+									selected-label="Chosen"
+									field-level-help="Field is used to indicate the countries the customer intends to pay International Employees."
+									options={list_CountryOptions} value={list_SelectedCountryOptions} onchange={handleProductInterestCountry}>
+								</lightning-dual-listbox>
+							</template>
+						</lightning-accordion-section>
+					</lightning-accordion>
+				</template>
+				<!--accountRecordTypeId-->
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<template if:true={blnHasProductUpsellFields}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="checkbox" value={blnCreateProductUpsell} label="Create Product Upsell" name="Create Product Upsell" onchange={handleCreateProductUpsell}> </lightning-input>
+				</div>
+				<template if:true={blnCreateProductUpsell}>
+					<lightning-accordion allow-multiple-sections-open active-section-name="Product Upsell">
+						<lightning-accordion-section name="Product Upsell" label="Product Upsell">
+							<lightning-layout class="slds-p-around_xx-small" if:true={blnShowLeadPass}>
+								<lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12">
+									<lightning-button variant="brand" label="Employer of Record Lead Pass" title="Employer of Record Lead Pass" onclick={handleLeadPass}> </lightning-button>
+									<lightning-helptext content="Select this button to configure and create an Employer of Record Lead Pass to Remote. This will create a Product Upsell and Lead Pass to Remote."></lightning-helptext>
+								</lightning-layout-item>
+							</lightning-layout>
+							<lightning-layout multiple-rows if:true={objAllSmartCalling.Show_Point_of_Contact__c} class="slds-p-around_xx-small">
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+									<lightning-combobox
+										name="Point of Contact"
+										data-name="Point of Contact"
+										label="Point of Contact"
+										placeholder="Select Point of Contact"
+										options={list_PointOfContact}
+										onchange={handlePointOfContactChange}
+										required
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+							</lightning-layout>
+
+							<lightning-record-edit-form density="comfy" object-api-name="Partnership_Interest__c" record-type-id={customerSucessRT}>
+								<lightning-messages> </lightning-messages>
+								<!-- PICKLIST -->
+								<template if:true={list_ProductUpsellPicklistFields}>
+									<lightning-layout multiple-rows>
+										<template for:each={list_ProductUpsellPicklistFields} for:item="field">
+											<lightning-layout-item key={field.strFieldApiName} size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+												<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+											</lightning-layout-item>
+										</template>
+									</lightning-layout>
+								</template>
+								<!-- TEXTAREA -->
+								<template if:true={list_ProductUpsellTextAreaFields}>
+									<lightning-layout multiple-rows>
+										<template for:each={list_ProductUpsellTextAreaFields} for:item="field">
+											<lightning-layout-item key={field.strFieldApiName} size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+												<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+											</lightning-layout-item>
+										</template>
+									</lightning-layout>
+								</template>
+								<!-- OTHERS -->
+								<template if:true={list_ProductUpsellOtherFields}>
+									<lightning-layout multiple-rows>
+										<template for:each={list_ProductUpsellOtherFields} for:item="field">
+											<lightning-layout-item key={field.strFieldApiName} size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+												<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+											</lightning-layout-item>
+										</template>
+									</lightning-layout>
+								</template>
+
+								<!-- MULTIPICKLIST -->
+								<template if:true={list_ProductUpsellMultiPicklistFields}>
+									<lightning-layout multiple-rows>
+										<template for:each={list_ProductUpsellMultiPicklistFields} for:item="field">
+											<lightning-layout-item key={field.strFieldApiName} size="12">
+												<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+											</lightning-layout-item>
+										</template>
+									</lightning-layout>
+								</template>
+
+								<template lwc:if={blnTypeSelected}>
+									<lightning-layout multiple-rows>
+										<!--401k fields-->
+										<template lwc:if={blnType401}>
+											<template for:each={list_ProductUpsell401KFields} for:item="field">
+												<lightning-layout-item key={field.strFieldApiName} size="12">
+													<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+												</lightning-layout-item>
+											</template>
+										</template>
+									</lightning-layout>
+								</template>
+
+								<template lwc:if={blnTypeSelected}>
+									<lightning-layout multiple-rows>
+										<!--529 fields-->
+										<template lwc:if={blnType529}>
+											<template for:each={list_ProductUpsell529TextAreaFields} for:item="field">
+												<lightning-layout-item key={field.strFieldApiName} size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+													<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+												</lightning-layout-item>
+											</template>
+										</template>
+									</lightning-layout>
+								</template>
+								<!--worker's comp fields-->
+								<template lwc:if={blnTypeSelected}>
+									<lightning-layout multiple-rows>
+										<template lwc:if={blnTypeWorkersComp}>
+											<template for:each={list_ProductUpsellWorkersCompFields} for:item="field">
+												<lightning-layout-item key={field.strFieldApiName} size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+													<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+												</lightning-layout-item>
+											</template>
+											<template lwc:if={blnWorkersCompInterestNEXT}>
+												<template lwc:if={blnShowSecondaryContact}>
+													<lightning-layout>
+														<lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12">
+															<lightning-combobox
+																name="Secondary Point of Contact"
+																data-name="Secondary Point of Contact"
+																label="Secondary Point of Contact"
+																placeholder="Select Secondary Point of Contact"
+																options={list_AccountContactsOptions}
+																onchange={handleSecondaryPointOfContactChange}
+																value={objParameters.strSecContactId}
+																field-level-help={strSecondaryPOCHelpText}
+															>
+															</lightning-combobox>
+														</lightning-layout-item>
+													</lightning-layout>
+												</template>
+											</template>
+										</template>
+									</lightning-layout>
+								</template>
+
+								<template lwc:if={blnTypeSelected}>
+									<lightning-layout multiple-rows>
+										<!--Ardius fields-->
+										<template lwc:if={blnTypeArdius}>
+											<template for:each={list_ProductUpsellArdiusFields} for:item="field">
+												<lightning-layout-item key={field.strFieldApiName} size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+													<lightning-input-field id={field.strFieldApiName} field-name={field.strFieldApiName} onchange={handleProductUpsellFields}> </lightning-input-field>
+												</lightning-layout-item>
+											</template>
+										</template>
+									</lightning-layout>
+								</template>
+							</lightning-record-edit-form>
+						</lightning-accordion-section>
+					</lightning-accordion>
+				</template>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<!-- Current Record details -->
+			<template if:true={objAllSmartCalling.Current_Record__c}>
+				<lightning-accordion allow-multiple-sections-open active-section-name={strCurrentRecordDetail}>
+					<lightning-accordion-section name={strCurrentRecordDetail} label={strCurrentRecordDetail}>
+						<lightning-record-edit-form density="comfy" object-api-name={objectApiName} record-id={recordId}>
+							<lightning-messages> </lightning-messages>
+							<lightning-layout multiple-rows>
+								<template for:each={list_ObjFields} for:item="field">
+									<lightning-layout-item
+										key={field.strFieldApiName}
+										size={field.intSize}
+										large-device-size={field.intLargeSize}
+										medium-device-size={field.intMediumSize}
+										small-device-size={field.intSmallSize}
+									>
+										<lightning-input-field
+											if:false={field.blnShowSpecific}
+											id={field.strFieldApiName}
+											data-name="detail-opportunity"
+											field-name={field.strFieldApiName}
+											onchange={handleObjectDetailFields}
+										>
+										</lightning-input-field>
+										<lightning-combobox
+											if:true={field.blnShowState}
+											name={field.strFieldApiName}
+											label={field.strFieldLabel}
+											options={list_StateOptions}
+											data-name="detail-opportunity"
+											onchange={handleObjectDetailFields}
+											value={field.strStateValue}
+										>
+										</lightning-combobox>
+									</lightning-layout-item>
+								</template>
+							</lightning-layout>
+						</lightning-record-edit-form>
+					</lightning-accordion-section>
+				</lightning-accordion>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<!-- Additional Info -->
+			<template if:true={objAllSmartCalling.Additional_Info__c}>
+				<lightning-accordion allow-multiple-sections-open active-section-name={strAddtnlInfoDetail}>
+					<lightning-accordion-section name={strAddtnlInfoDetail} label={strAddtnlInfoDetail}>
+						<lightning-record-edit-form density="comfy" object-api-name={objectApiName} record-id={recordId}>
+							<lightning-messages> </lightning-messages>
+							<lightning-layout multiple-rows>
+								<template for:each={list_AddtnlInfoObjFields} for:item="field">
+									<lightning-layout-item
+										key={field.strFieldApiName}
+										size={field.intSize}
+										large-device-size={field.intLargeSize}
+										medium-device-size={field.intMediumSize}
+										small-device-size={field.intSmallSize}
+									>
+										<lightning-input-field id={field.strFieldApiName} data-name="detail-opportunity" field-name={field.strFieldApiName} onchange={handleObjectDetailFields}>
+										</lightning-input-field>
+									</lightning-layout-item>
+								</template>
+							</lightning-layout>
+						</lightning-record-edit-form>
+					</lightning-accordion-section>
+				</lightning-accordion>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<template if:true={objAllSmartCalling.Payroll_Opportunity__c}>
+				<!-- Create Payroll Opportunity -->
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input
+						type="checkbox"
+						value={blnCreatePayrollOpty}
+						label="Create Payroll Opportunity"
+						name="Create Payroll Opportunity"
+						onchange={handleCreatePayrollOp}
+					></lightning-input>
+				</div>
+				<template if:true={blnCreatePayrollOpty}>
+					<lightning-accordion allow-multiple-sections-open active-section-name="Create Payroll Opportunity">
+						<lightning-accordion-section name="Create Payroll Opportunity" label="Create Payroll Opportunity">
+							<lightning-layout multiple-rows>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-input type="text" label="Opportunity Name" data-name="payroll-opportunity" required onchange={handlePayrollOpportunityNameChange}></lightning-input>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="Opportunity Stage"
+										label="Opportunity Stage"
+										data-name="payroll-opportunity"
+										required
+										options={list_PayrollOptyStages}
+										onchange={handleOptyStageChange}
+									></lightning-combobox>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-input type="date" name="Close Date" label="Close Date" data-name="payroll-opportunity" required onchange={handlePayrollOpportunityCloseDateChange}>
+									</lightning-input>
+								</lightning-layout-item>
+							</lightning-layout>
+						</lightning-accordion-section>
+					</lightning-accordion>
+				</template>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<!-- Create HI Opportunity -->
+			<template if:true={objAllSmartCalling.HI_Opportunity__c}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input type="checkbox" value={blnCreateHIOpty} label="Create HI Opportunity" name="Create HI Opportunity" onchange={handleCreateHIOp}></lightning-input>
+				</div>
+				<template if:true={blnCreateHIOpty}>
+					<lightning-accordion allow-multiple-sections-open active-section-name="Create HI Opportunity">
+						<lightning-accordion-section name="Create HI Opportunity" label="HI Opportunity">
+							<lightning-layout multiple-rows>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="Opportunity Type"
+										label="Opportunity Type"
+										data-name="hi-opportunity"
+										required
+										options={list_HIOptyTypeOptions}
+										onchange={handleHIOptyTypeChange}
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="HI Opportunity Stage"
+										label="HI Opportunity Stage"
+										data-name="hi-opportunity"
+										value={selectedHIOpptyStage}
+										required
+										options={list_HIOptyStageOptions}
+										onchange={handleHIOptyStageChange}
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-input
+										type="date"
+										name="HI Close Date"
+										label="Close Date"
+										data-name="hi-opportunity"
+										required
+										onchange={handleHIOptyCloseDateChange}
+										value={objParameters.strHIOpportunityCloseDate}
+									>
+									</lightning-input>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox name="State" label="State" options={list_StateOptions} data-name="hi-opportunity" required onchange={handleStateChange}> </lightning-combobox>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-input
+										type="number"
+										name="Num of Employees"
+										label="# of Employees"
+										data-name="hi-opportunity"
+										required={blnIsNoOfEmployeesRequired}
+										onchange={handleHIOptyEmployeesChange}
+									>
+									</lightning-input>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-textarea name="HI notes" label="HI Notes" data-name="hi-opportunity" required={blnIsHINotesRequired} onchange={handleHIOptyNotesChange} field-level-help={strHINotesHelpText}>
+									</lightning-textarea>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="Benefits Contacts"
+										label="Benefits Contacts"
+										data-name="hi-opportunity"
+										value={strSelectedHIOppConId}
+										options={list_AccountContactsOptions}
+										onchange={handleBenefitsContactChange}
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+							</lightning-layout>
+							<div if:true={objAllSmartCalling.Show_Live_HI_Transfer__c} class="slds-p-around_xx-small">
+								<lightning-input type="checkbox" name="Live HI Transfer" label="Live HI Transfer" data-name="hi-opportunity" onchange={handleLiveHITransferChange}> </lightning-input>
+							</div>
+						</lightning-accordion-section>
+					</lightning-accordion>
+				</template>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+
+			<!-- Create Ardius Opportunity -->
+			<template if:true={objAllSmartCalling.Create_Ardius_Opportunity__c}>
+				<div class="slds-p-vertical_x-small slds-p-horizontal_medium">
+					<lightning-input
+						type="checkbox"
+						value={blnCreateArdiusOpty}
+						label="Create Tax Credits Opportunity"
+						name="Create Ardius Opportunity"
+						disabled={blnAllowArdiusOpty}
+						onchange={handleCreateArdiusOp}
+					></lightning-input>
+				</div>
+				<template if:true={blnCreateArdiusOpty}>
+					<lightning-accordion allow-multiple-sections-open active-section-name="Create Tax Credits Opportunity">
+						<lightning-accordion-section name="Create Tax Credits Opportunity" label="Create Tax Credits Opportunity">
+							<lightning-layout multiple-rows>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="Tax Credits Opportunity Stage"
+										label="Tax Credits Opportunity Stage"
+										data-name="ardius-opportunity"
+										value={selectedArdiusOpptyStage}
+										required
+										options={list_ArdiusOptyStageOptions}
+										onchange={handleArdiusOptyStageChange}
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-combobox
+										name="Tax Credits Opportunity Type"
+										label="Tax Credits Opportunity type"
+										data-name="ardius-opportunity"
+										value={selectedType}
+										required
+										options={list_TaxCreditsTypeOptions}
+										onchange={handleTaxCreditTypeChange}
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-input
+										type="text"
+										name="Tax Year"
+										label="Tax Year"
+										data-name="ardius-opportunity"
+										maxlength="4"
+										value={selectedTaxYear}
+										required
+										onchange={handleTaxYearChange}
+									>
+									</lightning-input>
+								</lightning-layout-item>
+							</lightning-layout>
+						</lightning-accordion-section>
+					</lightning-accordion>
+				</template>
+
+				<div class="slds-p-vertical_xx-small slds-border_bottom">
+					<span class="slds-hide">Dummy Div</span>
+				</div>
+			</template>
+		</div>
+
+		<!-- Buttons -->
+		<div class="custom-docked-composer__footer">
+			<lightning-button if:true={showSave} variant="brand" label="Save" title="Save" onclick={handleSave} class="slds-m-left_x-small" disabled={blnSaveButtonDisabled}> </lightning-button>
+		</div>
+
+		<!-- Modal -->
+		<template if:true={blnShowModal}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+				class="slds-modal slds-fade-in-open slds-modal_medium">
+				<div class="slds-modal__container">
+					<lightning-spinner if:true={blnSpinner} alternative-text="Loading" size="small" variant="brand" style="z-index: 9999;"></lightning-spinner>
+					<template if:true={blnShowLeadPassModal}>
+						<div class="slds-modal__header">
+							<h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Employer of Record Lead Pass</h1>
+						</div>
+						<div class="slds-modal__content" id="modal-content-id-1" style="overflow: scroll">
+							<div class="slds-grid slds-wrap slds-box">
+								<div class="slds-col slds-size_12-of-12">
+									<div class="slds-text-heading_small slds-clearfix slds-p-bottom_small">
+										<div class="slds-float_left slds-p-top_xx-small" style="font-weight: bold">Please select a Contact</div>
+									</div>
+								</div>
+								<div class="slds-col slds-size_12-of-12">
+									<lightning-combobox 
+										name="Contact Name" 
+										data-name="Contact Name"
+										placeholder="Select Contact" 
+										options={list_PointOfContact} 
+										onchange={handleContactNameChange}
+										value={objParameters.strWhoId}
+										data-uniqueid="contactNameLeadPass"
+										variant="label-hidden">
+									</lightning-combobox>
+								</div>
+								<template if:true={list_CountriesSentToRemote.length}>
+									<div
+										class="slds-box slds-box_x-small slds-col slds-grid slds-size_12-of-12 slds-wrap slds-m-vertical_x-small">
+										<div class="slds-col slds-size_12-of-12">Please note: These countries have already been sent to Remote:
+										</div>
+										<div class="slds-col slds-size_12-of-12">
+											</br>
+											<ul class="slds-list_dotted">
+												<template for:each={list_CountriesSentToRemoteToDisplay} for:item="country">
+													<li key={country}>{country}</li>
+												</template>
+											</ul>
+										</div>
+									</div>
+								</template>
+								<div class="slds-box slds-box_x-small slds-col slds-grid slds-size_12-of-12 slds-wrap slds-m-vertical_xx-small">
+									<div class="slds-col slds-size_12-of-12">
+										<div class="slds-text-heading_small slds-clearfix slds-p-bottom_small">
+											<div class="slds-float_left slds-p-top_xx-small" style="font-weight: bold">Product Interest Countries</div>
+											<div>
+												<lightning-helptext
+													content="Any countries selected/chosen will be sent to Remote as a Lead Pass."></lightning-helptext>
+											</div>
+										</div>
+									</div>
+									<div class="slds-col slds-size_12-of-12 slds-p-bottom_x-small">Please select the Product Interest Countries to Send to Remote. The
+										countries unsupported and not already sent to Remote are preselected. Please update as needed.</div>
+									<div class="slds-col slds-size_12-of-12">
+										<lightning-dual-listbox 
+											name="To_Send_To_Remote"
+											source-label="Available"
+											selected-label="Chosen"
+											options={list_LeadPassOptions}
+											value={list_LeadPassOptionsSelected}
+											onchange={handleLeadPassOption}
+											variant="label-hidden"
+											data-uniqueid="countrySelect">
+										</lightning-dual-listbox>
+									</div>
+								</div>
+								<div class="slds-box slds-box_x-small slds-col slds-grid slds-size_12-of-12 slds-wrap slds-m-vertical_x-small">
+									<div class="slds-col slds-size_12-of-12">
+										<div class="slds-text-heading_small slds-clearfix slds-p-bottom_small">
+											<div class="slds-float_left slds-p-top_xx-small" style="font-weight: bold">Additional Countries</div>
+											<div>
+												<lightning-helptext content="Any countries selected/chosen will be sent to Remote as a Lead Pass and added to the Account's Product Interest Countries."></lightning-helptext>
+											</div>
+										</div>
+									</div>
+									<div class="slds-col slds-size_12-of-12 slds-p-bottom_x-small">Please select any additional countries to send to Remote. These
+										countries will be added to the Account's Product Interest Countries.</div>
+									<div class="slds-col slds-size_12-of-12">
+										<lightning-dual-listbox 
+											name="To_Send_To_Remote_Additional"
+											source-label="Available" 
+											selected-label="Chosen"
+											options={list_LeadPassOptionsAdditional} 
+											value={list_LeadPassOptionsAdditionalSelected}
+											onchange={handleLeadPassOptionAdditional} 
+											variant="label-hidden"
+											data-uniqueid="countrySelectAdditional">
+										</lightning-dual-listbox>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="slds-modal__footer">
+							<lightning-button label="Save" variant="brand" title="Save" onclick={handleLeadPassSend}
+								style="padding-right: 5px"></lightning-button> &nbsp;
+							<lightning-button label="Close" title="Close" onclick={closeModal}></lightning-button>
+						</div>
+					</template>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+	</div>
+</template>

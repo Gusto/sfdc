@@ -1,0 +1,11 @@
+<!--
+    @author Ajay Krishna P U
+    @description Custom Feed View based on Type, Only one type is supported in the view
+    @since 2024-03-11
+-->
+<aura:component implements="force:appHostable,forceCommunity:availableForAllPageTypes">
+	<aura:attribute name="strType" type="String" default="Groups" />
+	<aura:attribute name="strFeedDesign" type="String" default="BROWSE" />
+
+	<forceChatter:feed type="{! v.strType}" feedDesign="{! v.strFeedDesign}" />
+</aura:component>

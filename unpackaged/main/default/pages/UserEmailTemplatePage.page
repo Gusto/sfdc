@@ -1,0 +1,244 @@
+<apex:page controller="UserEmailTemplateController" showHeader="false" sidebar="false" id="page">
+  <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+  <apex:includeScript value="/support/console/42.0/integration.js"/>
+  <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>  
+  
+  	<style>
+	  	.permissionDiv {
+	        display: none;
+	        position: absolute;
+	        bottom: 25px;
+	        z-index: 999999;
+	        background: #fff;
+	        border: 1px solid #ccc;
+	        padding: 5px;
+	        right: 0px;
+	        left: -68%;
+	        max-width: 30%;
+	        margin: 0px auto;
+	        white-space: pre;
+	    }
+
+	    a.nameTag:hover + div {
+          	display: inline-block;
+        }
+	    
+	</style>
+	<script type="text/javascript">
+		var $j = jQuery.noConflict();
+	</script>
+
+<div class="gusto" >
+	<apex:actionstatus id="status">
+		<apex:facet name="start">
+			<div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+	        	<div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+	            	<img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+	                <span class="waitingDescription">Loading...</span>
+	           	</div>
+	        </div>
+	    </apex:facet>
+	</apex:actionstatus>
+	<apex:form id="frm" styleclass="pageForm">
+	    <apex:actionFunction name="emailFolderList" action="{!getEmailTemplateData}" rerender="emailTemplateBlock,blnkPanel" status="status"/>
+	    	<div class="slds-p-around--medium" style="margin-left: 2px;">
+	            <strong>Folder&nbsp;&nbsp;</strong> 
+	            <apex:selectList value="{!folderId}" size="1"  onchange="emailFolderList();"  > <!-- Email folders ak1 -->
+	                    <apex:selectOptions value="{!folders}"/>
+	            </apex:selectList>
+	        </div>
+	        <div style="overflow:auto;height:300px" class="slds-m-horizontal--medium">
+		        <apex:pageBlock id="emailTemplateBlock">
+			        <apex:panelGroup >
+		            	<apex:outputLabel >Filter Name &nbsp;</apex:outputLabel>&nbsp;
+		               	<apex:inputtext id="searchTextBox" value="{!searchEmailName}" />&nbsp;&nbsp;                   
+		               	<apex:commandButton styleclass="slds-button_neutral" style="padding: 2px 3px !important;" Id="btnSearch" action="{!getEmailTemplateData}" rerender="emailTemplateBlock,blnkPanel" status="status" title="Search" value="Search"></apex:commandButton>
+		           	</apex:panelGroup><br/><br/>
+			        <apex:pageBlockTable styleclass="slds-table slds-table_bordered slds-table_cell-buffer" value="{!emailingTemplates}" var="e" rendered="{!IF(emailingTemplates != null && emailingTemplates.size > 0, true, false)}">
+				    	<apex:column onmouseover="displayTemplateBody('{!e.templateId}');">
+		                    <apex:facet name="header">Name</apex:facet>
+		                    <a href="#" class="nameTag" onclick="emailArticle('{!e.templateId}'); return false;">{!e.Name}</a>
+		                    &nbsp;
+		                    <a style="cursor: pointer;color:black;" id="{!e.templateId}" onclick="openDescription('{!e.templateId}');">[view]</a>
+		                </apex:column>
+				    	<!-- <apex:column >
+			                <apex:facet name="header">Name</apex:facet>
+			                        {!e.Name}
+			            </apex:column> -->
+			            <apex:column styleclass="slds-cell-wrap">
+			                <apex:facet name="header">Description</apex:facet>
+			                        {!e.Description}
+			            </apex:column>
+                        <apex:column >
+			                <apex:facet name="header">Folder</apex:facet>
+			                        {!e.Folder}
+			            </apex:column>
+				    </apex:pageBlockTable>
+				</apex:pageBlock>
+			</div>
+	        <apex:outputPanel id="blnkPanel" rendered="{!IF(emailingTemplates.size==0,true,false)}">        
+				<div class="n_t_d_box">
+	            	<div class="tr">No records found.</div>
+	                <div class="tr bg">
+	                	<div class="td1 td_bg"><strong>No Templates Available</strong></div>
+	                    	<div class="cl"></div>
+	                    </div>
+	            </div>  
+			</apex:outputPanel>
+	
+		<script>
+			var templateId;
+			function emailArticle(id) {
+		            sforce.console.setCustomConsoleComponentVisible(false);
+
+		                                //alert('email template id >>'+id);
+		            templateId = id.substring(0, 15);   
+		      		Sfdc.canvas.publisher.publish({name: 'publisher.selectAction', 
+		        	payload: { actionName: 'Case.Email'}}); 
+		        	Sfdc.canvas.publisher.publish({name: 'publisher.setActionInputValues', 
+		        	payload: {
+		           		actionName: 'Case.Email',
+		           		emailFields: {
+				            template: {id: templateId} 
+		                    /* subject:{value:"Your Issue Has Been Resolved"} */
+				        }
+		           		//emailTemplate:{id:id}
+		        	}});
+		        	sforce.console.getFocusedPrimaryTabObjectId(showObjectId);
+		    } 
+		    
+		    var showObjectId = function showObjectId(result) {        
+			            //alert('getFocusedPrimaryTabObjectId >>'+result.id+'templateId >>>'+templateId);
+			            // set subject and get response
+			            if(result.id!=null && result.id!='' && result.id!='null'){
+			            	Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.UserEmailTemplateController.getEmailSubject}',
+						                result.id,
+						                function(result, event){
+						                    if (event.status) {
+						                        if(result != null){ 
+						                           console.log('logged email audit >>'+result);
+						                           Sfdc.canvas.publisher.publish({name: 'publisher.selectAction', 
+									        	   payload: { actionName: 'Case.Email'}}); 
+									        	   Sfdc.canvas.publisher.publish({name: 'publisher.setActionInputValues', 
+									        	   payload: {
+									           	   actionName: 'Case.Email',
+									           	   emailFields: {
+											           /* subject:{value:result} */
+											       }
+									             	//emailTemplate:{id:id}
+									        	   }});
+						                        }  
+						                    }                                          
+						                }, 
+						                {escape: true}
+							);
+				            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.UserEmailTemplateController.logEmailAudit}',
+						                templateId,result.id,
+						                function(result, event){
+						                    if (event.status) {
+						    				    if(result != null){ 
+						                           console.log('logged email audit >>'+result);
+						                        }  
+						                    }                                          
+						                }, 
+						                {escape: true}
+							); 
+			            }
+			};   
+
+
+			var lastPorcessedTemplateId;
+			function displayTemplateBody(templateIdd){
+				/*console.log('@@## templateid '+templateIdd);
+				if(templateIdd != null && templateIdd != undefined && templateIdd != lastPorcessedTemplateId){
+					lastPorcessedTemplateId = templateIdd;
+					console.log('@@## IN ');
+					Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.UserEmailTemplateController.getTemplateBody}',
+						templateIdd,
+			            function(result, event){
+			                if (event.status) {
+			                	console.log('@@## status  '+event.status);
+			                	console.log('@@## result out '+result);
+			                    if(result != null){ 
+		            		       console.log('@@## result '+result);	                		
+			                		$j("[class^='templateBody__']").html('');       
+			                		var panelPartialId = '.templateBody__'+templateIdd;     
+			                		$j(panelPartialId).html(result);
+			                		//$j(panelPartialId).parent().css('display','inline-block');
+			                    }  
+			                }                                          
+			            }, 
+			            {escape: true}
+					);
+				}*/
+			}
+
+			
+			$j(function(){				
+	            //Cancel copy artical modal-------------starts
+	            $j(document).on('click', '.close-showDescriptionModal', function(e) {
+	                $j('#showDescriptionModal').addClass("slds-hide");
+	                return false;
+	            });
+
+	            $j(document).on('keydown', function(e){
+	                if ( e.keyCode == 27 ) {
+	                    $j('#showDescriptionModal').addClass("slds-hide");
+	                	return false;
+	                }	          
+	            });
+			});
+
+			function openDescription(templateIdd){
+
+	            if(templateIdd != null && templateIdd != undefined && $j('#showDescriptionModal').is(':hidden')){
+	                
+					if(templateIdd != null && templateIdd != undefined && templateIdd != lastPorcessedTemplateId){
+						lastPorcessedTemplateId = templateIdd;
+						console.log('@@## IN ');
+						Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.UserEmailTemplateController.getTemplateBody}',
+							templateIdd,
+				            function(result, event){
+				                if (event.status) {
+				                	console.log('@@## status  '+event.status);
+				                	console.log('@@## result out '+result);
+				                    if(result != null){ 
+			            		       $j('#showDescriptionModal p').html(result);
+			            		       $j('#showDescriptionModal').removeClass("slds-hide");
+			            		       $j('#showDescriptionModal .slds-moadal__content').scrollTop();
+				                    }  
+				                }                                          
+				            }, 
+				            {escape: true}
+						);
+					}              
+	            }
+	        }
+
+		</script> 
+		<div id="showDescriptionModal" class="slds-hide click" style="width:80% !important;">
+	        <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open click">
+	            <div class="slds-modal__container click" id="showDescriptionModalDiv">
+	                <header class="slds-modal__header slds-modal__header--empty click">
+	                    <button class="click slds-button slds-button_icon slds-modal__close slds-button_icon-inverse close-showDescriptionModal hideForTaxOpstask" title="Close">
+	                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+	                            <use xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href="{!URLFOR($Resource.SLDS,'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+	                        </svg>
+	                       <span class="slds-assistive-text">Close</span>
+	                    </button>
+	                </header>
+	                <div class=" click slds-modal__content slds-p-around--medium" id="modal-content-id-2" style="overflow:auto;">
+	                    <p style="white-space: pre-wrap !important;">Not able to render the body. Please try again.</p>
+	                </div>
+	                <footer class="slds-modal__footer"> 
+	                   <!--  <button class="slds-button slds-button--neutral close-showDescriptionModal showForTaxOpstask" onclick="editArticle(null,null);">Edit Article</button> -->
+	                    <button class="slds-button slds-button--neutral close-showDescriptionModal">Close</button>
+	                </footer>
+	            </div>
+	        </section>
+	        <div class="slds-backdrop slds-backdrop_open" style="opacity:2;visibility:visible;"></div>
+	    </div> 
+	</apex:form>
+</div>
+</apex:page>

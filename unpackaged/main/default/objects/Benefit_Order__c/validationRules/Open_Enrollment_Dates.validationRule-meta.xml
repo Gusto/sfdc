@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_Enrollment_Dates</fullName>
+    <active>true</active>
+    <description>The Open Enrollment End Date must occur after the Open Enrollment Start Date.</description>
+    <errorConditionFormula>Open_Enrollment_Start_Date__c &gt; Open_Enrollment_End_Date__c</errorConditionFormula>
+    <errorMessage>The Open Enrollment End Date must occur after the Open Enrollment Start Date.</errorMessage>
+</ValidationRule>

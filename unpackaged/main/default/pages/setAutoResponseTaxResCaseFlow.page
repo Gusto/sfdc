@@ -1,0 +1,16 @@
+<apex:page controller="setAutoResponseTaxResCaseFlowExtension">
+    <apex:form >
+    	<apex:pageBlock title="Flow Update">
+            <apex:pageMessages />
+            <apex:pageBlockSection columns="1">
+                <apex:selectList value="{!setting.flowType}" multiselect="false" size="1" label="Organisation Flow Volume: ">
+                    <apex:selectOption itemValue="Low Volume" itemLabel="Low Volume"/>
+                    <apex:selectOption itemValue="High Volume" itemLabel="High Volume"/>
+                </apex:selectList>
+            </apex:pageBlockSection> 
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveCustom}" value="Save"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

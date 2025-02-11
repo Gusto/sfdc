@@ -1,0 +1,189 @@
+<template>
+
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <div class="slds-theme_default">
+        <template if:true={blnIsWarningMessage}>
+            <div class="slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+                <span class="slds-assistive-text">info</span>
+                <span class="slds-icon_container slds-icon-utility-user slds-var-m-right_x-small"
+                    title="Description of icon when needed">
+                    <lightning-icon icon-name="standard:case" size="small"></lightning-icon>
+                </span>
+                <h2>Click &#8287;
+                    <a onclick={handleOpenNotification} href="javascript:void(0);">here</a> &#8287;to view
+                    unassigned cases
+                </h2>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse"
+                        title="Close">
+                        <lightning-icon onclick={handleCloseAllNotification} icon-name="utility:close" size="xx-small">
+                        </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={blnIsNotificationVisible}>
+            <!-- slds-notification -->
+            <section style="width: 100%; position: relative;" >
+                <!-- slds-notification__body slds-notification__target -->
+                <div class="slds-scoped-notification slds-media slds-media_center slds-theme_info" id="dialog-body-id-4"
+                    style="padding: 5px;" role="status">
+                    <!-- <span class="slds-icon_container slds-icon-standard-event slds-media__figure" title="event"> -->
+                    <!-- </span> -->
+                    <!-- <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title"> -->
+                            <!---webkit-line-clamp: 2; class="slds-text-heading_small slds-var-m-bottom_xx-small" -->
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-utility-warning slds-current-color" title="warning">
+                                <lightning-icon icon-name="utility:warning" size="small"></lightning-icon>
+                                <span class="slds-assistive-text">warning</span>
+                                </span>
+                            </div>
+                            <div class="slds-media__body overflow-tip">
+                                <h2 class="slds-text-heading_small slds-var-m-bottom_xx-small" id="noti52"
+                            style="font-size: 13px;">
+                            <span class="slds-assistive-text">warning</span>View Unassigned Cases</h2>
+                            <template for:each={list_unAssignedCases} for:item="caseObj">
+                                <template if:true={caseObj.blnIsLessThanSeven}>
+                                    <a class="testfont" key={caseObj.Id} onmouseover={displayPopOver} data-id={caseObj.Id}
+                                        onmouseout={togglePopover} onclick={accessHyperLink}>{caseObj.CaseNumber}</a>
+                                    <template if:true={caseObj.blnIsCommaVisible}>, </template>
+                                    <!-- <a key={caseObj.Id}>  View All </a> -->
+                                    <template if:true={caseObj.blnIsPopOverVisible}>
+                                        <section
+                                            style="position:absolute; right: 0px; bottom:-300px; width: 100%;  left:0px; padding: inherit; color: black"
+                                            key={caseObj.Id} aria-labelledby="panel-heading-id"
+                                            class="slds-popover slds-popover_panel slds-nubbin_top" role="dialog">
+                                            <div class="slds-popover__header">
+                                                <header class="slds-media slds-media_center slds-var-m-bottom_small">
+                                                    <span
+                                                        class="slds-icon_container slds-icon-standard-account slds-media__figure">
+                                                        <lightning-icon icon-name="standard:case" size="small">
+                                                        </lightning-icon>
+                                                    </span>
+                                                    <div class="slds-media__body">
+                                                        <h2 class="slds-text-heading_medium slds-hyphenate slds-truncate">
+                                                            {caseObj.Subject}
+                                                        </h2>
+                                                    </div>
+                                                </header>
+        
+                                                <footer class="slds-grid slds-wrap slds-grid_pull-padded">
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class="slds-form-element__label"
+                                                                    title="Case Number">Case Number</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate"> {caseObj.CaseNumber}</p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class="slds-form-element__label slds-truncate"
+                                                                    title="Owner">Owner</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate"> {caseObj.Owner.Username}</p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class=" slds-form-element__label slds-truncate"
+                                                                    title="Record Type">Record Type</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate"> {caseObj.Record_Type_Name__c}</p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class="slds-form-element__label slds-truncate"
+                                                                    title="Routing Case Reason">Routing Case Reason</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate"> {caseObj.Routing_Case_Reason__c}
+                                                                </p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class=" slds-form-element__label slds-truncate"
+                                                                    title="Status">Status</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate">
+                                                                    {caseObj.Status}</p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class="slds-form-element__label slds-truncate"
+                                                                    title="Opened Date">Opened Date</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate">{caseObj.CreatedDate}</p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div
+                                                        class="slds-var-p-horizontal_small slds-size_1-of-2 slds-var-p-bottom_x-small">
+                                                        <dl>
+                                                            <dt>
+                                                                <p class="slds-form-element__label slds-truncate"
+                                                                    title="Touchpoints">Touchpoints</p>
+                                                            </dt>
+                                                            <dd>
+                                                                <p class="slds-truncate">
+                                                                    {caseObj.Total_Number_of_Touchpoints__c}</p>
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                </footer>
+                                            </div>
+                                        </section>
+        
+                                    </template>
+                                </template>
+                            </template>
+                            <template if:false={blnIsLengthLessThanSeven}>
+                                <a onclick={handleViewAll}>{strView}</a>
+                            </template>
+                                <!-- <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1 id="noti52">
+                                            <span class="slds-page-header__title slds-truncate title-font-size">View Unassigned Cases</span>
+                                        </h1>
+                                    </div>
+                                </div> -->
+                            </div>
+                        <!-- </div>
+                    </div> -->
+                   
+                </div>
+            </section>
+        </template>
+    </div>
+</template>

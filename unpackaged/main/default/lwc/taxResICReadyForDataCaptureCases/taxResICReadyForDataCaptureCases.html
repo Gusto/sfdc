@@ -1,0 +1,78 @@
+<template>
+	<div class="spinner">
+		<template if:true={blnIsLoading}>
+			<div class="slds-is-relative">
+				<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium"> </lightning-spinner>
+			</div>
+		</template>
+	</div>
+	<lightning-layout multiple-rows horizontal-align="spread" vertical-align="end">
+		<lightning-layout-Item padding="around-small">
+			<div style="width: 100%; text-align: right">
+				<lightning-icon icon-name='custom:custom53' alternative-text='Partially Indexed' size='small' title='partiallyIndexed'></lightning-icon>
+				<b> = Partially Indexed</b>
+			</div>
+			<div>
+				<lightning-combobox
+				name='indexingStatus'
+				label='Auto Indexing Status'
+				value={selectedIndexing}
+				options={indexingOptions}
+				onchange={handleChange}
+			></lightning-combobox>
+			</div>
+		</lightning-layout-Item>
+
+		<lightning-layout-Item padding="around-small">
+			<div style="width: 100%; text-align: right">
+				<lightning-button variant="neutral" label="Refresh" title="Refresh Page" onclick={refreshPage} class="slds-m-left_x-small"></lightning-button>
+			</div>
+		</lightning-layout-Item>
+	</lightning-layout>
+	<div class="demo-only table-header">
+		<div class="slds-text-align_left bold-font">Assigned Cases</div>
+	</div>
+	<lightning-layout multiple-rows>
+		<lightning-layout-Item padding="around-small" size="12">
+			<div style="height: 250px">
+				<lightning-datatable
+					key-field="id"
+					data={list_MyCases}
+					columns={columns}
+					sorted-by={strSortedByMyCases}
+					sorted-direction={strSortedDirectionMyCases}
+					onsort={handleColumnSortMyCases}
+					hide-checkbox-column
+					onrowaction={handleRowActionMyCases}
+					show-row-number-column="true"
+					onloadmore={loadMoreDataMyCases}
+					enable-infinite-loading
+				>
+				</lightning-datatable>
+			</div>
+		</lightning-layout-Item>
+	</lightning-layout>
+	<div class="demo-only table-header">
+		<div class="slds-text-align_left bold-font">Available Cases</div>
+	</div>
+	<lightning-layout multiple-rows="true" horizontal-align="center">
+		<lightning-layout-Item padding="around-small" size="12">
+			<div style="height: 450px">
+				<lightning-datatable
+					key-field="id"
+					data={list_UnAssignedCases}
+					columns={columns}
+					sorted-by={strSortedBy}
+					sorted-direction={strSortedDirection}
+					onsort={handleColumnSort}
+					hide-checkbox-column
+					onrowaction={handleRowAction}
+					show-row-number-column="true"
+					onloadmore={loadMoreData}
+					enable-infinite-loading
+				>
+				</lightning-datatable>
+			</div>
+		</lightning-layout-Item>
+	</lightning-layout>
+</template>

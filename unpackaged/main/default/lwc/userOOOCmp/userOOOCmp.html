@@ -1,0 +1,18 @@
+<template>
+	<template lwc:if={blnIsLoading}>
+		<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+	</template>
+	<lightning-card>
+		<div class="slds-grid slds-gutters">
+			<div class="slds-col slds-align_absolute-center">
+				<h3>
+					<lightning-icon icon-name="utility:resource_absence" size="small"></lightning-icon>
+					Update Out Of Office
+				</h3>
+			</div>
+			<div class="slds-col slds-align_absolute-center">
+				<lightning-button variant={btnStyle} label={btnLabel} onclick={handleUpdate} class="slds-m-left_x-small"></lightning-button>
+			</div>
+		</div>
+	</lightning-card>
+</template>

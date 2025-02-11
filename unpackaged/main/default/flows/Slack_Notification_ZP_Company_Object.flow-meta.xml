@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Post_Slack_Message</name>
+        <label>Post Message to big-desk-epd-sales</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Message</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <stringValue>a1E8Y00000DQK3JUAX</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>Zp_company_record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <description>Sub-Flow used to send Slack Notifications for ZP Company Object.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>URL_Creation</name>
+        <dataType>String</dataType>
+        <expression>LEFT({!$Api.Enterprise_Server_URL_510}, FIND( &apos;/services&apos;, {!$Api.Enterprise_Server_URL_510}))&amp; {!Zp_company_record.Id}</expression>
+    </formulas>
+    <interviewLabel>Slack Notification {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Slack Notification - ZP Company Object</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Post_Slack_Message</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <textTemplates>
+        <name>Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Below Error has occurred while Creating/Updating a ZP Company record.
+Error: {!Zp_company_record.Message__c}
+Parent Company Id = {!Zp_company_record.Parent_Company_Id__c}
+Child Company Id = {!Zp_company_record.ID__c}
+Below is the link for reference
+{!URL_Creation}</text>
+    </textTemplates>
+    <variables>
+        <name>Zp_company_record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>ZP_Company__c</objectType>
+    </variables>
+</Flow>

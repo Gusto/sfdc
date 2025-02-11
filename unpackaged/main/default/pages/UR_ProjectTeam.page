@@ -1,0 +1,269 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_NewEditProjectCtrl" applyBodyTag="false" sidebar="false">
+  <apex:form id="frmBody">
+  <head>
+    <title>Gusto</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <c:UR_HeaderComponent />
+    <script>
+         $(document).ready(function(){
+         $ = jQuery.noConflict();
+         $("[id$=mlktp]").hide();
+         });
+    </script>
+  </head>
+
+  <body>
+  <div class="slds-scope">     
+    <c:UR_ActionStatus />
+    <div class="slds-p-around_small">
+
+      <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_medium">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-6 ">
+          <div class="slds-media">
+            <div class="slds-media__figure">
+              <div class="bg-grey slds-p-vertical_xx-small slds-p-horizontal_x-small">
+                <a href="#" onClick="gotoHome();">
+                  <apex:image url="{!URLFOR($Resource.UR_ScoutLogo)}" width="30"/>  
+                </a>
+              </div>
+            </div>
+            <div class="slds-media__body">
+              <div>UXR Scout</div>
+              <div class="slds-text-heading_large"><strong>{!if(projectMaster.Id==null, 'New Project', projectMaster.Name)}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-6">
+          <div class="slds-text-align_right slds-m-top_small">
+            
+            <apex:actionFunction name="cancel" action="{!cancel}" status="statusSave" reRender="frmBody"/> 
+            <apex:actionFunction name="cancelProject" action="{!cancelProject}" status="statusSave" reRender="frmBody"/>
+            <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!if(projectMaster.Id==null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frmBody"/> 
+            
+            <apex:commandButton value="Cancel" action="{!cancelProject}" rendered="{!if(projectMaster.Id!=null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frmBody"/>
+            
+          </div>
+        </div>
+
+
+      </div>
+      
+    
+    
+      <div class="slds-tabs_default slds-m-bottom_small">
+        <ul class="slds-tabs_default__nav" role="tablist">
+          <li class="slds-tabs_default__item slds-tabs_default__link">
+            1. Edit project details 
+          </li>
+          <li class="slds-tabs_default__item slds-tabs_default__link slds-is-active">
+            2. Edit project team &amp; permissions
+          </li>
+          
+        </ul>
+      </div>
+      
+      <apex:pageMessages id="msg"/>
+      
+      <div class="slds-card slds-m-bottom_small" style="border: 1px solid #dddbda;">
+        <div class="slds-card__header slds-grid slds-p-bottom_small slds-m-bottom_none bg-grey">
+          <div class="slds-media slds-media_center slds-has-flexi-truncate">
+            
+            <div class="slds-media__body">
+              <h2 class="slds-card__header-title">
+                Project team roles &amp; permissions
+              </h2>
+            </div>
+            <div>
+              <apex:commandLink rerender="frmBody" status="statusSave" value="+ Add  project team member" action="{!addTeamMember}"/>
+            </div>
+          </div>
+        </div>
+        
+        <apex:outputPanel rendered="{!if(projectMaster.Id==null, true, false)}" >
+        <div class="slds-card__body slds-m-bottom_none slds-p-around_small slds-border_top">
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <p class="slds-m-bottom_small">
+                        <apex:outputText value="{!$User.FirstName&' '&$User.LastName}"/>
+                 
+                  <span class="text-grey fs-11"><em>
+                    <br/>
+                    <apex:outputText value="project creator" />
+                    </em></span></p>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-media slds-m-bottom_small">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                         <input type="checkbox" name="label" checked="checked" disabled="disabled" value="option" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      can <strong>edit</strong> this project &amp; <strong>contact customers</strong> on behalf of this project
+                    </div>
+                  </div>
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                        <input type="checkbox" name="label" checked="checked" disabled="disabled" value="option" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      Should be <strong>invited</strong> to any <strong>scheduled customer interviews</strong>
+                      
+                      <span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip"></i>
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                          <p class="slds-popover__body">This will send an invitation to observe the sessions that are scheduled through this tool.</p>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  
+                </div>
+                    
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-text-align_right slds-m-top_small">
+
+                  </div>
+                </div>
+              </div>
+          </div>
+          </apex:outputPanel>
+        
+        
+          <apex:repeat value="{!projectTeamMap}" var="key">
+          <div class="slds-card__body slds-m-bottom_none slds-p-around_small slds-border_top">
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-m-bottom_small">
+                        <apex:inputField rendered="{!if(projectTeamMap[key].Id == null,true,false)}" value="{!projectTeamMap[key].User__c}" />
+                        <apex:outputField rendered="{!if(projectTeamMap[key].Id != null,true,false)}" value="{!projectTeamMap[key].User__c}" />
+                 <br/>
+                  <span class="text-grey fs-11">
+                    <em>
+                        <apex:outputPanel rendered="{!if(projectTeamMap[key].Project_Creator__c,true,false)}" >
+                            project creator <br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!if(projectMaster.Id!=null && projectTeamMap[key].User__c == projectMaster.OwnerId ,true,false)}" >
+                            qa owner
+                        </apex:outputPanel>
+                    </em>
+                    </span>
+                    
+                </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-media slds-m-bottom_small">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                        <apex:inputField value="{!projectTeamMap[key].Edit_Access__c}" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      can <strong>edit</strong> this project &amp; <strong>contact customers</strong> on behalf of this project
+                    </div>
+                  </div>
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <span class="slds-checkbox slds-checkbox_standalone">
+                        <apex:inputField value="{!projectTeamMap[key].Invite_for_Interviews__c}" />
+                        <span class="slds-checkbox_faux"></span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      Should be <strong>invited</strong> to any <strong>scheduled customer interviews</strong> 
+                      <span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip"></i>
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                          <p class="slds-popover__body">This will send an invitation to observe the sessions that are scheduled through this tool.</p>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  
+                </div>
+                    
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-text-align_right slds-m-top_small">
+                    <apex:commandButton rendered="{!if(projectTeamMap[key].Project_Creator__c,false,true)}" styleclass="slds-button slds-button_text-destructive" rerender="frmBody" status="statusSave" value="Delete" action="{!deleteTeamMember}">
+                          <apex:param name="eventId" value="{!key}" assignTo="{!deleteRowIndex}"/>
+                    </apex:commandButton> 
+                  </div>
+                </div>
+              </div>
+          </div>
+          </apex:repeat> 
+          
+      </div>
+
+      <div class="slds-card slds-m-bottom_small" style="border: 1px solid #dddbda;">
+        <div class="slds-card__header slds-grid slds-p-bottom_small slds-m-bottom_none bg-grey">
+          <div class="slds-media slds-media_center slds-has-flexi-truncate">
+            
+            <div class="slds-media__body">
+              <h2 class="slds-card__header-title">
+                Other permissions
+              </h2>
+            </div>
+          </div>
+        </div>
+        
+          <div class="slds-card__body slds-m-bottom_none slds-p-around_small slds-border_top">
+            <div class="slds-grid slds-wrap slds-gutters_large">
+                <div class="slds-col slds-size_1-of-1">
+                  <p class="slds-m-bottom_small">All Gusties</p>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <div class="slds-media__body" style="margin-top: -2px;">
+                      can <strong>view</strong> this project
+                    </div>
+                  </div>
+                  
+                </div>
+                    
+                
+              </div>
+          </div>
+          
+      </div>
+
+
+      <div class="slds-m-top_large">
+            
+        <apex:commandButton rendered="{!if(projectMaster.Id==null,true,false)}" styleclass="slds-button slds-button_outline-brand slds-m-bottom_small" status="statusSave" value="Back" action="{!backToProject}"/>
+        <apex:commandButton value="Cancel" action="{!cancelProject}" rendered="{!if(projectMaster.Id!=null,true,false)}" styleClass="slds-button slds-button_outline-brand slds-m-bottom_small"  status="statusSave" reRender="frmBody"/>
+       
+        <apex:outputpanel rendered="{!isEditable}">
+            
+            <apex:commandButton reRender="frmBody" status="statusSave" rendered="{!if(projectMaster.Id==null,true,false)}" styleclass="slds-button slds-button_brand slds-m-bottom_small slds-float_right"  value="Save" action="{!saveProject}"/>
+            <apex:commandButton reRender="frmBody" status="statusSave" rendered="{!if(projectMaster.Id!=null,true,false)}" styleclass="slds-button slds-button_brand slds-m-bottom_small slds-float_right" value="Save" action="{!saveTeamMember}"/>
+            
+        </apex:outputpanel>
+      </div>
+
+    </div>  
+    </div>
+    <script>
+        function gotoHome(){
+            var objId = '{!projectMaster.Id}';
+            if(objId != '' && objId != 'null'){
+                cancelProject();
+            }else{
+                cancel();
+            }
+       }
+        
+    </script> 
+     
+  </body>
+  </apex:form>
+</apex:page>

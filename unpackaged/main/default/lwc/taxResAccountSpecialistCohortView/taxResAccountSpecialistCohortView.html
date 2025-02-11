@@ -1,0 +1,126 @@
+<template>
+	<div class="spinner">
+		<template if:true={blnIsLoading}>
+			<div class="slds-is-relative">
+				<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium">
+				</lightning-spinner>
+			</div>
+		</template>
+	</div>
+	<lightning-card>
+		<div class="slds-m-around_medium">
+			<template if:true={blnIsAccountSpecialist}>
+				<div class="slds-grid ">
+					<div class="slds-col slds-m-top_small">
+						<lightning-icon icon-name="standard:incident" alternative-text="Escalated" title="Escalated" size="xx-small"></lightning-icon>&nbsp; Escalated &nbsp;
+						<lightning-icon icon-name="standard:campaign" alternative-text="P&I Auto-solve Eligible" title="P&I Auto-solve Eligible" size="xx-small"></lightning-icon>&nbsp; P&I Auto-solve Eligible
+					</div>
+					<div class="slds-col_bump-right slds-m-bottom_small">
+						<lightning-button
+							data-name="refresh-Page"
+							slot="actions"
+							label="Refresh"
+							onclick={retrieveCustomSettingValue}
+						></lightning-button>
+					</div>
+				</div>
+				<div class="demo-only message">
+					<div class="slds-text-align_left text-font">Action Required Cases</div>
+				</div>
+				&nbsp;<br/>
+				<div class="text-sub-heading">New Cases</div>
+				<template if:true={blnActionRequiredNewCasesRecordFound}>
+					&nbsp;<br/>
+					<lightning-layout multiple-rows="true" horizontal-align="center">
+						<lightning-layout-item padding="around-small" size="12">
+							<div class="tableHeight">
+								<c-custom-type-datatable
+									data-id="actionRequiredNewCasesId"
+									key-field="Id"
+									data={list_ActionRequiredNewCasesData}
+									columns={list_ASViewCasesColumns}
+									sorted-by={strSortedByActionRequiredNewCases}
+									sorted-direction={strSortedDirectionActionRequiredNewCases}
+									onsort={sortColumnsForActionRequiredNewCases}
+									onloadmore={loadMoreActionRequiredNewCases}
+									hide-checkbox-column
+									enable-infinite-loading
+									show-row-number-column="true">
+								</c-custom-type-datatable>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+				</template>
+				<template if:false={blnActionRequiredNewCasesRecordFound}>
+					&nbsp;<br/>
+					<div><h2><b><center>No new case records found.</center></b></h2></div>
+				</template>
+
+				&nbsp;<br/><div class="text-sub-heading">In Progress Cases</div>
+				<template if:true={blnActionRequiredInProgressCasesRecordFound}>
+					&nbsp;<br/>
+					<lightning-layout multiple-rows="true" horizontal-align="center">
+						<lightning-layout-item padding="around-small" size="12">
+							<div class="tableHeight">
+								<c-custom-type-datatable
+									data-id="actionRequiredInProgressCasesId"
+									key-field="Id"
+									data={list_ActionRequiredInProgressCasesData}
+									columns={list_ASViewCasesColumns}
+									sorted-by={strSortedByActionRequiredInProgressCases}
+									sorted-direction={strSortedDirectionActionRequiredInProgressCases}
+									onsort={sortColumnsForActionRequiredInProgressCases}
+									onloadmore={loadMoreActionRequiredInProgressCases}
+									hide-checkbox-column
+									enable-infinite-loading
+									show-row-number-column="true">
+								</c-custom-type-datatable>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+				</template>
+				<template if:false={blnActionRequiredInProgressCasesRecordFound}>
+					&nbsp;<br/>
+					<div><h2><b><center>No In Progress case records found.</center></b></h2></div>
+				</template>
+
+				&nbsp;<br/><br/>&nbsp;
+				<div class="demo-only message">
+					<div class="slds-text-align_left text-font">Shelved Cases</div>
+				</div>
+				<template if:true={blnShelvedCasesRecordFound}>
+					<lightning-layout multiple-rows="true" horizontal-align="center">
+						<lightning-layout-item padding="around-small" size="12">
+							<div class="tableHeight">
+								<c-custom-type-datatable
+									data-id="shelvedCasesId"
+									key-field="Id"
+									data={list_ShelvedCasesData}
+									columns={list_ASViewCasesColumns}
+									sorted-by={strSortedByShelvedCases}
+									sorted-direction={strSortedDirectionShelvedCases}
+									onsort={sortColumnsForShelvedCases}
+									onloadmore={loadMoreShelvedCases}
+									hide-checkbox-column
+									enable-infinite-loading
+									show-row-number-column="true">
+								</c-custom-type-datatable>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+				</template>
+				<template if:false={blnShelvedCasesRecordFound}>
+					&nbsp;<br/>
+					<div><h2><b><center>No case records found.</center></b></h2></div>
+				</template>
+			</template>
+			<template if:false={blnIsAccountSpecialist}>
+				<lightning-layout-item size="12">
+					<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+						<h2>Error while retrieving user role data.</h2>
+					</div>
+				</lightning-layout-item>
+			</template>
+		</div>
+	</lightning-card>
+</template>

@@ -1,0 +1,43 @@
+<!--
+    Purpose: LWC that is responsible for My Detail
+    Written by : Lakshey Mendiratta
+    Date: 09/16/2020
+-->
+
+<template>
+	<div class="spinner">
+		<template if:true={blnIsLoading}>
+			<lightning-spinner alternative-text="Loading" variant="brand" size="medium"> </lightning-spinner>
+		</template>
+	</div>
+	<lightning-layout multiple-rows>
+		<lightning-layout-item size="12" padding="around-small">
+			<div class="demo-only" style="padding: 0.5rem; background: #f4f6f9">
+				<div class="slds-text-align_left slds-align_absolute-center">My Details</div>
+			</div>
+			<template if:true={blnIsMessageVisible}>
+				<lightning-layout-item size="12">
+					<div class={strMessageClass} role="alert">
+						<span class="slds-assistive-text">warning</span>
+						<h2>{strMessage}</h2>
+					</div>
+				</lightning-layout-item>
+			</template>
+			<div class="custom-box slds-box slds-p-around_medium" style="margin-top: 10px">
+				<div class="slds-grid slds-wrap">
+					<div class="slds-col slds-size_1-of-13 slds-p-right_x-small outOfOffice">
+						<p style="text-align: center">Out Of Office</p>
+					</div>
+					<div class="slds-col slds-size_1-of-12 checkbox">
+						<lightning-input type="checkbox" checked={blnIsCheck} onchange={handleCheck}></lightning-input>
+					</div>
+				</div>
+			</div>
+		</lightning-layout-item>
+		<lightning-layout-item size="12" padding="around-small">
+			<div class="custom-box slds-box slds-p-around_medium slds-text-align_center">
+				<lightning-button label="Update" onclick={handleUpdate} class="slds-m-left_x-small"></lightning-button>
+			</div>
+		</lightning-layout-item>
+	</lightning-layout>
+</template>

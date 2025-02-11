@@ -1,0 +1,62 @@
+<apex:page sidebar="false" controller="BTCOFacilitatorListViewCtrl" action="{!RefreshFacOOOPanel}">
+<c:BTFacilitatorComp facListTab="" facOOOTab="active" />
+<apex:form id="frmBody">
+      <script>
+     function selectAllCheckboxes(obj,receivedInputID){
+           var inputCheckBox = document.getElementsByTagName("input");
+           for(var i=0; i<inputCheckBox.length; i++){
+               if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                   if(inputCheckBox[i].disabled == false){
+                       inputCheckBox[i].checked = obj.checked;
+                   }
+               }
+           }
+       }
+    </script>
+    <div class="slds-scope">
+         <apex:pageBlock id="boOutOfTheOffice" title="Mark Out Of The Office">
+         	 <div style="text-align: right; margin-top: -40px;">
+           <apex:commandButton value="Refresh" action="{!RefreshFacOOOPanel}" reRender="frmBody" status="actStatusId" styleclass="btn-blue" style="padding: 3px 8px !important;"/>
+       </div>
+         	<div><apex:pageMessages id="showmsg" /></div> 
+         <table id="OutOfTheOfficeTable" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                   <thead>
+                       <tr>
+                           <th data-orderable="false">
+                           	<apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'chkAssignId');"/>
+                           	Re-Assign
+                           </th>
+                           <th data-orderable="false">Carrier Order Name</th>
+                           <th data-orderable="false">Parent Carrier Order</th>
+                           <th>Order Status</th>
+                           <th data-orderable="false">OOO Notes</th>
+                       </tr>
+                   </thead>
+                    <tbody>
+                    	<apex:repeat value="{!list_CarrierOrderOOOWrapper}" var="co">
+                       <tr>
+                           <td><apex:inputCheckbox id="chkAssignId" value="{!co.blnReAssign}"/></td>
+                           <td><a href="javascript:void(0);" onclick="openSubTab('{!co.objCarrierOrder.Id}','{!JSENCODE(co.objCarrierOrder.Name)}');return false;">{!co.objCarrierOrder.Name}</a></td>
+                           <td><a href="javascript:void(0);" onclick="openSubTab('{!co.objCarrierOrder.Parent_Carrier_Order__c}','{!JSENCODE(co.objCarrierOrder.Parent_Carrier_Order__r.Name)}');return false;">{!co.objCarrierOrder.Parent_Carrier_Order__r.Name}</a></td>
+                           <td>{!co.objCarrierOrder.Implementation_Stage__c}</td>
+                           <td> <apex:inputTextarea value="{!co.objCarrierOrder.OOO_Comments__c}" rows="2" cols="30" /></td>
+                       </tr>
+                     </apex:repeat>
+                    </tbody>
+            </table>
+             <apex:outputpanel rendered="{!if(list_CarrierOrderOOOWrapper.size>0,true,false)}" layout="block" style="text-align: left; margin-top: 10px;">
+               <apex:commandButton value="Save" action="{!SaveOOONotes}" reRender="frmBody" status="actStatusId" styleclass="btn-blue" style="padding: 3px 8px !important;"/>
+               &nbsp;&nbsp;&nbsp;<apex:commandButton action="{!ReasignBOOnOOO}" value="Reasign and Mark Out of the Office" reRender="frmBody" status="actStatusId" styleclass="btn-blue" style="padding: 3px 8px !important;"/>
+           </apex:outputpanel>
+          </apex:pageBlock>
+    </div>
+     <script>
+            $(function() {
+               $(".header-section").click(function(){
+	                $(this).nextAll(".slide-section:first").slideToggle("slow");
+	                $(this).find("i").toggleClass("arrow-down");
+	            });
+            });
+        </script>
+</apex:form>
+</apex:page>

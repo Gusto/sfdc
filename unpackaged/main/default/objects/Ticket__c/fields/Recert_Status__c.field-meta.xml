@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recert_Status__c</fullName>
+    <description>For Advising recertification tracking</description>
+    <label>Recert Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Escalation_Reason__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Advisor action needed</fullName>
+                <default>false</default>
+                <label>Advisor action needed</label>
+            </value>
+            <value>
+                <fullName>Advisor sent to ER, awaiting response</fullName>
+                <default>false</default>
+                <label>Advisor sent to ER, awaiting response</label>
+            </value>
+            <value>
+                <fullName>ER approved</fullName>
+                <default>false</default>
+                <label>ER approved</label>
+            </value>
+            <value>
+                <fullName>Recert sent to carrier, awaiting response</fullName>
+                <default>false</default>
+                <label>Recert sent to carrier, awaiting response</label>
+            </value>
+            <value>
+                <fullName>Recert Approved</fullName>
+                <default>false</default>
+                <label>Recert Approved</label>
+            </value>
+            <value>
+                <fullName>Recert Failed</fullName>
+                <default>false</default>
+                <label>Recert Failed</label>
+            </value>
+            <value>
+                <fullName>Email Automation Failed</fullName>
+                <default>false</default>
+                <label>Email Automation Failed</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>Advisor action needed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>Advisor sent to ER, awaiting response</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>ER approved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>Recert sent to carrier, awaiting response</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>Recert Approved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>Recert Failed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recertification</controllingFieldValue>
+            <valueName>Email Automation Failed</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

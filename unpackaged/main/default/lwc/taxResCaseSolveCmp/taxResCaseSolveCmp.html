@@ -1,0 +1,28 @@
+<template>
+	<lightning-card title="Solve Case" icon-name="standard:case">
+		<div class="spinner">
+			<template if:true={blnIsLoading}>
+				<div class="slds-is-relative div-position">
+					<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium"> </lightning-spinner>
+				</div>
+			</template>
+		</div>
+		<lightning-layout multiple-rows>
+			<lightning-layout-item size="12" padding="around-small">
+				<lightning-record-edit-form object-api-name="Case" record-id={recordId} onload={handleOnLoad} onsubmit={handleCaseSolve} onsuccess={handleSolveSuccess} onerror={handleSolveError}>
+					<lightning-messages></lightning-messages>
+					<lightning-output-field field-name="Penalty_and_Interest_Link__c"> </lightning-output-field>
+					<template for:each={list_EditableFieldAPINames} for:item="apiName">
+						<lightning-input-field id={apiName.key} onchange={handleDataChange} field-name={apiName} key={apiName}> </lightning-input-field>
+					</template>
+					<lightning-button label="Save" title="Save" type="submit" class="slds-m-left_x-small" onclick={handleSaveBtnClick}></lightning-button>&nbsp;
+					<lightning-button label={strButtonLabel} title="Solve Case" type="submit" class="slds-m-left_x-small" onclick={handleSolveBtnClick}></lightning-button>
+				</lightning-record-edit-form>
+			</lightning-layout-item>
+		</lightning-layout>
+	</lightning-card>
+
+	<template lwc:if={blnShowModal}>
+		<c-tax-res-email-attachment-cmp record-id={recordId} onclosemodalpopup={closeModal} onhandleokpopup={handleOk}></c-tax-res-email-attachment-cmp>
+	</template>
+</template>

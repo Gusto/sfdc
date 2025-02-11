@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <description>Set status to Open</description>
+        <name>Reopen</name>
+        <label>Reopen</label>
+        <locationX>198</locationX>
+        <locationY>398</locationY>
+        <assignmentItems>
+            <assignToReference>objCurrentCase.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>What type is the current user</description>
+        <name>Current_User</name>
+        <label>Current User</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <defaultConnector>
+            <targetReference>Status</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Data_Migration</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$User.Data_Migration_Validation__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Data Migration</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>What Status is the Case</description>
+        <name>Status</name>
+        <label>Status</label>
+        <locationX>330</locationX>
+        <locationY>278</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>In_Progress</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objCurrentCase.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>In Progress</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reopen</targetReference>
+            </connector>
+            <label>In Progress</label>
+        </rules>
+    </decisions>
+    <description>Update In Progress Cases to Open if no modifications in the last one hour.</description>
+    <environments>Default</environments>
+    <interviewLabel>Case {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Reopen after 1 hour SubFlow Helper</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Current_User</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>The current Case record</description>
+        <name>objCurrentCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Admin_Committed_High_Response</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordType.DeveloperName = &apos;Benefits_BoR&apos;,  ISPICKVAL(Exception_Request__c, &quot;Yes&quot;), ISBLANK(  TEXT( Admin_Commited_High_Response_Level__c )  ) )</errorConditionFormula>
+    <errorDisplayField>Admin_Commited_High_Response_Level__c</errorDisplayField>
+    <errorMessage>Please select when admin committed to high level of responsiveness</errorMessage>
+</ValidationRule>

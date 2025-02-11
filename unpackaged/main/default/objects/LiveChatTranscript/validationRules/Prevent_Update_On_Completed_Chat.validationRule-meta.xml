@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Update_On_Completed_Chat</fullName>
+    <active>true</active>
+    <description>External Chat should not be editable for Engagement users once it is completed.</description>
+    <errorConditionFormula>AND(
+ISPICKVAL( PRIORVALUE(Status) , &apos;Completed&apos;),
+ISPICKVAL( Status , &apos;Completed&apos;) ,
+NOT(ISBLANK(Tab_Close_Time__c)),
+NOT(ISNEW()),
+RecordType.DeveloperName = &apos;External&apos;,
+($Profile.Name &lt;&gt; $Label.ZP_System_Administrator &amp;&amp; $Profile.Name &lt;&gt; $Label.System_Administrator &amp;&amp; 
+$Profile.Name &lt;&gt; &apos;Vendor CX&apos; &amp;&amp; 
+$Profile.Name &lt;&gt; &apos;Benefits Care&apos;),
+$User.Exempt_from_Validation_Rules__c = false
+)</errorConditionFormula>
+    <errorMessage>Cannot edit chat in completed status</errorMessage>
+</ValidationRule>

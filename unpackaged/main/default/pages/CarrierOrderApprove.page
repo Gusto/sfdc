@@ -1,0 +1,35 @@
+<apex:page standardController="Carrier_Order__c" extensions="CarrierOrderApproveExt">
+    <apex:sectionHeader title="Approve/Audit Order"
+    subtitle="Please provide details to approve {!Carrier_Order__c.Name}"/>
+    <apex:actionstatus id="status">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <apex:form id="frmId">
+        <apex:pageBlock mode="edit">
+        <apex:pageMessages />
+        <apex:pageBlockButtons location="bottom" >
+        <apex:commandButton value="{!$Label.Confirm}" action="{!updateCarrier}" rendered="{!!isError}" reRender="frmId" status="status"/>
+        <apex:commandButton value="{!$Label.Discard}" action="{!cancel}"  reRender="frmId" status="status"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1" collapsible="false" title="Please enter the approve reason" rendered="{!!isError}">
+        <!-- <apex:inputField value="{!carrierObj.Implementation_Stage__c}" required="true"/> -->
+        <apex:selectList value="{!carrierObj.Implementation_Stage__c}" multiselect="false" size="1">
+             <apex:selectOptions value="{!lstImplementationStage}"/>
+         </apex:selectList>
+        <!-- <apex:inputField value="{!carrierObj.Stage_Detail__c}" rendered="{!blnHasTadaOrder}"/> -->
+         <apex:selectList value="{!carrierObj.Stage_Detail__c}" multiselect="false" size="1" rendered="{!blnHasTadaOrder}">
+             <apex:selectOptions value="{!lstImplementationStageDetail}"/>
+         </apex:selectList>
+        <apex:inputField value="{!carrierObj.Approval_Notes__c}"/>
+        <apex:inputField value="{!carrierObj.Approval_Method__c}"/>
+        </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

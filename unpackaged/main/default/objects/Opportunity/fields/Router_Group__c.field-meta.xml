@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Router_Group__c</fullName>
+    <description>Is used for A/B 9- testing. Lead-Opportunity split between MDR and SB.</description>
+    <label>Router Group</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Test</fullName>
+                <default>false</default>
+                <label>Test</label>
+            </value>
+            <value>
+                <fullName>Control</fullName>
+                <default>false</default>
+                <label>Control</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,1058 @@
+<apex:page standardController="Case" lightningStyleSheets="true" extensions="ChatInternalWidgetLEXExt">
+    <apex:includeScript value="/support/console/48.0/integration.js"/>
+    <apex:slds />
+    <div class="slds-scope">
+        <div id="cutOffTimeMessage" class="slds-p-vertical_medium hideElement">
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                <span class="slds-assistive-text">warning</span>
+                <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+                  <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                    <use xmlns:xlink="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                  </svg>
+                </span>
+                <h2><p id="messageText"></p></h2>
+            </div>
+        </div>
+        <div id="preForm">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="textarea-id-01">Please include question and all applicable Panda and Hippo links you have used so far</label>
+                <div class="slds-form-element__control">
+                  <textarea id="question" required="" onkeyup="onChangeHandler(event);" class="slds-textarea" placeholder="Enter your question here."></textarea>
+                </div>
+            </div>
+            <div class="slds-p-bottom_xx-small slds-p-top_xx-small button-group">
+                <button id="search" class="slds-button slds-button_neutral" onclick="openSearchTab();" style="display: none;">
+                    Search Related Chats
+                </button>
+            </div>
+            <div class="slds-form-element" id="hypothesisDiv">
+                <form>
+                    <label class="slds-form-element__label" for="textarea-id-03">
+                        <abbr class="slds-required" title="required">* </abbr>What steps have you taken and where are you stuck?
+                    </label>
+                    <div class="slds-form-element__control">
+                      <textarea id="hypothesis" onblur="handleOnBlur(event);" required="true" class="slds-textarea" placeholder="Enter the text here."></textarea>
+                    </div>
+                    <div id="hypothesisError" class="hideElement">
+                        <div class="slds-form-element__help">Please enter a value.</div>
+                    </div>
+                </form>  
+            </div>
+            <div class="slds-form-element" id="chatReasonDiv">
+                <form>
+                    <label class="slds-form-element__label" for="select-01">
+                        <abbr class="slds-required" title="required">* </abbr>Chat Reason
+                    </label>
+                    <div class="slds-form-element__control">
+                        <div class="slds-select_container">
+                            <select class="slds-select" id="chatReason" onblur="handleOnBlur(event);">
+                                <option value="">Select a reason</option>                            
+                                <option value="Escalation">Escalation</option>
+                                <option value="Phone">Phone</option>
+                                <option value="Customer Chat">Customer Chat</option>
+                                <option value="Carrier Access Code Request">Carrier Access Code Request</option>
+                                <option value="Email">Email</option>
+                                <option value="TaxOps Jira Needed">TaxOps Jira Needed</option>
+                                <option value="Potential Bug/TPO Jira Needed">Potential Bug/TPO Jira Needed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="chatReasonError" class="hideElement">
+                        <div class="slds-form-element__help">Please select a value.</div>
+                    </div>
+                </form>  
+            </div>
+            <div class="slds-form-element" id="requestTypeDiv">
+                <form>
+                    <label class="slds-form-element__label" for="select-01">
+                        <abbr class="slds-required" title="required">* </abbr>Request Type
+                    </label>
+                    <div class="slds-form-element__control">
+                        <div class="slds-select_container">
+                            <select class="slds-select" id="requestType" onblur="handleOnBlur(event);">
+                                <option value="">Select a request type</option>
+                                <option value="Internal Benefits">Internal Benefits</option>
+                                <option value="External Benefits">External Benefits</option>
+                                <option value="Payroll">Payroll</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="requestTypeError" class="hideElement">
+                        <div class="slds-form-element__help">Please select a value.</div>
+                    </div>
+                </form> 
+            </div>
+            <apex:form id="caseReasonForm">
+                <div class="slds-form-element" id="caseReasonDiv">
+                    <label class="slds-form-element__label" id="caseReasonLabel">
+                    </label>
+                    <div class="slds-form-element__control">
+                        <apex:inputField html-placeholder="Search Case Reason Classifications" 
+                            html-title="Click the search icon to select a case reason" styleClass="max-width" 
+                            id="caseReason" value="{!objChat.Case_Reason__c}"
+                            onkeypress="handleKeyPress(event);">
+                            <apex:actionSupport event="onchange" oncomplete="onChangeHandler(event);" rerender="caseReasonPanel"/>
+                        </apex:inputField>
+                    </div> 
+                    <div id="caseReasonError" class="hideElement">
+                        <div class="slds-form-element__help">Please select a value.</div>
+                    </div>
+                    <apex:outputPanel id="caseReasonPanel" styleClass="hideElement">
+                        <apex:outputText value="{!CaseReasonId}" id="caseReasonSelected"/>
+                    </apex:outputPanel>
+                </div>
+            </apex:form>
+            <div class="slds-form-element" id="resourceSelectedDiv">
+                <form>
+                    <label class="slds-form-element__label" for="select-03">
+                        <abbr class="slds-required" title="required">* </abbr>What resources did you check?
+                    </label>
+                    <div class="slds-form-element__control">
+                        <div>
+                            <fieldset> 
+                                <div class="slds-p-around_xxx-small">
+                                    <input onchange="onChangeHandler(event);" type="checkbox" name="resources" value="IKB/HC">IKB/HC</input>
+                                </div>
+                                <div class="slds-p-around_xxx-small">
+                                    <input onchange="onChangeHandler(event);" type="checkbox" name="resources" value="Slack">Slack</input>
+                                </div>
+                                <div class="slds-p-around_xxx-small">
+                                    <input onchange="onChangeHandler(event);" type="checkbox" name="resources" value="Jira">Jira</input> 
+                                </div>  
+                                <div class="slds-p-around_xxx-small">
+                                    <input onchange="onChangeHandler(event);" type="checkbox" name="resources" value="Salesforce">Salesforce</input> 
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div id="selectedResourceError" class="hideElement">
+                        <div class="slds-form-element__help">Please select an option.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="slds-form-element" id="uplandLinkDiv">
+                <form>
+                    <label class="slds-form-element__label">
+                        <abbr class="slds-required" title="required">* </abbr> Resources Checked
+                    </label>
+                    <div class="slds-form-element__control">
+                        <input type="url" id="uplandLink" class="slds-textarea" onblur="handleOnBlur(event);" placeholder="Enter Upland URL here."></input>
+                    </div>
+                    <div id="uplandLinkError" class="hideElement">
+                        <div class="slds-form-element__help">Please enter a value.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="slds-form-element" id="pandaLinkDiv">
+                <form>
+                    <label class="slds-form-element__label" for="textarea-id-03">
+                        <abbr class="slds-required" title="required">* </abbr>Panda/Hippo link
+                    </label>
+                    <div class="slds-form-element__control">
+                      <input type="url" required="true" onblur="handleOnBlur(event);" id="pandaLink" class="slds-textarea" placeholder="Enter Panda/Hippo link here."></input>
+                    </div>
+                    <div id="pandaLinkError" class="hideElement">
+                        <div class="slds-form-element__help">Please enter a value.</div>
+                    </div>
+                    <div id="URLError" class="hideElement">
+                        <div class="slds-form-element__help">Please provide Panda or Hippo link.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="slds-form-element" id="employeeChatDiv">
+                <label class="slds-form-element__label">Is this chat related to an Employee?</label>
+                <div class="slds-form-element__control">
+                    <input type="checkbox" id="employeeChat" onchange="onChangeHandler(event);" name="employeeChatCheckbox"/>
+                </div>
+            </div>
+            <div class="slds-form-element hideElement" id="employeePandaLinkDiv">
+                <form>
+                    <label class="slds-form-element__label" for="textarea-id-05">
+                        <abbr class="slds-required" title="required">* </abbr>Provide the Panda link if this chat related to an Employee
+                    </label>
+                    <div class="slds-form-element__control">
+                      <input type="url" required="true" onblur="handleOnBlur(event);" id="employeePandaLink" class="slds-textarea" placeholder="Enter the link here."></input>
+                    </div>
+                    <div id="employeePandaLinkError" class="hideElement">
+                        <div class="slds-form-element__help">Please enter a value.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="slds-form-element" id="smeCheckboxDiv">
+                <label class="slds-form-element__label">Have you checked in with a SME?</label>
+                <div class="slds-form-element__control">
+                    <input type="checkbox" id="smeCheckbox" name="checkbox1"/>
+                </div>
+            </div>
+              <div class="slds-p-bottom_xx-small slds-p-top_xx-small button-group">
+                <button id="start" class="slds-button slds-button_brand" onclick="startChat();">Next</button>
+              </div> 
+        </div>
+        <div id="notCase" class="slds-p-vertical_medium">
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                <span class="slds-assistive-text">warning</span>
+                <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+                  <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                    <use xmlns:xlink="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                  </svg>
+                </span>
+                <h2>Please start chat from a case page.</h2>
+              </div>
+        </div>
+        <div class="button-group">
+            <button id="refreshend" class="slds-button slds-button_brand" onclick="refresh();"></button>
+            <button id="refresh" class="slds-button slds-button_brand" onclick="refresh();">Refresh</button>
+        </div>
+    </div>
+    <style type='text/css'>
+        .slds-icon-text-default {
+            fill: white !important;
+        }
+        .slds-vf-scope .message {
+            background-color: #0A8080 !important;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton {
+            background-color: #0A8080;
+            font-family: "Arial", sans-serif;
+            max-width: 26em;
+        }
+        span .message {
+            background-color: #0A8080 !important;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton:focus {
+            outline: 1px solid #0A8080;
+        }
+        .refresh {
+            bottom: 0;
+            width: 100%;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            text-align: center;
+            vertical-align: middle;
+            justify-content: center;
+            border: 1px solid #dddbda;
+            transition: border .15s linear;
+            background-color: rgb(25, 70, 127) !important;
+            border-color:rgb(25, 70, 127) !important;
+            color: #fff !important;
+            border-radius: .25rem;
+            line-height: 1.875rem;
+        }
+        #alert {
+            background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.025) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.025) 50%, rgba(0, 0, 0, 0.025) 75%, transparent 75%, transparent);
+            background-size: 64px 64px;
+            background-color: rgb(255, 183, 93);
+            color: rgb(8, 7, 7);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: rgba(rgb(112, 110, 107), 0.95);
+            font-weight: 300;
+            padding: .5rem 2rem .5rem .5rem;
+            text-align: center;
+            width: 100%;
+        }
+        .button-group {
+            display: inline-flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .showElement {
+            display: block;
+        }
+        .hideElement {
+            display: none;
+        }
+        .max-width {
+            width: 100%;
+        }
+    </style>
+    
+    <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+    <script type='text/javascript'>
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.OPEN_TAB, handleOpenTab);
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB, handleCloseTab);
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB, handleCloseTab);
+        sforce.console.onFocusedPrimaryTab(handleTabFocus);
+
+        //has a chat started
+        var blnChatStarted = false;
+
+        //the latest case user opened
+        var idLatestCase;
+        //List of resources selected
+        var list_ResourcesSelected = [];
+        //String representation of the selected resources
+        var strResourceSelected; 
+        //Case Origin
+        var strCaseOrigin;
+        var idFocusedTab;
+        // To store the cutoff time custom metadata
+        var objCutoffTime;
+        var blnProceedToChat = true;
+        var blnIsPRCContractor = false;
+        var blnIsFSCContractor = false;
+        var blnIsVendorSME = false;
+        var idChosenButton;
+
+        /* Disbale the "Enter" key for Case Reason input */
+        function handleKeyPress(event) {
+            if (event.code === "Enter") {
+                event.preventDefault();
+            }
+        }
+
+        function testGetFocusedPrimaryTabObjectId() {
+            sforce.console.getFocusedPrimaryTabObjectId(showObjectId);
+        }
+        var showObjectId = function showObjectId(result) {
+            //Display the object ID
+            console.log('case id ', result);
+            initESW('https://service.force.com', idLatestCase);
+        };
+
+        window.onload = function () {
+            document.getElementById("smeCheckboxDiv").style.display = "none";
+            if ("{!$User.Vendor__c}" !== '') {
+                document.getElementById("smeCheckboxDiv").style.display = "block";
+            }
+            sforce.console.getFocusedPrimaryTabId(getPageInfo);
+
+            var objCaseReasonLink = document.querySelectorAll("a.max-width");
+            if (objCaseReasonLink && objCaseReasonLink[0]?.id.includes("caseReason")) {
+                var strLink = objCaseReasonLink[0].href;
+                var objCasereasonInput = document.getElementById('{!$Component.caseReasonForm.caseReason}');  
+                objCasereasonInput.outerHTML = "<a href=" + strLink + ">" + objCasereasonInput.outerHTML + "</a>";
+            }
+        };
+    
+        function getPageInfo(result) {
+            idFocusedTab = '';
+            idFocusedTab = result?.id;
+            document.getElementById("refreshend").style.display = "none";
+            sforce.console.getPageInfo(result.id, displayResult);
+        }
+
+        function displayResult(result) {
+            //clear latest case
+            idLatestCase = '';
+
+            if(result.pageInfo !== null && result.pageInfo !== "null" && result.pageInfo !== undefined) {
+                var pageInfo = JSON.parse(result.pageInfo);
+                if(pageInfo.objectId.startsWith('500')) {
+                    if(!pageInfo.objectName) {
+                        console.log('!not case');
+                        //close tab, no object name
+                        showWarning();
+                    }
+                    else {
+                        //opened, is on Case
+                        console.log('inside case condition')
+                        showPreForm();
+                        if (document.querySelectorAll("span.lookupInput")) {
+                            document.querySelectorAll("span.lookupInput")[0].classList.add("max-width");
+                        }
+                        document.getElementById("refreshend").textContent = "Refresh and end chat for " + pageInfo.objectName;
+                        idLatestCase = pageInfo.objectId;
+                        Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.ChatInternalWidgetLEXExt.getCaseInfoById}',
+                        pageInfo.objectId, 
+                        function(vfResult, event){
+                            if (event.status) {
+                                blnIsPRCContractor = vfResult?.blnIsPRCContractor;
+                                blnIsFSCContractor = vfResult?.blnIsFSCContractor;
+                                blnIsVendorSME = vfResult?.blnIsVendorSME;
+                                if (vfResult?.objCutoffTime) {
+                                    objCutoffTime = vfResult?.objCutoffTime;
+                                    var blnApplyCutoffTime = getRolesToExclude(objCutoffTime);
+                                    if (blnApplyCutoffTime) {
+                                        checkCutOffTime(vfResult?.objCutoffTime);
+                                    }
+                                }
+
+                                strCaseOrigin = vfResult?.objCase?.Origin;
+                                if (strCaseOrigin === 'Phone') {
+                                    document.getElementById('caseReasonLabel').innerHTML = '<abbr class="slds-required" ' +
+                                        'title="required">* </abbr>Case Reason';
+                                } else {
+                                    document.getElementById('caseReasonLabel').innerHTML = 'Case Reason';
+                                }    
+                            } 
+                        }, 
+                        {escape: true}
+                    );
+                    }
+                }
+                else if(pageInfo.objectId.startsWith('570')) {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.ChatInternalWidgetLEXExt.queryCaseInfo}',
+                        pageInfo.objectId, 
+                        function(vfResult, event){
+                            if (event.status) {
+                                showPreForm();
+                                if (document.querySelectorAll("span.lookupInput")) {
+                                    document.querySelectorAll("span.lookupInput")[0].classList.add("max-width");
+                                }
+                                document.getElementById("refreshend").textContent = "Refresh and end chat for " + vfResult?.objLiveChatTranscript?.Case?.CaseNumber;
+                                idLatestCase = vfResult?.objLiveChatTranscript?.CaseId;
+                                blnIsPRCContractor = vfResult?.blnIsPRCContractor;
+                                blnIsFSCContractor = vfResult?.blnIsFSCContractor;
+                                blnIsVendorSME = vfResult?.blnIsVendorSME;
+                                if (vfResult?.objCutoffTime) {
+                                    objCutoffTime = vfResult?.objCutoffTime;
+                                    var blnApplyCutoffTime = getRolesToExclude(objCutoffTime);
+                                    if (blnApplyCutoffTime) {
+                                        checkCutOffTime(vfResult?.objCutoffTime);
+                                    }
+                                }  
+
+                                strCaseOrigin = vfResult?.objLiveChatTranscript?.Case?.Origin;
+                                if (strCaseOrigin === 'Phone') {
+                                    document.getElementById('caseReasonLabel').innerHTML = '<abbr class="slds-required" ' +
+                                        'title="required">* </abbr>Case Reason';
+                                } else {
+                                    document.getElementById('caseReasonLabel').innerHTML = 'Case Reason';
+                                } 
+                            } 
+                        }, 
+                        {escape: true}
+                    );
+                }
+                else {
+                    //not on case
+                    console.log('! not case still');
+                    showWarning();
+                }
+            }
+            else {
+                console.log('! here');
+                showWarning();
+            }
+        }
+
+        function getRolesToExclude(objCutoffTime) {
+            if (objCutoffTime?.User_Roles_to_Exclude__c) {
+                var list_Roles = objCutoffTime?.User_Roles_to_Exclude__c.split(",");
+                for (var i = 0; i < list_Roles.length; i++) {
+                    if ('{!$UserRole.DeveloperName}'.toLowerCase().includes(list_Roles[i].trim().toLowerCase())) {
+                        return false;
+                    }
+                }
+            }
+            return true;           
+        }
+
+        /* Check if its past time cut-off time then don't allow users to start the chat */
+        function checkCutOffTime(objCutoffTime) {
+            //Checking if DST is observed
+            blnProceedToChat = true;
+            Date.prototype.stdTimeZoneOffSet = function() {
+                var jan = new Date(this.getFullYear(), 0, 1);
+                var jul = new Date(this.getFullYear(), 6, 1);
+                return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+            }
+
+            Date.prototype.isDSTObserved = function() {
+                return this.getTimezoneOffset() < this.stdTimeZoneOffSet();
+            }
+
+            var dtCurrentDate = new Date();
+            if (dtCurrentDate.isDSTObserved()) {
+                dtCurrentDate.setMinutes(dtCurrentDate.getMinutes() + 60);
+            }
+
+            var options = {
+                timeZone: 'MST',
+                timeZoneName: 'short',
+                weekday: 'short',
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: false
+            };
+            var formatter = new Intl.DateTimeFormat(['en-US'], options);
+            var strDate = formatter.format(dtCurrentDate);
+            var intHour = strDate.substring(strDate.lastIndexOf(",") + 2, strDate.lastIndexOf(",") + 4);
+            var intMinutes = strDate.substring(strDate.lastIndexOf(",") + 5, strDate.lastIndexOf(",") + 7);
+            var intCutoffHour;
+            var intCutoffMinutes;
+            if (objCutoffTime?.Cut_off_Time__c && objCutoffTime?.Cut_off_Time__c?.includes(':')) {
+                intCutoffHour = parseInt(objCutoffTime?.Cut_off_Time__c.split(':')[0].trim());
+                intCutoffMinutes = parseInt(objCutoffTime?.Cut_off_Time__c.split(':')[1].trim());
+            }
+    
+            if (intHour >= intCutoffHour && intMinutes > intCutoffMinutes) {
+                blnProceedToChat = false;
+                document.getElementById("preForm").style.display = "none";
+                document.getElementById("cutOffTimeMessage").classList.add("showElement");
+                document.getElementById("cutOffTimeMessage").classList.remove("hideElement");
+                document.getElementById("messageText").innerHTML = objCutoffTime?.Message__c;
+            }
+        }
+
+        function showWarning() {
+            var preForm = document.getElementById("preForm");
+            preForm.style.display = "none";
+            var notCase = document.getElementById("notCase");
+            notCase.style.display = "block";
+            var refreshBtn = document.getElementById("refresh");
+            refreshBtn.style.display = "block";
+        }
+
+        function onChangeHandler(event) {
+            if (event?.target?.name === "resources") {
+                var list_Options = document.getElementsByName("resources");
+                list_ResourcesSelected = [];
+                for (var i = 0; i < list_Options.length; i++) {
+                    if (list_Options[i].checked) {
+                        list_ResourcesSelected.push(list_Options[i].value);
+                    }    
+                }
+                if (list_ResourcesSelected.length === 0) {
+                    document.getElementById("resourceSelectedDiv").classList.add("slds-has-error"); 
+                    document.getElementById("selectedResourceError").classList.remove("hideElement");
+                    document.getElementById("selectedResourceError").classList.add("showElement");
+                } else {
+                    document.getElementById("resourceSelectedDiv").classList.remove("slds-has-error");
+                    document.getElementById("selectedResourceError").classList.remove("showElement");
+                    document.getElementById("selectedResourceError").classList.add("hideElement");
+                }
+            } else if(event?.target?.id === "employeeChat") {
+                var objPandaLinkDiv = document.getElementById("employeePandaLinkDiv");
+                if (document.getElementById("employeeChat").checked) {
+                    objPandaLinkDiv.classList.remove("hideElement");
+                    objPandaLinkDiv.classList.add("showElement");
+                } else {
+                    objPandaLinkDiv.classList.add("hideElement");
+                    objPandaLinkDiv.classList.remove("showElement");
+                }
+            } else if (event?.target?.id?.includes("caseReason") && event?.target?.value !== "") {
+                document.getElementById("caseReasonDiv").classList.remove("slds-has-error");
+                var caseReason = document.getElementById('{!$Component.caseReasonForm.caseReason}');
+                caseReason.classList.remove("slds-has-error");
+                caseReason.style.boxShadow = 'none';
+                var caseReasonError = document.getElementById("caseReasonError");
+                caseReasonError.classList.add("hideElement");
+                caseReasonError.classList.remove("showElement");
+            } else {
+                var searchButton = document.getElementById("search");
+                if (document.getElementById("question").value) {
+                    searchButton.style.display = "block";
+                } else {
+                    searchButton.style.display = "none";
+                }
+            } 
+        }
+
+        function handleOnBlur(event) {
+            var elementId = event.target.id;
+            var elementValue = document.getElementById(elementId).value;
+            if (elementId === 'pandaLink') {
+                if (elementValue === "") {
+                    document.getElementById("pandaLinkDiv").classList.add("slds-has-error"); 
+                    document.getElementById("pandaLinkError").classList.add("showElement");
+                    document.getElementById("pandaLinkError").classList.remove("hideElement");
+                    document.getElementById("URLError").classList.remove("showElement");
+                    document.getElementById("URLError").classList.add("hideElement");
+                } else if (!elementValue.includes("app.gusto.com/panda") && !elementValue.includes("hippo.gusto.com")) {
+                    document.getElementById("pandaLinkDiv").classList.add("slds-has-error"); 
+                    document.getElementById("pandaLinkError").classList.remove("showElement");
+                    document.getElementById("pandaLinkError").classList.add("hideElement");
+                    document.getElementById("URLError").classList.add("showElement");
+                    document.getElementById("URLError").classList.remove("hideElement");
+                } else {
+                    document.getElementById("pandaLinkDiv").classList.remove("slds-has-error");
+                    document.getElementById("pandaLinkError").classList.remove("showElement");
+                    document.getElementById("pandaLinkError").classList.add("hideElement");
+                    document.getElementById("URLError").classList.remove("showElement");
+                    document.getElementById("URLError").classList.add("hideElement");
+                }
+            } else {
+                if (elementValue === "" || 
+                    elementValue === "Select a reason" ||
+                    elementValue === "Select a request type") {
+                    document.getElementById(elementId+"Div").classList.add("slds-has-error");
+                    document.getElementById(elementId+"Error").classList.add("showElement");
+                    document.getElementById(elementId+"Error").classList.remove("hideElement");
+                } else {
+                    document.getElementById(elementId+"Div").classList.remove("slds-has-error");
+                    document.getElementById(elementId+"Error").classList.remove("showElement");
+                    document.getElementById(elementId+"Error").classList.add("hideElement");
+                }
+            }
+        }
+        
+        function openSearchTab() {
+            console.log('tab id-' + idFocusedTab);
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.ChatInternalWidgetLEXExt.createSessionCache}',
+                document.getElementById("question").value, idFocusedTab,
+                function (vfResult, event) {
+                    console.log('vfResult ' + vfResult + 'event.status ' + event.status);
+                    if (event.status && vfResult === 'Success') {
+                        sforce.console.openPrimaryTab(null, '/lightning/n/Search_Related_Chats', true, 'Search Related Chats',
+                            openSuccess, 'salesforceTab');
+                    }
+                },
+                { escape: true }
+            );
+        }
+        
+        var openSuccess = function openSuccess(result) {
+        };
+
+        function showPreForm() {
+            var preForm = document.getElementById("preForm");
+            preForm.style.display = "block";
+            var notCaseWarning = document.getElementById("notCase");
+            notCaseWarning.style.display = "none";
+            var refreshBtn = document.getElementById("refresh");
+            refreshBtn.style.display = "none";
+            var objCutoffMessage = document.getElementById("cutOffTimeMessage");
+            objCutoffMessage.classList.remove("showElement");
+            objCutoffMessage.classList.add("hideElement");
+        }
+
+        function hideFormAndWarning() {
+            var preForm = document.getElementById("preForm");
+            preForm.style.display = "none";
+            var notCaseWarning = document.getElementById("notCase");
+            notCaseWarning.style.display = "none";
+            var refreshBtn = document.getElementById("refresh");
+            refreshBtn.style.display = "block";
+        }
+
+        function startChat() {
+            //window.location.reload();
+            //get embedded service details - return here and then send to the initESW
+            //Check if its past cut-off time, then don't allow the chat to be started
+            var blnApplyCutoffTime = getRolesToExclude(objCutoffTime);
+            if (blnApplyCutoffTime) {
+                checkCutOffTime(objCutoffTime);
+            }
+
+            if (!blnProceedToChat) {
+                return;
+            }
+
+            var list_Options = document.getElementsByName("resources");
+            var pandaLink = document.getElementById("pandaLink").value;
+            var strEmployeePandaLink = document.getElementById("employeePandaLink").value;
+            list_ResourcesSelected = [];
+            for (var i = 0; i < list_Options.length; i++) {
+                if (list_Options[i].checked) {
+                    list_ResourcesSelected.push(list_Options[i].value);
+                }    
+            }
+            if (document.getElementById("chatReason").value === "Select a reason" || 
+                document.getElementById("requestType").value === "Select a request type" ||
+                list_ResourcesSelected.length === 0 ||
+                document.getElementById("hypothesis").value === "" ||
+                document.getElementById("uplandLink").value === "" ||
+                (document.getElementById("employeeChat").checked && strEmployeePandaLink === "") ||
+                (strCaseOrigin === 'Phone' && 
+                document.getElementById('{!$Component.caseReasonForm.caseReasonSelected}').innerText === "")
+            ) {
+                if (document.getElementById("chatReason").value === "Select a reason") {
+                    document.getElementById("chatReasonDiv").classList.add("slds-has-error");
+                    document.getElementById("chatReasonError").classList.add("showElement");
+                    document.getElementById("chatReasonError").classList.remove("hideElement");
+                } else {
+                    document.getElementById("chatReasonDiv").classList.remove("slds-has-error");
+                    document.getElementById("chatReasonError").classList.remove("showElement");
+                    document.getElementById("chatReasonError").classList.add("hideElement");
+                }
+
+                if (document.getElementById("requestType").value === "Select a request type") {
+                    document.getElementById("requestTypeDiv").classList.add("slds-has-error");
+                    document.getElementById("requestTypeError").classList.add("showElement");
+                    document.getElementById("requestTypeError").classList.remove("hideElement");
+                } else {
+                    document.getElementById("requestTypeDiv").classList.remove("slds-has-error");
+                    document.getElementById("requestTypeError").classList.remove("showElement");
+                    document.getElementById("requestTypeError").classList.add("hideElement");
+                }
+
+                if (list_ResourcesSelected.length === 0) {
+                    document.getElementById("resourceSelectedDiv").classList.add("slds-has-error"); 
+                    document.getElementById("selectedResourceError").classList.remove("hideElement");
+                    document.getElementById("selectedResourceError").classList.add("showElement");
+                } else {
+                    document.getElementById("resourceSelectedDiv").classList.remove("slds-has-error");
+                    document.getElementById("selectedResourceError").classList.remove("showElement");
+                    document.getElementById("selectedResourceError").classList.add("hideElement");
+                }
+
+                if (document.getElementById("hypothesis").value === "") {
+                    document.getElementById("hypothesisDiv").classList.add("slds-has-error"); 
+                    document.getElementById("hypothesisError").classList.remove("hideElement");
+                    document.getElementById("hypothesisError").classList.add("showElement");
+                } else {
+                    document.getElementById("hypothesisDiv").classList.remove("slds-has-error");
+                    document.getElementById("hypothesisError").classList.remove("showElement");
+                    document.getElementById("hypothesisError").classList.add("hideElement");
+                }
+
+                if (document.getElementById("uplandLink").value === "") {
+                    document.getElementById("uplandLinkDiv").classList.add("slds-has-error"); 
+                    document.getElementById("uplandLinkError").classList.remove("hideElement");
+                    document.getElementById("uplandLinkError").classList.add("showElement");
+                } else {
+                    document.getElementById("uplandLinkDiv").classList.remove("slds-has-error");
+                    document.getElementById("uplandLinkError").classList.remove("showElement");
+                    document.getElementById("uplandLinkError").classList.add("hideElement");
+                }
+
+                if (pandaLink === "") {
+                    document.getElementById("pandaLinkDiv").classList.add("slds-has-error"); 
+                    document.getElementById("pandaLinkError").classList.remove("hideElement");
+                    document.getElementById("pandaLinkError").classList.add("showElement");
+                } else {
+                    document.getElementById("pandaLinkDiv").classList.remove("slds-has-error");
+                    document.getElementById("pandaLinkError").classList.remove("showElement");
+                    document.getElementById("pandaLinkError").classList.add("hideElement");
+                }
+
+                if (document.getElementById("employeeChat").checked && strEmployeePandaLink === "") {
+                    document.getElementById("employeePandaLinkDiv").classList.add("slds-has-error");
+                    var pandaLinkError = document.getElementById("employeePandaLinkError");
+                    pandaLinkError.classList.remove("hideElement");
+                    pandaLinkError.classList.add("showElement");
+                } else {
+                    document.getElementById("employeePandaLinkDiv").classList.remove("slds-has-error");
+                    var pandaLinkError = document.getElementById("employeePandaLinkError");
+                    pandaLinkError.classList.add("hideElement");
+                    pandaLinkError.classList.remove("showElement");
+                }
+
+                if (
+                    document.getElementById('{!$Component.caseReasonForm.caseReasonSelected}').innerText === "" &&
+                    strCaseOrigin === 'Phone'
+                ) {
+                    document.getElementById("caseReasonDiv").classList.add("slds-has-error");
+                    var caseReason = document.getElementById('{!$Component.caseReasonForm.caseReason}');
+                    caseReason.classList.add("slds-has-error");
+                    caseReason.style.boxShadow = 'rgb(234 0 30) 0 0 0 1px inset';
+                    var caseReasonError = document.getElementById("caseReasonError");
+                    caseReasonError.classList.remove("hideElement");
+                    caseReasonError.classList.add("showElement");
+                } else {
+                    document.getElementById("caseReasonDiv").classList.remove("slds-has-error");
+                    var caseReason = document.getElementById('{!$Component.caseReasonForm.caseReason}');
+                    caseReason.classList.remove("slds-has-error");
+                    caseReason.style.boxShadow = 'none';
+                    var caseReasonError = document.getElementById("caseReasonError");
+                    caseReasonError.classList.add("hideElement");
+                    caseReasonError.classList.remove("showElement");
+                }
+            } else {
+                if (!pandaLink.includes("app.gusto.com/panda") && !pandaLink.includes("hippo.gusto.com")) {
+                    document.getElementById("pandaLinkDiv").classList.add("slds-has-error"); 
+                    document.getElementById("URLError").classList.add("showElement");
+                    document.getElementById("URLError").classList.add("hideElement");
+                    return;
+                }
+                blnChatStarted = true;
+                hideFormAndWarning();
+                //testGetFocusedPrimaryTabObjectId();
+                strResourceSelected = '';
+                for (var i = 0; i < list_ResourcesSelected.length; i++) {
+                    if (strResourceSelected === '') {
+                        strResourceSelected = list_ResourcesSelected[i];
+                    } else {
+                        strResourceSelected = strResourceSelected + ';' + list_ResourcesSelected[i];
+                    }
+                }
+
+                var strRequestType = document.getElementById("requestType").value;
+                var strVendor = "{!$User.Vendor__c}";
+                var blnIsDSP = "{!$UserRole.Name}".includes('Dedicated Support');
+                var idVendorFSCButton = "{!$Label.Vendor_Full_Stack_Internal_Chat_Button_Id}";
+                var idVendorPRCButton = "{!$Label.Vendor_Payroll_Care_Internal_Chat_Button_Id}";
+                var idPRCButton = "{!$Label.Payroll_Care_Internal_Chat_Button_Id}";
+                var idFSCButton = "{!$Label.Full_Stack_Care_Internal_Chat_Button_Id}";
+                var idDSPButton = "{!$Label.DSP_Internal_Chat_Button_Id}";
+                var idPRCContractorButton = "{!$Label.Contractor_PRC_Internal_Chat_Button_Id}";
+                var idFSCContractorButton = "{!$Label.Contractor_FSC_Internal_Chat_Button_Id}";
+                var idVendorSMEPRCButton = "{!$Label.Vendor_SME_PRC_Chat_Button_Id}";
+                var idVendorSMEFSCButton = "{!$Label.Vendor_SME_FSC_Chat_Button_Id}";
+
+                console.log("strVendor " + strVendor);
+                console.log("strRequestType " + strRequestType);
+                
+                //if user is DSP or Concierge user
+                if (blnIsDSP) {
+                    idChosenButton = idDSPButton;
+                } else if (blnIsPRCContractor) {
+                    idChosenButton = idPRCContractorButton;
+                } else if (blnIsFSCContractor) {
+                    idChosenButton = idFSCContractorButton;
+                } else if (strVendor && strRequestType === "Internal Benefits") { //if user is a Vendor
+                    if (blnIsVendorSME) {
+                        idChosenButton = idVendorFSCButton;
+                    } else {
+                        idChosenButton = idVendorSMEFSCButton;
+                    }
+                } else if (strVendor && (strRequestType === "External Benefits" || strRequestType === "Payroll")) { //if user is a Vendor
+                    if (blnIsVendorSME) {
+                        idChosenButton = idVendorPRCButton;
+                    } else {
+                        idChosenButton = idVendorSMEPRCButton;
+                    }
+                }
+                //if Internal Benefits is chosen and user is C&C gustie
+                else if (!strVendor && strRequestType === "Internal Benefits") {
+                    console.log("@@gustie FSC");
+                    idChosenButton = idFSCButton;
+                }
+                //if External Benefits or Payroll is chosen and user is C&C gustie
+                else if (!strVendor && (strRequestType === "External Benefits" || strRequestType === "Payroll")) {
+                    console.log("@@gustie PRC");
+                    idChosenButton = idPRCButton;
+                }
+                else {
+                    console.log("@@ELSE PRC");
+                    idChosenButton = idPRCButton;
+                }
+
+                initESW('https://service.force.com', idLatestCase);
+                document.getElementById("refresh").style.display = "none";
+                document.getElementById("refreshend").style.display = "block";
+            }
+        }
+
+        function handleOpenTab(result) {
+            if(blnChatStarted === false) {
+                if(result.objectId.startsWith('500')) {
+                    setTimeout(() => { 
+                        sforce.console.getPageInfo(result.id, displayResult);
+                    }, 3000);
+                }
+                else if(result.objectId.startsWith('570')) {
+                    setTimeout(() => { 
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.ChatInternalWidgetLEXExt.queryCaseInfo}',
+                            result.objectId, 
+                            function(vfResult, event){
+                                if (event.status) {
+                                    sforce.console.getPageInfo(vfResult?.objLiveChatTranscript?.CaseId, displayResult);
+                                } 
+                            }, 
+                            {escape: true}
+                        );
+                    }, 3000);
+                }
+                else {
+                    showWarning();
+                }
+            }
+        }
+
+        function handleCloseTab(result) {
+            if(blnChatStarted === false) {
+                sforce.console.getFocusedPrimaryTabId(displayResult);
+            }
+        }
+
+        function handleTabFocus(result) {
+            idFocusedTab = result.id;
+            if(blnChatStarted === false) {
+                if(result.objectId.startsWith('500')) {
+                    setTimeout(() => { 
+                        sforce.console.getPageInfo(result.id, displayResult);
+                    }, 3000);
+                }
+                else if(result.objectId.startsWith('570')) {
+                    setTimeout(() => { 
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.ChatInternalWidgetLEXExt.queryCaseInfo}',
+                            result.objectId, 
+                            function(vfResult, event){
+                                if (event.status) {
+                                    sforce.console.getPageInfo(vfResult?.objLiveChatTranscript?.CaseId, displayResult);
+                                } 
+                            }, 
+                            {escape: true}
+                        );
+                    }, 3000);
+                }
+                else {
+                    showWarning();
+                }
+            }
+        }
+
+        function refresh() {
+            if(blnChatStarted && embedded_svc) {
+                embedded_svc.liveAgentAPI.clearSession();
+            }
+            window.location.reload(true);
+            blnChatStarted = false;
+            document.getElementById("refresh").style.display = "none";
+            document.getElementById("endchat").style.display = "block";
+        }
+
+        var initESW = function(gslbBaseURL, idCase) {
+            embedded_svc.settings.displayHelpButton = true; //Or false
+            embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+    
+            embedded_svc.settings.defaultMinimizedText = 'Chat with a Captain'; //(Defaults to Chat with an Expert)
+            embedded_svc.settings.disabledMinimizedText = 'No captains available'; //(Defaults to Agent Offline)
+
+            //embedded_svc.settings.loadingText = ''; //(Defaults to Loading)
+            //embedded_svc.settings.storageDomain = 'yourdomain.com'; //(Sets the domain for your deployment so that visitors can navigate subdomains during a chat session)
+    
+            // Settings for Chat
+            console.log("vendor value: " + "{!$User.Vendor__c}".toLowerCase());
+            var blnIsVendor = "{!$User.Vendor__c}" !== '' && "{!$User.Vendor__c}" !== undefined
+                ? true
+                : false
+            //embedded_svc.settings.prepopulatedPrechatFields = {}; //Sets the auto-population of pre-chat form fields
+            //embedded_svc.settings.fallbackRouting = []; //An array of button IDs, user IDs, or userId_buttonId
+            //embedded_svc.settings.offlineSupportMinimizedText = '...'; //(Defaults to Contact Us) 
+            embedded_svc.settings.extraPrechatFormDetails = [{  
+                "label": "Record Type",
+                "value": "0121M000001YgUc",
+                "transcriptFields": [ "RecordTypeId" ],
+                "displayToAgent": false
+            },{  
+                "label": "User Id",
+                "value": "{!$User.Id}",
+                "transcriptFields": [ "Requested_By__c" ],
+                "displayToAgent": true
+            },{
+                "label": "Case Id",
+                "value": idCase,
+                "displayToAgent": true
+            }, {
+                "label": "First Name",
+                "value": "{!$User.FirstName}",
+                "displayToAgent": true
+            }, {
+                "label": "Last Name",
+                "value": "{!$User.LastName}",
+                "displayToAgent": true
+            },{
+                "label": "User Role",
+                "value": "{!$UserRole.Name}",
+                "displayToAgent": true
+            },{
+                "label": "Chat Reason",
+                "transcriptFields": [ "Chat_Reason__c" ],
+                "value": document.getElementById("chatReason").value,
+                "displayToAgent": true
+            },{
+                "label": "Question",
+                "transcriptFields": [ "Question__c" ],
+                "value": document.getElementById("question").value
+            }, {
+                "label": "Request Type",
+                "transcriptFields": [ "Request_Type__c" ],
+                "value": document.getElementById("requestType").value,
+                "displayToAgent": true
+            }, {
+                "label": "Vendor",
+                "value": "{!$User.Vendor__c}",
+                "displayToAgent": true,
+            }, {
+                "label": "What resources did you check?",
+                "transcriptFields": [ "What_resources_did_you_check__c" ],
+                "value": strResourceSelected,
+                "displayToAgent": true
+            }, {
+                "label": "Hypothesis of the answer/resolution",
+                "transcriptFields": [ "Hypothesis_of_the_answer_resolution__c" ],
+                "value": document.getElementById("hypothesis").value,
+                "displayToAgent": true
+            }, {
+                "label": "Have you checked in with a SME?",
+                "transcriptFields": [ "Have_you_checked_in_with_a_SME__c" ],
+                "value": document.getElementById("smeCheckbox").checked,
+                "displayToAgent": true
+            },
+            {
+                "label": "Panda/Hippo link",
+                "transcriptFields": [ "Panda_Hippo_link__c" ],
+                "value": document.getElementById("pandaLink").value,
+                "displayToAgent": true
+            },
+            {
+                "label": "Panda Link For Employee Related Chat",
+                "transcriptFields": [ "Employee_Chat_Panda_Link__c" ],
+                "value": document.getElementById("employeePandaLink").value,
+                "displayToAgent": true
+            },
+            {
+                "label": "Resources Checked",
+                "transcriptFields": [ "Resources_Checked__c" ],
+                "value": document.getElementById("uplandLink").value,
+                "displayToAgent": true
+            },
+            {
+                "label": "Case Reason",
+                "transcriptFields": [ "Case_Reason__c" ],
+                "value": document.getElementById('{!$Component.caseReasonForm.caseReasonSelected}').innerText,
+                "displayToAgent": true
+            },
+            {
+                "label": "Team",
+                "transcriptFields": [ "Team__c" ],
+                "value": "{!$UserRole.Name}",
+                "displayToAgent": true
+            },
+            {
+                "label": "Request from Vendor",
+                "transcriptFields": [ "Request_from_Vendor__c" ],
+                "value": blnIsVendor,
+                "displayToAgent": true
+            }];
+            embedded_svc.settings.extraPrechatInfo = [{
+                "entityName": "Case",
+                "saveToTranscript": "CaseId",
+                "entityFieldMaps": [{
+                    "isExactMatch": true,
+                    "doCreate": false,
+                    "doFind": true,
+                    "label": "Case Id",
+                    "fieldName": "Id"
+                }]
+            }, {
+                "entityName": "Contact",
+                "entityFieldMaps": [{
+                    "isExactMatch": false,
+                    "fieldName": "FirstName",
+                    "doCreate": false,
+                    "doFind": false,
+                    "label": "First Name"
+                }, {
+                    "isExactMatch": false,
+                    "fieldName": "LastName",
+                    "doCreate": false,
+                    "doFind": false,
+                    "label": "Last Name"
+                }]
+            }]
+            embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+            embedded_svc.settings.entryFeature = 'LiveAgent';
+            embedded_svc.init(
+                "{!$Label.Internal_chat_org_url}",
+                "{!$Label.Internal_chat_site_url}",
+                gslbBaseURL,
+                "{!$Label.Internal_chat_org_id}",
+                'CX_Internal_Chat',
+                {
+                    baseLiveAgentContentURL: "{!$Label.Internal_chat_baseLiveAgentContentURL}",
+                    deploymentId: "{!$Label.Internal_chat_deploymentId}",
+                    buttonId: idChosenButton,
+                    baseLiveAgentURL: "{!$Label.Internal_chat_baseLiveAgentURL}",
+                    eswLiveAgentDevName: "{!$Label.Internal_chat_eswLiveAgentDevName}",
+                    isOfflineSupportEnabled: false
+                }
+            );
+        };
+    </script>
+</apex:page>

@@ -1,0 +1,278 @@
+<!--
+    Purpose: LWC that renders dynamic case fields and used for updating case record
+    Written by : Praveen Sethu
+    Date: 09/15/2020
+-->
+<template>
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+    <div class="slds-theme_default" onmouseover={checkValidity}>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="6" class="slds-var-p-right_small slds-var-p-top_xx-small">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="unique-id-of-input">Status </label>
+                    <div class="slds-form-element__icon">
+                    </div>
+                    <div class="slds-form-element__control">
+                        <lightning-combobox name="progress" variant="label-hidden" class="custom-font" label=""
+                            placeholder="Select Status" onchange={handleDataChange} value={objCase.Status}
+                            data-api="Status" disabled={blnIsReadOnlyCase} options={statusoptions}>
+                        </lightning-combobox>
+                    </div>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" class="slds-var-p-right_small slds-var-p-top_xx-small">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="unique-id-of-input">Case Number</label>
+                    <div class="slds-form-element__icon">
+                        <lightning-icon icon-name="utility:copy" class="pointer" size="xx-small"
+                            onclick={copyToClipBoard}></lightning-icon>
+                    </div>
+                    <div class="slds-form-element__control">
+                        <span>{objCase.CaseNumber}</span>
+                    </div>
+                </div>
+
+            </lightning-layout-item>
+
+            <lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+            
+                        <c-auto-complete-cmp if:true={blnShowProductAreaInputbox} autocompletelist={list_strProductAreas} label="Product Area (Optional)"
+                            onfilterlist={handleFilterList} onfilterselected={handleFilterSelected} icon="standard:default" disablemouseover={blnDisableMouseover} 
+                            selectedvalue={strSelectedProductArea} blnisvisible={blnIsReadOnlyCase}></c-auto-complete-cmp>
+            
+                        <c-auto-complete-cmp if:true={blnShowProductAreaInputbox} data-id="subproductcmp" autocompletelist={list_strSubproductAreas} label="Sub Product Area (Optional)"
+                            onfilterlist={handleFilterList} onfilterselected={handleFilterSelected} icon="standard:default" disablemouseover={blnDisableMouseover} 
+                            selectedvalue={strSelectedSubproductArea} blnisvisible={blnIsReadOnlyCase}></c-auto-complete-cmp>
+            
+                        <c-case-reason-group-auto-complete-cmp strcasereason={objCase.Confirm_Case_Reason__c}
+                            blncasereasonfound={blnIsCaseReasonFound} onselectcasereason={handleCaseReasonSelected}
+                            onfiltercasereason={handleFilterCaseReason} mapcasereason={map_caseReasonToGroupMap}
+                            strlabel="Confirm Case Reason" blnisdisabled={blnIsReadOnlyCase}>
+                        </c-case-reason-group-auto-complete-cmp>
+                    </div>
+                </div>
+            </lightning-layout-item>
+
+            <template if:true={blnIsPartnerAccountVisible}>
+                <div class="slds-form-element record-form">
+                    <div class="slds-form-element__control">
+                        <lightning-record-edit-form record-id={idCase} object-api-name="Case">
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                Partner Account
+                            </label>
+                            <lightning-input-field data-visibility="true" data-input-field="true" required="true" field-name="Partner_Account__c" data-api="Partner_Account__c" onchange={handleDataChange} value={objCase.Partner_Account__c} variant="label-hidden">
+                            </lightning-input-field>
+                        </lightning-record-edit-form>
+                    </div>
+                </div>
+            </template>
+
+            <template if:true={blnIsSubCaseReasonVisible}>
+                <lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="unique-id-of-input">
+                            <template if:true={blnIsSubCaseReasonRequired}>
+                                <abbr class="slds-required" title="required">*</abbr>
+                            </template>
+                            Confirm Sub Case Reason
+                        </label>
+                        <div class="slds-form-element__icon">
+                        </div>
+                        <div class="slds-form-element__control">
+                            <lightning-combobox required={blnIsSubCaseReasonRequired} data-visibility="true" 
+                                variant="label-hidden" class="custom-font custom-dropdown" label=""
+                                placeholder="Select Sub Case Reason" options={list_subCaseReasons}
+                                data-api="Confirm_Sub_Case_Reason__c" onchange={handleDataChange}
+                                value={objCase.Confirm_Sub_Case_Reason__c} disabled={blnIsReadOnlyCase}>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+            </template>
+
+            <template if:true={blnIsRequiredFieldsDisplayed}>
+                <div class="slds-form-element record-form">
+                    <div class="slds-form-element__control">
+                        <lightning-record-edit-form record-id={idCase} object-api-name="Case">
+                            <template for:each={map_RequiredFields} for:item="field">
+                                <lightning-input-field id={field.key} required={field.value} key={field.key} field-name={field.key}
+                                    onchange={handleDataChange} data-input-field="true" data-api={field.key} data-visibility="true"
+                                    data-value={field.key}>
+                                </lightning-input-field>
+                            </template>
+                        </lightning-record-edit-form>
+                    </div>
+                </div>
+            </template>
+
+            <template if:true={blnIsOtherCaseReasonAvailable}>
+                <lightning-layout-item size="12" class="slds-var-p-right_small slds-var-p-top_xx-small">
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="unique-id-of-input">Other Case Reason
+                            Description</label>
+                        <div class="slds-form-element__icon">
+                        </div>
+                        <div class="slds-form-element__control">
+                        <template if:true={blnIsOtherCaseReasonRequired}>
+                            <lightning-input disabled={blnIsReadOnlyCase} type="text" variant="label-hidden" required
+                                data-api="Other_Case_Reason_Description__c" onchange={handleDataChange} data-input-field="false"
+                                value={objCase.Other_Case_Reason_Description__c} data-visibility="true" ></lightning-input>
+                        </template>
+                        <template if:false={blnIsOtherCaseReasonRequired}>
+                            <lightning-input disabled={blnIsReadOnlyCase} type="text" variant="label-hidden"
+                                data-api="Other_Case_Reason_Description__c" onchange={handleDataChange} data-input-field="false"
+                                value={objCase.Other_Case_Reason_Description__c} data-visibility="true" ></lightning-input>
+                        </template>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+            </template>
+        </lightning-layout>
+
+        <template if:true={blnIsDynamicFieldsAvailable}>
+            <lightning-record-edit-form record-id={idCase} object-api-name="Case" record-type-id={idCurrentRecordTypeId}>
+                <lightning-layout multiple-rows>
+                    <template for:each={list_dynamicFields} for:item="field">
+                        <template if:true={field.isVisible}>
+                            <lightning-layout-item size={field.size} class="slds-var-p-right_small slds-var-p-top_xx-small"
+                                key={field.api}>
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <template if:true={field.input}>
+                                            <template if:true={field.isRequired}>
+                                                <label class="slds-form-element__label" for={field.api}>
+                                                    {field.label}
+                                                    <abbr title="required" class="slds-required">*</abbr>
+                                                </label>
+                                                <lightning-input-field id={field.api} variant="label-hidden" required
+                                                    field-name={field.api} onchange={handleDataChange}
+                                                    data-api={field.api} data-visibility="true" data-value={field.value} data-input-field="true" class="custom-font" value={field.value}>
+                                                </lightning-input-field>
+                                            </template>
+
+                                            <template if:false={field.isRequired}>
+                                                <label class="slds-form-element__label" for={field.api}>
+                                                    {field.label}
+                                                </label>
+                                                <lightning-input-field id={field.api} variant="label-hidden"
+                                                    field-name={field.api} onchange={handleDataChange}
+                                                    data-api={field.api} data-visibility="true" class="custom-font" data-input-field="true" data-value={field.value} value={field.value}>
+                                                </lightning-input-field>
+                                            </template>
+                                        </template>
+
+                                        <template if:false={field.input}>
+                                            <label class="slds-form-element__label" for={field.api}>
+                                                {field.label}
+                                            </label>
+                                            <lightning-output-field id={field.api} field-name={field.api}
+                                                class="custom-font output-padding" variant="label-hidden" disabled>
+                                            </lightning-output-field>
+                                        </template>
+                                    </div>
+                                </div>
+                            </lightning-layout-item>
+                        </template>
+                    </template>
+                </lightning-layout>
+            </lightning-record-edit-form>
+
+        </template>
+
+        <template if:false={blnIsReadOnlyCase}>
+            <div class="slds-align_absolute-center slds-var-p-top_x-small">
+                <template if:true={blnIsSolveDisabled}>
+                    <lightning-button class="buttonStyle" label="Solve" disabled onclick={handleSolveCase}></lightning-button>
+                </template>
+                <template if:false={blnIsSolveDisabled}>
+                    <lightning-button class="buttonStyle" label="Solve" variant="brand" onclick={handleSolveCase}></lightning-button>
+                </template>
+
+                <template if:true={blnIsSaveDisabled}>
+                    <lightning-button label="Save" disabled variant="brand" onclick={handleSave}></lightning-button>
+                </template>
+                <template if:false={blnIsSaveDisabled}>
+                    <lightning-button label="Save" variant={strSaveButtonVariant} onclick={handleSave}></lightning-button>
+                </template>
+                <template if:true={blnIsPlayMode}>
+                    <lightning-button label="Save & Next" onclick={handleSaveAndNext}></lightning-button>
+                </template>
+            </div>
+        </template>
+
+        <!-- <template if:false={blnIsShowMore}> -->
+            <div data-id="chevron-down" class="slds-align_absolute-center slds-var-p-top_x-small">
+                <lightning-button-icon icon-name="utility:chevrondown" onclick={handleShowMore}>
+                </lightning-button-icon>
+            </div>
+        <!-- </template> -->
+
+        <template if:true={blnIsChevronDownClicked}>
+            <div data-id="chevron-up" class="slds-align_absolute-center slds-var-p-top_xx-small">
+                <lightning-button-icon icon-name="utility:chevronup" onclick={handleHideDetails}>
+                </lightning-button-icon>
+            </div>
+
+
+            <template if:true={blnIsDynamicFieldsAvailable}>
+                    <div data-id="hidden-fields" class="">
+                        <lightning-record-edit-form record-id={idCase} object-api-name="Case">
+                            <lightning-layout multiple-rows>
+                                <template for:each={list_dynamicFields} for:item="field">
+                                    <template if:false={field.isVisible}>
+                                        <lightning-layout-item size={field.size} class="slds-var-p-right_small slds-var-p-top_xx-small"
+                                            key={field.api}>
+                                            <div class="slds-form-element">
+
+                                                <div class="slds-form-element__control">
+                                                    <template if:true={field.input}>
+
+                                                        <template if:true={field.isRequired}>
+                                                            <label class="slds-form-element__label" for={field.api}>
+                                                                {field.label}
+                                                                <abbr title="required" class="slds-required">*</abbr>
+                                                            </label>
+                                                            <lightning-input-field id={field.api} variant="label-hidden"
+                                                                required field-name={field.api} onchange={handleDataChange}
+                                                                data-api={field.api} class="custom-font" data-visibility="false" data-input-field="true" data-value={field.value} value={field.value}>
+                                                            </lightning-input-field>
+                                                        </template>
+
+                                                        <template if:false={field.isRequired}>
+                                                            <label class="slds-form-element__label" for={field.api}>
+                                                                {field.label}
+                                                            </label>
+                                                            <lightning-input-field id={field.api} variant="label-hidden"
+                                                                field-name={field.api} onchange={handleDataChange}
+                                                                data-api={field.api} class="custom-font" data-visibility="false" data-input-field="true" data-value={field.value} value={field.value}>
+                                                            </lightning-input-field>
+                                                        </template>
+
+                                                    </template>
+
+                                                    <template if:false={field.input}>
+                                                        <label class="slds-form-element__label" for={field.api}>
+                                                            {field.label}
+                                                        </label>
+                                                        <lightning-output-field id={field.api} field-name={field.api}
+                                                            class="custom-font" variant="label-hidden" disabled>
+                                                        </lightning-output-field>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </lightning-layout-item>
+                                    </template>
+                                </template>
+                            </lightning-layout>
+                        </lightning-record-edit-form>
+                    </div>
+            </template>
+        </template>
+    </div>
+</template>

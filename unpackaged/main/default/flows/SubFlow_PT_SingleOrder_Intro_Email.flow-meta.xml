@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <description>Check if case is of Payroll Transfer Case record type.</description>
+        <name>Check_Case_Record_Type</name>
+        <label>Check Case Record Type</label>
+        <locationX>930</locationX>
+        <locationY>350</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Payroll_Transfer_Case_Type</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Related_Case.Record_Type_Name__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll Transfer Case</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Intro_Email_Type</targetReference>
+            </connector>
+            <label>Payroll Transfer Case  Type</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Intro_Email_Type</name>
+        <label>Check Intro Email Type</label>
+        <locationX>578</locationX>
+        <locationY>458</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Intro_Email</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>OrderRec.Case__r.Order_Notification__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Intro Email</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email</targetReference>
+            </connector>
+            <label>Intro Email</label>
+        </rules>
+        <rules>
+            <name>Intro_Mail_IOP_QBOI</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>OrderRec.Case__r.Order_Notification__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Intro Email - IOP/QBOI</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email_IPO_QBOI</targetReference>
+            </connector>
+            <label>Intro Mail - IOP/QBOI</label>
+        </rules>
+        <rules>
+            <name>Intro_Mail_ADP_Run</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>OrderRec.Case__r.Order_Notification__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Intro Email - ADP Run</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email_ADP_Run</targetReference>
+            </connector>
+            <label>Intro Mail - ADP Run</label>
+        </rules>
+        <rules>
+            <name>Intro_Mail_Exception_Request</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>OrderRec.Case__r.Order_Notification__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Intro Email - Exception Request</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email_Exception_Request</targetReference>
+            </connector>
+            <label>Intro Mail Exception Request</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Order has an associated Case.</description>
+        <name>Order_Case_Exists</name>
+        <label>Order Case Exists</label>
+        <locationX>1194</locationX>
+        <locationY>134</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Case_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>OrderRec.Case__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Related_Case</targetReference>
+            </connector>
+            <label>Case Exists</label>
+        </rules>
+    </decisions>
+    <description>Subflow to handle sending of intro emails for single order migrations.</description>
+    <environments>Default</environments>
+    <interviewLabel>Sub {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>SubFlow_PT_SingleOrder_Intro_Email</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Related_Case</name>
+        <label>Get Related Case</label>
+        <locationX>930</locationX>
+        <locationY>242</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Case_Record_Type</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>OrderRec.Case__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>1068</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Order_Case_Exists</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <description>Call Payroll Transfer Notifications Flow for Intro Email</description>
+        <name>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email</name>
+        <label>Call Payroll Transfer Notifications Flow for Intro Email</label>
+        <locationX>50</locationX>
+        <locationY>566</locationY>
+        <flowName>Payroll_Transfer_Notifications_Flow</flowName>
+        <inputAssignments>
+            <name>inputCaseRecord</name>
+            <value>
+                <elementReference>Get_Related_Case</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>inputOrderAEEmail</name>
+            <value>
+                <elementReference>Get_Related_Case.Order_AE_Email__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>TriggeredFromIntroEmail</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <description>Call Payroll Transfer Notifications Flow for Intro Email - ADP Run</description>
+        <name>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email_ADP_Run</name>
+        <label>Call Payroll Transfer Notifications Flow for Intro Email - ADP Run</label>
+        <locationX>578</locationX>
+        <locationY>566</locationY>
+        <flowName>Payroll_Transfer_Notifications_Flow</flowName>
+        <inputAssignments>
+            <name>inputCaseRecord</name>
+            <value>
+                <elementReference>Get_Related_Case</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>inputOrderAEEmail</name>
+            <value>
+                <elementReference>Get_Related_Case.Order_AE_Email__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>TriggeredFromIntroEmail_ADPRun</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <description>Call Payroll Transfer Notifications Flow for Intro Email - Exception Request</description>
+        <name>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email_Exception_Request</name>
+        <label>Call Payroll Transfer Notifications Flow for Intro Email - Exception Request</label>
+        <locationX>842</locationX>
+        <locationY>566</locationY>
+        <flowName>Payroll_Transfer_Notifications_Flow</flowName>
+        <inputAssignments>
+            <name>inputCaseRecord</name>
+            <value>
+                <elementReference>Get_Related_Case</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>inputOrderAEEmail</name>
+            <value>
+                <elementReference>Get_Related_Case.Order_AE_Email__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>TriggeredFromIntroEmail_ExceptionRequest</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <description>Call Payroll Transfer Notifications Flow for Intro Email - IPO/QBOI</description>
+        <name>Call_Payroll_Transfer_Notifications_Flow_for_Intro_Email_IPO_QBOI</name>
+        <label>Call Payroll Transfer Notifications Flow for Intro Email - IPO/QBOI</label>
+        <locationX>314</locationX>
+        <locationY>566</locationY>
+        <flowName>Payroll_Transfer_Notifications_Flow</flowName>
+        <inputAssignments>
+            <name>inputCaseRecord</name>
+            <value>
+                <elementReference>Get_Related_Case</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>inputOrderAEEmail</name>
+            <value>
+                <elementReference>Get_Related_Case.Order_AE_Email__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>TriggeredFromIntroEmail_IOP_QBOI</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <variables>
+        <name>OrderRec</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Order</objectType>
+    </variables>
+    <variables>
+        <name>OrderRecOld</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Order</objectType>
+    </variables>
+    <variables>
+        <description>Stores name of Order Approval Process</description>
+        <name>varOrderApprovalProcessName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>Order_Approval_Process</stringValue>
+        </value>
+    </variables>
+</Flow>

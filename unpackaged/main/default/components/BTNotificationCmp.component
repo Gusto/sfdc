@@ -1,0 +1,22 @@
+<apex:component controller="BTNotificationCmpCtrl" access="global">
+    <apex:attribute name="DisplayFormat" assignTo="{!strDisplayFormat}" description="how the value need to be displayed" type="String" />
+    <apex:attribute name="InfoNeeded" assignTo="{!strInfoNeeded}" description="what needs to be retrived" type="String" />
+    <apex:attribute name="RecordIdToCompare" assignTo="{!strRecordIdToCompare}" description="Id of the record which needs to be compared" type="String" />
+    <apex:attribute name="FieldNameToCompare" assignTo="{!strFieldNameToCompare}" description="field name that needs to be checked for equality in query" type="String"/>
+    <apex:attribute name="ObjectToBeQueried" assignTo="{!strObjectToBeQueried}" description="Object that needs to be queried" type="String"/>
+    
+    <apex:outputPanel id="displayMapAsUnorderedListSection" rendered="{!IF(strDisplayFormat = 'Map of List as UL',true,false)}">
+        <ul>
+        <apex:repeat value="{!mapResults}" var="COName">
+                <apex:repeat value="{!mapResults[COName]}" var="BenefitInfo">
+                    <li>{!BenefitInfo}</li>
+                </apex:repeat>
+        </apex:repeat>
+        </ul>
+    </apex:outputPanel>
+    <apex:outputPanel id="displayDate" rendered="{!IF(strDisplayFormat = 'Date',true,false)}">
+        <apex:outputtext value="{0, date, MM/dd/yyyy}">
+            <apex:param value="{!todayPlusFiveBusinessDays}"></apex:param>
+        </apex:outputtext>
+    </apex:outputPanel>
+</apex:component>

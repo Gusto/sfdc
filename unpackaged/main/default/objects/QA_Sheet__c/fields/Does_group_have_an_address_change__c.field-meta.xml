@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Does_group_have_an_address_change__c</fullName>
+    <description>Passed on qa_sheet_info event for renewals, indicates whether the company is updating their address</description>
+    <label>Does group have an address change</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Y</fullName>
+                <default>false</default>
+                <label>Y</label>
+            </value>
+            <value>
+                <fullName>N</fullName>
+                <default>false</default>
+                <label>N</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

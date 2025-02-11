@@ -1,0 +1,149 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="TaxResCaseButtons">
+    
+    <!-- Aura Handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="strCurrentRecordType" type="String" default=""/>   
+
+    <aura:attribute name="objCase" type="Case" default="{ 'sobjectType': 'Case' }"/>
+    <aura:attribute name="objUser" type="User"/>
+
+    <aura:attribute name="blnIsLoading" type="Boolean" default="false" />
+    <!-- Boolean attributes related to opening/closing modals -->
+    <aura:attribute name="blnChangeOwnerModal" type="Boolean" default="false" />
+    <aura:attribute name="blnChangeAccountSpecialistModal" type="Boolean" default="false" />
+    <aura:attribute name="blnCreateNewCaseModal" type="Boolean" default="false" />    
+    <aura:attribute name="blnIsCaseClosed" type="Boolean" default="false" />
+    <aura:attribute name="blnShowConfirmDialog" type="Boolean" default="false"/>    
+    <aura:attribute name="blnShowChangeOwner" type="Boolean" /> 
+    <aura:attribute name="blnShowChangeAccSpecialist" type="Boolean" />  
+    <aura:attribute name="blnDisabledOnClick" type="Boolean" default="false"/>  
+
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:navigation aura:id="navService"/>
+
+    <div class="slds-dropdown-trigger slds-dropdown-trigger_hover div-dropdown">
+        <lightning:buttonIcon iconName="utility:down" size="x-small" alternativeText="View More" iconClass="slds-m-around_small" title="View More" variant="border-filled"/>
+        <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions">
+          <ul role="menu">             
+            <aura:if isTrue="{!v.blnShowChangeOwner}">
+            <li class="slds-dropdown__item" role="presentation">
+              <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.toggleChangeOwnerModal}">
+                <span class="slds-truncate" title="Change Owner">Change Owner</span>
+              </a>
+            </li>
+            </aura:if>
+            <aura:if isTrue="{!v.blnShowChangeAccSpecialist}">
+              <li class="slds-dropdown__item" role="presentation">
+                <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.toggleChangeAccountSpecialistModal}">
+                  <span class="slds-truncate" title="Change Account Specialist">Change Account Specialist</span>
+                </a>
+              </li>
+            </aura:if>
+            <aura:if isTrue="{!!v.blnIsCaseClosed}">
+              <li class="slds-dropdown__item" role="presentation">
+                <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.mergeCase}">
+                  <span class="slds-truncate" title="Merge Case">Merge Case</span>
+                </a>
+              </li>
+            </aura:if>
+            <aura:if isTrue="{!and(v.blnIsCaseClosed, v.blnShowChangeOwner)}">
+              <li class="slds-dropdown__item" role="presentation">
+                <a
+                  href="javascript:void(0);"
+                  role="menuitem"
+                  tabindex="-1"
+                  onclick="{!c.handleConfirmDialog}"
+                >
+                  <span class="slds-truncate" title="Unmerge Case">Unmerge Case</span>
+                </a>
+              </li>
+            </aura:if>
+            <li class="slds-dropdown__item" role="presentation">
+                <a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.openNewCaseModal}">
+                    <span class="slds-truncate" title="Create New Case">Create New Case</span>
+                </a>
+            </li>
+          </ul>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.blnIsLoading}">
+      <lightning:spinner alternativeText="Loading" size="small" variant="brand"/>
+    </aura:if>
+    
+    <aura:renderIf isTrue="{!v.blnChangeOwnerModal}">
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <lightning:buttonIcon class="slds-modal__close slds-button_icon-inverse" iconName="utility:close" variant="bare" onclick="{!c.toggleChangeOwnerModal}" alternativeText="close" title="close" />
+            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Change Owner</h2>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <div class="slds-text-title slds-p-left_xxx-small">Owner</div>
+            <force:inputField aura:id="owner" value="{!v.objCase.OwnerId}"/>
+          </div>
+          <footer class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" onclick="{!c.toggleChangeOwnerModal}">Cancel</button>
+            <button class="slds-button slds-button_brand" onclick="{!c.doChangeOwner}">Save</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:renderIf>
+    
+    <aura:If isTrue="{!v.blnChangeAccountSpecialistModal}">
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <lightning:buttonIcon class="slds-modal__close slds-button_icon-inverse" iconName="utility:close" variant="bare" onclick="{!c.toggleChangeAccountSpecialistModal}" alternativeText="close" title="close" />
+            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Change Account Specialist</h2>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <lightning:recordEditForm aura:id="recordEditFormAS" recordId="{!v.recordId}" objectApiName="Case" onsubmit="{!c.handleASSubmit}" onsuccess="{!c.handleAccSpecialistSuccess}" onerror="{!c.handleAccSpecialistError}">
+              <lightning:messages />
+              <lightning:inputField fieldName="Account_Specialist__c"/>
+              <div class="slds-p-top_xx-small slds-modal__footer" align="right">
+                <lightning:button variant="neutral" name="Cancel" label="Cancel" class="slds-p-right_x-small" onclick="{!c.closeModal}"  disabled="{!v.blnDisabledOnClick}"/>
+                <lightning:button variant="brand" type="submit" name="update" label="Save"  disabled="{!v.blnDisabledOnClick}"/>
+              </div>
+            </lightning:recordEditForm>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:If>
+    
+    <aura:if isTrue="{!v.blnCreateNewCaseModal}">
+      <c:taxResCreateNewCase recordId="{!v.recordId}" onclosemodal="{!c.closeNewCaseModal}"></c:taxResCreateNewCase>
+    </aura:if>
+	
+    <aura:if isTrue="{!v.blnShowConfirmDialog}">
+        <!--Modal Box Start-->
+        <div role="dialog" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!--Modal Box Header Start-->
+                <header class="slds-modal__header">
+                    <h1 class="slds-text-heading--medium">Confirmation</h1>
+                </header>
+                <!--Modal Box Header End-->
+                  
+                <!--Modal Box Content Start-->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <center><b>Are you sure you want to Unmerge the current case?</b></center>
+                </div>
+                <!--Modal Box Content End-->
+                  
+                <!--Modal Box Button Start-->
+                <footer class="slds-modal__footer">
+                    <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                    <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                </footer>
+                <!--Modal Box Button End-->
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>            
+    </aura:if>    
+    <!--Component End-->
+</aura:component>

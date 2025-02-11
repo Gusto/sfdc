@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Close_lock_employees</fullName>
+    <active>true</active>
+    <errorConditionFormula>IsClosed &amp;&amp;
+OR(
+ISCHANGED(NumberOfEmployees__c),
+ISCHANGED(Number_of_Contractors__c),
+ISCHANGED(International_Contractors__c)) &amp;&amp; 
+NOT($User.Exempt_from_Validation_Rules__c)</errorConditionFormula>
+    <errorMessage>Employees and Contractors cannot be edited because the Opportunity is closed.</errorMessage>
+</ValidationRule>

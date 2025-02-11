@@ -1,0 +1,341 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_ManageParticipantCtrl" 
+           applyBodyTag="false" sidebar="false" action="{!PopulateSurveyResponse}">
+ <apex:form id="frmBody">
+    <head>
+    <title>Gusto</title>
+        <script>
+        function setFocusOnLoad() {}
+      </script>
+    <c:UR_SortingTable />
+     <style>
+        .blacklist-optout td, .blacklist-optout:hover td, .blacklist-optout:focus td{
+            background-color: #f8d7da !important;
+        }
+        .custom-tooltip .custom-tooltip-box {
+            display: none;
+        }
+        .custom-tooltip a:hover + .custom-tooltip-box {
+            display: block;
+        }
+      </style>
+     <script type="text/javascript">
+		        function selectAllCheckboxes(obj,receivedInputID){
+		            var inputCheckBox = document.getElementsByTagName("input");
+		            for(var i=0; i<inputCheckBox.length; i++){
+				          if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+		                    inputCheckBox[i].checked = obj.checked;
+		                }
+		            }
+		        }
+		      </script>
+  </head>
+
+   <body class="slds-scope">
+     <c:UR_ActionStatus />
+	 <c:UR_MenuHeaderComponent tabName="Results" subTabName="VSR" prjId="{!objProject.Id}"/>
+  
+    <!--body start here-->  
+    <div class="slds-p-around_small">   
+      <div class="slds-tabs_default slds-border_bottom slds-m-bottom_small" style="position: relative;">
+          <ul class="slds-tabs_default__nav results-nav" role="tablist" style="margin-bottom: -1px; flex: 1;">
+            <li class="slds-tabs_default__item">
+              <a class="slds-tabs_default__link  uxr-scout-url" href="UR_ProjectCloser?projectId={!objProject.Id}" role="tab" data-toggle="tab" data-target="#attendance" tabindex="-1" aria-selected="false" aria-controls="tab-results-attendance__item" id="tab-results-attendance">Attendance</a>
+            </li>
+            <li class="slds-tabs_default__item  slds-is-active">
+              <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" data-toggle="tab" data-target="#survey-results" tabindex="-1" aria-selected="true" aria-controls="tab-results-surveys__item" id="tab-results-surveys">Surveys  <span class="slds-badge slds-badge_inverse">{!if(newSurveyCount>0,newSurveyCount,'')}</span></a>
+            </li>
+          </ul>
+      </div>
+      <apex:pageMessages />
+        
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">
+
+		
+        <apex:outputPanel rendered="{!if(lstSurveyResponseWrapper.size>0,true,false)}">
+          <div class="slds-text-align_right bg-grey slds-p-around_small slds-p-bottom_none" style="border-radius: .25rem;height: 53px;">
+           <!--<apex:commandButton value="Back" action="{!BackToProjectVf}" styleclass="slds-button slds-button_outline-brand slds-float_left"/> -->
+           <apex:commandButton rendered="{!isEditable}" value="Download CSV of responses" action="{!Downloadcsv}" styleclass="slds-button slds-button_outline-brand slds-m-bottom_small"/>
+           
+           <apex:actionFunction name="inviteToInterview" action="{!inviteToInterviewFromSurvey}" status="statusSave"/>
+           <apex:actionFunction name="sendFollowUp" action="{!sendFollowUpFromSurvey}" status="statusSave"/>
+           <apex:actionFunction name="updateViewSurveyDate" action="{!updateViewSurveyDate}" status="statusSave" reRender="surveyViewDate"/>   
+          </div> 
+          
+          <div class="slds-p-vertical_small">
+            <div id="recordCount" class="slds-m-bottom_small mt-items" style="margin-top: 0px; display:{!if(objProject.Screener_URL__c=='','none;','')}">
+                Survey URL :  <a href="javascript:void(0);" onclick="opensurvey('{!objProject.Screener_URL__c}');" >{!objProject.Screener_URL__c}</a>
+            </div>
+              
+            <div class="slds-grid slds-wrap slds-gutters">
+              <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                <div class="slds-form-element slds-m-bottom_small">
+                  <label class="slds-form-element__label" for="">Select Question</label>
+                  <div class="slds-form-element__control">
+                    <apex:selectlist styleclass="slds-select" value="{!strSelectedQuestion}" size="1">
+                        <apex:selectOptions value="{!selQuestionsList}"/>
+                        <apex:actionSupport event="onchange" action="{!DisplaysurveyTable}" status="statusSave" rerender="frmBody"/>
+                      </apex:selectlist>
+                  </div>
+                </div>
+              </div> 
+            </div> 
+            
+            <div id="recordCount" class="slds-m-bottom_small mt-items" style="margin-top: 0px;">
+                  0 participants selected
+            </div>
+              
+            <div class="slds-scrollable" style="max-height: 315px; width: 100%;">               
+             <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout custom-table" id="casetable">
+                            <thead>
+                                
+                                <tr class="slds-line-height_reset">
+                                    <th class="slds-text-title_caps sorter-false" scope="col" style="width: 60px;padding-left: 18px !important;">
+                                        <div class="slds-checkbox slds-checkbox_standalone"><apex:inputcheckbox styleClass="slds-checkbox" onclick="selectAllCheckboxes(this,'InputId'); countSelectedRecord();"/>
+                                            <span class="slds-checkbox_faux"></span>
+                                        </div>
+                                    </th>
+                                    <th class="slds-text-title_caps" scope="col" style="width: 180px;">
+                                        <div class="slds-truncate" scope="col" title="Contact Name">
+                                            Contact Name</div>
+                                    </th>
+                                    <th class="slds-text-title_caps" scope="col" style="width: 90px;">
+                                        <div class="slds-truncate" scope="col" title="Participant Status">
+                                            Status</div>
+                                    </th>
+                                    <th class="slds-text-title_caps" scope="col" style="width: 90px;">
+                                        <div class="slds-truncate" scope="col" title="Comment">
+                                            Comment</div>
+                                    </th>
+                                    <apex:repeat value="{!mapSurveyQuestion}" var="sQuest">
+                                        <th class="slds-text-title_caps" scope="col">
+                                            <div class="slds-truncate" title="{!mapSurveyQuestion[sQuest]}">
+                                                {!mapSurveyQuestion[sQuest]}
+                                            </div>
+                                        </th>
+                                    </apex:repeat>    
+                                    <th class="slds-text-title_caps" scope="col" style="width: 120px;">
+                                        <div class="slds-truncate" scope="col" title="Recorded Date">Recorded Date</div>
+                                    </th>
+                                </tr>
+                                
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!lstSurveyResponseWrapper}" var="res">
+                                    <tr class="{!if(res.objResearchSurvey.Research_Project_Detail__r.Blacklist__c==true || res.objResearchSurvey.Research_Project_Detail__r.Opt_Out__c==true ,'slds-hint-parent blacklist-optout','slds-hint-parent')}">
+                                       <td style="padding-left: 18px !important;">
+										<div>
+											<div class="slds-checkbox slds-checkbox_standalone slds-float_left">
+											 <apex:inputcheckbox styleClass="slds-checkbox manage-checkbox ux-mp-checkbox" value="{!res.selContact}" id="InputId" />
+											 <span class="slds-checkbox_faux"></span>
+											</div>
+											
+											<div style="display:{!if(res.objResearchSurvey.Research_Project_Detail__r.Blacklist__c==true || res.objResearchSurvey.Research_Project_Detail__r.Opt_Out__c==true ,'block;','none;')} position: relative;" class="custom-tooltip slds-float_right">
+												<a href="javascript:;"><i class="fas fa-exclamation-triangle" style="color:#c23934"></i></a>
+												<div style="position: absolute; bottom: 32px; left: -17px; white-space: nowrap;" class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left custom-tooltip-box" role="tooltip"  >
+													
+												   <div class="slds-popover__body">
+														{!if(res.objResearchSurvey.Research_Project_Detail__r.Blacklist__c==true,'Black List','')}  {!if(res.objResearchSurvey.Research_Project_Detail__r.Opt_Out__c==true,'Opt Out','')} 
+												   </div>
+												</div>
+										   </div>
+									   </div>
+									</td>
+                                        <td><div class="slds-truncate" title="{!res.objResearchSurvey.Research_Project_Detail__r.Contact__r.Name}">{!res.objResearchSurvey.Research_Project_Detail__r.Contact__r.Name}</div></td>
+                                        <td><div class="slds-truncate" title="{!res.objResearchSurvey.Research_Project_Detail__r.Research_Participant_Status__c}">{!res.objResearchSurvey.Research_Project_Detail__r.Research_Participant_Status__c}</div></td>
+                                        <td><div class="slds-truncate" title="{!res.objResearchSurvey.Research_Project_Detail__r.Comment__c}">{!res.objResearchSurvey.Research_Project_Detail__r.Comment__c}</div></td>
+                                        <apex:repeat value="{!res.objResearchSurvey.Research_Survey_Responses__r}" var="resAns">
+                                            <td>
+                                                <div class="slds-truncate" title="{!resAns.Survey_Answers__c}">{!resAns.Survey_Answers__c}</div>
+                                            </td>
+                                        </apex:repeat>
+                                        <td>
+                                            
+                                            <div class="slds-truncate slds-text-body_small">
+                                                <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                                    <apex:param value="{!res.objResearchSurvey.Recorded_Date__c}" /> 
+                                                </apex:outputText>
+                                            </div>
+                                        </td>
+                                        
+                                    </tr>
+                                </apex:repeat> 
+                            </tbody>
+                        </table>
+            </div>
+            <div class="slds-text-align_right">
+               <apex:outputpanel rendered="{!isEditable}" >
+               <!-- <apex:commandButton value="Invite to Interview" rendered="{!isEditable}" action="{!RedirectToSendEmailFromSurvey}" status="statusSave" styleclass="slds-button slds-button_brand slds-m-top_small"/>
+                -->
+             	<div class="slds-button-group slds-m-left_x-small slds-m-bottom_x-small prepare-and-send slds-p-top_medium" style="display:none; font-size:inherit;" role="group">                   
+                    <a onclick="javascript:void(0);"  class="slds-button slds-button_brand prepare-send-btn" style="min-width: 143px;">Prepare &amp; Send...</a>
+                    <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-button_last prepare-send-dropdown">
+                      <a onclick="javascript:void(0);" class="slds-button slds-button_icon slds-button_icon-brand prepare-send-btn" aria-haspopup="true" title="More Actions">
+                        <i class="fas fa-sort-down" style="line-height: 25px;"></i>
+                      </a>
+                      <div class="slds-dropdown slds-dropdown_right slds-dropdown_actions slds-dropdown_bottom" style="min-width: 174px;">
+                        <ul class="slds-dropdown__list" role="menu">
+                         <!-- <li class="slds-dropdown__item" role="presentation">
+                            <apex:commandLink action="{!RedirectToSendEmailFromSurvey}">
+                                <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                                <span class="slds-truncate" style="margin: 0px auto;">...Invitation to an interview</span>
+                            </apex:commandLink>                           
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <apex:commandLink action="{!RedirectToSendEmailFromSurvey}">
+                                <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                                <span class="slds-truncate" style="margin: 0px auto;">...Follow up email</span>
+                            </apex:commandLink> 
+                          </li>-->
+                            
+                          <li class="slds-dropdown__item" role="presentation">
+                            <apex:commandLink action="{!RedirectToSendEmailFromSurvey}">
+                                <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                                <span class="slds-truncate" style="margin: 0px auto;">...Invitation (Calendly)</span>
+                            </apex:commandLink>                           
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <apex:commandLink action="{!RedirectToSendEmailFromSurveyNoCalendly}">
+                                <apex:param name="ITI" value="ITI" assignTo="{!sendEmailFlag}"/>
+                                <span class="slds-truncate" style="margin: 0px auto;">...Invitation (no Calendly)</span>
+                            </apex:commandLink>                           
+                          </li>
+                            
+                          <li class="slds-dropdown__item" role="presentation">
+                            <apex:commandLink action="{!RedirectToSendEmailFromSurvey}">
+                                <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                                <span class="slds-truncate" style="margin: 0px auto;">...NDA</span>
+                            </apex:commandLink> 
+                          </li>
+                          <li class="slds-dropdown__item" role="presentation">
+                            <apex:commandLink action="{!RedirectToSendEmailFromSurvey}">
+                                <apex:param name="SFUI" value="SFUI" assignTo="{!sendEmailFlag}"/>
+                                <span class="slds-truncate" style="margin: 0px auto;">...Follow up email</span>
+                            </apex:commandLink> 
+                          </li>
+                            
+                        </ul>
+                      </div>
+                    </div>
+                </div>  
+                </apex:outputpanel>
+                
+            </div>
+          </div>
+       </apex:outputPanel>   
+        </div>
+        
+          
+
+      </div>
+	
+        <apex:outputPanel rendered="{!isUpdateLastViewDate}" id="surveyViewDate">
+            <script>
+                $( window ).ready(function() {
+                     updateViewSurveyDate();
+                });
+            </script>
+        </apex:outputPanel>
+    </div>
+    <!--body end here-->  
+
+     	
+       
+    <script>
+       /*  $('.send-survey-btn').click(function(e) {
+                  blankSendSurvey();
+          });
+          $('.invite-to-interview-btn').click(function(e) {
+              var selectedIteam = $('.manage-checkbox:checked').length;
+              console.log('======>' + selectedIteam);
+              if('{!isEditable}'=='true' && selectedIteam>0){
+                    inviteToInterview();
+              }else{
+                  	blankInviteToInterview();
+              }
+          });
+          $('.send-follow-up-btn').click(function(e) { 
+              var selectedIteam = $('.manage-checkbox:checked').length;
+              console.log('======>' + selectedIteam);
+              if('{!isEditable}'=='true' && selectedIteam>0){
+                    sendFollowUp();
+              }else{
+                  	blankSendFollowUp();
+              }
+                  
+          }); */
+       
+       	function countSelectedRecord(){
+            var selectedIteam = parseInt($('.manage-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+            console.log('------> ' + selectedIteam);
+            if(selectedIteam>0){
+                $('.prepare-and-send').css('display','');
+            }else{
+                $('.prepare-and-send').css('display','none');
+            }
+            $('.mt-items').html(selectedIteam +' participants selected');
+        }
+       
+          $(document).ready(function() {
+            var $chkboxes = $('.ux-mp-checkbox');
+            var lastChecked = null;  
+            //We can use "chkboxes" css class for first multi-select table used in same VF page
+            $chkboxes.click(function(e) {
+                if (!lastChecked) { 
+                    lastChecked = this; 
+                    var selectedIteam = parseInt($('.ux-mp-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+                    totoalSelectedRecordCount(selectedIteam);
+                    return;
+                }
+                if (e.shiftKey) {
+                    var start = $chkboxes.index(this);
+                    var end = $chkboxes.index(lastChecked);
+                    $chkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastChecked.checked);
+                }lastChecked = this;
+                
+                var selectedIteam = parseInt($('.ux-mp-checkbox:checked').length) + parseInt('{!selectedRecordCount}');
+                totoalSelectedRecordCount(selectedIteam);
+            });           
+        });
+       
+        function totoalSelectedRecordCount(selectedIteam){
+            console.log('====>>>>' + selectedIteam);
+             try{
+                if(selectedIteam>0){
+                    $('.prepare-and-send').css('display','');
+                }else{
+                    $('.prepare-and-send').css('display','none');
+                }
+                $('.mt-items').html(selectedIteam +' participants selected');
+             }catch(err){}
+        }
+    </script>
+       
+    <script type="text/javascript">
+      $('.add-participants-btn').click(function() {
+        $('.add-participants-dropdown').toggleClass('slds-is-open');        
+      });
+      $('.prepare-send-btn').click(function() {
+            $(this).siblings('.prepare-send-dropdown').toggleClass('slds-is-open');
+            $(this).parents('.prepare-send-dropdown').toggleClass('slds-is-open'); 
+      });
+      $(".add-participants-btn, .prepare-send-btn").click(function(e){
+          e.stopPropagation();
+      });
+
+      $(document).click(function(){
+          $(".add-participants-dropdown, .prepare-send-dropdown").removeClass('slds-is-open');
+      });
+       
+      function opensurvey(url){
+      	 window.open(url);
+      }
+       
+       $('.uxr-scout-url').click(function() {
+           $('#customURL').removeClass('slds-hide');
+       });
+     </script> 
+  </body>
+    </apex:form>
+   
+</apex:page>

@@ -1,0 +1,318 @@
+<template>
+    <div class="spinner">
+        <template if:true={blnIsLoading}>
+            <div class="slds-is-relative">
+                <lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium">
+                </lightning-spinner>
+            </div>
+        </template>
+    </div>
+    <lightning-record-edit-form
+        object-api-name="Tax_Notice_Index__c"
+        record-id={idNoticeIndexRecord} 
+        onsubmit={handleSubmit}
+        onsuccess={handleSuccess}>
+
+        <lightning-layout horizontal-align='spread' vertical-align='baseline' multiple-rows>
+            <template if:true={blnIsMRR}>
+                <lightning-layout-item style="padding: 5px;"  size="6">
+                    <label for="mrr">Manual Review Required?</label>
+                    <lightning-input-field name="mrr" field-name="Manual_Review_Required__c" variant="label-hidden" disabled="true"> </lightning-input-field>                 
+                </lightning-layout-item>
+
+                <lightning-layout-item style="padding: 5px;"  size="6">
+                    <label for="mrrreason">MRR Reason</label>
+                    <lightning-input-field name="mrrreason" field-name="MRR_Reason__c" variant="label-hidden" disabled="true"> </lightning-input-field>                 
+                </lightning-layout-item>
+            </template>
+            
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="agencyInfo" class="custom-label"><div class="slds-required label-div">*</div>Agency Information</label>
+                <lightning-input-field data-id="agencyInfo" field-name="Agency_Information__c" value={strCaseAgencyInfo} variant="label-hidden" disabled={blnDisableFields} onchange={handleEvent}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Notice_Form_Number_Conf_Score__c}>
+                <label for="formNumber" class="custom-label"><div class="slds-required label-div">*</div>Tax Notice Form Number</label>
+                <lightning-input-field data-id="formNumber" field-name="Tax_Notice_Form_Number__c" variant="label-hidden" disabled={blnDisableFields} onchange={handleEvent}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template lwc:if={objConfidenceScore.Notice_Form_Number_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="formNumberValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="formNumberValidated" field-name="Notice_Form_Number_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="clientName" class="custom-label"><div class="slds-required label-div">*</div>Account Name</label>
+                <lightning-input-field id="clientName" field-name="Client_Name__c" variant="label-hidden" value={strAccountId} onchange={handleAccountChange} disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Tax_Notice_Date_Conf_Score__c}>
+                <label for="noticeDate" class="custom-label"><div class="slds-required label-div">*</div>Tax Notice Date</label>
+                <lightning-input-field id="noticeDate" field-name="Tax_Notice_Date__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Tax_Notice_Date_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeDateValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeDateValidated" field-name="Tax_Notice_Date_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="segment" class="custom-label"><div class="slds-required label-div">*</div>Segment</label>
+                <lightning-input-field id="segment" disabled="true" field-name="Segment__c" value={strAccountSegment} variant="label-hidden"> </lightning-input-field>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Tax_Notice_Type_Conf_Score__c}>
+                <label for="noticeType" class="custom-label"><div class="slds-required label-div">*</div>Tax Notice Type</label>
+                <!-- <lightning-input-field id="noticeType" field-name="Tax_Notice_Type__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field> -->
+                <lightning-combobox
+                    name="noticeType"
+                    variant="label-hidden"
+                    value={selectedNoticeType}
+                    placeholder="--None--"
+                    options={list_TaxNoticeTypes}
+                    onchange={handleEvent}
+                    >
+                </lightning-combobox>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Tax_Notice_Type_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Tax_Notice_Type_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <template if:true={blnIsCompany}>
+                    <label for="tier" class="custom-label"><div class="slds-required label-div">*</div>Tier</label>
+                    <lightning-input-field id="tier" disabled="true" field-name="Tier__c" value={strAccountTier} variant="label-hidden"> </lightning-input-field>
+                </template>
+                <template if:false={blnIsCompany}>
+                    <label for="pTier" class="custom-label"><div class="slds-required label-div">*</div>Tier</label>
+                    <lightning-input-field id="pTier" disabled="true" field-name="Partner_Tier__c" value={strAccountTier} variant="label-hidden"> </lightning-input-field>
+                </template>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Tax_Notice_Numeration_Conf_Score__c}>
+                <label for="noticeNumeration" class="custom-label"><div class="slds-required label-div">*</div>Tax Notice Numeration</label>
+                <lightning-input-field id="noticeNumeration" field-name="Tax_Notice_Numeration__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Tax_Notice_Numeration_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Tax_Notice_Numeration_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Year_Quarter_Conf_Score__c}>
+                <template if:false={blnDisplaySuiRateFields}>
+                    <label for="yrQtr" class="custom-label"><div class="slds-required label-div">*</div>Year/Quarter</label>
+                    <lightning-input-field id="yrQtr1" field-name="Yr_Qtr__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+                </template>
+
+                <template if:true={blnDisplaySuiRateFields}>
+                    <label for="yrQtr" class="custom-label"><div class="slds-required label-div">*</div>Year/Quarter</label>
+                    <lightning-input-field if:true={blnIsTaxRateAvailable} id="yrQtrSui" field-name="Yr_Qtr__c" disabled="true" variant="label-hidden" value={suiYrQtr}> </lightning-input-field>
+                    <lightning-input-field if:false={blnIsTaxRateAvailable} id="yrQtr2" field-name="Yr_Qtr__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+                </template>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Year_Quarter_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Year_Quarter_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+            
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Tax_Amount_Due_Conf_Score__c}>
+                <label for="taxAmount" class="custom-label"><div class="slds-required label-div">*</div>Tax Amount Due</label>
+                <lightning-input-field id="taxAmount" field-name="Tax_Notice_Tax_Amount__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Tax_Amount_Due_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Tax_Amount_Due_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Multi_Yr_Qtr_Indicator_Conf_Score__c}>
+                <label for="yrQtrIndicator" class="custom-label"><div class="slds-required label-div">*</div>Multi Yr/Qtr Indicator</label>
+                <lightning-input-field id="yrQtrIndicator" field-name="Multi_YR_QTR_Indicator__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Multi_Yr_Qtr_Indicator_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Multi_Yr_Qtr_Indicator_Manualy_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Total_Amount_Due_Conf_Score__c}>
+                <label for="noticeAmount" class="custom-label"><div class="slds-required label-div">*</div>Total Amount Due</label>
+                <lightning-input-field id="noticeAmount" field-name="Tax_Notice_Amount_Total__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Total_Amount_Due_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Total_Amount_Due_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="notes" class="custom-label">Notes Field</label>
+                <lightning-input-field id="notes" field-name="Notes_Field__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Penalty_Amount_Due_Conf_Score__c}>
+                <label for="penaltyAmount" class="custom-label"><div class="slds-required label-div">*</div>Penalty Amount Due</label>
+                <lightning-input-field id="penaltyAmount" field-name="Penalty_Amount_Due__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Penalty_Amount_Due_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Penalty_Amount_Due_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Client_Tax_ID_Conf_Score__c}>
+                <label for="taxId" class="custom-label"><div class="slds-required label-div">*</div>Assigned Client Tax ID (Agency Assigned)</label>
+                <lightning-input-field id="taxId" field-name="Assigned_Client_Tax_ID_Agency_Assigned__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Client_Tax_ID_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Client_Tax_ID_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size={objLayoutSize.Interest_Amount_Due_Conf_Score__c}>
+                <label for="interestAmount"><div class="slds-required label-div">*</div>Interest Amount Due</label>
+                <lightning-input-field id="interestAmount" field-name="Interest_Amount_Due__c" variant="label-hidden" disabled={blnDisableFields}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Interest_Amount_Due_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Interest_Amount_Due_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <!-- Blank Space -->
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="lateDepositAmt">Late Deposit Amount</label>
+                <lightning-input-field id="lateDepositAmt" field-name="Late_Deposit_Amount__c" variant="label-hidden" disabled={blnDisableFields}></lightning-input-field>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;" size={objLayoutSize.Tax_Notice_Due_Date_Conf_Score__c}>
+                <label for="dueDate" class="custom-label"><div class="slds-required label-div">*</div>Tax Notice Due Date</label>
+                <lightning-input-field data-id="dueDate" onchange={handleEvent} field-name="Tax_Notice_Due_Date__c" variant="label-hidden" disabled={noNoticeStatus}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={objConfidenceScore.Tax_Notice_Due_Date_Conf_Score__c}>
+                <lightning-layout-item style="padding: 5px;"  size="2">
+                    <label for="taxNoticeTypeValidated" class="custom-label  confidence-score-red">Manually Validated</label>
+                    <lightning-input-field data-id="taxNoticeTypeValidated" field-name="Tax_Notice_Due_Date_Manually_Validated__c" variant="label-hidden"></lightning-input-field>
+                </lightning-layout-item>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="refIndicator">RAF Indicator</label>
+                <lightning-input-field data-id="rafIndicator" value={strRAFVal} field-name="RAF_Indicator__c" variant="label-hidden" disabled={blnDisableFields} onchange={handleEvent}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="noDueDate">No Due Date</label>
+                <lightning-input type="checkbox" name="noDueDate" onchange={handleEvent} checked={blnIsNoticeDueDateNotPopulated} disabled={blnDisableFields}></lightning-input>
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="GustoAddressee">Gusto is addressee of record?</label>
+                <lightning-input-field data-id="gustoAddressee" value={blnGustoAddressee} field-name="Gusto_is_addressee_of_record__c" variant="label-hidden" disabled={blnDisableFields} onchange={handleEvent}> </lightning-input-field>
+            </lightning-layout-item>
+
+            <template if:true={blnDisplaySuiRateFields}>
+                <lightning-layout-item style="padding: 5px;"  size="6">
+                    <template if:true={blnIsTaxRateAvailable}>                    
+                        <lightning-radio-group name="radioGroup"
+                            label="Sui Rate Format"
+                            options={suiRateOptions}
+                            value={selectedSuiRateType}
+                            type="radio"
+                            onchange={handleEvent}
+                            data-id="suiRateType">
+                        </lightning-radio-group>
+                    </template>
+                </lightning-layout-item>
+
+                <lightning-layout-item style="padding: 5px;"  size="6">
+                    <!-- Blank Space -->
+                </lightning-layout-item>
+
+                <lightning-layout-item style="padding: 5px;"  size="6">
+                    <b>Sui Rate Type</b>
+                </lightning-layout-item>
+
+                <lightning-layout-item style="padding: 5px;"  size="6">
+                    <b>SUI ER Rate</b>
+                </lightning-layout-item>
+
+                <template for:each={list_TaxRates} for:item="item" for:index="indexVar">
+                    <template if:true={blnIsTaxRateAvailable}>
+                        <lightning-layout-item style="padding: 5px;"  size="6" key={item.value}>
+                            {item.label}
+                        </lightning-layout-item>
+
+                        <lightning-layout-item style="padding: 5px;"  size="6" key={item.value}>
+                            <lightning-input  if:false={isSelectedSuiRateTypeDecimal}  data-row-id={item.value} type="number" formatter="percent-fixed" step=".0000000001" onkeypress={validateSuiRate} variant="label-hidden"  disabled={blnDisableFields} value={item.decSuiRate} onchange={handelSuiRateChange}></lightning-input>
+                            <lightning-input  if:true={isSelectedSuiRateTypeDecimal} data-row-id={item.value} type="number" formatter="number" step=".0000000001" onkeypress={validateSuiRate} variant="label-hidden" disabled={blnDisableFields} value={item.decSuiRate} onchange={handelSuiRateChange}></lightning-input>
+                        </lightning-layout-item>
+                    </template>
+                </template>
+            </template>
+
+            <template if:true={blnDisplaySuiRateFields} >
+                <template if:true={blnIsTaxRateAvailable}>
+                    <lightning-layout-item style="padding: 5px;"  size="6">
+                        <!-- Blank Space -->
+                    </lightning-layout-item>
+
+                    <lightning-layout-item style="padding: 5px;"  size="6">
+                        <label for="taxId" class="custom-label"><div class="slds-required label-div">*</div>SUI Rate Effective Date</label>
+                        <lightning-input-field data-id="suiDate" value={dtEffectiveDate} field-name="SUI_Rate_Effective_Date__c" variant="label-hidden" disabled={blnDisableFields} onchange={handleEvent}> </lightning-input-field>
+                    </lightning-layout-item>
+                </template>
+            </template>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <label for="noticeMissing">No Notice Attached</label>
+                <lightning-input type="checkbox" name="noticeMissing" onchange={handleEvent} checked={blnIsNoticeMissing}></lightning-input>                    
+            </lightning-layout-item>
+
+            <lightning-layout-item style="padding: 5px;"  size="6">
+                <template if:true={blnFoundIndexRecord}>
+                    <label>Owner Name</label><br/>
+                    {ownerName}
+                </template>
+            </lightning-layout-item>
+        </lightning-layout>
+        
+        <div class="slds-var-m-top_medium">
+            <lightning-button-group>
+                <lightning-button variant="brand" type="submit" label="Save" title="Save changes without validation."></lightning-button>&nbsp;
+                <lightning-button type="submit" onclick={handleComplete} label="Complete" if:true={blnIsSatusDataCaptureInProgress}></lightning-button>
+            </lightning-button-group>   
+        </div>
+    </lightning-record-edit-form>
+</template>

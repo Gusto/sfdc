@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_is_required_to_set_a_CRC_Active</fullName>
+    <active>true</active>
+    <description>An approval is required to set the Case Reason Classification record active and be considered in the Agatha model.</description>
+    <errorConditionFormula>AND(
+    Active__c = True,
+    OR(ISPICKVAL(Type__c, &apos;Payroll Care&apos;),ISPICKVAL(Type__c, &apos;Benefits Care&apos;)),
+    OR(ISNEW(),ISCHANGED(Active__c),ISCHANGED(Type__c)),
+    $User.Exempt_from_Validation_Rules__c = false,
+    $UserRole.Name != &apos;admin&apos;
+)</errorConditionFormula>
+    <errorMessage>An approval is needed to mark this record as &apos;Active&apos;. To request the approval, please save this record after unchecking the field &apos;Active&apos; and then click on &apos;Submit for Approval&apos; button at the top of the page.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_IBV_Connection</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL( Escalation_Reason_Detail__c, &quot;IBV Connection&quot;),
+NOT( Issues_Connecting_to_IBV__c),
+NOT( Bank_Disconnection_Issue__c ))</errorConditionFormula>
+    <errorMessage>Must mark either &apos;Issues Connecting to IBV&apos; or &apos;Bank Disconnection Issue&apos;</errorMessage>
+</ValidationRule>

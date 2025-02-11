@@ -1,0 +1,35 @@
+<apex:page standardController="Case" showHeader="true">
+    <style>
+        #content {
+      margin: 0 auto;
+      position:absolute;
+      bottom:0px;
+      top:0px;
+      overflow:auto
+    }  
+    </style> 
+    <div id="content">
+    <apex:emailPublisher entityId="{!Case.Id}" 
+        title="Send Email To Requester"
+        emailBodyHeight="250em"
+        verticalResize="true"
+        expandableHeader="false"
+        subject=""
+        showAdditionalFields="true" 
+        emailBodyFormat="textAndHTML"
+        enableQuickText="true"
+        rendered="true"
+        sendButtonName="Send To Requester"
+        showTemplates="True"
+        fromVisibility="selectable"
+        toVisibility="editable"
+        bccVisibility="hidden" 
+        ccVisibility="editable"                         
+        toAddresses="{!Case.Privacy_Requester_Email__c}" 
+        onSubmitSuccess="alert('Email Sent Successfully!');"
+        onSubmitFailure="alert('Email failed');"
+        fromAddresses="no-reply@gusto.com"
+        emailBody=""
+        />     
+    </div>
+</apex:page>

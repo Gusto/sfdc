@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <assignments>
+        <description>Assign to List of non-profile related permission sets</description>
+        <name>Assign_to_Filtered_List</name>
+        <label>Assign to Filtered List</label>
+        <locationX>270</locationX>
+        <locationY>638</locationY>
+        <assignmentItems>
+            <assignToReference>ListOfFilteredPermissionSetAssignments</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Filter_Out_Profile_Permission_Sets</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Filter_Out_Profile_Permission_Sets</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Set_Removed_By_User</name>
+        <label>Set Removed By User</label>
+        <locationX>50</locationX>
+        <locationY>1190</locationY>
+        <assignmentItems>
+            <assignToReference>Perm_Set_Removal_User</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Formula_Perm_Set_Removal_User</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>Check to see if there are any perm sets to be deleted</description>
+        <name>Are_there_PermSets_to_Delete</name>
+        <label>Are there PermSets to Delete?</label>
+        <locationX>182</locationX>
+        <locationY>950</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Assignments_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>ListOfFilteredPermissionSetAssignments</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Delete_Existing_Permission_Sets</targetReference>
+            </connector>
+            <label>Assignments Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Was a permission set located that did not have a profileid?</description>
+        <name>Was_a_permission_Set_Found</name>
+        <label>Was a permission Set Found?</label>
+        <locationX>402</locationX>
+        <locationY>518</locationY>
+        <defaultConnector>
+            <targetReference>Filter_Out_Profile_Permission_Sets</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Filtered PermSet Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Filtered_PermSet_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varFiltered_Permission_Set.ProfileId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_Filtered_List</targetReference>
+            </connector>
+            <label>Filtered PermSet Found</label>
+        </rules>
+    </decisions>
+    <description>Overview:  This is a subflow that Removes Permission Sets and Permission Set Groups from the User Record. 
+* If permissions were removed it will set the text for the Permission Sets Last Removed By and Permissions Sets Last Removed field and pass it to the parent flow to update the user record.</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Create the text running user</description>
+        <name>Formula_Perm_Set_Removal_User</name>
+        <dataType>String</dataType>
+        <expression>{!$User.FirstName} &amp; &apos; &apos; &amp; {!$User.LastName}</expression>
+    </formulas>
+    <interviewLabel>This is a subflow that can be called by other flows to remove all permission sets from a user record.  Just send the ID of the User. {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisioning - Remove Permission Set Assignments (Sub Flow)</label>
+    <loops>
+        <description>This is to filter out permission sets that belong to the user&apos;s profile.    
+If those are removed the following error will occur:  
+INVALID_CROSS_REFERENCE_KEY, You can&apos;t assign or unassign this permission set because it&apos;s associated with a profile</description>
+        <name>Filter_Out_Profile_Permission_Sets</name>
+        <label>Filter Out Profile Permission Sets</label>
+        <locationX>182</locationX>
+        <locationY>278</locationY>
+        <collectionReference>ListofExistingPermissionSetAssignments</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Search_for_Permission_Set</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Are_there_PermSets_to_Delete</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordDeletes>
+        <description>Delete all permission sets assigned.</description>
+        <name>Delete_Existing_Permission_Sets</name>
+        <label>Delete Existing Permission Sets</label>
+        <locationX>50</locationX>
+        <locationY>1070</locationY>
+        <connector>
+            <targetReference>Set_Removed_By_User</targetReference>
+        </connector>
+        <inputReference>ListOfFilteredPermissionSetAssignments</inputReference>
+    </recordDeletes>
+    <recordLookups>
+        <description>Get a list of the user&apos;s current permission sets</description>
+        <name>Get_List_of_Users_Perm_Set_Assignments</name>
+        <label>Get List of Users Perm Set Assignments</label>
+        <locationX>182</locationX>
+        <locationY>158</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Filter_Out_Profile_Permission_Sets</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>AssigneeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varUserRecord.Id</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSetAssignment</object>
+        <outputReference>ListofExistingPermissionSetAssignments</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>AssigneeId</queriedFields>
+        <queriedFields>PermissionSetId</queriedFields>
+        <queriedFields>PermissionSetGroupId</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <description>Search for permission set</description>
+        <name>Search_for_Permission_Set</name>
+        <label>Search for Permission Set</label>
+        <locationX>402</locationX>
+        <locationY>398</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_a_permission_Set_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Filter_Out_Profile_Permission_Sets.PermissionSetId</elementReference>
+            </value>
+        </filters>
+        <object>PermissionSet</object>
+        <outputReference>varFiltered_Permission_Set</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>ProfileId</queriedFields>
+    </recordLookups>
+    <runInMode>DefaultMode</runInMode>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_List_of_Users_Perm_Set_Assignments</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>List of Permission set assignments that were assigned to user before flow started.</description>
+        <name>ListofExistingPermissionSetAssignments</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>List of permission Set Assignments that are not related to a profile</description>
+        <name>ListOfFilteredPermissionSetAssignments</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSetAssignment</objectType>
+    </variables>
+    <variables>
+        <description>running user</description>
+        <name>Perm_Set_Removal_User</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <description>The permissionset that doesn&apos;t have a profileid</description>
+        <name>varFiltered_Permission_Set</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>PermissionSet</objectType>
+    </variables>
+    <variables>
+        <description>The id for the user account to have permission sets removed</description>
+        <name>varUserRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+</Flow>

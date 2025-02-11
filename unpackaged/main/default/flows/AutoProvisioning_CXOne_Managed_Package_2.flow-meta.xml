@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <decisions>
+        <name>Call_Center_Updated</name>
+        <label>Call Center Updated</label>
+        <locationX>1634</locationX>
+        <locationY>863</locationY>
+        <defaultConnectorLabel>Record Not Found</defaultConnectorLabel>
+        <rules>
+            <name>If_Call_Center_Updated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.CallCenterId</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>If Call Center Updated</label>
+        </rules>
+        <rules>
+            <name>Found_For_Deactivated_User</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>New_CXOne_Package_Id.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Found For Deactivated User</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Call_Center_Id</name>
+        <label>Check Call Center Id</label>
+        <locationX>644</locationX>
+        <locationY>863</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Assign_New_License</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.CallCenterId</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Get_New_Call_Center_Id.Id</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Has_New_Package_License</targetReference>
+            </connector>
+            <label>Assign New License</label>
+        </rules>
+        <rules>
+            <name>Assign_Old_License</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.CallCenterId</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Get_Old_Call_Center_Id.Id</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Has_old_Package_License</targetReference>
+            </connector>
+            <label>Assign Old License</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Create_or_Update</name>
+        <label>Create or Update?</label>
+        <locationX>1139</locationX>
+        <locationY>755</locationY>
+        <defaultConnector>
+            <targetReference>Call_Center_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Updated</defaultConnectorLabel>
+        <rules>
+            <name>Created</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>isNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Call_Center_Id</targetReference>
+            </connector>
+            <label>Created</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Has_New_Package_License</name>
+        <label>Has New Package License</label>
+        <locationX>182</locationX>
+        <locationY>971</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>License_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>New_CXOne_Package_Id.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_CXOne_License</targetReference>
+            </connector>
+            <label>License Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Has_old_Package_License</name>
+        <label>Has Old Package License</label>
+        <locationX>710</locationX>
+        <locationY>971</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Copy_1_of_License_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Old_CXOne_Package_Id.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_New_CXOne_License</targetReference>
+            </connector>
+            <label>Copy 1 of License Found</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>isNew</name>
+        <dataType>Boolean</dataType>
+        <expression>IsNew()</expression>
+    </formulas>
+    <interviewLabel>AutoProvisioning - CXOne Managed Package (2) {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisioning - CXOne Managed Package (2)</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Assign_CXOne_License</name>
+        <label>Assign CXOne License</label>
+        <locationX>50</locationX>
+        <locationY>1079</locationY>
+        <inputAssignments>
+            <field>PackageLicenseId__NotFound</field>
+            <value>
+                <elementReference>New_CXOne_Package_Id.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>UserId__NotFound</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>UserPackageLicense</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Assign_New_CXOne_License</name>
+        <label>Assign New CXOne License</label>
+        <locationX>578</locationX>
+        <locationY>1079</locationY>
+        <inputAssignments>
+            <field>PackageLicenseId__NotFound</field>
+            <value>
+                <elementReference>Old_CXOne_Package_Id.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>UserId__NotFound</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>UserPackageLicense</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <description>Get the Id of the New Call Center - Based on new - This will be used to assign new license</description>
+        <name>Get_New_Call_Center_Id</name>
+        <label>Get New Call Center Id</label>
+        <locationX>1139</locationX>
+        <locationY>431</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Old_CXOne_Package_Id</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>CXone Agent for Salesforce</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>CallCenter</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the Id of the Old Call Center - Based on new - This will be used to assign old license</description>
+        <name>Get_Old_Call_Center_Id</name>
+        <label>Get Old Call Center Id</label>
+        <locationX>1139</locationX>
+        <locationY>647</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Create_or_Update</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>NICE CXone Classic</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>CallCenter</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the record of the New CXOne from PackageLicense object</description>
+        <name>New_CXOne_Package_Id</name>
+        <label>New CXOne Package Id</label>
+        <locationX>1139</locationX>
+        <locationY>323</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_New_Call_Center_Id</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>NamespacePrefix</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>NICECXoneAgent</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>PackageLicense</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the record of the Old CXOne from PackageLicense object</description>
+        <name>Old_CXOne_Package_Id</name>
+        <label>Old CXOne Package Id</label>
+        <locationX>1139</locationX>
+        <locationY>539</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Old_Call_Center_Id</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>NamespacePrefix</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>icAgentConsole</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>PackageLicense</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>1013</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>New_CXOne_Package_Id</targetReference>
+        </connector>
+        <filterFormula>NOT(( INCLUDES({!$Record.Bypass_Flows__c}, &apos;All_Flows&apos;)) &amp;&amp; {!$Record.IsActive} = TRUE)</filterFormula>
+        <object>User</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>OutofLicense</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>We are out of CXOne Managed Package license </stringValue>
+        </value>
+    </variables>
+</Flow>

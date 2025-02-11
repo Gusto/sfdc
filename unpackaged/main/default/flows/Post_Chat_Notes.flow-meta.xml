@@ -1,0 +1,1239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <assignments>
+        <name>Assign_Unconverted_Lead_Id</name>
+        <label>Assign Unconverted Lead Id</label>
+        <locationX>182</locationX>
+        <locationY>1118</locationY>
+        <assignmentItems>
+            <assignToReference>idLeadRecord</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Lead_Records.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Chat_Transcript_Exists</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Set Who Id with contact Id</description>
+        <name>Contact_Who_ID</name>
+        <label>Contact Who ID</label>
+        <locationX>50</locationX>
+        <locationY>2498</locationY>
+        <assignmentItems>
+            <assignToReference>whoId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Contact.recordId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Set_What_Id_Account</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Reset_Who_Id</name>
+        <label>Reset Who Id</label>
+        <locationX>50</locationX>
+        <locationY>3506</locationY>
+        <assignmentItems>
+            <assignToReference>whoId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Task</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Set WhatId based on Account</description>
+        <name>Set_Account_What_ID</name>
+        <label>Set Account What ID</label>
+        <locationX>50</locationX>
+        <locationY>2834</locationY>
+        <assignmentItems>
+            <assignToReference>whatId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Account.recordId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Set_What_Id_Opportunity</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Set What Id based on Opportunity.</description>
+        <name>Set_Opportunity_What_Id</name>
+        <label>Set Opportunity What Id</label>
+        <locationX>50</locationX>
+        <locationY>3170</locationY>
+        <assignmentItems>
+            <assignToReference>whatId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Opportunity.recordId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_If_What_Id_Exists</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Set Who Id with lead id</description>
+        <name>Set_Who_Id_Lead</name>
+        <label>Set Who Id - Lead</label>
+        <locationX>50</locationX>
+        <locationY>2162</locationY>
+        <assignmentItems>
+            <assignToReference>whoId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>idLeadRecord</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Set_Who_Id_Contact</targetReference>
+        </connector>
+    </assignments>
+    <choices>
+        <name>Add_Accountant</name>
+        <choiceText>Add Accountant</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Add Accountant</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Add_Employees_Add_Contractors</name>
+        <choiceText>Add Employees | Add Contractors</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Add Employees | Add Contractors</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>After_Payroll_Not_transferred</name>
+        <choiceText>After Payroll / Not transferred</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>After Payroll / Not transferred</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Bad_Transfer_from_Care_not_an_FEIN_change</name>
+        <choiceText>Bad Transfer from Care (not an FEIN change)</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Bad Transfer from Care (not an FEIN change)</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Bank_Account_Verify_Bank_Account</name>
+        <choiceText>Bank Account | Verify Bank Account</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Bank Account | Verify Bank Account</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Choose_A_Plan</name>
+        <choiceText>Choose A Plan</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Choose A Plan</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Company_s_Address</name>
+        <choiceText>Company’s Address</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Company’s Address</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Discover_App_Integration_or_Partner</name>
+        <choiceText>Discover App, Integration, or Partner</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Discover App, Integration, or Partner</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Explore_Benefits</name>
+        <choiceText>Explore Benefits</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Explore Benefits</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>JIRA_please_post_link_in_notes</name>
+        <choiceText>JIRA - please post link in notes</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>JIRA - please post link in notes</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Not_Sold_Determine_Closed_Lost</name>
+        <choiceText>Not Sold | Determine Closed Lost</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Not Sold | Determine Closed Lost</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Onboarding</name>
+        <choiceText>Onboarding</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Onboarding</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Other</name>
+        <choiceText>Other</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Other</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>R_D_Tax_Credit</name>
+        <choiceText>R&amp;D Tax Credit</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>R&amp;D Tax Credit</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Report_Previous_Paystubs</name>
+        <choiceText>Report Previous Paystubs</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Report Previous Paystubs</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>RFI_Assurance</name>
+        <choiceText>RFI / Assurance</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>RFI / Assurance</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Run_Payroll</name>
+        <choiceText>Run Payroll</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Run Payroll</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Running_it_by_decision_maker</name>
+        <choiceText>Running it by decision maker</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Running it by decision maker</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Sales</name>
+        <choiceText>Sales</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Sales</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Select_A_Payroll_Schedule</name>
+        <choiceText>Select A Payroll Schedule</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Select A Payroll Schedule</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Set_Up_Federal_Taxes</name>
+        <choiceText>Set Up Federal Taxes</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Set Up Federal Taxes</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Set_Up_State_Taxes</name>
+        <choiceText>Set Up State Taxes</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Set Up State Taxes</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Sign_Documents_Add_Signatory</name>
+        <choiceText>Sign Documents | Add Signatory</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Sign Documents | Add Signatory</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Sold_Notate_APD</name>
+        <choiceText>Sold | Notate APD</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Sold | Notate APD</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Transfer_Other_Team_Responsibility</name>
+        <choiceText>Transfer / Other Team Responsibility</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Transfer / Other Team Responsibility</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Transfer_to_Care</name>
+        <choiceText>Transfer to Care</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Transfer to Care</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Unpaid_Tax_Liabilities</name>
+        <choiceText>Unpaid Tax Liabilities</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Unpaid Tax Liabilities</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Workers_Compensation</name>
+        <choiceText>Workers Compensation</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Workers Compensation</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>X25_Employees_Pass_To_Another_Team</name>
+        <choiceText>25+ Employees | Pass To Another Team</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>25+ Employees | Pass To Another Team</stringValue>
+        </value>
+    </choices>
+    <decisions>
+        <description>Validate if Chat Transcript Exists.</description>
+        <name>Chat_Transcript_Exists</name>
+        <label>Chat Transcript Exists</label>
+        <locationX>468</locationX>
+        <locationY>1430</locationY>
+        <defaultConnector>
+            <targetReference>Get_Task</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>isChatTranscript</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>getChatTranscript.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Chat_Transcript</targetReference>
+            </connector>
+            <label>isChatTranscript</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If Chat Transcript Id is present.</description>
+        <name>Chat_Transcript_Id_Present</name>
+        <label>Chat Transcript Id Present</label>
+        <locationX>699</locationX>
+        <locationY>638</locationY>
+        <defaultConnector>
+            <targetReference>Successfully_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Validate_Chat_Transcript_Id</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>idChatTranscript</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_If_Lead_Is_Present</targetReference>
+            </connector>
+            <label>Validate Chat Transcript Id</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_If_Lead_Is_Present</name>
+        <label>Check If Lead Is Present</label>
+        <locationX>468</locationX>
+        <locationY>758</locationY>
+        <defaultConnector>
+            <targetReference>Chat_Transcript_Exists</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Lead_Is_Present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Lead.recordId</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Lead_Records</targetReference>
+            </connector>
+            <label>Lead Is Present</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_If_What_Id_Exists</name>
+        <label>Check If What Id Exists</label>
+        <locationX>182</locationX>
+        <locationY>3386</locationY>
+        <defaultConnector>
+            <targetReference>Update_Task</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>What_Id_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>whatId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>whoId</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>idLeadRecord</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reset_Who_Id</targetReference>
+            </connector>
+            <label>What Id Exists</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check if unconverted leads exist</description>
+        <name>Does_Unconverted_Lead_Exists</name>
+        <label>Does Unconverted Lead Exists</label>
+        <locationX>314</locationX>
+        <locationY>998</locationY>
+        <defaultConnector>
+            <targetReference>Chat_Transcript_Exists</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Unconverted_Lead_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Lead_Records</leftValueReference>
+                <operator>NotEqualTo</operator>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Unconverted_Lead_Id</targetReference>
+            </connector>
+            <label>Unconverted Lead Exists</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Set What Id from Account.</description>
+        <name>Set_What_Id_Account</name>
+        <label>Set What Id - Account</label>
+        <locationX>182</locationX>
+        <locationY>2714</locationY>
+        <defaultConnector>
+            <targetReference>Set_What_Id_Opportunity</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Validate_Account</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Account.recordId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Account_What_ID</targetReference>
+            </connector>
+            <label>Validate Account</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Set What Id if Opportunity is present.</description>
+        <name>Set_What_Id_Opportunity</name>
+        <label>Set What Id - Opportunity</label>
+        <locationX>182</locationX>
+        <locationY>3050</locationY>
+        <defaultConnector>
+            <targetReference>Check_If_What_Id_Exists</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Validate_Opportunity</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Opportunity.recordId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Opportunity_What_Id</targetReference>
+            </connector>
+            <label>Validate Opportunity</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Set who id with contact id.</description>
+        <name>Set_Who_Id_Contact</name>
+        <label>Set Who Id - Contact</label>
+        <locationX>182</locationX>
+        <locationY>2378</locationY>
+        <defaultConnector>
+            <targetReference>Set_What_Id_Account</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Who_Id_Contact</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Contact.recordId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Contact_Who_ID</targetReference>
+            </connector>
+            <label>Who Id Contact</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Validate if Task exists.</description>
+        <name>Task_Exists</name>
+        <label>Task Exists</label>
+        <locationX>468</locationX>
+        <locationY>1922</locationY>
+        <defaultConnector>
+            <targetReference>Successfully_Updated</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>isTask</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Task.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Validate_Lead_Id</targetReference>
+            </connector>
+            <label>isTask</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Validate if screen should be displayed</description>
+        <name>Validate_Display_Screen</name>
+        <label>Validate Display Screen</label>
+        <locationX>1136</locationX>
+        <locationY>158</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Validate_Screen</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>idChatTranscript</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>getChatTranscript</targetReference>
+            </connector>
+            <label>Validate Screen</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Validate Input from the rep.</description>
+        <name>Validate_Input</name>
+        <label>Validate Input</label>
+        <locationX>902</locationX>
+        <locationY>518</locationY>
+        <defaultConnector>
+            <targetReference>Error_Message</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>IsCallReasonFilled</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Call_Reason.topValue</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Call_Reason.middleValue</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Chat_Transcript_Id_Present</targetReference>
+            </connector>
+            <label>IsCallReasonFilled</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Validate Lead Id</description>
+        <name>Validate_Lead_Id</name>
+        <label>Validate Lead Id</label>
+        <locationX>182</locationX>
+        <locationY>2042</locationY>
+        <defaultConnector>
+            <targetReference>Set_Who_Id_Contact</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Lead_Id_Present</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>idLeadRecord</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Who_Id_Lead</targetReference>
+            </connector>
+            <label>Lead Id Present</label>
+        </rules>
+    </decisions>
+    <description>Sales Post Chat Notes. Setting What Id as Account &amp; Opportunity only when Task is not linked to a Lead. Added fault path when updating chat transcripts. Updating flow to work only with unconverted leads.</description>
+    <environments>Default</environments>
+    <interviewLabel>Post Chat Notes {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Post Chat Notes</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <description>Query leads</description>
+        <name>Get_Lead_Records</name>
+        <label>Get Lead Records</label>
+        <locationX>314</locationX>
+        <locationY>878</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Does_Unconverted_Lead_Exists</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Lead.recordId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>IsConverted</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Lead</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>IsConverted</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get Activity associated with chat transcript.</description>
+        <name>Get_Task</name>
+        <label>Get Task</label>
+        <locationX>468</locationX>
+        <locationY>1802</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Task_Exists</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Chat_Transcript__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>idChatTranscript</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Task</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Query Chat Transcript record</description>
+        <name>getChatTranscript</name>
+        <label>getChatTranscript</label>
+        <locationX>902</locationX>
+        <locationY>278</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Post_Chat</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>idChatTranscript</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>LiveChatTranscript</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>Update chat transcript</description>
+        <name>Update_Chat_Transcript</name>
+        <label>Update Chat Transcript</label>
+        <locationX>204</locationX>
+        <locationY>1550</locationY>
+        <connector>
+            <targetReference>Get_Task</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Get_Task</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>getChatTranscript.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>Account.recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ContactId</field>
+            <value>
+                <elementReference>Contact.recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LeadId</field>
+            <value>
+                <elementReference>idLeadRecord</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Opportunity__c</field>
+            <value>
+                <elementReference>Opportunity.recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>LiveChatTranscript</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Update Activity from Chat Transcript</description>
+        <name>Update_Task</name>
+        <label>Update Task</label>
+        <locationX>182</locationX>
+        <locationY>3722</locationY>
+        <connector>
+            <targetReference>Successfully_Updated</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Successfully_Updated</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Chat_Transcript__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>idChatTranscript</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Primary_Call_Reason__c</field>
+            <value>
+                <elementReference>Call_Reason.topValue</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Secondary_Call_Reason__c</field>
+            <value>
+                <elementReference>Call_Reason.middleValue</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>whatId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhoId</field>
+            <value>
+                <elementReference>whoId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordUpdates>
+    <screens>
+        <description>Displays Error Message.</description>
+        <name>Error_Message</name>
+        <label>Error Message</label>
+        <locationX>1106</locationX>
+        <locationY>638</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Validate_Display_Screen</targetReference>
+        </connector>
+        <fields>
+            <name>Error_Text</name>
+            <fieldText>&lt;p&gt;Please Select Required Fields.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <nextOrFinishButtonLabel>Finish</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
+        <name>Post_Chat</name>
+        <label>Post Chat</label>
+        <locationX>902</locationX>
+        <locationY>398</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Validate_Input</targetReference>
+        </connector>
+        <fields>
+            <name>Call_Reason</name>
+            <extensionName>flowruntime:dependentPicklists</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>dependencyWrapperApiName</name>
+                <value>
+                    <stringValue>Task</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>topPicklistApiName</name>
+                <value>
+                    <stringValue>Primary_Call_Reason__c</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>middlePicklistApiName</name>
+                <value>
+                    <stringValue>Secondary_Call_Reason__c</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>topLabel</name>
+                <value>
+                    <stringValue>Contact Reason</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>topRequired</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>middleLabel</name>
+                <value>
+                    <stringValue>Sub-Contact Reason</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>middleRequired</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <fields>
+            <name>Lead</name>
+            <extensionName>flowruntime:lookup</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>fieldApiName</name>
+                <value>
+                    <stringValue>LeadId</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Lead</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>objectApiName</name>
+                <value>
+                    <stringValue>LiveChatTranscript</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>required</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>recordId</name>
+                <value>
+                    <elementReference>getChatTranscript.LeadId</elementReference>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+            <visibilityRule>
+                <conditionLogic>(1 OR 2) AND (NOT 3)</conditionLogic>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Sales</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Onboarding</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.middleValue</leftValueReference>
+                    <operator>Contains</operator>
+                    <rightValue>
+                        <stringValue>Transfer</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>Contact</name>
+            <extensionName>flowruntime:lookup</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>objectApiName</name>
+                <value>
+                    <stringValue>LiveChatTranscript</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fieldApiName</name>
+                <value>
+                    <stringValue>ContactId</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Contact</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>required</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>recordId</name>
+                <value>
+                    <elementReference>getChatTranscript.ContactId</elementReference>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+            <visibilityRule>
+                <conditionLogic>(1 OR 2) AND (NOT 3)</conditionLogic>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Sales</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Onboarding</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.middleValue</leftValueReference>
+                    <operator>Contains</operator>
+                    <rightValue>
+                        <stringValue>Transfer</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>Account</name>
+            <extensionName>flowruntime:lookup</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>fieldApiName</name>
+                <value>
+                    <stringValue>AccountId</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Account</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>objectApiName</name>
+                <value>
+                    <stringValue>LiveChatTranscript</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>recordId</name>
+                <value>
+                    <elementReference>getChatTranscript.AccountId</elementReference>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+            <visibilityRule>
+                <conditionLogic>(1 OR 2) AND (NOT 3)</conditionLogic>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Sales</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Onboarding</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.middleValue</leftValueReference>
+                    <operator>Contains</operator>
+                    <rightValue>
+                        <stringValue>Transfer</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>Opportunity</name>
+            <extensionName>flowruntime:lookup</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>fieldApiName</name>
+                <value>
+                    <stringValue>Opportunity__c</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Opportunity</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>objectApiName</name>
+                <value>
+                    <stringValue>LiveChatTranscript</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>recordId</name>
+                <value>
+                    <elementReference>getChatTranscript.Opportunity__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+            <visibilityRule>
+                <conditionLogic>(1 OR 2) AND (NOT 3)</conditionLogic>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Sales</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.topValue</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Onboarding</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Call_Reason.middleValue</leftValueReference>
+                    <operator>Contains</operator>
+                    <rightValue>
+                        <stringValue>Transfer</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <nextOrFinishButtonLabel>Save</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <description>Displays success Message</description>
+        <name>Successfully_Updated</name>
+        <label>Successfully Updated</label>
+        <locationX>699</locationX>
+        <locationY>4070</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Success</name>
+            <fieldText>&lt;p&gt;Chat Transcript and Activity Successfully updated.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <nextOrFinishButtonLabel>Finish</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <start>
+        <locationX>1010</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Validate_Display_Screen</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Case Id</description>
+        <name>idCase</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>Chat Transcript Id</description>
+        <name>idChatTranscript</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Unconverted Lead Id</description>
+        <name>idLeadRecord</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Holds Account or Opportunity Id.</description>
+        <name>whatId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>Holds contact or lead id.</description>
+        <name>whoId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+</Flow>

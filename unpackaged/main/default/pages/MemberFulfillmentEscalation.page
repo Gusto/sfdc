@@ -1,0 +1,121 @@
+<apex:page standardController="case" extensions="MemberFulfillmentEscalationController" id="page">
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    
+    <style>
+        .slds-scope.main th, .slds-scope.main td {
+           white-space: normal !important;
+        }
+    </style>
+    <script>
+
+        
+        function openCase(caseId,caseNumber) {
+            //alert(caseId);
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            
+            sforce.console.openPrimaryTab(null , '/'+caseId, false,'salesforce', openSuccess, 'salesforceTab'); 
+            //sforce.console.openPrimaryTab(null , '/'+caseId, true, caseNumber, openSuccess, 'salesforceCaseTab'); 
+        };
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if(result.success==true){
+                sforce.console.focusPrimaryTabById(result.id);
+                }
+        };
+    
+    
+    </script>
+    
+    <div class="gusto" >
+        <apex:form id="theForm">
+            <apex:actionFunction action="{!setSubjectAndDescription}" name="setSubjectAndDescription" id="setSubjectAndDescription" reRender="editPanel"/>
+            <apex:outputPanel id="mainPanel">                      
+                <apex:actionStatus id="fetchStatus" >
+                    <apex:facet name="start">
+                            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                                   height: 100%;opacity:0.65;width:100%;z-index: 99 !important"> 
+                                <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                                    <span class="waitingDescription">Please Wait...</span> 
+                                </div>
+                            </div>
+                        </apex:facet>
+                </apex:actionStatus>
+            </apex:outputPanel>
+            <apex:pageMessages /> 
+            
+            <apex:outputPanel id="editPanel" rendered="{! !caseInsertSuccessfully}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Case: {!selectedCaseRec.CaseNumber} </span>
+                </h4>&nbsp;&nbsp;
+                <table class="slds-table slds-table--bordered slds-table_cell-buffer">
+                    
+                    <tr>
+                        <th scope="col" style="text-align:right;"> 
+                            <div class="slds-truncate">Options: </div>
+                        </th>
+                        <td>
+                            <apex:selectList multiselect="false" size="1"  value="{!reason}" onchange="setSubjectAndDescription();">
+                                <apex:selectOptions value="{!reasonList}"/>
+                            </apex:selectList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="col" style="text-align:right;">
+                            <div class="slds-truncate">Reach out to Employer: </div>
+                        </th>
+                        <td>
+                            <apex:inputCheckbox value="{!setEmployer}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="col" style="text-align:right;">
+                            <div class="slds-truncate">{!$ObjectType.Case.fields.Subject.Label}: </div>
+                        </th>
+                        <td>
+                            <apex:inputField value="{!selectedCaseRec.Subject}" style="width:500px;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="col" style="text-align:right;">
+                            <div class="slds-truncate">{!$ObjectType.Case.fields.Description.Label}: </div>
+                        </th>
+                        <td>
+                            <apex:inputField value="{!selectedCaseRec.Description}" style="width:500px;height:150px;"/>
+                        </td>
+                    </tr>    
+                    <tr class="slds-text-title">
+                        <td colspan="2">
+                            <apex:commandButton action="{!createNewCase}" value="Escalate" status="fetchStatus"/>                            
+                            &nbsp;&nbsp;
+                            <apex:commandButton action="{!cancel}" value="Cancel" status="fetchStatus"/>
+                        </td>
+                    </tr>                
+                </table>            
+            </apex:outputPanel>
+            
+            <apex:outputPanel id="successpanel" rendered="{! caseInsertSuccessfully}">
+                <h4 class="slds-section__title slds-theme--shade">
+                  <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Mass Update</span>
+                </h4>&nbsp;&nbsp;
+                <div class="slds-scoped-notification slds-media slds-media_center" role="status">
+                  <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-info" title="information">
+                      <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#info" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                      </svg>
+                      <span class="slds-assistive-text">information</span>
+                    </span>
+                  </div>
+                  <div class="slds-media__body">
+                      
+                      <p>Records successfully created. <A HREF="#" onClick="openCase('{!selectedCaseRec.Id}','{!selectedCaseRec.CaseNumber}');return false">{!selectedCaseRec.CaseNumber}</A> &nbsp; <apex:commandButton action="{!cancel}" value="Back" styleclass="slds-button slds-button_neutral"/></p>
+                  </div>
+                </div> 
+            </apex:outputPanel>    
+            
+            
+        </apex:form>
+    </div>            
+</apex:page>

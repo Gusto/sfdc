@@ -1,0 +1,22 @@
+<apex:page standardController="Opportunity" >
+<apex:form >
+<apex:pageBlock >
+<apex:pageBlockSection id="theFields" collapsible="false" >
+<apex:outputField value="{!Opportunity.AccountId}"/>
+<apex:outputField value="{!Opportunity.Account.Name}"/>
+<apex:outputField value="{!Opportunity.Account.NumberOfEmployees}" label="Number of People we are going to pay"/>
+<apex:outputField value="{!Opportunity.Account.Owner.Name}"/>
+
+<apex:outputField value="{!Opportunity.Account.Owner.UserRole.Name}" label="The Role Name of the Account Owner"/>
+<apex:outputField value="{!Opportunity.Account.ZP_Company_ID__c}" label="Gusto Company ID"/>
+</apex:pageBlockSection>
+<apex:tabPanel switchType="client" selectedTab="name2" id="theTabPanel">
+<apex:tab label="SDR Notes" name="sdr1">{!Opportunity.Account.SDR_Notes__c} </apex:tab>
+<apex:tab label="Benefits Notes" name="benefit1" >{!Opportunity.Account.Benefits_Notes__c} </apex:tab>
+
+</apex:tabPanel>
+</apex:pageBlock>
+
+
+</apex:form>
+</apex:page>

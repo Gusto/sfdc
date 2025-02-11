@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Manual_Signatory_Verfication_Req</fullName>
+    <active>true</active>
+    <description>&quot;Manual Signatory Verification&quot; Risk Ticket Reason required fields when submitting ticket.</description>
+    <errorConditionFormula>RecordType.DeveloperName = &apos;Risk_Assurance&apos; &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason__c, &apos;Company Onboarding&apos;) &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason_Detail__c, &apos;Manual Signatory Verification&apos;) &amp;&amp;
+ The_signatory_s_profile_is_complete__c = FALSE</errorConditionFormula>
+    <errorDisplayField>The_signatory_s_profile_is_complete__c</errorDisplayField>
+    <errorMessage>Please ensure the signatory’s profile is complete and present in Panda.</errorMessage>
+</ValidationRule>

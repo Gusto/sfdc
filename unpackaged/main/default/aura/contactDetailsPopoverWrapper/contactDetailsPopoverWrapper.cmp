@@ -1,0 +1,7 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:registerEvent name="mouseLeaveEvent" type="c:mouseLeaveComponentEvent"/>
+    <aura:registerEvent name="mouseOverEvent" type="c:mouseOverComponentEvent"/>
+    <div onmouseleave="{!c.handleMouseLeave}" onmouseover="{!c.handleMouseOver}">
+        <c:contactDetailsPopover recordId="{!v.recordId}" />
+    </div>
+</aura:component>

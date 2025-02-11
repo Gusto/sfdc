@@ -1,0 +1,38 @@
+<!--
+@File Name          : CaseMassUpdateLightning.page
+@Description        : 
+@Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+@Group              : 
+@Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+@Last Modified On   : 7/2/2020, 6:52:10 PM
+@Modification Log   : 
+Ver       Date            Author                Modification
+1.0    6/26/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<apex:page standardController="Case" recordSetVar="caseList" docType="html-5.0" extensions="CaseMassUpdateLightningController">
+    <apex:includeLightning />
+    <apex:slds />
+
+    <div style="width:100%;height:100%" id="LightningContainer"/>
+    <script type="text/javascript">
+    var caseId = {!getCaseRecordList};
+    // if(UITheme.getUITheme() === "Theme4u"){
+        if(caseId < 1){
+            sforce.one.showToast({"title": "Select at least one record and try again.","message": " ","type": "Error"});
+            window.history.back();
+        } else {
+            $Lightning.use("c:caseMassUpdateApp", function() {
+                $Lightning.createComponent("c:caseMassUpdateAuraComponent", 
+                                           {
+                                               "caseId" : JSON.stringify(caseId)}, //Pass Parameter
+                                           "LightningContainer", function(component) {
+                                               console.log('Component created');
+                                           });
+            });
+        }
+    // } else {
+    //     alert('Please use this feature only in Lightning Experience Console');
+    //  window.history.back();
+    // }
+    </script>
+</apex:page>

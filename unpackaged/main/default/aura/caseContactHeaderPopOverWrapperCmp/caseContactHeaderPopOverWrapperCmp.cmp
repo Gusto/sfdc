@@ -1,0 +1,14 @@
+<aura:component>
+    
+    <aura:attribute name="recordId" type="Id" />
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:registerEvent name="mouseLeaveAccountHeaderEvent" type="c:caseMouseLeaveContactPopoverEvent"/>
+    <aura:registerEvent name="mouseOverAccountHeaderEvent" type="c:caseMouseOverContactPopoverEvent"/>
+    <aura:registerEvent name="caseContactPopOverCloseEvent" type="c:caseContactPopOverCloseEvent"/>
+    <aura:registerEvent name="caseAccountChangeEvent" type="c:caseAccountChangeEvent"/>
+    
+    <div onmouseleave="{!c.handleMouseLeave}" onmouseover="{!c.handleMouseOver}">
+        <c:caseContactHeaderPopOver recordId="{!v.recordId}" onclosepopover="{!c.handleClosePopOver}" onaccountchange="{!c.handleAccountChange}" onopenlink="{!c.handleOpenContact}"/>
+    </div>
+    
+</aura:component>

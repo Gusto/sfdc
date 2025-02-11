@@ -1,0 +1,30 @@
+<template>
+<template lwc:if={fromSendPartnerFlow}>
+    <lightning-input-rich-text value={fieldValue} 
+                               label={fieldLabel} 
+                               label-visible
+                               required={required} 
+                               formats={allowedFormats} 
+                               valid={validity}
+                               class="visibleLines emailStyling slds-wrap"
+                               onchange={handleChange}             
+                               share-with-entity-id={recordId}
+                               disabled={disabledVar}
+                               message-when-bad-input={errorMessage} >
+    </lightning-input-rich-text>
+</template>
+<template lwc:else>
+    <lightning-input-rich-text value={fieldValue} 
+                                    label={fieldLabel} 
+                                    label-visible
+                                    required={required} 
+                                    formats={allowedFormats} 
+                                    valid={validity}
+                                    class="visibleLines"
+                                    onchange={handleChange}             
+                                    share-with-entity-id={recordId}
+                                    disabled={disabledVar}
+                                    message-when-bad-input={errorMessage}>
+        </lightning-input-rich-text>
+</template>
+</template>

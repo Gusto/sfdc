@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <interviewLabel>Login Notfication {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Login Notfication</label>
+    <processType>Flow</processType>
+    <screens>
+        <name>Release_Notes</name>
+        <label>Release Notes</label>
+        <locationX>87</locationX>
+        <locationY>141</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Upcoming</name>
+            <fieldText>&lt;SPAN ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;&lt;B&gt;Upcoming Enchancements&lt;/B&gt;&lt;/FONT&gt;&lt;/SPAN&gt;&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;&lt;/FONT&gt;&lt;/DIV&gt;&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Over the course of the next couple days, there are several notable enhancements will be deployed. A few of the items include:&lt;/FONT&gt;&lt;/DIV&gt;&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;&lt;/FONT&gt;&lt;/DIV&gt;&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;&lt;/FONT&gt;&lt;/DIV&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Automated creation of a benefit order if a the benefits flow is re-entered and completed&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Ability to reopen benefit orders&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Limited ability to reopen opportunities&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Aligned opportunity stages and benefit order statuses&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Improved tracking for closed date, order lost date, effective date&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Total count of how many times a benefits flow has been completed&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Modified account and opportunity page layouts&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Automated note transfer between account, opportunity, and benefit order&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Transparent pricing calculator for both payroll and benefits&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;TEXTFORMAT LEADING=&quot;2&quot;&gt;&lt;LI&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Improved sync with Hippo&lt;/FONT&gt;&lt;/LI&gt;&lt;/TEXTFORMAT&gt;&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;&lt;/FONT&gt;&lt;/DIV&gt;&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;More details will be prepared as part of the release notes.&lt;/FONT&gt;&lt;/DIV&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>confirmation</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>false</booleanValue>
+            </defaultValue>
+            <fieldText>I confirm that I have read this announcement</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+            <validationRule>
+                <errorMessage>Please read and confirm before proceeding</errorMessage>
+                <formulaExpression>{!confirmation}</formulaExpression>
+            </validationRule>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Release_Notes</startElementReference>
+    <status>Active</status>
+</Flow>

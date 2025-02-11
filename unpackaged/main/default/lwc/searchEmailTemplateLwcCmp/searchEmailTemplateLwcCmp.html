@@ -1,0 +1,63 @@
+<template>
+	<div style="height: 435px; overflow-y: hidden; overflow-x: hidden" class="slds-p-bottom_xx-large">
+		<template if:true={blnIsLoading}>
+			<lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+		</template>
+
+		<lightning-layout horizontal-align="center" vertical-align="center">
+			<!--Picklist of all Email template folders-->
+			<lightning-layout-item size="4" padding="horizontal-small">
+				<lightning-combobox name="progress" value={strSelectedFoldervalue} placeholder="Select Folder" options={lst_allTemplateFoldersMasterRecords} onchange={handleFolderNameChange}>
+				</lightning-combobox>
+			</lightning-layout-item>
+			<!--Search box for email template name-->
+			<lightning-layout-item padding="horizontal-small">
+				<lightning-input type="Search" value={strSelectedField} onchange={handleFilterList} placeholder="Search"></lightning-input>
+			</lightning-layout-item>
+		</lightning-layout>
+
+		<!--Table to show list if template name and preview of selected template-->
+		<lightning-layout horizontal-align="center" vertical-align="center">
+			<lightning-layout-item class="slds-p-right_large slds-p-left_large slds-p-top_medium">
+				<table class="slds-box slds-table--fixed-layout">
+					<tbody>
+						<template if:true={blnShowTable}>
+							<tr>
+								<!--List of templates in the selected folder-->
+								<td width="30%" style="vertical-align: top">
+									<div style="height: 360px; overflow-y: scroll">
+										<table class="slds-table">
+											<template for:each={lst_filteredEmailTemplateRecords} for:item="mapKey">
+												<tr key={mapKey.id} class="slds-hint-parent">
+													<td
+														class="slds-cell-wrap slds-border_bottom slds-border_right"
+														onmouseover={handleLinkHover}
+														onmouseout={handleTemplateMouseOut}
+														data-idval={mapKey.Id}
+													>
+														<a onclick={handleOpenEmailTemplatePusblisher}>
+															<b>{mapKey.Name}</b>
+														</a>
+														<br />
+														{mapKey.Description}
+													</td>
+												</tr>
+											</template>
+										</table>
+									</div>
+								</td>
+
+								<!--Preview of selected template-->
+								<td width="70%" style="vertical-align: top" class="slds-cell-wrap slds-p-around_small slds-border_left">
+									<div style="height: 360px; overflow-x: scroll; white-space: normal">
+										<lightning-formatted-rich-text value={strBody}></lightning-formatted-rich-text>
+									</div>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</lightning-layout-item>
+		</lightning-layout>
+	</div>
+</template>

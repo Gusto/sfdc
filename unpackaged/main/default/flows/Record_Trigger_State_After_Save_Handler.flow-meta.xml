@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>61.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>Record Trigger: State After Save Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: State After Save Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Agency_is_no_longer_licensed_in_state</name>
+        <label>Update Agency is no longer licensed in state</label>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
+        <inputAssignments>
+            <field>Agency_Licensed_in_State__c</field>
+            <value>
+                <stringValue>No</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>AND(ISPICKVAL({!$Record.Agency_Licensed_in_State__c}, &quot;Yes&quot;), {!$Record.Agency_State_License_Expiration_Date__c} &lt; TODAY())</filterFormula>
+        <object>State__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Agency_is_no_longer_licensed_in_state</name>
+            <connector>
+                <targetReference>Update_Agency_is_no_longer_licensed_in_state</targetReference>
+            </connector>
+            <label>Agency is no longer licensed in state</label>
+            <offsetNumber>0</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Agency_State_License_Expiration_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+</Flow>

@@ -1,0 +1,18 @@
+<!--
+    Description: This component has only one button (View Full Case)
+    that updates Case_In_Route__c field to be false. Case_In_Route__c is 
+    a flag used by captains and PEs to route case
+    Author: Praveen Sethu
+    Date: 09/16/2020
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" controller="ViewFullCaseController">
+    <aura:attribute name="blnIsLoading" type="Boolean" default="false" />
+    <aura:if isTrue="{!v.blnIsLoading}">
+        <lightning:spinner alternativeText="Loading" size="small" variant="brand" />
+    </aura:if>
+    <div class="slds-theme_default">
+        <div class="slds-align_absolute-center slds-p-around_small">
+            <lightning:button variant="brand" label="View Full Case" title="View Full Case" onclick="{! c.handleViewFullCase }" />
+        </div>
+    </div>
+</aura:component>

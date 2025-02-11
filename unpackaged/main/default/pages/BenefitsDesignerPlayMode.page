@@ -1,0 +1,84 @@
+<apex:page controller="BenefitsDesignerPlayModeCtrl" sidebar="false" docType="html-5.0">
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <style>
+        .btn-custom{
+            background-repeat: no-repeat !important;
+            background-position: 4px -261px !important;
+            height: 21px;
+            width: 29px;
+            background-image: url('/img/support/servicedesk/serviceDeskListReskin-sprite.png') !important;
+         }    
+    </style>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js" />	   
+    <script>
+        function OpenRecordInPrimaryTab(ids, names) {
+            if (sforce.console.isInConsole()) {
+                if(ids != '' && ids != null) {
+                    var list_ids = ids.split(",");
+                    var list_names = names.split(",");
+                    var blnTabActive = true;
+                    list_ids.forEach(function(value, index, array){
+                        var redirectUrl = '/'+value+'?o=1'+'&id='+value;
+						sforce.console.openPrimaryTab(null,redirectUrl ,blnTabActive,list_names[index]);
+                        
+                        if(blnTabActive == true) {
+                            blnTabActive = false;
+                        }
+                    });
+                }
+            }	else {
+                
+                if(ids != '' && ids != null) {
+                    var list_ids = ids.split(',');
+                    var list_names = names.split(',');
+                    
+                    list_ids.foreach(function(value, index, array){
+                        window.top.location.href = '/' + value;
+                    });
+                }
+            }
+        } 
+    	
+    	function refreshPage(){
+            location.reload();
+        }
+    	
+    	var eventHandler = function (result) {
+            refreshPage();
+        };
+    	sforce.console.onCustomConsoleComponentButtonClicked(eventHandler); 
+    </script>
+    <apex:form id="frm">
+        <c:GustoActionStatus /> 
+        <div class="slds-scope"> 
+            <apex:pageMessages id="messageSection"/>
+            <apex:pageBlock rendered="{!blnIsBenefitDesginer}">
+                <div>
+                    <apex:commandButton oncomplete="OpenRecordInPrimaryTab('{!strAssignedOpportunityIds}','{!strAssignedOpportunityNames}');" status="actStatusId" action="{!playOpportunities}" rerender="frm,messageSection" value="Play" disabled="{!IF(NOT(blnPlayModeConfigComplete) || intOpptiesInReadyForDefault > 0, true, false)}"/>
+                	<input type="button" class="btn btn-custom" title="Refresh" onclick="refreshPage();" status="status"/>
+                </div>
+                <apex:pageBlockSection >
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >#My Ready for build Opps</apex:outputLabel>
+                        <apex:outputText >{!intOpptiesInReadyForDefault}</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >#Opportunities in Blocked</apex:outputLabel>
+                        <apex:outputText >{!intOpptiesInBlocked}</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Oldest Blocked Timestamp</apex:outputLabel>
+                        <apex:outputText value="{0, date,d MMMM yyyy HH:mm a}">
+                            <apex:param value="{!dtLatestBlockedTimestamp}" /> 
+                        </apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >#Recommendations sent today</apex:outputLabel>
+                        <apex:outputText >{!intRecommendationsSentCount}</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+    	</div>
+    </apex:form>
+</apex:page>

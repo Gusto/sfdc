@@ -1,0 +1,256 @@
+<!--
+  @Author:          Alex Xiong
+  @Description:     Aura cmp to update multiple Cases
+-->
+<aura:component implements="lightning:isUrlAddressable" controller="CaseMassUpdateLightningController">
+	<!-- All String Attributes -->
+	<aura:attribute name="caseId" type="String" />
+	<aura:attribute name="selectedRecordType" type="String" />
+	<aura:attribute name="selectedOwnerType" type="String" />
+	<aura:attribute name="selectedAssignmentType" type="String" />
+	<aura:attribute name="selectedStatus" type="String" />
+	<aura:attribute name="headerMessge" type="String" default="The following records are going to be impacted due to mass update." />
+	<aura:attribute name="recordTypeId" type="String" />
+	<aura:attribute name="errorMessage" type="String" />
+	<aura:attribute name="strChatterText" type="String" default="Mass updated. Please do not route back to FS." />
+	<aura:attribute name="strRoundRobin" type="String" default="round_robin" />
+	<aura:attribute name="strIcAssignment" type="String" default="ic_assignment" />
+	<aura:attribute name="strAccountSpecialist" type="String" default="Account Specialist" />
+	<aura:attribute name="strMassUpdate" type="String" default="Mass Update" />
+	<aura:attribute name="strCoordinator" type="String" default="Coordinator" />
+	<aura:attribute name="strReadyForResearch" type="String" default="Ready for Research" />
+	<aura:attribute name="strResearchInProgress" type="String" default="Research in progress" />
+	<aura:attribute name="strWaitingForCoordinator" type="String" default="Waiting for Coordinator" />
+	<aura:attribute name="strMFRTCaseStatus" type="String" default="Closed" />
+
+	<!-- All List Attributes -->
+	<aura:attribute name="caseReasonList" type="List" />
+	<aura:attribute name="caseRecordTypeList" type="List" />
+	<aura:attribute name="largeScaleIssueList" type="List" />
+	<aura:attribute name="fieldSearchList" type="List" />
+	<aura:attribute name="fieldSearchMasterList" type="List" />
+	<aura:attribute name="fieldsApiNameList" type="List" />
+	<aura:attribute name="columns" type="List" />
+	<aura:attribute name="caseIdList" type="List" />
+	<aura:attribute name="taxResOwnerTypeList" type="List" />
+	<aura:attribute name="taxResStatusList" type="List" />
+	<aura:attribute name="taxResAssignmentTypeList" type="List" />
+
+	<!-- All Boolean Attributes -->
+	<aura:attribute name="isLoading" type="Boolean" default="false" />
+	<aura:attribute name="isOwnerIdAvailable" type="Boolean" default="false" />
+	<aura:attribute name="isError" type="Boolean" />
+	<aura:attribute name="blnPostFeed" type="Boolean" default="false" />
+	<aura:attribute name="blnDisplayTaxResStatus" type="Boolean" default="false" />
+	<aura:attribute name="blnDisplayTaxResOwner" type="Boolean" default="false" />
+	<aura:attribute name="blnDisplayAssignmentType" type="Boolean" default="false" />
+	<aura:attribute name="blnIsMFRTCase" type="Boolean" default="false" />
+
+	<!-- All Object Attributes -->
+	<aura:attribute name="toUpdateCase" type="Case" default="{ 'sobjectType': 'Case' }" />
+	<aura:attribute name="data" type="Object" />
+
+	<!-- All Event Handlers -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+	<aura:attribute name="selectedField" type="String" default="" />
+	<aura:attribute name="selectedFieldConfirmCase" type="String" default="" />
+
+	<aura:attribute name="caseReasonListLabels" type="List" />
+	<aura:attribute name="masterCaseReasonListLabels" type="List" />
+
+	<!-- Show Loading Spinner When fetching data using Apex -->
+	<aura:if isTrue="{!v.isLoading}">
+		<lightning:spinner alternativeText="Loading" variant="brand" size="medium" />
+	</aura:if>
+
+	<div class="slds-box slds-theme_default">
+		<div class="slds-text-heading_large slds-align_absolute-center slds-var-p-bottom_medium">Mass Update</div>
+
+		<div class="slds-text-heading_small slds-var-p-bottom_medium">
+			<aura:unescapedHtml value="{!v.headerMessge}" />
+		</div>
+
+		<!-- Handle Errors on the Page. Example - If user selects a record type that is not supported -->
+		<aura:if isTrue="{!v.isError}">
+			<div class="slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+				<span class="slds-assistive-text">error</span>
+				<span class="slds-icon_container slds-icon-utility-error slds-var-m-right_x-small" title="Error">
+					<lightning:icon iconName="utility:error" size="small" alternativeText="Error" title="Error" />
+				</span>
+				<h2>{!v.errorMessage} Please click &#160; <a onclick="{!c.handleCancel}">here</a> &#160; to return back to the list view.</h2>
+			</div>
+
+			<aura:set attribute="else">
+				<div>
+					<lightning:layout horizontalAlign="spread" multipleRows="true">
+						<lightning:layoutItem size="12">
+							<lightning:combobox
+								name="recordTypeList"
+								label="Record Type Id"
+								placeholder="Select Record Type"
+								value="{!v.selectedRecordType}"
+								options="{! v.caseRecordTypeList }"
+								onchange="{! c.handleRecordTypeChange }"
+							/>
+						</lightning:layoutItem>
+					</lightning:layout>
+					<aura:if isTrue="{!v.selectedRecordType == 'Tax Res'}">
+						<lightning:layout horizontalAlign="spread" multipleRows="true">
+							<lightning:layoutItem size="12">
+								<lightning:combobox
+									name="ownerTypeList"
+									label="Target Owner Type"
+									placeholder="Select Target Owner Type"
+									value="{!v.selectedOwnerType}"
+									options="{!v.taxResOwnerTypeList}"
+									onchange="{!c.handleOwnerTypeChange}"
+								/>
+							</lightning:layoutItem>
+							<aura:if isTrue="{!v.selectedOwnerType != 'Mass Update'}">
+								<aura:if isTrue="{!v.blnDisplayAssignmentType}">
+									<lightning:layoutItem size="12">
+										<lightning:combobox
+											name="assignmentTypeList"
+											label="Assignment Type"
+											placeholder="Select Assignment Type"
+											value="{!v.selectedAssignmentType}"
+											options="{!v.taxResAssignmentTypeList}"
+											onchange="{!c.handleAssignmentTypeChange}"
+										/>
+									</lightning:layoutItem>
+								</aura:if>
+								<aura:if isTrue="{!v.blnDisplayTaxResStatus}">
+									<lightning:layoutItem size="12">
+										<lightning:combobox
+											name="statusTypeList"
+											label="Target Status"
+											placeholder="Select Status"
+											value="{!v.selectedStatus}"
+											options="{!v.taxResStatusList}"
+											onchange="{!c.handleStatusChange}"
+											disabled="true"
+										/>
+									</lightning:layoutItem>
+								</aura:if>
+	
+								<aura:if isTrue="{!v.blnDisplayTaxResOwner}">
+									<lightning:layoutItem size="12">
+										<lightning:recordEditForm objectApiName="Case">
+											<label class="slds-form-element__label">Select Owner</label>
+											<lightning:inputField aura:id="caseOwner" fieldName="Account_Specialist__c" variant="label-hidden" />
+										</lightning:recordEditForm>
+									</lightning:layoutItem>
+								</aura:if>
+							</aura:if>
+						</lightning:layout>
+					</aura:if>
+
+					<aura:if isTrue="{!OR(v.selectedRecordType != 'Tax Res', v.selectedOwnerType == 'Mass Update')}">
+						<lightning:layout horizontalAlign="spread" multipleRows="true">
+							<aura:if isTrue="{!v.blnIsMFRTCase}">
+								<aura:iteration items="{!v.fieldsApiNameList}" var="field">
+									<lightning:layoutItem size="12">
+										<aura:if isTrue="{!field.fieldApiName != 'OwnerId'}">
+											<aura:if isTrue="{!field.fieldApiName == 'Status'}">
+												<lightning:recordEditForm objectApiName="Case" recordTypeId="{!v.recordTypeId}">
+													<lightning:inputField value="{!v.strMFRTCaseStatus}" fieldName="{!field.fieldApiName}" variant="label-stacked" onchange="{!c.handleDataChange}" />
+												</lightning:recordEditForm>
+												<aura:set attribute="else">
+													<lightning:recordEditForm objectApiName="Case" recordTypeId="{!v.recordTypeId}">
+														<lightning:inputField fieldName="{!field.fieldApiName}" variant="label-stacked" onchange="{!c.handleDataChange}" />
+													</lightning:recordEditForm>
+												</aura:set>
+											</aura:if>
+										</aura:if>
+									</lightning:layoutItem>
+								</aura:iteration>
+								<aura:set attribute="else">
+									<aura:iteration items="{!v.fieldsApiNameList}" var="field">
+										<aura:if isTrue="{!and(field.fieldApiName != 'OwnerId')}">
+											<lightning:layoutItem size="12">
+												<aura:if isTrue="{!field.isFieldComboBox}">
+													<aura:if isTrue="{!or( (field.fieldApiName == 'Routing_Case_Reason__c'), (field.fieldApiName == 'Confirm_Case_Reason__c'))}">
+														<aura:if isTrue="{!and(field.fieldApiName == 'Routing_Case_Reason__c')}">
+															<c:autoCompleteCmp
+																autocompletelist="{!v.caseReasonListLabels}"
+																label="Routing Case Reason"
+																onfilterlist="{!c.handleFilterList}"
+																onfilterselected="{!c.handleFilterSelected}"
+																icon="standard:case"
+																selectedvalue="{!v.selectedField}"
+																auracomponent="true"
+															>
+															</c:autoCompleteCmp>
+															<aura:set attribute="else">
+																<c:autoCompleteCmp
+																	autocompletelist="{!v.caseReasonListLabels}"
+																	label="Confirm Case Reason"
+																	onfilterlist="{!c.handleFilterList}"
+																	onfilterselected="{!c.handleFilterSelectedConfirm}"
+																	icon="standard:case"
+																	selectedvalue="{!v.selectedFieldConfirmCase}"
+																	auracomponent="true"
+																>
+																</c:autoCompleteCmp>
+															</aura:set>
+														</aura:if>
+													</aura:if>
+													<aura:if isTrue="{!and(field.fieldApiName == 'Large_Scale_Issue__c')}">
+														<lightning:combobox
+															name="{!field.fieldApiName}"
+															label="{!field.fieldLabel}"
+															onchange="{!c.handleLargeScaleIssueChange}"
+															placeholder="Select Large Scale Issue"
+															options="{!v.largeScaleIssueList}"
+														/>
+													</aura:if>
+
+													<aura:set attribute="else">
+														<lightning:recordEditForm objectApiName="Case" recordTypeId="{!v.recordTypeId}">
+															<lightning:inputField fieldName="{!field.fieldApiName}" variant="label-stacked" onchange="{!c.handleDataChange}" />
+														</lightning:recordEditForm>
+													</aura:set>
+												</aura:if>
+											</lightning:layoutItem>
+										</aura:if>
+									</aura:iteration>
+								</aura:set>
+							</aura:if>
+							<lightning:layoutItem aura:id="ownerIdClass" size="6">
+								<label class="slds-form-element__label">Post Chatter</label>
+								<lightning:input aura:id="postChatter" type="checkbox" onchange="{!c.handlePostFeedChange}" />
+								<aura:if isTrue="{!v.blnPostFeed}">
+									<lightning:input label="Chatter Post Text" value="{!v.strChatterText}" />
+								</aura:if>
+
+								<label class="slds-form-element__label">Owner Id</label>
+								<force:inputField aura:id="ownerId" value="{!v.toUpdateCase.OwnerId}" />
+							</lightning:layoutItem>
+						</lightning:layout>
+					</aura:if>
+					<div aura:id="ownerUpdate" class="slds-hide">
+						<label class="slds-form-element__label">Owner Id</label>
+						<force:inputField value="{!v.toUpdateCase.OwnerId}" />
+					</div>
+					<br />
+					<div class="slds-text-align_center">
+						<lightning:button variant="brand" label="Update Records" onclick="{!c.handleMassUpdate}" />
+						&nbsp; &nbsp;
+						<lightning:button variant="neutral" label="Update and Route" onclick="{!c.handleMassUpdate}" />
+					</div>
+					<br />
+					<div class="slds-text-align_center">
+						<lightning:button label="Cancel" onclick="{!c.handleCancel}" />
+					</div>
+				</div>
+			</aura:set>
+		</aura:if>
+		<br />
+		<!-- Data table that shows users all their selected records -->
+		<div class="datatable slds-var-p-bottom_medium">
+			<lightning:datatable keyField="id" data="{!v.data}" columns="{!v.columns}" hideCheckboxColumn="true" class="slds-var-p-bottom_medium" />
+		</div>
+		<br />
+	</div>
+</aura:component>

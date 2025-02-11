@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Subscriptions__c</fullName>
+    <description>Subscriptions that customers have opted in to receive from the Subscription Center in product.</description>
+    <inlineHelpText>Subscriptions that customers have opted in to receive.</inlineHelpText>
+    <label>Subscription Preferences</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Biz Newsletter</fullName>
+                <default>false</default>
+                <label>Biz Newsletter</label>
+            </value>
+            <value>
+                <fullName>Feature Announcements</fullName>
+                <default>false</default>
+                <label>Feature Announcements</label>
+            </value>
+            <value>
+                <fullName>Benefit Announcements</fullName>
+                <default>false</default>
+                <label>Benefit Announcements</label>
+            </value>
+            <value>
+                <fullName>Deals and Promos</fullName>
+                <default>false</default>
+                <label>Deals and Promos</label>
+            </value>
+            <value>
+                <fullName>Financial Products</fullName>
+                <default>false</default>
+                <label>Financial Products</label>
+            </value>
+            <value>
+                <fullName>Referrals</fullName>
+                <default>false</default>
+                <label>Referrals</label>
+            </value>
+            <value>
+                <fullName>CSAT</fullName>
+                <default>false</default>
+                <label>CSAT</label>
+            </value>
+            <value>
+                <fullName>Survey</fullName>
+                <default>false</default>
+                <label>Survey</label>
+            </value>
+            <value>
+                <fullName>UX Research</fullName>
+                <default>false</default>
+                <label>UX Research</label>
+            </value>
+            <value>
+                <fullName>Outreach</fullName>
+                <default>false</default>
+                <label>Outreach</label>
+            </value>
+            <value>
+                <fullName>Marketing Email Opt Out</fullName>
+                <default>false</default>
+                <label>Marketing Email Opt Out</label>
+            </value>
+            <value>
+                <fullName>Account Partner News</fullName>
+                <default>false</default>
+                <label>Account Partner News</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

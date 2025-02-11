@@ -1,0 +1,12 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:hasSObjectName"
+access="global">
+    <aura:attribute name="recordId" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:html tag="style">
+        .slds-modal__container{
+        width: 70%;
+        max-width: unset;
+        }
+    </aura:html>
+    <c:orderProductActions recordId="{!v.recordId}" objectApiName="{!v.sObjectName}" onclose="{!c.closeQA}"/>
+</aura:component>

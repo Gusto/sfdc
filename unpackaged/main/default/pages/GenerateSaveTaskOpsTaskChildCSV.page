@@ -1,0 +1,28 @@
+<apex:page standardController="Tax_Ops_Task__c" extensions="TaxOpsTaskCSVImportController" action="{!saveChildDetailsAsCSVAttachment}">
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    
+    <script>
+        function refreshClosePage(){
+            reopenTab();
+        }
+        
+        function reopenTab() 
+        {
+            
+            sforce.console.getFocusedPrimaryTabId(reopenTabById); 
+        }
+        
+        var reopenTabById = function reopenTabById(result) 
+        {
+            var tabId = result.id;
+            //alert(tabId);
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.openPrimaryTab(tabId ,'/{!Tax_Ops_Task__c.id}' ,true);
+        };
+    </script>
+    
+    <div>
+        <apex:pageMessages />
+        <input class="btn" type="button" onclick="refreshClosePage();return false;" value="Go back."/>
+    </div>
+</apex:page>

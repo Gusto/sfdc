@@ -1,0 +1,126 @@
+<apex:page standardController="Case" extensions="CaseTransitionToFulfillmentExtension">
+    <style> 
+    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+</style>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>    
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:form >
+            
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Benefits Point of Contact : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Benefits_Point_of_Contact__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Contact Preference : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Contact_Preference__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Medical Carrier : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Medical_Carrier__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Dental Carrier : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Dental_Carrier__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Vision Carrier : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Vision_Carrier__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">LiDi Carrier : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.LiDi_Carrier__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Is LiDi contributory ? : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Is_LiDi_contributory__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">FSA/HSA/401K : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.FSA_HSA_401K__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Notes for the CX team : </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!transition.Notes_for_the_CX_team__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                
+
+            </Table>
+            <br/>
+            <apex:outputField value="{!theCase.Description}"/>
+        </apex:form>
+    </div>    
+</apex:page>

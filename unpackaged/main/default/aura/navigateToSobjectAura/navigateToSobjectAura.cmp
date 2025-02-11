@@ -1,0 +1,5 @@
+<aura:component implements="force:lightningQuickAction,lightning:availableForFlowActions" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.invoke}" description="Handler Init event fired when the component has been initialised"/>
+</aura:component>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Assign_Quantity</name>
+        <label>Assign Quantity</label>
+        <locationX>50</locationX>
+        <locationY>395</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Quantity</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Employees</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Product_Family</name>
+        <label>Product Family?</label>
+        <locationX>182</locationX>
+        <locationY>287</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Benefit</name>
+            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Product2.Family</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefit</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>ISNEW</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Quantity</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Opportunity.NumberOfEmployees__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Quantity</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>Benefit</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>Employees</name>
+        <dataType>Number</dataType>
+        <expression>IF( {!$Record.Opportunity.NumberOfEmployees__c} =0, 1, {!$Record.Opportunity.NumberOfEmployees__c})</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>ISNEW</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>OpportunityLineItem Before Trigger {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>OpportunityLineItem Before Save Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Product_Family</targetReference>
+        </connector>
+        <filterFormula>NOT({!$Permission.Bypass_Flows})</filterFormula>
+        <object>OpportunityLineItem</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

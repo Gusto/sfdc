@@ -1,0 +1,388 @@
+<apex:page standardController="Case" lightningStyleSheets="true">
+    <apex:includeScript value="/support/console/48.0/integration.js"/>
+    <apex:slds />
+    <div class="slds-scope">
+        <div class="slds-text-align_center">
+            <h2 id="caseNumber"></h2>
+        </div>
+        <div id="preForm">
+            <div class="slds-form-element slds-p-bottom_x-small">
+                <label class="slds-form-element__label" for="combobox-id-1">Chat Reason</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-combobox_container">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                      <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        <input type="text" class="slds-input slds-combobox__input" id="chatReason" aria-controls="listbox-id-1" autoComplete="off" role="textbox" placeholder="Select an Option" value="General Question" readonly="true"/>
+                        <span class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                          <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                            <use xmlns:xlink="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+                          </svg>
+                        </span>
+                      </div>
+                      <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                          <li role="presentation" class="slds-listbox__item">
+                            <div id="option1" class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                              <span class="slds-media__figure slds-listbox__option-icon"></span>
+                              <span class="slds-media__body">
+                                <span class="slds-truncate" title="General Question">General Question</span>
+                              </span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="textarea-id-01">Question</label>
+                <div class="slds-form-element__control slds-p-bottom_medium">
+                  <textarea id="question" required="" class="slds-textarea" placeholder="Enter your question here."></textarea>
+                </div>
+              </div>
+            <button id="start" class="refresh" onclick="startChat();">Next</button>
+        </div>
+        <div id="notCase" class="slds-p-vertical_medium">
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                <span class="slds-assistive-text">warning</span>
+                <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+                  <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                    <use xmlns:xlink="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                  </svg>
+                </span>
+                <h2>Please start chat from a case page.</h2>
+              </div>
+        </div>
+        <br/>
+        <div>
+            <button id="refresh" class="refresh" onclick="refresh();">End Chat and Refresh</button>
+        </div>
+    </div>
+    
+    <style type='text/css'>
+        .slds-icon-text-default {
+            fill: white !important;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton {
+            background-color: #0A8080;
+            font-family: "Arial", sans-serif;
+            max-width: 25em;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton:focus {
+            outline: 1px solid #0A8080;
+        }
+        .refresh {
+            bottom: 0;
+            width: 100%;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            text-align: center;
+            vertical-align: middle;
+            justify-content: center;
+            border: 1px solid #dddbda;
+            transition: border .15s linear;
+            background-color: #0070d2;
+            border-color: #0070d2;
+            color: #fff;
+            border-radius: .25rem;
+            line-height: 1.875rem;
+        }
+        #alert {
+            background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.025) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.025) 50%, rgba(0, 0, 0, 0.025) 75%, transparent 75%, transparent);
+            background-size: 64px 64px;
+            background-color: rgb(255, 183, 93);
+            color: rgb(8, 7, 7);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: rgba(rgb(112, 110, 107), 0.95);
+            font-weight: 300;
+            padding: .5rem 2rem .5rem .5rem;
+            text-align: center;
+            width: 100%;
+        }
+
+    </style>
+    
+    <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+    <script type='text/javascript'>
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.OPEN_TAB, handleOpenTab);
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB, handleCloseTab);
+        sforce.console.addEventListener(sforce.console.ConsoleEvent.CLOSE_TAB, handleCloseTab);
+        sforce.console.onFocusedPrimaryTab(handleTabFocus);
+
+        function testGetFocusedPrimaryTabObjectId() {
+            sforce.console.getFocusedPrimaryTabObjectId(showObjectId);
+        }
+        var showObjectId = function showObjectId(result) {
+            //Display the object ID
+            console.log('case id ', result);
+            initESW('https://service.force.com', latestCase);
+        };
+        
+        var boolChatStarted = false;
+        var latestCase;
+        // document.addEventListener(
+        //     "setCustomField",
+        //     function(event) {
+        //         embedded_svc.settings.extraPrechatFormDetails[5].value = document.getElementById("chatReason").value;
+        //         // Fire startChat callback.
+        //         event.detail.callback();
+        //     },
+        //     false
+        // );
+
+        window.onload = function () {
+            sforce.console.getFocusedPrimaryTabId(getPageInfo);
+        };
+    
+        function getPageInfo(result) {
+            sforce.console.getPageInfo(result.id, displayResult);
+        }
+
+        function displayResult(result) {
+            console.log('! result', result);
+            console.log('! pageInfo ', result.pageInfo);
+            if(result.pageInfo !== null && result.pageInfo !== "null" && result.pageInfo !== undefined) {
+                console.log('! not null');
+                var pageInfo = JSON.parse(result.pageInfo);
+                console.log('!pageinfo ', pageInfo);
+                if(pageInfo.objectId.startsWith('500')) {
+                    console.log('! is case');
+                    if(!pageInfo.objectName) {
+                        console.log('!not case');
+                        //close tab, no object name
+                        showWarning();
+                    }
+                    else {
+                        //opened, is on Case
+                        console.log('! show name');
+                        showPreForm();
+                        document.getElementById("caseNumber").innerHTML = "Case " + pageInfo.objectName;
+                        latestCase = pageInfo.objectId;
+                    }
+                }
+                else {
+                    //not on case
+                    console.log('! not case still');
+                    showWarning();
+                }
+            }
+            else {
+                console.log('! here');
+                showWarning();
+            }
+            
+        }
+        function showWarning() {
+            var preForm = document.getElementById("preForm");
+            preForm.style.display = "none";
+            var caseNum = document.getElementById("caseNumber");
+            caseNum.style.display = "none";
+            var notCase = document.getElementById("notCase");
+            notCase.style.display = "block";
+            var refreshBtn = document.getElementById("refresh");
+            refreshBtn.style.display = "block";
+        }
+        
+        function showPreForm() {
+            var preForm = document.getElementById("preForm");
+            preForm.style.display = "block";
+            var caseNum = document.getElementById("caseNumber");
+            caseNum.style.display = "block";
+            var notCaseWarning = document.getElementById("notCase");
+            notCaseWarning.style.display = "none";
+            var refreshBtn = document.getElementById("refresh");
+            refreshBtn.style.display = "none";
+        }
+
+        function hideFormAndWarning() {
+            var preForm = document.getElementById("preForm");
+            preForm.style.display = "none";
+            var notCaseWarning = document.getElementById("notCase");
+            notCaseWarning.style.display = "none";
+            var refreshBtn = document.getElementById("refresh");
+            refreshBtn.style.display = "block";
+        }
+
+        function startChat() {
+            //window.location.reload();
+            //get embedded service details - return here and then send to the initESW
+            boolChatStarted = true;
+            hideFormAndWarning();
+            //testGetFocusedPrimaryTabObjectId();
+            initESW('https://service.force.com', latestCase);
+        }
+
+        function handleOpenTab(result) {
+            if(boolChatStarted === false) {
+                if(result.objectId.startsWith('500')) {
+                    setTimeout(() => { 
+                        sforce.console.getPageInfo(result.id, displayResult);
+                    }, 3000);
+                    
+                }
+                else {
+                    showWarning();
+                }
+            }
+        }
+
+        function handleCloseTab(result) {
+            if(boolChatStarted === false) {
+                sforce.console.getFocusedPrimaryTabId(displayResult);
+            }
+        }
+
+        function handleTabFocus(result) {
+            console.log('! focus');
+            if(boolChatStarted === false) {
+                if(result.objectId.startsWith('500')) {
+                    setTimeout(() => { 
+                        sforce.console.getPageInfo(result.id, displayResult);
+                    }, 3000);
+                    
+                }
+                else {
+                    showWarning();
+                }
+            }
+        }
+
+        function getCaseName(result) {
+            var pageInfo = JSON.parse(result.pageInfo);
+            
+            document.getElementById("caseNumber").innerHTML = "Case " + pageInfo.objectName;
+        }
+
+        function refresh() {
+            if(boolChatStarted) {
+                embedded_svc.liveAgentAPI.clearSession();
+            }
+            window.location.reload(true);
+            boolChatStarted = false;
+        }
+
+        var initESW = function(gslbBaseURL, caseId) {
+            embedded_svc.settings.displayHelpButton = true; //Or false
+            embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+    
+            embedded_svc.settings.defaultMinimizedText = 'Chat with a Captain'; //(Defaults to Chat with an Expert)
+            embedded_svc.settings.disabledMinimizedText = 'No one online'; //(Defaults to Agent Offline)
+    
+            //embedded_svc.settings.loadingText = ''; //(Defaults to Loading)
+            //embedded_svc.settings.storageDomain = 'yourdomain.com'; //(Sets the domain for your deployment so that visitors can navigate subdomains during a chat session)
+    
+            // Settings for Chat
+            console.log("@@@ Case Origin" + "{!Case.Origin}");
+            embedded_svc.settings.directToButtonRouting = function(prechatFormData) {
+                if("{!Case.Origin}" !== "Phone") {
+                    return "5731M000000D7G8";
+                }
+            };
+            //embedded_svc.settings.prepopulatedPrechatFields = {}; //Sets the auto-population of pre-chat form fields
+            //embedded_svc.settings.fallbackRouting = []; //An array of button IDs, user IDs, or userId_buttonId
+            //embedded_svc.settings.offlineSupportMinimizedText = '...'; //(Defaults to Contact Us) 
+            embedded_svc.settings.extraPrechatFormDetails = [{  
+                "label": "Record Type",
+                "value": "0121M000001YgUc",
+                "transcriptFields": [ "RecordTypeId" ],
+                "displayToAgent": false
+            },{  
+                "label": "Record Type",
+                "value": "{!$User.Id}",
+                "transcriptFields": [ "Requested_By__c" ],
+                "displayToAgent": true
+            },{
+                "label": "Case Id",
+                "value": caseId,
+                "displayToAgent": true
+            }, {
+                "label": "First Name",
+                "value": "{!$User.FirstName}",
+                "displayToAgent": true
+            }, {
+                "label": "Last Name",
+                "value": "{!$User.LastName}",
+                "displayToAgent": true
+            },{
+                "label": "User Role",
+                "value": "{!$UserRole.Name}",
+                "displayToAgent": true
+            },{
+                "label": "Chat Reason",
+                "transcriptFields": [ "Chat_Reason__c" ],
+                "value": document.getElementById("chatReason").value,
+                "displayToAgent": true
+            },{
+                "label": "Question",
+                "transcriptFields": [ "Question__c" ],
+                "value": document.getElementById("question").value
+            }];
+            embedded_svc.settings.extraPrechatInfo = [{
+                "entityName": "Case",
+                "saveToTranscript": "CaseId",
+                "entityFieldMaps": [{
+                    "isExactMatch": true,
+                    "doCreate": false,
+                    "doFind": true,
+                    "label": "Case Id",
+                    "fieldName": "Id"
+                },
+                {
+                    "isExactMatch": false,
+                    "fieldName": "Chat_Session_Key__c",
+                    "doCreate": false,
+                    "doFind": false,
+                    "label": "Chat Session Key"
+                }]
+            }, {
+                "entityName": "Contact",
+                "entityFieldMaps": [{
+                    "isExactMatch": false,
+                    "fieldName": "FirstName",
+                    "doCreate": false,
+                    "doFind": false,
+                    "label": "First Name"
+                }, {
+                    "isExactMatch": false,
+                    "fieldName": "LastName",
+                    "doCreate": false,
+                    "doFind": false,
+                    "label": "Last Name"
+                }]
+            }]
+                embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+                embedded_svc.settings.entryFeature = 'LiveAgent';
+        
+                embedded_svc.init(
+                'https://gusto.my.salesforce.com',
+                'https://gusto.secure.force.com/CXInternalChat',
+                gslbBaseURL,
+                '00DG0000000hKQi',
+                'CX_Internal_Chat',
+                {
+                    baseLiveAgentContentURL: 'https://c.la2-c2-iad.salesforceliveagent.com/content',
+                    deploymentId: '5721M000000HIaG',
+                    buttonId: '5731M000000D7G3',
+                    baseLiveAgentURL: 'https://d.la2-c2-iad.salesforceliveagent.com/chat',
+                    eswLiveAgentDevName: 'EmbeddedServiceLiveAgent_Parent04I1M000000KyjVUAS_1732b484afe',
+                    isOfflineSupportEnabled: false
+                }
+            );
+        };
+
+        /*if (!window.embedded_svc) {
+            var s = document.createElement('script');
+            s.setAttribute('src', 'https://gusto--uat.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+            s.onload = function() {
+                initESW(null);
+            };
+            document.body.appendChild(s);
+        } else {
+            initESW('https://service.force.com');}*/
+
+    </script>
+</apex:page>

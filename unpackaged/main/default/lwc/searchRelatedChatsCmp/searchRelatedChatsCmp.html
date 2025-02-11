@@ -1,0 +1,33 @@
+<template>
+    <div class="slds-box background-white">
+        <template if:true={blnShowSpinner}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+        <lightning-layout vertical-align="end" class="slds-p-bottom_medium">
+            <lightning-layout-item size="12" small-device-size="6" medium-device-size="4" large-device-size="5">
+                <lightning-input label="Search" type="search" value={strQuestion} onchange={handleKeyChange}>
+                </lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item class="slds-p-left_x-small">
+                <lightning-button name="Search" variant="brand" onclick={getRelatedChats} label="Find Chats"></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+        <div class="slds-scrollable_y datatable-height">
+            <lightning-datatable if:true={blnShowChats} 
+                                 key-field="id" 
+                                 data={list_Chats} 
+                                 columns={list_DatatableColumns}
+                                 show-row-number-column 
+                                 hide-checkbox-column 
+                                 onrowaction={handleRowAction}>
+            </lightning-datatable>
+            <template if:true={blnNoChatsFound}>
+                <div class="slds-p-top_large">
+                    <p class="slds-align_absolute-center slds-text-heading_small">
+                        No chats found containing the entered text.
+                    </p>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

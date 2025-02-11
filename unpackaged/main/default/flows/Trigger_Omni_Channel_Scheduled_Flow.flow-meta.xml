@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>Trigger Omni Channel Scheduled Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Trigger Omni Channel Scheduled Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Status</name>
+        <label>Update Status</label>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
+        <inputAssignments>
+            <field>isCaseInPlay__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>{!$Record.Owner:User.Id} != null &amp;&amp;
+{!$Record.RecordType.DeveloperName} = {!$Label.Engagement_RecordType_Name} &amp;&amp;
+NOT( ISPICKVAL({!$Record.Origin} , &apos;Phone&apos;) ) &amp;&amp;
+NOT( ISPICKVAL( {!$Record.Origin} , &apos;Chat&apos;) )  &amp;&amp;
+{!$Record.isCaseInPlay__c} = true &amp;&amp;
+ISPICKVAL({!$Record.Status}, &apos;Open&apos;) &amp;&amp; 
+NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;))</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Update_Status</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

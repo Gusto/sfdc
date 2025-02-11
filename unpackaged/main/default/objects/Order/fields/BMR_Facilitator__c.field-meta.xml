@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BMR_Facilitator__c</fullName>
+    <description>This field is created for reporting use only. This will show that the BMR&apos;s are assigned to facilitators but not the order.</description>
+    <externalId>false</externalId>
+    <formula>Bulk_Migration__r.Facilitator__r.FirstName</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>BMR Facilitator</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pricing_Expectations__c</fullName>
+    <label>Pricing Expectations</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Lead_Status_Detail__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Value for Offering</fullName>
+                <default>false</default>
+                <label>Value for Offering</label>
+            </value>
+            <value>
+                <fullName>Cost for 1 EE</fullName>
+                <default>false</default>
+                <label>Cost for 1 EE</label>
+            </value>
+            <value>
+                <fullName>Only Runs Quarterly Payroll</fullName>
+                <default>false</default>
+                <label>Only Runs Quarterly Payroll</label>
+            </value>
+            <value>
+                <fullName>Only Runs Annual Payroll</fullName>
+                <default>false</default>
+                <label>Only Runs Annual Payroll</label>
+            </value>
+            <value>
+                <fullName>Competitor Discounts</fullName>
+                <default>false</default>
+                <label>Competitor Discounts</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Price Too High</controllingFieldValue>
+            <valueName>Value for Offering</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Price Too High</controllingFieldValue>
+            <valueName>Cost for 1 EE</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Price Too High</controllingFieldValue>
+            <valueName>Only Runs Quarterly Payroll</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Price Too High</controllingFieldValue>
+            <valueName>Only Runs Annual Payroll</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Price Too High</controllingFieldValue>
+            <valueName>Competitor Discounts</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

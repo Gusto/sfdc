@@ -1,0 +1,118 @@
+<template>
+	<lightning-card>
+		<lightning-layout multiple-rows="true">
+			<template if:true={blnIsLoading}>
+				<lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+			</template>
+			<lightning-layout-item padding="around-small" size="2">
+				<lightning-input
+					type="text"
+					label="Case Number"
+					placeholder="Enter case number..."
+					minlength="8"
+					message-when-too-short="Please enter the complete case number"
+					value={strCaseNumber}
+					onchange={handleCaseNumber}
+				>
+				</lightning-input>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<lightning-combobox name="priority" label="Priority" value={strPriority} placeholder="Select a Priority" options={priorityOptions} onchange={handlePriorityChange}></lightning-combobox>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<div class="slds-form-element__label slds-no-flex">Skills</div>
+				<lightning-checkbox-group
+					name="skillfilter"
+					options={list_SkillOptions}
+					value={list_SelectedSkills}
+					onchange={handleSkillChange}
+					variant="label-hidden"
+					class="slds-scrollable_y"
+					style="height: 10rem"
+					tabindex="0"
+				></lightning-checkbox-group>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<div class="slds-form-element__label slds-no-flex">Pillar</div>
+				<lightning-checkbox-group
+					name="pillarfilter"
+					options={list_Pillars}
+					value={list_SelectedPillars}
+					onchange={handlePillarChange}
+					variant="label-hidden"
+					class="slds-scrollable_y"
+					style="height: 10rem"
+					tabindex="0"
+				></lightning-checkbox-group>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<div class="slds-form-element__label slds-no-flex">Sub-Pillar</div>
+				<lightning-checkbox-group
+					name="subpillarfilter"
+					options={list_SubPillars}
+					value={list_SelectedSubPillars}
+					onchange={handleSubPillarChange}
+					variant="label-hidden"
+					class="slds-scrollable_y"
+					style="height: 10rem"
+					tabindex="0"
+				></lightning-checkbox-group>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<div class="slds-form-element__label slds-no-flex">WFM Queue Tag</div>
+				<lightning-checkbox-group
+					name="wfmqueuefilter"
+					options={list_WFMQueues}
+					value={list_SelectedWFMQueues}
+					onchange={handleWFMQueueChange}
+					variant="label-hidden"
+					class="slds-scrollable_y"
+					style="height: 10rem"
+					tabindex="0"
+				></lightning-checkbox-group>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<lightning-record-picker label="Agent" placeholder="Search Agents..." object-api-name="User" onchange={handleAgentChange} value={strAgentId}> </lightning-record-picker>
+			</lightning-layout-item>
+			<lightning-layout-item padding="around-small" size="2">
+				<lightning-combobox name="chatbutton" label="Chat Button" value={strChatButtonId} placeholder="Select a Chat Button" options={list_ChatButtons} onchange={handleButtonChange}></lightning-combobox>
+			</lightning-layout-item>
+			<lightning-layout-item class="slds-p-top_x-large" size="4">
+				<lightning-button
+					class="slds-var-p-around_small"
+					disabled={blnDisableFilter}
+					variant="brand"
+					label="Apply Filters"
+					onclick={handleOnFilter}
+					title="Apply Filters"
+					icon-name="utility:filterList"
+				></lightning-button>
+				<lightning-button
+					class="slds-var-p-around_small"
+					disabled={blnDisableClear}
+					label="Clear Filters"
+					title="Clear Filters"
+					onclick={handleOnClear}
+					icon-name="utility:clear"
+				></lightning-button>
+			</lightning-layout-item>
+			<lightning-layout-item size="12">
+				<lightning-layout>
+					<lightning-layout-item padding="around-small" size="12" style="height: 25rem">
+						<div class="slds-p-bottom_small">Backlog Count: <b>{intBacklogCount}</b></div>
+						<c-custom-type-datatable
+							key-field="strCaseNumber"
+							data={list_FilteredData}
+							columns={columns}
+							sorted-by={strSortedBy}
+							sorted-direction={strSortDirection}
+							onsort={updateColumnSorting}
+							hide-checkbox-column="true"
+						>
+						</c-custom-type-datatable>
+					</lightning-layout-item>
+				</lightning-layout>
+			</lightning-layout-item>
+		</lightning-layout>
+	</lightning-card>
+</template>

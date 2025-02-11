@@ -1,0 +1,15 @@
+<template>
+    <div class="spinner">
+        <template lwc:if={blnIsLoading}>
+            <div class="slds-is-relative div-position">
+                <lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" size="medium"> </lightning-spinner>
+            </div>
+        </template>
+    </div>
+	<div class="slds-float_right">
+		<lightning-button variant="brand" label="Add Attachments to Email" onclick={handleClick}></lightning-button>
+	</div>
+	<template lwc:if={blnShowModal}>
+		<c-tax-res-email-attachment-cmp record-id={recordId} onclosemodalpopup={closeModal} onhandleokpopup={handleOk}></c-tax-res-email-attachment-cmp>
+	</template>
+</template>

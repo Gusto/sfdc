@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Ticket_Reason_Detail__c</fullName>
+    <label>Risk Ticket Reason Detail</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Risk_Ticket_Reason__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Expedite Payroll Failure</fullName>
+                <default>false</default>
+                <label>Expedite Payroll Failure</label>
+            </value>
+            <value>
+                <fullName>Recovery Case</fullName>
+                <default>false</default>
+                <label>Recovery Case</label>
+            </value>
+            <value>
+                <fullName>Pending Unsuspension Recovery</fullName>
+                <default>false</default>
+                <label>Pending Unsuspension Recovery</label>
+            </value>
+            <value>
+                <fullName>Risk Tolerance Question</fullName>
+                <default>false</default>
+                <label>Risk Tolerance Question</label>
+            </value>
+            <value>
+                <fullName>Risk Tolerance Approval</fullName>
+                <default>false</default>
+                <label>Risk Tolerance Approval</label>
+            </value>
+            <value>
+                <fullName>Faster Contractor Pay</fullName>
+                <default>false</default>
+                <label>Faster Contractor Pay</label>
+            </value>
+            <value>
+                <fullName>Next Day</fullName>
+                <default>false</default>
+                <label>Next Day</label>
+            </value>
+            <value>
+                <fullName>2-day</fullName>
+                <default>false</default>
+                <label>2-day</label>
+            </value>
+            <value>
+                <fullName>Recovery Wires</fullName>
+                <default>false</default>
+                <label>Recovery Wires</label>
+            </value>
+            <value>
+                <fullName>Wire-Ins</fullName>
+                <default>false</default>
+                <label>Wire-Ins</label>
+            </value>
+            <value>
+                <fullName>Reverse Wires</fullName>
+                <default>false</default>
+                <label>Reverse Wires</label>
+            </value>
+            <value>
+                <fullName>Manual Signatory Verification</fullName>
+                <default>false</default>
+                <label>Manual Signatory Verification</label>
+            </value>
+            <value>
+                <fullName>Payment Review RFI</fullName>
+                <default>false</default>
+                <label>Payment Review RFI</label>
+            </value>
+            <value>
+                <fullName>NACHA Failure RFI</fullName>
+                <default>false</default>
+                <label>NACHA Failure RFI</label>
+            </value>
+            <value>
+                <fullName>Onboarding RFI</fullName>
+                <default>false</default>
+                <label>Onboarding RFI</label>
+            </value>
+            <value>
+                <fullName>Risk Bank Verification (One Time Exception)</fullName>
+                <default>false</default>
+                <label>Risk Bank Verification (One Time Exception)</label>
+            </value>
+            <value>
+                <fullName>Company Looking to Come Back (Rejected by Risk)</fullName>
+                <default>false</default>
+                <label>Company Looking to Come Back (Rejected by Risk)</label>
+            </value>
+            <value>
+                <fullName>Fraudulent Behavior or Activity</fullName>
+                <default>false</default>
+                <label>Fraudulent Behavior or Activity</label>
+            </value>
+            <value>
+                <fullName>Second Pair of Eyes ( &gt; $150k)</fullName>
+                <default>false</default>
+                <label>Second Pair of Eyes ( &gt; $150k)</label>
+            </value>
+            <value>
+                <fullName>Second Pair of Eyes (Suspicious Activity)</fullName>
+                <default>false</default>
+                <label>Second Pair of Eyes (Suspicious Activity)</label>
+            </value>
+            <value>
+                <fullName>Previous Suspension</fullName>
+                <default>false</default>
+                <label>Previous Suspension</label>
+            </value>
+            <value>
+                <fullName>Bank Error</fullName>
+                <default>false</default>
+                <label>Bank Error</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Recovery</controllingFieldValue>
+            <valueName>Expedite Payroll Failure</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recovery</controllingFieldValue>
+            <valueName>Recovery Case</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Recovery</controllingFieldValue>
+            <valueName>Pending Unsuspension Recovery</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Risk Tolerance</controllingFieldValue>
+            <controllingFieldValue>Risk Tolerance-Contractor</controllingFieldValue>
+            <valueName>Risk Tolerance Question</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Risk Tolerance</controllingFieldValue>
+            <controllingFieldValue>Risk Tolerance-Contractor</controllingFieldValue>
+            <valueName>Risk Tolerance Approval</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Faster Payroll</controllingFieldValue>
+            <valueName>Faster Contractor Pay</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Faster Payroll</controllingFieldValue>
+            <valueName>Next Day</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Faster Payroll</controllingFieldValue>
+            <valueName>2-day</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wires (Recovery Wires/Wire-Ins)</controllingFieldValue>
+            <valueName>Recovery Wires</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wires (Recovery Wires/Wire-Ins)</controllingFieldValue>
+            <valueName>Wire-Ins</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wires (Recovery Wires/Wire-Ins)</controllingFieldValue>
+            <valueName>Reverse Wires</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Company Onboarding</controllingFieldValue>
+            <valueName>Manual Signatory Verification</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Payroll Blocker</controllingFieldValue>
+            <valueName>Payment Review RFI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Payroll Blocker</controllingFieldValue>
+            <valueName>NACHA Failure RFI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Payroll Blocker</controllingFieldValue>
+            <valueName>Onboarding RFI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>General Risk</controllingFieldValue>
+            <valueName>Risk Bank Verification (One Time Exception)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>General Risk</controllingFieldValue>
+            <valueName>Company Looking to Come Back (Rejected by Risk)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>General Risk</controllingFieldValue>
+            <valueName>Fraudulent Behavior or Activity</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Re-Approving 2-day</controllingFieldValue>
+            <valueName>Previous Suspension</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Re-Approving 2-day</controllingFieldValue>
+            <valueName>Bank Error</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

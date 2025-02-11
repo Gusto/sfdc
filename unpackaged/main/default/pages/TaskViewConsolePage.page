@@ -1,0 +1,66 @@
+<apex:page standardController="Task" extensions="TaskViewExtension"  docType="html-5.0">
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+	<style> 
+	    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+	</style>
+       <script type="text/javascript">
+            
+	       function RefreshPrimaryTab() 
+	       {
+	           sforce.console.getFocusedPrimaryTabId(showTabId);
+	       }
+	       
+	       var showTabId = function showTabId(result) 
+	       {
+	           var tabId = result.id;
+	           sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+	       };
+	       
+	       var refreshSuccess = function refreshSuccess(result) 
+	       {
+	           //Report whether refreshing the primary tab was successful
+	           if (result.success == true) {
+	           } 
+	           else {
+	           }
+	       };
+	       
+	       //================================================
+	       
+       </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    	
+    <script type="text/javascript">
+        function initiateOpenSubtab() {
+            //First find the ID of the primary tab to put the new subtab in
+            sforce.console.getEnclosingPrimaryTabId(openSubtab);
+        }
+        
+        var openSubtab = function openSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/{!theTask.WhatId}', false, 
+                '{!caseNumber}', null, openSuccess, 'openSuccess');
+        };
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if (result.success == true) {
+                sforce.console.focusSubtabById(result.id,focusSuccess);
+            }
+        };
+    
+        var focusSuccess = function focusSuccess(result) {
+            //Report whether going to the subtab was successful
+            if (result.success == true) {
+            } else {
+            }
+        };    
+    
+    	 if('{!caseNumber}'!=''){
+             sforce.console.openPrimaryTab(null,'/{!theTask.WhatId}', true, openSuccess );
+        }
+    </script>    
+
+</apex:page>

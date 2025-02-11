@@ -1,0 +1,5 @@
+<apex:page controller="UR_ExcludedCSVCtrl" cache="true" action="{!fetchExcludedRecord}" contentType="application/octet-stream#ExcludeCSVRecord.csv" showHeader="false" sidebar="false" standardStylesheets="false">
+    first_name,last_name,email,user_id,employee_id,message
+    <apex:repeat value="{!csvMap}" var="key">
+    {!csvMap[key]}
+</apex:repeat></apex:page>

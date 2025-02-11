@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <decisions>
+        <name>Check_if_Record_Type_is_Engagement</name>
+        <label>Check if Record Type is Engagement</label>
+        <locationX>248</locationX>
+        <locationY>431</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Engagement</name>
+            <conditionLogic>1 AND ((2 AND 3 AND 4) OR 5)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Engagement</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Prior_Owner_Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Prior_Owner_Record.Out_Of_Office__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Boolean_PreviouslyOwnerbyaUser</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Boolean_PreviouslyOwnerbyaQueue</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>IS_Case_TAM_Present</targetReference>
+            </connector>
+            <label>Engagement ?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Checks to see if there a TAM present on account and Account is a reseller then route case to that TAM instead of Omni-Routing.</description>
+        <name>IS_Case_TAM_Present</name>
+        <label>IS Case TAM Present?</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <defaultConnector>
+            <targetReference>Route_to_Agent</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>((1 AND 2 AND 3) OR (4 AND 5 AND (6 OR 7) AND 8) OR ( 9 AND 10 AND 11)) AND NOT(12 AND (13 OR 15)) AND 14</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Persona__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Accountant</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account.Technical_Account_Manager__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reseller</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Company</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account.Technical_Account_Manager__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Company_Size__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Grower 25-49</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Company_Size__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Grower 50</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Persona__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Admin</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account.Technical_Account_Manager__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Persona__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Admin</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Account.CX_Experiment__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Project-GHR</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>In Progress</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Awaiting Response</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnPriority0</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Awaiting Internal Support</stringValue>
+                </rightValue>
+            </conditions>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>PLEASE make changes on top of this version going forward
+
+- Removed references to Prior_Agent__c and renamed the flow label.
+- Added Engagement Alert routing
+- Added custom setting for getting queue ids
+- Added Specialization changes
+- Manual Owner Change trigger
+- Manual Owner Change prioritization
+- Removed Internal Support Requested Form Field condition
+- Added all origins/channels
+- Added checks for Engagement RT
+- Added Negation of Origins/Channels
+- Adding Prior Owner OOO and Inactive check and skip routing
+- Adding new conditions for Engagement Closed Cases
+- Confidential Project (new TAM use case)
+- Removed IsEscalated Logic
+- Added conditions for TAM Cases</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>blnManualOwnerChange</name>
+        <dataType>Boolean</dataType>
+        <expression>{!$Record__Prior.OwnerId} != {!$Record.OwnerId} &amp;&amp;
+{!$Record.OwnerId} != NULL &amp;&amp;
+BEGINS({!$Record.OwnerId}, &quot;005&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Agent went offline and back online and this case needs to only be routed back to them</description>
+        <name>blnPriority0</name>
+        <dataType>Boolean</dataType>
+        <expression>( ( ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;Open&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) &amp;&amp; {!$Record.Owner:User.Id} != null) )</expression>
+    </formulas>
+    <formulas>
+        <description>Boolean set to true if the case was owned by a Queue</description>
+        <name>Boolean_PreviouslyOwnerbyaQueue</name>
+        <dataType>Boolean</dataType>
+        <expression>BEGINS({!$Record__Prior.OwnerId},&quot;00G&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Boolean set to true if the case was owned by a user</description>
+        <name>Boolean_PreviouslyOwnerbyaUser</name>
+        <dataType>Boolean</dataType>
+        <expression>BEGINS({!$Record__Prior.OwnerId}, &quot;005&quot;)</expression>
+    </formulas>
+    <interviewLabel>Omni Owner Routing {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Omni Owner Routing</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get Prior Owner Active and Out Of Office Status</description>
+        <name>Get_Prior_Owner_Record</name>
+        <label>Get Prior Owner Record</label>
+        <locationX>248</locationX>
+        <locationY>323</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_if_Record_Type_is_Engagement</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record__Prior.OwnerId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>IsActive</queriedFields>
+        <queriedFields>Out_Of_Office__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>122</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Prior_Owner_Record</targetReference>
+        </connector>
+        <filterFormula>CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.Omni_Case_Record_Types__c} , {!$Record.RecordType.DeveloperName} ) &amp;&amp;
+            {!$Record.Channel__c} != &apos;Phone&apos; &amp;&amp;
+            {!$Record.Channel__c} != &apos;Chat&apos; &amp;&amp;
+            NOT( CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channels__c}, TEXT( {!$Record.Origin} ))) &amp;&amp;
+            {!$Record.Case_In_Route__c} = false &amp;&amp;
+            (
+            ( ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Response&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) &amp;&amp; NOT(ISCHANGED({!$Record.Re_Route_Count__c})) ) ||
+            ( ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;Open&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;))) ||
+            ( ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Internal Support&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; NOT(ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) ) ||
+            ( ISPICKVAL({!$Record__Prior.Status}, &apos;Closed&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) ) ||
+            ( {!$Record__Prior.OwnerId} != {!$Record.OwnerId} &amp;&amp; {!$Record.OwnerId} != NULL &amp;&amp; BEGINS({!$Record.OwnerId}, &quot;005&quot;) ) )</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Route_to_Agent</name>
+        <label>Route to Agent</label>
+        <locationX>182</locationX>
+        <locationY>647</locationY>
+        <flowName>Route_to_Agent</flowName>
+        <inputAssignments>
+            <name>blnManualOwnerChange</name>
+            <value>
+                <elementReference>blnManualOwnerChange</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>blnPriority0</name>
+            <value>
+                <elementReference>blnPriority0</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>CaseUpdatedRecord</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>EngagementAlert</name>
+            <value>
+                <elementReference>$Record.Engagement_Alert__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>strOwnerId</name>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+</Flow>

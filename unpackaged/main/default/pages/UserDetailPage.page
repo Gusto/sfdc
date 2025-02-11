@@ -1,0 +1,251 @@
+<apex:page standardController="User" extensions="UserDetailExtension" recordSetVar="userList">
+    <apex:slds />
+    <apex:includeScript value="//code.jquery.com/jquery-2.0.3.min.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <script type="text/javascript">
+          var j$ = jQuery.noConflict();
+          
+          function updatecss(){
+            j$('td.selectCell').css('width', '200px');
+            j$('td.buttonCell').css('padding-top', '30px');
+            j$('td.buttonCell').css('width', '100px');
+            j$('td.buttonCell').css('display', 'block');
+          }
+    </script>
+    <style>
+        .gusto img{
+            height:20px;
+        }
+        
+        .gusto h3{
+            font-size:1.5em !important;
+        }
+        tr.spaceUnder>td {
+            padding-bottom: 2em;
+        }
+    </style>
+    <apex:actionstatus id="fetchstatus">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <div class="gusto slds-scope" >
+    <apex:form >
+        <apex:actionFunction name="editUser1" action="{!editUser}" status="fetchstatus" reRender="userListBlock" oncomplete="updatecss();return false">
+            <apex:param name="selectedUserId1" value="" assignTo="{!selectedUserId}"/>
+        </apex:actionFunction>       
+        <apex:pageBlock id="userListBlock">
+            <apex:pageMessages />
+            <apex:outputPanel rendered="{!IF(userList != null && selectedUserId == null, true, false)}">
+                <div>
+                    <apex:selectList value="{!filterId}" size="1">
+                        <apex:actionSupport event="onchange" rerender="userListBlock"/>
+                        <apex:selectOptions value="{!listviewoptions}"/>
+                    </apex:selectList>
+                </div>
+            </apex:outputPanel>
+            <br/>
+            <apex:pageBlockTable value="{!userList}" var="user" rendered="{!IF(selectedUserId == null, true, false)}">
+                <apex:column >
+                    <apex:facet name="header">Action</apex:facet>
+                    <apex:outputLink value="#" onclick="editUser1('{!user.Id}'); return false;">Edit</apex:outputLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">First Name</apex:facet>
+                    <apex:outputLink value="/{!user.id}">{!user.FirstName}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!user.LastName}"/>
+                <apex:column value="{!user.Email}"/>
+                <apex:column value="{!user.Out_Of_Office__c}"/>                         
+            </apex:pageBlockTable>
+            <apex:outputPanel rendered="{!IF(userList != null && selectedUserId == null, true, false)}">    
+                <table style="width: 100%">
+                    <tr>
+                        <td>
+                            <apex:outputText value=" Page {!IF(CEILING(ResultSize/PageSize)==0,0,PageNumber)} of {!CEILING(ResultSize/PageSize)}"/>
+                        </td>
+                        <td style="text-align: center !important;">
+                            <apex:commandLink action="{!Previous}" value="« Previous" rendered="{!HasPrevious}"/>
+                            <apex:outputText style="color: #ccc;" value="« Previous" rendered="{!NOT(HasPrevious)}"/>&nbsp;&nbsp;  
+                            <apex:commandLink action="{!Next}" value="Next »" rendered="{!HasNext}"/>
+                            <apex:outputText style="color: #ccc;" value="Next »" rendered="{!NOT(HasNext)}"/>
+                        </td>
+                        <td style="text-align: right !important;">
+                            <apex:selectList value="{!PageSize}" size="1">
+                                <apex:selectOption itemValue="20" itemLabel="20"/>
+                                <apex:selectOption itemValue="50" itemLabel="50"/>
+                                <apex:selectOption itemValue="100" itemLabel="100"/>
+                                <apex:actionSupport event="onchange" reRender="userListBlock" status="fetchstatus"/>
+                            </apex:selectList>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(selectedUserId != null, true, false)}">                
+                <h3 class="slds-section__title slds-theme--shade">
+                   <span class="slds-truncate slds-p-horizontal_small" title="Section Title" ><svg>{!toEditUserRec.Name}</svg></span>
+                </h3>
+                <Table class="table.spacing" style="width: 80%">
+                    <tbody>
+                        <Tr>
+                            <td class="label-div" style="width:20%">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.All_Queues__c.Label}: </label>
+                            </td>
+                            <td>
+                                <c:MultiselectPicklist leftLabel="Available"
+                                        leftOption="{!allQueueAvailableList}"
+                                        rightLabel="Chosen"
+                                        rightOption="{!selectedAllQueueList}"
+                                        size="5"
+                                        width="200px"/>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.Individual_Queues__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <!-- <apex:inputField value="{!toEditUserRec.Individual_Queues__c}"/> -->
+                                    <c:MultiselectPicklist leftLabel="Available"
+                                        leftOption="{!individualQueueAvailableList}"
+                                        rightLabel="Chosen"
+                                        rightOption="{!selectedIndividualQueueList}"
+                                        size="5"
+                                        width="200px"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.Class_Queue__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.Class_Queue__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.Benefits_Class__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.Benefits_Class__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_Care__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_Care__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_PRC_Class_2__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_PRC_Class_2__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr class="spaceUnder">
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_PRC_Class_3__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_PRC_Class_3__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                        </tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_FSC__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_FSC__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_FSC_Class_2__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_FSC_Class_2__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr class="spaceUnder">
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_FSC_Class_3__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_FSC_Class_3__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_DSP__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_DSP__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_DSP_Class_2__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_DSP_Class_2__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                        <Tr>
+                            <td class="label-div">
+                                <label class="slds-form-element__label" for="allqueue">{!$ObjectType.User.fields.On_The_Floor_Date_DSP_Class_3__c.Label}: </label>
+                            </td>
+                            <td>
+                                <div class="slds-form-element__control" id="allqueue">
+                                    <apex:inputField value="{!toEditUserRec.On_The_Floor_Date_DSP_Class_3__c}"/>
+                                </div>
+                            </td>
+                        </Tr>
+                    </tbody>
+                </Table>                            
+                <br/>
+                <apex:commandButton styleclass="slds-button_neutral" style="padding: 2px 3px !important;" Id="btnUpdate" action="{!updateUser}"  status="fetchstatus" title="Update" value="Update" rerender="userListBlock"></apex:commandButton>
+                <apex:commandButton styleclass="slds-button_neutral" style="padding: 2px 3px !important;" Id="btnCancel" action="{!cancelEditUser}"  status="fetchstatus" title="Cancel" value="Cancel" rerender="userListBlock"></apex:commandButton>
+                    
+            </apex:outputPanel>  
+        </apex:pageBlock>
+    </apex:form>
+    </div>
+            
+</apex:page>

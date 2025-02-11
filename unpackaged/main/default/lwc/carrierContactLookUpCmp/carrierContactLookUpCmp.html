@@ -1,0 +1,135 @@
+<template>
+    
+    <div class="slds-form-element">
+        <label class="slds-form-element__label" for="combobox-id-3">Carrier to Contact</label>
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div
+                    class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                    aria-expanded="false"
+                    aria-haspopup="listbox"
+                    role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                        role="none">
+                        <!-- hide this by default-->
+                        <div class="selectedOption slds-hide">
+                            <span class="slds-icon_container slds-icon-standard-contact slds-combobox__input-entity-icon" title="Contact">
+                                <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small">
+                                </lightning-icon>
+                                <span class="slds-assistive-text">Contact</span>
+                            </span>
+                            <input type="text" 
+                                class="slds-input slds-combobox__input slds-combobox__input-value search-result_left-pad"
+                                id="combobox-id-5"
+                                aria-controls="listbox-id-5"
+                                autocomplete="off"
+                                role="textbox"
+                                placeholder="Select an Option"
+                                readonly=""
+                                value={strSelectedContact}/>
+                            <button
+                                class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                title="Remove selected option">
+                                <lightning-icon
+                                    icon-name="utility:close"
+                                    alternative-text="close"
+                                    size="x-small"
+                                    onclick={handleRemoveSelectedOption}
+                                ></lightning-icon>
+                                <span class="slds-assistive-text">Remove selected option</span>
+                            </button>
+                        </div>
+                        <!-- end hide this by default-->
+                        <div class="defaultClass">
+                            <input
+                                type="text"
+                                class="slds-input slds-combobox__input slds-has-focus"
+                                id="combobox-id-3"
+                                aria-activedescendant="option1"
+                                aria-autocomplete="list"
+                                aria-controls="listbox-id-3"
+                                autocomplete="off"
+                                role="textbox"
+                                placeholder="Search..."
+                                onblur={handleBlur}
+                                onkeyup={handleKeyUp}
+                                onfocus={handleFocus}
+                                value={strSearch}/>
+                            <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                <lightning-icon
+                                    icon-name="utility:search"
+                                    alternative-text="Approved"
+                                    size="x-small">
+                                </lightning-icon>
+                            </span>
+                        </div>
+                    </div>
+                    <div
+                        id="listbox-id-3"
+                        class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid contacts_list slds-hide"
+                        role="listbox">
+                        <ul class="slds-listbox slds-listbox_vertical"
+                            role="presentation">
+                            <li role="presentation" class="slds-listbox__item">
+                                <div
+                                    aria-selected="true"
+                                    id="option0"
+                                    class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_term slds-has-focus"
+                                    role="option">
+                                    <span
+                                        class="slds-media__figure slds-listbox__option-icon" >
+                                        <span
+                                            class="slds-icon_container slds-icon-utility-search"
+                                            title="Search for term: ">
+                                            <lightning-icon
+                                                icon-name="utility:search"
+                                                alternative-text="search"
+                                                size="x-small"
+                                            ></lightning-icon>
+                                            <span class="slds-assistive-text">Search for term:</span>
+                                        </span>
+                                    </span>
+                                    <span class="slds-media__body">
+                                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">"{strSearch}"</span>
+                                    </span>
+                                </div>
+                            </li>
+                            <template
+                                for:each={lst_contact}
+                                for:item="contact">
+                                <li
+                                    role="presentation"
+                                    class="slds-listbox__item"
+                                    key={contact.Id}
+                                    onclick={handleOptionSelect}
+                                    data-id={contact.Id}
+                                    data-name={contact.Name}
+                                    data-email={contact.Email}>
+                                    <div
+                                        aria-selected="true"
+                                        id={contact.Id}
+                                        class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                        role="option"
+                                        tabindex="0">
+                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                            <span class="slds-icon_container slds-icon-standard-contact">
+                                                <lightning-icon icon-name="standard:contact" alternative-text="Contact" size="x-small">   
+                                                </lightning-icon>
+                                            </span>
+                                        </span>
+                                        <span class="slds-media__body slds-listbox__option-text slds-listbox__option-text_entity">
+                                            {contact.Name}
+                                            <span
+                                                class="slds-listbox__option-meta slds-listbox__option-meta_entity"
+                                                >Contact</span>
+                                        </span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

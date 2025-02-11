@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <name>SET_COMPLEXITY</name>
+        <label>SET COMPLEXITY</label>
+        <locationX>182</locationX>
+        <locationY>311</locationY>
+        <defaultConnector>
+            <targetReference>UPDATE_COMPLEXITY_LOW</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>DEFAULT</defaultConnectorLabel>
+        <rules>
+            <name>HIGH</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Churn Prevention</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Rates</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>SEP (NP)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Research &amp; Review</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Mid-Year Add Medical</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Mid-Year Replace Medical</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Renewal Escalation (For RF Use Only)</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualification</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Invalid Plan Combo</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Class Based Contribution</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Escalation_Reason__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Carrier Info Discrepancy</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>UPDATE_COMPLEXITY_TO_HIGH</targetReference>
+            </connector>
+            <label>HIGH</label>
+        </rules>
+    </decisions>
+    <description>This flow will provide the benefit advising fulfillment area with the ability to categorize (automated) tickets as low or high complexity for prioritization and tracking. Essentially this will create a complexity class system for the advising team.</description>
+    <environments>Default</environments>
+    <interviewLabel>TICKET _COMPLEXITY CLASS_ADVISING {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Ticket _Complexity Class Advising_Before Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>UPDATE_COMPLEXITY_LOW</name>
+        <label>UPDATE COMPLEXITY LOW</label>
+        <locationX>314</locationX>
+        <locationY>431</locationY>
+        <inputAssignments>
+            <field>Complexity__c</field>
+            <value>
+                <stringValue>Low</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>UPDATE_COMPLEXITY_TO_HIGH</name>
+        <label>UPDATE COMPLEXITY TO HIGH</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <inputAssignments>
+            <field>Complexity__c</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>SET_COMPLEXITY</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>New</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Ticket_Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Advising Fulfillment</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Ticket_Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Advising Fulfillment Care</stringValue>
+            </value>
+        </filters>
+        <object>Ticket__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

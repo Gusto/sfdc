@@ -1,0 +1,52 @@
+<!--
+    Description: LWC that serves x number of cases to advocates.
+    Author: Praveen Sethu
+    Date: 09/16/2020
+-->
+<template>
+    <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+    <template if:true={blnIsLoading}>
+        <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+    </template>
+
+    <!-- Title -->
+    <div class="slds-text-heading_medium slds-align_absolute-center slds-var-p-top_medium">Play Mode</div>
+    <!-- Business Logic - Include fields like Queue, Number to Serve Up and Buttons that Assigns Cases -->
+    <div class="slds-box slds-p-around_none slds-var-m-top_x-small slds-var-m-bottom_medium slds-m-horizontal_none">
+        <!-- Lightning Layout Structure Begins Here -->
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12" padding="around-small">
+                <div class="custom-box slds-box slds-var-p-around_medium slds-text-align_center">
+                    <lightning-combobox name="queue" label="Select Queue" required placeholder="Select Queue" options={list_queueChoices} onchange={handleQueueChange} data-id="queue" value={idQueue} ></lightning-combobox>
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="12" padding="around-small">
+                <div class="custom-box slds-box slds-var-p-around_medium slds-text-align_center">
+                    <lightning-combobox name="intNumberToServeUp" label="Number to Serve Up" required placeholder="Number to Serve Up" options={list_numberToServeUp} onchange={handleNumberToServeUpChange} data-id="intNumberToServeUp" value={intNumberToServeUp} ></lightning-combobox>
+                </div>
+            </lightning-layout-item>
+
+            <template if:true={blnIsMessageVisible}>
+                <lightning-layout-item size="12">
+                    <div class={strMessageClass} role="alert">
+                        <span class="slds-assistive-text">warning</span>
+                        <h2>{strMessage}</h2>
+                    </div>
+                </lightning-layout-item>
+            </template>
+            <lightning-layout-item size="12" padding="around-small">
+                <div class="custom-box slds-box slds-var-p-around_medium slds-text-align_center">
+                    <lightning-button-group>
+                        <lightning-button label="Case Play" variant="brand" icon-name="utility:play" disabled={blnIsDisabled} onclick={handleSubmit} ></lightning-button>
+                        <lightning-button label="Refresh" icon-name="utility:refresh" onclick={handleRefresh}></lightning-button>
+                    </lightning-button-group>
+                </div>
+            </lightning-layout-item>
+
+        </lightning-layout>
+        <!-- Lightning Layout Structure Ends Here -->
+
+    </div>
+
+</template>

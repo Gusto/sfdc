@@ -1,0 +1,360 @@
+<apex:page standardController="Benefit_Order__c" extensions="OnboardingAdvocateViewCtrl" action="{!CallOnOnboardingAdvocateActionView}">
+<c:OnboardingAdvocateTabComp actionTab="active" cohortTab="" businessTab=""/>  
+<apex:form id="frmBody"> 
+  
+    <style>
+        .message {
+            margin: 0px;
+        }
+        .messageTable {
+            width: auto !important;
+        }
+        .subTabLinks.active{
+            background:#666 !important;
+        }
+        .showMorePanel{
+            text-align: center;
+            padding-top: 4px;
+        }
+        
+    </style>   
+        <div class="tabcontent slds-scope">
+        <table width="100%" style="margin-bottom: 5px;">
+            <tr>
+                <td><apex:pageMessages id="showmsg" /></td>
+                <td style="text-align:right !important; vertical-align: bottom !important;"><apex:commandButton value="Refresh" status="statusSave" action="{!CallOnOnboardingAdvocateActionView}" rerender="frmBody"/></td>
+            </tr>
+        </table>
+         <!--Benefit Order Stat Start  -->
+        
+        <apex:pageblock title="Benefit Order Stats">
+            <table  style="margin-bottom: 6px;" width="100%">
+                <tr><th>Coverage Effective From : &nbsp;<apex:inputField value="{!objBenefitOrder.Coverage_Effective_Date__c}"/> 
+                    &nbsp;&nbsp;
+                    To : &nbsp;<apex:inputField value="{!objBenefitOrder.Blocked_Date__c}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:commandButton value="Show Stat" action="{!RetriveBenefitOrderStatData}" status="statusSave" rerender="frmBody" /></th></tr>
+            </table>
+            <table id="orderStat" class="tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th># of orders</th>
+                  <th>Avg days in status</th>
+                  <th>Oldest Order in status</th>
+                  <th>Oldest time in status</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstBOStatsWrapper}" var="objBO">
+                <tr>
+                  <td>{!objBO.strBoStatus}</td>
+                  <td>{!objBO.strNumberOfBO}</td>
+                  <td>{!objBO.strAverage}</td>
+                  <td><a href="javascript:void(0);"  onclick="openRecord('{!objBO.strOldestBOId}','{!objBO.strOldestBOName}');return false;">{!objBO.strOldestBOName}</a></td>
+                  <td>{!objBO.oldestNoOfday}</td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+        </apex:pageblock>
+        <!--Benefit Order Stat End  -->
+        <!-- Communication Start -->
+        <br/>
+        <div class="tab">
+          <apex:commandLink action="{!ShowCustomerCommunication}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!custActive}" style="padding:5px 12px">Customer Communication ({!lstCustomerCommWrapper.size} Records)</apex:commandLink>
+          <apex:commandLink action="{!ShowCarrierCommunication}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!carActive}" style="padding:5px 12px">Carrier Communication ({!lstCarrierCommWrapper.size} Records)</apex:commandLink>
+        </div>
+        <div class="tabcontent">
+            <!-- Customer Communication Start -->
+            <apex:outputPanel rendered="{!if(custActive=='active',true,false)}" id="custPanel">
+            <table id="customerCommunication" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th >Days since email received</th>
+                  <th data-orderable="false" >Benefit Order name</th>
+                  <th data-orderable="false">Benefit Order status</th>
+                  <th data-orderable="false">Case # </th>
+                  <th>Effective date </th>
+                  <th data-orderable="false">Contact Name</th>
+                  <th data-orderable="false">Action Required</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstCustomerCommWrapper}" var="objCC">
+                <tr>
+                  <td>{!objCC.intDaySinceLastReceived}</td>
+                  <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.Benefit_Order__c}','{!objCC.objCase.Benefit_Order__r.Name}');return false;">{!objCC.objCase.Benefit_Order__r.Name}</a></td>
+                  <td><apex:outputlabel value="{!objCC.objCase.Benefit_Order__r.Order_Status__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.Id}','{!objCC.objCase.CaseNumber}');return false;">{!objCC.objCase.CaseNumber}</a></td>
+                  <td><div style="display: none;">{!objCC.strEffectiveDate}</div><apex:outputfield value="{!objCC.objCase.Benefit_Order__r.Coverage_Effective_Date__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.ContactId}','{!objCC.objCase.Contact.Name}');return false;">{!objCC.objCase.Contact.Name}</a></td>
+                  <td>
+                    <label class="slds-checkbox_toggle slds-grid">
+                        <apex:inputcheckbox value="{!objCC.objCase.Requires_Action__c}">
+                            <apex:actionSupport event="onchange" action="{!updateRequireStatus}" status="statusSave" rerender="frmBody">
+                                    <apex:param name="strCaseId" value="{!objCC.objCase.Id}"/>
+                            </apex:actionSupport>
+                        </apex:inputcheckbox>
+                        <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                            <span class="slds-checkbox_faux"></span>
+                        </span>
+                     </label>  
+                  </td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+            </apex:outputPanel>
+            <!-- Customer Communication End -->
+            <!-- Carrier Communication Start -->
+            <apex:outputPanel rendered="{!if(carActive=='active',true,false)}" id="carrierPanel">
+                <table id="carrierCommunication" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Days since email received</th>
+                  <th data-orderable="false">Carrier Order name</th>
+                  <th>Implementation Stage</th>
+                  <th data-orderable="false">Benefit Order name</th>
+                  <th data-orderable="false">Case # </th>
+                  <th>Effective date </th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstCarrierCommWrapper}" var="objCC">
+                <tr>
+                  <td>{!objCC.intDaySinceLastReceived}</td>
+                  <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.Carrier_Order__c}','{!objCC.objCase.Carrier_Order__r.Name}');return false;">{!objCC.objCase.Carrier_Order__r.Name}</a></td>
+                  <td><apex:outputfield value="{!objCC.objCase.Carrier_Order__r.Implementation_Stage__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.Benefit_Order__c}','{!objCC.objCase.Benefit_Order__r.Name}');return false;">{!objCC.objCase.Benefit_Order__r.Name}</a></td>
+                  <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.Id}','{!objCC.objCase.CaseNumber}');return false;">{!objCC.objCase.CaseNumber}</a></td>
+                  <td><div style="display: none;">{!objCC.strEffectiveDate}</div><apex:outputfield value="{!objCC.objCase.Benefit_Order__r.Coverage_Effective_Date__c}"/></td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+            </apex:outputPanel>
+            <!-- Carrier Communication End -->
+        </div>
+        <!-- Communication End -->
+        <!-- Tickets section Start -->
+        <br/>
+        <apex:outputpanel id="ticketPanel">
+             <div class="tab">
+              <apex:commandLink action="{!ShowTicketCreatedByMe}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!createdActive}" style="padding:5px 12px">Tickets Created by Me ({!intNoOfTicketCreated} Records)</apex:commandLink>
+              <apex:commandLink action="{!ShowTicketOwnedByMe}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!ownedActive}" style="padding:5px 12px">Tickets Assigned to Me ({!intNoOfTicketOnwed} Records)</apex:commandLink>
+              <apex:commandLink action="{!ShowClosedTicket}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!closedActive}" style="padding:5px 12px">Tickets Closed Within Past Week ({!intNoOfTicketClosed} Records)</apex:commandLink>
+            </div>
+            <div class="tabcontent">
+                <!-- Ticket Created By me Start -->
+                    <table id="TicketTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Days since ticket created</th>
+                          <th data-orderable="false">Benefit/Carrier order name</th>
+                          <th>Ticket Status</th>
+                          <th>Ticket Reason</th>
+                          <th>Ticket reason detail</th>
+                          <th data-orderable="false">Ticket # </th>
+                          <th>Effective date </th>
+                          <th data-orderable="false">Description</th>
+                          <th data-orderable="false">Reporting team</th>
+                           <th data-orderable="false">Last modified date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <apex:repeat value="{!lstTicketWrapper}" var="tkt">
+                        <tr>
+                          <td>{!tkt.intDaySinceLastCreated}</td>
+                          <td><a href="javascript:void(0);" onclick="openRecord('{!tkt.objTicket.Benefit_Order__c}','{!tkt.objTicket.Benefit_Order__r.Name}');return false;">{!tkt.objTicket.Benefit_Order__r.Name}</a></td>
+                          <td><apex:outputlabel value="{!tkt.objTicket.Status__c}"/></td>
+                          <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason__c}"/></td>
+                           <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason_Detail__c}"/></td>
+                          <td><a href="javascript:void(0);" onclick="openRecord('{!tkt.objTicket.Id}','{!tkt.objTicket.Name}');return false;">{!tkt.objTicket.Name}</a></td>
+                          <td><div style="display: none;">{!tkt.strEffectiveDate}</div><apex:outputfield value="{!tkt.objTicket.Benefit_Order__r.Coverage_Effective_Date__c}"/></td>
+                          <td><apex:outputfield value="{!tkt.objTicket.Description__c}"/></td>
+                          <td><apex:outputfield value="{!tkt.objTicket.Reporting_Team__c}"/></td>
+                          <td>
+                          	<div style="display: none;">{!tkt.strLastModifiedDate}</div>
+                            <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                <apex:param value="{!tkt.objTicket.LastModifieddate}" />
+                            </apex:outputText>
+                          </td>
+                        </tr>
+                      </apex:repeat>
+                      </tbody>
+                    </table>
+                </div>
+            </apex:outputpanel>
+       
+        <!-- Tickets section End -->
+        
+        <!-- Termination Section Start -->
+        <br/>
+        <apex:outputpanel id="terminationPanel">
+             <div class="tab">
+              <apex:commandLink action="{!ShowOpenTerminated}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!openTActive}" style="padding:5px 12px">Open Terminated Carrier Orders ({!intNoOfOpenTerminated} Records)</apex:commandLink>
+              <apex:commandLink action="{!ShowCancelTerminated}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!cancelTActive}" style="padding:5px 12px">Cancel Terminated Carrier Orders ({!intNoOfCancelTerminated} Records)</apex:commandLink>
+            </div>
+            <div class="tabcontent">
+                    <table id="terminatedCO" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+                      <thead>
+                        <tr>
+                            <th>Benefit Order Name</th>
+                            <th>Carrier Order Name</th>
+                            <th>Implementation Stage</th>
+                            <th>Preceeding Order</th>
+                            <th>Coverage Effective Date</th>
+                            <!-- <th>Termination Submission Date</th> -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                     <apex:repeat value="{!lstTerminationWrapper}" var="co">
+                          <tr>
+                              <td><a href="javascript:void(0);" onclick="openRecord('{!co.objCO.Benefit_Order__c}','{!co.objCO.Benefit_Order__r.Name}');return false;">{!co.objCO.Benefit_Order__r.Name}</a></td>
+                              <td><a href="javascript:void(0);" onclick="openRecord('{!co.objCO.Id}','{!co.objCO.Name}');return false;">{!co.objCO.Name}</a></td>
+                              <td><apex:outputField value="{!co.objCO.Implementation_Stage__c}"/></td>
+                              <td><a href="javascript:void(0);" onclick="openRecord('{!co.objCO.Parent__c}','{!co.objCO.Parent__r.Name}');return false;">{!co.objCO.Parent__r.Name}</a></td>
+                              <td><div style="display: none;">{!co.strEffectiveDate}</div><apex:outputField value="{!co.objCO.Effective_Date__c}"/></td>
+                              <!-- <td><div style="display: none;">{!co.strTerminationSubmissionDate}</div><apex:outputField value="{!co.objCO.Term_Submission_Date__c}"/></td> -->
+                          </tr>
+                      </apex:repeat>
+                      </tbody>
+                    </table>
+                </div>
+            </apex:outputpanel>
+        <!-- Termination Section End -->
+       <!-- Process Step Start -->
+        <br/>
+        <apex:pageblock title="Process Steps ({!lstProcessWrapper.size} Records)" id="processStepsPanel">
+            <a href="javascript:void(0);" id="selectColLink" onClick="openModal()" style="float: right;">Select Columns</a>
+              <table id="ProcessStep" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                 <thead>
+                     <tr>
+                         <apex:repeat value="{!mapLstSelectedFields['OA ProcessSteps Benefit_Order__c']}" var="field">
+                             <th><apex:outputText value="{!mapAllFields['Benefit_Order__c'][field]}"/></th>
+                         </apex:repeat>
+                     </tr>
+                 </thead>
+                 <tbody>
+                     <apex:repeat value="{!lstProcessWrapper}" var="bo">
+                        <tr>
+                            <apex:repeat value="{!mapLstSelectedFields['OA ProcessSteps Benefit_Order__c']}" var="field">
+                                <td class="{!IF(field=='Submission_Deadline__c',bo.rowColor,'')}"> 
+                                    
+                                    <apex:outputField value="{!bo.objOrder[field]}" rendered="{!AND(field != 'Name' && field != 'Follow_Up_Notes__c' && field != 'Status_Change_Date_Time__c' && field != 'LastModifiedDate' && field != 'Benefits_Flow_Completed_Timestamp__c' && field != 'Open_Enrollment_End_Date__c' && field != 'Open_Enrollment_Start_Date__c' && field != 'Submission_Deadline__c' && field != 'Coverage_Effective_Date__c' && field != 'Follow_Up_Date__c')}"/>
+                                    <apex:outputPanel rendered="{!IF(field == 'Name',true,false)}">
+                                        <a href="javascript:void(0);" onclick="openRecord('{!bo.objOrder.Id}','{!bo.objOrder[field]}');return false;">{!bo.objOrder[field]}</a>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel styleclass="txt-truncate" layout="block" title="{!bo.objOrder[field]}" rendered="{!IF(field == 'Follow_Up_Notes__c',true,false)}">
+                                        {!bo.objOrder[field]}
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(field == 'LastModifiedDate',true,false)}">
+										<div style="display: none;">{!bo.strLastModifiedDate}</div>
+										<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+											<apex:param value="{!bo.objOrder[field]}" />
+										</apex:outputText> 
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Status_Change_Date_Time__c',true,false)}">
+										<div style="display: none;">{!bo.strStatusChangeDateTime}</div>
+										<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+											<apex:param value="{!bo.objOrder[field]}" />
+										</apex:outputText> 
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Benefits_Flow_Completed_Timestamp__c',true,false)}">
+										<div style="display: none;">{!bo.strBenefitsFlowCompletedTimestamp}</div>
+										<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+											<apex:param value="{!bo.objOrder[field]}" />
+										</apex:outputText> 
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Follow_Up_Date__c',true,false)}">
+										<div style="display: none;">{!bo.strImplementationFollowUpDate}</div>
+										 <apex:outputField value="{!bo.objOrder[field]}"/>
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Coverage_Effective_Date__c',true,false)}">
+										<div style="display: none;">{!bo.strCoverageEffectiveDate}</div>
+										 <apex:outputField value="{!bo.objOrder[field]}"/>
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Submission_Deadline__c',true,false)}">
+										<div style="display: none;">{!bo.strSubmissionDeadline}</div>
+										 <apex:outputField value="{!bo.objOrder[field]}"/>
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Open_Enrollment_Start_Date__c',true,false)}">
+										<div style="display: none;">{!bo.strOpenEnrollmentStartDate}</div>
+										 <apex:outputField value="{!bo.objOrder[field]}"/>
+									</apex:outputPanel>
+									<apex:outputPanel rendered="{!IF(field == 'Open_Enrollment_End_Date__c',true,false)}">
+										<div style="display: none;">{!bo.strOpenEnrollmentEndDate}</div>
+										 <apex:outputField value="{!bo.objOrder[field]}"/>
+									</apex:outputPanel>
+                                </td>
+                            </apex:repeat>
+                         </tr>
+                     </apex:repeat>
+                 </tbody>
+             </table>
+        </apex:pageblock>
+         <!-- Div Modal Start-->
+            <div class="modal-window myProcessStepsModal" style="display: none;">
+                <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container" style="max-width: 500px;">
+                        <div class="slds-modal__header">
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Columns to Show</h2>
+                        </div>
+                        <apex:pageMessages />
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>
+                                <apex:selectCheckboxes value="{!mapLstSelectedFields['OA ProcessSteps Benefit_Order__c']}" styleclass="chk-box" id="boProcessStepsColumnFilter" layout="pagedirection">
+                                    <apex:selectOptions value="{!mapLstAllFields['Benefit_Order__c']}"/>
+                                </apex:selectCheckboxes>
+                            </p>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral processSteps-close-btn" onclick="return false;">Cancel</button>
+                            <button class="slds-button slds-button_brand save-preferences-processSteps">Save</button>
+                            <apex:actionFunction name="SavePref" status="statusSave" rerender="frmBody" action="{!savePreference}">
+                                <apex:param name="view" value="OA ProcessSteps" assignTo="{!currentView}" />
+                                <apex:param name="objName" value="Benefit_Order__c" assignTo="{!currentObjName}" />
+                            </apex:actionFunction>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div>
+            <!-- Div Model End -->
+        <!-- Process Step End -->
+        </div>
+        <script>
+            $(function() {
+              $("#customerCommunication").DataTable({"aaSorting": []});
+              $("#carrierCommunication").DataTable({"aaSorting": []});
+              $("#TicketTable").DataTable({"aaSorting": []});
+               $("#terminatedCO").DataTable({"aaSorting": []});
+               $("#ProcessStep").DataTable({"aaSorting": []});
+               
+            });
+            function setFocusOnLoad() {}
+             function openModal(){
+                 $('.myProcessStepsModal').show(); 
+             }
+           
+             $('.processSteps-close-btn').click(function() {
+                    $('.myProcessStepsModal').hide();
+                    return false;
+              });
+            
+             $('.save-preferences-processSteps').click(function() {
+                var nofSelect= $("[id*='boProcessStepsColumnFilter']:checked").length;
+                if(nofSelect==0){
+                       alert('Please select at least one coulmn.');
+                       return false;
+                   }
+                   else if(nofSelect>10){
+                        alert('You can select maximum 10 column to display');
+                        return false;
+                  }else{
+                    SavePref();
+                  }                 
+             });
+        </script>
+</apex:form>
+</apex:page>

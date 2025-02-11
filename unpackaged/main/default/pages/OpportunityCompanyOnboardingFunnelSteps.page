@@ -1,0 +1,110 @@
+<apex:page StandardController="Opportunity">
+    <apex:form >
+		<table>
+            <Tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Company_Setup_Step__c'].label}"></apex:outputLabel>
+                </td>
+				<td>
+                	<apex:outputField value="{!Opportunity.ZP_Company_Setup_Step__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['Is_Historical__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.Is_Historical__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Add_Company_Addresses__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Add_Company_Addresses__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Add_Employees__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Add_Employees__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Set_Up_Federal_Taxes__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Set_Up_Federal_Taxes__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Set_Up_State_Taxes__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Set_Up_State_Taxes__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Set_Up_Bank_Account__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Set_Up_Bank_Account__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Select_a_Payroll_Schedule__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Select_a_Payroll_Schedule__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Report_Previous_Paystubs__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Report_Previous_Paystubs__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Add_Signatory__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Add_Signatory__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Sign_Company_Forms__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Sign_Company_Forms__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Verify_Company_Bank_Account__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Verify_Company_Bank_Account__c}"/>
+                </td>
+            </Tr>
+        	<tr>
+                <td>
+                    <apex:outputLabel value="{!$ObjectType.Opportunity.fields['ZP_Enter_Unpaid_Tax_Liabilities__c'].label}"></apex:outputLabel>
+                </td>
+                <td>
+                <apex:outputField value="{!Opportunity.ZP_Enter_Unpaid_Tax_Liabilities__c}"/>
+                </td>
+            </Tr>
+        </table>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Org Notification 57</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/articles/BizTech_How_To/Tax-Res-Auto-Solve-Batch-Package-Failures-Reprocessing?popup=false&amp;navBack=H4sIAAAAAAAAAIuuVipWslLyzssvz0lNSU_1yM9NVdJRygaKFSSmp4ZkluSA-KVAvn58aaZ-NkyhPpCDosu-ODWxKDnDVqk2FgDeHqwIVQAAAA</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Notification__c</field>
+        <value xsi:type="xsd:string">Tax Res Auto Solve Package Batch Failures</value>
+    </values>
+    <values>
+        <field>Payops_Notification__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Point_Of_Contact__c</field>
+        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+    </values>
+    <values>
+        <field>Point_of_Contact_Name__c</field>
+        <value xsi:type="xsd:string">Ela Nagarathinam</value>
+    </values>
+    <values>
+        <field>Query_Return_Type__c</field>
+        <value xsi:type="xsd:string">Integer</value>
+    </values>
+    <values>
+        <field>Record_Threshold__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.lightning.force.com/lightning/r/Report/00O8Y000009b7GgUAI/view</value>
+    </values>
+    <values>
+        <field>SOQL_Query__c</field>
+        <value xsi:type="xsd:string">SELECT COUNT() FROM case WHERE Automation_Message__c = &apos;Auto-Solve Batch&apos; AND Status != &apos;Solved&apos; AND Status != &apos;Closed&apos; AND Automation_Status__c = &apos;Failed&apos; AND Mass_Email_Step__C != null AND Automation_Message_Follow_Up__c != &apos;The case has multiple attachments so could not auto close the case&apos; AND Automation_Message_Follow_Up__c != &apos;The contact email address is marked as bounced&apos;</value>
+    </values>
+</CustomMetadata>

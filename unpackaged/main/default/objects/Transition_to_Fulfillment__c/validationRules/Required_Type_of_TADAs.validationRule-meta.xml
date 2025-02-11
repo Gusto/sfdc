@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Type_of_TADAs</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+RecordType.DeveloperName = &apos;Benefits_BoR&apos;,   
+  ISPICKVAL( Transferring_TADA_s__c , &quot;Y&quot;), 
+ISBLANK(  Type_of_Transfer_TADA_s__c )
+)</errorConditionFormula>
+    <errorDisplayField>Transferring_TADA_s__c</errorDisplayField>
+    <errorMessage>Please select Type of TADA&apos;s transferred by the customer</errorMessage>
+</ValidationRule>

@@ -1,0 +1,913 @@
+<apex:page id="sendemail" StandardController="Research_Project_Master__c"  extensions="UR_ManageParticipantCtrl" action="{!initSendEmail}" applyBodyTag="false" sidebar="false">
+  <apex:form id="frmBody"> 
+  <head>
+      <title>Gusto</title>
+      <style type="text/css">
+        /*
+          https://gusto.az1.qualtrics.com/jfe/form/SV_9ERe2ntxYQKaWP3?sID=
+        */
+        .slds-scope .slds-grid--inline-form .slds-form-element {
+          width: 150px;
+          margin-right: 10px;
+        }
+      </style>
+	  
+	  <style type="text/css">
+          	.datePicker{
+                position: fixed;
+                z-index:10001;
+            }
+			.slds-scope .modal--schedule-send .slds-table th:first-child,
+			.slds-scope .modal--schedule-send .slds-table td:first-child {
+			  padding-left: 1rem;
+			}
+			.slds-scope .modal--schedule-send .slds-table tbody tr:nth-child(even) {
+			  background: #f5f7f9;
+			}
+			.slds-scope .modal--schedule-send .slds-table {
+			  margin-bottom: 1rem;
+			}
+			.slds-scope .modal--schedule-send .slds-table tbody td {
+			  font-size: 12px;
+			}
+            
+            .cke_dialog{
+          	   max-width:500px;
+             }
+          
+           .cke_dialog_page_contents > table{
+          		width:96% !important;
+           }
+
+		  </style>
+  </head>
+   <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"/>
+   <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+
+   <script type="text/javascript">
+           $j = jQuery.noConflict();
+           function setCKEditorValues(){
+                //here we assign to our hidden textarea the value of the visible one  
+                $j("[id$='hidden_text_area_field']").val(CKEDITOR.instances[$j("[id$='text_area_field']").attr('id')].getData());                           
+            }      
+    </script> 
+      
+  <body class="slds-scope">
+   <c:UR_ActionStatus />
+   <c:UR_MenuHeaderComponent tabName="Participants" subTabName="{!sendEmailSubTab}" prjId="{!objProject.Id}"/>
+   <apex:actionFunction name="saveEmailAsDraft" action="{!saveEmailAsDraft}" status="statusDraftEmail" reRender="draftTemplateId, autoSaveId, msg"/> 
+      
+   <apex:outputPanel rendered="{!if(intSelectedContact>0 || excludedContactList.size>0 ,true,false)}">
+    <!--body start here-->  
+    <div class="slds-p-around_small slds-p-top_none"> 
+      <div class="slds-grid slds-wrap slds-gutters">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">         
+        <apex:pageMessages escape="false" id="msg"/>
+          <div class="slds-text-heading_medium slds-m-vertical_medium">
+            <strong>
+              {!if(strEmailStatus=='Send survey or screener','Send: Qualtrics, Google form, or UserTesting link',strEmailStatus)} 
+            </strong>
+          </div>
+
+          <div class="scout-toolbar slds-text-align_right bg-grey slds-p-around_small" style="border-radius: .25rem; min-height: 55px;">
+            <div class="slds-media slds-media_center">
+              <div class="slds-media__body">
+                <apex:outputPanel rendered="{!if(sendEmailSubTab=='SS',true, false)}">
+                  <div class="slds-float_left">
+                    <div class="slds-form-element slds-m-around_none">
+                      <label class="slds-form-element__label">URL:</label>
+                      <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                        <span class="slds-input__icon">
+                          <i class="fas fa-info-circle"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip">
+                            <p class="slds-popover__body tip">Please enter a valid Qualtrics, Google form or UserTesting link.</p>
+                          </span>
+                        </span>
+                        <apex:inputText value="{!objProject.Screener_URL__c}" styleClass="slds-input slds-input--large slds-m-around_none" html-placeholder="Enter your URL and save" html-data-parse="survey" html-data-value="{!objProject.Screener_URL__c}" alt="You can enter your survey's URL" />
+                      </div>
+                    </div>
+                    <apex:commandButton id="saveurl" onclick="setCKEditorValues();" styleClass="slds-button slds-button_brand {!if(objProject.Screener_URL__c!='','btn-grey','')}" action="{!updateQualtricsId}" value="Save" status="statusSave" rerender="frmBody"/>
+                   
+                  </div>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!if(sendEmailSubTab=='ITI' && isCalendlyVisible==true,true, false)}">
+                  <div class="slds-float_left scout-calendly slds-with-calendly">
+                    <div class="slds-form-element slds-m-bottom_none slds-m-right_small">
+                      <label class="slds-form-element__label slds-grid">Calendly URL: 
+                        <!--<div class="slds-checkbox slds-checkbox_standalone slds-m-left_x-small">
+                          <input type="checkbox" class="slds-checkbox" name="use-calendly" value="true" checked="checked" data-toggle="calendly" />
+                        <span class="slds-checkbox_faux"></span>
+                        </div>-->
+                      </label>
+                    </div>
+                    <div class="slds-form-element slds-m-around_none">
+                      <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-m-right_x-small">
+                        <span class="slds-input__icon">
+                          <i class="fas fa-info-circle"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip">
+                            <p class="slds-popover__body tip">This will be the link you send to participants.</p>
+                          </span>
+                        </span>
+                        <apex:inputText id="calendlyURLId" value="{!objProject.Primary_calendly_URL__c}" styleClass="slds-input slds-input--large slds-m-around_none slds-m-right_small" html-data-parse="survey" html-data-value="{!objProject.Primary_calendly_URL__c}" html-placeholder="https://calendly.com/USERNAME/CALENDLY_ID" alt="Link to send to participants" />  
+                      </div>
+                      <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                        <span class="slds-input__icon">
+                          <i class="fas fa-info-circle"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip">
+                            <p class="slds-popover__body tip1">This is the the event ID in Calendly.</p>
+                          </span>
+                        </span>
+                        <apex:inputText id="eventId" onchange="checkFieldValue();" value="{!objProject.Calendly_EventId__c}"  styleClass="slds-input slds-input--small slds-m-around_none" alt="Calendly Event ID" />
+                      </div>
+
+                    </div>
+                    <apex:commandButton id="saveCalendlyURL" onclick="setCKEditorValues();" styleClass="slds-button slds-button_brand" action="{!updateQualtricsId}" value="Save" status="statusSave" rerender="frmBody"/>
+                  </div>
+                </apex:outputPanel>
+              </div>
+              <div class="slds-m-left_small">
+                <apex:outputPanel rendered="{!if(sendEmailSubTab=='ITI' && isCalendlyVisible==true,true, false)}">
+                  <a href="{!calURL}" target="_blank" class="slds-button slds-button_outline-brand">Update Calendly <i class="fas fa-external-link-alt" style="margin-left:5px;"></i></a>
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!if(sendEmailSubTab=='SS',true, false)}">
+                  <a href="{!$Label.UR_GoogleForm}" target="_blank" class="slds-button slds-button_outline-brand" title="Create a new google form">Create Google Form<i class="fas fa-external-link-alt" style="margin-left:5px;"></i></a>  
+                  <a href="{!$Label.UR_QualURL}" target="_blank" class="slds-button slds-button_outline-brand" title="Create a new survey in Qualtrics">Create Qualtrics Survey<i class="fas fa-external-link-alt" style="margin-left:5px;"></i></a>
+                </apex:outputPanel>
+              </div>
+            </div>
+  
+          </div>
+
+          <div style="overflow-x: hidden;">
+            <div class="slds-grid slds-wrap slds-gutters_large slds-m-top_large">
+              <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-border_right">
+                <div class="slds-text-heading_medium slds-m-bottom_small"><strong>To:</strong> <a href="javascript:void(0);" class="contacts-link">{!intSelectedContact} contacts</a></div>
+                
+                <apex:outputPanel rendered="{!if(sendEmailSubTab=='SFUI', true, false)}">
+                <div class="slds-form-element slds-m-top_large">
+                  <label class="slds-form-element__label slds-text-heading_small" for=""><strong>Type of follow up:</strong> </label>
+                  <div class="slds-form-element__control">
+                    <apex:selectlist styleclass="slds-select" value="{!strPartStatus}" size="1">
+                       <apex:selectOptions value="{!list_SelectedEmailPicklists}"/>
+                       <apex:actionSupport event="onchange" action="{!RetriveEmailTemplate}" status="statusSave" rerender="frmBody"  />
+                     </apex:selectlist>  
+                  </div>
+                </div>
+                </apex:outputPanel> 
+                  
+                <div class="slds-form-element slds-m-top_large">
+                  <label class="slds-form-element__label slds-text-heading_small" for=""><strong>UXR-created templates:</strong> </label>
+                  <div class="slds-form-element__control">
+                    <apex:selectlist disabled="{!if(sendEmailSubTab=='SS' && objProject.Screener_URL__c=='',true, false)}" styleclass="slds-select" value="{!strSelectEmailId}" size="1">
+                       <apex:selectOptions value="{!list_SelectedEmailTemplates}"/>
+                       <apex:actionSupport event="onchange" action="{!showPreview}" status="statusSave" rerender="frmBody"  />
+                     </apex:selectlist>  
+                  </div>
+                </div> 
+				
+				<div class="slds-form-element slds-m-top_large" style="display:{!if(list_DraftEmailTemplates.size>1,'','none;')}">
+                  <label class="slds-form-element__label slds-text-heading_small" for=""><strong>My templates:</strong> </label>
+                  <div class="slds-form-element__control">
+                    <apex:selectlist disabled="{!if(sendEmailSubTab=='SS' && objProject.Screener_URL__c=='',true, false)}" styleclass="slds-select" value="{!strSelectDraftEmailId}" size="1">
+                       <apex:selectOptions value="{!list_DraftEmailTemplates}"/>
+                       <apex:actionSupport event="onchange" action="{!showDraftEmail}" status="statusSave" rerender="frmBody"  />
+                     </apex:selectlist>  
+                  </div>
+                </div>    
+                
+				<div class="slds-form-element slds-m-top_large" style="display:{!if(strSelectDraftEmailId!=null,'','none;')}">
+					 <apex:commandButton disabled="{!if(strSelectDraftEmailId!=null, false, true)}" styleclass="slds-button slds-button_outline-brand delete-draft-btn" value="Delete this draft" action="{!deleteDraftEmail}" status="statusSave" rerender="frmBody"/>
+				</div>
+				
+              </div>
+                
+                
+                
+              <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-border_left" style="margin-left: -1px;">
+                <div class="slds-text-heading_medium slds-m-bottom_small">
+                  <strong>Email:</strong>&nbsp;&nbsp;&nbsp;
+                  <small><a href="#" class="glossary-merge-fields" >Glossary of available merge fields <i class="fas fa-external-link-alt"></i></a></small>
+                </div>
+                
+                <div class="slds-p-around_small" style="border: 1px dashed #dddbda;">
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="">Subject</label>
+                    <div class="slds-form-element__control">
+                      <apex:inputText value="{!strSubject}" styleClass="slds-input" /> 
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="">Email Body - (<span class="slds-required">Note: Do not change merge field value</span>)</label>
+                    <div class="slds-form-element__control">
+                      <apex:inputTextarea rows="15" value="{!strEmailBody}" styleClass="slds-textarea ckeditor" style="height: 600px;" id="text_area_field" richtext="false" />
+                      <apex:inputHidden id="hidden_text_area_field" value="{!strEmailBody}" />  
+                      <apex:inputHidden id="draftTemplateId" value="{!strDraftEmailTemplateId}"/> 
+                        <script>
+                             CKEDITOR.replace('{!$Component.text_area_field}',{
+                                 removePlugins:'contextmenu,tabletools',
+                                 removeButtons:'Styles,Format,Blockquote,Copy,Cut,Paste,Undo,Redo,Print,Form,TextField,Textarea,Button,SelectAll,CreateDiv,Table,PasteText,PasteFromWord,Select,HiddenField,Unlink,Subscript,Superscript,Anchor,About,Maximize,Source,Image,Scayt,HorizontalRule,SpecialChar'
+                             });
+                        
+                        	CKEDITOR.on( 'dialogDefinition', function(ev){
+                            // Take the dialog name and its definition from the event data.
+                              var dialogName = ev.data.name;
+                              var dialogDefinition = ev.data.definition;
+                              if(dialogName == 'link'){
+                                  dialogDefinition.removeContents('target');
+                                  dialogDefinition.removeContents('advanced');
+                                  // Get a reference to the 'Link Info' tab.
+                                  var infoTab = dialogDefinition.getContents( 'info' ); 
+                                  // Remove unnecessary widgets from the 'Link Info' tab.         
+      							  infoTab.get('linkType').style = 'display: none';
+                              }
+                            });
+                        
+                        	//Save Email as draft.
+                        	for (var i in CKEDITOR.instances) {
+                                var deleteBtn = document.getElementsByClassName("delete-draft-btn");
+                                CKEDITOR.instances[i].on('blur', function() {
+                                    if(document.getElementById('sendemail:frmBody:draftTemplateId').value!=''){
+                                        setCKEditorValues();
+                                        saveEmailAsDraft();
+                                        if(deleteBtn != null && deleteBtn.length > 0){
+                                          deleteBtn[0].style.display = ""; 
+                                        }
+                                    }   
+                                });
+                                
+                                CKEDITOR.instances[i].on('focus', function() {
+                                  if(deleteBtn != null && deleteBtn.length > 0){
+                                    deleteBtn[0].style.display = "none"; 
+                                  }
+                                });
+
+                                break;
+                            }
+                        </script>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slds-text-align_right slds-p-vertical_large">
+                  <apex:actionFunction name="scheduleEmail" status="statusScheduleEmail" rerender="frmBody" action="{!SendEmail}"/>
+                  <apex:actionFunction name="sendEmail" status="statusSendEmail" rerender="frmBody" action="{!SendEmail}"/>
+                  <apex:actionFunction name="sendSelfEmail" status="statusTestEmail" rerender="frmBody" action="{!SendSelfEmail}"/>
+                  <!--<apex:commandButton styleClass="slds-button slds-button_outline-brand slds-float_left" action="{!BackToProjectVF}" value="Cancel" status="statusSave" rerender="frmBody"/>-->
+                 
+                  <apex:outputpanel id="actionBtn" rendered="{!isEditable}">  
+                      <table>
+                          <tr>
+						  
+                          <td class="slds-float_left"> 
+							 <div style="display:{!if(blnDraftEmail==true,'none;','')}">
+								<apex:inputcheckbox styleClass="slds-checkbox" id="autoSaveId" value="{!blnDraftEmail}" onChange="saveAsDraft();" rendered="{!if(strDraftEmailTemplateId==null,true,false)}" /> Save my template
+							</div>  
+                            <div style="display:{!if(strDraftEmailTemplateId!=null && strDraftEmailTemplateId!='','','none;')}">
+								<i class="fas fa-check" style="color:green;"></i>&nbsp; Your template is autosaving
+							</div>   
+                          </td>
+                          <td class="slds-float_right"> 
+                              <apex:commandButton onclick="setCKEditorValues();" disabled="{!if((strSelectEmailId!=null || strSelectDraftEmailId!=null) && intSelectedContact>0, false, true)}" styleclass="slds-button slds-button_outline-brand" value="Receive a test email" action="{!sendEmailToSelf}" status="statusTestEmail" rerender="frmBody" onComplete="sendSelfEmail();"/>
+                              <apex:commandButton onclick="setCKEditorValues();" disabled="{!if((strSelectEmailId!=null || strSelectDraftEmailId!=null) && intSelectedContact>0, false, true)}" styleclass="slds-button slds-button_brand" value="Schedule an Email" html-data-toggle="modal" html-data-modal="schedule-send" />
+                              <apex:commandButton onclick="return false;" disabled="{!if((strSelectEmailId!=null || strSelectDraftEmailId!=null) && intSelectedContact>0, false, true)}" styleclass="slds-button slds-button_brand confirm-send-now" value="Confirm & send now" />
+                          </td>
+                      	</tr>
+                      </table>        
+                      <!-- <apex:commandButton onclick="setCKEditorValues();" disabled="{!if(strSelectEmailId!=null && intSelectedContact>0, false, true)}" styleclass="slds-button slds-button_brand" value="Confirm & send now" action="{!sendEmailToAll}" status="statusSendEmail" rerender="frmBody" onComplete="sendEmail();"/> -->
+                  </apex:outputpanel>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--body end here-->  
+    
+       <!--modal start here-->  
+       <div class="modal-window contacts-modal" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open slds-modal_large">
+               <div class="slds-modal__container">
+                   <div class="slds-modal__header">
+                       <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="return false;">
+                           <i class="fas fa-times" style="font-size: 24px;"></i>
+                           <span class="slds-assistive-text">Close</span>
+                       </button>
+                       <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                           <strong> {!if(strEmailStatus=='Send survey or screener','Send: Qualtrics, Google form, or UserTesting link',strEmailStatus)} </strong>  
+                       </h2>
+                   </div>
+                   <div class="slds-modal__content slds-p-around_medium">
+                       <div class="slds-text-heading_small slds-m-bottom_small"><strong>Web will send email to:</strong> {!intSelectedContact} contacts</div>
+                       <div class="slds-text-heading_small slds-m-bottom_small"><em>Out of {!totalContact} selected participants, {!excludedContactList.size} were excluded</em></div>
+                       
+                       <div class="slds-card bg-grey" style="border: 1px solid #dddbda;">
+
+                       </div>
+                       <div class="slds-card bg-grey" style="border: 1px solid #dddbda;">
+                           <div class="slds-card__header slds-grid">
+                               <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                                   
+                                   <div class="slds-media__body">
+                                       <h2 class="slds-card__header-title">
+                                           <strong style="color:red;">{!excludedContactList.size} excluded contacts. </strong>
+                                       </h2>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="slds-card__body slds-m-bottom_none">
+                               <div class="slds-scrollable" style="max-height: 305px; width: 100%;">
+                                   <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                       <thead>
+                                           <tr class="slds-line-height_reset">
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Contact Name
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Email
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Participant Status
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Comment
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Reason for excluded
+                                               </th>
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                           <apex:repeat value="{!excludedContactList}" var="cc">
+                                               <tr>                
+                                                   <td>{!cc.objResProject.Contact__r.Name}</td>
+                                                   <td>{!cc.objResProject.Contact__r.Email}</td>
+                                                   <td>{!cc.objResProject.Research_Participant_Status__c}</td>  
+                                                   <td>{!cc.objResProject.Comment__c}</td> 
+                                                   <td style="color:red;">
+                                                       {!if(cc.objResProject.Blacklist__c==true && cc.objResProject.Opt_Out__c==true,'Black List & Opt Out','')}  
+                                                       {!if(cc.objResProject.Blacklist__c==false && cc.objResProject.Opt_Out__c==true,'Opt Out','')} 
+                                                       {!if(cc.objResProject.Blacklist__c==true && cc.objResProject.Opt_Out__c==false,'Black List','')}
+                                                       {!if(cc.objResProject.Blacklist__c==false && cc.objResProject.Opt_Out__c==false,'Duplicate Email','')}  
+                                                   </td> 
+                                               </tr>
+                                           </apex:repeat>
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="slds-modal__footer">
+                       <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">Close</button>
+                   </div>
+               </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+       </div>
+       <!--modal end here--> 
+   
+       <!--modal start here-->    
+       <div class="modal-window merge-modal" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open slds-modal_large">
+               <div class="slds-modal__container">
+                   <div class="slds-modal__header">
+                       <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="return false;">
+                           <i class="fas fa-times" style="font-size: 24px;"></i>
+                           <span class="slds-assistive-text">Close</span>
+                       </button>
+                       <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                           <strong> Research Glossary of Merge Fields</strong>              
+                       </h2>
+                       You can input the bracketed { } fields into your email in order to personalize it for participants.
+                   </div>
+                   <div class="slds-modal__content slds-p-around_medium">
+                       
+                       <div class="slds-card bg-grey" style="border: 1px solid #dddbda;">
+                           
+                           <div class="slds-card__body slds-m-bottom_none">
+                               <div class="slds-scrollable" style="max-height: 200px; width: 100%;">
+                                   <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                       <thead>
+                                           <tr class="slds-line-height_reset">
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Description
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col" width="20%">
+                                                   Example
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Merge Field Name
+                                               </th>
+                                               <th class="slds-text-title_caps" scope="col">
+                                                   Source Of Field
+                                               </th>
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                           <apex:repeat value="{!mergeFieldList}" var="merge">
+                                               <tr>                
+                                                   <td>{!merge.Description__c}</td>
+                                                   <td>{!merge.Example__c}</td>
+                                                   <td>{!merge.Merge_Field_Name__c}</td>
+                                                   <td>{!merge.Source_Of_Field__c}</td> 
+                                               </tr> 
+                                           </apex:repeat>                      
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                           
+                       </div>
+                       
+                   </div>
+                   <div class="slds-modal__footer">
+                       <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">Close</button>
+                   </div>
+               </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+       </div>
+       <!--modal end here--> 
+ 
+ 
+       <!--Schedule modal start here--> 
+       <div class="modal-window modal--schedule-send" data-modal="schedule-send" style="display: none;">
+           <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-schedule-send" aria-modal="true" aria-describedby="modal-heading-schedule-send" class="slds-modal slds-fade-in-open">
+               <div class="slds-modal__container" style="max-width: 700px;">
+                   <div class="slds-modal__header">
+                       <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="return false;">
+                           <i class="fas fa-times" style="font-size: 24px;"></i>
+                           <span class="slds-assistive-text">Close</span>
+                       </button>
+                       <h2 id="modal-heading-schedule-send" class="slds-text-heading_medium slds-hyphenate">
+                           <strong>Schedule a Survey Email</strong>
+                       </h2>
+                   </div>
+                   <div class="slds-modal__content slds-top_small slds-p-bottom_small" style="min-height: 100px; overflow: visible;">
+                       <div class="survey-recipients">
+                           <h4 class="slds-text-heading_small slds-m-bottom_x-small slds-m-top_medium slds-m-left_medium">Recipients<span id="recipient-count"></span>:</h4>
+                           <div data-copy="included-participants"></div>
+                       </div>
+                       <div class="survey-schedule slds-m-top_small">
+                           <h4 class="slds-text-heading_small slds-m-bottom_x-small slds-m-top_large slds-m-left_medium">Schedule For:</h4>
+                           <div class="slds-form slds-grid slds-grid--inline-form slds-p-left_medium slds-p-top_small slds-border--top slds-m-bottom_medium">
+                               <input id="schedule-send-recipient-count" type="hidden" value="" data-label="Recipient Count" class="scout-form-data" />
+                               <div class="slds-form-element slds-form-element--with-datepicker">
+                                   <label class="slds-form-element__label" for="schedule-send-date-input-id">Date</label>
+                                   <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                       <apex:inputField styleClass="slds-input" value="{!scheduleEmail.Schedule_Email_Date__c}" /> 
+                                   </div>
+                               </div>
+                               
+                               <div class="slds-form-element">
+                                   <label class="slds-form-element__label" for="schedule-send--time-input-id">Time</label>
+                                   <div class="slds-form-element__control">
+                                       <apex:inputField styleclass="slds-select" value="{!scheduleEmail.Schedule_Email_Time__c}" />
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="slds-modal__footer">
+                       <button type="button" class="slds-button slds-button_outline-brand slds-float_left close-modal" onclick="return false;">Cancel</button>
+                       <apex:commandButton onclick="setCKEditorValues();" disabled="{!if((strSelectEmailId!=null || strSelectDraftEmailId!=null) && intSelectedContact>0, false, true)}" styleclass="slds-button slds-button_brand" value="Schedule Email" action="{!scheduleEmailToAll}" status="statusScheduleEmail" rerender="frmBody" onComplete="scheduleEmail();"/>          
+                   </div>
+               </div>
+           </div>
+           <div class="slds-backdrop slds-backdrop_open"></div>
+       </div>
+       <!--Schedule modal end here--> 
+ 
+    </apex:outputPanel>
+     
+     
+    <apex:outputPanel rendered="{!if(intSelectedContact==0 && excludedContactList.size==0,true,false)}">
+        <div class="slds-p-around_small slds-p-top_none"> 
+          <div class="slds-grid slds-wrap slds-gutters">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_12-of-12">
+            <apex:pageMessages escape="false"/>
+              <div class="slds-text-heading_medium slds-m-vertical_medium">
+                <strong>
+                  {!if(strEmailStatus=='Send survey or screener','Send: Qualtrics, Google form, or UserTesting link',strEmailStatus)}   
+                </strong>
+              </div>
+
+              <div class="scout-toolbar slds-text-align_right bg-grey slds-p-around_small slds-grid" style="justify-content: space-between; border-radius: .25rem; min-height: 55px;">
+
+                <apex:outputPanel rendered="{!if(sendEmailSubTab=='SS',true, false)}">
+                  <div class="slds-form-element">
+                    <label class="slds-form-element__label">URL:</label>
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                      <span class="slds-input__icon">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip">
+                          <p class="slds-popover__body tip">Please enter a valid Qualtrics, Google form or UserTesting link.</p>
+                        </span>
+                      </span>
+                      <apex:inputText value="{!objProject.Screener_URL__c}" styleClass="slds-input slds-input--large slds-m-around_none" html-placeholder="Enter your survey's URL" html-data-parse="survey" html-data-value="{!objProject.Screener_URL__c}" alt="You can enter your survey's URL" />
+                    </div>
+                  </div>
+                  <apex:commandButton styleClass="slds-button slds-button_brand" action="{!updateQualtricsId}" value="Save" status="statusSave" rerender="frmBody"/>                   
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!if(AND(sendEmailSubTab=='ITI',isEditable),true, false)}"> 
+                  <div class="slds-float_left scout-calendly slds-with-calendly">
+                    <div class="slds-form-element slds-m-bottom_none slds-m-right_small">
+                      <label class="slds-form-element__label slds-grid">Calendly URL: 
+                       <!-- <div class="slds-checkbox slds-checkbox_standalone slds-m-left_x-small">
+                          <input type="checkbox" class="slds-checkbox" name="use-calendly" value="true" checked="checked" data-toggle="calendly" />
+                        <span class="slds-checkbox_faux"></span>
+                        </div>-->
+                      </label>
+                    </div>
+                    <div class="slds-form-element slds-m-around_none">
+                      <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-m-right_x-small">
+                        <span class="slds-input__icon">
+                          <i class="fas fa-info-circle"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip">
+                            <p class="slds-popover__body tip">This will be the link you send to participants.</p>
+                          </span>
+                        </span>
+                        <apex:inputText id="calendlyURLId2" value="{!objProject.Primary_calendly_URL__c}" styleClass="slds-input slds-input--large slds-m-around_none slds-m-right_small" html-placeholder="https://calendly.com/USERNAME/CALENDLY_ID" alt="Link to send to participants" />  
+                      </div>
+                      <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                        <span class="slds-input__icon">
+                          <i class="fas fa-info-circle"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip">
+                            <p class="slds-popover__body tip">This is the the event ID in Calendly.</p>
+                          </span>
+                        </span>
+                        <apex:inputText id="eventId2" value="{!objProject.Calendly_EventId__c}" styleClass="slds-input slds-input--small slds-m-around_none" alt="Calendly Event ID" />
+                      </div>
+
+                    </div>
+                    <apex:commandButton styleClass="slds-button slds-button_brand" action="{!updateQualtricsId}" value="Save" status="statusSave" rerender="frmBody"/>
+                  </div>
+                 </apex:outputPanel>
+               
+              <!--  <apex:outputPanel rendered="{!if(AND(isEditable,objProject.Survey_Id__c==null),true,false)}">-->
+                  <apex:outputPanel rendered="{!if(sendEmailSubTab=='ITI',true, false)}">
+                    <a href="{!calURL}" target="_blank" class="slds-button slds-button_outline-brand">Update Calendly <i class="fas fa-external-link-alt" style="margin-left:5px;"></i></a>
+                  </apex:outputPanel>
+                  
+                  <apex:outputPanel rendered="{!if(sendEmailSubTab=='SS',true, false)}">
+                    <a href="{!$Label.UR_GoogleForm}" target="_blank" class="slds-button slds-button_outline-brand" title="Create a new google form">Create Google Form<i class="fas fa-external-link-alt" style="margin-left:5px;"></i></a> 
+                    <a href="{!$Label.UR_QualURL}" target="_blank" class="slds-button slds-button_outline-brand" title="Create a new survey in Qualtrics">Create Qualtrics Survey<i class="fas fa-external-link-alt" style="margin-left:5px;"></i></a>  
+                  </apex:outputPanel>
+             <!--   </apex:outputPanel> -->
+               
+             </div>
+              <div class="slds-m-vertical_small"><a href="javascript:void(0);" class="sh-filter-btn show-filter slds-hide">Show Filters &rsaquo;</a></div>
+              
+              <div class="slds-p-vertical_large" >
+                <div class="slds-p-bottom_large">You have not selected any participants. Return to <b>Manage Participants</b> and select who you would like to contact.</div>
+                <!--<div class="text-grey">
+                  1. Return to “Manage participants”<br />
+                  2. Select the participants you wish to invite to your study.<br />
+                  3. Select “Send survey” from the email type dropdown.
+                </div>-->
+              </div>
+            </div>
+          </div>
+        
+        </div>
+     </apex:outputPanel>
+      
+     <div class="modal-window send-email-modal" style="display: none;">
+          <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container" style="max-width: 500px;">
+			 <div class="slds-modal__header">  
+              <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Confirm &amp; send now</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+              <p>Are you ready to send your email to {!intSelectedContact} participants?</p>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_outline-brand close-modal" onclick="return false;">No</button>
+              <apex:commandButton onclick="setCKEditorValues();" styleclass="slds-button slds-button_brand" value="Yes" action="{!sendEmailToAll}" status="statusSendEmail" rerender="frmBody" onComplete="sendEmail();"/> 
+                      
+           </div>
+          </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+      </div> 
+	
+	 <div class="modal-window draft-email-modal" style="display: none;">
+       <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal  slds-fade-in-open">
+         <div class="slds-modal__container" style="max-width: 500px;">
+           <div class="slds-modal__header">
+             
+             <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Draft Email Template Name</h2>
+           </div>
+           <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+             <p class="slds-m-bottom_medium"> What would you like to call this template?</p>
+     
+             <apex:inputText style="resize: none;" styleClass="slds-input" value="{!strDraftEmailNickName}" html-placeholder="Template Name"/>
+             <br/>
+           </div>
+           
+           <div class="slds-modal__footer">
+             <button class="slds-button slds-button_outline-brand close-modal" rerender="frmTableBody" status="statusSave"  onclick="cancelDraft(); return false;">Cancel</button>
+             <apex:commandButton styleClass="slds-button slds-button_brand" status="statusSave" rerender="frmBody" value="Save" action="{!saveEmailAsDraft}" onComplete="$('.modal-window').fadeOut();"/>
+             
+           </div>
+         </div>
+       </div>
+   <div class="slds-backdrop slds-backdrop_open"></div>
+ </div>
+	
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+     <script type="text/javascript">
+      
+      $('.add-info-btn').click(function() {
+        $('.add-info').slideToggle();
+        $('.add-info-btn i').toggleClass('fa-angle-right');        
+      });
+      $('.add-info-btn-01').click(function() {
+        $('.add-info-01').slideToggle();
+        $('.add-info-btn-01 i').toggleClass('fa-angle-right');        
+      });
+      $('.other-permissions-btn').click(function() {
+        $('.other-permissions').slideToggle();
+        $('.other-permissions-btn i').toggleClass('fa-angle-right');        
+      });
+      $('.close-modal, .slds-modal__close').click(function() {
+        $('.modal-window').fadeOut();
+      });
+      $('.contacts-link').click(function() {
+        $('.contacts-modal').fadeIn();
+      });
+      
+      $('.glossary-merge-fields').click(function() {
+        $('.merge-modal').fadeIn();
+      });
+      
+      $('.update-project-detail-btn').click(function() {
+        $('.update-project-detail-modal').fadeIn();
+      });
+      
+      $('.update-project-detail-cal-btn').click(function() {
+        $('.update-project-detail-cal-modal').fadeIn();
+      });
+      
+      $('.sh-filter-btn').click(function(e) {
+        e.preventDefault();
+        $('.side-filter').toggleClass('toggled');
+        if($('.side-filter').hasClass('toggled')) {
+          $('.right-panel').removeClass('slds-medium-size_8-of-12').addClass('slds-medium-size_12-of-12');
+          $('.sh-filter-btn').removeClass('slds-hide');
+          $('.side-filter').fadeOut('fast');
+        }else {
+          $('.right-panel').removeClass('slds-medium-size_12-of-12').addClass('slds-medium-size_8-of-12');  
+          $('.sh-filter-btn.show-filter').addClass('slds-hide');
+          $('.side-filter').show();
+        }
+      });
+		
+      $('.confirm-send-now').click(function(e) {
+          	$('.send-email-modal').fadeIn();
+      });
+                                   
+      $('.send-survey-btn').click(function(e) {
+            var status = '{!sendEmailFlag}';
+            if(status!='SS'){
+                blankSendSurvey();
+            }
+      });
+      $('.invite-to-interview-btn').click(function(e) {
+            var status = '{!sendEmailFlag}';
+            if(status!='ITI'){
+                blankInviteToInterview();
+            }
+      });
+      $('.send-follow-up-btn').click(function(e) {
+            var status = '{!sendEmailFlag};'
+            if(status!='SFUI'){
+                blankSendFollowUp();
+            }
+      });
+      /*
+      $('.update-qualtrics-id').click(function() {
+          var eventId = $('#sendemail:frmBody:eventId:visible,#sendemail:frmBody:eventId2:visible').first().val();
+          var calendlyURLId = $('#sendemail:frmBody:calendlyURLId:visible,#sendemail:frmBody:calendlyURLId2:visible').first().val();
+          if(eventId=='' || calendlyURLId==''){   
+                document.getElementById("errorMsg").innerHTML  = 'Event ID & Link to send to participants field value should not be blank.';
+          }else{
+                document.getElementById("errorMsg").innerHTML  = '';
+                saveQualtricsId();
+          }
+      });*/
+      
+      $('.cancel-btn').click(function() {
+            //document.getElementById("errorMsg").innerHTML  = '';
+            document.getElementById("sendemail:frmBody:eventId").value = '{!objProject.Calendly_EventId__c}';
+            document.getElementById("sendemail:frmBody:eventId2").value = '{!objProject.Calendly_EventId__c}';
+            document.getElementById("sendemail:frmBody:calendlyURLId").value = '{!objProject.Primary_calendly_URL__c}';
+            document.getElementById("sendemail:frmBody:calendlyURLId2").value = '{!objProject.Primary_calendly_URL__c}';
+      });
+
+      function resetIconClass(index, className) {
+        return (className.match (/(^|\s)fa-\S+/g) || []).join(' ');
+      } // resetIconClass
+
+      function resetHasClass(index, className) {
+        return (className.match (/(^|\s)slds-has-\S+/g) || []).join(' ');
+      } // resetHasClass
+
+      function resetSurveyClass(index, className) {
+        return (className.match (/(^|\s)survey-\S+/g) || []).join(' ');
+      } // resetSurveyClass
+
+      function parseSurveyValue(e) { // Fancy Survey ID parsing
+        var v = $.trim(this.value),
+            $elem = $(this).closest('.slds-form-element'),
+            $icon = $elem.find('.slds-input__icon .fas'),
+            $tip = $elem.find('.tip'),
+            $tip1 = $elem.find('.tip1')
+            valid = false;
+
+        $elem.removeClass(resetHasClass).removeClass(resetSurveyClass);
+        // $tip.html('Please enter a valid Qualtrics ID.');
+        $tip.html('Please enter a valid Qualtrics, Google form or UserTesting link.');
+        $icon.removeClass(resetIconClass);   
+        var objSaveButton = document.getElementById("sendemail:frmBody:saveurl");
+        
+        if(objSaveButton==null){
+        	objSaveButton = document.getElementById("sendemail:frmBody:saveCalendlyURL");
+            $tip.html('Please enter a valid Calendly URL and Event Id.');
+            $tip1.html('Please enter a valid Calendly URL and Event Id.');
+        } 
+
+        if(v!==this.getAttribute('data-value')) {
+          $elem.addClass('slds-is-changed');
+        }
+
+        if(v.length===0) {
+          $icon.addClass('fa-info-circle');
+          $elem.addClass('survey-none');
+          $tip.html('This will be the link you send to participants.');
+          $tip1.html('This is the the event ID in Calendly.');
+        }
+        else {
+          // parse urls
+          if(v.indexOf('qualtrics')>=0) { // for Qualtrics
+            v = v.replace(/.*(SV_[A-Za-z0-9]+).*/, '$1');
+          }
+          else if(v.indexOf('google')>=0) {
+            v = v.replace(/.*forms\/d\/e\/([^/]+).*/, '$1');
+          }
+		
+		  var inputURL = v;
+		  inputURL = inputURL.toLowerCase();
+          // check type
+          if(/^SV_[a-z0-9]{12,15}$/i.test(v)) {
+            $elem.addClass('survey-qualtrics');
+            $tip.html('You have entered a valid Qualtrics URL.');
+            $tip1.html('You have entered a valid Qualtrics Id.');
+            valid = true;
+          }
+          else if(v.length>45 && /^[a-z0-9_\-]+$/i.test(v)) {
+            $elem.addClass('survey-google-forms');
+            $tip.html('You have entered a valid Google form id.');
+            valid = true;
+          }else if(inputURL.indexOf('usertesting')>=0) {
+			      $elem.addClass('survey-userzoom-forms');
+            $tip.html('You have entered a valid UserTesting link.');
+            valid = true;
+          }else if(inputURL.indexOf('calendly.com')>=0 && inputURL.indexOf('/p-')>=0) {
+            if(document.getElementById('sendemail:frmBody:eventId').value!=''){ 
+                $elem.addClass('survey-userzoom-forms');
+                $tip.html('You have entered a valid Calendly link.');
+                $tip1.html('You have entered a valid Event Id.');
+                valid = true;
+             }
+		  } 
+          console.log('---->>---'+ inputURL);
+ 
+          if(valid) { // fake validation
+            $elem.addClass('slds-has-success');
+            $icon.addClass('fa-check');
+			objSaveButton.classList.remove('btn-grey');
+          }
+          else {
+            $elem.addClass('slds-has-error');
+            $icon.addClass('fa-ban');
+			objSaveButton.classList.add('btn-grey');
+          }
+        }
+        $elem.addClass('slds-m-around_none');
+		if(v==''){
+			objSaveButton.classList.add('btn-grey');
+		}
+      } // parseSurveyValue
+
+      $('body')
+        .on('change blur', '[data-parse="survey"]', parseSurveyValue)
+        // .on('change', '[data-parse="survey"]', function() {
+        //   var v = $.trim(this.value),
+        //       $elem = $(this).closest('.slds-form-element');
+
+        //   if(v!==this.getAttribute('data-value')) {
+        //     $elem.addClass('slds-has-edit');
+        //   }
+
+        // })
+        .on('focus blur', '[data-parse="survey"]', function() {
+          var $elem = $(this).closest('.slds-form-element');
+          if($elem.hasClass('slds-has-success')) {
+            setTimeout(function() {
+              $elem.removeClass('slds-is-changed');
+            }, 5000);
+          }
+        })
+      /*.on('click', '[data-toggle="calendly"]', function(e) {
+          var $checkbox = $(this),
+              $form = $checkbox.closest('.scout-calendly');
+
+          if($checkbox.is(':checked')) {
+            $form.addClass('slds-with-calendly');
+            $form.find(':input:not([type="checkbox"])').removeAttr('disabled');
+          }
+          else {
+            $form.addClass('slds-with-calendly');
+            $form.find(':input:not([type="checkbox"])').attr('disabled', true);
+          }
+        })*/
+        .on('click', '[data-toggle="modal"]', function(e) {
+          e.preventDefault();
+          $('.modal-window[data-modal="' + this.getAttribute('data-modal') + '"]').show();
+        })
+        .on('focus', '#schedule-send-date-input-id', function() {
+          $(this).parent().siblings('.slds-datepicker').removeClass('slds-hide');
+        })
+        .on('click', function(e) {
+          if($('.slds-datepicker:not(.slds-hide)').length>0) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if($(e.target).closest('.slds-form-element--with-datepicker').length===0) {
+              $('.slds-datepicker').addClass('slds-hide');
+            }
+          }
+        });
+
+      $('[data-parse="survey"]').each(parseSurveyValue);
+
+      $('.slds-datepicker .slds-day[data-day="' + new Date().getDate() + '"]').parent().addClass('slds-is-today');
+     </script> 
+	 
+	 
+	   <script>
+		$(document).ready(function() {
+		  console.log('hi!')
+		  $('body').on('click', '[data-store]', function(e) {
+			var formData = $('.modal-window:visible .scout-form-data').map(function(i, v) { return [[this.getAttribute('data-label'), $(this).val()]]; }).toArray();
+			console.log(formData);
+			localStorage.setItem(this.getAttribute('data-store'), JSON.stringify(formData));
+		  });
+
+		  $('[data-copy]').each(function(i, v) {
+			var id = this.getAttribute('data-copy'),
+				$clone = $('#' + id).clone(true),
+				recipientCount = $clone.find('tbody tr').length;
+			
+			$clone.attr('id', id + '-copy');
+			$clone.css('max-height', '150px');
+			$clone.find('tbody tr td:first-child+td').each(function(i, v) {
+			  $(v).append(`<input type="hidden" data-label="Email" value="${v.innerHTML}" class="scout-form-data" />`);
+			});
+			$(this).replaceWith($clone);
+			$('#recipient-count').html(` (${recipientCount})`);
+			$('#schedule-send-recipient-count').val(recipientCount);
+		  });
+
+		})
+        
+        function checkFieldValue(objEventId){
+            var objCalendlyURL = document.getElementById('sendemail:frmBody:calendlyURLId');
+            $(objCalendlyURL).trigger("change");
+        }   
+		
+		function saveAsDraft(){
+			setCKEditorValues();
+			$('.draft-email-modal').fadeIn();
+		}
+		function cancelDraft(){
+			document.getElementById('sendemail:frmBody:autoSaveId').checked = false;
+		}
+	  </script>
+  
+  </body>
+     <apex:outputPanel id="actionLink">
+  		<script>
+         /*     window.onload = function(){ $('.cke_button__link').hide();}
+      		function hideHyperLink(){ $('.cke_button__link').hide();}
+            setTimeout(hideHyperLink,100);
+         */
+        </script> 
+     </apex:outputPanel> 
+</apex:form>
+
+</apex:page>

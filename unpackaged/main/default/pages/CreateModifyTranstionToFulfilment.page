@@ -1,0 +1,418 @@
+<!--
+  @description       : 
+  @author            : Nigam Goyal
+  @group             : 
+  @last modified on  : 07-24-2023
+  @last modified by  : Nigam Goyal
+-->
+<apex:page id="pg" standardController="Transition_to_Fulfillment__c" extensions="NewTransitionToFulfillmentController" action="{!initData}">
+	<apex:includeScript value="/support/console/45.0/integration.js" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+	<apex:slds />
+	<style>
+		.slds-scope img {
+			max-width: none;
+			height: unset;
+		}
+		.pbSubheader h3 {
+			display: inline;
+		}
+		/* This is for the full screen DIV */
+		.popupBackground {
+			/* Background color */
+			background-color: black;
+			opacity: 0.2;
+			filter: alpha(opacity = 20);
+			/* Dimensions */
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			z-index: 998;
+			position: absolute;
+			/* Mouse */
+			cursor: wait;
+		}
+		/* This is for the message DIV */
+		.PopupPanel {
+			/* Background color */
+			border: solid 1px black;
+			background-color: white;
+			/* Dimensions */
+			left: 50%;
+			width: 200px;
+			margin-left: -100px;
+			top: 50%;
+			height: 50px;
+			margin-top: -25px;
+			z-index: 999;
+			position: fixed;
+			cursor: pointer;
+		}
+	</style>
+
+	<script>
+		function toggleFields(forWhich) {
+			if ("{!contextRecordType }" != "Benefits New Plan") {
+				if (document.getElementsByClassName("pointOfContact")[0].value == "") {
+					alert("Please select Benefit Point of Contact.");
+					document.getElementsByClassName("pointOfContact")[0].focus();
+					document.getElementsByClassName("affiliateClass")[0].checked = false;
+					return;
+				}
+			} else {
+				if (document.getElementsByClassName("pointOfContact")[0].value == "") {
+					alert("Please select Benefit Point of Contact.");
+					document.getElementsByClassName("pointOfContact")[0].focus();
+					document.getElementsByClassName("affiliateClass")[0].checked = false;
+					return;
+				}
+			}
+			if (forWhich == "Account") {
+				doesAffiliate();
+			}
+
+			if (forWhich == "Medical") showHideFieldsMed();
+			else if (forWhich == "Dental") showHideFieldsDen();
+			else if (forWhich == "vision") showHideFieldsVision();
+			else if (forWhich == "LIFE") showHideFieldsLife();
+			else if (forWhich == "STD") showHideFieldsSTD();
+			else if (forWhich == "LTD") showHideFieldsLTD();
+		}
+
+		var oppId;
+		function closeCurrentTab(oppRecId) {
+			if (sforce.console.isInConsole()) {
+				oppId = oppRecId;
+				sforce.console.getFocusedSubtabId(closeSubtab);
+			} else {
+				// for inline Vf
+				window.open("/" + oppRecId, "_self");
+			}
+		}
+
+		var closeSubtab = function closeSubtab(result) {
+			sforce.console.getEnclosingTabId(function (enclosingResult) {
+				sforce.console.getEnclosingPrimaryTabId(function (primaryResult) {
+					sforce.console.openSubtab(primaryResult.id, "/" + oppId, true, "Opportunity");
+					sforce.console.closeTab(result.id);
+				});
+			});
+		};
+
+		function closeModal() {
+			$(".ShowSendOrderPanel").fadeOut();
+		}
+
+		function checkPriority(strValue){
+			if (strValue == 'Y') {
+				document.getElementById('idPriorityReasons').style.display = '';
+			} else {
+				document.getElementById('idPriorityReasons').style.display = 'none;';
+			}
+		}
+	</script>
+
+	<div class="slds-scope">
+		<apex:form id="frm" rendered="{! !blnIsOpportunityDismissed}">
+			<apex:pageMessages ></apex:pageMessages>
+			<apex:outputPanel layout="none" rendered="{!isTTFScreenVisible}">
+				<apex:pageBlock mode="detail" id="block1" title="Transition to Qualification Edit" rendered="{!contextRecordType == 'Benefits New Plan'}">
+					<apex:pageblockbuttons >
+                        <apex:commandButton value="Save" action="{!processAcknowledgement}" status="status" reRender="frm"/>
+						<apex:commandButton immediate="true" value="Cancel" action="{!cancelAction}" />
+					</apex:pageblockbuttons>
+					<apex:pageBlockSection columns="2" title="System Information" id="SystemInformation" collapsible="true">
+						<apex:outputField value="{!ttfRecord.Opportunity__c}" />
+						<apex:outputField value="{!ttfRecord.recordTypeId}" />
+						<apex:outputField value="{!ttfRecord.Account__c}" />
+						<apex:outputField value="{!ttfRecord.Benefit_Order__c}" />
+						<apex:outputField value="{!ttfRecord.Parent_Transition_to_fulfillment__c}" rendered="{!Not(blnNeededAffliated)}" />
+						<apex:outputLabel rendered="{!Not(blnNeededAffliated)}" />
+					</apex:pageBlockSection>
+					<apex:pageBlockSection id="additionalPOCSection" columns="1" title="Group Contact Info" collapsible="true">
+						<apex:outputPanel rendered="{!AND(NULL != list_OpptyContactRole , list_OpptyContactRole.size > 0)}" id="contactRoleSection">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+								<thead>
+									<tr class="slds-text-title slds-line-height_reset">
+										<th scope="col">Contact Name</th>
+										<th scope="col">Role</th>
+										<th scope="col">Check Primary POC</th>
+										<th scope="col">Check Additional POC</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:repeat value="{!list_OpptyContactRole}" var="cRole">
+										<tr class="slds-text-title detailRow">
+											<td>
+												<apex:outputText value="{!cRole.Contact.FirstName} {!cRole.Contact.LastName}" />
+											</td>
+											<td>
+												<apex:repeat value="{!map_ContactIdRole}" var="contactId" >
+													<apex:outputPanel rendered="{!IF(contactId == cRole.ContactId,true,false)}">
+														<apex:outputText value="{!map_ContactIdRole[contactId]}" />
+													</apex:outputPanel>
+												</apex:repeat>  
+											</td>
+											<td>
+												<apex:inputField value="{!cRole.IsPrimary}">
+													<apex:actionSupport event="onchange" action="{!selectPrimary}" rerender="frm" status="status">
+														<apex:param value="{!cRole.Id}" name="roleId" assignTo="{!idPrimaryRole}" />
+													</apex:actionSupport>
+												</apex:inputField>
+											</td>
+											<td>
+												<apex:inputField value="{!cRole.Check_Additional_POC__c}">
+													<apex:actionSupport event="onchange" action="{!selectSecondary}" rerender="frm" status="status">
+														<apex:param value="{!cRole.Id}" name="roleId" assignTo="{!idSecRole}" />
+													</apex:actionSupport>
+												</apex:inputField>
+											</td>
+										</tr>
+									</apex:repeat>
+								</tbody>
+							</table>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!OR(NULL == list_OpptyContactRole, list_OpptyContactRole.size == 0)}"> There are no Contact Roles on opportunity. </apex:outputPanel>
+						<apex:pageBlockSectionItem id="Pcontact">
+							<apex:outputLabel value="Primary Point of Contact" />
+							<apex:outputPanel layout="block" styleclass="requiredInput">
+								<div class="requiredBlock"></div>
+								<apex:inputField value="{!ttfRecord.Contact__c}" id="bpc1" styleClass="pointOfContact" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem id="Pcontactmethod">
+							<apex:outputLabel value="Preferred contact method" />
+							<apex:outputPanel layout="block">
+								<apex:inputField value="{!ttfRecord.Preferred_contact_method__c}" id="bpc23" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+					</apex:pageBlockSection>
+
+					<apex:pageBlockSection columns="1" title=" Multi EEIN" rendered="{!blnNeededAffliated}" collapsible="true" id="AccountSectionNewPlan">
+						<apex:inputField id="affilatechk" onchange="toggleFields('Account');" value="{!ttfRecord.Do_they_have_affiliates__c}" styleClass="affiliateClass" />
+						<apex:outputPanel layout="none" rendered="{!(ttfRecord.Do_they_have_affiliates__c == True)}">
+							<apex:variable var="cnt" value="{!0}" />
+							<apex:pageBlockTable value="{!list_Affliates}" var="aff">
+								<apex:column headerValue="Affiliates">
+									<apex:inputField value="{!aff.ttf.InternalAccount__c}" />
+								</apex:column>
+								<apex:column >
+									<a href="javascript:void(0)" name="{!cnt}" onclick="if(confirm('Are you sure?')) removeAccount(this.name);">Delete Affiliate</a>
+									<apex:variable value="{!cnt+1}" var="cnt" />
+								</apex:column>
+							</apex:pageBlockTable>
+							<a href="javascript:void(0)" onclick="addAccount();">Add Affiliate</a>
+						</apex:outputPanel>
+						<apex:outputLabel rendered="{!ttfRecord.Do_they_have_affiliates__c != True}"></apex:outputLabel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" title="Ops Info" collapsible="true">
+						<apex:pageBlockSection columns="2">
+							<apex:inputField value="{!ttfRecord.Priority__c}"  onchange="checkPriority(this.value)"/>
+							<apex:inputField value="{!objRelatedOpp.SGHI_LGHI__c}" />
+							<apex:inputField value="{!objRelatedOpp.Funding_Type__c}" />
+							<apex:inputField value="{!objRelatedOpp.Unsupported_Carrier__c}" />
+							<apex:inputField value="{!ttfRecord.PEO__c}" />
+						</apex:pageBlockSection>
+						<div id="idPriorityReasons" style="display:{!if(ttfRecord.Priority__c == 'Y','','none;')}">
+							<apex:pageBlockSection columns="2" >
+									<apex:inputField value="{!ttfRecord.Priority_Reasons__c}"/>
+							</apex:pageBlockSection>
+						</div>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="2" title="Information" collapsible="true">
+						<apex:outputField value="{!ttfRecord.Name}" />
+						<apex:outputField value="{!ttfRecord.OwnerId}" />
+					</apex:pageBlockSection>
+
+					<apex:pageBlockSection columns="1" title="QA Sheet" collapsible="false">
+					    <a style="display:{!if(strHippoURL!='', '','none;')}" href="javascript:void(0);" onclick ="window.open('{!strHippoURL}');return false;">Open QA</a>
+
+						<apex:outputPanel style="background-color: yellow;width:100%;">
+					Please use the link to the QA Sheet on the opportunity to complete qualification and handoff details for the group. You will not be able to click 'Send Order' until completed QA Sheet data has been received from Hippo.
+					</apex:outputPanel>
+					</apex:pageBlockSection>
+					
+					<apex:pageBlockSection columns="1" title="Send Order" collapsible="true">
+						<apex:panelGroup >
+							<apex:pageMessage rendered="{!AND(disableSendOrder, blnPoliciesMissing)}"
+								summary="The opportunity does not have any policies. Please make sure policies are present in hippo and then opportunity before you click send order."
+								severity="warning"
+								strength="3"
+							/>
+							<apex:pageMessage rendered="{!AND(disableSendOrder, blnQASheetInfoMissing)}"
+								summary="There are no QA Sheet Info found in processed state. Please process QA Sheet from hippo and then opportunity before you click send order."
+								severity="warning"
+								strength="3"
+							/>
+						</apex:panelGroup>
+						<apex:inputCheckbox value="{!ttfRecord.Send_Order__c}" disabled="{!disableSendOrder}" />
+					</apex:pageBlockSection>
+				</apex:pageBlock>
+				<apex:pageBlock id="pb" mode="detail" title="Transition to Qualification Edit" rendered="{!OR(contextRecordType == 'Benefits Renewal',contextRecordType == 'Benefits Change')}">
+					<apex:pageblockbuttons >
+						<apex:commandButton value="Save" action="{!processAcknowledgement}" status="status"  reRender="frm,sendOrderModalPanelId"/>
+						<apex:commandButton immediate="true" value="Cancel" action="{!cancelAction}" />
+					</apex:pageblockbuttons>
+					<apex:pageBlockSection columns="2" title="System Information" id="systemInformation" collapsible="true">
+						<apex:outputField value="{!ttfRecord.Opportunity__c}" />
+						<apex:outputField value="{!ttfRecord.Account__c}" />
+						
+						<apex:outputField value="{!ttfRecord.Benefit_Order__c}" />
+						<apex:outputField value="{!ttfRecord.recordTypeId}" rendered="{!!isLinkClicked}" />
+						<apex:outputField value="{!ttfRecord.Parent_Transition_to_fulfillment__c}" rendered="{!and(contextRecordType == 'Benefits Renewal', Not(blnNeededAffliated))}" />
+						<apex:outputLabel rendered="{!contextRecordType != 'Benefits Renewal'}"></apex:outputLabel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection id="additionalPOCSection" columns="1" title="Group Contact Info" collapsible="true">
+						<apex:outputPanel rendered="{!AND(NULL != list_OpptyContactRole , list_OpptyContactRole.size > 0)}" id="contactRoleSection">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+								<thead>
+									<tr class="slds-text-title slds-line-height_reset">
+										<th scope="col">Contact Name</th>
+										<th scope="col">Role</th>
+										<th scope="col">Check Primary POC</th>
+										<th scope="col">Check Additional POC</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:repeat value="{!list_OpptyContactRole}" var="cRole">
+										<tr class="slds-text-title detailRow">
+											<td>
+												<apex:outputText value="{!cRole.Contact.FirstName} {!cRole.Contact.LastName}" />
+											</td>
+											<td>
+												<apex:repeat value="{!map_ContactIdRole}" var="contactId" >
+													<apex:outputPanel rendered="{!IF(contactId == cRole.ContactId,true,false)}">
+														<apex:outputText value="{!map_ContactIdRole[contactId]}" />
+													</apex:outputPanel>
+												</apex:repeat>
+											</td>
+											<td>
+												<apex:inputField value="{!cRole.IsPrimary}">
+													<apex:actionSupport event="onchange" action="{!selectPrimary}" rerender="frm" status="status">
+														<apex:param value="{!cRole.Id}" name="roleId" assignTo="{!idPrimaryRole}" />
+													</apex:actionSupport>
+												</apex:inputField>
+											</td>
+											<td>
+												<apex:inputField value="{!cRole.Check_Additional_POC__c}">
+													<apex:actionSupport event="onchange" action="{!selectSecondary}" rerender="frm" status="status">
+														<apex:param value="{!cRole.Id}" name="roleId" assignTo="{!idSecRole}" />
+													</apex:actionSupport>
+												</apex:inputField>
+											</td>
+										</tr>
+									</apex:repeat>
+								</tbody>
+							</table>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{!OR(NULL == list_OpptyContactRole, list_OpptyContactRole.size == 0)}"> There are no Contact Roles on opportunity. </apex:outputPanel>
+						<apex:pageBlockSectionItem id="Pcontact">
+							<apex:outputLabel value="Primary Point of Contact" />
+							<apex:outputPanel layout="block" styleclass="requiredInput">
+								<div class="requiredBlock" />
+								<apex:inputField value="{!ttfRecord.Contact__c}" id="renewBOP" styleClass="pointOfContact" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+						<apex:pageBlockSectionItem id="Pcontactmethod">
+							<apex:outputLabel value="Preferred contact method" />
+							<apex:outputPanel layout="block">
+								<apex:inputField value="{!ttfRecord.Preferred_contact_method__c}" id="bpc23" />
+							</apex:outputPanel>
+						</apex:pageBlockSectionItem>
+					</apex:pageBlockSection>
+					
+
+					<apex:pageBlockSection columns="1"
+						title=" Multi EEIN"
+						rendered="{!AND(blnNeededAffliated,!isLinkClicked)}"
+						collapsible="true"
+						id="AccountSection"
+					>
+						<apex:inputField id="affilatechk" onchange="toggleFields('Account');" value="{!ttfRecord.Do_they_have_affiliates__c}" styleClass="affiliateClass" />
+						<apex:outputPanel layout="none" rendered="{!(ttfRecord.Do_they_have_affiliates__c == True)}">
+							<apex:variable var="cnt" value="{!0}" />
+							<apex:pageBlockTable value="{!list_Affliates}" var="aff">
+								<apex:column headerValue="Affiliates">
+									<apex:inputField value="{!aff.ttf.InternalAccount__c}" />
+								</apex:column>
+								<apex:column >
+									<a href="javascript:void(0)" name="{!cnt}" onclick="if(confirm('Are you sure?')) removeAccount(this.name);">Delete Affiliate</a>
+									<apex:variable value="{!cnt+1}" var="cnt" />
+								</apex:column>
+							</apex:pageBlockTable>
+							<a href="javascript:void(0)" onclick="addAccount();">Add Affiliate</a>
+						</apex:outputPanel>
+						<apex:outputLabel rendered="{!ttfRecord.Do_they_have_affiliates__c != True}" />
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="2" title="Ops Info" collapsible="true" id="req" rendered="{!!isLinkClicked}">
+						<apex:inputField value="{!ttfRecord.Priority__c}" onchange="checkPriority(this.value)"/>
+					</apex:pageBlockSection>
+					<div id="idPriorityReasons" style="display:{!if(ttfRecord.Priority__c == 'Y','','none;')}">
+						<apex:pageBlockSection columns="2" >
+								<apex:inputField value="{!ttfRecord.Priority_Reasons__c}"/>
+						</apex:pageBlockSection>
+					</div>
+					
+					<apex:pageBlockSection columns="1" title="QA Sheet" collapsible="false">
+					    <a style="display:{!if(strHippoURL!='', '','none;')}" href="javascript:void(0);" onclick ="window.open('{!strHippoURL}');return false;">Open QA</a>
+
+						<apex:outputPanel style="background-color: yellow;width:100%;">
+					Please use the link to the QA Sheet on the opportunity to complete qualification and handoff details for the group. You will not be able to click 'Send Order' until completed QA Sheet data has been received from Hippo.
+					</apex:outputPanel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" title="Send Order">
+						<apex:panelGroup >
+							<apex:pageMessage rendered="{!AND(disableSendOrder, blnPoliciesMissing)}"
+								summary="The opportunity does not have any policies. Please make sure policies are present in hippo and then opportunity before you click send order."
+								severity="warning"
+								strength="3"
+							/>
+							<apex:pageMessage rendered="{!AND(disableSendOrder, blnQASheetInfoMissing)}"
+								summary="There are no QA Sheet Info found in processed state. Please process QA Sheet from hippo and then opportunity before you click send order."
+								severity="warning"
+								strength="3"
+							/>
+						</apex:panelGroup>
+						<apex:inputCheckbox value="{!ttfRecord.Send_Order__c}" disabled="{!disableSendOrder}">
+							<!--<apex:actionSupport event="onchange" reRender="QAFields" status="status" />-->
+						</apex:inputCheckbox>
+					</apex:pageBlockSection>
+				</apex:pageBlock>
+			</apex:outputPanel>
+			<apex:actionStatus id="status" stopText="">
+				<apex:facet name="start">
+					<div>
+						<div class="popupBackground" />
+						<div class="PopupPanel">
+							<table border="0" width="100%" height="100%">
+								<tr>
+									<td align="center"><b>Please Wait</b></td>
+								</tr>
+								<tr>
+									<td align="center"><img src="{!$Resource.loading_image}" /></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</apex:facet>
+			</apex:actionStatus>
+			<apex:actionFunction name="showHideFieldsMed" reRender="mec,pbs,req,uncommon,tada" status="medCarSwitchStatus" />
+			<apex:actionFunction name="showHideFieldsDen" reRender="pbsDentalE,pbsDental" status="medCarSwitchStatus" />
+			<apex:actionFunction name="showHideFieldsVision" reRender="pbVisionE,pbVision" status="medCarSwitchStatus" />
+			<apex:actionFunction name="showHideFieldsLife" reRender="pbsLifeE,pbsLife" status="medCarSwitchStatus" />
+			<apex:actionFunction name="showHideFieldsSTD" reRender="pbSTDE,pbSTD" status="medCarSwitchStatus" />
+			<apex:actionFunction name="showHideFieldsLTD" reRender="pbLTDE,pbLTD" status="medCarSwitchStatus" />
+			<apex:actionFunction name="addAccount" action="{!addAffliate}" reRender="AccountSection,AccountSectionNewPlan" status="status" />
+			<apex:actionFunction name="removeAccount" action="{!removeAffliate}" reRender="AccountSection,AccountSectionNewPlan" status="status">
+				<apex:param id="remAct" name="indx" value="" />
+			</apex:actionFunction>
+			<apex:actionFunction name="doesAffiliate" action="{!doesHaveAffliate}" reRender="AccountSection,AccountSectionNewPlan" status="status" />
+		</apex:form>
+		<apex:form id="frm2" rendered="{! blnIsOpportunityDismissed}">
+			<apex:pageMessages escape="false"></apex:pageMessages>
+			<apex:commandButton action="{!Cancel}" value="Back" rendered="!sforce.console.isInConsole()" />
+		</apex:form>
+	</div>
+</apex:page>

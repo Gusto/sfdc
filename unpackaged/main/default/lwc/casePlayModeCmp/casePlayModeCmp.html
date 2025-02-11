@@ -1,0 +1,57 @@
+<template>
+	<div style="width: 95%; margin: 5px !important">
+		<template if:true={blnIsLoading}>
+			<lightning-spinner alternative-text="Loading ..." size="small" variant="brand"></lightning-spinner>
+		</template>
+
+		<div class="slds-m-top_medium slds-m-bottom_medium slds-grid slds-gutters">
+			<div class="slds-form-element__control slds-col slds-size_2-of-8" style="margin: 5px !important">
+				<div style="font-weight: bold; margin-bottom: 5px">Select Case Type :</div>
+				<div class="slds-select_container">
+					<select class="slds-select" onchange={caseTypeChangeHandler}>
+						<template for:each={list_CaseTypes} for:item="option">
+							<option key={option.strLabel} class="uiInputSelectOption" value={option.strValue}>{option.strValue}</option>
+						</template>
+					</select>
+				</div>
+			</div>
+
+			<template lwc:if={blnEnableCarrier}>
+				<div class="slds-form-element__control slds-col slds-size_2-of-8" style="margin: 5px !important">
+					<div style="font-weight: bold; margin-bottom: 5px">Select Carrier Type :</div>
+					<div class="slds-select_container">
+						<select class="slds-select" onchange={carrierChangeHandler}>
+							<template for:each={list_Carries} for:item="option">
+								<option key={option.strLabel} class="uiInputSelectOption" value={option.strValue}>{option.strValue}</option>
+							</template>
+						</select>
+					</div>
+				</div>
+			</template>
+
+			<template lwc:if={blnEnableCount}>
+				<div class="slds-form-element__control slds-col slds-size_2-of-8" style="margin: 5px !important">
+					<div style="font-weight: bold; margin-bottom: 5px">Number to Serve Up :</div>
+					<div class="slds-select_container">
+						<select class="slds-select" onchange={countChangeHandler}>
+							<template for:each={list_CaseNumber} for:item="option">
+								<option key={option.strLabel} class="uiInputSelectOption" value={option.strValue}>{option.strValue}</option>
+							</template>
+						</select>
+					</div>
+				</div>
+			</template>
+		</div>
+
+		<div class="slds-m-top_medium slds-m-bottom_medium slds-grid slds-gutters">
+			<div class="slds-form-element__control slds-col slds-size_4-of-8" style="margin: 5px !important">
+				<lightning-formatted-text value={strMsg}></lightning-formatted-text> <br />
+				<lightning-formatted-text value={strSubMsg}></lightning-formatted-text>
+			</div>
+			<div class="slds-form-element__control slds-col slds-size_3-of-8" style="margin: 5px !important">
+				<lightning-button label="Case Play" onclick={casePlay} variant="brand"></lightning-button>
+				<lightning-button-icon icon-name="utility:refresh" size="medium" alternative-text="Refresh" onclick={refresh} class="slds-p-around_x-small"></lightning-button-icon>
+			</div>
+		</div>
+	</div>
+</template>

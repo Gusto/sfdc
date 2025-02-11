@@ -1,0 +1,6 @@
+<apex:page StandardController="Case" showHeader="false" sidebar="false">
+    <apex:form >
+    <apex:OutputLabel value="{!$ObjectType.Case.fields.Submission_Method__c.Label}"/>
+    <apex:inputField value="{!case.Submission_Method__c}"/>
+    </apex:form>
+</apex:page>

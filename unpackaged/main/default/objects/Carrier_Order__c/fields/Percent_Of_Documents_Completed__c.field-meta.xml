@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Percent_Of_Documents_Completed__c</fullName>
+    <description>Benefit Transfer - To calculate the percentage between total doc vs collected doc.</description>
+    <formula>IF(Number_Of_Collected_Documents__c != 0, Number_Of_Collected_Documents__c  /  Total_Number_Of_Documents__c,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>% Of Documents Completed</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

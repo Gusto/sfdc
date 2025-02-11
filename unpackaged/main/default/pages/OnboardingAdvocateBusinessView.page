@@ -1,0 +1,273 @@
+<apex:page standardController="Benefit_Order__c" extensions="OnboardingAdvocateViewCtrl" title="OnboardingAdvocateBusinessView" action="{!callOnOnboardingAdvocateBusinessView}">
+    <c:OnboardingAdvocateTabComp actionTab="" cohortTab="" businessTab="active"/>  
+    <apex:form id="frmId">  
+        <style>
+            .tablesorter-blue tfoot th {
+                padding: 10px;
+            }
+            .tablesorter-blue tfoot input, .tablesorter-blue thead input {
+                width: 100%;
+                padding: 3px;
+                box-sizing: border-box;
+            }
+        </style>       
+        <div class="tabcontent slds-scope">
+                <table width="100%" style="margin-bottom: 5px;">
+                    <tr>
+                        <td><apex:pageMessages id="showmsg" /></td>
+                        <td style="text-align:right !important; vertical-align: bottom !important;"><apex:commandButton value="Refresh" status="statusSave" action="{!callOnOnboardingAdvocateBusinessView}" rerender="frmId"/></td>
+                    </tr>
+                </table>
+                 <div class="tab">
+                  <apex:commandLink action="{!ShowBenefitOrderPanel}" status="statusSave" rerender="frmId" styleclass="tablinks subTabLinks {!boActive}" style="padding:5px 12px">Open Benefit Orders ({!lstBOBusinessView.size} Records)</apex:commandLink>
+                  <apex:commandLink action="{!ShowCarrierOrderPanel}" status="statusSave" rerender="frmId" styleclass="tablinks subTabLinks {!coActive}" style="padding:5px 12px">Open Carrier Orders ({!lstCOBusinessView.size} Records)</apex:commandLink>
+                </div>
+                 <div class="tabcontent">
+                 <!-- BO Business View Start -->
+                 <apex:outputPanel rendered="{!if(boActive=='active',true,false)}" id="boPanel">
+                    <a href="javascript:void(0);" id="selectColLink" onClick="openModalBO()" style="float: right;">Select Columns</a>
+                    <table id="BOStat" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                        <thead>
+                            <tr>
+                                <apex:repeat value="{!mapLstSelectedFields['OA Business Benefit_Order__c']}" var="field">
+                                    <th><apex:outputText value="{!mapAllFields['Benefit_Order__c'][field]}"/></th>
+                                </apex:repeat>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!lstBOBusinessView}" var="objBO">
+                                <tr>
+                                 <apex:repeat value="{!mapLstSelectedFields['OA Business Benefit_Order__c']}" var="field">
+                                    <td class="{!IF(field=='Submission_Deadline__c',objBO.rowColor,'')}"> 
+                                        <apex:outputField value="{!objBO.objOrder[field]}" rendered="{!AND(field != 'Name' && field != 'Follow_Up_Notes__c' && field != 'Status_Change_Date_Time__c' && field != 'LastModifiedDate')}"/>
+                                        
+                                        <apex:outputPanel rendered="{!IF(field == 'Name',true,false)}">                                            
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Id}','{!JSENCODE(objBO.objOrder[field])}');return false;">{!objBO.objOrder[field]}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel styleclass="txt-truncate" layout="block" title="{!objBO.objOrder[field]}" rendered="{!IF(field == 'Follow_Up_Notes__c',true,false)}">
+                                            {!objBO.objOrder[field]}
+                                        </apex:outputPanel>
+                                        <apex:outputText rendered="{!IF(OR(field == 'Status_Change_Date_Time__c',field == 'LastModifiedDate') ,true,false)}" value="{0,date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!objBO.objOrder[field]}" />
+                                        </apex:outputText>
+                                    </td>
+                                 </apex:repeat>
+                                </tr> 
+                            </apex:repeat>
+                        </tbody>
+                         <tfoot>
+                            <tr>
+                                <apex:repeat value="{!mapLstSelectedFields['OA Business Benefit_Order__c']}" var="field">
+                                    <th><apex:outputText value="{!mapAllFields['Benefit_Order__c'][field]}"/></th>
+                                </apex:repeat>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </apex:outputPanel>
+                <!-- BO Business View End -->
+                <!-- CO Business View Start -->
+                 <apex:outputPanel rendered="{!if(coActive=='active',true,false)}" id="coPanel">
+                    <a href="javascript:void(0);" id="selectColLink" onClick="openModalCO()" style="float: right;">Select Columns</a>
+                    <table id="COStat" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                        <thead>
+                            <tr>
+                                <apex:repeat value="{!mapLstSelectedFields['OACO Business Carrier_Order__c']}" var="field">
+                                    <th><apex:outputText value="{!mapAllFields['Carrier_Order__c'][field]}"/></th>
+                                </apex:repeat>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!lstCOBusinessView}" var="objBO">
+                                <tr>
+                                 <apex:repeat value="{!mapLstSelectedFields['OACO Business Carrier_Order__c']}" var="field">
+                                    <td class="{!IF(field=='Submission_Deadline_Date__c',objBO.rowColor,'')}"> 
+                                        <apex:outputField value="{!objBO.objOrder[field]}" rendered="{!AND(field != 'Name' && field != 'Follow_Up_Notes__c' && field != 'Status_Change_Date_Time__c' && field != 'LastModifiedDate' && field != 'Benefit_Order__c' && field != 'Audit_Owner__c' && field != 'Parent__c' && field != 'Ownerid' && field != 'Confirmation_Owner__c' && field != 'LastModifiedById')}"/>
+                                        <apex:outputPanel rendered="{!IF(field == 'Name',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Id}','{!objBO.objOrder[field]}');return false;">{!objBO.objOrder[field]}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(field == 'Benefit_Order__c',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Benefit_Order__c}','{!objBO.objOrder.Benefit_Order__r.Name}');return false;">{!objBO.objOrder.Benefit_Order__r.Name}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(field == 'Audit_Owner__c',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Audit_Owner__c}','{!objBO.objOrder.Audit_Owner__r.Name}');return false;">{!objBO.objOrder.Audit_Owner__r.Name}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(field == 'Parent__c',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Parent__c}','{!objBO.objOrder.Parent__r.Name}');return false;">{!objBO.objOrder.Parent__r.Name}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(field == 'Ownerid',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Ownerid}','{!objBO.objOrder.Owner.Name}');return false;">{!objBO.objOrder.Owner.Name}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(field == 'Confirmation_Owner__c',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.Confirmation_Owner__c}','{!objBO.objOrder.Confirmation_Owner__r.Name}');return false;">{!objBO.objOrder.Confirmation_Owner__r.Name}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(field == 'LastModifiedById',true,false)}">
+                                            <a href="javascript:void(0);" onclick="openRecord('{!objBO.objOrder.LastModifiedById}','{!objBO.objOrder.LastModifiedBy.Name}');return false;">{!objBO.objOrder.LastModifiedBy.Name}</a>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel styleclass="txt-truncate" layout="block" title="{!objBO.objOrder[field]}" rendered="{!IF(field == 'Follow_Up_Notes__c',true,false)}">
+                                            {!objBO.objOrder[field]}
+                                        </apex:outputPanel>
+                                        <apex:outputText rendered="{!IF(OR(field == 'Status_Change_Date_Time__c',field == 'LastModifiedDate') ,true,false)}" value="{0,date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!objBO.objOrder[field]}" />
+                                        </apex:outputText>
+                                    </td>
+                                 </apex:repeat>
+                                </tr> 
+                            </apex:repeat>
+                        </tbody>
+                         <tfoot>
+                            <tr>
+                                <apex:repeat value="{!mapLstSelectedFields['OACO Business Carrier_Order__c']}" var="field">
+                                    <th><apex:outputText value="{!mapAllFields['Carrier_Order__c'][field]}"/></th>
+                                </apex:repeat>
+                            </tr>
+                        </tfoot>
+                    </table>
+                 </apex:outputPanel>
+                 <!-- CO Business View End -->
+               </div> 
+             
+            <!-- Div BO Modal Start-->
+            <div class="modal-window myModelBO" style="display: none;">
+                <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container" style="max-width: 500px;">
+                        <div class="slds-modal__header">
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Columns to Show</h2>
+                        </div>
+                        <apex:pageMessages />
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>
+                                <apex:selectCheckboxes value="{!mapLstSelectedFields['OA Business Benefit_Order__c']}" styleclass="chk-box" id="boColumnFilter" layout="pagedirection">
+                                    <apex:selectOptions value="{!mapLstAllFields['Benefit_Order__c']}"/>
+                                </apex:selectCheckboxes>
+                            </p>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral re-open-close-btn-bo" onclick="return false;">Cancel</button>
+                            <button class="slds-button slds-button_brand save-preferences1">Save</button>
+                            <apex:actionFunction name="SavePref" status="statusSave" rerender="frmBody" action="{!savePreference}">
+                                <apex:param name="view" value="OA Business" assignTo="{!currentView}" />
+                                <apex:param name="objName" value="Benefit_Order__c" assignTo="{!currentObjName}" />
+                            </apex:actionFunction>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div>
+            <!-- Div BO Model End -->
+            
+            <!-- Div CO Modal Start-->
+            <div class="modal-window myModelCO" style="display: none;">
+                <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container" style="max-width: 500px;">
+                        <div class="slds-modal__header">
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Columns to Show</h2>
+                        </div>
+                        <apex:pageMessages />
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>
+                                <apex:selectCheckboxes value="{!mapLstSelectedFields['OACO Business Carrier_Order__c']}" styleclass="chk-box" id="boColumnFilterCO" layout="pagedirection">
+                                    <apex:selectOptions value="{!mapLstAllFields['Carrier_Order__c']}"/>
+                                </apex:selectCheckboxes>
+                            </p>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral re-open-close-btn-co" onclick="return false;">Cancel</button>
+                            <button class="slds-button slds-button_brand save-preferences1-co">Save</button>
+                            <apex:actionFunction name="SavePrefCO" status="statusSave" rerender="frmBody" action="{!savePreference}">
+                                <apex:param name="view" value="OACO Business" assignTo="{!currentView}" />
+                                <apex:param name="objName" value="Carrier_Order__c" assignTo="{!currentObjName}" />
+                            </apex:actionFunction>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div>
+            <!-- Div CO Model End -->
+            
+        </div>
+        <script>
+            
+            $(function() {
+                initTable("#BOStat");
+                initTable("#COStat");
+            });
+            
+            function initTable(tableId){
+                $(tableId).DataTable(
+                {
+                        "lengthMenu": [[-1,10, 25, 50, 100], ["All",10, 25, 50,100]],
+                        "aaSorting": []
+                    } 
+                );
+                
+                 // Setup - add a text input to each footer cell
+                $(tableId+' '+' tfoot th').each( function () {
+                    var title = $(this).text();
+                    $(this).html( '<input type="text" />' );
+                } );
+             
+                // DataTable
+                var table = $(tableId).DataTable();
+             
+                // Apply the search
+                table.columns().every( function () {
+                    var that = this;
+             
+                    $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                        if ( that.search() !== this.value ) {
+                            that
+                                .search( this.value )
+                                .draw();
+                        }
+                    } );
+                } );
+                $(tableId+' '+'tfoot tr').appendTo(tableId+' '+' thead');
+            }
+            function openModalBO(){
+                 $('.myModelBO').show(); 
+             }
+              function openModalCO(){
+                 $('.myModelCO').show(); 
+             }
+             
+           
+             $('.re-open-close-btn-bo').click(function() {
+                    $('.myModelBO').hide();
+                    return false;
+              });
+              $('.re-open-close-btn-co').click(function() {
+                    $('.myModelCO').hide();
+                    return false;
+              });
+            
+             $('.save-preferences1').click(function() {
+                var nofSelect= $("[id*='boColumnFilter']:checked").length;
+                if(nofSelect==0){
+                       alert('Please select at least one coulmn.');
+                       return false;
+                   }
+                   else if(nofSelect>10){
+                        alert('You can select maximum 10 column to display');
+                        return false;
+                  }else{
+                    SavePref();
+                  }                 
+             });
+             
+             $('.save-preferences1-co').click(function() {
+                var nofSelect= $("[id*='boColumnFilterCO']:checked").length;
+                if(nofSelect==0){
+                       alert('Please select at least one coulmn.');
+                       return false;
+                   }
+                   else if(nofSelect>10){
+                        alert('You can select maximum 10 column to display');
+                        return false;
+                  }else{
+                    SavePrefCO();
+                  }                 
+             });
+             
+        </script>
+    </apex:form>
+</apex:page>

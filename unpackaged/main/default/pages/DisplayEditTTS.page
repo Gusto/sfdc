@@ -1,0 +1,867 @@
+<apex:page standardController="Benefit_Order__c" extensions="DisplayEditTTSExt" tabStyle="Benefit_Order__c">
+    <apex:slds />
+    <apex:sectionHeader Title="TTS Detail"/>
+    <head>
+        <apex:includeScript value="/support/console/45.0/integration.js"/>
+        <script type="text/javascript">
+        function RefreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+        };
+    
+    var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               console.log('Test1');
+               sforce.console.getFocusedSubtabId(function(subTabId){
+                   sforce.console.closeTab(subTabId.id);
+               });
+           } 
+           else 
+           {
+                console.log('Test2');
+               //alert('Cannot refresh the page');
+           }
+       };
+        // for opening tab in console for bank information
+        function openBankInfoTab(recId){
+            var redirectUrl4 = 'https://app.gusto.com/panda/companies/'+recId;
+            window.open(redirectUrl4, '_blank');
+        }   
+        function openHippoTab(recId){
+            var redirectUrl5 = 'https://hippo.gusto.com/companies/'+recId;
+            window.open(redirectUrl5, '_blank');
+        } 
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+        <style>
+            .requiredField{
+                border-left:#c00 solid 3px !important;
+            }
+            /* Style the tab */
+            .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            }
+            /* Style the buttons inside the tab */
+            .tab a {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 46px;
+            transition: 0.3s;
+            font-size: 14px;
+            }
+            
+            /* Change background color of buttons on hover */
+            .tab a:hover {
+            background-color: #ddd;
+            }
+            
+            /* Create an active/current tablink class */
+            .tab a.active {
+            background-color: #ccc;
+            }
+            
+            /* Style the tab content */
+            .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+            }
+            #tbReadonly td{
+                padding-bottom: 7px;
+                border-bottom: 1px solid #ececec;
+            }
+            .myClass{
+            color:black !important;
+            background:#72abcbc7 !important;
+            }
+            .myClass1{
+            color:black !important;
+            background:#f1f1f1 !important;
+            }  
+            .policyDetailClass{
+            align:right;
+            }
+                .readOnly {
+                background:#ffff;
+                pointer-events: none; 
+                }
+                
+            </style>
+    </head>
+    <apex:actionstatus id="status">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height:100%; position: fixed; z-index: 9999; opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessages />
+            <apex:outputPanel id="frm">
+                <apex:pageBlockSection title="System Information">
+                    <apex:outputField value="{!objTTSRecord.Opportunity__c}"/>
+                    <apex:outputField value="{!objTTSRecord.Account__c}"/>
+                    <apex:outputField value="{!objTTSRecord.Benefit_Order__c}"/>
+                    <apex:outputField value="{!objTTSRecord.Implementation_Advocate__c}"/>
+                    <apex:outputField value="{!objTTSRecord.Benefit_Advisor__c}"/>
+                    <apex:outputField value="{!objTTSRecord.LastModifiedById}"/>
+                    <apex:outputField value="{!objTTSRecord.CreatedById}"/>
+                    <apex:outputField value="{!objTTSRecord.LastModifiedDate }"/>
+                </apex:pageBlockSection>
+
+                 <!-- Edit mode -->
+                <apex:outputText rendered="{!!blnPageReadOnly}" >
+                    <apex:repeat value="{!list_SectionHeaderWithOrder}" var="sectionHeaderName" >
+                        <apex:pageBlockSection title="{!sectionHeaderName}" rendered="{!map_SectionHeaderWithSameLayout[sectionHeaderName]}">
+                            <apex:repeat value="{!map_SectionHeaderAndFields[sectionHeaderName]}" var="fieldMappingRecord" >
+
+                                <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'Transition_to_Fulfillment__c' 
+                                && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnDifflayout) && 
+                                NOT(fieldMappingRecord.blnDependentField) && fieldMappingRecord.blnControllingField , true, false)}"  
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')} {!fieldMappingRecord.strFieldAPIName}" value="{!objTTSRecord[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}" onchange="displayDependentField('{!fieldMappingRecord.strFieldAPIName}')">
+                                </apex:inputField>
+ 
+                                <apex:pageBlockSectionItem rendered="{!IF(fieldMappingRecord.blnControllingField , true, false)}" 
+                                dataStyleClass="{!map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]}" 
+                                labelStyleClass="{!map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]}" 
+                                dataStyle="display:{!if(contains(strChild,map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]),'','none;')}" 
+                                labelStyle="display:{!if(contains(strChild,map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]),'','none;')}">
+                                    <apex:outputLabel > {!map_ParentChildLabelFields[fieldMappingRecord.strFieldAPIName]}</apex:outputLabel>
+                                    <apex:inputField styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}"
+                                    value="{!objTTSRecord[map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]]}" />
+                                </apex:pageBlockSectionItem>
+
+                                <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'Transition_to_Fulfillment__c' 
+                                && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnDifflayout) && 
+                                NOT(fieldMappingRecord.blnDependentField)  && NOT(fieldMappingRecord.blnControllingField) , true, false)}"  
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" value="{!objTTSRecord[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}"/>
+
+                                <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' && fieldMappingRecord.blnFieldToDisplay 
+                                && NOT(fieldMappingRecord.blnDifflayout), true, false)}" 
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" value="{!objQALineOfCoverage[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}"/>
+
+                                <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'Company_Level_Documents__c' && fieldMappingRecord.blnFieldToDisplay 
+                                && NOT(fieldMappingRecord.blnDifflayout), true, false)}" 
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" value="{!objCLD[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}"/>
+
+                            </apex:repeat>
+                            <apex:pageBlockSectionItem rendered="{!sectionHeaderName == 'Company Details'}">
+                                <apex:outputLabel >Bank information</apex:outputLabel>
+                                <apex:commandLink onclick="openBankInfoTab('{!accCompanyId}');return false;">Click here</apex:commandLink>
+                            </apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem rendered="{!sectionHeaderName == 'Company Details' && blnShowBankInformation}">
+                                <apex:outputLabel value="Bank Address" rendered="{!!ISNULL(QAObj.Bank_Address__c)}"/>
+                                <apex:outputField value="{!QAObj.Bank_Address__c}" rendered="{!NOT(ISNULL(QAObj.Bank_Address__c))}"/>
+                            </apex:pageBlockSectionItem>
+
+                            <!-- Show Do they have affiliates? table in bottom of Company Details. -->
+                            <apex:repeat value="{!map_SectionHeaderAndFields[sectionHeaderName]}" var="fieldMappingRecord" >
+                                <apex:outputPanel rendered="{!IF(fieldMappingRecord.blnFieldToDisplay && fieldMappingRecord.blnDifflayout
+                                && fieldMappingRecord.strFieldAPIName  == 'Do_they_have_affiliates__c', true, false)}">
+                                    <apex:outputLabel >{!fieldMappingRecord.strFieldALabel}</apex:outputLabel>
+                                    <apex:outputField value="{!objTTSRecord.Do_they_have_affiliates__c}" rendered="{!objTTSRecord.Do_they_have_affiliates__c}" ></apex:outputField>
+                                    <apex:pageBlockTable value="{!list_RelatedBOs}" var="objBO" rendered="{!objTTSRecord.Do_they_have_affiliates__c}">
+                                        <apex:column headerValue="Affiliated companies">
+                                            <apex:outputField value="{!objBO.Name}"/>
+                                        </apex:column>
+                                    </apex:pageBlockTable>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            
+                        </apex:pageBlockSection>
+
+                        <apex:pageBlockSection columns="1" title="{!sectionHeaderName}" id="companyLevelDocumentSection" rendered="{!sectionHeaderName == 'Company Level Documents'}">
+                            <apex:variable var="count" value="{!0}"/> 
+                            <apex:pageBlockTable value="{!lstMasterCLDWrapper}" var="cc">
+                                <apex:column headerValue="Company Level Document Name" rendered="{!map_CompanyLevelDocumentsFields['Name'].blnFieldToDisplay}">
+                                    <apex:inputField value="{!cc.childObj.name}" >
+                                        <apex:actionSupport event="onchange" reRender="companyLevelDocumentSection"/>
+                                    </apex:inputField>
+                                </apex:column>
+                                <apex:column headerValue="Company Level Document Additional Details" rendered="{!map_CompanyLevelDocumentsFields['Additional_Details__c'].blnFieldToDisplay}">
+                                    <apex:inputTextarea cols="35" rows="5" value="{!cc.childObj.Additional_Details__c}" />
+                                </apex:column>
+                                <apex:column headerValue="Primary Options" rendered="{!map_CompanyLevelDocumentsFields['Primary_Options__c'].blnFieldToDisplay}">
+                                    <apex:outputPanel layout="none" rendered="{!cc.childObj.name != 'Owner Tax Documentation'}">
+                                        <apex:selectList value="{!cc.childObj.Primary_Options__c}" size="1">
+                                            <apex:selectOptions value="{!firstList}"></apex:selectOptions>
+                                        </apex:selectList>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel layout="none" rendered="{!cc.childObj.name == 'Owner Tax Documentation'}">
+                                        <apex:selectList value="{!cc.childObj.Primary_Options__c}" size="1">
+                                            <apex:selectOptions value="{!secondList}"></apex:selectOptions>
+                                        </apex:selectList>
+                                    </apex:outputPanel>
+                                </apex:column>
+                                <apex:column rendered="{!map_CompanyLevelDocumentsFields != null}">
+                                    <apex:facet name="header">
+                                        <apex:inputCheckbox value="{!isChecked}" onclick="selectAllCheckboxes(this,'inputId')"/>
+                                    </apex:facet>
+                                    <apex:inputCheckbox value="{!cc.selectRecToDelete}" id="inputId"/>
+                                    <apex:variable value="{!count + 1}" var="count"/> 
+                                </apex:column>
+                            </apex:pageBlockTable>
+                            <apex:outputPanel >
+                                <apex:commandButton value="Add New Document" action="{!AddRow}" reRender="companyLevelDocumentSection"/>
+                                <div style="float:right;">
+                                    <apex:commandButton value="Delete" action="{!DeleteRow}" reRender="companyLevelDocumentSection"/>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:pageBlockSection>
+                        
+                    </apex:repeat>
+                    <apex:pageBlockSection title="Group Submission Info" rendered="{! blnShowAttachmentSection || bln_BSCAMedicalForRenewal }" >
+                        <apex:inputField styleClass="requiredField" value="{!objTTSRecord.Infertility_Rider__c}" label="Infertility Rider?" rendered="{!bln_BSCAMedicalForRenewal}"/>
+                    </apex:pageBlockSection>
+
+                    <!--</apex:repeat> -->
+                    <apex:pageblock title="Policy and Plan Information" id="trp">
+                        <div class="tab" id="trp">
+                            <div style="float:right">
+                                <apex:commandLink onclick="openHippoTab('{!accCompanyId}');return false;" styleClass="{!if(accCompanyId != Null,'policyDetailClass','')}">Hippo</apex:commandLink>
+                            </div>
+                            <apex:commandLink styleClass="{!if(StrParam=='Medical','myClass','myClass1')}" value="Medical" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!contains(tastring,':Medical')}" status="status"> 
+                                <apex:param value="Medical" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Dental','myClass','myClass1')}" value="Dental" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!contains(tastring,':Dental')}" status="status">
+                                <apex:param value="Dental" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Vision','myClass','myClass1')}" value="Vision" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!contains(tastring,'Vision')}" status="status">
+                                <apex:param value="Vision" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Life','myClass','myClass1')}" value="Life" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!contains(tastring,'Life')}" status="status">
+                                <apex:param value="Life" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='LTD','myClass','myClass1')}" value="LTD" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!if(contains(tastring,'LTD') ||contains(tastring,'Long Term Disability'),true,false)}" status="status">
+                                <apex:param value="LTD" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='STD','myClass','myClass1')}" value="STD" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!if(contains(tastring,'STD') ||contains(tastring,'Short Term Disability'),true,false)}" status="status">
+                                <apex:param value="STD" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='FSA','myClass','myClass1')}" value="FSA" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!if(contains(tastring,'FSA') ||contains(tastring,'Flexible Spending Account - Medical'),true,false)}" status="status">
+                                <apex:param value="FSA" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='DCA','myClass','myClass1')}" value="DCA" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!if(contains(tastring,'DCA') ||contains(tastring,'Flexible Spending Account - Dependent Care'),true,false)}" status="status">
+                                <apex:param value="DCA" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='HSA','myClass','myClass1')}" value="HSA" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!contains(tastring,'HSA')}" status="status">
+                                <apex:param value="HSA" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Commuter','myClass','myClass1')}" value="Commuter" action="{!DisplayRec}" rerender="trp,trp1" rendered="{!contains(tastring,'Commuter')}" status="status">
+                                <apex:param value="Commuter" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                        </div>
+                        <apex:pageBlock id="trp1">
+                            <apex:pageBlockSection columns="2" id="locPanel">
+                                <apex:repeat value="{!lstQALinesOfCoverage}" var="qline" id="therepeat">
+                                    <apex:outputText style="width:50%;">
+                                        <table frame="box" class="bPageBlock" style="display: inline-block;padding:5px" id="tb">
+                                            <apex:outputText rendered="{!IF(StrParam=='Life'||StrParam=='LTD'||StrParam=='STD',true,false)}">
+                                                <apex:repeat value="{!map_SectionHeaderAndFields['Policy Details (LiDi)']}" var="fieldMappingRecord" >
+                                                    <tr>
+                                                        <td> {!fieldMappingRecord.strFieldALabel} </td>
+                                                        <td>
+                                                            <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                            && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnReadOnly)
+                                                            , true, false)}"  
+                                                            styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                            value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                            label="{!fieldMappingRecord.strFieldALabel}" >
+                                                            </apex:inputField> 
+
+                                                            <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                            && fieldMappingRecord.blnFieldToDisplay && fieldMappingRecord.blnReadOnly
+                                                            , true, false)}"  
+                                                            styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                            value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                            label="{!fieldMappingRecord.strFieldALabel}" >
+                                                            </apex:outputField> 
+                                                        </td>
+                                                    </tr>
+                                                </apex:repeat>
+                                               <!-- <tr>
+                                                    <td> Carriers </td>
+                                                    <td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Benefits selected (Carrier)</td>
+                                                    <td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rating Structure: Composite,<br/> Age Banded, Other </td>
+                                                    <td><apex:inputfield value="{!qline.Rating_Structure_Composite_Age_Banded__c}" 
+                                                        styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Documents Require for Submission</td>
+                                                    <td> 
+                                                        <apex:inputTextarea title="Character limit :32768" html-maxLength="32768" cols="35" 
+                                                        rows="{!map_RowCountTextArea[qLine.Id]['Documents_Require_for_Submission__c']}" 
+                                                        value="{!qline.Documents_Require_for_Submission__c}" />
+                                                    </td>
+                                                </tr>
+                                                <apex:outputText rendered="{!QAObj.recordtype.developername ='Benefit_Renewal'}">
+                                                    <tr>
+                                                        <td>Alignment to be requested by submission team?</td>
+                                                        <td><apex:inputField value="{!qLine.Does_group_have_an_alignment__c}"/></td>
+                                                    </tr>
+                                                </apex:outputText>
+                                                <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                                    <tr>
+                                                        <td>Participation requirements</td>
+                                                        <td>
+                                                            <apex:inputTextarea title="Character limit :5000" 
+                                                            html-maxLength="5000" cols="35" 
+                                                            rows="{!map_RowCountTextArea[qLine.Id]['Participation_Requirements__c']}"  
+                                                            value="{!qline.Participation_Requirements__c}" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Plan Changes </td>
+                                                        <td>
+                                                            <apex:inputTextarea title="Character limit :1000" 
+                                                            html-maxLength="1000" cols="35" 
+                                                            rows="{!map_RowCountTextArea[qLine.Id]['Plan_changes__c']}"  
+                                                            value="{!qline.Plan_changes__c}" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Waiting Period Changes</td>
+                                                        <td>
+                                                            <apex:inputTextarea title="Character limit :1000" 
+                                                            html-maxLength="1000" cols="35" 
+                                                            rows="{!map_RowCountTextArea[qLine.Id]['Waiting_Period_change__c']}"  
+                                                            value="{!qline.Waiting_Period_change__c}" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Contribution Changes</td>
+                                                        <td>
+                                                            <apex:inputTextarea title="Character limit :1000" 
+                                                            html-maxLength="1000" cols="35" 
+                                                            rows="{!map_RowCountTextArea[qLine.Id]['Contribution_change__c']}"  
+                                                            value="{!qline.Contribution_change__c}" />
+                                                        </td>
+                                                    </tr>
+                                                </apex:outputText>                                        
+                                                <tr>
+                                                    <td>Allow plans with no enrolles</td>
+                                                    <td>
+                                                        <apex:inputfield value="{!qline.Allows_plans_with_no_enrollees__c}">
+                                                            <apex:actionSupport event="onchange" reRender="locPanel"/>
+                                                        </apex:inputfield>
+                                                    </td>
+                                                </tr>
+                                                <apex:outputText rendered="{! IF(QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto',true,false)}" >
+                                                    <tr>
+                                                        <td>LIst of Owner names and the percentages</td>
+                                                        <td>
+                                                            <apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" 
+                                                            value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" />
+                                                        </td>
+                                                    </tr>
+                                                </apex:outputText>
+                                                <tr>
+                                                    <td>Valid Waivers</td>
+                                                    <td>
+                                                        <apex:inputTextarea title="Character limit :1000" 
+                                                        html-maxLength="1000" cols="35"   
+                                                        value="{!qline.Valid_Waivers__c}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>LIst of Owner names and the percentages</td>
+                                                    <td>
+                                                        <apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35"  
+                                                        value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" 
+                                                        rendered="{!QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto'}"/>
+                                                    </td>
+                                                </tr> -->
+                                            </apex:outputText>
+                                            <apex:outputText rendered="{!IF(StrParam=='Dental'||StrParam=='Vision',true,false)}">
+                                                <apex:repeat value="{!map_SectionHeaderAndFields['Policy Details (Dental/Vision)']}" var="fieldMappingRecord" >
+                                                    <tr>
+                                                        <td> {!fieldMappingRecord.strFieldALabel} </td>
+                                                        <td>
+                                                            <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                            && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnReadOnly)
+                                                            , true, false)}"  
+                                                            styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                            value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                            label="{!fieldMappingRecord.strFieldALabel}" >
+                                                            </apex:inputField> 
+
+                                                            <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                            && fieldMappingRecord.blnFieldToDisplay && fieldMappingRecord.blnReadOnly
+                                                            , true, false)}"  
+                                                            styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                            value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                            label="{!fieldMappingRecord.strFieldALabel}" >
+                                                            </apex:outputField> 
+                                                        </td>
+                                                    </tr>
+                                                </apex:repeat>
+                                                <!--<tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Rating Structure: Composite,<br/> Age Banded, Other</td><td><apex:inputfield value="{!qline.Rating_Structure_Composite_Age_Banded__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"></apex:inputfield></td></tr>
+                                                <tr><td>Documents Require for Submission</td><td> <apex:inputTextarea title="Character limit :32768" html-maxLength="32768" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Documents_Require_for_Submission__c']}"  value="{!qline.Documents_Require_for_Submission__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"/></td></tr>
+                                                <tr><td>Pay Schedule(Beam Only)</td><td><apex:inputfield value="{!qline.Pay_Schedule__c}" ></apex:inputfield></td></tr>
+                                                <tr><td>ID Number(Beam Only)</td><td><apex:inputfield value="{!qline.ID_Number__c}" ></apex:inputfield></td></tr>
+                                                <apex:outputText rendered="{!QAObj.recordtype.developername ='Benefit_Renewal'}">
+                                                    <tr><td>Alignment to be requested by submission team?</td><td><apex:inputField value="{!qLine.Does_group_have_an_alignment__c}"/></td></tr>
+                                                </apex:outputText>
+                                                <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                                    <tr><td>Participation requirements</td><td><apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Participation_Requirements__c']}"  value="{!qline.Participation_Requirements__c}" ></apex:inputTextarea></td></tr>
+                                                    <tr><td>Plan Changes</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Plan_changes__c']}"  value="{!qline.Plan_changes__c}" ></apex:inputTextarea></td></tr>
+                                                    <tr><td>Waiting Period Changes</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Waiting_Period_change__c']}"  value="{!qline.Waiting_Period_change__c}" ></apex:inputTextarea></td></tr>
+                                                    <tr><td>Contribution Changes</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Contribution_change__c']}"  value="{!qline.Contribution_change__c}" ></apex:inputTextarea></td></tr>
+                                                </apex:outputText>
+                                                <tr><td>Allow plans with no enrolles</td><td><apex:inputfield value="{!qline.Allows_plans_with_no_enrollees__c}"><apex:actionSupport event="onchange" reRender="locPanel"/></apex:inputfield></td></tr>
+                                                <apex:outputText rendered="{! IF(QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto',true,false) }" >
+                                                    <tr><td>LIst of Owner names and the percentages</td><td><apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" /></td></tr>
+                                                </apex:outputText>
+                                                <tr><td>Valid Waivers</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35"   value="{!qline.Valid_Waivers__c}" ></apex:inputTextarea></td></tr>
+                                            -->
+                                            </apex:outputText>
+                                             <apex:outputText rendered="{!IF(StrParam=='Medical',true,false)}" id="medicalPanel">
+
+                                                <apex:repeat value="{!map_SectionHeaderAndFields['Policy Details (Medical)']}" var="fieldMappingRecord" >
+                                                    <tr>
+                                                        <td> {!fieldMappingRecord.strFieldALabel} </td>
+                                                        <td>
+                                                            <apex:inputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                            && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnReadOnly)
+                                                            , true, false)}"  
+                                                            styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                            value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                            label="{!fieldMappingRecord.strFieldALabel}" >
+                                                            </apex:inputField> 
+
+                                                            <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                            && fieldMappingRecord.blnFieldToDisplay && fieldMappingRecord.blnReadOnly
+                                                            , true, false)}"  
+                                                            styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                            value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                            label="{!fieldMappingRecord.strFieldALabel}" >
+                                                            </apex:outputField> 
+                                                        </td>
+                                                    </tr>
+                                                </apex:repeat>
+                                                <!--<tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Rating Structure: Composite,<br/> Age Banded, Other</td><td><apex:inputfield value="{!qline.Rating_Structure_Composite_Age_Banded__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"></apex:inputfield></td></tr>
+                                                <tr><td>Deductible Reset Year</td><td><apex:inputfield value="{!qline.PY_or_CY_Deductible__c}" ></apex:inputfield></td></tr>
+                                                <tr><td>Documents Require for Submission</td><td> <apex:inputTextarea title="Character limit :32768" html-maxLength="32768" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Documents_Require_for_Submission__c']}"  value="{!qline.Documents_Require_for_Submission__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}" /></td></tr>
+                                                <apex:outputText rendered="{!QAObj.recordtype.developername ='Benefit_Renewal'}">
+                                                    <tr><td>Rating Structure Change?</td><td><apex:inputField value="{!qLine.Rate_Change__c}"/></td></tr>
+                                                </apex:outputText>
+                                                <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                                    <tr><td>Participation requirements</td><td><apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Participation_Requirements__c']}"  value="{!qline.Participation_Requirements__c}" ></apex:inputTextarea></td></tr>
+                                                    <tr><td>Plan Changes</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Plan_changes__c']}"  value="{!qline.Plan_changes__c}" ></apex:inputTextarea></td></tr>
+                                                    <tr><td>Waiting Period Changes</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Waiting_Period_change__c']}"  value="{!qline.Waiting_Period_change__c}" ></apex:inputTextarea></td></tr>
+                                                    <tr><td>Contribution Changes</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Contribution_change__c']}"  value="{!qline.Contribution_change__c}" ></apex:inputTextarea></td></tr>
+                                                </apex:outputText>
+                                                <tr><td>Valid Waivers</td><td><apex:inputTextarea title="Character limit :1000" html-maxLength="1000" cols="35"   value="{!qline.Valid_Waivers__c}" ></apex:inputTextarea></td></tr>
+                                                <tr><td>Medical LOA Required</td><td><apex:inputfield value="{!qline.Medical_LOA_Required__c}"/></td></tr>
+                                                <tr><td>Personal LOA Required</td><td><apex:inputfield value="{!qline.LOA_Required__c}"/></td></tr>
+                                                <tr><td>Allow plans with no enrolles</td><td><apex:inputfield value="{!qline.Allows_plans_with_no_enrollees__c}"><apex:actionSupport event="onchange" reRender="locPanel"/></apex:inputfield></td></tr>
+                                                <apex:outputText rendered="{! IF(QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto',true,false)}" >
+                                                    <tr><td>LIst of Owner names and the percentages</td><td><apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" /></td></tr>
+                                                </apex:outputText>
+                                                <tr><td>Deductible Reset Year</td><td><apex:inputfield value="{!qline.PY_or_CY_Deductible__c}" required="true"/></td></tr>
+                                                <tr><td>Aligning coverage to medical renewal date</td><td><apex:inputfield value="{!objTTSRecord.Aligning_coverage_to_medical_renewal_dat__c}" rendered="{! qline.Carrier_Order__r.Order_Assignment__c == 'New Line of Coverage'}"/></td></tr>
+                                            -->
+                                            </apex:outputText>
+                                            <!-- TADA fields -->
+                                            <apex:outputText rendered="{!IF(StrParam=='FSA'||StrParam=='DCA',true,false)}">
+                                                <tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Documents Require for Submission</td><td> <apex:inputTextarea title="Character limit :32768" html-maxLength="32768" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Documents_Require_for_Submission__c']}"  value="{!qline.Documents_Require_for_Submission__c}"  /></td></tr>
+                                                <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                                    <tr><td>Participation requirements</td><td><apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Participation_Requirements__c']}"  value="{!qline.Participation_Requirements__c}" ></apex:inputTextarea></td></tr>
+                                                    <!--<tr><td>Contribution Changes</td><td><apex:inputfield value="{!qline.Contribution_change__c}"></apex:inputfield></td></tr>-->
+                                                </apex:outputText>
+                                                <tr><td>LIst of Owner names and the percentages</td><td><apex:inputTextarea title="Character limit :5000" html-maxLength="5000" cols="35" value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" rendered="{!QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto'}"/></td></tr>
+
+                                            </apex:outputText>
+                                            <apex:outputText rendered="{!IF(StrParam=='HSA'||StrParam=='Commuter',true,false)}">
+                                                <tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                            </apex:outputText>
+                                            <!--<apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                            <tr><td>TTQ Link</td><td><apex:outputLink value="apex/CreateModifyTranstionToFulfilment?id={!ttfbrecord.id}" target="_blank">{!ttfbrecord.Name}</apex:outputLink></td></tr> 
+                                            </apex:outputText>-->
+                                            <apex:outputPanel layout="none" rendered="{!StrParam != 'HSA' && StrParam != 'Commuter'}">
+                                                <tr>
+                                                    <td>
+                                                        Ready for Submission
+                                                    </td>
+                                                    <td>
+                                                        <apex:inputfield value="{!qline.Request_for_Submission__c}"/>
+                                                    </td>
+                                                </tr>
+                                            </apex:outputPanel>
+                                            <apex:outputText rendered="{!map_ShowTTQForQALine[qline.Id]}">
+                                                    <tr><td colspan="2" style="color: white;font-weight: bold;background-color: #539fc6;"><apex:outputLabel value="Policy and Plan Information"></apex:outputLabel></td></tr>
+                                                    <apex:repeat value="{!map_TTQAsPerCOOrderAssignement[qline.Id]}" var="fieldName">
+                                                        <tr>
+                                                            <td style="padding-bottom: 5px;"><apex:outputLabel value="{!StrParam} {!map_FieldAPILabel[fieldName]}"/></td>
+                                                            <td style="word-break: break-word;overflow-wrap: break-word;" >
+                                                                <apex:outputField value="{!qline[fieldName]}"></apex:outputField>
+                                                            </td>
+                                                        </tr>
+                                                    </apex:repeat>
+                                            </apex:outputText>
+                                        </table>
+                                    </apex:outputText>
+                                </apex:repeat>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:pageblock>
+                    <apex:outputText value="{!scriptvar}" escape="false"></apex:outputText>
+                </apex:outputText>
+
+                <!-- If page read only -->
+                <apex:outputText rendered="{!blnPageReadOnly}">
+                    <apex:repeat value="{!list_SectionHeaderWithOrder}" var="sectionHeaderName" >
+                        <apex:pageBlockSection title="{!sectionHeaderName}" rendered="{!map_SectionHeaderWithSameLayout[sectionHeaderName]}">
+                            <apex:repeat value="{!map_SectionHeaderAndFields[sectionHeaderName]}" var="fieldMappingRecord" >
+                                <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'Transition_to_Fulfillment__c' 
+                                && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnDifflayout) && 
+                                NOT(fieldMappingRecord.blnDependentField) && fieldMappingRecord.blnControllingField , true, false)}"  
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')} {!fieldMappingRecord.strFieldAPIName}" value="{!objTTSRecord[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}" />
+ 
+                                <apex:pageBlockSectionItem rendered="{!IF(fieldMappingRecord.blnControllingField , true, false)}" 
+                                dataStyleClass="{!map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]}" 
+                                labelStyleClass="{!map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]}" 
+                                dataStyle="display:{!if(contains(strChild,map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]),'','none;')}" 
+                                labelStyle="display:{!if(contains(strChild,map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]),'','none;')}">
+                                    <apex:outputLabel > {!map_ParentChildLabelFields[fieldMappingRecord.strFieldAPIName]}</apex:outputLabel>
+                                    <apex:outputField styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}"
+                                    value="{!objTTSRecord[map_ParentChildAPIFields[fieldMappingRecord.strFieldAPIName]]}" />
+                                </apex:pageBlockSectionItem>
+
+                                <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'Transition_to_Fulfillment__c' 
+                                && fieldMappingRecord.blnFieldToDisplay && NOT(fieldMappingRecord.blnDifflayout) && 
+                                NOT(fieldMappingRecord.blnDependentField)  && NOT(fieldMappingRecord.blnControllingField) , true, false)}"  
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" value="{!objTTSRecord[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}"/>
+
+                                <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' && fieldMappingRecord.blnFieldToDisplay, true, false)}" 
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" value="{!objQALineOfCoverage[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}"/>
+
+                                <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'Company_Level_Documents__c' && fieldMappingRecord.blnFieldToDisplay, true, false)}" 
+                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" value="{!objCLD[fieldMappingRecord.strFieldAPIName]}" 
+                                label="{!fieldMappingRecord.strFieldALabel}"/>
+
+                            </apex:repeat>
+                            <apex:pageBlockSectionItem rendered="{!sectionHeaderName == 'Company Details'}">
+                                <apex:outputLabel >Bank information</apex:outputLabel>
+                                <apex:commandLink onclick="openBankInfoTab('{!accCompanyId}');return false;">Click here</apex:commandLink>
+                            </apex:pageBlockSectionItem>
+                            <apex:pageBlockSectionItem rendered="{!sectionHeaderName == 'Company Details' && blnShowBankInformation}">
+                                <apex:outputLabel value="Bank Address" rendered="{!!ISNULL(QAObj.Bank_Address__c)}"/>
+                                <apex:outputField value="{!QAObj.Bank_Address__c}" rendered="{!NOT(ISNULL(QAObj.Bank_Address__c))}"/>
+                            </apex:pageBlockSectionItem>
+
+                            <!-- Show Do they have affiliates? table in bottom of Company Details. -->
+                            <apex:repeat value="{!map_SectionHeaderAndFields[sectionHeaderName]}" var="fieldMappingRecord" >
+                                <apex:outputPanel rendered="{!IF(fieldMappingRecord.blnFieldToDisplay && fieldMappingRecord.blnDifflayout
+                                && fieldMappingRecord.strFieldAPIName  == 'Do_they_have_affiliates__c', true, false)}">
+                                    <apex:pageBlockTable value="{!list_RelatedBOs}" var="objBO" rendered="{!objTTSRecord.Do_they_have_affiliates__c}">
+                                        <apex:column headerValue="Affiliated companies">
+                                            <apex:outputField value="{!objBO.Name}"/>
+                                        </apex:column>
+                                    </apex:pageBlockTable>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                        </apex:pageBlockSection>
+
+                        <apex:pageBlockSection columns="1" title="Company Level Documents" rendered="{!sectionHeaderName == 'Company Level Documents'}">
+                            <apex:variable var="count" value="{!0}"/>            <!--initialising-->
+                            <apex:pageBlockTable value="{!lstMasterCLDWrapper}" var="cc">
+                                <apex:column headerValue="Company Level Document Name">
+                                    <apex:outputField value="{!cc.childObj.Name}" ></apex:outputField>
+                                </apex:column>
+                                <apex:column headerValue="Company Level Document Additional Details">
+                                    <apex:outputfield value="{!cc.childObj.Additional_Details__c}" ></apex:outputfield>
+                                </apex:column>
+                                <apex:column headerValue="Primary Options">
+                                    <apex:outputField value="{!cc.childObj.Primary_Options__c}"/>
+                                </apex:column>
+                                <apex:variable value="{!count + 1}" var="count"/>  <!--increment-->
+                            </apex:pageBlockTable>
+                        </apex:pageBlockSection>
+
+                    </apex:repeat>
+                    <apex:pageblock title="Policy and Plan Information" id="trpReadonly">
+                        <div class="tab" id="trpReadonly">
+                            <div style="float:right">
+                                <apex:commandLink onclick="openHippoTab('{!accCompanyId}');return false;" styleClass="{!if(accCompanyId!=Null,'myClass2','')}">Hippo</apex:commandLink>
+                                
+                            </div>
+                            <apex:commandLink styleClass="{!if(StrParam=='Medical','myClass','myClass1')}" value="Medical" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!contains(tastring,':Medical')}" status="status"> 
+                                <apex:param value="Medical" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Dental','myClass','myClass1')}" value="Dental" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!contains(tastring,':Dental')}" status="status">
+                                <apex:param value="Dental" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Vision','myClass','myClass1')}" value="Vision" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!contains(tastring,'Vision')}" status="status">
+                                <apex:param value="Vision" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Life','myClass','myClass1')}" value="Life" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!contains(tastring,'Life')}" status="status">
+                                <apex:param value="Life" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='LTD','myClass','myClass1')}" value="LTD" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!if(contains(tastring,'DCA') ||contains(tastring,'Long Term Disability'),true,false)}" status="status">
+                                <apex:param value="LTD" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='STD','myClass','myClass1')}" value="STD" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!if(contains(tastring,'STD') ||contains(tastring,'Short Term Disability'),true,false)}" status="status">
+                                <apex:param value="STD" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='FSA','myClass','myClass1')}" value="FSA" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!if(contains(tastring,'FSA') ||contains(tastring,'Flexible Spending Account - Medical'),true,false)}" status="status">
+                                <apex:param value="FSA" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='DCA','myClass','myClass1')}" value="DCA" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!if(contains(tastring,'DCA') ||contains(tastring,'Flexible Spending Account - Dependent Care'),true,false)}" status="status">
+                                <apex:param value="DCA" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='HSA','myClass','myClass1')}" value="HSA" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!contains(tastring,'HSA')}" status="status">
+                                <apex:param value="HSA" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                            <apex:commandLink styleClass="{!if(StrParam=='Commuter','myClass','myClass1')}" value="Commuter" action="{!DisplayRec}" 
+                                rerender="trpReadonly,trpReadonly1" rendered="{!contains(tastring,'Commuter')}" status="status">
+                                <apex:param value="Commuter" assignTo="{!StrParam}"/>
+                            </apex:commandLink>
+                        </div>
+                        <apex:pageBlock id="trpReadonly1">
+                            <apex:pageBlockSection columns="2">
+                            <apex:repeat value="{!lstQALinesOfCoverage}" var="qline" id="therepeat">
+                                <apex:outputText style="width:50%;">
+                                <table frame="box" class="bPageBlock" style="display: inline-block;padding:5px" id="tbReadonly">
+                                    <apex:outputText rendered="{!IF(StrParam=='Life'||StrParam=='LTD'||StrParam=='STD',true,false)}">
+                                        <!--
+                                        <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Rating Structure: Composite,<br/> Age Banded, Other</td><td><apex:outputField value="{!qline.Rating_Structure_Composite_Age_Banded__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"></apex:outputField></td></tr>
+                                        <tr><td>Documents Require for Submission</td><td> <apex:outputField value="{!qline.Documents_Require_for_Submission__c}" /></td></tr>
+                                        <apex:outputText rendered="{!QAObj.recordtype.developername ='Benefit_Renewal'}">
+                                            <tr><td>Alignment to be requested by submission team?</td><td><apex:outputField value="{!qline.Does_group_have_an_alignment__c}" /></td></tr>
+                                        </apex:outputText>  
+                                        <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                            <tr><td>Participation requirements</td><td><apex:outputField value="{!qline.Participation_Requirements__c}" ></apex:outputField></td></tr>
+                                            <tr><td>Plan Changes</td><td><apex:outputField value="{!qline.Plan_changes__c}"></apex:outputField></td></tr>
+                                            <tr><td>Waiting Period Changes</td><td><apex:outputField value="{!qline.Waiting_Period_change__c}"></apex:outputField></td></tr>
+                                            <tr><td>Contribution Changes</td><td><apex:outputField value="{!qline.Contribution_change__c}"></apex:outputField></td></tr>
+                                        </apex:outputText>
+                                        <tr><td>Valid Waivers</td><td><apex:outputField value="{!qline.Valid_Waivers__c}"/></td></tr>
+                                        <apex:outputText rendered="{! IF(QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto',true,false)}">
+                                            <tr><td>LIst of Owner names and the percentages</td><td><apex:outputField value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" /></td></tr>
+                                        </apex:outputText> -->
+                                        <apex:repeat value="{!map_SectionHeaderAndFields['Policy Details (LiDi)']}" var="fieldMappingRecord" >
+                                            <tr>
+                                                <td> {!fieldMappingRecord.strFieldALabel} </td>
+                                                <td>
+                                                    <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                    && fieldMappingRecord.blnFieldToDisplay, true, false)}"  
+                                                    styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                    value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                    label="{!fieldMappingRecord.strFieldALabel}" >
+                                                    </apex:outputField> 
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </apex:outputText>
+                                    <apex:outputText rendered="{!IF(StrParam=='Dental'||StrParam=='Vision',true,false)}">
+                                       <!--<tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Rating Structure: Composite,<br/> Age Banded, Other</td><td><apex:outputField value="{!qline.Rating_Structure_Composite_Age_Banded__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"></apex:outputField></td></tr>
+                                        <tr><td>Documents Require for Submission</td><td> <apex:outputField value="{!qline.Documents_Require_for_Submission__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"/></td></tr>
+                                        <tr><td>Pay Schedule(Beam Only)</td><td><apex:outputField value="{!qline.Pay_Schedule__c}" ></apex:outputField></td></tr>
+                                        <tr><td>ID Number(Beam Only)</td><td><apex:outputField value="{!qline.ID_Number__c}" ></apex:outputField></td></tr>
+                                        <apex:outputText rendered="{!QAObj.recordtype.developername ='Benefit_Renewal'}">
+                                            <tr><td>Alignment to be requested by submission team?</td><td><apex:outputField value="{!qline.Does_group_have_an_alignment__c}" /></td></tr>
+                                        </apex:outputText>    
+                                        <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                            <tr><td>Participation requirements</td><td><apex:outputField value="{!qline.Participation_Requirements__c}" ></apex:outputField></td></tr>
+                                            <tr><td>Plan Changes</td><td><apex:outputField value="{!qline.Plan_changes__c}"></apex:outputField></td></tr>
+                                            <tr><td>Waiting Period Changes</td><td><apex:outputField value="{!qline.Waiting_Period_change__c}"></apex:outputField></td></tr>
+                                            <tr><td>Contribution Changes</td><td><apex:outputField value="{!qline.Contribution_change__c}"></apex:outputField></td></tr>
+                                        </apex:outputText>
+                                        <tr><td>Valid Waivers</td><td><apex:outputField value="{!qline.Valid_Waivers__c}"></apex:outputField></td></tr>
+                                        <tr><td>Allow plans with no enrolles</td><td><apex:outputfield value="{!qline.Allows_plans_with_no_enrollees__c}"/></td></tr>
+                                        <apex:outputText rendered="{! IF(QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto',true,false)}" >
+                                            <tr><td>LIst of Owner names and the percentages</td><td><apex:outputField value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" /></td></tr>
+                                        </apex:outputText> -->
+                                        <apex:repeat value="{!map_SectionHeaderAndFields['Policy Details (Dental/Vision)']}" var="fieldMappingRecord" >
+                                            <tr>
+                                                <td> {!fieldMappingRecord.strFieldALabel} </td>
+                                                <td>
+                                                    <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                    && fieldMappingRecord.blnFieldToDisplay, true, false)}"  
+                                                    styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                    value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                    label="{!fieldMappingRecord.strFieldALabel}" >
+                                                    </apex:outputField> 
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </apex:outputText>
+                                    <!-- Medical fields -->
+                                    <apex:outputText rendered="{!IF(StrParam=='Medical',true,false)}">
+                                        <!--<tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Rating Structure: Composite,<br/> Age Banded, Other</td><td><apex:outputField value="{!qline.Rating_Structure_Composite_Age_Banded__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}"></apex:outputField></td></tr>
+                                        <tr><td>Deductible Reset Year</td><td><apex:outputField value="{!qline.PY_or_CY_Deductible__c}" ></apex:outputField></td></tr>
+                                        <tr><td>Documents Require for Submission</td><td> <apex:outputField value="{!qline.Documents_Require_for_Submission__c}" styleClass="{!if(QAObj.recordtype.developername ='Benefit_Renewal'||QAObj.recordtype.developername ='Benefit_Change','border-left:#c00 solid 3px !important;','')}" /></td></tr>
+                                        <apex:outputText rendered="{!QAObj.recordtype.developername ='Benefit_Renewal'}">
+                                            <tr><td>Rating Structure Change?</td><td><apex:outputField value="{!qline.Rate_Change__c}" /></td></tr>
+                                        </apex:outputText>
+                                        <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                            <tr><td>Participation requirements</td><td><apex:outputField value="{!qline.Participation_Requirements__c}" ></apex:outputField></td></tr>
+                                           <tr><td>Plan Changes</td><td><apex:outputField value="{!qline.Plan_changes__c}"></apex:outputField></td></tr>
+                                            <tr><td>Waiting Period Changes</td><td><apex:outputField value="{!qline.Waiting_Period_change__c}"></apex:outputField></td></tr>
+                                            <tr><td>Contribution Changes</td><td><apex:outputField value="{!qline.Contribution_change__c}"></apex:outputField></td></tr>
+                                        </apex:outputText>
+                                        <tr><td>Valid Waivers</td><td><apex:outputField value="{!qline.Valid_Waivers__c}"></apex:outputField></td></tr>
+                                        <tr><td>Medical LOA Required</td><td><apex:outputField value="{!qline.Medical_LOA_Required__c}"/></td></tr>
+                                        <tr><td>Personal LOA Required</td><td><apex:outputField value="{!qline.LOA_Required__c}"/></td></tr> 
+                                        <tr><td>Allow plans with no enrolles</td><td><apex:outputField value="{!qline.Allows_plans_with_no_enrollees__c}"/></td></tr>
+                                        <tr><td>LIst of Owner names and the percentages</td><td><apex:outputField value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" rendered="{!QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto'}"/></td></tr>
+									-->
+                                    <apex:repeat value="{!map_SectionHeaderAndFields['Policy Details (Medical)']}" var="fieldMappingRecord" >
+                                        <tr>
+                                            <td> {!fieldMappingRecord.strFieldALabel} </td>
+                                            <td>
+                                                <apex:outputField rendered="{!IF(fieldMappingRecord.strSourceObjectName == 'QA_Lines_Of_Coverage__c' 
+                                                && fieldMappingRecord.blnFieldToDisplay, true, false)}"  
+                                                styleClass="{!IF(fieldMappingRecord.blnRequired, 'requiredField', '')}" 
+                                                value="{!qline[fieldMappingRecord.strFieldAPIName]}" 
+                                                label="{!fieldMappingRecord.strFieldALabel}" >
+                                                </apex:outputField> 
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                                    </apex:outputText>
+                                    <!-- TADA fields -->
+                                    <apex:outputText rendered="{!IF(StrParam=='FSA'||StrParam=='DCA',true,false)}">
+                                        <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Documents Require for Submission</td><td> <apex:outputField value="{!qline.Documents_Require_for_Submission__c}"  /></td></tr>
+                                        <apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                            <tr><td>Participation requirements</td><td><apex:outputField value="{!qline.Participation_Requirements__c}" ></apex:outputField></td></tr>
+                                            <!--<tr><td>Contribution Changes</td><td><apex:outputField value="{!qline.Contribution_change__c}"></apex:outputField></td></tr> -->
+                                        </apex:outputText>
+                                        <apex:outputText rendered="{! IF(QAObj.Benefit_Order__r.Type__c=='Carrier switch'||QAObj.Benefit_Order__r.Type__c=='New Line of Coverage'||QAObj.Benefit_Order__r.Type__c=='New to Gusto',true,false)}">
+                                            <tr><td>LIst of Owner names and the percentages</td><td><apex:outputField value="{!qline.LIst_of_Owner_names_and_the_percentage__c}" /></td></tr>
+                                        </apex:outputText>
+                                    </apex:outputText>
+                                    <apex:outputText rendered="{!IF(StrParam=='HSA'||StrParam=='Commuter',true,false)}">
+                                        <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                        <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                    </apex:outputText>
+                                    <!--<apex:outputText rendered="{!QAObj.Benefit_Order__r.Type__c!='New to Gusto'}">
+                                    <tr><td>TTQ Link</td><td><apex:outputLink value="apex/CreateModifyTranstionToFulfilment?id={!ttfbrecord.id}" target="_blank">{!ttfbrecord.Name}</apex:outputLink></td></tr> 
+                                    </apex:outputText> -->
+                                    <apex:outputPanel layout="none" rendered="{!StrParam != 'HSA' && StrParam != 'Commuter'}">
+                                        <tr>
+                                            <td>
+                                                Ready for Submission
+                                            </td>
+                                            <td>
+                                                <apex:outputField value="{!qline.Request_for_Submission__c}"/>
+                                            </td>
+                                        </tr>
+                                    </apex:outputPanel>
+                                    <apex:outputText rendered="{!map_ShowTTQForQALine[qline.Id]}">
+                                            <tr><td colspan="2" style="color: white;font-weight: bold;background-color: #539fc6;"><apex:outputLabel value="Policy and Plan Information"></apex:outputLabel></td></tr>
+                                            <apex:repeat value="{!map_TTQAsPerCOOrderAssignement[qline.Id]}" var="fieldName">
+                                                <tr>
+                                                    <td style="padding-bottom: 5px;"><apex:outputLabel value="{!StrParam} {!map_FieldAPILabel[fieldName]}"/></td>
+                                                    <td style="word-break: break-word;overflow-wrap: break-word;" >
+                                                        <apex:outputField value="{!qline[fieldName]}"></apex:outputField>
+                                                    </td>
+                                                </tr>
+                                            </apex:repeat>
+                                    </apex:outputText>
+                                </table>  
+                                </apex:outputText>
+                            </apex:repeat>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:pageblock>
+                </apex:outputText>
+            </apex:outputPanel>
+            <apex:outputPanel id="childRecord">
+                <script>
+                        var Values = '{!list_Values}';
+                        var parentfield = '.{!strParentRecord}';
+                        var Parent_value = document.querySelector(parentfield).value;
+                        if (Values.indexOf(Parent_value) == 1) {
+                            var el = document.querySelectorAll('.{!strChildRecord}');
+                            for(var i = 0;i<el.length;i++)
+                            {
+                                el[i].style.display = '';
+                            }
+                        }
+                        else{
+                            var el = document.querySelectorAll('.{!strChildRecord}');
+                            for(var i = 0;i<el.length;i++)
+                            {
+                                el[i].style.display = 'none';
+                            }
+                        }
+                </script>
+            </apex:outputPanel>
+            <apex:pageblockbuttons location="bottom"  rendered="{!!blnPageReadOnly}">
+                <apex:commandButton value="Save Draft" action="{!CustomSave}" status="status"/>
+                <apex:commandButton value="Move Selected Carrier" action="{!MoveSelectedCarrier}" status="status"/> 
+                <apex:commandButton value="Move All Carriers" action="{!MoveToSubmission}" status="status" />
+            </apex:pageblockbuttons>
+            <apex:actionFunction name="displayDependentField" reRender="childRecord" action="{!displayDependentFields}" >
+                <apex:param name="parentAPIName" value="" assignTo="{!strParentRecord}"/>
+            </apex:actionFunction>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

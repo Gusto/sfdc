@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride">
+    <c:searchEmailTemplateLwcCmp onopentab="{!c.handleOpenTab}" recordId="{!v.recordId}"></c:searchEmailTemplateLwcCmp>
+    <lightning:utilityBarAPI aura:id="utilitybar" />
+    <lightning:quickActionAPI aura:id="quickActionAPI" />
+</aura:component>

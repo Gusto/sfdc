@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mandatory_Feedback_Notes</fullName>
+    <active>true</active>
+    <description>Notes should be filled when PE_Follow_Up_Recommended__c checkbox is checked.</description>
+    <errorConditionFormula>PE_Follow_Up_Recommended__c  &amp;&amp;  Notes__c  = &apos;&apos;</errorConditionFormula>
+    <errorDisplayField>Notes__c</errorDisplayField>
+    <errorMessage>Please fill in feedback notes</errorMessage>
+</ValidationRule>

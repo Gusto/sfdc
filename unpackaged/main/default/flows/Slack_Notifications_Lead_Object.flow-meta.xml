@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Post Message to Slack</description>
+        <name>Post_Message_to_mdr_accountant_new_lead</name>
+        <label>Post Message to mdr_accountant_new_lead</label>
+        <locationX>578</locationX>
+        <locationY>1320</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>AccountantLeadMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>var_MDR_Accountant_New_Lead_Destination</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Post Message to Slack</description>
+        <name>Post_message_to_mdr_direct_new_lead</name>
+        <label>Post message to mdr_direct_new_lead</label>
+        <locationX>50</locationX>
+        <locationY>1320</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>DirectLeadMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>var_MDR_Direct_New_Lead_Destination_ID_Asyc</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Post Message to Slack</description>
+        <name>Post_message_to_mdr_direct_new_lead_25_EEs</name>
+        <label>Post message to mdr_direct_new_lead_25+_EEs</label>
+        <locationX>1634</locationX>
+        <locationY>1584</locationY>
+        <actionName>slackv2__invokePostMessage</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>DirectLeadMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messageDestinationId</name>
+            <value>
+                <elementReference>var_MDR_Direct_New_Lead_Destination_ID_Scheduled</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>53.0</apiVersion>
+    <assignments>
+        <name>Assign_to_MDR_Accountant_New_Lead_Variable</name>
+        <label>Assign to MDR Accountant New Lead Variable</label>
+        <locationX>996</locationX>
+        <locationY>768</locationY>
+        <assignmentItems>
+            <assignToReference>var_MDR_Accountant_New_Lead_Destination</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_to_Find_ID_s_Async_Actions.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_to_Find_ID_s_Async_Actions</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_to_MDR_Direct_New_Lead_Variable</name>
+        <label>Assign to MDR Direct New Lead Variable</label>
+        <locationX>732</locationX>
+        <locationY>768</locationY>
+        <assignmentItems>
+            <assignToReference>var_MDR_Direct_New_Lead_Destination_ID_Asyc</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_to_Find_ID_s_Async_Actions.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_to_Find_ID_s_Async_Actions</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign current loop variable to variable to be used in Email Alert</description>
+        <name>Assign_to_MDR_Direct_New_Lead_Variable_Scheduled</name>
+        <label>Assign to MDR Direct New Lead Variable_Scheduled</label>
+        <locationX>2052</locationX>
+        <locationY>1128</locationY>
+        <assignmentItems>
+            <assignToReference>var_MDR_Direct_New_Lead_Destination_ID_Scheduled</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_to_Find_ID_s_Scheduled_Actions.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_to_Find_ID_s_Scheduled_Actions</targetReference>
+        </connector>
+    </assignments>
+    <collectionProcessors>
+        <description>Destination ID&apos;s for the Slack Messages that are sent Asynchronously.</description>
+        <name>Destination_ID_s_for_Async_Flow</name>
+        <elementSubtype>FilterCollectionProcessor</elementSubtype>
+        <label>Destination ID&apos;s for Async Flow</label>
+        <locationX>644</locationX>
+        <locationY>408</locationY>
+        <assignNextValueToReference>currentItem_Destination_ID_s_for_Async_Flow</assignNextValueToReference>
+        <collectionProcessorType>FilterCollectionProcessor</collectionProcessorType>
+        <collectionReference>Get_Destination_IDs_Async_Actions</collectionReference>
+        <conditionLogic>or</conditionLogic>
+        <conditions>
+            <leftValueReference>currentItem_Destination_ID_s_for_Async_Flow.Name</leftValueReference>
+            <operator>EqualTo</operator>
+            <rightValue>
+                <stringValue>MDR_Accountant_New Lead</stringValue>
+            </rightValue>
+        </conditions>
+        <conditions>
+            <leftValueReference>currentItem_Destination_ID_s_for_Async_Flow.Name</leftValueReference>
+            <operator>EqualTo</operator>
+            <rightValue>
+                <stringValue>MDR_Direct_New_Lead</stringValue>
+            </rightValue>
+        </conditions>
+        <connector>
+            <targetReference>Loop_to_Find_ID_s_Async_Actions</targetReference>
+        </connector>
+    </collectionProcessors>
+    <collectionProcessors>
+        <description>Destination ID&apos;s for the Slack Messages that are scheduled for deliver</description>
+        <name>Destination_ID_s_for_Scheduled_Actions</name>
+        <elementSubtype>FilterCollectionProcessor</elementSubtype>
+        <label>Destination ID&apos;s for Scheduled Actions</label>
+        <locationX>1964</locationX>
+        <locationY>888</locationY>
+        <assignNextValueToReference>currentItem_Destination_ID_s_for_Scheduled_Actions</assignNextValueToReference>
+        <collectionProcessorType>FilterCollectionProcessor</collectionProcessorType>
+        <collectionReference>Get_Destination_IDs_Scheduled_Actions</collectionReference>
+        <conditionLogic>and</conditionLogic>
+        <conditions>
+            <leftValueReference>currentItem_Destination_ID_s_for_Scheduled_Actions.Name</leftValueReference>
+            <operator>EqualTo</operator>
+            <rightValue>
+                <stringValue>MDR_Direct_New_Lead</stringValue>
+            </rightValue>
+        </conditions>
+        <connector>
+            <targetReference>Loop_to_Find_ID_s_Scheduled_Actions</targetReference>
+        </connector>
+    </collectionProcessors>
+    <decisions>
+        <description>Based on the name assign to a variable</description>
+        <name>Assign_ID_s_To_Variables</name>
+        <label>Assign ID&apos;s To Variables</label>
+        <locationX>996</locationX>
+        <locationY>648</locationY>
+        <defaultConnector>
+            <targetReference>Loop_to_Find_ID_s_Async_Actions</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>This_is_MDR_Direct_New_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_to_Find_ID_s_Async_Actions.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MDR_Direct_New_Lead</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_MDR_Direct_New_Lead_Variable</targetReference>
+            </connector>
+            <label>This is MDR Direct New Lead</label>
+        </rules>
+        <rules>
+            <name>This_is_Accountant_New_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_to_Find_ID_s_Async_Actions.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MDR_Accountant_New Lead</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_to_MDR_Accountant_New_Lead_Variable</targetReference>
+            </connector>
+            <label>This is Accountant New Lead</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_for_Ownership_Change</name>
+        <label>Check for Ownership Change</label>
+        <locationX>1667</locationX>
+        <locationY>648</locationY>
+        <defaultConnector>
+            <targetReference>Get_Destination_IDs_Scheduled_Actions</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Owner Has Not Changed</defaultConnectorLabel>
+        <rules>
+            <name>Owner_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Owner_Information.Email</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>michaela.foky@gusto.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Profile_Information.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>API Integration</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Profile_Information.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Gusto Integration Profile</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Profile_Information.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Marketo Integration</stringValue>
+                </rightValue>
+            </conditions>
+            <label>Owner Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_If_Accountant_New_Lead_Destination_Not_Null</name>
+        <label>Check If Accountant New Lead Destination Not Null</label>
+        <locationX>710</locationX>
+        <locationY>1200</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Accountant_New_Lead_Destination_Not_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_MDR_Accountant_New_Lead_Destination</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Post_Message_to_mdr_accountant_new_lead</targetReference>
+            </connector>
+            <label>Accountant New Lead Destination Not Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_If_MDR_New_Lead_Destination_Id_Not_Null</name>
+        <label>Check If MDR New Lead Destination Id Not Null</label>
+        <locationX>182</locationX>
+        <locationY>1200</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>MDR_New_Lead_Destination_Not_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_MDR_Direct_New_Lead_Destination_ID_Asyc</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Post_message_to_mdr_direct_new_lead</targetReference>
+            </connector>
+            <label>MDR_New_Lead_Destination_Not_Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_MDR_New_Lead_Not_Null_Sch_Flow</name>
+        <label>Check MDR New Lead Not Null Sch Flow</label>
+        <locationX>1766</locationX>
+        <locationY>1464</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>MDR_New_Lead_Not_Null_Sch_Flow</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_MDR_Direct_New_Lead_Destination_ID_Scheduled</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Post_message_to_mdr_direct_new_lead_25_EEs</targetReference>
+            </connector>
+            <label>MDR New Lead Not Null Sch Flow</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Route the Lead to send the Slack message to the correct channel.</description>
+        <name>Route_Lead_to_Correct_Slack_Channel</name>
+        <label>Route Lead to Correct Slack Channel</label>
+        <locationX>644</locationX>
+        <locationY>1080</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>MDR_Direct_New_Lead</name>
+            <conditionLogic>1 AND 4 AND 5 AND 6 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Company</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Last_Rep_Activity_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Greaterthan90days</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Owner:User.UserRole.DeveloperName</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>MDR</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.NumberOfEmployees</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <numberValue>25.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MQL</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_If_MDR_New_Lead_Destination_Id_Not_Null</targetReference>
+            </connector>
+            <label>MDR Direct New Lead</label>
+        </rules>
+        <rules>
+            <name>MRD_Accountant_New_Lead_0</name>
+            <conditionLogic>1 AND 2 AND 5 AND (3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MQL</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reseller</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Last_Rep_Activity_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Greaterthan90days</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Owner:User.UserRole.DeveloperName</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>mdr</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_If_Accountant_New_Lead_Destination_Not_Null</targetReference>
+            </connector>
+            <label>MRD Accountant New Lead</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Route the Lead to send the Slack message to the correct channel.</description>
+        <name>Route_to_MDR_Direct_New_Lead_Channel</name>
+        <label>Route to MDR Direct New Lead Channel</label>
+        <locationX>1964</locationX>
+        <locationY>1344</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>MDR_Direct_New_Big_Desk_Lead</name>
+            <conditionLogic>1 AND 4 AND 5 AND 6 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Company</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Last_Rep_Activity_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Greaterthan90days</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Owner:User.UserRole.DeveloperName</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>mdr</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.NumberOfEmployees</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>25.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>MQL</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_MDR_New_Lead_Not_Null_Sch_Flow</targetReference>
+            </connector>
+            <label>MDR Direct New  Big Desk Lead</label>
+        </rules>
+    </decisions>
+    <description>Slack channel #MDR_Direct_New_Lead: This channel reports new leads to be worked by Direct MDRs
+Slack channel #MDR_Accountant_New Lead: This channel notifies MDRs of new Accountant Leads
+9/16/22 - Added Logic to wait 5 min for Leads with 25+ EE&apos;s (For Big Desk Schedule a Call Functionality)
+Since this is simply a notification, Trigger Order was set to 500 in an effort to make sure it occurs after all other flows.</description>
+    <formulas>
+        <description>Set a variable for 90 days older than today</description>
+        <name>Greaterthan90days</name>
+        <dataType>Boolean</dataType>
+        <expression>TODAY() - {!$Record.Last_Rep_Activity_Date__c} &gt;= 90</expression>
+    </formulas>
+    <interviewLabel>Slack Notification - Lead {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Slack Notifications - Lead Object</label>
+    <loops>
+        <description>Go through ID&apos;s to find the ID&apos;s for this path</description>
+        <name>Loop_to_Find_ID_s_Async_Actions</name>
+        <label>Loop to Find ID&apos;s Async Actions</label>
+        <locationX>644</locationX>
+        <locationY>528</locationY>
+        <collectionReference>Destination_ID_s_for_Async_Flow</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Assign_ID_s_To_Variables</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Route_Lead_to_Correct_Slack_Channel</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <description>Go through ID&apos;s to find the ID&apos;s for this path</description>
+        <name>Loop_to_Find_ID_s_Scheduled_Actions</name>
+        <label>Loop to Find ID&apos;s Scheduled Actions</label>
+        <locationX>1964</locationX>
+        <locationY>1008</locationY>
+        <collectionReference>Destination_ID_s_for_Scheduled_Actions</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Assign_to_MDR_Direct_New_Lead_Variable_Scheduled</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Route_to_MDR_Direct_New_Lead_Channel</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get Slack Channel Destination ID&apos;s</description>
+        <name>Get_Destination_IDs_Async_Actions</name>
+        <label>Get Destination IDs Async Actions</label>
+        <locationX>644</locationX>
+        <locationY>288</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Destination_ID_s_for_Async_Flow</targetReference>
+        </connector>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get Slack Channel Destination ID&apos;s</description>
+        <name>Get_Destination_IDs_Scheduled_Actions</name>
+        <label>Get Destination IDs Scheduled Actions</label>
+        <locationX>1964</locationX>
+        <locationY>768</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Destination_ID_s_for_Scheduled_Actions</targetReference>
+        </connector>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>slackv2__Message_Destination__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the same Lead record to see if the owner changed during the 5 min delay.  If the Customer setup and appt through Chilipiper, the new Event will change the owner of the lead.</description>
+        <name>Get_Lead_Record_Again</name>
+        <label>Get Lead Record Again</label>
+        <locationX>1667</locationX>
+        <locationY>288</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Owner_Information</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Lead</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>OwnerId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get Owner Information to make sure it&apos;s not a Default User</description>
+        <name>Get_Owner_Information</name>
+        <label>Get Owner Information</label>
+        <locationX>1667</locationX>
+        <locationY>408</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Profile_Information</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Lead_Record_Again.OwnerId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Email</queriedFields>
+        <queriedFields>ProfileId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get Profile info to make sure its not owned by an integration user</description>
+        <name>Get_Profile_Information</name>
+        <label>Get Profile Information</label>
+        <locationX>1667</locationX>
+        <locationY>528</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_for_Ownership_Change</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Owner_Information.ProfileId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Profile</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>589</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Owner_Role_formula__c</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>mdr</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MQL</stringValue>
+            </value>
+        </filters>
+        <object>Lead</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Destination_IDs_Async_Actions</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>Wait_5_Minutes_Before_Sending_Slack_Message</name>
+            <connector>
+                <targetReference>Get_Lead_Record_Again</targetReference>
+            </connector>
+            <label>Wait 5 Minutes Before Sending Slack Message</label>
+            <maxBatchSize>20</maxBatchSize>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <timeSource>RecordTriggerEvent</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <textTemplates>
+        <description>Slack Message for Accountant Leads</description>
+        <name>AccountantLeadMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>***NEW ACCOUNTANT MDR LEAD***
+Lead Name: {!$Record.FirstName} {!$Record.LastName}
+Number of Employees: {!$Record.NumberOfEmployees}
+Lead Status: {!$Record.Status}
+@here</text>
+    </textTemplates>
+    <textTemplates>
+        <description>Message for Slack</description>
+        <name>DirectLeadMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>*NEW DIRECT MDR LEAD*
+Lead Name: {!$Record.FirstName} {!$Record.LastName}
+Number of Employees: {!$Record.NumberOfEmployees}
+Lead Status: {!$Record.Status}
+@here</text>
+    </textTemplates>
+    <variables>
+        <description>Current Owner from Second Record Pull</description>
+        <name>Current_Owner</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+    <variables>
+        <name>currentItem_Destination_ID_s_for_Async_Flow</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>slackv2__Message_Destination__c</objectType>
+    </variables>
+    <variables>
+        <name>currentItem_Destination_ID_s_for_Scheduled_Actions</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>slackv2__Message_Destination__c</objectType>
+    </variables>
+    <variables>
+        <name>var_MDR_Accountant_New_Lead_Destination</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_MDR_Direct_New_Lead_Destination_ID_Asyc</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Holds the Slack Destination for the scheduled actions path</description>
+        <name>var_MDR_Direct_New_Lead_Destination_ID_Scheduled</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

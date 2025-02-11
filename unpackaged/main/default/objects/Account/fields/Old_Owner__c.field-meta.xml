@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Old_Owner__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The field stores previous OwnerId when Owner, whose Role is &quot;sales_partner_ae_xx&quot;, is changed to the new Owner, whose Role is either “sales_partner_ae_xx” or ”sales_partner_am_xx” or ”sales_partner_sam_xx” or ”sales_partner_xx_xx_mgr” (which are the roles for AE,AM, SAM, or PE).</description>
+    <label>Account Old Owner</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Old_Owned_Accounts</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

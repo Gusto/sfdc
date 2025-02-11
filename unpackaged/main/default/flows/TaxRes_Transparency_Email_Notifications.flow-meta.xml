@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Send email 14 days after case creation.</description>
+        <name>After_14_Days_Email_Alert</name>
+        <label>After 14 Days Email Alert</label>
+        <locationX>578</locationX>
+        <locationY>408</locationY>
+        <actionName>Case.TaxRes_Transparency_Email_Notification</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Create_Email_Message</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>CaseId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.TaxRes_Transparency_Email_Notification</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send email 1 days after case creation.</description>
+        <name>After_1_Days_Email_Alert</name>
+        <label>After 1 Days Email Alert</label>
+        <locationX>50</locationX>
+        <locationY>408</locationY>
+        <actionName>Case.TaxRes_Transparency_Email_Notification</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Create_Email_Message</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>CaseId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.TaxRes_Transparency_Email_Notification</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Send email 28 days after case creation.</description>
+        <name>After_28_Days_Email_Alert</name>
+        <label>After 28 Days Email Alert</label>
+        <locationX>1106</locationX>
+        <locationY>408</locationY>
+        <actionName>Case.TaxRes_Transparency_Email_Notification</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Create_Email_Message</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>CaseId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Case.TaxRes_Transparency_Email_Notification</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Update_Email_Message_body_with_email_body</name>
+        <label>Update Email Message body with email body</label>
+        <locationX>512</locationX>
+        <locationY>863</locationY>
+        <actionName>EmailMessageTriggerHelper</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_CaseIds</name>
+            <value>
+                <elementReference>CaseId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>EmailMessageTriggerHelper</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <constants>
+        <description>Texas Workforce Commission agency name</description>
+        <name>Texas_Workforce_Commision</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Texas Workforce Commission</stringValue>
+        </value>
+    </constants>
+    <decisions>
+        <description>Check for eligible agency</description>
+        <name>Check_Eligible_Agency</name>
+        <label>Check Eligible Agency</label>
+        <locationX>182</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Eligible_Agency</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>AgencyName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Texas_Workforce_Commision</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>After_1_Days_Email_Alert</targetReference>
+            </connector>
+            <label>Eligible Agency</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check for eligible agency</description>
+        <name>Check_Eligible_Agency_0</name>
+        <label>Check Eligible Agency</label>
+        <locationX>710</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Eligible_Agency_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>AgencyName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Texas_Workforce_Commision</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>After_14_Days_Email_Alert</targetReference>
+            </connector>
+            <label>Eligible Agency</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check for eligible agency</description>
+        <name>Check_Eligible_Agency_0_0_0_0</name>
+        <label>Check Eligible Agency</label>
+        <locationX>1238</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Eligible_Agency_0_0_0_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>AgencyName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Texas_Workforce_Commision</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>After_28_Days_Email_Alert</targetReference>
+            </connector>
+            <label>Eligible Agency</label>
+        </rules>
+    </decisions>
+    <description>Adding date check for 6/9/2022
+Adding Texas agency check in the trigger itself
+Adding EmailMessage tracking in SFDC
+Adding age check
+Adding in-app notice check
+Sending periodical emails to the client, for process transparency.</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Name of the related Agency</description>
+        <name>AgencyName</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Agency_Information__r.Name}</expression>
+    </formulas>
+    <formulas>
+        <name>toAddresses</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.ContactEmail} + &apos;;&apos; + {!$Record.Order_AE_Email__c}</expression>
+    </formulas>
+    <interviewLabel>TaxRes Transparency Email Notifications {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>TaxRes Transparency Email Notifications</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Email_Message</name>
+        <label>Create Email Message</label>
+        <locationX>512</locationX>
+        <locationY>743</locationY>
+        <assignRecordIdToReference>EmailMessageCreated.Id</assignRecordIdToReference>
+        <connector>
+            <targetReference>Update_Email_Message_body_with_email_body</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Email_Template_Name__c</field>
+            <value>
+                <stringValue>TaxRes_TWC_Notice_Update</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentId</field>
+            <value>
+                <elementReference>CaseId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>3</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ToAddress</field>
+            <value>
+                <elementReference>toAddresses</elementReference>
+            </value>
+        </inputAssignments>
+        <object>EmailMessage</object>
+    </recordCreates>
+    <start>
+        <locationX>386</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>AND(TEXT({!$Record.Status})&lt;&gt; &apos;Blocked&apos;, TEXT({!$Record.Status})&lt;&gt; &apos;Closed&apos;, TEXT({!$Record.Status})&lt;&gt; &apos;Solved&apos;) &amp;&amp;
+NOT(ISNULL({!$Record.ContactId})) &amp;&amp;
+NOT(ISNULL({!$Record.Agency_Information__c})) &amp;&amp;
+{!$Record.RecordType.DeveloperName} = &apos;Tax_Res&apos; &amp;&amp;
+{!$Record.In_App_Notice__c} = true &amp;&amp; 
+{!$Record.Age__c} &lt;= 40 &amp;&amp;
+{!$Record.Agency_Information__r.Name} = &apos;Texas Workforce Commission&apos; &amp;&amp;
+DATEVALUE({!$Record.CreatedDate}) &gt; DATE(2022,06,09)</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Email_after_1_Days</name>
+            <connector>
+                <targetReference>Check_Eligible_Agency</targetReference>
+            </connector>
+            <label>Email after 1 Days</label>
+            <maxBatchSize>1</maxBatchSize>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>Email_after_14_Days</name>
+            <connector>
+                <targetReference>Check_Eligible_Agency_0</targetReference>
+            </connector>
+            <label>Email after 14 Days</label>
+            <offsetNumber>14</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>Email_after_28_Days</name>
+            <connector>
+                <targetReference>Check_Eligible_Agency_0_0_0_0</targetReference>
+            </connector>
+            <label>Email after 28 Days</label>
+            <offsetNumber>28</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+    <variables>
+        <description>Case Id</description>
+        <name>CaseId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>$Record.Id</elementReference>
+        </value>
+    </variables>
+    <variables>
+        <name>EmailMessageCreated</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>EmailMessage</objectType>
+    </variables>
+</Flow>

@@ -1,0 +1,13 @@
+<apex:page standardController="Order" recordSetVar="orders">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection >
+                <apex:inputField value="{!Order.OwnerId}" />
+                <apex:inputField value="{!Order.Status}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ticket_Can_Not_Be_Assigned_To_Advising</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISCHANGED( OwnerId )&amp;&amp; Owner:User.Alias = &quot;Success&quot; &amp;&amp; $User.Exempt_from_Validation_Rules__c &lt;&gt; TRUE</errorConditionFormula>
+    <errorMessage>Tickets cannot be assigned to Advising Team user.</errorMessage>
+</ValidationRule>

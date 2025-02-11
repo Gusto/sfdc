@@ -1,0 +1,21 @@
+<!--
+    Purpose: Aura Wrapper component for File Previews. 
+            Renders Dynamic files. 
+            Users can preview the files and open the files record in a new tab.
+    Written by : Dhir Kumar
+    Date: 09/15/2020
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId" access="global" >
+    <!-- Workspace API -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+
+    <!-- recordId = the case record Id on which the files needs to be previewed -->
+    <!-- ontabOpen = when the user clicks on this the Files record opens in a new Sub tab -->
+    <!-- onattachtabopen = when the user clicks on this the attachment record opens in a new Sub tab -->
+    <!-- onfileclick = when the user clicks on this the files opens in a preview mode -->
+
+    <c:filesPreviewLwcCmp recordId="{!v.recordId}" 
+        ontabOpen="{!c.handleTabOpen}"
+        onattachtabopen="{!c.handleAttachTabOpen}"
+        onfileclick="{!c.OpenFile}"></c:filesPreviewLwcCmp>
+</aura:component>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Send Callout To Workato for HI Owner Routing</description>
+        <name>Send_Callout_To_Workato</name>
+        <label>Send Callout To Workato</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <actionName>SendAccountToRingLead</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>idRecord</name>
+            <value>
+                <elementReference>Account_Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>strObjectType</name>
+            <value>
+                <stringValue>Account</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>strRoutingType</name>
+            <value>
+                <stringValue>HI Owner</stringValue>
+            </value>
+        </inputParameters>
+        <nameSegment>SendAccountToRingLead</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <description>Send Account to RingLead for HI Owner Routing. We will use this flow if HI owner is not found in Salesforce based on aligned rep.</description>
+    <environments>Default</environments>
+    <interviewLabel>Send Account For HI Owner Routing {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Send Account For HI Owner Routing</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Send_Callout_To_Workato</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Salesforce Account Id</description>
+        <name>Account_Id</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+</Flow>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Get_Inbound_Call_Email_Address_Action_1</name>
+        <label>Get Inbound Call Email Address Action 1</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>InboundCallListenerController</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_InteractionIds</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>InboundCallListenerController</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <description>Record triggered flow on Salesforce Interaction to publish inbound call platform events</description>
+    <environments>Default</environments>
+    <interviewLabel>Record Triggered Flow: Sales Interaction {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Triggered Flow: Sales Interaction</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Inbound_Call_Email_Address_Action_1</targetReference>
+        </connector>
+        <filterLogic>1 AND (2 OR 3)</filterLogic>
+        <filters>
+            <field>Email_Address__c</field>
+            <operator>EqualTo</operator>
+        </filters>
+        <filters>
+            <field>Retry_Attempts__c</field>
+            <operator>LessThan</operator>
+            <value>
+                <numberValue>10.0</numberValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Retry_Attempts__c</field>
+            <operator>EqualTo</operator>
+        </filters>
+        <object>Sales_Interaction__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

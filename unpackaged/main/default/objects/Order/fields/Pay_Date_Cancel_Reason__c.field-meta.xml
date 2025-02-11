@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pay_Date_Cancel_Reason__c</fullName>
+    <label>Pay Date Cancel Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Status</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>PT Controllable</fullName>
+                <default>false</default>
+                <label>PT Controllable</label>
+            </value>
+            <value>
+                <fullName>Sales Controllable</fullName>
+                <default>false</default>
+                <label>Sales Controllable</label>
+            </value>
+            <value>
+                <fullName>Uncontrollable</fullName>
+                <default>false</default>
+                <label>Uncontrollable</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>PT Controllable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Sales Controllable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Uncontrollable</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

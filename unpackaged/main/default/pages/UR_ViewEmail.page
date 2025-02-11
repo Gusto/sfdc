@@ -1,0 +1,323 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_VewEmailCtrl" applyBodyTag="false" sidebar="false" id="pg">
+ <script  src="//code.jquery.com/ui/1.8.24/jquery-ui.js"/>
+ <apex:includeScript value="{!URLFOR($Resource.autocomplete, 'autocomplete/autocomplete.js')}" />
+ <apex:stylesheet value="{!URLFOR($Resource.autocomplete, 'autocomplete/jquery-ui-1.8.16.custom.css')}" />  
+ <apex:form id="frmBody">
+ <head>
+    <title>Gusto</title>
+    <style>
+         .tablesorter thead .sorter-false {
+            padding: .25rem 10px !important;
+         }
+    
+        .ui-autocomplete-loading { 
+           background: white url(/img/loading32.gif) right center no-repeat;
+           background-size:15px 15px; 
+        }
+        .ui-autocomplete {
+            max-height: 400px;
+            overflow-y: auto;  
+            overflow-x: hidden;
+            z-index:1000 !important;
+        }
+    </style>
+     <script>
+        function setFocusOnLoad() {}
+      </script>
+    <c:UR_SortingTable />
+ </head>
+  <body class="slds-scope">
+     <c:UR_ActionStatus />
+     <c:UR_MenuHeaderComponent tabName="emails" subTabName="" prjId="{!objProject.Id}"/>
+      <!--body start here-->  
+     
+     <apex:actionFunction rerender="frm" status="statusSave" name="sortParticipantList" action="{!sortParticipantList}">
+        <apex:param name="sortby" value="" assignTo="{!sortbyFieldAPIName}"/>
+        <apex:param name="orderas" value="{!orderas}"/>
+        <apex:param name="projectId" value="{!objProject.Id}"/>
+     </apex:actionFunction> 
+     
+    <div class="slds-p-around_small">
+      <apex:pageMessages /> 
+      <div class="slds-grid slds-wrap slds-gutters_x-small">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-6">
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for="">Select Contact</label>
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-m-right_small">
+                <span class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" style="color: #b0adab;">
+                    <i id="searchContactId" style="color:{!if(strSelectedContactedEmail=='','','green;')}" class="fas fa-search"></i>
+                </span>
+                <apex:inputText id="searchConName" onblur="resetSearch(this.value);" value="{!strSearchContactName}" html-placeholder="Enter Contact Name Here" styleClass="slds-input"/>
+                <apex:inputHidden id="searchConId" value="{!strSelectedContactedEmail}" />
+            </div>
+          </div>
+          
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6">
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for="">From</label>
+            <div class="slds-form-element__control">
+             <apex:inputField styleclass="slds-input slds-m-bottom_small" value="{!objContactFrom.BirthDate}" style="width:60%"/>
+            </div>
+          </div>
+          
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6">
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for="">To</label>
+            <div class="slds-form-element__control">
+             <apex:inputField styleclass="slds-input slds-m-bottom_small" value="{!objContactTo.BirthDate}" style="width:60%"/>
+            </div>
+          </div>
+          
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-6">
+          <div class="slds-show_medium slds-m-top_large"></div>
+          <apex:actionFunction name="actionOnComplete" rerender="frmBody"/>
+          <apex:commandButton rerender="frmBody" status="statusSave" value="Show" action="{!showMessageHistory}" styleclass="slds-button slds-button_brand slds-m-bottom_small"/>
+          <!--<apex:commandButton value="Back" action="{!BackToProject}" styleclass="slds-button slds-button_outline-brand slds-m-bottom_small"/>-->
+        </div>
+      </div>
+
+      <div class="slds-scrollable" style="max-height:500px; min-height:200px;">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered fix-header">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('CreatedDate');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Date</li>
+                      <li>
+                          <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='CreatedDate' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='CreatedDate' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+            </th>
+            <th class="slds-text-title_caps sorter-false" scope="col" >
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Name</li>
+                      <li>
+                         
+                      </li>                      
+                  </ul>
+            </th>
+            <th class="slds-text-title_caps sorter-false" scope="col">
+                 <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Email Address</li>
+                      <li>
+                      </li>                      
+                  </ul>
+            </th>
+            <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Status');">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Status</li>
+                      <li>
+                          <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Status' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Status' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+            </th>
+            <th class="slds-text-title_caps sorter-false" scope="col"  onclick="sortParticipantList('Subject');">              
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">Subject</li>
+                      <li>
+                          <i class="fas fa-arrow-down" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Subject' && orderAs=='desc','','none;')}"></i>
+                          <i class="fas fa-arrow-up" style=" margin-left: 5px;  display:{!if(sortbyFieldAPIName=='Subject' && orderAs=='asc','','none;')}"></i> 
+                      </li>                      
+                  </ul>
+            </th>
+            <th class="slds-text-title_caps sorter-false" scope="col">
+                  <ul class="slds-list_horizontal">
+                      <li class="slds-truncate">View Email</li>
+                      <li>
+                      </li>                      
+                  </ul>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        <apex:repeat value="{!lstMessageWrapper}" var="mh">
+          <tr style="{!if(mh.envStyle=='fa-envelope','font-weight:bold;','')}">         
+            <td class="{!if(mh.envStyle=='fa-envelope','highlight','')}">
+             <apex:outputField value="{!mh.objEmailMsg.CreatedDate}"/>
+            </td>
+            <td class="{!if(mh.envStyle=='fa-envelope','highlight','')}">
+             <apex:outputtext value="{!mh.strName}"/>
+            </td>
+            <td class="{!if(mh.envStyle=='fa-envelope','highlight','')}">
+              <apex:outputtext value="{!mh.strEmail}"/>
+            </td>
+            <td class="{!if(mh.envStyle=='fa-envelope','highlight','')}">
+              <apex:outputpanel styleClass="{!if(mh.objEmailMsg.Status=='3','text-green','text-orange')}">{!if(mh.objEmailMsg.Status=='3','Sent','Replied')}</apex:outputpanel>
+            </td>
+            <td class="{!if(mh.envStyle=='fa-envelope','highlight','')}">
+             <apex:outputField value="{!mh.objEmailMsg.Subject}"/>
+            </td>
+            <td class="{!if(mh.envStyle=='fa-envelope','highlight','')}">
+                <a href="#" class="view-email-btn" onclick="initOpenViewMode('{!JSENCODE(mh.objEmailMsg.Id)}','{!JSENCODE(mh.objEmailMsg.RelatedToId)}');"><i class="fas {!mh.envStyle}" title="View Email"></i></a>
+            </td>                            
+          </tr>
+          </apex:repeat>
+        </tbody>
+      </table>
+                     
+      </div>
+     
+     <center>
+      <br/>
+      <apex:outputPanel style="display:{!if(lstMessageWrapper.size>0,'block;','none;')}" >
+          <apex:commandButton value="First" action="{!first}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>
+          <apex:commandButton value="Previous" action="{!previous}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasPrevious)}" styleClass="slds-button slds-button_outline-brand"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+          <apex:commandButton value="Next" action="{!next}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+          <apex:commandButton value="Last" action="{!last}" rerender="frmBody" status="statusSave"  disabled="{!NOT(hasNext)}" styleClass="slds-button slds-button_outline-brand"/>
+     </apex:outputPanel>
+     </center>
+        
+        
+      </div>
+          <!-- For Popup Window -->
+      <div class="modal-window view-email-modal" style="display: none;">
+      <div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="max-width: 500px;">
+          <div class="slds-modal__header">
+            <h2 id="modal-heading-01" class="slds-text-heading_small slds-hyphenate">
+            <b>Email - {!objEmailMsgWrapper.objEmailMessage.Subject}</b></h2>
+          </div>
+             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="max-height: 350px; overflow-y: auto;">
+              <apex:outputpanel rendered="{!isEditable}">
+              <div class="slds-form">
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <apex:outputText style="color:green" value="{!successMsg}" escape="false" id="successMsg"/>
+                    <label class="slds-form-element__label" for="stacked-input-id-02">
+                        Reply
+                    </label>
+                    <div class="slds-form-element__control">
+                        <apex:inputTextarea styleclass="slds-textarea" value="{!emailReplyBody}"/>
+                    </div>  
+                    <div class="slds-text-align_right slds-m-top_xx-small">
+                      <apex:commandButton styleclass="slds-button slds-button_brand" value="Send" action="{!ReplyEmail}" rerender="successMsg" oncomplete="actionOnComplete();" status="statusSave"/>
+                    </div>  
+                  </div>
+              </div>
+              </apex:outputpanel>
+              
+            <div class="slds-p-vertical_small"><a href="javascript:void(0);" title="View More"><i class="fas fa-ellipsis-h show-more-btn" style="font-size: 20px; color: #080707;"></i></a></div> 
+              <div class="more-content" style="display: none;">
+                <h3 class="slds-text-body_small slds-text-align_right">
+                <b>Created on: </b> 
+                <apex:outputText value=" {0,date,M/d/yyy h:mm a}">  
+                    <apex:param value="{!objEmailMsgWrapper.objEmailMessage.CreatedDate + offset}" /> 
+                </apex:outputText>
+                <!--<apex:outputText value="{0,date,dd MMM yyyy, HH:mm:ss}">
+                    <apex:param value="{!objEmailMsgWrapper.objEmailMessage.CreatedDate}" /> 
+                </apex:outputText>-->
+                </h3>
+                <p><apex:outputtext value="{!objEmailMsgWrapper.emailBody}" escape="false"/></p>
+              </div>  
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_brand close-modal" onclick="return false;">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <!-- End Pop-up window code -->
+      <apex:actionFunction name="initOpenViewMode" action="{!UpdateReadEmailStatus}" rerender="frmBody" status="statusSave" onComplete="openmodal();">
+                <apex:param value="" name="currentTaskId" />
+                <apex:param value="" name="currentPartId" />
+       </apex:actionFunction>
+    
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+      <script type="text/javascript">
+             $(document).ready(function(){
+               /*$("table").tablesorter({
+                 theme : 'jui', 
+                 headerTemplate : '{content} {icon}',
+                 widgets : ['uitheme', 'zebra'],
+                 widgetOptions : {
+                     zebra   : ["even", "odd"],
+                 }
+                   });*/
+               }); 
+      
+           $('.close-modal').click(function() {
+            $('.modal-window').fadeOut();
+           });
+            $('.show-more-btn').click(function() {
+               $('.more-content').slideToggle();
+           });
+
+           function closemodal(){
+            $('.view-email-modal').fadeOut(); 
+           }
+           function openmodal(){
+            $('.view-email-modal').fadeIn(); 
+           }
+        
+         /*
+          function removeHighLight(){
+            var element = document.getElementsByClassName("view-email");
+            var i;
+            for (i = 0; i < element.length; i++) {
+              element[i].classList.remove("highlight");
+            }
+          }
+
+        $(document).ready(function() {
+            setTimeout(removeHighLight, 5000);
+        });*/
+     </script> 
+     
+     <script type="text/javascript">
+        var participantObjects;
+        var queryTerm;
+        var objProjectId = '{!objProject.Id}';
+        var objContactId = document.getElementById('searchContactId');
+        $('[id$=searchConName]').autocomplete({
+            minLength: 2,
+            source: function(request, response) {
+                        queryTerm = request.term;
+                        UR_VewEmailCtrl.searchContact(objProjectId, request.term, function(result, event){
+                            if(event.type == 'exception') {
+                                  alert(event.message);
+                            } else {
+                                 participantObjects = result;
+                                 response(participantObjects);    
+                            }
+                            $('[id$=searchConId]').val('');
+                            $(objContactId).css('color','');
+                            
+                        });
+                   },
+            focus: function( event, ui ) {
+                    $('[id$=searchConName]').val( ui.item.Contact__r.Name );
+                    return false;
+                    },
+            select: function( event, ui ) {
+                        $('[id$=searchConName]').val( ui.item.Contact__r.Name );
+                        $('[id$=searchConId]').val( ui.item.Id );
+                        $(objContactId).css('color','green');
+                        return false;
+                    },
+         })
+         .data( "autocomplete" )._renderItem = function( ul, item ) {
+            var entry = "<a>" + item.Contact__r.Name;
+            entry = entry + "</a>";
+            entry = entry.replace(queryTerm, "<b>" + queryTerm + "</b>");
+            return $( "<li></li>" )
+                .data( "item.autocomplete", item )
+                .append( entry )
+                .appendTo( ul );
+        };
+
+		function resetSearch(obj){
+            console.log('obj--->' + obj);
+            if(obj==null || obj==''){
+                document.getElementById('pg:frmBody:searchConId').value='';
+            }   
+        }    
+    </script>
+
+    </body>
+    </apex:form>   
+</apex:page>

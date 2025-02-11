@@ -1,0 +1,92 @@
+<apex:page standardController="Carrier_Order__c" extensions="TransitionToNotesOnCODetailExt" showHeader="false" sidebar="false">
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    
+    <script type="text/javascript">   
+    //for opening QA Sheet
+    function openSubTabQASheet(recId){
+        var redirectUrl3 = '/'+recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl3, true,'QA Sheet', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl3, '_blank');
+        }
+    }
+    //for opening TTIA vf
+    function openSubTab(recId){
+        var redirectUrl = '/apex/DisplayEditTTIA?BOid='+recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl, true,'TTIA', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl, '_blank');
+        }
+    } 
+    // for opening TTQ
+    function openTTFQTab(recId){
+        var redirectUrl1 = '/apex/CreateModifyTranstionToFulfilment?id='+recId;
+        //var redirectUrl1 = recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl1, true,'TTQ', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl1, '_blank');
+        }
+    }       
+    // for opening TTS
+    function openTTSTab(recId){
+        var redirectUrl4 = '/apex/DisplayEditTTS?BOid='+recId;
+        //var redirectUrl1 = recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl4, true,'TTS', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl4, '_blank');
+        }
+    }    
+    </script>
+    <apex:form >
+        <apex:pageMessages ></apex:pageMessages>
+        
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Transition To Notes" columns="1">
+                <table>
+                    <tr>
+                        <td><b>Transition To Qualification:</b>  <a href="javascript:void(0);" onclick="openTTFQTab('{!TtqObj.id}');return false;">Open TTQ</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>QA Sheet:</b>  
+                            <a style="display:{!if(strHippoURL!='', '','none;')}" href="javascript:void(0);" onclick ="window.open('{!strHippoURL}');return false;">Open QA</a>
+                        	<a style="display:{!if(strHippoURL=='', '','none;')}" href="javascript:void(0);" onclick ="openSubTabQASheet('{!IF(lstQARec.size > 0,lstQARec[0].Id,null)}');return false;">Open QA</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Transition To Submission:</b>  <a href="javascript:void(0);" onclick="openTTSTab('{!CarrierOrderObj.Benefit_Order__c}');return false;">Open TTS</a></td>
+                    </tr>
+                </table> 
+                
+            </apex:pageBlockSection>
+           <!---- <apex:pageBlockSection title="Tickets">
+                
+            </apex:pageBlockSection>---->
+            
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

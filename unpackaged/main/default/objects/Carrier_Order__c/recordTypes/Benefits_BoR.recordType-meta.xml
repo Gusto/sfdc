@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Benefits_BoR</fullName>
+    <active>true</active>
+    <label>Benefits BoR</label>
+    <picklistValues>
+        <picklist>Approval_Method__c</picklist>
+        <values>
+            <fullName>Approved using phone call or email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Approved using portal and%2For invoice</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Approved using renewal packet</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Automated_Submission__c</picklist>
+        <values>
+            <fullName>Bot Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HI Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HI%2FBot Submission</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Automation_Status__c</picklist>
+        <values>
+            <fullName>Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Failed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Started</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submitted</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Contribution_Change__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Escalated_Reason__c</picklist>
+        <values>
+            <fullName>Attempt to prevent a social%2Fexecutive escalation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Same day deadline on PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Social%2FExecutive escalation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Facilitator_2_Plan_Build__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Funding_Type__c</picklist>
+        <values>
+            <fullName>Chamber of Commerce</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fully funded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General Agent%2FTPA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Level funded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PEO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Self funded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trust%2Fassociation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>HI_Confirmation_Automation_Status__c</picklist>
+        <values>
+            <fullName>Carrier data not available yet</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Failed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Success</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unable to audit</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>HI_Submission_Automation_Status__c</picklist>
+        <values>
+            <fullName>Failed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Success</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unable_to_automate</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Hold_Out_Record__c</picklist>
+        <values>
+            <fullName>Hold Out - Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Implementation_Stage__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Balance Collection</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked Plan Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Canceled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collecting Documents</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Enrollment Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Enrollment Review Entry in Progress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Enrollment Review Sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Implementing Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Implementing TAdA Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending ER Signature</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plan Review Sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plans Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Qualification</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready For Qualification</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Ready for Document Collection</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready for Implementing Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready to Send Enrollment Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready to Send Plan Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transferring Balances</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unblock Plan Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>With Sales</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Order_Type__c</picklist>
+        <values>
+            <fullName>Carrier Switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New line of Coverage</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New to Gusto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Same Carrier%2C NO Plan%2FGroup Level Changes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Same carrier%2C plan%2Fgroup level changes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TAdA%3A No Pre OE Setup</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TAdA%3A Pre OE Setup</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Terminated Order</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Pending_Action_Responsibility__c</picklist>
+        <values>
+            <fullName>Carrier</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gusto</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Plan_Change__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Resign_Required_Reason__c</picklist>
+        <values>
+            <fullName>Dba not provided</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect carrier</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect group name</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect group number</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect signatory</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect signatory title</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No letterhead</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sign date too far in the past</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Supplemental form not sent</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Resign_Required__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Served_Other_Rules__c</picklist>
+        <values>
+            <fullName>Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Served_Up_Rule__c</picklist>
+        <values>
+            <fullName>Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Stage_Detail__c</picklist>
+        <values>
+            <fullName>Accidental Sign</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Compliance - CS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Compliance - Class Based CS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Decided to not transfer at this time</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Did not run payroll</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Duplicate</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Carrier</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual%2FLarge Group coverage%2FSelf Funded%2FLevel Funded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Invoice disqualification before assignment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Basic life with voluntary buy up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Child%2C spouse support for life</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Contributory disability</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Contributory life</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Mandatory life %2B ER paid buy up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Post tax support</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Voluntary disability</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lidi - Voluntary life</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Owner%27s Choice</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pre-ACA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation - Class Based WP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation - Unsupported WP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product dissatisfaction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product limitation- CS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product limitation- post tax</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Renewal Date</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shareholders cannot participate</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unsupported Carrier</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unsupported line of coverage</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type__c</picklist>
+        <values>
+            <fullName>Carrier Added</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Carrier Modified</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Removed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Renewed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New Line of Coverage</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Waiting_Period_Change__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Waiting_Period__c</picklist>
+        <values>
+            <fullName>Fifteenth of Month 30 days After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fifteenth of Month 60 days After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fifteenth of Month After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month 1 Month After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month 2 Month After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month 30 Days After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month 60 Days After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month 90 Days After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month Following Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First of Month Following Or On Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ninety Dates After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Waiting Period</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Thirty Days After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Three Months After Hire</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Two Months After Hire</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

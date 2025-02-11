@@ -1,0 +1,59 @@
+<apex:component controller="BTFacilitatorCompCtrl">
+    <apex:attribute name="facListTab" description="This is to make facListTab tab active." type="String" />
+    <apex:attribute name="facOOOTab" description="This is to make facOOOTab tab active." type="String" />
+    <apex:attribute name="fac2ListTab" description="This is to make fac2ListTab tab active" type="String" />
+     
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+ <link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+ <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script>
+  <apex:includeScript value="/support/console/45.0/integration.js"/>
+<apex:slds />
+ <c:BTCustomCSS />  
+  <c:GustoActionStatus />
+        &nbsp;<br/>
+        <div class="tab"> 
+            <apex:outputPanel rendered="{!blnIsFAC1}">
+                <a href="javascript:void(0);" onclick="openPage('BTCOFacilitatorListView');return false;" class="tablinks {!facListTab}">Facilitator 1</a>    
+            </apex:outputPanel>  
+            <apex:outputPanel rendered="{!blnIsFAC2}">
+                <a href="javascript:void(0);"  onclick="openPage('BTCOFacilitator2ListView');return false;"  class="tablinks {!fac2ListTab}">Facilitator 2</a>         
+            </apex:outputPanel>    
+            <apex:outputPanel rendered="{!if(blnIsFAC1 || blnIsFAC2,true,false)}">            
+                <a href="javascript:void(0);" onclick="openPage('BTCOFacilitatorOOOView');return false;"  class="tablinks {!facOOOTab}">OOO Views</a>
+            </apex:outputPanel>            
+        </div>
+        
+       <script type="text/javascript">         
+        function openPage(pagename){
+             var redirectUrl = 'apex/'+pagename; 
+             if (sforce.console.isInConsole()) {
+                 //sforce.console.openPrimaryTab(undefined,redirectUrl,true);
+                window.open('/'+redirectUrl+'?isdtp=vw', '_self');
+             } else {
+                 // for inline Vf
+                 window.open('/'+redirectUrl, '_self');
+             }
+        }
+        function openSubTab(recId,label){
+            var redirectUrl = '/'+recId; 
+            if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(function(enclosingResult){
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        console.log(primaryResult.id);
+                        if(primaryResult.id=='null'){
+                            sforce.console.openPrimaryTab(undefined,redirectUrl,true,label);
+                        }else{
+                            sforce.console.openSubtab(primaryResult.id, redirectUrl, false,label, null);
+                        }
+                    });
+                })
+            } else {
+                // for inline Vf
+                window.open(redirectUrl, '_blank');
+            }
+        }
+
+    </script>
+</apex:component>

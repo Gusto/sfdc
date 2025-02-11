@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Automated_Submission__c</fullName>
+    <label>Submission Automation Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Bot Submission</fullName>
+                <default>false</default>
+                <label>Bot Submission</label>
+            </value>
+            <value>
+                <fullName>HI Submission</fullName>
+                <default>false</default>
+                <label>HI Submission</label>
+            </value>
+            <value>
+                <fullName>HI/Bot Submission</fullName>
+                <default>false</default>
+                <label>HI/Bot Submission</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

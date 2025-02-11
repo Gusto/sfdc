@@ -1,0 +1,276 @@
+<apex:page controller="AdvocateViewCtrl" action="{!CallOnAdvocateBMR_MultiFEINview}">
+<c:AdvocateTabComp actionTab="" cohortTab="" bmrMultiTab="active"/> 
+ <!-- MultiSelect CSS & JS library -->
+ <link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+ <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script> 
+<apex:form id="frmBody">
+	 <style>
+            .custom-table th, .custom-table td {
+                 padding: 5px; 
+                 white-space: normal; 
+                 vertical-align: top;  
+            }   
+          
+            .ms-options-wrap > button:focus, .ms-options-wrap > button {
+               background: #fff;
+               max-width: 408px;
+            }
+            .ms-options-wrap {
+                position: relative;
+            }
+            .disableClick{
+            	pointer-events:none;
+            }
+        </style>   
+    <div class="tabcontent slds-scope">
+	<table width="100%" style="margin-bottom: 5px;">
+        <tr>
+            <td><apex:pageMessages id="showmsg" /></td>
+            <td style="text-align:right !important; vertical-align: bottom !important;"><apex:commandButton value="Refresh" status="statusSave" action="{!CallOnAdvocateBMR_MultiFEINview}" rerender="frmBody"/></td>
+        </tr>
+    </table>
+    <apex:outputpanel rendered="{!isManager}">
+         <table width="100%" style="margin-bottom: 5px;">
+        	 <tr>
+                <td colspan="2">Select team member to see Details : <apex:selectList value="{!strCurrentUserId}" multiselect="false" size="1">
+                           <apex:selectOptions value="{!list_NonManagerUsers}"/>
+                           <apex:actionSupport event="onchange" status="statusSave" action="{!CallOnAdvocateBMR_MultiFEINview}" rerender="frmBody"/>
+                       </apex:selectList></td>
+            </tr>
+         </table>
+         </apex:outputpanel>
+         
+       <apex:pageblock id="reportSection" title="BMR Stats">
+        <table class="custom-table" style="width: auto !important;"> 
+            
+            <tr>
+                <th>First Check Date: </th>
+                <td><apex:inputField value="{!objOrderTemp.First_Check_Date__c}"/> </td>
+                <td width="30"></td>
+                <th>To :</th><td><apex:inputField value="{!objOrderTemp.Follow_Up_Date__c}"/></td>
+            </tr>
+            <tr>
+            	<td>BMR </td>
+            	<td colspan="3">
+            		<apex:selectList value="{!lstSelectedBMR}" multiselect="true">
+                         <apex:selectOptions value="{!lstBMROptions}"/>
+                     </apex:selectList>
+            	</td>
+            	 <th colspan="4" align="center"><apex:commandButton value="Update" action="{!ShowBMRStats}" status="statusSave" rerender="frmBody" /></th>
+            </tr>
+              <tr>
+            	<th align="left">
+            		<a href = "javascript:void(0);"  onclick="navigateTo('{!strBMRReportId}')">View Report</a>
+            	</th>
+            </tr>  
+        </table>
+        <apex:outputPanel id="cohortFunnelPanel">
+        <table width="100%" cellpadding="5">
+        	<tr>
+	        	<td valign="top" width="30%">
+		            <div class="disableClick">
+		         		<analytics:reportChart rendered="{!if(lstSelectedBMR.size!=0,true,false)}" showRefreshButton="false" cacheResults="false" developerName="Advocate_BMR_Funnel" filter="{!strBMRReportFilterJson}" size="medium"/>
+		        	 </div>
+	        	 </td>
+	        	 <td valign="top" width="70%">
+	        	 	 <table id="orderStat" class="tablesorter-blue" style="margin: 0px;" width="100%">
+		              <thead>
+		                <tr>
+		                  <th>Status</th>
+		                  <th># of orders</th>
+		                  <th>Avg days in status</th>
+		                  <th>Oldest Order in status</th>
+		                  <th>Oldest time in status</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              <apex:repeat value="{!lstOrderStatsWrapper}" var="objOrder">
+		                <tr>
+		                  <td>{!objOrder.strOrderStatus}</td>
+		                  <td>{!objOrder.strNumberOfOrder}</td>
+		                  <td>{!objOrder.strAverage}</td>
+		                  <td><a href="javascript:void(0);"  onclick="navigateTo('{!objOrder.strOldestOrderId}')">{!objOrder.strOldestOrderName}</a></td>
+		                  <td>{!objOrder.oldestNoOfday}</td>
+		                </tr>
+		              </apex:repeat>
+		              </tbody>
+		            </table>
+	        	 </td>
+        	 </tr>
+        </table>
+        </apex:outputPanel>
+    </apex:pageBlock>  
+     <apex:pageblock title="Open Orders ({!lstOrderCohortView.size} Records)" id="boPanel">
+            	
+                <table class="custom-table" style="width: auto !important;"> 
+                	
+                    <tr><th>Order Status : </th>
+                        <td colspan="4">
+                            <apex:selectList value="{!lstSelectedOrderStatus}" multiselect="true">
+                                <apex:selectOptions value="{!lstOrderStatus}"/>
+                            </apex:selectList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{!if(IsFacilitator,'Facilitator Due Date ', 'First Check Date ')} From :</th>
+                        <td><apex:inputField value="{!objOrderTemp.Work_Start_Date__c}"/></td>
+                        <td width="30"></td>
+                        <th>To :</th><td><apex:inputField value="{!objOrderTemp.Requested_Pay_Date__c}"/></td>
+					</tr>
+					<tr><th>Payroll Run Date From:</th>
+                        <td><apex:inputField value="{!objOrderTemp.Payroll_Run_Date__c}"/> </td>
+                        <td></td>
+                        <th>To :</th><td><apex:inputField value="{!objOrderTemp.Account_Approved_Date__c}"/></td>
+                    </tr>
+                     <tr><th>BMR : </th>
+                        <td colspan="3">
+                           <apex:selectList value="{!lstSelectedBMRVal}" multiselect="true">
+	                         <apex:selectOptions value="{!lstBMROptionsVal}"/>
+	                     </apex:selectList>
+                        </td>
+                    </tr>
+                    
+                    <tr><td></td><th colspan="4" align="center"><apex:commandButton value="Show Orders" action="{!ShowBMROrders}" status="statusSave" rerender="frmBody"/></th></tr>
+                    
+                </table>
+                <br/>
+                <a href="javascript:void(0);" id="selectColLink" onClick="openModal()" style="float: right;">Select Columns</a>
+                     <table id="orderTable" class="tablesorter-blue custom-table" style="margin: 0px;" width="100%">
+                        <thead>
+                            <tr>
+                                <apex:repeat value="{!mapLstSelectedFields['Adv BMR Order']}" var="field">
+                                    <th style="display:{!if(mapAllFields['Order'][field]=='Facilitator Due Date' && IsFacilitator==false,'none;','')}"><apex:outputText value="{!mapAllFields['Order'][field]}"/></th>
+                                </apex:repeat>
+                            </tr>
+                        </thead>
+                         <tbody>
+                            <apex:repeat value="{!lstOrderCohortView}" var="wrapperBO">
+                            	<tr>
+                                     <apex:repeat value="{!mapLstSelectedFields['Adv BMR Order']}" var="field">
+                                        <td style="display:{!if(field == 'Facilitator_Due_Date__c' && IsFacilitator==false,'none;','')}">  
+                                        	 <apex:outputField value="{!wrapperBO.objOrder[field]}" rendered="{!AND(field != 'Account.ZP_Company_ID__c',field != 'AccountId',field != 'Additional_Information__c',field != 'Data_Entry_Assist__c',field != 'LastModifiedById',field != 'Bulk_Case__c',field != 'Bulk_Migration__c',field != 'Case__c',field != 'Account.ZP_Company_ID__c', field != 'OrderNumber',field != 'Follow_Up_Notes__c' , field != 'AccountId' , field != 'Migration_Notes__c', field != 'LastModifiedDate', field != 'Facilitator_Due_Date__c', field != 'Payroll_Run_Date__c',field != 'First_Check_Date__c',field != 'Account_Approved_Date__c',field != 'Follow_Up_Date__c',field != 'Facilitator_Follow_Up_Date__c' )}"/>
+											 <apex:outputPanel rendered="{!IF(field == 'OrderNumber',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.Id}')">{!wrapperBO.objOrder.Account.Name}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'LastModifiedById',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.LastModifiedById}')">{!wrapperBO.objOrder.LastModifiedBy.Name}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Data_Entry_Assist__c',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.Data_Entry_Assist__c}')">{!wrapperBO.objOrder.Data_Entry_Assist__r.Name}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Bulk_Case__c',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.Bulk_Migration__r.Bulk_Case__c}')">{!wrapperBO.objOrder.Bulk_Migration__r.Bulk_Case__r.CaseNumber}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Bulk_Migration__c',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.Bulk_Migration__c}')">{!wrapperBO.objOrder.Bulk_Migration__r.Name}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Case__c',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.Case__c}')">{!wrapperBO.objOrder.Case__r.CaseNumber}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'AccountId',true,false)}">
+												<a href="javascript:void(0);" onclick="navigateTo('{!wrapperBO.objOrder.AccountId}')">{!wrapperBO.objOrder.Account.Name}</a>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Account.ZP_Company_ID__c',true,false)}">
+												<a href="https://app.gusto.com/panda/companies/{!wrapperBO.objOrder.Account.ZP_Company_ID__c}/transfer" target="_blank">{!wrapperBO.objOrder.Account.ZP_Company_ID__c}</a>
+											</apex:outputPanel>
+											<apex:outputPanel styleclass="txt-truncate" layout="block" title="{!wrapperBO.objOrder[field]}" rendered="{!IF(OR(field == 'Follow_Up_Notes__c',field == 'Migration_Notes__c',field == 'Additional_Information__c'),true,false)}">
+												{!wrapperBO.objOrder[field]}
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'LastModifiedDate',true,false)}">
+												<div style="display: none;">{!wrapperBO.strLastModifiedDate}</div>
+												<apex:outputText rendered="{!IF(field == 'LastModifiedDate' ,true,false)}" value="{0,date,MM'/'dd'/'yyyy}">
+													<apex:param value="{!wrapperBO.objOrder[field]}" />
+												</apex:outputText> 
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Facilitator_Due_Date__c', true,false)}">
+												<div style="display: none;">{!wrapperBO.strDueDateFormat}</div>
+												 <apex:outputField value="{!wrapperBO.objOrder[field]}"/>
+											</apex:outputPanel>
+                                            <apex:outputPanel rendered="{!IF(field == 'Payroll_Run_Date__c',true,false)}">
+												<div style="display: none;">{!wrapperBO.strRunDateFormat}</div>
+												 <apex:outputField value="{!wrapperBO.objOrder[field]}"/>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'First_Check_Date__c',true,false)}">
+												<div style="display: none;">{!wrapperBO.strFirstCheckDateFormat}</div>
+												 <apex:outputField value="{!wrapperBO.objOrder[field]}"/>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Follow_Up_Date__c',true,false)}">
+												<div style="display: none;">{!wrapperBO.strFollowUpDate}</div>
+												 <apex:outputField value="{!wrapperBO.objOrder[field]}"/>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Facilitator_Follow_Up_Date__c',true,false)}">
+												<div style="display: none;">{!wrapperBO.strFacilitatorFollowUp}</div>
+												 <apex:outputField value="{!wrapperBO.objOrder[field]}"/>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!IF(field == 'Account_Approved_Date__c',true,false)}">
+												<div style="display: none;">{!wrapperBO.strAccountApprovedDate}</div>
+												 <apex:outputField value="{!wrapperBO.objOrder[field]}"/>
+											</apex:outputPanel>
+                                         </td>
+                                    </apex:repeat> 
+                                </tr>
+                            </apex:repeat>
+                        </tbody> 
+                      
+                    </table>
+            </apex:pageblock>      
+			<!-- Div Modal Start-->
+			 <div class="modal-window myModel" style="display: none;">
+				<div role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+					<div class="slds-modal__container" style="max-width: 500px;">
+						<div class="slds-modal__header">
+							<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Columns to Show</h2>
+						</div>
+						<apex:pageMessages />
+						<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+							<p>
+								<apex:selectCheckboxes value="{!mapLstSelectedFields['Adv BMR Order']}" styleclass="chk-box" id="boColumnFilter" layout="pagedirection">
+									<apex:selectOptions value="{!mapLstAllFields['Order']}"/>
+								</apex:selectCheckboxes>
+							</p>
+						</div>
+						<div class="slds-modal__footer">
+							<button class="slds-button slds-button_neutral re-open-close-btn" onclick="return false;">Cancel</button>
+							<button class="slds-button slds-button_brand save-preferences1">Save</button>
+							<apex:actionFunction name="SavePref" status="statusSave" rerender="frmBody" action="{!saveBMRPreference}">
+								<apex:param name="view" value="Adv BMR" assignTo="{!currentView}" />
+								<apex:param name="objName" value="Order" assignTo="{!currentObjName}" />
+							</apex:actionFunction>
+						</div>
+					</div>
+				</div>
+				<div class="slds-backdrop slds-backdrop_open"></div>
+			</div> 
+			<!-- Div Model End -->
+	</div>
+	<script>
+            $(function() {
+                $("#orderTable").DataTable({"aaSorting": [],pageLength:50});
+                $('select[multiple]').multiselect();
+            });
+            function setFocusOnLoad() {}
+            function openModal(){
+                 $('.myModel').show(); 
+             }
+           
+             $('.re-open-close-btn').click(function() {
+                    $('.myModel').hide();
+                    return false;
+              });
+     		
+     		 $('.save-preferences1').click(function() {
+     		 	var nofSelect= $("[id*='boColumnFilter']:checked").length;
+				if(nofSelect==0){
+		               alert('Please select at least one coulmn.');
+		               return false;
+		           }
+		           else if(nofSelect>10){
+		           		alert('You can select maximum 10 column to display');
+		           		return false;
+		          }else{
+		          	SavePref();
+		          }     		 	
+		     });
+        </script>
+</apex:form>
+</apex:page>

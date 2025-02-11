@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Payroll_Opportunities__c</fullName>
+    <description>To calculate total number of payroll opportunities on account.
+Will be used temporarily.</description>
+    <label># Total Payroll Opportunities</label>
+    <summaryForeignKey>Opportunity.AccountId</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_UX_Active_Formula__c</fullName>
+    <formula>If(ISBLANK(ZP_User_Role__c),false,if(OR(INCLUDES(ZP_User_Role__c, &apos;Contractor&apos;),INCLUDES(ZP_User_Role__c, &apos;Employee&apos;)),Is_UX_Active__c,true))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Is UR Active Formula</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

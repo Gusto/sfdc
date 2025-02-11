@@ -1,0 +1,191 @@
+<apex:page standardController="Ticket__c" extensions="TicketBenefitChangeOppPageCtrl" action="{!navigateToOpportunity}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.css" rel="stylesheet" />
+    <script src="https://demos.codexworld.com/multi-select-dropdown-list-with-checkbox-jquery/multiselect/jquery.multiselect.js"></script> 
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+	<style> 
+        .text-center {
+          text-align: center !important;
+        }
+        .text-right {
+          text-align: right !important;
+        }
+        .text-hide{
+            display: none;
+        }
+
+        .custom-header-text{
+        	font-size: 12px;
+            display: block;
+            background-color: #c99c9c;
+            padding: 4px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+    	function RefreshPrimaryTab(){
+	        sforce.console.getFocusedPrimaryTabId(showTabId);
+	    }
+    
+    	var showTabId = function showTabId(result){
+	        var tabId = result.id;
+	        //alert('Primary Tab IDs: primaryTabId ' + tabId );
+	        sforce.console.refreshPrimaryTabById(tabId , true);
+	    };
+    </script>
+    <c:BTCustomCSS />
+    <apex:form id="frmId"> 
+        <apex:actionFunction name="checkBenefitType" immediate="true" action="{!checkBenefitType}" status="actStatusId" reRender="frmId">
+            <apex:param value="" name="oppType" assignTo="{!oppObj.Type}"/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="fetchPrimaryContact" action="{!fetchPrimaryContact}" status="actStatusId" reRender="frmId"/>
+        
+        <apex:actionFunction name="fetchBenefitType" action="{!fetchBenefitType}" status="actStatusId" reRender="frmId">
+            <apex:param value="" name="rowindex" assignTo="{!rowIndex}"/>
+        </apex:actionFunction>
+        
+        <apex:pageBlock >
+            <c:GustoActionStatus />
+            <apex:pageMessages />   
+	        <apex:outputPanel rendered="{!IF(hasError == false,true,false)}">
+	            <apex:pageBlockSection >
+		            <apex:outputField value="{!oppObj.OwnerId}"/>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Opportunity Stage" />
+                    	<apex:outputText value="{!oppStage}" />
+                    </apex:pageBlockSectionItem>
+		            <apex:outputField value="{!oppObj.Notes__c}"/>
+                    <apex:outputField value="{!oppObj.Description}"/>
+		            <apex:outputField value="{!oppObj.CloseDate}"/>
+		            <apex:inputField required="true" value="{!oppObj.AccountId}"/>
+		            <apex:inputField onchange="checkBenefitType(this.value);" value="{!oppObj.Type}"/>
+		            <apex:inputField rendered="{!!isTransferType}" value="{!oppObj.HI_Effective_Date__c}" />
+	            </apex:pageBlockSection>
+            </apex:outputPanel>
+            
+            <apex:outputPanel id="oppContact" style="display:{!if(isTransferType==true,'block;','none;')}" >
+            	<apex:pageBlockSection columns="1" id="additionalPOCSection" title="Opportunity Contact Roles" collapsible="false">
+                    <apex:pageBlockSectionItem > 
+                        <apex:outputLabel value="Primary Point of Contact"/>
+                        <apex:outputPanel layout="block" styleclass="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField value="{!objTTFRecord.Contact__c}" onchange="fetchPrimaryContact();"/>                        
+                        </apex:outputPanel> 
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:inputField value="{!objTTFRecord.Point_of_Contact_Phone__c}"/>
+                	<apex:inputField value="{!objTTFRecord.Point_of_Contact_Email__c}"/>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+		    
+			<apex:outputPanel id="lineCoverage1" style="display:{!if(lst_TadaCarrierOrderDetails.size>0,'block;','none;')}" > 
+                <div style="display:{!if(isTransferType==true,'block;','none;')}" class="custom-header-text">Manage TADA Order(s)</div>
+                 	<br/>
+					<apex:repeat value="{!lst_TadaCarrierOrderDetails}" var="carrierDetail">
+					<table cellpadding="5" cellspacing="0" width="100%" class="custom-table" id="table-01">
+						<tbody>
+                            <tr>
+                                <td style="font-weight: bold;">Benefit Type</td>
+								<td>
+									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName1}');" id="orderName1" value="{!lst_Tada[0].isChecked}"/>{!lst_Tada[0].orderName}
+								</td>
+								<td>
+									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName2}');" id="orderName2" value="{!lst_Tada[1].isChecked}"/>{!lst_Tada[1].orderName}
+								</td>
+								<td>
+									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName3}');" id="orderName3" value="{!lst_Tada[2].isChecked}"/>{!lst_Tada[2].orderName}
+								</td>
+								<td>
+									<apex:inputCheckbox id="orderName4" value="{!lst_Tada[3].isChecked}"/>{!lst_Tada[3].orderName}
+								</td>
+                            </tr>
+                            <tr>
+                               <td style="font-weight: bold;">Renewal Date</td>
+							   <td>
+									<apex:outputPanel style="display:{!if(lst_Tada[0].isChecked,'block;','none;')}"  id="orderDate1"><apex:inputField styleclass="edit-mode" value="{!lst_Tada[0].lineItem.Renewal_Date__c}" /></apex:outputPanel>
+							   </td> 
+							   <td>
+									<apex:outputPanel style="display:{!if(lst_Tada[1].isChecked,'block;','none;')}"  id="orderDate2"><apex:inputField styleclass="edit-mode" value="{!lst_Tada[1].lineItem.Renewal_Date__c}" /></apex:outputPanel>
+							   </td> 
+							   <td>
+									<apex:outputPanel style="display:{!if(lst_Tada[2].isChecked,'block;','none;')}"  id="orderDate3"><apex:inputField styleclass="edit-mode" value="{!lst_Tada[2].lineItem.Renewal_Date__c}" /></apex:outputPanel>
+							   </td> 
+							   <td>
+							   </td> 
+                            </tr>
+						</tbody>
+					</table>
+					</apex:repeat> 					
+			</apex:outputPanel>
+            <br/>
+			
+			<apex:outputPanel id="lineCoverage" style="display:{!if(lst_CarrierOrderDetails.size>0,'block;','none;')}" > 
+                <div style="display:{!if(isTransferType==true,'block;','none;')}" class="custom-header-text">Manage  Lines of Coverage</div>
+                 	<br/>
+					  <table cellpadding="5" cellspacing="0" width="100%" class="custom-table" id="table-01">
+						<thead>
+							<th>Carrier Name</th>
+							<th>Renewal Date</th>
+							<th width="300">Benefit Type</th>
+							<th>Remove</th>
+						</thead>
+						<tbody>                    
+							<apex:variable var="lst_count" value="{!0}"/>
+							<apex:repeat value="{!lst_CarrierOrderDetails}" var="carrierDetail">
+								<tr>
+                                    <td>
+                                        <apex:outputField styleClass="normal-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id != null || carrierDetail.isTadaRecord==true,true,false)}"/>
+                                        <div class="requiredInput">
+                                            <div class="requiredBlock"></div>
+                                        	<apex:inputField required="false" styleClass="edit-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id == null && carrierDetail.isTadaRecord==false,true,false)}" onchange="fetchBenefitType('{!lst_count}');"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <apex:outputField styleclass="normal-mode" value="{!carrierDetail.objCarrierOrder.Renewal_Date__c}" rendered="{!if(carrierDetail.objCarrierOrder.Id != null,true,false)}"/>
+                                        <apex:inputField styleclass="edit-mode" value="{!carrierDetail.objCarrierOrder.Renewal_Date__c}" rendered="{!if(carrierDetail.objCarrierOrder.Id == null,true,false)}"/>
+                                    </td>
+									<td>                            
+										<apex:selectList value="{!carrierDetail.lst_SelectedBenefitType}" multiselect="true">
+											<apex:selectOptions value="{!carrierDetail.lst_UnSelectedBenefitType}"/>
+										</apex:selectList>
+									</td> 
+									<td> 
+										<apex:commandLink rendered="{!if(carrierDetail.isFirstRecord==true,false,true)}" action="{!removeNewRow}"  status="actStatusId" rerender="frmId" immediate="true" value="x" style="font-size: 24px; color: red; text-decoration: none; margin-top: -10px;" styleClass="{!IF(carrierDetail.objCarrierOrder.Id !=null,'text-hide','')}">
+											<apex:param name="todeleteNewCO" assignTo="{!rowIndex}" value="{!lst_count}"/>
+										</apex:commandLink>
+									</td>                           
+								</tr>
+								<apex:variable var="lst_count" value="{!lst_count+1}"/>
+							</apex:repeat>
+						</tbody>
+					  </table>
+           	 </apex:outputPanel>
+			 
+			
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton styleclass="btn-blue white add-row" value="Add" action="{!addNewRow}" status="actStatusId" rerender="frmId" rendered="{!if(isTransferType==true && isTada==false,true,false)}"/>
+                <apex:commandButton styleClass="btn-blue" action="{!savemethod}" value="Submit" status="actStatusId" rendered="{!IF(hasError == false,true,false)}" reRender="frmId"/>
+                <apex:commandButton styleClass="btn-blue" action="{!Cancel}" value="Back" status="actStatusId" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <script type="text/javascript">
+            $(function() {
+                $('select[multiple]').multiselect();
+            });
+			
+			function checkValue(objId){
+                var inputCheckBoxId = document.getElementById(objId);
+                var inputDateId = document.getElementById(objId.replace('orderName','orderDate'));
+                console.log(inputDateId + '=======>' + objId);
+                if($(inputCheckBoxId).is(":checked")==true){
+                    inputDateId.style.display = 'block'; 
+                }else{
+                    inputDateId.style.display = 'none'; 
+                }
+			}
+        </script>
+    </apex:form>
+</apex:page>

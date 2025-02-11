@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pay_date_extension_count_negative</fullName>
+    <active>true</active>
+    <description>The total count of pay date extensions cannot be negative.</description>
+    <errorConditionFormula>Pay_Date_Extension_count__c &lt; 0</errorConditionFormula>
+    <errorDisplayField>Pay_Date_Extension_count__c</errorDisplayField>
+    <errorMessage>The total count of pay date extensions cannot be negative.</errorMessage>
+</ValidationRule>

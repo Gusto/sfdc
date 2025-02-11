@@ -1,0 +1,126 @@
+<template>
+
+    <template if:true={openModal}>
+
+        <lightning-layout>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container slds-align_absolute-center">
+                        <header class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                title="Close" onclick={handleCancel}>
+                                <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                    size="small"></lightning-icon>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Follow Up Case
+                            </h2>
+                        </header>
+                        <div class="slds-modal__content slds-var-p-around_medium slds-is-relative" id="modal-content-id-3">
+                            <template if:true={blnIsLoading}>
+                                <lightning-spinner alternative-text="Loading" size="small" variant="brand">
+                                </lightning-spinner>
+                            </template>
+                            <lightning-input class="left-margin" onblur={handleOnBlur} name="subject" 
+                                onchange={handleDataChange} label="Subject"
+                                required></lightning-input>
+                            <lightning-input class="left-margin" onblur={handleOnBlur} name="description" 
+                                onchange={handleDataChange} label="Description" maxlength="1000"
+                                required></lightning-input>
+                            <c-case-routing-classification record-id={recordId} str-case-reasons-to-skip={strCaseReasonsToSkip}
+                                oncasereasonselected={handleCaseReason} onclosed={handleClosed}>
+                            </c-case-routing-classification>
+                            <div class="slds-var-m-bottom_x-small left-margin">
+                                <label class="slds-form-element__label">Follow Up Date/Time</label>    
+                                <lightning-input type="datetime" name="followup-date" onchange={handleDataChange}></lightning-input>
+                            </div>    
+                            <div class="slds-var-m-bottom_x-small left-margin">
+                                <lightning-textarea label="What is the Customer Asking and/or Requesting?" required
+                                    name="customer-query" 
+                                    variant="label-stacked" min-length="50" 
+                                    onchange={handleDataChange}
+                                    onblur={handleOnBlur}
+                                    message-when-too-short="Please enter a minimum of 50 characters"
+                                    maxlength="2000">
+                                </lightning-textarea>
+                            </div>  
+                            <div class="slds-var-m-bottom_x-small left-margin">
+                                <lightning-textarea label="What Action or Correction is Needed to Resolve Customer Inquiry?" 
+                                    required name="action-needed"
+                                    onblur={handleOnBlur}
+                                    variant="label-stacked" onchange={handleDataChange}
+                                    maxlength="2000">
+                                </lightning-textarea>
+                            </div>  
+                            <div class="slds-var-m-bottom_x-small left-margin">
+                                <lightning-input label="Other Relevant Panda/Hippo Links for the Case" 
+                                    variant="label-stacked" name="other-links" onchange={handleDataChange}>
+                                </lightning-input>
+                            </div> 
+                            <div class="slds-var-m-bottom_x-small left-margin">
+                                <lightning-combobox
+                                        label="Reason for Follow-up Case"
+                                        placeholder="Select a reason"
+                                        options={list_FollowUpReasons}
+                                        required
+                                        name="followup-reason"
+                                        variant="label-stacked"
+                                        onchange={handleDataChange}>
+                                </lightning-combobox>
+                            </div>                
+                            <div class="slds-form-element left-margin">
+                                <label class="slds-checkbox_toggle slds-grid">
+                                    <span class="slds-form-element__label slds-m-bottom_none">Route to Queue?</span>
+                                    <input type="checkbox" onchange={handleToggle} name="checkbox-toggle-16"
+                                        value="checkbox-toggle-16" aria-describedby="checkbox-toggle-16" />
+                                    <span id="checkbox-toggle-16" class="slds-checkbox_faux_container"
+                                        aria-live="assertive">
+                                        <span class="slds-checkbox_faux"></span>
+                                        <span class="slds-checkbox_on">Yes</span>
+                                        <span class="slds-checkbox_off">No</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <br />
+                            <div class="slds-form-element left-margin">
+                                <label class="slds-checkbox_toggle slds-grid">
+                                    <span class="slds-form-element__label slds-m-bottom_none">Merge original
+                                        case?</span>
+                                    <input type="checkbox" onchange={handleMergeToggle} name="checkbox-toggle-16"
+                                        value="checkbox-toggle-16" aria-describedby="checkbox-toggle-16" />
+                                    <span id="checkbox-toggle-17" class="slds-checkbox_faux_container"
+                                        aria-live="assertive">
+                                        <span class="slds-checkbox_faux"></span>
+                                        <span class="slds-checkbox_on">Yes</span>
+                                        <span class="slds-checkbox_off">No</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <br />
+                            <br />
+                            <div>
+                                <lightning-layout>
+                                    <lightning-layout-item style="margin-left:700px">
+                                        <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}
+                                            class="slds-var-m-left_x-small"></lightning-button>
+
+                                    </lightning-layout-item>
+                                    <lightning-layout-item>
+                                        <lightning-button onclick={handleCreate} variant="brand"
+                                            disabled={blnIsCreateDisabled} label="Create" class="slds-var-m-left_x-small">
+                                        </lightning-button>
+
+                                    </lightning-layout-item>
+                                </lightning-layout>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </lightning-layout>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

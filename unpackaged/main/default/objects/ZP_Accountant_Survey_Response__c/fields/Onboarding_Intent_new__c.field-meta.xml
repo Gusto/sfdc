@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onboarding_Intent_new__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(
+OR(CONTAINS(Number_of_Accountants_in_Firm__c,&quot;10-49 accountants&quot;),
+CONTAINS(Number_of_Accountants_in_Firm__c,&quot;10-49&quot;),
+CONTAINS(Number_of_Accountants_in_Firm__c,&quot;50 or more&quot;),
+CONTAINS(Number_of_Accountants_in_Firm__c,&quot;50 or more accountants&quot;)) ,&apos;High&apos;,
+IF(
+AND(
+CONTAINS(Will_Run_First_Client_Payroll_Timeline__c,&quot;In the next month&quot;)
+),
+&apos;High&apos;,
+&apos;Low&apos;)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Onboarding Intent</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

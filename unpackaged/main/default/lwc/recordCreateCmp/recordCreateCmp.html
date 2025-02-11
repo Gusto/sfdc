@@ -1,0 +1,156 @@
+<template>
+	<div class="slds-box slds-theme_default">
+		<template if:true={blnLoading}>
+			<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" style="z-index: 9999"></lightning-spinner>
+		</template>
+
+		<!-- Title for record create -->
+		<div class="slds-text-heading_medium slds-align_absolute-center">{strTitle}</div>
+
+		<br />
+		<div class="slds-border_bottom"></div>
+		<div class="slds-border_bottom"></div>
+		<br />
+
+		<div class="form" style="margin-left: auto; margin-right: auto; width: 60%">
+			<!-- Show error message here -->
+			<template if:true={blnPageError}>
+				<div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+					<span class="slds-assistive-text">error</span>
+					<span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+						<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+							<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+						</svg>
+					</span>
+					<h2>{strErrorMessage}</h2>
+					<div class="slds-notify__close">
+						<button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" title="Close">
+							<svg class="slds-button__icon" aria-hidden="true">
+								<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+							</svg>
+							<span class="slds-assistive-text">Close</span>
+						</button>
+					</div>
+				</div>
+			</template>
+			<template if:false={blnAddProducts}>
+				<!-- If no error message, display record types and fields -->
+				<template if:false={blnPageError}>
+					<!-- If fields are available, show fields -->
+					<template if:false={blnNoRecordTypesAvailable}>
+						<div class="slds-grid">
+							<div class="slds-col slds-size_1-of-2">
+								<lightning-combobox
+									name="strRecordType"
+									value={strSelectedRecordType}
+									label="Choose Record Type"
+									onchange={handleRecordTypeChange}
+									placeholder="Choose Record Type"
+									options={options}
+									data-id="chooseRecordType"
+								></lightning-combobox>
+							</div>
+
+							<div class="slds-col slds-size_1-of-2 slds-p-left_x-small">
+								<lightning-textarea name="Description" label="Description" disabled="false" value={strSelectedRecordTypeDescription}></lightning-textarea>
+							</div>
+						</div>
+
+						<br />
+						<div class="slds-border_bottom"></div>
+						<br />
+					</template>
+				</template>
+
+				<template if:false={blnPageError}>
+					<template if:false={blnFieldsUnavailable}>
+						<!-- Lightning record edit form - Iterate over each field and show them as lightning input fields -->
+						<lightning-record-edit-form object-api-name={strObjectToCreate} density="comfy" layout-type="Full" record-type-id={strSelectedRecordType}>
+							<lightning-messages></lightning-messages>
+							<template for:each={list_RecordCreateFields} for:item="eachArray">
+								<div class="slds-grid" key={eachArray}>
+									<template for:each={eachArray} for:item="eachField">
+										<div class="slds-col slds-size_1-of-2" key={eachField}>
+											<template if:false={eachField.isblank}>
+												<lightning-input-field
+													field-name={eachField.Field_API__c}
+													value={eachField.Default_Value__c}
+													onkeyup={handleKeypress}
+													data-field={eachField.Field_API__c}
+													required={eachField.Is_Required__c}
+													disabled={eachField.Is_Disabled__c}
+													onchange={handleFieldChange}
+												>
+												</lightning-input-field>
+											</template>
+										</div>
+									</template>
+								</div>
+							</template>
+						</lightning-record-edit-form>
+					</template>
+					<!-- If there are no fields configured for each record type, show error message -->
+					<template if:true={blnFieldsUnavailable}>
+						<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+							<span class="slds-assistive-text">warning</span>
+							<span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+								<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+									<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+								</svg>
+							</span>
+							<template if:false={blnNoRecordTypesAvailable}>
+								<h2>No fields are configured for the selected record type. Please select another record type or contact your administrator.</h2>
+							</template>
+							<template if:true={blnNoRecordTypesAvailable}>
+								<h2>No fields are configured for this object. Please select another record type or contact your administrator.</h2>
+							</template>
+							<div class="slds-notify__close">
+								<button class="slds-button slds-button_icon slds-button_icon-small" title="Close">
+									<svg class="slds-button__icon" aria-hidden="true">
+										<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+									</svg>
+									<span class="slds-assistive-text">Close</span>
+								</button>
+							</div>
+						</div>
+					</template>
+				</template>
+			</template>
+
+			<template if:true={blnAddProducts}>
+				<div class="slds-align_absolute-center">
+					<lightning-button variant="brand" label={strSaveButtonLabel} title="Save" onclick={handleSave} class="slds-m-left_x-small" disabled={blnFieldsUnavailable}></lightning-button>
+					<template if:true={isConsoleNavigation}>
+						<lightning-button variant="brand-outline" label="Cancel" title="Cancel" onclick={closeTab} class="slds-m-left_x-small"></lightning-button>
+					</template>
+				</div>
+				<br />
+				<lightning-datatable
+					key-field="Id"
+					data={productData}
+					columns={productColumns}
+					selected-rows={selectedProducts}
+					lwc:ref="dataTable"
+					suppress-bottom-bar="true"
+					oncellchange={handleDataTableSave}
+					draft-values={draftValues}
+				></lightning-datatable>
+			</template>
+		</div>
+		<br />
+
+		<div class="slds-align_absolute-center">
+			<!-- If there is a page error don't show save button - Also set save button to disabled if there are no fields visible on the Opportunity -->
+			<template if:false={blnPageError}>
+				<lightning-button variant="brand" label={strSaveButtonLabel} title="Save" onclick={handleSave} class="slds-m-left_x-small" disabled={blnFieldsUnavailable}></lightning-button>
+			</template>
+			<!-- Show close button only on console navigation -->
+			<template if:true={isConsoleNavigation}>
+				<lightning-button variant="brand-outline" label="Cancel" title="Cancel" onclick={closeTab} class="slds-m-left_x-small"></lightning-button>
+			</template>
+		</div>
+
+		<br />
+		<br />
+	</div>
+</template>

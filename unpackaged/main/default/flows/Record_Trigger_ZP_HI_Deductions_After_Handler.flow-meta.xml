@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <decisions>
+        <description>Check if Retry Process Count is null</description>
+        <name>Is_Retry_Process_Count_Null</name>
+        <label>Is Retry Process Count Null</label>
+        <locationX>374</locationX>
+        <locationY>276</locationY>
+        <defaultConnector>
+            <targetReference>Increment_Retry_Process_Count_By_1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Retry_Process_Count_is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Retry_Process_Count__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Retry_Process_Count_to_1</targetReference>
+            </connector>
+            <label>Retry Process Count is Null</label>
+        </rules>
+    </decisions>
+    <description>Record trigger flow to re-process error zp hi deduction records if account update fails</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Increment_Process_Count_By_1</name>
+        <dataType>Number</dataType>
+        <expression>{!$Record.Retry_Process_Count__c} + 1</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>Record Trigger: ZP HI Deductions After Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: ZP HI Deductions After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>If retry process count is not null, increment the field by 1</description>
+        <name>Increment_Retry_Process_Count_By_1</name>
+        <label>Increment Retry Process Count By 1</label>
+        <locationX>506</locationX>
+        <locationY>384</locationY>
+        <inputAssignments>
+            <field>Retry_Process_Count__c</field>
+            <value>
+                <elementReference>Increment_Process_Count_By_1</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <description>If retry process count is null, set to 1</description>
+        <name>Set_Retry_Process_Count_to_1</name>
+        <label>Set Retry Process Count to 1</label>
+        <locationX>242</locationX>
+        <locationY>384</locationY>
+        <inputAssignments>
+            <field>Retry_Process_Count__c</field>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1 AND (2 OR 3)</filterLogic>
+        <filters>
+            <field>Processing_State__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Error</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Retry_Process_Count__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Retry_Process_Count__c</field>
+            <operator>LessThan</operator>
+            <value>
+                <numberValue>3.0</numberValue>
+            </value>
+        </filters>
+        <object>ZP_HI_Deduction__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Re_Process_ZP_Hi_Decution</name>
+            <connector>
+                <targetReference>Is_Retry_Process_Count_Null</targetReference>
+            </connector>
+            <label>Re Process ZP Hi Decution</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>LastModifiedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

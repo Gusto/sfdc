@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <decisions>
+        <name>user_data_updated</name>
+        <label>user data updated</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>yes_updated</name>
+            <conditionLogic>1 OR 2 OR (3 AND 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>isNewUser</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CallCenterId</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsActive</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>call_sub_flow</targetReference>
+            </connector>
+            <label>yes updated</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>isNewUser</name>
+        <dataType>Boolean</dataType>
+        <expression>IsNew()</expression>
+    </formulas>
+    <interviewLabel>AutoProvisioning - CXOne Managed Package {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisioning - CXOne Managed Package</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>user_data_updated</targetReference>
+        </connector>
+        <filterFormula>NOT( INCLUDES({!$Record.Bypass_Flows__c}, &apos;All_Flows&apos;))</filterFormula>
+        <object>User</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <subflows>
+        <name>call_sub_flow</name>
+        <label>call sub flow</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <flowName>AutoProvisioning_CXOne_Managed_Package_Subflow</flowName>
+        <inputAssignments>
+            <name>User_ID</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+</Flow>

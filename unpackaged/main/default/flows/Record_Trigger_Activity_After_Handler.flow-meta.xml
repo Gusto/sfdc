@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Outbound message action to callout to qualtrics for AI survey trigger</description>
+        <name>Qualified_Chat_Survey_Qualtrics_AI_OB</name>
+        <label>Qualified Chat Survey Qualtrics - AI - OB</label>
+        <locationX>578</locationX>
+        <locationY>731</locationY>
+        <actionName>Event.Qualified_Chat_Survey_Qualtrics_AI</actionName>
+        <actionType>outboundMessage</actionType>
+        <connector>
+            <targetReference>Update_Triggering_Event</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Event.Qualified_Chat_Survey_Qualtrics_AI</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Outbound message action to callout to qualtrics for Human assisted and company onboarding source survey trigger</description>
+        <name>Qualified_Chat_Survey_Qualtrics_Human_Assisted_and_Company_Onboarding_OB</name>
+        <label>Qualified Chat Survey Qualtrics - Human Assisted and Company Onboarding - OB</label>
+        <locationX>50</locationX>
+        <locationY>731</locationY>
+        <actionName>Event.Qualified_Chat_Survey_Qualtrics_HA_CO</actionName>
+        <actionType>outboundMessage</actionType>
+        <connector>
+            <targetReference>Update_Triggering_Event</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Event.Qualified_Chat_Survey_Qualtrics_HA_CO</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <description>Outbound message action to callout to qualtrics for Human assisted and not company onboarding source survey trigger</description>
+        <name>Qualified_Chat_Survey_Qualtrics_Human_Assisted_and_Not_Company_Onboarding_OB</name>
+        <label>Qualified Chat Survey Qualtrics - Human Assisted and Not Company Onboarding - OB</label>
+        <locationX>314</locationX>
+        <locationY>731</locationY>
+        <actionName>Event.Qualified_Chat_Survey_Qualtrics_HA_NCO</actionName>
+        <actionType>outboundMessage</actionType>
+        <connector>
+            <targetReference>Update_Triggering_Event</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Event.Qualified_Chat_Survey_Qualtrics_HA_NCO</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>Check_Booked_By_Checked</name>
+        <label>Booked By Checked</label>
+        <locationX>446</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Send_to_Qualtrics_for_survey</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Booked_By_Checked</name>
+            <conditionLogic>((1 AND 2) OR (5 AND (2 or 3 or 4))) AND 6</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.No_Show_CP__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.No_Show_CP__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Event_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Attempt</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Event_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Canceled</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Event_Status__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Booked_By__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Email_Booked_By_User</targetReference>
+            </connector>
+            <label>Booked By Checked</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check whether the event meets criteria to trigger the survey via qualtrics.</description>
+        <name>Send_to_Qualtrics_for_survey</name>
+        <label>Send to Qualtrics for survey?</label>
+        <locationX>446</locationX>
+        <locationY>623</locationY>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Qualified_Chat_Human_Assisted_Company_Onboarding</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualified Chat - Human Assisted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>ChatSource_Contains_CO</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CreatedBy.FirstName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualified</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CreatedBy.LastName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Integration</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.WhoId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Qualified_Chat_Survey_Qualtrics_Human_Assisted_and_Company_Onboarding_OB</targetReference>
+            </connector>
+            <label>Yes - Qualified Chat Human Assisted Company Onboarding</label>
+        </rules>
+        <rules>
+            <name>Yes_Qualified_Chat_Human_Assisted_Non_Company_Onboarding</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualified Chat - Human Assisted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>ChatSource_Contains_CO</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CreatedBy.FirstName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualified</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CreatedBy.LastName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Integration</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.WhoId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Qualified_Chat_Survey_Qualtrics_Human_Assisted_and_Not_Company_Onboarding_OB</targetReference>
+            </connector>
+            <label>Yes - Qualified Chat Human Assisted Non Company Onboarding</label>
+        </rules>
+        <rules>
+            <name>Yes_Qualified_Chat_AI</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualified Chat - AI</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CreatedBy.FirstName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Qualified</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CreatedBy.LastName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Integration</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.WhoId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Qualified_Chat_Survey_Qualtrics_AI_OB</targetReference>
+            </connector>
+            <label>Yes - Qualified Chat AI</label>
+        </rules>
+    </decisions>
+    <description>03/13/2023 - Rushi R - Initial version migrated from Process Builder
+10/04/2024 - Update to include qualtrics survey triggers
+1/20/2025 - BSS-2980 - Update chat source contains/does not contain check from &quot;company_onboarding&quot; to &quot;app.gusto.com&quot;</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Returns true if ChatSource__c contains the text &quot;company_onboarding&quot;
+Update BSS-2980 - Changed to contains &quot;app.gusto.com&quot;</description>
+        <name>ChatSource_Contains_CO</name>
+        <dataType>Boolean</dataType>
+        <expression>CONTAINS({!$Record.ChatSource__c}, &quot;app.gusto.com&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Returns true if the record is new.</description>
+        <name>IsNew</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>Activity After Save Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Activity After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>Update triggering event survey sent</description>
+        <name>Update_Triggering_Event</name>
+        <label>Update Triggering Event</label>
+        <locationX>446</locationX>
+        <locationY>923</locationY>
+        <inputAssignments>
+            <field>Qualtrics_Survey_Flow_Triggered__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>320</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Booked_By_Checked</targetReference>
+        </connector>
+        <object>Event</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Email_Booked_By_User</name>
+        <label>Email Booked By User of Demo No Show</label>
+        <locationX>314</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Send_to_Qualtrics_for_survey</targetReference>
+        </connector>
+        <flowName>Email_Booked_By_User_of_Demo_No_Show</flowName>
+        <inputAssignments>
+            <name>EventRecord</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+</Flow>

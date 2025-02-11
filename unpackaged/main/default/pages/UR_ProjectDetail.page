@@ -1,0 +1,393 @@
+<apex:page StandardController="Research_Project_Master__c" extensions="UR_NewEditProjectCtrl" 
+           applyBodyTag="false" sidebar="false" id="rsProject" action="{!CompleteProjectMsg}">
+  <apex:form id="frm">
+  <head>
+    <title>Gusto</title>
+  </head>
+
+  <body class="slds-scope"> 
+  <c:UR_ActionStatus /> 
+      <c:UR_MenuHeaderComponent tabName="Project Details" subTabName="" prjId="{!projectMaster.Id}"/>
+      <script>
+             $(document).ready(function(){
+             $ = jQuery.noConflict();
+             $("[id$=mlktp]").hide();
+             });
+             
+             function checkEnterKey(e){
+                var keyCode = e.which ? e.which : e.keyCode
+                if(keyCode==13){
+                   return false;
+                   // $("html, body").animate({ scrollTop: 0 }, "slow");
+                }
+            }
+       </script>
+      
+      <div class="slds-p-around_small"> 
+          <apex:pageMessages id="msg"/> 
+         <!-- <div class="slds-p-bottom_small slds-text-align_right">
+              <a href="javascript:void(0);" class="slds-button slds-button_destructive mark-project-complete" style="min-width: 182px; display:{!if(isEditable==true && projectMaster.Project_Status__c!='Complete','', 'none;')}">Mark project complete</a>
+              <a href="javascript:void(0);" class="slds-button slds-button_outline-brand slds-truncate re-open-btn" style="min-width: 182px; display:{!if(projectMaster.Project_Status__c=='Complete' && isProjectEditAccess==true,'', 'none;')}">Re-open project</a>
+              
+              <apex:commandButton rendered="{!isEditable}" value="Add Participants" action="{!addParticipants}" styleClass="slds-button slds-button_brand" />            
+          </div> -->
+          
+		<div class="slds-grid slds-wrap slds-gutters">
+          <div class="slds-col slds-size_1-of-1">
+            <!-- Approval Section -->
+            <div class="slds-box slds-m-bottom_medium bg-grey" style="background: rgb(194, 57, 52, .1); padding-bottom: 0; display:{!if(isApprover==true && projectMaster.Additional_Participant_Status__c=='In progress', 'block;' , 'none;')}">
+              <strong class="slds-text-heading_small">Approval Section: </strong>
+              <hr class="slds-m-vertical_small" style="margin-right: -16px; margin-left: -16px;" />
+              <ul>
+                <li style="display: inline-block; margin-bottom: 1rem;" class="slds-m-right_xx-large">Number of Allowed Participants : &nbsp;
+                  <apex:outputField value="{!projectMaster.Number_of_Allowed_Participant__c}" />
+                </li>
+                <li style="display: inline-block; margin-bottom: 1rem;" class="slds-m-right_medium">
+                  Number of Additional Participants to Approve : &nbsp;
+                  <apex:inputText value="{!projectMaster.Number_of_Expected_Participant__c}" styleclass="slds-input" style="width: 100px;" />
+                </li>
+                <li style="display: inline-block; margin-bottom: 1rem;" class="slds-m-right_medium">
+                  <apex:commandButton action="{!approveRequest}" status="statusSave" rerender="frm" styleClass="slds-button slds-button_brand slds-m-bottom_small slds-m-bottom_none" value="Approve" />
+                  <apex:commandButton action="{!rejectRequest}" status="statusSave" rerender="frm" styleClass="slds-button slds-button_neutral slds-m-bottom_small slds-m-bottom_none" value="Reject" />
+                </li>
+              </ul>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="horizontal-input-id-02" style="font-size: 13px;">Comments :</label>
+                <div class="slds-form-element__control">
+                  <apex:inputTextarea value="{!approverComment}" styleclass="slds-textarea slds-m-bottom_medium" />
+                </div>
+              </div>
+            </div>
+            <div class="slds-card slds-m-bottom_small">
+
+              
+              <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small slds-m-bottom_none bg-grey">
+                <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                  <div class="slds-media__body">
+                    <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                      <span>Project Info</span>
+                        
+                      <span style="margin-left:10px">
+                        <apex:outputField value="{!projectMaster.Project_Id__c}" />
+                        <span class="info-tooltip"  style="position: relative;">
+                          <i class="fas fa-info-circle info-tooltip"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                            <p class="slds-popover__body">You'll need this project ID for Calendly scheduling integration</p>
+                          </span>
+                        </span>
+                      </span>
+                    </h2>
+                    <div class="note">
+                      <div class="text-grey">Last updated &nbsp;
+                        <apex:outputField value="{!projectMaster.LastModifiedDate}" /> by &nbsp; <apex:outputField value="{!projectMaster.LastModifiedBy.Name}" />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <!-- <a href="javascript:void(0);" class="slds-button slds-button__icon--large slds-button-group-item slds-button_outline-brand mark-project-complete" style="display:{!if(isEditable==true && projectMaster.Project_Status__c!='Complete','', 'none;')}">Mark project complete</a> -->
+                    <!-- <a href="javascript:void(0);" class="slds-button slds-button__icon--large slds-button-group-item slds-button_outline-brand re-open-btn" style="display:{!if(projectMaster.Project_Status__c=='Complete' && isProjectEditAccess==true,'', 'none;')}">Re-open project</a> -->
+                    <apex:commandButton rendered="{!isEditable}" value="Edit" action="{!editProject}" styleClass="slds-button slds-button_outline-brand" />
+                  </div>
+                </div>
+              </div>
+              <!-- // -->
+              <div class="slds-card__header slds-grid slds-border_bottom slds-p-around_small slds-m-bottom_none bg-grey border-orange" style="display:none;">
+                <div class="slds-grid slds-wrap wd-100">
+                  <div class="slds-size_1-of-1 slds-medium-size_5-of-12">
+                    <div class="slds-m-top_xx-small">
+                      <span class="slds-text-heading_medium"><strong>Project Info</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <div class="slds-m-top_x-small text-grey">Last updated &nbsp;
+                      <apex:outputField value="{!projectMaster.LastModifiedDate}" /> by &nbsp;
+                      <apex:outputField value="{!projectMaster.LastModifiedBy.Name}" />
+                    </div>
+
+                      <apex:outputField value="{!projectMaster.Project_Id__c}" />
+                      <span style="position: relative;">
+                        <i class="fas fa-info-circle info-tooltip"></i>
+                        <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                          <p class="slds-popover__body">Use this project Id in your calendly link for integrated scheduling.</p>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="slds-size_1-of-1 slds-medium-size_5-of-12">
+                  </div>
+                  <div class="slds-size_1-of-1 slds-medium-size_2-of-12 slds-text-align_right">
+                    <apex:commandButton rendered="{!isEditable}" value="Edit" action="{!editProject}" styleClass="slds-button slds-button_outline-brand" />
+                  </div>
+                </div>
+              </div><!-- // -->
+
+              <div class="slds-card__body slds-p-around_none slds-m-around_none">
+
+
+                <div class="slds-form slds-form_horizontal striped-and-flexed">
+                  <div class="control-pair">
+                    <strong>Project name</strong>
+                    <apex:outputField value="{!projectMaster.Name}" />
+                  </div>
+                  <apex:outputPanel rendered="{!blnApprovalCodeVisible}">
+                    <div class="control-pair">
+                      <strong>Project Approval Code</strong>
+                      <apex:outputField value="{!projectMaster.Project_Approval_Code__c}" />
+                    </div>
+                  </apex:outputPanel>
+                  <div class="control-pair">
+                    <strong>Anticipated Study Dates</strong>
+                    <div>
+                      <apex:outputField value="{!projectMaster.Project_Start_Date__c}" /> &#8211;
+                      <apex:outputField value="{!projectMaster.Project_End_Date__c}" />
+                    </div>
+                  </div>
+                  <div class="control-pair">
+                    <strong>Segment(s)</strong>
+                    <apex:outputField value="{!projectMaster.Segment__c}" />
+                  </div>
+                  <div class="control-pair">
+                    <strong>Type of Research</strong>
+                    <apex:outputField value="{!projectMaster.Type_of_Research__c}" />
+                  </div>
+                  <apex:outputpanel layout="block" rendered="{!if(projectMaster.Type_of_Research__c!='Unmoderated - Survey',true,false)}">
+                    <div class="control-pair">
+                      <strong>How long will your interviews be (in minutes)?</strong>
+                      <apex:outputField value="{!projectMaster.How_long_will_your_interviews_be__c}" />
+                    </div>
+                    <div class="control-pair">
+                      <strong>Buffer after interview</strong>
+                      <apex:outputField value="{!projectMaster.Time_for_Post_interview_discussion__c}" />
+                    </div>
+                  </apex:outputpanel>
+                  <div class="control-pair">
+                    <strong>Please summarize project goals or what you are studying</strong>
+                    <apex:outputField value="{!projectMaster.Description__c}" />
+                  </div>
+                  <div class="control-pair">
+                    <strong>Who are you hoping to find &amp; contact?</strong>
+                    <apex:outputField value="{!projectMaster.Type_of_people_are_you_hoping_to_contact__c}" />
+                  </div>
+                  <div class="control-pair">
+                    <strong>How many participants are you aiming to interview / study?</strong>
+                    <apex:outputField value="{!projectMaster.Number_of_Participants_to_Add_to_Project__c}" />
+                  </div>
+                  
+                  <div class="control-pair">
+                    <strong>Plan to offer incentives?</strong>
+                    <apex:outputField value="{!projectMaster.Plan_to_offer_incentives__c}" />
+                  </div>
+                  <div class="control-pair" style="display:{!if(projectMaster.Plan_to_offer_incentives__c=='Yes, we plan to offer Amazon','','none;')}">
+                    <strong>Incentive monetary ($) amount</strong>
+                    <apex:outputField value="{!projectMaster.Incentive_Amount__c}" />
+                  </div>
+                  <div class="control-pair" style="display:{!if(projectMaster.Plan_to_offer_incentives__c=='Other','','none;')}">
+                    <strong>Describe incentive type</strong>
+                    <apex:outputField value="{!projectMaster.Describe_Incentive_Type__c}" />
+                  </div>
+                  <div class="control-pair">
+                      <strong>Project Brief URL / UX Research Plan URL</strong>
+                      <a href="{!projectMaster.Project_Brief_URL__c}" target="_blank">{!projectMaster.Project_Brief_URL__c}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- XXXX -->
+
+            <div class="slds-card slds-m-bottom_small" style="display:none;">
+
+              <div class="slds-card__header slds-grid slds-border_bottom slds-p-around_small slds-m-bottom_none bg-grey border-orange">
+                <div class="slds-grid slds-wrap wd-100">
+                  <div class="slds-size_1-of-1 slds-medium-size_5-of-12">
+                    <div class="slds-m-top_xx-small">
+                      <span class="slds-text-heading_medium"><strong>Integrations and Scheduling</strong></span>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- // -->
+
+              <div class="slds-card__body slds-p-around_none slds-m-around_none">
+                <div class="slds-form slds-form_horizontal striped-and-flexed">
+                  <div class="slds-text-heading_label slds-p-around_small slds-heading_orange"><strong>Participant Scheduling</strong></div>
+                  <apex:outputPanel layout="block" styleclass="control-pair">
+                    <strong>Calendly link to send to participants</strong>
+                    <a href="{!projectMaster.Primary_calendly_URL__c}" target="_blank">{!projectMaster.Primary_calendly_URL__c}</a>
+                  </apex:outputPanel>
+
+                  <div class="control-pair">
+                    <strong>Calendly Event ID</strong>
+                    <apex:outputField value="{!projectMaster.Calendly_EventId__c}" />
+                  </div>
+
+                  <apex:outputPanel layout="block" styleclass="control-pair">
+                    <strong>Survey/screener link to send to participants</strong>
+                    <a href="{!projectMaster.Screener_URL__c}" target="_blank">{!projectMaster.Screener_URL__c}</a>
+                  </apex:outputPanel>
+
+                  <div class="control-pair">
+                    <strong>Qualtrics survey ID</strong>
+                    <apex:outputField value="{!projectMaster.Survey_Id__c}" />
+                  </div>
+
+                  <apex:outputPanel layout="block" rendered="{!if(projectMaster.Type_of_Research__c!='Unmoderated - Survey',true,false)}" styleclass="control-pair">
+                    <strong>NDA URL</strong>
+                    <a href="{!projectMaster.NDA_URL__c}" target="_blank">{!projectMaster.NDA_URL__c}</a>
+                  </apex:outputPanel>
+                  <div class="control-pair">
+                    <strong>Zoom link for participant interviews</strong>
+                    <a href="{!projectMaster.Zoom_link_for_participant_interviews__c}" target="_blank">{!projectMaster.Zoom_link_for_participant_interviews__c}</a>
+                  </div>
+                </div>
+
+                <div class="slds-form slds-form_horizontal striped-and-flexed">
+                  <div class="slds-text-heading_label slds-p-around_small slds-heading_orange"><strong>Observer Sessions</strong></div>
+                  <apex:outputpanel >
+                    <div class="control-pair">
+                      <strong>Zoom link for post-interview discussions</strong>
+                      <a href="{!projectMaster.Zoom_link_for_post_interview_discussions__c}" target="_blank">{!projectMaster.Zoom_link_for_post_interview_discussions__c}</a>
+                    </div>
+                  </apex:outputpanel>
+                </div>
+              </div>
+            </div>
+            <!-- XXXX -->
+
+            <div class="slds-card slds-m-bottom_small">
+              <div class="slds-card__header slds-grid slds-border_bottom slds-p-around_small slds-m-bottom_none bg-grey border-orange">
+                <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                  <div class="slds-media__body">
+                    <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                      <span>Additional Details</span>
+                    </h2>
+                    <p class="note"></p>
+                  </div>
+                </div>
+              </div><!-- // -->
+
+              <div class="slds-card__body slds-p-around_none slds-m-around_none">
+                <div class="slds-form slds-form_horizontal striped-and-flexed">
+                  <div class="control-pair">
+                    <strong>Persona / Participant profile(s)</strong>
+                    <apex:outputField value="{!projectMaster.Customer_Types__c}" />
+                  </div>
+                  <div class="control-pair">
+                    <strong>Relevant Product Area(s)</strong>
+                    <apex:outputField value="{!projectMaster.Product_Area__c}" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- XXXX -->
+            <div class="slds-card slds-m-bottom_small">
+              <div class="slds-card__header slds-grid slds-border_bottom slds-p-around_small slds-m-bottom_none bg-grey border-orange">
+                <div class="slds-media slds-media_bottom slds-has-flexi-truncate">
+                  <div class="slds-media__body">
+                    <h2 class="slds-card__header-title" style="margin-bottom: 5px;">
+                      <span>Team Roles &amp; Permissions</span>
+                      <span style="margin-left: 10px;">
+                        <span class="info-tooltip"  style="position: relative;">
+                          <i class="fas fa-info-circle info-tooltip"></i>
+                          <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 25px; left: -15px;">
+                            <p class="slds-popover__body">Add team members who should have edit access or be invited to observe customer interviews.</p>
+                          </span>
+                        </span>
+                      </span>
+                    </h2>
+                    <p class="note">
+                      <div class="slds-m-top_x-small text-grey">Last updated &nbsp;
+                        <apex:outputField value="{!projectTeamObj.LastModifiedDate}" /> by &nbsp;
+                        <apex:outputField value="{!projectTeamObj.LastModifiedBy.Name}" />
+                      </div>
+                    </p>
+                  </div>
+                  <div>
+                      <apex:commandLink style="display:{!if(isEditable,'','none;')}" rerender="frmForm" status="statusSave" action="{!editProjectTeam}">
+                      	Add project team member <i class="fas fa-user-plus"></i>
+                      </apex:commandLink>
+                  </div>
+                </div>
+              </div>
+
+              <div class="slds-card__body slds-m-around_none">
+                <div class="slds-form slds-form_horizontal striped-and-flexed">
+                  <div class="slds-p-around_small slds-heading_orange">
+                    <div><strong>All Gusties</strong> can <strong>view</strong> this project.</div>
+                  </div>
+                  <div class="control-pair">
+                    <strong>Project Lead(s)</strong>
+                    <apex:outputField value="{!projectMaster.Project_Leads__c}" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="slds-card__body slds-m-around_none slds-border_top">
+                <div class="slds-form slds-form_horizontal striped-and-flexed">
+                  <apex:repeat value="{!projectTeamMap}" var="key">
+                    <div class="control-single">
+                      <div class="slds-text-heading_small">
+                        <apex:outputField value="{!projectTeamMap[key].User__c}" />
+                        <span class="text-grey fs-11"><em>
+                            <apex:outputPanel rendered="{!if(projectTeamMap[key].Project_Creator__c,true,false)}">
+                              project creator
+                              <apex:outputText value=" / " rendered="{!if(projectTeamMap[key].User__c == projectMaster.OwnerId ,true,false)}" />
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!if(projectTeamMap[key].User__c == projectMaster.OwnerId ,true,false)}">
+                              owner
+                            </apex:outputPanel>
+                          </em></span>
+                      </div>
+                      <div class="slds-p-top_small">
+                        <div class="slds-media slds-p-around_xx-small {!if(projectTeamMap[key].Edit_Access__c,'','text-grey')}">
+                          <div class="slds-media__figure">
+                            <i class="{!if(projectTeamMap[key].Edit_Access__c,'fas fa-check','fas fa-times')}"></i>
+                          </div>
+                          <div class="slds-media__body">
+                            can <strong>edit</strong> this project &amp; <strong>contact customers</strong> on behalf of this project
+                          </div>
+                        </div>
+                        <div class="slds-media slds-p-around_xx-small {!if(projectTeamMap[key].Invite_for_Interviews__c,'','text-grey')}">
+                          <div class="slds-media__figure">
+                            <i class="{!if(projectTeamMap[key].Invite_for_Interviews__c,'fas fa-check','fas fa-times')}"></i>
+                          </div>
+                          <div class="slds-media__body">
+                            should be <strong>invited to any customer interviews</strong> scheduled
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </apex:repeat>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+		
+    </div>
+
+     <script type="text/javascript">
+       
+       $('.add-info-btn').click(function() {
+        $('.add-info').slideToggle();
+        $('.add-info-btn i').toggleClass('fa-angle-right');        
+      });
+       $('.add-info-btn-01').click(function() {
+        $('.add-info-01').slideToggle();
+        $('.add-info-btn-01 i').toggleClass('fa-angle-right');        
+       });
+        $('.other-permissions-btn').click(function() {
+        $('.other-permissions').slideToggle();
+        $('.other-permissions-btn i').toggleClass('fa-angle-right');        
+      });
+      
+      /*
+       $('.mark-project-complete').click(function() {
+      		fetchProjectDetails();
+       });
+       $('.re-open-btn').click(function() {
+      		fetchCloseProjectDetails();
+       });
+      
+      */      
+     </script> 
+    
+  </body>
+  </apex:form>
+</apex:page>

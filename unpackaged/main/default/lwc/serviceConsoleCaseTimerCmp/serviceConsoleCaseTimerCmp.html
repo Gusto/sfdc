@@ -1,0 +1,23 @@
+<template>
+	<lightning-card if:false={hideCmp} icon-name="custom:custom25" id="cmpCard">
+		<h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Session Timer" slot="title">{cmpHeader}</h1>
+		<div class="slds-card">
+			<center if:false={hideClock}>
+				<ul class="buttonAndTimer">
+					<li>
+						<template if:true={playing}>
+							<img data-id="stop" src={timerPauseBtn} onclick={btnClick} />
+						</template>
+						<template if:false={playing}>
+							<img data-id="start" src={timerPlayBtn} onclick={btnClick} />
+						</template>
+						<template if:true={disconnected}>
+							<img src={timerPauseBtn} />
+						</template>
+						<div id="time" class="timerClass">{stime}</div>
+					</li>
+				</ul>
+			</center>
+		</div>
+	</lightning-card>
+</template>

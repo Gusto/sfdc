@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Implementation_Stage__c</fullName>
+    <description>The picklist values for the Order Status on the Benefit Order and the Implementation Stage on the Carrier Order must be kept in sync.
+
+The Previous Implementation Stage and Implementation stage should be in sync. This status is mapped to previous implementation stage and OB message is sent to app using Kafka.</description>
+    <label>Implementation Stage</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Awaiting Routing</fullName>
+                <default>false</default>
+                <label>Awaiting Routing</label>
+            </value>
+            <value>
+                <fullName>Ready For Qualification</fullName>
+                <default>true</default>
+                <label>Ready For Qualification</label>
+            </value>
+            <value>
+                <fullName>Qualification</fullName>
+                <default>false</default>
+                <label>Qualification</label>
+            </value>
+            <value>
+                <fullName>With Advising</fullName>
+                <default>false</default>
+                <label>With Advising</label>
+            </value>
+            <value>
+                <fullName>With Sales</fullName>
+                <default>false</default>
+                <label>With Sales</label>
+            </value>
+            <value>
+                <fullName>Blocked</fullName>
+                <default>false</default>
+                <label>Blocked</label>
+            </value>
+            <value>
+                <fullName>Ready for OE Prep</fullName>
+                <default>false</default>
+                <label>Ready for OE Prep</label>
+            </value>
+            <value>
+                <fullName>OE Prep</fullName>
+                <default>false</default>
+                <label>OE Prep</label>
+            </value>
+            <value>
+                <fullName>OE</fullName>
+                <default>false</default>
+                <label>OE</label>
+            </value>
+            <value>
+                <fullName>OE Extended</fullName>
+                <default>false</default>
+                <label>OE Extended</label>
+            </value>
+            <value>
+                <fullName>OE Verification/Checking Participation</fullName>
+                <default>false</default>
+                <label>OE Verification/Checking Participation</label>
+            </value>
+            <value>
+                <fullName>Ready for Submission Prep</fullName>
+                <default>false</default>
+                <label>Ready for Submission Prep</label>
+            </value>
+            <value>
+                <fullName>Submission Prep</fullName>
+                <default>false</default>
+                <label>Submission Prep</label>
+            </value>
+            <value>
+                <fullName>Ready for Confirmation</fullName>
+                <default>false</default>
+                <label>Ready for Confirmation</label>
+            </value>
+            <value>
+                <fullName>Pending Confirmation</fullName>
+                <default>false</default>
+                <label>Pending Confirmation</label>
+            </value>
+            <value>
+                <fullName>Pending Item</fullName>
+                <default>false</default>
+                <label>Pending Item</label>
+            </value>
+            <value>
+                <fullName>Approved Pending EE Audit</fullName>
+                <default>false</default>
+                <label>Approved Pending EE Audit</label>
+            </value>
+            <value>
+                <fullName>Ready for Document Collection</fullName>
+                <default>false</default>
+                <label>Ready for Document Collection</label>
+            </value>
+            <value>
+                <fullName>Collecting Documents</fullName>
+                <default>false</default>
+                <label>Collecting Documents</label>
+            </value>
+            <value>
+                <fullName>Ready for Implementing Plans</fullName>
+                <default>false</default>
+                <label>Ready for Implementing Plans</label>
+            </value>
+            <value>
+                <fullName>Implementing Plans</fullName>
+                <default>false</default>
+                <label>Implementing Plans</label>
+            </value>
+            <value>
+                <fullName>Ready to Send Plan Review</fullName>
+                <default>false</default>
+                <label>Ready to Send Plan Review</label>
+            </value>
+            <value>
+                <fullName>Plan Review Sent</fullName>
+                <default>false</default>
+                <label>Plan Review Sent</label>
+            </value>
+            <value>
+                <fullName>Blocked Plan Review</fullName>
+                <default>false</default>
+                <label>Blocked Plan Review</label>
+            </value>
+            <value>
+                <fullName>Unblock Plan Review</fullName>
+                <default>false</default>
+                <label>Unblock Plan Review</label>
+            </value>
+            <value>
+                <fullName>Plans Confirmed</fullName>
+                <default>false</default>
+                <label>Plans Confirmed</label>
+            </value>
+            <value>
+                <fullName>Enrollment Review Entry in Progress</fullName>
+                <default>false</default>
+                <label>Enrollment Review Entry in Progress</label>
+            </value>
+            <value>
+                <fullName>Ready to Send Enrollment Review</fullName>
+                <default>false</default>
+                <label>Ready to Send Enrollment Review</label>
+            </value>
+            <value>
+                <fullName>Enrollment Review Sent</fullName>
+                <default>false</default>
+                <label>Enrollment Review Sent</label>
+            </value>
+            <value>
+                <fullName>Enrollment Confirmed</fullName>
+                <default>false</default>
+                <label>Enrollment Confirmed</label>
+            </value>
+            <value>
+                <fullName>Implementing TAdA Plans</fullName>
+                <default>false</default>
+                <label>Implementing TAdA Plans</label>
+            </value>
+            <value>
+                <fullName>Balance Collection</fullName>
+                <default>false</default>
+                <label>Balance Collection</label>
+            </value>
+            <value>
+                <fullName>Transferring Balances</fullName>
+                <default>false</default>
+                <label>Transferring Balances</label>
+            </value>
+            <value>
+                <fullName>Pending ER Signature</fullName>
+                <default>false</default>
+                <label>Pending ER Signature</label>
+            </value>
+            <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
+                <fullName>Canceled</fullName>
+                <default>false</default>
+                <label>Canceled</label>
+            </value>
+            <value>
+                <fullName>Closed Admin</fullName>
+                <default>false</default>
+                <label>Closed Admin</label>
+            </value>
+            <value>
+                <fullName>Existing Group Coverage/BOR</fullName>
+                <default>false</default>
+                <label>Existing Group Coverage/BOR</label>
+            </value>
+            <value>
+                <fullName>Ready for Early Submission</fullName>
+                <default>false</default>
+                <label>Ready for Early Submission</label>
+            </value>
+            <value>
+                <fullName>Early Submission</fullName>
+                <default>false</default>
+                <label>Early Submission</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

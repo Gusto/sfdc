@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>New_Plan</fullName>
+    <active>true</active>
+    <description>A new plan benefits order.</description>
+    <label>New Plan</label>
+    <picklistValues>
+        <picklist>Application_Status__c</picklist>
+        <values>
+            <fullName>Blocked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked Employee Details Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked Plan Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BoR Complete</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BoR Processed by All Carriers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Canceled%2F Rescinded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carriers Selected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Employee Details Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Employees Implemented</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Forms Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Forms Signed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Implementing Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Eligibility Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Employee Details Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Missing Emails Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Owners Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Plan Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Shareholders Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plans Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plans Implemented</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Processing BoR with Carriers</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Blocked_Reason__c</picklist>
+        <values>
+            <fullName>Affiliate company</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BVM JIRA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CIO JIRA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Compliance Escalation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Participation not met</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pushing effective date</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Resolving Ticket</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unresponsive Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upcoming NHE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upcoming payroll</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upcoming tax docs %28%3F%29</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Broker_Name__c</picklist>
+        <values>
+            <fullName>Lauren Fifield</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Nick Paloukos</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Documents_Status__c</picklist>
+        <values>
+            <fullName>None</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>all_completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>all_uploaded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>in_progress</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>External_Deductions__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>External_Deductions_for_LiDi__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Has_the_group_ever_offered_benefits__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Order_Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Awaiting ER Response - Pending Item</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Awaiting Routing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Canceled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Lost</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ER Outreach Required</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fulfilled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE Extended</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE Prep</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE Verification%2FChecking Participation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready for Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready for OE Prep</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Ready for Submission Prep</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submission Prep</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>With Sales</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Previous_Order_Status__c</picklist>
+        <values>
+            <fullName>Post-Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pre-Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Qualification</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Push_Rate_Reason__c</picklist>
+        <values>
+            <fullName>Covid-19</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Didn%E2%80%99t complete OE on time</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ER decided they%E2%80%99re not ready yet</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not enough EE enrolled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not enough payroll history</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Only owner%28s%29 enrolled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Problem with coverage area%3F%2FOOS EE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Too expensive%2Fneed more time to think about plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unresponsive ER</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Want to make changes to selections</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Special_Processing__c</picklist>
+        <values>
+            <fullName>External OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Passive OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plan Info Provided Outside of Gusto</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status_Detail__c</picklist>
+        <values>
+            <fullName>Awaiting PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Benefit Application Dismissed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Cancelled - Non Payment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Existing Group Coverage%2FBOR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fulfilled Pending Case Comms</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ineligible%3A Company not authorized in state</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ineligible%3A Insufficient Payroll</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ineligible%3A No eligible employees</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ineligible%3A No workers%27 compensation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ineligible%3A Not enough EE%27s in state</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ineligible%3A Owner Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Responsive Employer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Participation - 0 enrollees</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Participation - medical participation not met</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Items not provided</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A Did Not Become Gusto Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A No Longer Interested</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A Too Expensive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Useful_docs_in_attachments__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

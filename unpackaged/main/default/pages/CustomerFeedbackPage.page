@@ -1,0 +1,72 @@
+<apex:page standardController="Opportunity" extensions="CustomerFeedbackExtension" sidebar="false" showHeader="false" lightningStylesheets="true" >
+  <apex:form >
+  
+  <apex:pageBlock title="{!strLabel}" id="form1"  >
+ 
+  <apex:pageBlockSection title="Enter Information Below" columns="2" collapsible="false" >
+  <apex:pageBlockSection columns="1">
+  <apex:inputField value="{!objCustomerFeedback.Opportunity__c}" rendered="{! if(objCustomerFeedback.Opportunity__c != null,true,false)}"/>
+  <apex:inputField value="{!objCustomerFeedback.Lead__c}" rendered="{! if(objCustomerFeedback.Lead__c != null,true,false)}"/>
+  <apex:inputField value="{!objCustomerFeedback.Request_Type__c}"/>
+  <apex:inputField value="{!objCustomerFeedback.Request_Subtype__c}"/>
+  </apex:pageBlockSection>
+  
+  <apex:pageBlockSection columns="1">
+  <apex:inputField value="{!objCustomerFeedback.Account__c}" rendered="{! if(objCustomerFeedback.Account__c != null,true,false)}"/>
+  <apex:inputField value="{!objCustomerFeedback.Reporting_Level__c}"  required="true"/>
+  
+  </apex:pageBlockSection>
+   </apex:pageBlockSection>
+  
+<apex:outputPanel id="form2" >
+
+<apex:pageBlockSection columns="1" >
+  <apex:selectRadio value="{!objCustomerFeedback.Priority__c}" label="How important is this feature to the customer?" layout="pageDirection" style="width:250%; height:50%; align:center" rendered="{! if(blnShowResellerClient != true,true,false)}">
+                    <apex:selectoptions value="{!types}" ></apex:selectoptions>
+ </apex:selectRadio>
+ 
+ </apex:pageBlockSection>
+ </apex:outputPanel>
+ 
+<apex:pageBlockSection title="Impact Summary" columns="1" collapsible="false" rendered="{! blnShowResellerClient}">
+    <apex:inputField value="{!objCustomerFeedback.No_of_Clients_Impacted__c}" label="How many clients does this feedback impact?" />
+    <apex:selectRadio value="{!objCustomerFeedback.Scale_of_Painful__c}" label="When you encounter this, how painful is it on a scale of 1-10?  10 being highest pain" layout="pageDirection" style="width:250%; height:50%; align:center" >
+     	<apex:selectoptions value="{!painScale}" ></apex:selectoptions>
+ 	</apex:selectRadio>
+	<apex:selectRadio value="{!objCustomerFeedback.Frequency_of_Partner_Feeling_Pain__c}" label="How frequently does the Partner feel this pain?" layout="pageDirection" style="width:250%; height:50%; align:center" >
+     	<apex:selectoptions value="{!painFrequency}" ></apex:selectoptions>
+ 	</apex:selectRadio>
+    <apex:selectRadio value="{!objCustomerFeedback.Feedback_Importance__c}" label="How important is this feedback" layout="pageDirection" style="width:250%; height:50%; align:center" >
+     	<apex:selectoptions value="{!feedbackImp}" ></apex:selectoptions>
+ 	</apex:selectRadio>
+
+    <apex:pageBlockSectionItem >
+    	<apex:outputLabel value="Who at the firm could we talk to if we wanted to learn more?" />
+        <apex:panelGrid columns="2" >
+    		<apex:outputLabel value="Name "/>
+            <apex:inputField value="{!objCustomerFeedback.Contact_Name_at_Firm__c }" /> 
+        </apex:panelGrid>    
+    </apex:pageBlockSectionItem>
+
+</apex:pageBlockSection> 
+
+<apex:pageBlockSection columns="1"  >
+ 
+ <apex:inputField value="{!objCustomerFeedback.Comments__c}" style="align:left;width:75%; height:125px" required="true"  rendered="{!objCustomerFeedback.Case__c == null}" />
+  <apex:inputField value="{!objCustomerFeedback.Explanation__c}" style="align:left;width:75%; height:125px" />
+ 
+ </apex:pageBlockSection>
+  
+ <apex:pageBlockButtons >
+ 
+ <apex:commandButton action="{!saveRecord}" value="Save"/>
+ <apex:commandButton action="{!cancelrecord}" value="Cancel" immediate="true" />
+  <apex:commandButton action="{!savenextrecord}" value="Save and New"/>
+  
+ </apex:pageBlockButtons>
+  </apex:pageBlock>
+  
+  
+  
+  </apex:form>
+</apex:page>

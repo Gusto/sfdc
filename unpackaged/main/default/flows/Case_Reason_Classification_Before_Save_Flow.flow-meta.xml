@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <description>If a new record is created with a reason code OR if an existing record is updated to change the reason code, this record should be submitted for approval. Otherwise, record can be saved successfully.</description>
+        <name>Is_Reason_Code_Added_or_Changed</name>
+        <label>Is Reason Code Added or Changed</label>
+        <locationX>182</locationX>
+        <locationY>287</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Backup_the_Reason_Code_Field</name>
+            <conditionLogic>(((1 OR 2) AND (3 AND 8)) OR (4 AND 5)) AND 6 AND 7</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Reason_Code__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Reason_Code__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Approval_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Reason_Code__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Reason_Code_Being_Reviewed__c</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Approval_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Profile.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>System Administrator</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Profile.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>ZP System Administrator</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Approval_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Approval Required</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_the_fields</targetReference>
+            </connector>
+            <label>Backup the Reason Code Field</label>
+        </rules>
+    </decisions>
+    <description>Main Before Save Flow for Case Reason Classifications.</description>
+    <environments>Default</environments>
+    <interviewLabel>Case Reason Classification Before Save Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Reason Classification Before Save Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_the_fields</name>
+        <label>Update the fields</label>
+        <locationX>50</locationX>
+        <locationY>395</locationY>
+        <inputAssignments>
+            <field>Approval_Status__c</field>
+            <value>
+                <stringValue>Approval Required</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Reason_Code_Being_Reviewed__c</field>
+            <value>
+                <elementReference>$Record.Reason_Code__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Reason_Code__c</field>
+            <value>
+                <elementReference>$Record__Prior.Reason_Code__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Is_Reason_Code_Added_or_Changed</targetReference>
+        </connector>
+        <filterLogic>(1 OR 2 OR 3) AND 4</filterLogic>
+        <filters>
+            <field>Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Payroll Care</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Benefits Care</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Engagement</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Reason_Code__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </filters>
+        <object>Case_Reason_Classification__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>ListCRC</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case_Reason_Classification__c</objectType>
+    </variables>
+    <variables>
+        <name>objCRC</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case_Reason_Classification__c</objectType>
+    </variables>
+</Flow>

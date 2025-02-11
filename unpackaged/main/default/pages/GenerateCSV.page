@@ -1,0 +1,3 @@
+<apex:page controller="TaxOpsTaskCSVImportController" cache="true" showheader="false" sidebar="false" contentType="text/csv" language="en-US">{!headerLabelStr}
+<apex:repeat value="{!failedRecordsDetailListNoDups}" var="rec">
+{!rec} "</apex:repeat></apex:page>

@@ -1,0 +1,713 @@
+<apex:page standardController="Transition_to_Fulfillment__c" extensions="BTTransitionToFulfilmentExtension" id="mainpage" docType="HTML-5.0" title="Benefits Transfer: Transition To Fulfillment">
+	<apex:slds />
+	<c:BTCustomCSS />
+	<apex:includeScript value="/support/console/45.0/integration.js" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<apex:form id="mainform">
+		<div class="slds-scope">
+			<c:GustoActionStatus />
+			<apex:pageBlock id="pageblock">
+				<apex:pageMessages id="messages" />
+				<apex:pageBlockSection columns="2" title="TTF Detail">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Opportunity"></apex:outputLabel>
+						<apex:outputLink value="/{!objTTFRecord.Opportunity__c}" onclick="openSubTab('{!objTTFRecord.Opportunity__c}','{!objTTFRecord.Opportunity__r.Name}');return false;"
+							>{!objTTFRecord.Opportunity__r.Name}</apex:outputLink>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Account"></apex:outputLabel>
+						<apex:outputLink value="/{!objTTFRecord.Account__c}" onclick="openSubTab('{!objTTFRecord.Account__c}','{!objTTFRecord.Account__r.Name}');return false;"
+							>{!objTTFRecord.Account__r.Name}</apex:outputLink>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Benefit Order"></apex:outputLabel>
+						<apex:outputLink value="/{!objTTFRecord.Benefit_Order__c}" onclick="openSubTab('{!objTTFRecord.Benefit_Order__c}','{!objTTFRecord.Benefit_Order__r.Name}');return false;"
+							>{!objTTFRecord.Benefit_Order__r.Name}</apex:outputLink>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="BYB to BoR"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.BYB_to_BoR__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="SGHI/LGHI"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.Opportunity__r.SGHI_LGHI__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="Funding Type"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.Opportunity__r.Funding_Type__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="PEO Switcher"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.PEO__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="Broker Loyal"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.Broker_Loyal__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="Compliance Upsells"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.Compliance_Upsells__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="BoR Eligible Medical"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.BoR_Eligible_Medical__c}" />
+					</apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!(blnIsBYOBOpportunity && objTTFRecord.BoR_Eligible_Medical__c == 'Y') }">
+						<apex:outputLabel value="BYB Reason"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.BYB_Reason__c}" />
+					</apex:pageBlockSectionItem>    
+					<apex:pageBlockSectionItem rendered="{!!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="Partner Tier"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.Opportunity__r.Partner_Tier__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!!blnIsBYOBOpportunity}">
+						<apex:outputLabel value="Partner Firm Name"></apex:outputLabel>
+						<apex:outputText value="{!objTTFRecord.Opportunity__r.Partner_Firm_Name__c}" />
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+				<apex:pageBlockSection columns="1" id="additionalPOCSection" title="Opportunity Contact Roles" collapsible="true">
+					<apex:outputPanel rendered="{!AND(NULL != list_OpptyContactRole , list_OpptyContactRole.size > 0)}" id="contactRoleSection">
+						<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+							<thead>
+								<tr class="slds-text-title slds-line-height_reset">
+									<th scope="col">Contact Name</th>
+									<th scope="col">Role</th>
+									<th scope="col">Check Primary POC</th>
+									<th scope="col">Check Additional POC</th>
+									<th scope="col" style="display:{!if(blnIsBYOBOpportunity,'','none;')}">Check Broker POC</th>
+								</tr>
+							</thead>
+							<tbody>
+								<apex:repeat value="{!list_POCWrapper}" var="cRole">
+									<tr class="slds-text-title detailRow">
+										<td>
+											<apex:outputText value="{!cRole.objContactRole.Contact.FirstName} {!cRole.objContactRole.Contact.LastName}" />
+										</td>
+										<td>
+											<apex:outputField value="{!cRole.objContactRole.Role}" />
+										</td>
+										<td>
+											<apex:inputCheckbox value="{!cRole.boolChkPrimary}" disabled="true" />
+										</td>
+										<td>
+											<apex:inputField value="{!cRole.objContactRole.Check_Additional_POC__c}" html-disabled="true" />
+										</td>
+										<td style="display:{!if(blnIsBYOBOpportunity,'','none;')}">
+											<apex:inputField value="{!cRole.objContactRole.Check_Broker_POC__c}" html-disabled="true" />
+										</td>
+									</tr>
+								</apex:repeat>
+							</tbody>
+						</table>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!OR(NULL == list_OpptyContactRole, list_OpptyContactRole.size == 0)}"> There are no Contact Roles on opportunity. </apex:outputPanel>
+				</apex:pageBlockSection>
+				<apex:pageBlockSection columns="2" id="additionalPOCSectionDetail">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Primary Point of Contact" />
+						<apex:outputLink value="/{!objTTFRecord.Contact__c}" onclick="openSubTab('{!objTTFRecord.Contact__c}','{!objTTFRecord.Contact__r.Name}');return false;"
+							>{!objTTFRecord.Contact__r.Name}</apex:outputLink>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Broker Point of Contact" />
+						<apex:outputLink value="/{!objTTFRecord.Broker_Point_of_Contact__c}"
+							onclick="openSubTab('{!objTTFRecord.Broker_Point_of_Contact__c}','{!objTTFRecord.Broker_Point_of_Contact__r.Name}');return false;"
+							>{!objTTFRecord.Broker_Point_of_Contact__r.Name}</apex:outputLink>
+					</apex:pageBlockSectionItem>
+					<apex:outputField value="{!objTTFRecord.Point_of_Contact_Phone__c}" />
+					<apex:outputLabel />
+					<apex:outputField value="{!objTTFRecord.Point_of_Contact_Email__c}" />
+				</apex:pageBlockSection>
+				<apex:pageBlockSection columns="1" title="Carrier Names & Renewal Date">
+					<apex:outputPanel >
+						<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+							<thead>
+								<tr class="slds-text-title slds-line-height_reset">
+									<th scope="col">Carrier Name</th>
+									<th scope="col">Renewal Date</th>
+									<th scope="col">Benefits</th>
+								</tr>
+							</thead>
+							<tbody>
+								<apex:repeat value="{!map_carrierKeyBenefitDetails}" var="benefitWrapper">
+									<tr class="slds-text-title detailRow">
+										<td>
+											<a class="slds-form-element__label" href="/{!map_carrierKeyBenefitDetails[benefitWrapper].objCarrier.Id}"
+												>{!map_carrierKeyBenefitDetails[benefitWrapper].objCarrier.Name}</a
+											>
+										</td>
+										<td>
+											<apex:outputPanel layout="block" rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}">
+												<apex:outputField value="{!map_carrierKeyBenefitDetails[benefitWrapper].objContact.Last_Activity_Date__c}" label="" />
+											</apex:outputPanel>
+											<apex:outputField value="{!map_carrierKeyBenefitDetails[benefitWrapper].objContact.Last_Activity_Date__c}"
+												label=""
+												rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+											/>
+										</td>
+										<td>
+											<div>
+												<apex:variable var="benefitsName" value="{!''}{!map_carrierKeyBenefitDetails[benefitWrapper].lstBenefitName}" />
+												<span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(CONTAINS(benefitsName, 'medical'), '','none')}">Medical</span>
+												<span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(CONTAINS(benefitsName, 'dental'), '','none')}">Dental</span>
+												<span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(CONTAINS(benefitsName, 'vision'), '','none')}">Vision</span>
+												<span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(CONTAINS(benefitsName, 'life'), '','none')}">Life</span>
+												<span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(CONTAINS(benefitsName, 'long_term_disability'), '','none')}">LTD</span>
+												<span class="slds-badge slds-badge_inverse custom-badge" style="display:{!IF(CONTAINS(benefitsName, 'short_term_disability'), '','none')}">STD</span>
+											</div>
+										</td>
+									</tr>
+								</apex:repeat>
+								<apex:repeat value="{!list_CarrierDetails}" var="CarrierDetail" rendered="{!blnIsBYOBOpportunity}">
+									<tr class="slds-text-title detailRow">
+										<td>
+											<a class="slds-form-element__label" href="/{!CarrierDetail.objCase.Carrier__c}" style="display:{!if(CarrierDetail.blnIsSaved,'','none;')}"
+												>{!CarrierDetail.strCarrierName}</a
+											>
+											<br />
+											<apex:outputLabel styleClass="OtherCarrierName{!CarrierDetail.intRecordIndex}"
+												value="{!CarrierDetail.strOtherCarrier}"
+												style="display:{!if(CarrierDetail.blnIsSaved && CarrierDetail.strOtherCarrier != '','','none;')};"
+											/>
+										</td>
+										<td>
+											<apex:outputField value="{!CarrierDetail.objContact.Last_Activity_Date__c}" label="" rendered="{!CarrierDetail.blnIsSaved}" />
+										</td>
+										<td>
+											<div style="display:{!if(CarrierDetail.blnIsSaved,'','none;')}">
+												<apex:repeat value="{!CarrierDetail.list_SelectedBenefitNames}" var="BenefitTypes">
+													<span class="slds-badge slds-badge_inverse custom-badge">{!BenefitTypes}</span>
+												</apex:repeat>
+											</div>
+										</td>
+									</tr>
+								</apex:repeat>
+								<tr>
+									<td style="width: 10%">
+										<label class="slds-form-element__label">Notes for the CX team</label>
+									</td>
+									<td colspan="2" style="width: 80%; white-space: pre-wrap !important">
+										<apex:outputField value="{!objTTFRecord.Notes_for_the_CX_team__c}" style="width: 100%" />
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
+
+				<apex:pageBlockSection columns="2" id="detailsection">
+					<apex:pageBlockSection columns="1" id="tadainfo" title="TaDa Information" collapsible="true" rendered="{!!blnIsBYOBOpportunity}">
+						<div class="slds-form-element" style="display: flex">
+							<label class="slds-form-element__label label-yesno" for="">Does order contain TaDa?</label>
+							<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right yes-no-picklist">
+								<select class="slds-select tada-select" disabled="true">
+									<option>Select</option>
+									<option>Yes</option>
+									<option>No</option>
+								</select>
+							</div>
+						</div>
+						<apex:outputPanel styleClass="tada-select-panel" style="display: none">
+							<table style="margin-top: 2%">
+								<thead>
+									<th>Benefits</th>
+									<th style="text-align: center">Is Selected</th>
+									<th style="text-align: center">Renewal Date</th>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="tada-benefit-column">
+											<label class="slds-form-element__label tada-label" for="">Is there an HSA?</label>
+										</td>
+										<td>
+											<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+												<apex:selectList styleclass="slds-select tada-select-hsa"
+													size="1"
+													value="{!optedTadaDetails.strIsHSASelected}"
+													multiselect="false"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}"
+												>
+													<apex:selectOption itemValue="" itemLabel="-None-" />
+													<apex:selectOption itemValue="Transfer" itemLabel="Transfer" />
+													<apex:selectOption itemValue="New" itemLabel="New" />
+												</apex:selectList>
+												<apex:outputText styleclass="tada-select-hsa"
+													value="{!optedTadaDetails.strIsHSASelected}"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+										<td style="text-align: center" class="tada-benefit-column">
+											<div style="display: none" class="tada-renewaldate-hsa">
+												<apex:outputPanel layout="block" rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}">
+													<apex:outputField value="{!objTTFRecord.HSA_Renewal_Date__c}" label="" />
+												</apex:outputPanel>
+												<apex:outputField value="{!objTTFRecord.HSA_Renewal_Date__c}"
+													label=""
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td class="tada-benefit-column">
+											<label class="slds-form-element__label tada-label" for="">Is there an FSA?</label>
+										</td>
+										<td>
+											<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+												<apex:selectList styleclass="slds-select tada-select-fsa"
+													size="1"
+													value="{!optedTadaDetails.strIsFSASelected}"
+													multiselect="false"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}"
+												>
+													<apex:selectOption itemValue="" itemLabel="-None-" />
+													<apex:selectOption itemValue="Transfer" itemLabel="Transfer" />
+													<apex:selectOption itemValue="New" itemLabel="New" />
+												</apex:selectList>
+												<apex:outputText styleclass="tada-select-fsa"
+													value="{!optedTadaDetails.strIsFSASelected}"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+										<td style="text-align: center" class="tada-benefit-column">
+											<div style="display: none" class="tada-renewaldate-fsa">
+												<apex:outputPanel layout="block" rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}">
+													<apex:outputField value="{!objTTFRecord.FSA_Renewal_Date__c}" label="" />
+												</apex:outputPanel>
+												<apex:outputField value="{!objTTFRecord.FSA_Renewal_Date__c}"
+													label=""
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td class="tada-benefit-column">
+											<label class="slds-form-element__label tada-label" for="">Is there an DCA?</label>
+										</td>
+										<td>
+											<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+												<apex:selectList styleclass="slds-select tada-select-dca"
+													size="1"
+													value="{!optedTadaDetails.strIsDCASelected}"
+													multiselect="false"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}"
+												>
+													<apex:selectOption itemValue="" itemLabel="-None-" />
+													<apex:selectOption itemValue="Transfer" itemLabel="Transfer" />
+													<apex:selectOption itemValue="New" itemLabel="New" />
+												</apex:selectList>
+												<apex:outputText styleclass="tada-select-dca"
+													value="{!optedTadaDetails.strIsDCASelected}"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+										<td style="text-align: center" class="tada-benefit-column">
+											<div style="display: none" class="tada-renewaldate-dca">
+												<apex:outputPanel layout="block" rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}">
+													<apex:outputField value="{!objTTFRecord.DCA_Renewal_Date__c}" label="" />
+												</apex:outputPanel>
+												<apex:outputField value="{!objTTFRecord.DCA_Renewal_Date__c}"
+													label=""
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td class="tada-benefit-column">
+											<label class="slds-form-element__label tada-label" for="">Is there an Commuter?</label>
+										</td>
+										<td>
+											<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+												<apex:selectList styleclass="slds-select tada-select-commuter"
+													size="1"
+													value="{!optedTadaDetails.strIsCommuterSelected}"
+													multiselect="false"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,false,true)}"
+												>
+													<apex:selectOption itemValue="" itemLabel="-None-" />
+													<apex:selectOption itemValue="Transfer" itemLabel="Transfer" />
+													<apex:selectOption itemValue="New" itemLabel="New" />
+												</apex:selectList>
+												<apex:outputText value="{!optedTadaDetails.strIsCommuterSelected}"
+													rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true,true,false)}"
+												/>
+											</div>
+										</td>
+										<td style="text-align: center" class="tada-benefit-column">
+											<div style="display: none" class="tada-renewaldate-commuter">
+												<!--<apex:outputField value="{!objTTFRecord.Commuter_Renewal_Date__c}" label="" />-->
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection columns="1" id="coverageinfo" title="External Coverage" collapsible="true" rendered="{!!blnIsBYOBOpportunity}">
+						<apex:outputPanel styleclass="slds-form-element" style="display: flex">
+							<label class="slds-form-element__label label-yesno" for="">Lines of Coverage Staying External</label>
+							<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right yes-no-picklist">
+								<apex:outputField styleClass="slds-select external-select"
+									value="{!objTTFRecord.Any_lines_of_coverage_staying_external__c}"
+									rendered="{!objTTFRecord.Any_lines_of_coverage_staying_external__c!=''}"
+								/>
+								<apex:selectList styleclass="slds-select external-select"
+									size="1"
+									value="{!objTTFRecord.Any_lines_of_coverage_staying_external__c}"
+									multiselect="false"
+									disabled="true"
+									rendered="{!objTTFRecord.Any_lines_of_coverage_staying_external__c==''}"
+								>
+									<apex:selectOption itemValue="" itemLabel="-None-" />
+								</apex:selectList>
+							</div>
+						</apex:outputPanel>
+						<apex:outputPanel styleclass="slds-grid slds-wrap slds-gutters slds-m-top_medium external-select-panel"
+							style="margin-left: 0%"
+							rendered="{!objTTFRecord.Any_lines_of_coverage_staying_external__c=='Y'}"
+						>
+							<apex:repeat value="{!lst_eternalCoverageDetails}" var="externalWrapperInstance">
+								<apex:outputPanel layout="none" rendered="{! if(externalWrapperInstance.str_benefitName == 'Commuter',false,true)}">
+									<div class="slds-col slds-size_1-of-1 slds-small-size_3-of-6 slds-p-horizontal_none" style="display: flex">
+										<apex:inputCheckbox value="{!externalWrapperInstance.bln_isSelected}" disabled="true" /> &nbsp;&nbsp;
+										<span class="slds-form-element__label">
+											<strong>{!externalWrapperInstance.str_benefitName}</strong>
+										</span>
+									</div>
+								</apex:outputPanel>
+								<apex:outputPanel layout="none" rendered="{! if(externalWrapperInstance.str_benefitName == 'Commuter',true,false)}">
+									<div class="slds-col slds-size_1-of-1 slds-small-size_3-of-6 slds-p-horizontal_none" style="display: flex"></div>
+									<div class="slds-col slds-size_1-of-1 slds-small-size_3-of-6 slds-p-horizontal_none" style="display: flex">
+										<apex:inputCheckbox value="{!externalWrapperInstance.bln_isSelected}" disabled="true" /> &nbsp;&nbsp;
+										<span class="slds-form-element__label">
+											<strong>{!externalWrapperInstance.str_benefitName}</strong>
+										</span>
+									</div>
+								</apex:outputPanel>
+							</apex:repeat>
+							<apex:outputPanel >
+								<label class="slds-form-element__label">Additional Comments(Lines of Coverage)</label>
+								<apex:outputField value="{!objTTFRecord.Additional_Comments_Lines_of_Coverage__c}" style="width: 100%" />
+							</apex:outputPanel>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection id="exceptionpanel" title="Exceptions" columns="1" rendered="{!!blnIsBYOBOpportunity}">
+						<apex:outputPanel styleclass="slds-form-element" style="display: flex">
+							<label class="slds-form-element__label label-yesno" for="">Exception Request?</label>
+							<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right yes-no-picklist">
+								<apex:outputField styleClass="slds-select exception-select" value="{!objTTFRecord.Exception_Request__c}" rendered="{!objTTFRecord.Exception_Request__c!=''}" />
+								<apex:selectList styleclass="slds-select exception-select"
+									size="1"
+									value="{!objTTFRecord.Exception_Request__c}"
+									multiselect="false"
+									disabled="true"
+									rendered="{!objTTFRecord.Exception_Request__c==''}"
+								>
+									<apex:selectOption itemValue="" itemLabel="-None-" />
+								</apex:selectList>
+							</div>
+						</apex:outputPanel>
+						<apex:outputPanel layout="block" styleclass="slds-m-top_medium exception-select-panel" rendered="{!objTTFRecord.Exception_Request__c=='Yes'}" id="exceptionreasonpanel">
+							<table style="margin-top: 5px">
+								<tr>
+									<td>
+										<label class="slds-form-element__label" for="">Reason for exception request?</label>
+									</td>
+									<td>
+										<apex:outputField value="{!objTTFRecord.Reason_for_exception_request__c}" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class="slds-form-element__label" for="">Admin Commited High Response Level</label>
+									</td>
+									<td>
+										<apex:outputField value="{!objTTFRecord.Admin_Commited_High_Response_Level__c}" />
+									</td>
+								</tr>
+							</table>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection id="prioritypanel" title="Priority" columns="1" rendered="{!blnIsBYOBOpportunity}">
+						<apex:outputPanel styleclass="slds-form-element" style="display: flex">
+							<label class="slds-form-element__label label-yesno" for="">Priority?</label>
+							<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right yes-no-picklist">
+								<apex:outputField value="{!objTTFRecord.Priority__c}" styleClass="slds-select priority-select" label="" />
+							</div>
+						</apex:outputPanel>
+						<apex:outputPanel styleclass="slds-grid slds-wrap slds-gutters" style="display: flex">
+							<div class="slds-col slds-size_1-of-2">
+								<label class="slds-form-element__label label-yesno">Requires Open Enrollment on Gusto?</label>
+								<apex:outputField value="{!objTTFRecord.Requires_Open_Enrollment_on_Gusto__c}" />
+							</div>
+							<div class="slds-col slds-size_1-of-2">
+								<label class="slds-form-element__label label-yesno">Mid Market Multi-EIN (5+ EIN)</label>
+								<apex:outputField value="{!objTTFRecord.Multi_EIN__c}" />
+							</div>
+							<div class="slds-col slds-size_1-of-2" />
+							<div class="slds-col slds-size_1-of-2">
+								<label class="slds-form-element__label label-checkbox">Handed off to preferred broker partner?</label>
+								<apex:inputCheckbox value="{!objTTFRecord.Handed_off_to_preferred_broker_partner__c}" disabled="true" />
+							</div>
+							<div class="slds-col slds-size_1-of-2" style="display:{!if( (blnIsBYOBOpportunity && objTTFRecord.Handed_off_to_preferred_broker_partner__c),'','none;')}"/>
+							<div class="slds-col slds-size_1-of-2" style="display:{!if( (blnIsBYOBOpportunity && objTTFRecord.Handed_off_to_preferred_broker_partner__c),'','none;')}">
+								<label class="slds-form-element__label label-checkbox">Preferred Broker</label>
+								<apex:outputField value="{!objTTFRecord.Preferred_Broker__c}" />
+							</div>                                                                              
+						</apex:outputPanel>
+						<apex:outputPanel styleclass="slds-grid slds-wrap slds-gutters slds-m-top_medium priority-select-panel"
+							style="display: flex; margin-left: 0%"
+							rendered="{!blnIsBYOBOpportunity && (objTTFRecord.Priority__c =='Y')}"
+						>
+							<apex:repeat value="{!lst_priorityReasonDetails}" var="reasonWrapperInstance">
+								<div class="slds-col slds-size_1-of-1 slds-small-size_3-of-6 slds-p-horizontal_none" style="display: flex">
+									<apex:inputCheckbox value="{!reasonWrapperInstance.bln_isSelected}" disabled="true" /> &nbsp;&nbsp;
+									<span class="slds-form-element__label" style="padding-top: 0px">
+										<strong>{!reasonWrapperInstance.str_reasonName}</strong>
+									</span>
+								</div>
+							</apex:repeat>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+					<apex:pageBlockSection id="document_list" title="Upload Documents" columns="1">
+						<apex:outputPanel styleclass="slds-m-top_medium " layout="block" id="attachment_Panel" rendered="{! if(lst_TTFAttachmentList.size > 0,true,false)}">
+							<div class="slds-text-heading_small slds-m-top_medium">Uploaded Files</div>
+							<ul class="slds-has-dividers_bottom-space" style="overflow-y: scroll; max-height: 140px">
+								<apex:repeat value="{!lst_TTFAttachmentList}" var="attachmentRec">
+									<li class="slds-item slds-p-left_none">
+										<a href="javascript:void(0);" onclick="openFile('{!attachmentRec.Id}')">{!attachmentRec.Name}</a>
+									</li>
+								</apex:repeat>
+							</ul>
+						</apex:outputPanel>
+						<apex:outputPanel rendered="{! if(lst_TTFAttachmentList.size > 0,false,true)}" layout="none">
+							<span style="margin-top: 5px; color: red">No record found.</span>
+						</apex:outputPanel>
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+				<apex:pageBlockSection title="Multi EEIN" columns="1" rendered="{!!blnIsBYOBOpportunity}">
+					<apex:outputPanel styleclass="slds-form-element" style="display: flex">
+						<label class="slds-form-element__label label-yesno" for="">Do they have affiliates?</label>
+						<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right yes-no-picklist" style="width: 25%">
+							<apex:inputField value="{!objTTFRecord.Multi_EIN__c}"
+								styleClass="slds-select multiein-select"
+								label=""
+								rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c != true && objTTFRecord.Account__r.ParentId == null,true,false)}"
+							>
+								<apex:actionSupport event="onchange" action="{!multiEINSendOrderCheck}" rerender="sendOrderPanel" status="actStatusId" oncomplete="multieinDisplayUtil();" />
+							</apex:inputField>
+							<apex:outPutField value="{!objTTFRecord.Multi_EIN__c}"
+								styleClass="slds-select multiein-select"
+								label=""
+								rendered="{! if(objTTFRecord.Opportunity__r.Order_Generated__c == true || objTTFRecord.Account__r.ParentId != null,true,false)}"
+							/>
+						</div>
+					</apex:outputPanel>
+					<apex:outputPanel layout="block"
+						styleclass="slds-m-top_medium multiein-select-panel"
+						id="multieinpanel"
+						rendered="{! if((objTTFRecord.Id == null || objTTFRecord.Account__r.ParentId == null) && objTTFRecord.Multi_EIN__c=='Y',true,false)}"
+					>
+						<apex:pageBlockSection columns="1">
+							<apex:pageBlockSectionItem >
+								<apex:outputPanel id="selectedAccountSection">
+									<h2>
+										<strong>Selected Affilites</strong>
+									</h2>
+									<table title="Selected Companies" class="slds-table slds-table_cell-buffer slds-table_bordered">
+										<thead>
+											<th>Name</th>
+											<th>Role</th>
+										</thead>
+										<tbody>
+											<apex:repeat value="{!mapSelectedAccounts}" var="key">
+												<tr class="slds-text-title slds-line-height_reset">
+													<td>
+														<apex:outputField value="{!mapSelectedAccounts[key].objAccount.name}" />
+													</td>
+
+													<td>
+														<apex:outputText value="Parent Company" rendered="{! if(mapSelectedAccounts[key].objAccount.ParentId == null,true,false)}" />
+														<apex:outputText value="Affiliate" rendered="{! if(mapSelectedAccounts[key].objAccount.ParentId != null,true,false)}" />
+													</td>
+												</tr>
+											</apex:repeat>
+										</tbody>
+									</table>
+								</apex:outputPanel>
+							</apex:pageBlockSectionItem>
+						</apex:pageBlockSection>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{! if(objTTFRecord.Id != null && objTTFRecord.Account__r.ParentId != null && objTTFRecord.Multi_EIN__c=='Y',true,false)}">
+						<h2>
+							<strong>Affilites</strong>
+						</h2>
+						<table title="Selected Companies" class="slds-table slds-table_cell-buffer slds-table_bordered">
+							<thead>
+								<th>Name</th>
+								<th>Phone</th>
+								<th>Role</th>
+							</thead>
+							<tbody>
+								<apex:repeat value="{!list_AffiliatedAccounts}" var="affiliateRec">
+									<tr class="slds-text-title slds-line-height_reset">
+										<td>
+											<apex:outputField value="{!affiliateRec.Name}" />
+										</td>
+										<td>
+											<apex:outputField value="{!affiliateRec.Phone}" />
+										</td>
+										<td>
+											<apex:outputText value="Parent Company" rendered="{! if(affiliateRec.ParentId == null,true,false)}" />
+											<apex:outputText value="Affiliate" rendered="{! if(affiliateRec.ParentId != null,true,false)}" />
+										</td>
+									</tr>
+								</apex:repeat>
+							</tbody>
+						</table>
+					</apex:outputPanel>
+				</apex:pageBlockSection>
+				<apex:pageBlockSection title="System Information" columns="2" id="sendOrderPanel">
+					<apex:outputField value="{!objTTFRecord.CreatedDate}" />
+					<apex:outputField value="{!objTTFRecord.LastModifiedDate}" />
+					<apex:outputField value="{!objTTFRecord.Send_Order__c}"
+						rendered="{! if(blnIsOppERConfirmed == true && (objTTFRecord.Multi_EIN__c == 'N' || blnIsAffiliatesFormedSigned == true),true,false)}"
+					/>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</div>
+	</apex:form>
+	<script>
+		//=========script to run on page load==================
+		if (
+			"{!optedTadaDetails.strIsFSASelected}" != "" ||
+			"{!optedTadaDetails.strIsHSASelected}" != "" ||
+			"{!optedTadaDetails.strIsDCASelected}" != "" ||
+			"{!optedTadaDetails.strIsCommuterSelected}" != ""
+		) {
+			$(".tada-select").val("Yes");
+			tadaPanelDisplayUtil();
+			tadaHsaDisplayUtil();
+			tadaFsaDisplayUtil();
+			tadaDcaDisplayUtil();
+		}
+
+		//=====================tada js starts==================
+		$(".tada-select").change(function () {
+			tadaPanelDisplayUtil();
+		});
+
+		function tadaPanelDisplayUtil() {
+			var val = $(".tada-select").val();
+			if (val == "Yes") {
+				$(".tada-select-panel").show();
+			} else {
+				$(".tada-select-panel").hide();
+			}
+		}
+
+		$(".tada-select-hsa").change(function () {
+			tadaHsaDisplayUtil();
+		});
+
+		function tadaHsaDisplayUtil() {
+			var val = $(".tada-select-hsa").val();
+			if (val == "") {
+				val = $(".tada-select-hsa").text();
+			}
+			if (val == "Transfer") {
+				$(".tada-renewaldate-hsa").show();
+			} else {
+				$(".tada-renewaldate-hsa").hide();
+			}
+		}
+		$(".tada-select-fsa").change(function () {
+			tadaFsaDisplayUtil();
+		});
+
+		function tadaFsaDisplayUtil() {
+			var val = $(".tada-select-fsa").val();
+			if (val == "") {
+				val = $(".tada-select-fsa").text();
+			}
+			if (val == "Transfer") {
+				$(".tada-renewaldate-fsa").show();
+			} else {
+				$(".tada-renewaldate-fsa").hide();
+			}
+		}
+
+		$(".tada-select-dca").change(function () {
+			tadaDcaDisplayUtil();
+		});
+
+		function tadaDcaDisplayUtil() {
+			var val = $(".tada-select-dca").val();
+			if (val == "") {
+				val = $(".tada-select-dca").text();
+			}
+			if (val == "Transfer") {
+				$(".tada-renewaldate-dca").show();
+			} else {
+				$(".tada-renewaldate-dca").hide();
+			}
+		}
+		//==================Open New Multi-EIN TTFs==============================
+		function openmultieinttf(strTTFIds) {
+			console.log("passed str 1 " + strTTFIds);
+			if (strTTFIds != null && strTTFIds != undefined && strTTFIds != "") {
+				var ttfIds = strTTFIds.split(";");
+				console.log("ttfID " + ttfIds);
+				var i;
+				for (i = 0; i < ttfIds.length; i++) {
+					if (sforce.console.isInConsole()) {
+						console.log("single ttf " + ttfIds[i]);
+						sforce.console.openPrimaryTab(null, "/" + ttfIds[i] + "/e", false);
+					} else {
+						window.open("/" + ttfIds[i] + "/e");
+					}
+				}
+				if (sforce.console.isInConsole()) {
+					closeTab();
+				} else {
+					var oppId = "{!objTTFRecord.Opportunity__c}";
+					window.open("/" + oppId, "_parent", "");
+				}
+			}
+		}
+
+		function closeTab() {
+			sforce.console.getFocusedSubtabId(callCloseTab);
+		}
+		var callCloseTab = function callCloseTab(result) {
+			sforce.console.closeTab(result.id);
+		};
+		function openFile(strFieldId) {
+			var redirectUrl = "servlet/servlet.FileDownload?file=" + strFieldId;
+			openSubTab(redirectUrl);
+		}
+		function openSubTab(recId, label) {
+			var redirectUrl = "/" + recId;
+			if (sforce.console.isInConsole()) {
+				sforce.console.getEnclosingTabId(function (enclosingResult) {
+					sforce.console.getEnclosingPrimaryTabId(function (primaryResult) {
+						console.log(primaryResult.id);
+						if (primaryResult.id == "null") {
+							sforce.console.openPrimaryTab(undefined, redirectUrl, true, label);
+						} else {
+							sforce.console.openSubtab(primaryResult.id, redirectUrl, true, label, null);
+						}
+					});
+				});
+			} else {
+				// for inline Vf
+				window.open(redirectUrl, "_blank");
+			}
+		}
+	</script>
+</apex:page>

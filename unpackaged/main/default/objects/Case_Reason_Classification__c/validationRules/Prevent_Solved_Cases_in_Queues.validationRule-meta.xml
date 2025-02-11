@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Solved_Cases_in_Queues</fullName>
+    <active>true</active>
+    <description>Do not allow Stay In Team Queue = true while Keep Case Open for Auto Email = false</description>
+    <errorConditionFormula>AND(Stay_In_Team_Queue__c = TRUE , Do_Not_Auto_Solve_for_Auto_Email__c = FALSE)</errorConditionFormula>
+    <errorDisplayField>Do_Not_Auto_Solve_for_Auto_Email__c</errorDisplayField>
+    <errorMessage>Keep Case Open for Auto Email has to be checked when Stay In Team Queue is checked.</errorMessage>
+</ValidationRule>

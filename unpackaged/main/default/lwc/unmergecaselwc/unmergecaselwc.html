@@ -1,0 +1,10 @@
+<template>
+    
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </template>
+        <template if:true={showHideUnmerge}>
+            <lightning-button label="UnMerge" value={caseRecord} title="UnMerge" onclick={handleUnMergeCase} class="slds-m-left_x-small"></lightning-button> 
+        </template>
+    
+</template>

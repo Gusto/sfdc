@@ -1,0 +1,8 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride" access="global" >
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:quickActionAPI aura:id="quickActionAPI" />
+    <!-- Record Id fetched from Page -->
+    
+    <c:taxResAddAttachmentButtonCmp recordId="{!v.recordId}" onopentab="{!c.copyTextToPublisher}">
+    </c:taxResAddAttachmentButtonCmp>
+</aura:component>

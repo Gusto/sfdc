@@ -1,0 +1,77 @@
+<apex:page showHeader="false" sidebar="false" standardController="Contact" extensions="outboundCaseCreationExtension">
+	
+	<apex:includeScript value="/support/console/45.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+	<script type="text/javascript">
+		
+		var newCaseIdd;
+		function openNewCase(caseIdd){
+			if(caseIdd != null && caseIdd.length > 0){
+				newCaseIdd = caseIdd;
+				if(sforce.console.isInConsole()){
+					sforce.console.getEnclosingPrimaryTabId(openCaseSubtab);
+					//sforce.console.openPrimaryTab(null , '/'+caseIdd, true,'Case',openSuccess,'Case');
+				}
+				else{
+					window.open('/'+caseIdd);
+				}
+			}
+		}
+
+		/*var newCaseIdd;
+        function openTicketRec(newcaseid) {
+            newCaseIdd = frid;
+            console.log('@@## ticket id: '+selectedCaseId);
+            //First find the ID of the primary tab to put the new subtab in
+            //sforce.console.getEnclosingPrimaryTabId(openCaseSubtab);
+            sforce.console.openPrimaryTab(null , '/'+selectedCaseId, true,'Ticket',openSuccess,'Ticket');
+        }*/
+        
+        var openCaseSubtab = function openCaseSubtab(result) {
+            //Now that we have the primary tab ID, we can open a new subtab in it
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+newCaseIdd, true, 
+                'Case', null, openSuccess, 'Case');
+        };
+
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if(result.success==true){
+               location.reload();
+            }
+        };
+
+	</script>
+	<div class="gusto">
+		<apex:form id="frm">
+			<table>
+				<tr valign="top">
+					<td style="width:10%">
+						<apex:selectList value="{!selectedRecordType}" size="1">
+	                		<apex:selectOptions value="{!CaseRecordTypeList}"/>
+	        			</apex:selectList>
+					</td>
+					<td style="width:10%">						
+						<div style="display: inline-flex;">
+							&nbsp;Subject:&nbsp;<apex:inputText value="{!caseSubject}" required="true"/> 	&nbsp;						
+						</div>
+					</td>
+					<td style="width:10%">
+						<apex:commandButton action="{!createCase}" oncomplete="openNewCase('{!newCaseId}')" value="Create Outbound Case" reRender="frm" status="fetchStatus"/>
+					</td>
+					<td style="width:5%">
+						<apex:actionStatus id="fetchStatus" >
+			                <apex:facet name="start">
+	                            <img class="waitingImage" src="/img/loading.gif" />
+			                </apex:facet>
+		            	</apex:actionStatus>
+					</td>
+					<td style="width:65%">
+						<apex:pageMessages id="msg"/>
+					</td>
+				</tr>
+			</table>
+		</apex:form>
+	</div>
+</apex:page>

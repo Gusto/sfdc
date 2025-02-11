@@ -1,0 +1,58 @@
+<apex:component >
+<script type="text/javascript">
+    function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");
+            for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                    if(inputCheckBox[i].disabled == false){
+                        inputCheckBox[i].checked = obj.checked;
+                    }
+                }
+            }
+        }
+        
+              
+       $(document).ready(function(){
+            $("table").tablesorter({
+             theme : 'jui', 
+             headerTemplate : '{content} {icon}',
+             widgets : ['uitheme', 'zebra'],
+             widgetOptions : {
+                 zebra   : ["even", "odd"],
+             }
+         });
+       });
+        
+      </script>
+      <style>
+        .tablesorter .header,
+         .tablesorter .tablesorter-header {
+             padding: 4px 4px 4px 20px !important;
+             cursor: pointer;
+             background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+             background-position: center left;
+             background-repeat: no-repeat;
+         }
+         .tablesorter .headerSortUp,
+         .tablesorter .tablesorter-headerSortUp,
+         .tablesorter .tablesorter-headerAsc {
+             background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+             color: #000;
+         }
+         .tablesorter .headerSortDown,
+         .tablesorter .tablesorter-headerSortDown,
+         .tablesorter .tablesorter-headerDesc {
+             color: #000;
+             background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+         }
+         .tablesorter thead .sorter-false {
+             background-image: none;
+             cursor: default;
+             /*padding: 10px !important;*/
+         }
+         .tablesorter tr>td:first-child {
+            padding-left: 10px !important;
+         }
+    </style>
+      
+</apex:component>

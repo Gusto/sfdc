@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Clean_Company_Name__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(
+    OR( Company == &apos;-- BLANK --&apos; ,
+        Company == &apos;-- Blank --&apos; ,
+        Company == &apos;-- blank --&apos; ,
+        Company == &apos;--BLANK--&apos; ,
+        Company == &apos;--Blank--&apos; ,
+        Company == &apos;--blank--&apos; ,
+        Company == &apos;BLANK&apos; ,
+        Company == &apos;Blank&apos; ,
+        Company == &apos;blank&apos; ,
+        Company == &apos;N/A&apos; ,
+        Company == &apos;N/a&apos; ,
+        Company == &apos;n/A&apos; ,
+        Company == &apos;n/a&apos; ,
+        Company == &apos;N / A&apos; ,
+        Company == &apos;N / a&apos; ,
+        Company == &apos;n / A&apos; ,
+        Company == &apos;n / a&apos; ,
+        Company == &apos;NOT PROVIDED&apos; ,
+        Company == &apos;Not Provided&apos; ,
+        Company == &apos;Not provided&apos; ,
+        Company == &apos;not Provided&apos; ,
+        Company == &apos;not provided&apos; ,
+        Company == &apos;[NOT PROVIDED]&apos; ,
+        Company == &apos;[Not Provided]&apos; ,
+        Company == &apos;[Not provided]&apos; ,
+        Company == &apos;[not Provided]&apos; ,
+        Company == &apos;[not provided]&apos; ,
+        Company == &apos;UNKNOWN&apos; ,
+        Company == &apos;Unknown&apos; ,
+        Company == &apos;unknown&apos; ,
+        Company == &apos;[UNKNOWN]&apos; ,
+        Company == &apos;[Unknown]&apos; ,
+        Company == &apos;[unknown]&apos; ,
+        Company == &apos;[[UNKNOWN]]&apos; ,
+        Company == &apos;[[Unknown]]&apos; ,
+        Company == &apos;[[unknown]]&apos; ,
+        Company == &apos;NULL&apos; ,
+        Company == &apos;Null&apos; ,
+        Company == &apos;null&apos; ,
+        Company == &apos;&apos;
+    ) ,
+   null , Company
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Clean Company Name</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

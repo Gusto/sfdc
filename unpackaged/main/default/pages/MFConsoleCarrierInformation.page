@@ -1,0 +1,85 @@
+<apex:page standardController="Carrier__c">
+<style> 
+    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+</style>
+      
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>    
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+
+        <apex:form >
+            
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Carrier Name: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!Carrier__c.Name}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">State: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!Carrier__c.State__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Submission Method: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!Carrier__c.Submission_Method__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Submission Email: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!Carrier__c.Submission_Email__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Phone: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!Carrier__c.MF_Submission_Phone__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Fax: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!Carrier__c.MF_Submission_Fax__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+            </Table> 
+
+        </apex:form>
+    </div>
+
+</apex:page>

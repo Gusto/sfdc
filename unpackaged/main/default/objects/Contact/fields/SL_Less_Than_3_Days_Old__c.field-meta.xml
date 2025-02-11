@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SL_Less_Than_3_Days_Old__c</fullName>
+    <formula>IF(TODAY() - DATEVALUE(CreatedDate) &lt;= 3, TRUE, FALSE)</formula>
+    <inlineHelpText>Used for Salesloft automation rules so have a time limit to what is imported (since Salesloft cannot fire off of dates)</inlineHelpText>
+    <label>Less Than 3 Days Old</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

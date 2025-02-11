@@ -1,0 +1,272 @@
+<apex:page controller="UR_OptOutCtrl" lightningStylesheets="true" applyBodyTag="false" sidebar="false" showHeader="false" standardStylesheets="false" >
+    <apex:form >
+        <head>
+
+            <title>online hr services: payroll, benefits and everything else | gusto</title>
+
+            <link rel="stylesheet" media="screen" href="{!URLFOR($Resource.UR_Unsubscribe, '/Unsubscribe/constant-contact.css')}"/>
+            <link rel="stylesheet" media="screen" href="{!URLFOR($Resource.UR_Unsubscribe, '/Unsubscribe/gusto_paid-4e0f47144842ac7edc409123514cefab2abb2f84c04604817c6525a2ab5bf7ee.css')}"/>
+            <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.UR_Unsubscribe, '/Unsubscribe/forms2.css')}"/>
+
+            <style>
+                @font-face {
+                    font-family: 'Centra';
+                    font-weight: 300;
+                    font-style: normal;
+                    font-display: swap;
+                    unicode-range: U + 000-5ff; /* Download only latin glyphs */
+                    src: local('gcentra-book'),
+                    url('//static.gusto.com/fonts/gcentra-book.woff2') format('woff2'),
+                    url('//static.gusto.com/fonts/gcentra-book.woff') format('woff');
+                }
+
+                @font-face {
+                    font-family: 'CentraMed';
+                    font-weight: 400;
+                    font-style: normal;
+                    font-display: swap;
+                    unicode-range: U + 000-5ff; /* Download only latin glyphs */
+                    src: local('gcentra-medium'),
+                    url('//static.gusto.com/fonts/gcentra-medium.woff2') format('woff2'),
+                    url('//static.gusto.com/fonts/gcentra-medium.woff') format('woff');
+                }
+
+                body {
+                    font-family: 'Centra', helvetica, sans-serif;
+                }
+
+                .centra-med {
+                    font-family: 'CentraMed', helvetica, sans-serif;
+                }
+
+                .mktoButtonRow {
+                    margin-left: 0 !important;
+                }
+
+                .mktoButtonRow button.mktoButton {
+                    background: #f45d48 !important;
+                    border: 1px solid #db3837;
+                    padding: 7px 25px;
+                    border-radius: 3px;
+                    font-family: 'Centra', helvetica, sans-serif;
+                }
+
+                h1 .header-title {
+                    font-size: 18px;
+                }
+
+                section.hero-marketo-template {
+                    background: #2babad !important;
+                }
+
+                input.mktoButton {
+                    background: #f45d48 !important;
+                }
+
+                /* Medium devices (desktops, 992px and up) */
+                @media (min-width: 992px) {
+                    h1 .header-title {
+                        font-size: 36px;
+                    }
+                }
+
+            </style>
+        </head>
+
+        <body class="landing-page" data-lead-tag="lp_013_marketo_template_demo" id="paid-013-marketo-template-demo">
+            <apex:pageMessages />
+            <div class="mktoSnippet" id="analytics-snippet"></div>
+            <apex:outputPanel layout="block" styleclass="slds-grid slds-wrap slds-gutters_large" rendered="{!showPanel}">
+                <apex:outputPanel layout="block" rendered="{!if(conName!=null,true,false)}" styleclass="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+
+                    <section class="hero-marketo-template" style="min-height:300px">
+                        <div class="container padding-top-xs-25px padding-top-md-50px">
+                            <div class="row text-center-xs text-left-md">
+                                <div class="col-lg-8 col-md-6">
+                                    <a href="https://go.gusto.com/">
+                                        <svg class="logo-white logo-gusto" viewBox="0 0 180 50">
+                                            <title>Online Payroll, Health Benefits, Workers' Comp</title>
+                                            <alt>Online Payroll, Health Benefits, Workers' Comp</alt>
+                                            <path fill="#fff" d="M113,8a14.2,14.2,0,1,0,14.13,14.2A14.18,14.18,0,0,0,113,8Zm0,21.67a7.47,7.47,0,1,1,7.44-7.47A7.46,7.46,0,0,1,113,29.68ZM71.39,19.34,68.92,18.1a7.61,7.61,0,0,1-2-1.26,1.43,1.43,0,0,1-.41-1,1.41,1.41,0,0,1,.64-1.19,2.82,2.82,0,0,1,1.77-.48c1.39,0,2.93.83,4.62,2.52l4.17-4.19A10.91,10.91,0,0,0,68.86,8a8.93,8.93,0,0,0-6.29,2.27,7.19,7.19,0,0,0-2.45,5.47c0,3.3,2.16,6.06,6.51,8.25l2.27,1.14c2,1,2.94,2,2.94,3.05A1.87,1.87,0,0,1,71,29.7a3.3,3.3,0,0,1-2.15.65,6.19,6.19,0,0,1-2.83-.86,9.56,9.56,0,0,1-2.77-2.25l-4.15,4.54a11.18,11.18,0,0,0,9.38,4.62,10,10,0,0,0,7-2.41,7.8,7.8,0,0,0,2.63-6,7.84,7.84,0,0,0-1.45-4.71,14.59,14.59,0,0,0-5.35-3.94Zm-42,14V8.58H22.71v1.65A14,14,0,0,0,15.13,8a14.2,14.2,0,0,0,0,28.4,13.91,13.91,0,0,0,7.5-2.17c0,.22,0,.42,0,.55a7.42,7.42,0,0,1-11.37,6.33L7.94,47a13.88,13.88,0,0,0,7.26,2A14.26,14.26,0,0,0,29.42,34.8C29.42,34.5,29.44,33.6,29.42,33.32ZM15.13,29.68a7.47,7.47,0,1,1,7.44-7.47,7.46,7.46,0,0,1-7.44,7.47Zm41-21.11H49.4v13.5c0,1.92,0,5.23-1.39,6.64a4.05,4.05,0,0,1-5.93,0c-1.41-1.42-1.4-4.74-1.39-6.64V8.57H34V22c0,2.77-.06,7.92,3.33,11.34a10.08,10.08,0,0,0,7.76,3,10.07,10.07,0,0,0,7.76-3C56.18,30,56.15,24.79,56.12,22l0-13.46Zm38.2,19.9A4.72,4.72,0,0,1,91,29.6c-1.21-.17-2.19-1.06-2.35-4V14.36h7.93V8.55H88.66V1H81.94V2.48h0V24.67c0,3.53.89,11.73,9.07,11.73a11.74,11.74,0,0,0,7.71-3.2l.14-.11-4-5S94.53,28.34,94.35,28.47Z"/>
+                                        </svg>
+
+                                    </a>
+                                    <h4 id="header-intro" class="mktoText"><div></div></h4>
+                                    <h1 style="font-size:36px;" class="text-white margin-top-none">
+                                        <div id="header-title" class="mktoText"><div><span class="centra-med" style="font-size: 30px;">We’d love to get your feedback… <br/><span class="centra-med" style="font-size: 20px; line-height: 1.2;">Even if you’d like to unsubscribe from user experience research opportunities. Feel free to leave any comments for us on your way out.</span></span></div></div>
+
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="body-marketo-template">
+                        <div class="container padding-top-xs-20px padding-top-md-40px padding-bottom-none">
+                            <div class="row">
+                                <div class="col-lg-4 col-lg-offset-1 col-md-5 col-md-push-7 text-center">
+                                    <div class="form-wrapper"><div id="formtitle" class="mktoText"><h4><br/></h4></div>
+                                        <div class="form bg-white border border-radius-4px">
+                                            <div class="form-group form-group-icon-user" id="form-area" style="padding: 10px;">
+                                                <div class="mktoForm" id="exampleForm"><div id="lpeCDiv_90610" class="lpeCElement UX_research_-_unsubscribe_from_future_test_segments"><span class="lpContentsItem formSpan">
+
+                                                    <form class="mktoForm mktoHasWidth mktoLayoutLeft"  style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; color: rgb(51, 51, 51); width: 421px;">
+
+                                                        <div class="mktoFormRow">
+                                                            <div class="mktoFieldDescriptor mktoFormCol" style="margin-bottom: 10px;">
+                                                                <div class="mktoOffset" style="width: 10px;"></div>
+                                                                <div class="mktoFieldWrap">
+                                                                    <label for="Email" class="mktoLabel mktoHasWidth" style="width: 100px;">
+                                                                        <div class="mktoAsterix">*</div>Name:
+
+                                                                    </label>
+
+                                                                    <div class="mktoGutter mktoHasWidth" style="width: 10px;"></div>
+
+                                                                    <div class="mktoField mktoEmailField mktoHasWidth mktoValid" style="width: 150px;">
+
+
+                                                                    </div>
+                                                                    <div class="mktoClear"></div>
+                                                                    <apex:outputText value="{!conName}"  />
+                                                                </div>
+                                                                <div class="mktoClear"></div>
+                                                            </div>
+                                                            <div class="mktoClear"></div>
+                                                        </div>
+                                                        <div class="mktoFormRow">
+                                                            <div class="mktoFieldDescriptor mktoFormCol" style="margin-bottom: 10px;">
+                                                                <div class="mktoOffset" style="width: 10px;"></div>
+                                                                <div class="mktoFieldWrap">
+                                                                    <label for="uXResearchComments" class="mktoLabel mktoHasWidth" style="width: 100px;">
+                                                                        <div class="mktoAsterix">*</div>Any comments?
+                                                                    </label>
+                                                                    <div class="mktoGutter mktoHasWidth" style="width: 10px;"></div>
+
+                                                                    <apex:inputText value="{!comment}"  />
+                                                                    <div class="mktoClear"></div>
+                                                                </div>
+                                                                <div class="mktoClear"></div>
+                                                            </div>
+                                                            <div class="mktoClear"></div>
+                                                        </div>
+
+                                                        <div class="mktoButtonRow">
+                                                            <span class="mktoButtonWrap mktoDownloadButton" >
+                                                                <apex:commandButton Styleclass="mktoButton" value="Unsubscribe" action="{!UnsubcribeEmail}" />
+                                                            </span></div>
+                                                    </form>
+                                                    </span></div>
+                                                </div></div>
+                                            <hr/>
+                                            <div class="testimonial-headshot-horizontal margin-bottom-none">
+                                                <div id="testimonials-title" class="mktoText"><div></div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 col-md-pull-5">
+                                    <div id="title" class="mktoText"><div></div></div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section><div id="mktoStyleLoaded" style="display: none; border-top-color: rgb(18, 52, 86);"></div>
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" rendered="{!if(conName=null,true,false)}" styleclass="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+                    <section class="hero-marketo-template" style="min-height:300px">
+                        <div class="container padding-top-xs-25px padding-top-md-50px">
+                            <div class="row text-center-xs text-left-md">
+                                <div class="col-md-8">
+                                    <a href="https://go.gusto.com/">
+                                        <svg class="logo-white logo-gusto" viewBox="0 0 180 50">
+                                            <title>Online Payroll, Health Benefits, Workers' Comp</title>
+                                            <alt>Online Payroll, Health Benefits, Workers' Comp</alt>
+                                            <path fill="#fff" d="M113,8a14.2,14.2,0,1,0,14.13,14.2A14.18,14.18,0,0,0,113,8Zm0,21.67a7.47,7.47,0,1,1,7.44-7.47A7.46,7.46,0,0,1,113,29.68ZM71.39,19.34,68.92,18.1a7.61,7.61,0,0,1-2-1.26,1.43,1.43,0,0,1-.41-1,1.41,1.41,0,0,1,.64-1.19,2.82,2.82,0,0,1,1.77-.48c1.39,0,2.93.83,4.62,2.52l4.17-4.19A10.91,10.91,0,0,0,68.86,8a8.93,8.93,0,0,0-6.29,2.27,7.19,7.19,0,0,0-2.45,5.47c0,3.3,2.16,6.06,6.51,8.25l2.27,1.14c2,1,2.94,2,2.94,3.05A1.87,1.87,0,0,1,71,29.7a3.3,3.3,0,0,1-2.15.65,6.19,6.19,0,0,1-2.83-.86,9.56,9.56,0,0,1-2.77-2.25l-4.15,4.54a11.18,11.18,0,0,0,9.38,4.62,10,10,0,0,0,7-2.41,7.8,7.8,0,0,0,2.63-6,7.84,7.84,0,0,0-1.45-4.71,14.59,14.59,0,0,0-5.35-3.94Zm-42,14V8.58H22.71v1.65A14,14,0,0,0,15.13,8a14.2,14.2,0,0,0,0,28.4,13.91,13.91,0,0,0,7.5-2.17c0,.22,0,.42,0,.55a7.42,7.42,0,0,1-11.37,6.33L7.94,47a13.88,13.88,0,0,0,7.26,2A14.26,14.26,0,0,0,29.42,34.8C29.42,34.5,29.44,33.6,29.42,33.32ZM15.13,29.68a7.47,7.47,0,1,1,7.44-7.47,7.46,7.46,0,0,1-7.44,7.47Zm41-21.11H49.4v13.5c0,1.92,0,5.23-1.39,6.64a4.05,4.05,0,0,1-5.93,0c-1.41-1.42-1.4-4.74-1.39-6.64V8.57H34V22c0,2.77-.06,7.92,3.33,11.34a10.08,10.08,0,0,0,7.76,3,10.07,10.07,0,0,0,7.76-3C56.18,30,56.15,24.79,56.12,22l0-13.46Zm38.2,19.9A4.72,4.72,0,0,1,91,29.6c-1.21-.17-2.19-1.06-2.35-4V14.36h7.93V8.55H88.66V1H81.94V2.48h0V24.67c0,3.53.89,11.73,9.07,11.73a11.74,11.74,0,0,0,7.71-3.2l.14-.11-4-5S94.53,28.34,94.35,28.47Z"/>
+                                        </svg>
+
+                                    </a>
+                                    <h4 id="header-intro" class="mktoText"><div></div></h4>
+                                    <h1 style="font-size:36px;" class="text-white margin-top-none">
+                                        <div id="header-title" class="mktoText"><div><span style="font-size: 30px;">Invalid Detail</span></div></div>
+
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" styleclass="slds-grid slds-wrap slds-gutters_large" rendered="{!showMessage}">
+                <section class="hero-marketo-template" style="min-height:300px">
+                    <div class="container padding-top-xs-25px padding-top-md-50px">
+                        <div class="row text-center-xs text-left-md">
+                            <div class="col-md-8">
+                                <a href="https://go.gusto.com/">
+                                    <svg class="logo-white logo-gusto" viewBox="0 0 180 50">
+                                        <title>Online Payroll, Health Benefits, Workers' Comp</title>
+                                        <alt>Online Payroll, Health Benefits, Workers' Comp</alt>
+                                        <path fill="#fff" d="M113,8a14.2,14.2,0,1,0,14.13,14.2A14.18,14.18,0,0,0,113,8Zm0,21.67a7.47,7.47,0,1,1,7.44-7.47A7.46,7.46,0,0,1,113,29.68ZM71.39,19.34,68.92,18.1a7.61,7.61,0,0,1-2-1.26,1.43,1.43,0,0,1-.41-1,1.41,1.41,0,0,1,.64-1.19,2.82,2.82,0,0,1,1.77-.48c1.39,0,2.93.83,4.62,2.52l4.17-4.19A10.91,10.91,0,0,0,68.86,8a8.93,8.93,0,0,0-6.29,2.27,7.19,7.19,0,0,0-2.45,5.47c0,3.3,2.16,6.06,6.51,8.25l2.27,1.14c2,1,2.94,2,2.94,3.05A1.87,1.87,0,0,1,71,29.7a3.3,3.3,0,0,1-2.15.65,6.19,6.19,0,0,1-2.83-.86,9.56,9.56,0,0,1-2.77-2.25l-4.15,4.54a11.18,11.18,0,0,0,9.38,4.62,10,10,0,0,0,7-2.41,7.8,7.8,0,0,0,2.63-6,7.84,7.84,0,0,0-1.45-4.71,14.59,14.59,0,0,0-5.35-3.94Zm-42,14V8.58H22.71v1.65A14,14,0,0,0,15.13,8a14.2,14.2,0,0,0,0,28.4,13.91,13.91,0,0,0,7.5-2.17c0,.22,0,.42,0,.55a7.42,7.42,0,0,1-11.37,6.33L7.94,47a13.88,13.88,0,0,0,7.26,2A14.26,14.26,0,0,0,29.42,34.8C29.42,34.5,29.44,33.6,29.42,33.32ZM15.13,29.68a7.47,7.47,0,1,1,7.44-7.47,7.46,7.46,0,0,1-7.44,7.47Zm41-21.11H49.4v13.5c0,1.92,0,5.23-1.39,6.64a4.05,4.05,0,0,1-5.93,0c-1.41-1.42-1.4-4.74-1.39-6.64V8.57H34V22c0,2.77-.06,7.92,3.33,11.34a10.08,10.08,0,0,0,7.76,3,10.07,10.07,0,0,0,7.76-3C56.18,30,56.15,24.79,56.12,22l0-13.46Zm38.2,19.9A4.72,4.72,0,0,1,91,29.6c-1.21-.17-2.19-1.06-2.35-4V14.36h7.93V8.55H88.66V1H81.94V2.48h0V24.67c0,3.53.89,11.73,9.07,11.73a11.74,11.74,0,0,0,7.71-3.2l.14-.11-4-5S94.53,28.34,94.35,28.47Z"/>
+                                    </svg>
+
+                                </a>
+                                <h4 id="header-intro" class="mktoText"><div></div></h4>
+                                <h1 style="font-size:36px;" class="text-white margin-top-none">
+                                    <div id="header-title" class="mktoText"><div><span style="font-size: 30px;">You've unsubscribed from Gusto's user experience research emails.</span></div></div>
+
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </apex:outputPanel>
+            <footer class="border-top" id="paid-footer">
+                <section class="bg-salt-50">
+                    <div class="container padding-top-20px padding-bottom-20px">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-12 text-left-md text-center-xs">
+                                <a class="logo padding-none" href="https://go.gusto.com/">
+                                    <svg class="logo-gusto" viewBox="0 0 180 50">
+                                        <title>Online Payroll, Health Benefits, Workers' Comp</title>
+                                        <alt>Online Payroll, Health Benefits, Workers' Comp</alt>
+                                        <path fill="#fff" d="M113,8a14.2,14.2,0,1,0,14.13,14.2A14.18,14.18,0,0,0,113,8Zm0,21.67a7.47,7.47,0,1,1,7.44-7.47A7.46,7.46,0,0,1,113,29.68ZM71.39,19.34,68.92,18.1a7.61,7.61,0,0,1-2-1.26,1.43,1.43,0,0,1-.41-1,1.41,1.41,0,0,1,.64-1.19,2.82,2.82,0,0,1,1.77-.48c1.39,0,2.93.83,4.62,2.52l4.17-4.19A10.91,10.91,0,0,0,68.86,8a8.93,8.93,0,0,0-6.29,2.27,7.19,7.19,0,0,0-2.45,5.47c0,3.3,2.16,6.06,6.51,8.25l2.27,1.14c2,1,2.94,2,2.94,3.05A1.87,1.87,0,0,1,71,29.7a3.3,3.3,0,0,1-2.15.65,6.19,6.19,0,0,1-2.83-.86,9.56,9.56,0,0,1-2.77-2.25l-4.15,4.54a11.18,11.18,0,0,0,9.38,4.62,10,10,0,0,0,7-2.41,7.8,7.8,0,0,0,2.63-6,7.84,7.84,0,0,0-1.45-4.71,14.59,14.59,0,0,0-5.35-3.94Zm-42,14V8.58H22.71v1.65A14,14,0,0,0,15.13,8a14.2,14.2,0,0,0,0,28.4,13.91,13.91,0,0,0,7.5-2.17c0,.22,0,.42,0,.55a7.42,7.42,0,0,1-11.37,6.33L7.94,47a13.88,13.88,0,0,0,7.26,2A14.26,14.26,0,0,0,29.42,34.8C29.42,34.5,29.44,33.6,29.42,33.32ZM15.13,29.68a7.47,7.47,0,1,1,7.44-7.47,7.46,7.46,0,0,1-7.44,7.47Zm41-21.11H49.4v13.5c0,1.92,0,5.23-1.39,6.64a4.05,4.05,0,0,1-5.93,0c-1.41-1.42-1.4-4.74-1.39-6.64V8.57H34V22c0,2.77-.06,7.92,3.33,11.34a10.08,10.08,0,0,0,7.76,3,10.07,10.07,0,0,0,7.76-3C56.18,30,56.15,24.79,56.12,22l0-13.46Zm38.2,19.9A4.72,4.72,0,0,1,91,29.6c-1.21-.17-2.19-1.06-2.35-4V14.36h7.93V8.55H88.66V1H81.94V2.48h0V24.67c0,3.53.89,11.73,9.07,11.73a11.74,11.74,0,0,0,7.71-3.2l.14-.11-4-5S94.53,28.34,94.35,28.47Z"/>
+                                    </svg>
+
+                                </a>
+                            </div>
+                            <div class="col-md-8 col-sm-12 text-left-md text-center-xs">
+                                <ul class="footer-links inline-block">
+                                    <li>
+                                        <a href="https://gusto.com/product/how-it-works">
+                                            How it works
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://gusto.com/product/pricing">
+                                            Pricing
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://gusto.com/about/contact">
+                                            Contact
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-2 col-sm-12 text-right-md text-center-xs">
+                                <ul class="inline-block">
+                                    <li>
+                                        <a href="tel:8009360383">
+                                            (800) 936-0383
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </footer>
+
+        </body>
+    </apex:form>
+</apex:page>

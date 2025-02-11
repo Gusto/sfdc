@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <assignments>
+        <name>Access_Requested_Date_Assignment</name>
+        <label>Access Requested Date Assignment</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Access_Requested_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Payroll_Audit_Automation_Date_Check</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Audit_Automation_Date_Assignment</name>
+        <label>Audit Automation Date Assignment</label>
+        <locationX>50</locationX>
+        <locationY>767</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Audit_Automation_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Payroll_Audit_Manual_Review_Completed_Date_Check</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Manual_Review_Completed_date_Assignment</name>
+        <label>Manual Review Completed date Assignment</label>
+        <locationX>50</locationX>
+        <locationY>1103</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Manual_Review_Completion_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Payroll_Audit_Access_Requested_Date_Check</name>
+        <label>Payroll Audit Access Requested Date Check</label>
+        <locationX>182</locationX>
+        <locationY>311</locationY>
+        <defaultConnector>
+            <targetReference>Payroll_Audit_Automation_Date_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Access_Requested_Date_Check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Access_Automation_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Completed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Access_Requested_Date_Assignment</targetReference>
+            </connector>
+            <label>Access Requested Date Check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Payroll_Audit_Automation_Date_Check</name>
+        <label>Payroll Audit Automation Date Check</label>
+        <locationX>182</locationX>
+        <locationY>647</locationY>
+        <defaultConnector>
+            <targetReference>Payroll_Audit_Manual_Review_Completed_Date_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Audit_Automation_Date_Check</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Audit_Automation_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Error Found</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Audit_Automation_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>No Error Found</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Audit_Automation_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Failed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Audit_Automation_Date_Assignment</targetReference>
+            </connector>
+            <label>Audit Automation Date Check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Payroll_Audit_Manual_Review_Completed_Date_Check</name>
+        <label>Payroll Audit Manual Review Completed Date Check</label>
+        <locationX>182</locationX>
+        <locationY>983</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Manual_Review_Completed_Date_Check</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Manual_Review_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Completed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Manual_Review_Completed_date_Assignment</targetReference>
+            </connector>
+            <label>Manual Review Completed Date Check</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Payroll Audit Before Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Payroll Audit Before Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Payroll_Audit_Access_Requested_Date_Check</targetReference>
+        </connector>
+        <object>Payroll_Audit__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

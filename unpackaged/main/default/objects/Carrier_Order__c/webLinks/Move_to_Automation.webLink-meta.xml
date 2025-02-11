@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Move_to_Automation</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Move to Automation</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/connection.js&quot;)}  
+
+{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/apex.js&quot;)}
+
+var objCarrier= new sforce.SObject(&quot;Carrier_Order__c&quot;);
+objCarrier.Id = &apos;{!Carrier_Order__c.Id}&apos;;
+ console.log(&quot;recordId : &quot; + objCarrier.Id);
+
+alert(sforce.apex.execute(&quot;CarrierOrderMoveToRPACtrl&quot;,&quot;assignAutomationQueue&quot;,{strCarrierOrderId:objCarrier.Id }))
+document.location.reload(true);</url>
+</WebLink>

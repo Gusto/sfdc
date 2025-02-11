@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sold_By_CX_Experiment__c</fullName>
+    <description>The CX Experiment field from the account. Created for BT-16496.
+Note:  This did point to the sold by account field.  But the in order to meet the business needs it was changed to the Account. This field is used in Purecloud flows so the name/label was not changed.</description>
+    <externalId>false</externalId>
+    <formula>TEXT( Account.CX_Experiment__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>CX Experiment (CX Pilot)</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

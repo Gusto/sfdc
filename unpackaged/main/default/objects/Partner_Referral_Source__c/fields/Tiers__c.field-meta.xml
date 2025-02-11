@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tiers__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <description>Registered - new partners developing against Gusto API, unmanaged until they bring 10+ net new customers per month or have 100+ active integrations
+Emerging - new partners with growth potential (100-5000 customers) developing against Gusto API, non-dedicated management until they bring 20+ net new customers per month
+Strategic partners - new partners developing against Gusto API with 10K+ customers, highly managed and deep GTM commitments, 20+ net new customers per month expected</description>
+    <label>Tiers</label>
+    <required>false</required>
+    <securityClassification>Public</securityClassification>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Registered</fullName>
+                <default>false</default>
+                <label>Registered</label>
+            </value>
+            <value>
+                <fullName>Emerging</fullName>
+                <default>false</default>
+                <label>Emerging</label>
+            </value>
+            <value>
+                <fullName>Strategic</fullName>
+                <default>false</default>
+                <label>Strategic</label>
+            </value>
+            <value>
+                <fullName>Referral</fullName>
+                <default>false</default>
+                <label>Referral</label>
+            </value>
+            <value>
+                <fullName>Accountech</fullName>
+                <default>false</default>
+                <label>Accountech</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

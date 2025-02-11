@@ -1,0 +1,30 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:lightningQuickAction" controller="NBAServeRecord" access="global">
+	<!-- Declaring all services we need -->
+	<lightning:workspaceAPI aura:id="workspace" />
+	<lightning:navigation aura:id="navService" />
+
+	<!-- Declaring all handlers -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+	<!-- Declaring all variables -->
+	<aura:attribute name="isLoading" type="Boolean" default="false" />
+	<aura:attribute name="strSource" type="String" default="utility" />
+	<aura:attribute name="blnBodyVisible" type="Boolean" default="true" />
+	<aura:attribute name="intRetryAttempt" type="Integer" default="1" />
+
+	<aura:if isTrue="{!v.isLoading}">
+		<lightning:spinner alternativeText="Loading" size="medium" variant="brand" />
+	</aura:if>
+	<div class="slds-box slds-theme_default">
+		<aura:if isTrue="{!v.blnBodyVisible}">
+			<!-- Component body containing button to serve the next record -->
+			<div class="slds-text-heading_medium slds-text-align_center slds-p-around_small">Next Best Action - Play Record</div>
+			<div class="slds-align_absolute-center">
+				<lightning:button aura:id="getNextRecord" variant="brand" label="NBA Get Next Record" title="NBA Get Next Record" onclick="{! c.handlePlay }" iconName="utility:play" />
+			</div>
+			<aura:set attribute="else">
+				<div class="slds-text-body_regular slds-align_absolute-center">Please do not close this modal window.</div>
+			</aura:set>
+		</aura:if>
+	</div>
+</aura:component>

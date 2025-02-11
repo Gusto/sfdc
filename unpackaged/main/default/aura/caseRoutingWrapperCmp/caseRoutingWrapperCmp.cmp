@@ -1,0 +1,18 @@
+<!--
+    Purpose: Aura component wrapper that is responsible for routing cases
+    Written by : Praveen Sethu
+    Date: 09/16/2020
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable,force:hasRecordId">
+
+    <!-- workspace api need to close tabs -->
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <!-- Record Id fetched from Page -->
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="strCaseReasonsToSkip" type="String" access="public" />
+
+    <!-- onclosefocustab = event fired after routing is successful-->
+    <c:caseRoutingCmp recordid="{!v.recordId}" onclosefocustab="{!c.handleCloseFocusTab}"
+        strCaseReasonsToSkip="{!v.strCaseReasonsToSkip}">
+    </c:caseRoutingCmp>
+</aura:component>

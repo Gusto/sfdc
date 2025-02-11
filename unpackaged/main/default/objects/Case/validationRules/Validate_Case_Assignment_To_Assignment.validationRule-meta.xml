@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validate_Case_Assignment_To_Assignment</fullName>
+    <active>true</active>
+    <description>Prevent cases from being assigned to assignment queues</description>
+    <errorConditionFormula>NOT(ISNEW()) &amp;&amp; ISChanged( OwnerId ) &amp;&amp; CONTAINS(Owner:Queue.QueueName, &apos;Assignment&apos;) &amp;&amp;
+ NOT($User.Exempt_from_Validation_Rules__c)</errorConditionFormula>
+    <errorMessage>Cases cannot be assigned to assignment queue</errorMessage>
+</ValidationRule>

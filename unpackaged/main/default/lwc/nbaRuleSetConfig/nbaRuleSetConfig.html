@@ -1,0 +1,670 @@
+<template>
+	<div class="slds-box slds-theme_default">
+		<!-- Loading bar -->
+		<template if:true={blnLoading}>
+			<lightning-spinner class="slds-is-fixed" alternative-text="Loading" variant="brand" style="z-index: 9999;"></lightning-spinner>
+		</template>
+
+		<!-- NBA Title -->
+		<div class="slds-text-heading_medium slds-text-align_center slds-var-p-around_small">Next Best Action Rule Set</div>
+
+		<div class="slds-clearfix slds-float_right slds-var-p-around_small" if:false={blnError}>
+			<lightning-button variant="brand" label="New Rule Set" onclick={createNewConfig} disabled={blnViewOnlyAccess} icon-name="utility:record_create"></lightning-button>
+		</div>
+		<!-- Combo box to pick a rule set -->
+		<div class="slds-clearfix slds-align_absolute-center slds-var-p-around_small" if:false={blnError}>
+			<lightning-combobox
+				name="pickateam"
+				placeholder="Pick a rule set"
+				label="Pick a rule set"
+				options={list_TeamNames}
+				value={strSelectedTeam}
+				onchange={handleChangeTeam}
+				variant="label-inline"
+			></lightning-combobox>
+		</div>
+
+		<!-- Button groups to save and cancel -->
+		<div class="slds-clearfix slds-align_absolute-center slds-var-p-around_small" if:true={blnChanged}>
+			<lightning-button-group>
+				<lightning-button variant="brand" label="Save" onclick={handleSave} disabled={blnViewOnlyAccess}></lightning-button>
+				<lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+			</lightning-button-group>
+		</div>
+
+		<!-- Configurable warning message -->
+		<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert" if:true={showMessage}>
+			<span class="slds-assistive-text">warning</span>
+			<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Description of icon when needed">
+				<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+					<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+				</svg>
+			</span>
+			<h2>{strWarningMessage}</h2>
+		</div>
+		<template if:false={showMessage}>
+			<!-- Warning message to show user has view only access -->
+			<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert" if:true={blnViewOnlyAccess}>
+				<span class="slds-assistive-text">warning</span>
+				<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Description of icon when needed">
+					<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+						<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+					</svg>
+				</span>
+				<h2>{strViewOnlyAccessMessage}</h2>
+			</div>
+
+			<!-- allows the user to choose list of user roles -->
+			<lightning-accordion allow-multiple-sections-open active-section-name={list_openSections}>
+				<lightning-accordion-section name="1" label="Select user roles">
+					<div class="slds-grid slds-wrap">
+						<div class="slds-size_6-of-12">
+							<div class="slds-box slds-box_x-small slds-text-align_center">
+								<lightning-dual-listbox
+									id="selectRoles"
+									name="Select User Roles"
+									label="Select User Roles"
+									source-label="Available Roles"
+									selected-label="Selected Roles"
+									options={list_AvailableRoles}
+									data-field="User_Roles__c"
+									onchange={handleUserRoleChange}
+									disabled={blnViewOnlyAccess}
+									value={list_SelectedRoles}
+								>
+								</lightning-dual-listbox>
+							</div>
+						</div>
+
+						<div class="slds-size_6-of-12"></div>
+
+						<div class="slds-size_6-of-12">
+							<div class="slds-clearfix slds-align_absolute-center slds-var-p-around_medium">
+								<lightning-button-group>
+									<lightning-button variant="brand" label="Save" onclick={handleConfigSave} disabled={blnViewOnlyAccess}></lightning-button>
+									<lightning-button variant="neutral" label="Cancel" onclick={handleAccordionCancel}></lightning-button>
+								</lightning-button-group>
+							</div>
+						</div>
+					</div>
+				</lightning-accordion-section>
+			</lightning-accordion>
+
+			<br />
+			<div class="slds-clearfix slds-float_right slds-var-p-around_small" style="padding-bottom: 15px" if:false={blnError}>
+				<lightning-button variant="brand" label="New Rule" onclick={createNewRule} disabled={blnViewOnlyAccess} icon-name="utility:record_create"></lightning-button>
+			</div>
+			<div class="slds-clearfix slds-float_right slds-var-p-around_small" style="padding-bottom: 15px">
+				<template if:true={blnMaxRefreshAllHelp}>
+					<lightning-helptext content="This rule set has already been refreshed the maximum number of times today. Please try again tomorrow morning."></lightning-helptext>
+				</template>
+				<template if:true={blnNoRefreshConfig}>
+					<lightning-helptext content="Refresh has not been configured for this rule set, please contact BizTech."></lightning-helptext>
+				</template>
+				<lightning-button variant="brand" label={strRefreshAllLabel} onclick={handleRefreshAllRules} disabled={blnMaxRefreshAll} icon-name="utility:refresh"></lightning-button>
+			</div>
+
+			<br /><br />
+
+			<!-- Beginning of Table -->
+			<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+				<thead>
+					<tr class="slds-line-height_reset">
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Rule Name">Rule Name</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Rule Last Updated By" style="vertical-align: baseline">
+								Rule Last Updated By &nbsp;
+								<lightning-helptext
+									content="Indicates the user who updated the criteria or rule attributes. This field is not updated for Record Refresh or when serving a record updates the Last Ran with Zero Records field."
+								></lightning-helptext>
+							</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Priority">Priority</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Move Priority">Move Priority</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Is Active">Is Active</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="View Buttons">View Buttons</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Skills used">Skills used</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Hold Out">Hold Out</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Record Count">Record Count</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Record Count">Record Count</div>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template for:each={list_rules} for:item="rule">
+						<tr class="slds-hint-parent" key={rule.Id}>
+							<th scope="row">
+								<div class="slds-truncate" key={rule.Id}><a onclick={handleClickRule} data-id={rule.Id}> {rule.Rule_Name__c} </a></div>
+							</th>
+							<td>
+								<div class="slds-truncate slds-text-align_center">
+									{rule.LastModifiedBy}
+									<div>
+										<lightning-formatted-date-time
+											value={rule.LastModifiedDate}
+											year="numeric"
+											month="numeric"
+											day="numeric"
+											hour="2-digit"
+											minute="2-digit"
+										></lightning-formatted-date-time>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="slds-truncate slds-text-align_center">{rule.Priority__c}</div>
+							</td>
+							<td>
+								<template if:true={rule.Is_Active__c}>
+									<lightning-combobox
+										name="progress"
+										data-id={rule.Id}
+										value={rule.List_Chosen__c}
+										placeholder="Move Priority"
+										options={rule.List_Priority__c}
+										disabled={blnViewOnlyAccess}
+										onchange={handleChange}
+									></lightning-combobox>
+								</template>
+								<template if:false={rule.Is_Active__c}>
+									<lightning-combobox
+										name="progress"
+										data-id={rule.Id}
+										value={rule.List_Chosen__c}
+										placeholder="Move Priority"
+										options={rule.List_Priority__c}
+										disabled="true"
+									></lightning-combobox>
+								</template>
+							</td>
+							<td>
+								<div class="slds-truncate" title="20%">
+									<template if:true={rule.Is_Active__c}>
+										<lightning-input data-id={rule.Id} type="toggle" name="isactivecheckbox" checked onchange={handleActiveChange}></lightning-input>
+									</template>
+									<template if:false={rule.Is_Active__c}>
+										<lightning-input data-id={rule.Id} data-checkbox={rule.Id} type="toggle" name="isactivecheckbox" onchange={handleActiveChange}></lightning-input>
+									</template>
+								</div>
+							</td>
+							<td>
+								<div class="slds-truncate slds-text-align_center" style="padding-top: 3px; padding-bottom: 3px">
+									<div><lightning-button variant="brand" label="Criteria" data-id={rule.Id} onclick={handleViewRules}></lightning-button> <br /></div>
+									<div>
+										<lightning-button variant="neutral" label="Records" data-id={rule.Id} onclick={handleViewRecords}></lightning-button>
+									</div>
+								</div>
+							</td>
+
+							<td>
+								<div class="slds-truncate slds-text-align_center" style="white-space: pre-line;">
+									<template lwc:if={rule.Are_Skills_Used__c}>
+										<template for:each={rule.Skills_Used__c} for:item="skill">
+											{skill}
+											<br key={skill} />
+										</template>
+									</template>
+									<br />
+									<a onclick={handleViewSkills} data-id={rule.Id}>Edit</a>
+								</div>
+							</td>
+
+							<td style="width: 10px">
+								<div class="slds-truncate slds-text-align_center">
+									<lightning-input
+										label=""
+										variant="label-hidden"
+										type="number"
+										name="input8"
+										max="99"
+										step="1"
+										min="1"
+										disabled={blnViewOnlyAccess}
+										message-when-bad-input="Hold Out percentage must be between 1 and 99 in whole number increments"
+										message-when-range-overflow="Hold Out percentage must be between 1 and 99 in whole number increments"
+										message-when-range-underflow="Hold Out percentage must be between 1 and 99 in whole number increments"
+										message-when-step-mismatch="Hold Out percentage must be between 1 and 99 in whole number increments"
+										data-field="Hold_Out_Percentage__c"
+										onchange={handleRuleChange}
+										value={rule.Hold_Out_Percentage__c}
+										data-id={rule.Id}
+										data-holdout={rule.Id}
+									></lightning-input>
+								</div>
+							</td>
+
+							<td>
+								<div class="slds-truncate slds-text-align_center">
+									<lightning-button-group>
+										<lightning-button variant="brand" label="Refresh" data-id={rule.Id} onclick={handleViewRecordCount}></lightning-button>
+									</lightning-button-group>
+								</div>
+							</td>
+							<td>
+								<div class="slds-truncate slds-text-align_center">
+									<template for:each={rule.Record_Count__c} for:item="count">
+										{count}
+										<br key={count} />
+									</template>
+									<br />
+									Last Refreshed:
+
+									<template if:true={rule.Refresh_Date_Available__c}>
+										<lightning-formatted-date-time
+											value={rule.Last_Refreshed_Date__c}
+											year="numeric"
+											month="numeric"
+											day="numeric"
+											hour="2-digit"
+											minute="2-digit"
+										></lightning-formatted-date-time>
+									</template>
+									<br />
+
+									<template if:false={rule.Refresh_Date_Available__c}> {rule.Last_Refreshed_Date__c} </template>
+
+									<template if:true={rule.Last_Zero_Record_Run_Date_Available__c}>
+										Last Zero Records Run:
+
+										<lightning-formatted-date-time
+											value={rule.Last_Ran_With_Zero_Records__c}
+											year="numeric"
+											month="numeric"
+											day="numeric"
+											hour="2-digit"
+											minute="2-digit"
+										></lightning-formatted-date-time>
+									</template>
+								</div>
+							</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</template>
+		<div class="slds-clearfix slds-align_absolute-center slds-var-p-around_medium" if:true={blnChanged}>
+			<lightning-button-group>
+				<lightning-button variant="brand" label="Save" onclick={handleSave} disabled={blnViewOnlyAccess}></lightning-button>
+				<lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+			</lightning-button-group>
+		</div>
+
+		<template if:true={viewModal}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-02" class="slds-modal slds-fade-in-open slds-modal_large">
+				<div class="slds-modal__container">
+					<div class="slds-modal__header">
+						<h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate">View Records - {viewRulesName}</h1>
+					</div>
+					<template if:false={blnViewRecordsAvailable}>
+						<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert">
+							<span class="slds-assistive-text">warning</span>
+							<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Description of icon when needed">
+								<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+									<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+								</svg>
+							</span>
+							<h2>No criteria found</h2>
+						</div>
+					</template>
+					<div class="slds-modal__content" id="modal-content-id-2" style="overflow: scroll">
+						<template for:each={list_ViewRecords} for:item="record">
+							<div key={record}>
+								<div class="slds-text-heading_medium slds-text-align_center slds-p-around_small">{record.strTitle}</div>
+
+								<template if:false={record.blnRecordsAvailable}>
+									<div class="slds-notify slds-notify_alert slds-alert_warning slds-var-p-around_small" role="alert">
+										<span class="slds-assistive-text">warning</span>
+										<span class="slds-icon_container slds-icon-utility-warning slds-var-m-right_x-small" title="Description of icon when needed">
+											<svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+												<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+											</svg>
+										</span>
+										<h2>No records available for this rule.</h2>
+									</div>
+								</template>
+
+								<template if:true={record.blnRecordsAvailable}>
+									<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+										<thead>
+											<tr class="slds-line-height_reset">
+												<template for:each={record.list_Titles} for:item="title">
+													<th class="" scope="col" key={title}>
+														<div class="slds-truncate" title={title}>{title}</div>
+													</th>
+												</template>
+											</tr>
+										</thead>
+										<tbody>
+											<template for:each={record.list_Rows} for:item="row">
+												<tr class="slds-hint-parent" key={row.Id}>
+													<template for:each={row.list_Fields} for:item="field">
+														<td key={field.Id}>
+															<template if:true={field.isLink}>
+																<div class="slds-truncate slds-text-align_center"><a data-id={field.id} onclick={handleOpenRecord}> {field.value} </a></div>
+															</template>
+															<template if:false={field.isLink}>
+																<template if:true={field.isDateTime}>
+																	<lightning-formatted-date-time
+																		value={field.value}
+																		year="numeric"
+																		month="numeric"
+																		day="numeric"
+																		hour="2-digit"
+																		minute="2-digit"
+																	></lightning-formatted-date-time>
+																</template>
+
+																<template if:false={field.isDateTime}>
+																	<div class="slds-truncate slds-text-align_center">{field.value}</div>
+																</template>
+															</template>
+														</td>
+													</template>
+												</tr>
+											</template>
+										</tbody>
+									</table>
+								</template>
+
+								<br />
+								<br />
+							</div>
+						</template>
+					</div>
+
+					<div class="slds-modal__footer">
+						<lightning-button label="Cancel" variant="brand" title="Cancel" onclick={handleModalCancel} style="padding-right: 5px"></lightning-button> &nbsp; &nbsp; &nbsp;
+						<lightning-button label="Refresh" icon-name="utility:refresh" variant="nuetral" title="Refresh" data-id={viewRecordId} onclick={handleViewRecords}></lightning-button>
+					</div>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+
+		<template if:true={viewSkillsModal}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+				<div class="slds-modal__container">
+					<div class="slds-modal__header">
+						<h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Edit Skills - {viewRulesName}</h1>
+					</div>
+					<div class="slds-modal__content" id="modal-content-id-1" style="overflow: scroll">
+						<div class="slds-grid slds-wrap slds-box">
+							<div class="slds-size_6-of-12">
+								<div class="slds-box slds-box_x-small slds-text-align_center">
+									<label class="slds-form-element__label slds-form-element__legend">Select User Skills</label>
+									<lightning-helptext
+										class="slds-form-element__legend"
+										content="Select one or more Skills. If more than one skill is selected, the rule will serve up records based on either of the skills along with the Skill Level, if set."
+									></lightning-helptext>
+									<lightning-dual-listbox
+										id="selectSkills"
+										name="Select User Skills"
+										label="Select User Skills"
+										source-label="Available Skills"
+										selected-label="Selected Skills"
+										options={list_AvailableSkills}
+										data-field="User Skills"
+										onchange={handleRuleSkillChange}
+										disabled={blnViewOnlyAccess}
+										value={list_SelectedSkills}
+										variant="label-hidden"
+									>
+									</lightning-dual-listbox>
+								</div>
+							</div>
+
+							<div class="slds-size_6-of-12">
+								<div class="slds-box slds-box_x-small slds-text-align_center">
+									<table class="slds-table slds-table_bordered slds-table_col-bordered">
+										<thead>
+											<tr class="slds-line-height_reset">
+												<th class="" scope="col">
+													<div class="slds-truncate" title="Order"></div>
+												</th>
+												<th class="" scope="col">
+													<div class="slds-truncate" title="Skill Name">Skill Name</div>
+												</th>
+												<th class="" scope="col">
+													<div class="slds-truncate" title="Skill Name">Skill Level Operator</div>
+												</th>
+												<th class="" scope="col">
+													<div class="slds-truncate" title="Skill Level">
+														<label class="slds-form-element__label slds-form-element__legend">Skill Level</label>
+														<lightning-helptext
+															content="Skill Level is optional. 
+														Enter only one skill in Skill Level for each skill unless using '='. 
+														When using '=', enter separate values with a comma separator (2,6 for example)."
+														></lightning-helptext>
+													</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<template for:each={list_RuleSkillsToDisplay} for:item="skill">
+												<tr class="slds-hint-parent" key={skill.Name}>
+													<th scope="row">
+														<div class="slds-truncate slds-text-align_center">{skill.Order}</div>
+													</th>
+													<th scope="row">
+														<div class="slds-truncate slds-text-align_center">{skill.Name}</div>
+													</th>
+													<td>
+														<div class="slds-truncate slds-text-align_center" style="overflow: initial">
+															<lightning-record-edit-form object-api-name="NBA_Rule_Set_Skill__c">
+																<lightning-input-field
+																	field-name="Operator__c"
+																	value={skill.Operator__c}
+																	disabled={blnViewOnlyAccess}
+																	variant="label-stacked"
+																	data-skill={skill.Name}
+																	data-field="operator"
+																	onchange={handleSkillChange}
+																>
+																</lightning-input-field>
+															</lightning-record-edit-form>
+														</div>
+													</td>
+													<td>
+														<div class="slds-truncate slds-text-align_center">
+															<lightning-record-edit-form object-api-name="NBA_Rule_Set_Skill__c">
+																<lightning-input-field
+																	field-name="Skill_Level__c"
+																	value={skill.Skill_Level__c}
+																	disabled={blnViewOnlyAccess}
+																	variant="label-stacked"
+																	data-skill={skill.Name}
+																	data-field="level"
+																	onchange={handleSkillChange}
+																>
+																</lightning-input-field>
+															</lightning-record-edit-form>
+														</div>
+													</td>
+												</tr>
+											</template>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="slds-box slds-box_x-small slds-col slds-grid slds-size_6-of-12">
+								<div class="slds-text-align_center slds-col slds-size_2-of-3 slds-p-right_small">
+									<lightning-input type="text" label="Criteria logic" value={objVisibleRule.RuleSkillsCriteriaLogic}
+										onchange={handleRuleSkillCriteriaChange} data-attribute="RuleSkillsCriteriaLogic"
+										data-uniqueid="RuleSkillsCriteriaLogic" disabled></lightning-input>
+									&nbsp;
+								</div>
+								<div class="slds-text-align_center slds-col slds-size_1-of-3">
+									<lightning-combobox name="RuleSkillLogic" label="Operator" value={objVisibleRule.RuleSkillsLogic} options={objOperatorOptions}
+										onchange={handleRuleSkillCriteriaChange}  data-attribute="RuleSkillsLogic" data-uniqueid="RuleSkillsLogic"></lightning-combobox>
+								</div>
+							</div>
+							<div class="slds-size_6-of-12">
+							</div>
+							<!-- Button groups to save and cancel -->
+							<div class="slds-clearfix slds-align_absolute-center slds-var-p-top_large" if:true={blnSkillChanged}>
+								<lightning-button-group>
+									<lightning-button variant="brand" label="Save" data-event="skills" onclick={handleSave} disabled={blnViewOnlyAccess}></lightning-button>
+									<lightning-button variant="neutral" label="Cancel" data-event="skills" onclick={closeSkillsModal}></lightning-button>
+								</lightning-button-group>
+							</div>
+						</div>
+					</div>
+
+					<div class="slds-modal__footer">
+						<lightning-button label="Close" variant="brand" title="Close" onclick={closeSkillsModal} style="padding-right: 5px"></lightning-button> &nbsp; &nbsp; &nbsp;
+					</div>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+
+		<template if:true={configCreateModalVisible}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+				<div class="slds-modal__container" style="width: 700px">
+					<div class="slds-modal__header">
+						<h1 id="modal-heading-04" class="slds-modal__title slds-hyphenate">Create New Rule Set</h1>
+					</div>
+					<div class="slds-modal__content" id="modal-content-id-4">
+						<div class="slds-grid">
+							<div class="slds-col slds-size_2-of-2">
+								<br />
+
+								<lightning-input
+									label="Rule Set Name"
+									type="text"
+									name="ruleSetName"
+									disabled={blnViewOnlyAccess}
+									data-field="Name"
+									onchange={handleNewRuleSetChange}
+									value={ruleConfigNew.Name}
+									data-id="createNewRuleConfigText"
+									required="true"
+									field-level-help="Rule Set is created for a team and a role. A role can only be added to one Rule Set. Different Rules within a Rule Set can further define the rule criteria, skills/skill level, and priority."
+									variant="label-inline"
+								></lightning-input>
+
+								<br />
+
+								<lightning-input
+									label="Rule Set Abbreviation"
+									type="text"
+									name="ruleSetAbbreviation"
+									disabled={blnViewOnlyAccess}
+									data-field="Abbreviation__c"
+									onchange={handleNewRuleSetChange}
+									value={ruleConfigNew.Abbreviation__c}
+									data-id="createNewRuleConfigAbbr"
+									required="true"
+									max-length="5"
+									field-level-help={abbreviationHelpText}
+									variant="label-inline"
+								></lightning-input>
+
+								<br />
+
+								<lightning-record-edit-form object-api-name="NBA_Rule_Set_Configuration__c">
+									<lightning-input-field
+										field-name="Team_Skill_Type__c"
+										value={ruleConfigNew.Team_Skill_Type__c}
+										disabled={blnViewOnlyAccess}
+										name="skillType"
+										data-id="createNewRuleConfigSkillType"
+										onchange={handleNewRuleSetChange}
+										data-field="Team_Skill_Type__c"
+									>
+									</lightning-input-field>
+								</lightning-record-edit-form>
+							</div>
+						</div>
+
+						<br />
+						<div class="slds-align_absolute-center">
+							<lightning-button type="button" variant="brand" label="Create Rule Set" onclick={createRuleSet}></lightning-button>
+						</div>
+						<br />
+					</div>
+
+					<div class="slds-modal__footer">
+						<lightning-button label="Close" variant="brand" title="Close" onclick={hideConfigModal} style="padding-right: 5px"></lightning-button> &nbsp; &nbsp; &nbsp;
+					</div>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+
+		<template if:true={ruleCreateModalVisible}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-10" class="slds-modal slds-fade-in-open slds-modal_large">
+				<div class="slds-modal__container">
+					<div class="slds-modal__header">
+						<h1 id="modal-heading-10" class="slds-modal__title slds-hyphenate">{newRuleSet.title}</h1>
+					</div>
+					<div class="slds-modal__content" id="modal-content-id-10" style="overflow: scroll">
+						<div class="slds-grid slds-wrap slds-box">
+							<div class="slds-size_6-of-12">
+								<div class="slds-box slds-box_x-small slds-text-align_center">
+									<lightning-input
+										variant="label-inline"
+										label="Rule Name"
+										type="text"
+										name="input9"
+										disabled={blnViewOnlyAccess}
+										data-field="name"
+										onchange={handleNewRuleChange}
+										value={newRuleSet.name}
+										data-id="createNewRuleText"
+										field-level-help="A new rule is added as inactive and the priority set to the last numbered priority."
+										required="true"
+									></lightning-input>
+								</div>
+							</div>
+
+							<div class="slds-size_6-of-12">
+								<div class="slds-box slds-box_x-small slds-text-align_center">
+									<lightning-combobox
+										name="cloneroles"
+										placeholder="Clone Rule"
+										label="Clone Rule"
+										options={newRuleSet.cloneOptions}
+										value={newRuleSet.cloneRuleSet}
+										onchange={handleNewRuleChange}
+										variant="label-inline"
+										data-field="cloneRuleSet"
+									></lightning-combobox>
+								</div>
+							</div>
+							<!-- Button groups to save and cancel -->
+							<div class="slds-align_absolute-center" style="padding-top: 20px">
+								<lightning-button-group>
+									<lightning-button variant="brand" label="Save" data-event="skills" onclick={handleCreateNewRule} disabled={blnViewOnlyAccess}></lightning-button>
+									<lightning-button variant="neutral" label="Cancel" data-event="skills" onclick={handleCloseRule}></lightning-button>
+								</lightning-button-group>
+							</div>
+						</div>
+					</div>
+
+					<div class="slds-modal__footer">
+						<lightning-button label="Close" variant="brand" title="Close" onclick={handleCloseRule} style="padding-right: 5px"></lightning-button> &nbsp; &nbsp; &nbsp;
+					</div>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+	</div>
+</template>

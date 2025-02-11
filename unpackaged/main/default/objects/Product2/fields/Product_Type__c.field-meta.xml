@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Type__c</fullName>
+    <description>List of type of products to determine Quantity. Used to set the Quantity for each Opportunity Line Items for each of the Product Categories and Product Types.</description>
+    <inlineHelpText>List of type of products to determine Quantity. Used to set the Quantity for each Opportunity Line Items for each of the Product Categories and Product Types.</inlineHelpText>
+    <label>Product Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Monthly</fullName>
+                <default>false</default>
+                <label>Monthly</label>
+            </value>
+            <value>
+                <fullName>Employees</fullName>
+                <default>false</default>
+                <label>Employees</label>
+            </value>
+            <value>
+                <fullName>Contractors</fullName>
+                <default>false</default>
+                <label>Contractors</label>
+            </value>
+            <value>
+                <fullName>International Contractors</fullName>
+                <default>false</default>
+                <label>International Contractors</label>
+            </value>
+            <value>
+                <fullName>International Employees</fullName>
+                <default>false</default>
+                <label>International Employees</label>
+            </value>
+            <value>
+                <fullName>Assigned Employees</fullName>
+                <default>false</default>
+                <label>Assigned Employees</label>
+            </value>
+            <value>
+                <fullName>Assigned Contractors</fullName>
+                <default>false</default>
+                <label>Assigned Contractors</label>
+            </value>
+            <value>
+                <fullName>Assigned International Employees</fullName>
+                <default>false</default>
+                <label>Assigned International Employees</label>
+            </value>
+            <value>
+                <fullName>Assigned International Contractors</fullName>
+                <default>false</default>
+                <label>Assigned International Contractors</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

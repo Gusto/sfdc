@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Org Notification 26</label>
+    <protected>false</protected>
+    <values>
+        <field>Additional_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/articles/BizTech_FAQ/How-to-resolve-account-routing-issues?popup=false&amp;navBack=H4sIAAAAAAAAAIuuVipWslLyzssvz0lNSU_1yM9NVdJRygaKFSSmp4ZkluSA-KVAvn58aaZ-NkyhPpCDosu-ODWxKDnDVqk2FgDeHqwIVQAAAA</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Notification__c</field>
+        <value xsi:type="xsd:string">There is an issue with account routing. Refer to the report to see the accounts which has issue.</value>
+    </values>
+    <values>
+        <field>Payops_Notification__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Point_Of_Contact__c</field>
+        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+    </values>
+    <values>
+        <field>Point_of_Contact_Name__c</field>
+        <value xsi:type="xsd:string">Praveen Sethu</value>
+    </values>
+    <values>
+        <field>Query_Return_Type__c</field>
+        <value xsi:type="xsd:string">Integer</value>
+    </values>
+    <values>
+        <field>Record_Threshold__c</field>
+        <value xsi:type="xsd:double">10.0</value>
+    </values>
+    <values>
+        <field>Report_Link__c</field>
+        <value xsi:type="xsd:string">https://gusto.my.salesforce.com/00O8Y000008mX81</value>
+    </values>
+    <values>
+        <field>SOQL_Query__c</field>
+        <value xsi:type="xsd:string">SELECT count() FROM Account WHERE (Account_Route_Count__c &gt; 0 AND UniqueEntry__RingLead_App_Field__c != &apos;sf_processed&apos; AND createddate = last_n_days:7 ) or (Account_Route_Count__c &gt; 10 and createddate = today)</value>
+    </values>
+</CustomMetadata>

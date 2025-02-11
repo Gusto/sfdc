@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <assignments>
+        <name>Update_Failed</name>
+        <label>Update Failed</label>
+        <locationX>1166</locationX>
+        <locationY>744</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>RecordType_DeveloperName</name>
+        <label>RecordType DeveloperName</label>
+        <locationX>506</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Payroll_Care</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Payroll_Care</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reopen_Case_after_1_hour_PRC</targetReference>
+            </connector>
+            <label>Payroll Care</label>
+        </rules>
+        <rules>
+            <name>Benefits_Care</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Benefits_Care</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reopen_Case_after_1_hour_FSC</targetReference>
+            </connector>
+            <label>Benefits Care</label>
+        </rules>
+        <rules>
+            <name>Modern_Bank</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Modern_Bank</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reopen_Case_after_1_hour_MB</targetReference>
+            </connector>
+            <label>Modern Bank</label>
+        </rules>
+    </decisions>
+    <description>Main Scheduled Flow. PLEASE ADD RECORD TYPE IN START CONDITIONS WHEN ADDING NEW LOGIC.</description>
+    <environments>Default</environments>
+    <interviewLabel>Case {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case Scheduled Trigger</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>1166</locationX>
+        <locationY>864</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordUpdates>
+        <name>Update_Case</name>
+        <label>Update Case</label>
+        <locationX>506</locationX>
+        <locationY>624</locationY>
+        <faultConnector>
+            <targetReference>Update_Failed</targetReference>
+        </faultConnector>
+        <inputReference>Reopen_Case_after_1_hour_PRC.objCurrentCase</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterFormula>( {!$Record.RecordType.DeveloperName} = &apos;Payroll_Care&apos; || {!$Record.RecordType.DeveloperName} = &apos;Benefits_Care&apos; || {!$Record.RecordType.DeveloperName} = &apos;Modern_Bank&apos; )
+&amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) 
+&amp;&amp; NOT(ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;))</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X1_Hour_after_Case_Updated</name>
+            <connector>
+                <targetReference>RecordType_DeveloperName</targetReference>
+            </connector>
+            <label>1 Hour after Case Updated</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>Case_Updated__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Reopen_Case_after_1_hour_FSC</name>
+        <label>Reopen Case after 1 hour</label>
+        <locationX>374</locationX>
+        <locationY>408</locationY>
+        <connector>
+            <targetReference>Update_Case</targetReference>
+        </connector>
+        <flowName>Case_Reopen_after_1_hour_SubFlow_Helper</flowName>
+        <inputAssignments>
+            <name>objCurrentCase</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <name>Reopen_Case_after_1_hour_MB</name>
+        <label>Reopen Case after 1 hour</label>
+        <locationX>638</locationX>
+        <locationY>408</locationY>
+        <connector>
+            <targetReference>Update_Case</targetReference>
+        </connector>
+        <flowName>Case_Reopen_after_1_hour_SubFlow_Helper</flowName>
+        <inputAssignments>
+            <name>objCurrentCase</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <name>Reopen_Case_after_1_hour_PRC</name>
+        <label>Reopen Case after 1 hour</label>
+        <locationX>110</locationX>
+        <locationY>408</locationY>
+        <connector>
+            <targetReference>Update_Case</targetReference>
+        </connector>
+        <flowName>Case_Reopen_after_1_hour_SubFlow_Helper</flowName>
+        <inputAssignments>
+            <name>objCurrentCase</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <textTemplates>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Fault Message: {!$Flow.FaultMessage}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Interview Guid: {!$Flow.InterviewGuid}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Current Record: {!$Flow.CurrentRecord}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.&amp;nbsp;&amp;nbsp;&lt;/p&gt;&lt;p&gt;https://gusto.lightning.force.com/lightning/setup/Pausedflows/home&lt;/p&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+</Flow>

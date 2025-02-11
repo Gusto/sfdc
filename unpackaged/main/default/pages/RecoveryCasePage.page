@@ -1,0 +1,259 @@
+<apex:page standardController="Case" extensions="RecoveryCaseViewExtension">
+<style> 
+    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+</style>
+        <script type="text/javascript">
+
+        
+        function RefreshPrimaryTab() 
+        {
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(tabId , true);
+        };
+        </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>    
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:form >
+	<div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+		<apex:commandButton action="{!SaveRecoveryCase}" value="Save" styleclass="slds-button slds-button--neutral" />
+    </div>              
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Status: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Status}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="statusDetail">Created At Date: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Created_At_Date__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>     
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="recoveryCaseid">Recovery Case ID: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <a href="{!$Label.gusto_url_prefix}/panda/recovery_cases/{!theCase.Recovery_Case_ID__c}" id="caseLink" target="_new">{!theCase.Recovery_Case_ID__c}</a>
+                        </div>
+                    </td>                    
+                </Tr>  
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Payment Investigation ID: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <a href="{!$Label.gusto_url_prefix}/panda/payment_investigations/{!theCase.Payment_Investigation_ID__c}" id="paymentInvestigationLink" target="_new">{!theCase.Payment_Investigation_ID__c}</a>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Event ID: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <a href="{!$Label.gusto_url_prefix}/panda/{!Lower(strEventType)}s/{!theCase.Event_ID__c}" id="eventLink" target="_new">{!theCase.Event_ID__c}</a>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Event Type: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Event_Type__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Recovery Status: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Recovery_Status__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Initial Recovery Amount: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Initial_Recovery_Amount__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Outstanding Balance: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Outstanding_Balance__c}"> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Requires Action: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Requires_Action__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Reminder Notification: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Reminder_Notification__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>  
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Follow up Date: </label> 
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Follow_Up_Date__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>  
+                        </div>
+                    </td>                    
+                </Tr>      
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Payment Event: </label> 
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Payment_Event__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>  
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Bad Debt: </label> 
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Bad_Debt__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>  
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Error Code: </label> 
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Bank_Error_Code__c}"> 
+                            <!-- <apex:inlineEditSupport event="ondblClick" />  -->
+                        </apex:outputField>  
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Expedite Reason: </label> 
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Expedite_Reason__c}"> 
+                            <!-- <apex:inlineEditSupport event="ondblClick" />  -->
+                        </apex:outputField>  
+                        </div>
+                    </td>                    
+                </Tr>
+                
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Signatory Info: </label> 
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:repeat value="{!userRoleList}" var="userInfo">
+                                {!userInfo}<br/>
+                            </apex:repeat>
+
+                        </div>
+                    </td>                    
+                </Tr>
+                <tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Next Steps: </label> 
+                    </td>
+                    <td>
+                        <div>
+                            <apex:outputField value="{!theCase.Next_Steps__c}"> 
+                                <apex:inlineEditSupport event="ondblClick" /> 
+                            </apex:outputField>
+                        </div>
+                    </td>
+                </tr>
+            </Table>
+            <br/>
+            <apex:outputField value="{!theCase.Description}"/>
+            <br/>
+            &nbsp;
+            <label class="slds-form-element__label" for="status">Permission Level: </label>
+            <div class="slds-form-element__control" style="background-color:{!if(!isFullAccess && isAdmin,'Yellow','#d9dbe0')}">
+                <apex:outputText value="Limited Access" rendered="{! if(!isFullAccess && isAdmin,true,false)}"/> 
+                <apex:outputText value="Full Access" rendered="{! if(isFullAccess && isAdmin,true,false)}"/> 
+                <apex:outputText value="-" rendered="{! !isAdmin }"/>
+            </div>
+        </apex:form>
+        <!--<c:ContactUserInformation usrId="{!theCase.Contact.ZP_User_Id__c}" emlId="{!theCase.SuppliedEmail}" cseId="{!theCase.id}"/> -->
+    </div>
+    <script>
+    	if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+            RefreshPrimaryTab();
+        }
+    </script>
+</apex:page>

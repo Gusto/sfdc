@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Publish Carrier Order to Kafka.</description>
+        <name>Publish_CO_to_Kafka</name>
+        <label>Publish CO to Kafka</label>
+        <locationX>946</locationX>
+        <locationY>122</locationY>
+        <actionName>Carrier_Order__c.Publish_Career_Order_To_Kafka</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Carrier_Order__c.Publish_Career_Order_To_Kafka</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>55.0</apiVersion>
+    <decisions>
+        <name>Is_Implementation_Stage_Changed</name>
+        <label>Is Implementation Stage Changed</label>
+        <locationX>556</locationX>
+        <locationY>122</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Publich_Status_Change_to_Kafka</name>
+            <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
+            <conditions>
+                <leftValueReference>IS_NEW</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Implementation_Stage__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New_Plan</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Renewal</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Publish_CO_to_Kafka</targetReference>
+            </connector>
+            <label>Publich Status Change to Kafka</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>IS_NEW</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <interviewLabel>Record Trigger: Carrier Order After Handler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Carrier Order After Handler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>71</locationX>
+        <locationY>38</locationY>
+        <connector>
+            <targetReference>Is_Implementation_Stage_Changed</targetReference>
+        </connector>
+        <object>Carrier_Order__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

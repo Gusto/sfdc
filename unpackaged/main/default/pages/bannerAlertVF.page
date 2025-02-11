@@ -1,0 +1,16 @@
+<apex:page standardController="Benefit_Order__c">
+    <apex:includeLightning />
+
+    <div id="bannerAlertDiv"/>
+
+    <script>
+        $Lightning.use("c:bannerAlertApp", function() {
+          $Lightning.createComponent("c:bannerAlert",
+              {},
+              "bannerAlertDiv",
+              function(cmp) {
+              }
+          );
+        });
+    </script>
+</apex:page>

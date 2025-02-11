@@ -1,0 +1,478 @@
+<apex:page controller="AdvocateViewCtrl" action="{!CallOnAdvocateActionView}">
+<c:AdvocateTabComp actionTab="active" cohortTab="" bmrMultiTab=""/>  
+<apex:form id="frmBody"> 
+     <style>
+        .message {
+            margin: 0px;
+        }
+        .messageTable {
+            width: auto !important;
+        }
+        .subTabLinks.active{
+            background:#666 !important;
+        }
+        .showMorePanel{
+            text-align: center;
+            padding-top: 4px;
+        }
+        
+    </style> 
+     <div class="tabcontent slds-scope">
+        
+        <table width="100%" style="margin-bottom: 5px;">
+            <tr>
+                <td><apex:pageMessages id="showmsg" /></td>
+                <td style="text-align:right !important; vertical-align: bottom !important;"><apex:commandButton value="Refresh" status="statusSave" action="{!CallOnAdvocateActionView}" rerender="frmBody"/></td>
+            </tr>
+        </table>
+        <apex:outputpanel rendered="{!isManager}">
+         <table width="100%" style="margin-bottom: 5px;">
+             <tr>
+                <td colspan="2">Select team member to see Details : <apex:selectList value="{!strCurrentUserId}" multiselect="false" size="1">
+                           <apex:selectOptions value="{!list_NonManagerUsers}"/>
+                           <apex:actionSupport event="onchange" status="statusSave" action="{!CallOnAdvocateActionView}" rerender="frmBody"/>
+                       </apex:selectList></td>
+            </tr>
+         </table>
+         </apex:outputpanel>
+        <!-- Customer Communication Start -->
+        <br/>
+        <apex:pageblock title="Customer Communication" rendered="{!!IsFacilitator}" id="customerCommunicationPanel">
+              <table id="CustomerCommunication" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Days since email received</th>
+                  <th>Link: Order</th>
+                  <!-- <th>Account Name</th> -->
+                  <th>Link: Company</th>                  
+                  <th data-orderable="false">Bulk Migration</th>
+                  <th>Order Status</th>
+                  <th>Case # </th>
+                  <th style="display:{!if(IsFacilitator,'','none;')}">Facilitator Due Date</th>
+                  <!--<th style="display:{!if(IsFacilitator,'none;','')}">Payroll Run Date</th>-->
+                  <th>Contact Name</th>
+                  <th data-orderable="false">Action Required</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstCustomerCommWrapper}" var="objCC">
+                <tr>
+                  <td>{!objCC.intDaySinceLastReceived}</td>
+                  <td>
+                    <apex:outputPanel rendered="{! if(objCC.objCase.Order__c != null,true,false)}">
+                        <a href="javascript:void(0);" onclick="navigateTo('{!objCC.objCase.Order__c}')">{!objCC.objCase.Account.Name}</a>
+                    </apex:outputPanel>
+                  </td>
+                   <!-- <td><a href="javascript:void(0);" onclick="openRecord('{!objCC.objCase.AccountId}','{! JSENCODE(objCC.objCase.Account.Name)}');return false;">{!objCC.objCase.Account.Name}</a></td> -->
+                  <td><a href="https://app.gusto.com/panda/companies/{!objCC.objCase.Account.ZP_Company_ID__c}/transfer" target="_blank">{!objCC.objCase.Account.ZP_Company_ID__c}</a></td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!objCC.objCase.Order__r.Bulk_Migration__c}')">{!objCC.objCase.Order__r.Bulk_Migration__r.Name}</a></td>
+                  <td><apex:outputField value="{!objCC.objCase.Order__r.Status}"/></td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!objCC.objCase.Id}')">{!objCC.objCase.CaseNumber}</a></td>
+                  <td style="display:{!if(IsFacilitator,'','none;')}">
+                    <div style="display: none;">{!objCC.strDueDate}</div>
+                    <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                        <apex:param value="{!objCC.objCase.order__r.Facilitator_Due_Date__c}" />
+                    </apex:outputText>
+                  </td>
+                  <!--<td style="display:{!if(IsFacilitator,'none;','')}">
+                    <div style="display: none;">{!objCC.strRunDate}</div>
+                    <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                        <apex:param value="{!objCC.objCase.order__r.Payroll_Run_Date__c}" />
+                    </apex:outputText>
+                  </td>-->
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!objCC.objCase.ContactId}')">{!objCC.objCase.Contact.Name}</a></td>
+                  <td>
+                    <label class="slds-checkbox_toggle slds-grid">
+                        <apex:inputcheckbox value="{!objCC.objCase.Requires_Action__c}">
+                            <apex:actionSupport event="onchange" action="{!updateRequireStatus}" status="statusSave" rerender="frmBody">
+                                    <apex:param name="strCaseId" value="{!objCC.objCase.Id}"/>
+                            </apex:actionSupport>
+                        </apex:inputcheckbox>
+                        <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                            <span class="slds-checkbox_faux"></span>
+                        </span>
+                     </label>  
+                  </td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+        </apex:pageblock>
+        <!-- Customer Communication End -->
+          <br/>
+        <!-- Assign to Advocates Start -->
+        <apex:outputpanel rendered="{!!IsFacilitator}"> 
+            <br/>
+            <apex:pageblock title="Assigned to Advocate" id="assigntoAdvocateslistPanel">
+                  <table id="assigntoAdvocateslistTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Days since Assigned</th>
+                      <th>Link: Order</th>
+                      <th>Link: Company</th>                  
+                      <th>Order Status</th>
+                      <th style="display:{!if(IsFacilitator,'','none;')}">Facilitator Due Date</th>
+                      <th>Facilitator Name</th>
+                      <th data-orderable="false">Bulk Migration</th>
+                      <th>No Of  Blocked Checklist</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <apex:repeat value="{!list_AssigntoAdvocateWrapper}" var="ord">
+                    <tr>
+                      <td>{!ord.daySince}</td>
+                      <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Id}')">{!ord.objOrder.Account.Name}</a></td>
+                      <td><a href="https://app.gusto.com/panda/companies/{!ord.objOrder.Account.ZP_Company_ID__c}/transfer" target="_blank">{!ord.objOrder.Account.ZP_Company_ID__c}</a></td>
+                      <td><apex:outputfield value="{!ord.objOrder.Status}"/></td>
+                      <td style="display:{!if(IsFacilitator,'','none;')}">
+                        <div style="display: none;">{!ord.strDueDateFormat}</div>
+                        <apex:outputfield value="{!ord.objOrder.Facilitator_Due_Date__c}"/>
+                      </td>
+                      <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Data_Entry_Assist__c}')">{!ord.objOrder.Data_Entry_Assist__r.Name}</a></td>
+                      <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Bulk_Migration__c}')">{!ord.objOrder.Bulk_Migration__r.Name}</a></td>
+                      <td>{!ord.noc}</td>
+                    </tr>
+                  </apex:repeat>
+                  </tbody>
+                </table>
+            </apex:pageblock>
+         </apex:outputpanel>
+        <!-- Assign to Advocates End -->
+         
+       <br/>
+        <apex:outputpanel id="communicationPanel">
+        
+        <div class="tab">
+          <apex:commandLink action="{!ShowInternalCom}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!intComActive}" style="padding:5px 12px">Checklist Communication</apex:commandLink>
+          <apex:commandLink action="{!ShowSalesCom}" status="statusSave" rerender="frmBody" styleclass="tablinks subTabLinks {!salesComActive}" style="padding:5px 12px">Order Communication</apex:commandLink>
+        </div>
+        <div class="tabcontent">
+             <!-- Internal and Sales Communication Start -->
+              <table id="internalCommunicationsTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Days since new comment</th>
+                  <th>Link: Order</th>
+                  <!-- <th>Account Name</th> -->
+                  <th>Link: Company</th>                  
+                  <th>Order Status</th>
+                  <th style="display:{!if(IsFacilitator,'','none;')}">Facilitator Due Date</th>
+                  <!--<th style="display:{!if(IsFacilitator,'none;','')}">Payroll Run Date</th>-->
+                  <th>
+                    <apex:outputpanel rendered="{!!IsFacilitator}">
+                        Facilitator Name
+                    </apex:outputpanel>
+                    <apex:outputpanel rendered="{!IsFacilitator}">
+                        Advocate Name
+                    </apex:outputpanel>
+                  </th>
+                  <th data-orderable="false">Bulk Migration</th>
+                  <th data-orderable="false">
+                    <apex:outputlabel value="Action Required" rendered="{!if(intComActive=='active',true,false)}"/>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstInternalCommunication}" var="ord">
+                <tr>
+                  <td>{!ord.Noc}</td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Id}')">{!ord.objOrder.Account.Name}</a></td>
+                  <!-- <td><a href="javascript:void(0);" onclick="openRecord('{!ord.objOrder.AccountId}','{!ord.objOrder.Account.Name}');return false;">{!ord.objOrder.Account.Name}</a></td> -->
+                  <td><a href="https://app.gusto.com/panda/companies/{!ord.objOrder.Account.ZP_Company_ID__c}/transfer" target="_blank">{!ord.objOrder.Account.ZP_Company_ID__c}</a></td>
+                  <td><apex:outputfield value="{!ord.objOrder.Status}"/></td>
+                  <td style="display:{!if(IsFacilitator,'','none;')}">
+                    <div style="display: none;">{!ord.strDueDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.Facilitator_Due_Date__c}"/>
+                  </td>
+                  <!--<td style="display:{!if(IsFacilitator,'none;','')}">
+                    <div style="display: none;">{!ord.strRunDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.Payroll_Run_Date__c}"/>
+                  </td>-->
+                  <td>
+                        <apex:outputpanel rendered="{!!IsFacilitator}">
+                            <a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Data_Entry_Assist__c}')">{!ord.objOrder.Data_Entry_Assist__r.Name}</a>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!IsFacilitator}">
+                            <a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.OwnerId}')">{!ord.objOrder.Owner.Name}</a>
+                        </apex:outputpanel>
+                    </td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Bulk_Migration__c}')">{!ord.objOrder.Bulk_Migration__r.Name}</a></td>
+                  <td>
+                    <apex:outputpanel rendered="{!if(intComActive=='active',true,false)}">
+                        <label class="slds-checkbox_toggle slds-grid">
+                            <apex:inputcheckbox value="{!ord.objOrder.Communication_Required__c}" rendered="{!NOT(IsFacilitator)}">
+                                <apex:actionSupport event="onchange" action="{!updateInternalCommRequire}" status="statusSave" rerender="frmBody">
+                                        <apex:param name="strOrderId" value="{!ord.objOrder.Id}"/>
+                                </apex:actionSupport>
+                            </apex:inputcheckbox>
+                            <apex:inputcheckbox value="{!ord.objOrder.Communication_Required_Fac__c}" rendered="{!IsFacilitator}">
+                                <apex:actionSupport event="onchange" action="{!updateInternalCommRequire}" status="statusSave" rerender="frmBody">
+                                        <apex:param name="strOrderId" value="{!ord.objOrder.Id}"/>
+                                </apex:actionSupport>
+                            </apex:inputcheckbox>
+                            <span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+                                <span class="slds-checkbox_faux"></span>
+                            </span>
+                         </label>  
+                    </apex:outputpanel>
+                  </td>
+                  
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+             <!-- Internal and Sales Communication End -->
+         </div>
+       
+        </apex:outputpanel> 
+        <!-- Blocked Checklist Orders Start -->
+        <apex:outputpanel rendered="{!IsFacilitator}"> 
+            <br/>
+            <apex:pageblock title="Blocked Checklist Orders" id="blockedChecklistPanel">
+                  <table id="blockedChecklistTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Days since blocked</th>
+                      <th>Link: Order</th>
+                      <!-- <th>Account Name</th> -->
+                      <th>Link: Company</th>                  
+                      <th>Order Status</th>
+                      <th style="display:{!if(IsFacilitator,'','none;')}">Facilitator Due Date</th>
+                      <!--<th style="display:{!if(IsFacilitator,'none;','')}">Payroll Run Date</th>-->
+                      <th>
+                        <apex:outputpanel rendered="{!!IsFacilitator}">
+                            Facilitator Name
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!IsFacilitator}">
+                            Advocate Name
+                        </apex:outputpanel>
+                      </th>
+                      <th data-orderable="false">Bulk Migration</th>
+                      <th>No Of  Blocked Checklist</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <apex:repeat value="{!lstBlockedChecklistWrapper}" var="ord">
+                    <tr>
+                      <td>{!ord.daySince}</td>
+                      <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Id}')">{!ord.objOrder.Account.Name}</a></td>
+                      <!-- <td><a href="javascript:void(0);" onclick="openRecord('{!ord.objOrder.AccountId}','{!ord.objOrder.Account.Name}');return false;">{!ord.objOrder.Account.Name}</a></td> -->
+                      <td><a href="https://app.gusto.com/panda/companies/{!ord.objOrder.Account.ZP_Company_ID__c}/transfer" target="_blank">{!ord.objOrder.Account.ZP_Company_ID__c}</a></td>
+                      <td><apex:outputfield value="{!ord.objOrder.Status}"/></td>
+                      <td style="display:{!if(IsFacilitator,'','none;')}">
+                        <div style="display: none;">{!ord.strDueDateFormat}</div>
+                        <apex:outputfield value="{!ord.objOrder.Facilitator_Due_Date__c}"/>
+                      </td>
+                      <!--<td style="display:{!if(IsFacilitator,'none;','')}">
+                        <div style="display: none;">{!ord.strRunDateFormat}</div>
+                        <apex:outputfield value="{!ord.objOrder.Payroll_Run_Date__c}"/>
+                      </td>-->
+                      <td>
+                        <apex:outputpanel rendered="{!!IsFacilitator}">
+                            <a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Data_Entry_Assist__c}')">{!ord.objOrder.Data_Entry_Assist__r.Name}</a>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!IsFacilitator}">
+                            <a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.OwnerId}')">{!ord.objOrder.Owner.Name}</a>
+                        </apex:outputpanel>
+                      </td>
+                      <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Bulk_Migration__c}')">{!ord.objOrder.Bulk_Migration__r.Name}</a></td>
+                      <td>{!ord.noc}</td>
+                    </tr>
+                  </apex:repeat>
+                  </tbody>
+                </table>
+            </apex:pageblock>
+         </apex:outputpanel>
+        <!-- Blocked Checklist Orders End -->
+        
+         
+         <!-- Account in Final Stages Start -->
+        <br/>
+        <apex:pageblock rendered="{!!IsFacilitator}" title="Accounts in Final Stages" id="finalStagePanel">
+              <table id="finalStageTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <!-- <th>Account Name</th> -->
+                  <th>Link Order</th>
+                  <th>Order Type</th>
+                  <th>Order Status</th>                  
+                  <th>Advocate Follow-up Date</th>
+                  <th>Advocate Follow up Notes</th>
+                  <th>Case # </th>
+                  <th style="display:{!if(IsFacilitator,'','none;')}">Facilitator Due Date</th>
+                  <th style="display:{!if(IsFacilitator,'none;','')}">Payroll Run Date</th>
+                  <th>First Check Date</th>
+                  <th>Action Required</th>
+                  <th>Facilitator Name</th>
+                  <th data-orderable="false">Bulk Migration</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstFinalStageWrapper}" var="ord">
+                <tr>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Id}')">{!ord.objOrder.Account.Name}</a></td>
+                  <!-- <td><a href="javascript:void(0);" onclick="openRecord('{!ord.objOrder.AccountId}','{!ord.objOrder.Account.Name}');return false;">{!ord.objOrder.Account.Name}</a></td> -->
+                  <td><apex:outputfield value="{!ord.objOrder.Type}"/></td>
+                  <td><apex:outputfield value="{!ord.objOrder.Status}"/></td>                  
+                  <td>
+                    <div style="display: none;">{!ord.strFollowUpDate}</div>
+                    <apex:outputfield value="{!ord.objOrder.Follow_Up_Date__c}"/>
+                  </td>
+                  <td><apex:outputfield value="{!ord.objOrder.Follow_Up_Notes__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Case__c}')">{!ord.objOrder.Case__r.CaseNumber}</a></td>
+                  <td style="display:{!if(IsFacilitator,'','none;')}">
+                    <div style="display: none;">{!ord.strDueDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.Facilitator_Due_Date__c}"/>
+                  </td>
+                  <td style="display:{!if(IsFacilitator,'none;','')}">
+                    <div style="display: none;">{!ord.strRunDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.Payroll_Run_Date__c}"/>
+                  </td>
+                  <td><div style="display: none;">{!ord.strFirstCheckDateFormat}</div><apex:outputfield value="{!ord.objOrder.First_Check_Date__c}"/></td>
+                  <td><apex:outputfield value="{!ord.objOrder.Requires_Action__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Data_Entry_Assist__c}')">{!ord.objOrder.Data_Entry_Assist__r.Name}</a></td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Bulk_Migration__c}')">{!ord.objOrder.Bulk_Migration__r.Name}</a></td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+        </apex:pageblock>
+        <!-- Account in Final Stages End -->
+          <!-- Exception Request Orders Start -->
+        <br/>
+        <apex:pageblock title="Exception Request Orders" id="exceptionRequestPanel">
+              <table id="exceptionRequestTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Link Order</th>
+                  <!-- <th>Account Name</th> -->
+                  <th>Order Type</th>
+                  <th>Order Status</th>                  
+                  <th>{!IF(IsFacilitator,'Facilitator Follow-up Date','Advocate Follow-up Date')}</th>
+                  <th>{!IF(IsFacilitator,'Facilitator Follow up Notes','Advocate Follow up Notes')}</th>
+                  <th>Case # </th>
+                  <th style="display:{!if(IsFacilitator,'','none;')}">Facilitator Due Date</th>
+                  <th>Payroll Run Date</th>
+                  <th style="display:{!if(IsFacilitator,'none;','')}">First Check Date</th>
+                  <th>Action Required</th>
+                  <th>
+                    <apex:outputpanel rendered="{!!IsFacilitator}">
+                        Facilitator Name
+                    </apex:outputpanel>
+                    <apex:outputpanel rendered="{!IsFacilitator}">
+                        Advocate Name
+                    </apex:outputpanel>
+                    
+                  </th>
+                  <th data-orderable="false">Bulk Migration</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstExceptionRequestOrdersWrapper}" var="ord">
+                <tr>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Id}')">{!ord.objOrder.Account.Name}</a></td>
+                  <!-- <td><a href="javascript:void(0);" onclick="openRecord('{!ord.objOrder.AccountId}','{!ord.objOrder.Account.Name}');return false;">{!ord.objOrder.Account.Name}</a></td> -->
+                  <td><apex:outputfield value="{!ord.objOrder.Type}"/></td>
+                  <td><apex:outputfield value="{!ord.objOrder.Status}"/></td>                  
+                  <td>
+                    <apex:outputPanel rendered="{!!IsFacilitator}">
+                        <div style="display: none;">{!ord.strFollowUpDate}</div>
+                        <apex:outputfield value="{!ord.objOrder.Follow_Up_Date__c}"/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IsFacilitator}">
+                        <div style="display: none;">{!ord.strFacilitatorFollowUp}</div>
+                        <apex:outputfield value="{!ord.objOrder.Facilitator_Follow_Up_Date__c}"/>
+                    </apex:outputPanel>
+                  </td>
+                  <td>
+                    <apex:outputfield value="{!ord.objOrder.Follow_Up_Notes__c}" rendered="{!!IsFacilitator}"/>
+                    <apex:outputfield value="{!ord.objOrder.Facilitator_Follow_Up_Notes__c}" rendered="{!IsFacilitator}"/>
+                  </td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Case__c}')">{!ord.objOrder.Case__r.CaseNumber}</a></td>
+                  <td style="display:{!if(IsFacilitator,'','none;')}">
+                    <div style="display: none;">{!ord.strDueDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.Facilitator_Due_Date__c}"/>
+                  </td>
+                  <td>
+                    <div style="display: none;">{!ord.strRunDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.Payroll_Run_Date__c}"/>
+                  </td>
+                  <td style="display:{!if(IsFacilitator,'none;','')}">
+                    <div style="display: none;">{!ord.strFirstCheckDateFormat}</div>
+                    <apex:outputfield value="{!ord.objOrder.First_Check_Date__c}"/>
+                  </td>
+                  <td><apex:outputfield value="{!ord.objOrder.Requires_Action__c}"/></td>
+                  <td>
+                    <apex:outputpanel rendered="{!!IsFacilitator}">
+                        <a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Data_Entry_Assist__c}','{! JSENCODE(ord.objOrder.Data_Entry_Assist__r.Name)}');return false;">{!ord.objOrder.Data_Entry_Assist__r.Name}</a>
+                    </apex:outputpanel>
+                    <apex:outputpanel rendered="{!IsFacilitator}">
+                        <a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.OwnerId}','{! JSENCODE(ord.objOrder.Owner.Name)}');return false;">{!ord.objOrder.Owner.Name}</a>
+                    </apex:outputpanel>
+                    
+                  </td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!ord.objOrder.Bulk_Migration__c}','{!ord.objOrder.Bulk_Migration__r.Name}');return false;">{!ord.objOrder.Bulk_Migration__r.Name}</a></td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+        </apex:pageblock>
+        <!-- Exception Request Orders End -->
+          <!-- Ticket Start -->
+        <br/>
+        <apex:pageblock rendered="{!!IsFacilitator}" title="Tickets" id="ticketnPanel">
+              <table id="TicketTable" class="tablesorter tablesorter-blue" style="margin: 0px;" width="100%">
+              <thead>
+                <tr>
+                  <th>Days since ticket created</th>
+                  <th>Link Order</th>
+                  <!-- <th>Account Name</th> -->
+                  <th>Record Type</th>                  
+                  <th data-orderable="false">Bulk Migration</th>
+                  <th>Ticket Status</th>
+                  <th data-orderable="false">Ticket # </th>
+                  <th>Ticket Reason</th>
+                   <th data-orderable="false">Last modified date</th>
+                </tr>
+              </thead>
+              <tbody>
+              <apex:repeat value="{!lstTicketWrapper}" var="tkt">
+                <tr>
+                  <td>{!tkt.intDaySinceLastCreated}</td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!tkt.objTicket.Order__c}')">{!tkt.objTicket.Order__r.Account.Name}</a></td>
+                  <!-- <td><a href="javascript:void(0);" onclick="openRecord('{!tkt.objTicket.Account__c}','{!tkt.objTicket.Account__r.Name}');return false;">{!tkt.objTicket.Account__r.Name}</a></td> -->
+                  <td><apex:outputlabel value="{!tkt.objTicket.RecordType.Name}"/></td>                  
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!tkt.objTicket.Order__r.Bulk_Migration__c}')">{!tkt.objTicket.Order__r.Bulk_Migration__r.Name}</a></td>
+                  <td><apex:outputfield value="{!tkt.objTicket.Status__c}"/></td>
+                  <td><a href="javascript:void(0);" onclick="navigateTo('{!tkt.objTicket.Id}')">{!tkt.objTicket.Name}</a></td>
+                  <td><apex:outputfield value="{!tkt.objTicket.Escalation_Reason__c}"/></td>
+                  <td>
+                    <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                        <apex:param value="{!tkt.objTicket.LastModifieddate}" />
+                    </apex:outputText>
+                  </td>
+                </tr>
+              </apex:repeat>
+              </tbody>
+            </table>
+        </apex:pageblock>
+        <!-- Ticket End -->
+       
+      </div>
+        
+        
+         <script>
+            $(function() {
+              $("#CustomerCommunication").DataTable({"aaSorting": [],pageLength:25});
+              $("#TicketTable").DataTable({"aaSorting": [],pageLength:25});
+              $("#finalStageTable").DataTable({"aaSorting": [],pageLength:25});
+              $("#exceptionRequestTable").DataTable({"aaSorting": [],pageLength:25});
+              $("#blockedChecklistTable").DataTable({"aaSorting": [],pageLength:25});
+              $("#assigntoAdvocateslistTable").DataTable({"aaSorting": [],pageLength:25});
+              $("#internalCommunicationsTable").DataTable({"aaSorting": [],pageLength:25});
+              $("#salesCommunicationTable").DataTable({"aaSorting": [],pageLength:25});
+            });
+            
+        </script>
+</apex:form>
+</apex:page>

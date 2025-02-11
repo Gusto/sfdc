@@ -1,0 +1,77 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="NBAMiniViewController">
+	<!-- Opportunity variables grouped here -->
+	<aura:attribute name="strOppTitle" type="String" default="Opportunity Mini View" />
+	<aura:attribute name="strOppCheckbox" type="String" default="Show Detail View" />
+	<aura:attribute name="blnOppDetailViewVisible" type="Boolean" default="false" />
+	<aura:attribute name="strOppFieldSet" type="String" />
+	<aura:attribute name="oppFields" type="String[]" />
+
+	<!-- Account variables grouped here -->
+	<aura:attribute name="strAccTitle" type="String" default="Account Mini View" />
+	<aura:attribute name="strAccCheckbox" type="String" default="Show Detail View" />
+	<aura:attribute name="blnAccDetailViewVisible" type="Boolean" default="false" />
+	<aura:attribute name="strAccountId" type="String" />
+	<aura:attribute name="strAccFieldSet" type="String" />
+	<aura:attribute name="accFields" type="String[]" />
+
+	<!-- Lead variables grouped here -->
+	<aura:attribute name="strLeadTitle" type="String" default="Lead Mini View" />
+	<aura:attribute name="strLeadCheckbox" type="String" default="Show Detail View" />
+	<aura:attribute name="blnLeadDetailViewVisible" type="Boolean" default="false" />
+	<aura:attribute name="strLeadFieldSet" type="String" />
+	<aura:attribute name="leadFields" type="String[]" />
+
+	<!-- Aura handler to call apex method to fetch fields from Opportunity and Account Field Sets -->
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+	
+	<div class="slds-theme_default" style="padding-left: 15px;">
+		<!-- Show opportunity mini view only if Field set is configured in design properties -->
+		<aura:if isTrue="{!v.strOppFieldSet}">
+			<!-- Dynamic title depending on which view is visibla -->
+			<div class="slds-text-heading_medium slds-text-align_center slds-var-p-around_small">{!v.strOppTitle}</div>
+			<!-- Handler to toggle mini and full view -->
+			<lightning:input type="checkbox" label="{!v.strOppCheckbox}" onchange="{!c.handleOppChange}"></lightning:input>
+			<br />
+
+			<!-- Show full view if checkbox is checked -->
+			<aura:if isTrue="{!v.blnOppDetailViewVisible}">
+				<lightning:recordForm aura:id="oppRecordForm" recordId="{!v.recordId}" objectApiName="Opportunity" layoutType="Full" columns="2" mode="view" />
+				<aura:set attribute="else">
+					<lightning:recordForm aura:id="oppRecordForm" recordId="{!v.recordId}" objectApiName="Opportunity" fields="{!v.oppFields}" columns="2" mode="view" />
+				</aura:set>
+			</aura:if>
+		</aura:if>
+
+		<!-- Show account mini view only if Field set is configured in design properties -->
+		<aura:if isTrue="{!v.strAccFieldSet}">
+			<!-- Dynamic title depending on which view is visibla -->
+			<div class="slds-text-heading_medium slds-text-align_center slds-var-p-around_small">{!v.strAccTitle}</div>
+			<!-- Handler to toggle mini and full view -->
+			<lightning:input type="checkbox" label="{!v.strAccCheckbox}" onchange="{!c.handleAccChange}"></lightning:input>
+			<br />
+			<!-- Show full view if checkbox is checked -->
+			<aura:if isTrue="{!v.blnAccDetailViewVisible}">
+				<lightning:recordForm aura:id="accRecordId" recordId="{!v.strAccountId}" objectApiName="Account" layoutType="Full" columns="2" mode="view" />
+				<aura:set attribute="else">
+					<lightning:recordForm aura:id="accRecordId" recordId="{!v.strAccountId}" objectApiName="Account" fields="{!v.accFields}" columns="2" mode="view" />
+				</aura:set>
+			</aura:if>
+		</aura:if>
+
+		<!-- Show lead mini view only if Field set is configured in design properties -->
+		<aura:if isTrue="{!v.strLeadFieldSet}">
+			<!-- Dynamic title depending on which view is visibla -->
+			<div class="slds-text-heading_medium slds-text-align_center slds-var-p-around_small">{!v.strLeadTitle}</div>
+			<!-- Handler to toggle mini and full view -->
+			<lightning:input type="checkbox" label="{!v.strLeadCheckbox}" onchange="{!c.handleLeadChange}"></lightning:input>
+			<br />
+			<!-- Show full view if checkbox is checked -->
+			<aura:if isTrue="{!v.blnLeadDetailViewVisible}">
+				<lightning:recordForm aura:id="leadRecordId" recordId="{!v.recordId}" objectApiName="Lead" layoutType="Full" columns="2" mode="view" />
+				<aura:set attribute="else">
+					<lightning:recordForm aura:id="leadRecordId" recordId="{!v.recordId}" objectApiName="Lead" fields="{!v.leadFields}" columns="2" mode="view" />
+				</aura:set>
+			</aura:if>
+		</aura:if>
+	</div>
+</aura:component>

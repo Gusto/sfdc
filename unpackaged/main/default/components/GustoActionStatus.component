@@ -1,0 +1,11 @@
+<apex:component >
+    <apex:actionstatus id="actStatusId">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="position:fixed; background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: absolute;left: 0; right: 0; text-align:center; top: 50%; margin-top: -32px;" >
+                    <img class="waitingImage" src="{!$Resource.GustoLoader}" title="Please Wait..." />
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+</apex:component>

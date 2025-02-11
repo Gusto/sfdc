@@ -1,0 +1,346 @@
+<apex:page standardController="Case" extensions="MFCaseViewExtension">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
+<style> 
+    table.spacing { border-spacing: 30px; border-collapse: separate; } 
+    #typeDiv{
+        color:{!strColor};
+    }
+    .highlightMessage{
+        font-weight:bold;
+        color:red;
+    }
+    .info-tooltip {
+        color:#958d8d;
+    }
+    .info-tooltip + .slds-popover_tooltip, .info-tooltip .slds-popover_tooltip {
+        display: none;
+        width: 160px;
+        min-height: 0;
+    }
+    .info-tooltip:hover + .slds-popover_tooltip, .info-tooltip:hover .slds-popover_tooltip {
+        display: block;
+    }
+    .slds-popover_tooltip .slds-popover__body {
+        padding: 3px 5px;
+        line-height: normal;
+    }
+    .slds-scope .slds-popover_tooltip .slds-popover__body, .slds-scope .slds-popover--tooltip .slds-popover__body {
+        color: #000;
+        padding: 10px;
+    }
+    .slds-scope .slds-popover_tooltip .slds-popover__body a, .slds-scope .slds-popover--tooltip .slds-popover__body a {
+        text-decoration: underline;
+    }
+</style>
+        <script type="text/javascript">
+
+        //document.getElementById('typeDiv').style.color = '{!strColor}';
+        
+        function RefreshPrimaryTab() 
+        {
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , true, refreshSuccess);
+        };
+        
+        var refreshSuccess = function refreshSuccess(result) 
+        {
+            //Report whether refreshing the primary tab was successful
+            if (result.success == true) 
+            {
+                //alert('Email Sent');
+            } 
+            else 
+            {
+                //alert('Cannot refresh the page');
+            }
+        };   
+        
+        </script>   
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="/support/console/40.0/integration.js"/>    
+    <div class="gusto" >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:form >
+            <c:SkipCase caseId="{!theCase.id}" />
+            <c:MFCasePlay />    
+            <div id="existingCase" class="slds-col slds-no-flex slds-align-middle">
+                <apex:commandButton action="{!SaveMFNHECase}" value="Save" styleclass="slds-button slds-button--neutral" />
+                <apex:commandButton action="{!SaveMFNHECase}"  value="Save & Next" styleclass="slds-button slds-button--neutral linkCss" onComplete="nextCase();return false" />
+                <apex:commandButton action="{!SaveMFNHECase}"  value="Save & Next" styleclass="slds-button slds-button--neutral playCssMF" onComplete="playNextCase();return false" />
+            </div>              
+            <Table class="table.spacing">
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="status">Status: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Status}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="statusDetail">Status Detail: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Status_Detail__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <Tr >
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Type: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control" id="typeDiv">
+                        <apex:outputField value="{!theCase.Type}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>    
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="fulfillmentType">Fulfillment Type: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Fulfillment_Type__c}">
+                                <apex:inlineEditSupport event="ondblClick" />
+                            </apex:outputField>
+                        </div>
+                    </td>
+                </Tr> 
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="fulfillmentSubType"> Fulfillment Sub Type: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Fulfillment_Sub_Type__c}">
+                                <apex:inlineEditSupport event="ondblClick" />
+                            </apex:outputField>
+                        </div>
+                    </td>
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="requiresAction">Requires Action: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Requires_Action__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>  
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Carrier: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Carrier__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Submission Method: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Submission_Method__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>  
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Follow Up Date: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Follow_Up_Date__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr> 
+                <apex:outputPanel id="thePanel1" rendered="{!!bln_showSubcrpEndDate}">
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="carrier">Benefits Eligibility End Date:
+                                <span class="info-tooltip" style="position: relative;">
+                                    <i class="fas fa-info-circle info-tooltip"></i>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 15px; left: -5px;">
+                                      <p class="slds-popover__body">The EE's last day of employment with the company OR the date they went FT to PT.</p>
+                                    </span>
+                                </span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Termination_Date__c}"> 
+                            </apex:outputField>
+                            </div>
+                        </td>       
+                    </Tr>
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="carrier">Coverage End Date: 
+                                <span class="info-tooltip" style="position: relative;">
+                                    <i class="fas fa-info-circle info-tooltip"></i>
+                                    <span class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id="help" style="position: absolute; bottom: 15px; left: -5px;">
+                                      <p class="slds-popover__body">The EE's last day of coverage calculated based on their termination date and the group's termination policy.</p>
+                                    </span>
+                                </span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.MF_Coverage_End_Date__c}"> 
+                            </apex:outputField>
+                            </div>
+                        </td>       
+                    </Tr>
+                </apex:outputPanel>
+                <apex:outputPanel id="thePanel2" rendered="{!bln_showSubcrpEndDate}">                
+                    <Tr>
+                        <td>
+                            <label class="slds-form-element__label" for="carrier">Subscription End Date: </label>
+                        </td>
+                        <td>
+                            <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Subscription_End_Date__c}"> 
+                            </apex:outputField>
+                            </div>
+                        </td>            
+                    </Tr>   
+                </apex:outputPanel>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Follow Up Method: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        <apex:outputField value="{!theCase.Follow_Up_Method__c}"> 
+                            <apex:inlineEditSupport event="ondblClick" /> 
+                        </apex:outputField>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Google Drive URL: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Google_Drive_URL__c}"/>
+                        </div>
+                    </td>                    
+                </Tr>
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Tax Id: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        38-3969064
+                        </div>
+                    </td>                    
+                </Tr>    
+                <Tr>
+                    <td>
+                        <label class="slds-form-element__label" for="carrier">Benefits Phone #: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                        800-683-8526
+                        </div>
+                    </td>                    
+                </Tr>                
+            </Table>
+            <br/>
+            <apex:outputPanel rendered="{!AND(theCase.Enrollment_Message__c != null, theCase.Enrollment_Message__c != '')}">
+                <label class="slds-form-element__label" for="carrier">Enrollment Message: </label>
+                <br/>
+                <apex:outputText styleClass="highlightMessage" value="{!theCase.Enrollment_Message__c}"/>
+            </apex:outputPanel>
+            <br/>
+            <label class="slds-form-element__label" for="carrier">Special Instructions: </label>
+            <br/>
+            <font color="green">
+                <apex:outputField value="{!theCase.Special_Instructions__c}"/>
+            </font>         
+            <br/>
+            <table class="table.spacing">
+                <tr>
+                    <td>
+                        <label class="slds-form-element__label" for="formFullyMapped">Form Fully Mapped?: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Form_Fully_Mapped__c}"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="slds-form-element__label" for="missingAttr">Missing Form Attributes: </label>
+                    </td>
+                    <td>
+                        <div class="slds-form-element__control">
+                            <apex:outputField value="{!theCase.Missing_Form_Attributes__c}"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>         
+            <br/>
+            <br/>
+            <label class="slds-form-element__label" for="carrier">Employee/Dependent Info: </label>
+            <br/>
+            <apex:outputText value="{!encryptedInfo}" />
+            <br/>
+            <br/>
+            <label class="slds-form-element__label" for="carrier">HI Integration Error Message: </label>
+            <br/>
+            <apex:outputField value="{!theCase.HI_Integration_Error_Message__c}" />
+            <br/>
+            <label class="slds-form-element__label" for="carrier">Case Description: </label>
+            <br/>
+            <apex:outputField value="{!theCase.Description}"/>
+            <br/>
+            &nbsp;
+            <label class="slds-form-element__label" for="status">Permission Level: </label>
+            <div class="slds-form-element__control" style="background-color:{!if(!isFullAccess && isAdmin,'Yellow','#d9dbe0')}">
+                <apex:outputText value="Limited Access" rendered="{! if(!isFullAccess && isAdmin,true,false)}"/> 
+                <apex:outputText value="Full Access" rendered="{! if(isFullAccess && isAdmin,true,false)}"/> 
+                <apex:outputText value="-" rendered="{! !isAdmin }"/>
+            </div>
+        </apex:form>
+        <c:ContactUserInformation usrId="{!theCase.Contact.ZP_User_Id__c}" emlId="{!theCase.SuppliedEmail}" cseId="{!theCase.id}"/>
+    </div>
+    <script>
+        if('{!$CurrentPage.parameters.refreshPage}'=='true'){
+            RefreshPrimaryTab();
+        }
+    </script>
+</apex:page>

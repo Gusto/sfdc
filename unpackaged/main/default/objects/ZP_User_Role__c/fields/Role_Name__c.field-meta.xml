@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Role_Name__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(AND(OR(Type__c == &apos;Role::PayrollAdmin&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;PayrollAdmin&apos;)), Is_Primary__c == false),&apos;Payroll Admin&apos;,
+	IF(AND(OR(Type__c == &apos;Role::PayrollAdmin&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;PayrollAdmin&apos;)), Is_Primary__c == true),&apos;Primary Payroll Admin&apos;,
+		IF(OR(Type__c == &apos;Role::BenefitsAdmin&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;BenefitsAdmin&apos;)),&apos;Benefits Admin&apos;,
+			IF(OR(Type__c == &apos;Role::BenefitsSignatory&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;BenefitsSignatory&apos;)),&apos;Benefits Signatory&apos;,
+				IF(OR(Type__c == &apos;Role::Contractor&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;DomesticContractor&apos;)),&apos;Contractor&apos;,
+					IF(OR(Type__c == &apos;Role::Employee&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;DomesticEmployee&apos;)),&apos;Employee&apos;,
+						IF(OR(Type__c == &apos;Role::PrimaryPayrollAdmin&apos;, Type__c == &apos;Role::Primary Payroll Admin&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;PrimaryPayrollAdmin&apos;)),&apos;Primary Payroll Admin&apos;,
+							IF(AND(Type__c == &apos;Role::CompanyMember&apos; , Employment_Type__c == &apos;&apos;) ,&apos;Company Member&apos;,
+								IF(OR(Type__c == &apos;Role::InternationalEmployee&apos;, AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;InternationalEmployee&apos;)),&apos;International Employee&apos;,
+									IF(OR(Type__c == &apos;Role::InternationalContractor&apos;,AND(Type__c == &apos;Role::CompanyMember&apos;, Employment_Type__c == &apos;InternationalContractor&apos;)),&apos;International Contractor&apos;,
+                                        IF(AND(Type__c == &apos;Role::CompanyMember&apos;, NOT(Employment_Type__c == &apos;&apos;)),Employment_Type__c,
+                                            SUBSTITUTE(Type__c, &apos;Role::&apos; , &apos;&apos;)
+                                        )
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Role Name</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

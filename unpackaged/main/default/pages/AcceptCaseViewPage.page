@@ -1,0 +1,10 @@
+<apex:page standardController="Case" extensions="AcceptCaseExtension" action="{!acceptCase}">
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+    <apex:pageblock >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!backToCase}" title="Back To Case" value="Back To Case"></apex:commandButton>
+            </apex:pageBlockButtons>
+    </apex:pageblock>
+    </apex:form>
+</apex:page>

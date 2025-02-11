@@ -1,0 +1,21 @@
+<apex:page standardController="Case" extensions="PrivacyRequestRegenerateCodeExt">
+    <html>
+        <apex:slds />
+        <div class="slds-scope">
+            <div class="slds-text-align_center">
+                <div class="slds-text-heading_small">Are you sure you want to regenerate this Case's Confirmation Code?</div>
+                <apex:form >
+                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Regenerate" action="{!regenerateCode}" reRender="redirectPanel" onClick="this.disabled=true;"/>
+                    <!--<button class="slds-button slds-button_neutral" onclick="window.close();">Cancel</button>-->
+                    <apex:outputPanel id="redirectPanel" >
+                        <apex:outputText rendered="{!shouldRedirect}">
+                            <script type="text/javascript">
+                                window.top.location.href = '/console';
+                            </script>
+                        </apex:outputText>
+                    </apex:outputPanel>
+                </apex:form>
+            </div>
+        </div>
+    </html>
+</apex:page>

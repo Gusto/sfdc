@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Account_Transfer</fullName>
+    <active>true</active>
+    <description>Restricts account ownership changes to Sales Management, current owner, and Admin roles unless exempt from validation rules or have custom permissions.</description>
+    <errorConditionFormula>ISCHANGED(OwnerId) &amp;&amp;
+NOT (CONTAINS($Label.Sales_Management_Roles , $UserRole.Name + &apos;,&apos;)) &amp;&amp;
+$UserRole.Name &lt;&gt; &apos;admin&apos; &amp;&amp;
+PRIORVALUE(OwnerId) &lt;&gt; $User.Id &amp;&amp;
+NOT($User.Exempt_from_Validation_Rules__c) &amp;&amp;
+$Setup.Account_Custom_Permissions__c.Change_Ownership__c &lt;&gt; TRUE</errorConditionFormula>
+    <errorMessage>You do not have proper permissions to change the Owner field. Please contact your PE for assistance.</errorMessage>
+</ValidationRule>

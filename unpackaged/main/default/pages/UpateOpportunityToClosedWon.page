@@ -1,0 +1,29 @@
+<apex:page standardController="Opportunity" extensions="UpateOpportunityToClosedWonController" action="{!updateOpportunity}">
+    <apex:form id="wizard">            
+        <apex:sectionHeader title="Updated Opportunity to Closed Won"/>           
+        <apex:pageBlock title="{!opportunityRec.Name}" >
+	        <apex:outputpanel >
+			    <apex:actionstatus id="status">
+			        <apex:facet name="start">
+			            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+			                   height: 100%;opacity:0.65;width:100%;"> 
+			                <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+			                    <img class="waitingImage" src="/img/loading.gif" title="Sync..." />
+			                    <span class="waitingDescription">Sync...</span>
+			                </div>
+			            </div>
+			        </apex:facet>
+			    </apex:actionstatus>
+			</apex:outputpanel>
+            <apex:pagemessages escape="false"></apex:pagemessages>
+            <apex:pageBlockSection columns="2" id="detailSection">
+                <apex:outputField value="{!opportunityRec.Name}"/>
+                <apex:outputField value="{!opportunityRec.StageName}"/>
+                <apex:actionPoller action="{!queryOpportunityRecord}" interval="10" status="status" rerender="wizard"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!backToOpportunity}" value="Back to Opportunity" style="margin-left: 2em"/>                
+            </apex:pageBlockButtons>
+        </apex:pageBlock> 
+    </apex:form>                   
+</apex:page>

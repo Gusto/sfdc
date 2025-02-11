@@ -1,0 +1,132 @@
+<apex:page standardController="Benefit_Order__c" extensions="NPRU_TicketButtonOnBODetailExt" tabStyle="Ticket__c" showHeader="false" sidebar="false">
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    <script  type="text/javascript">
+        function RefreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+        };
+    
+    var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               console.log('Test1');
+               sforce.console.getFocusedSubtabId(function(subTabId){
+                   sforce.console.closeTab(subTabId.id);
+               });
+           } 
+           else 
+           {
+                console.log('Test2');
+               //alert('Cannot refresh the page');
+           }
+       };
+    </script>
+    <apex:actionstatus id="status">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <apex:form id="frmId">
+        <apex:pageBlock >
+            <apex:pageMessages />
+            <apex:pageBlockSection columns="1" collapsible="false" rendered="{!objQCError.From_Sub_Team_s__c != null}">
+                <apex:outputField value="{!objQCError.Benefit_Order__c}" label="Benefit Order"/>
+                <apex:selectList value="{!objQCError.From_Sub_Team_s__c}" size="1" label="From Team">
+					<apex:selectOptions value="{!list_FromTeams}"/>
+					<apex:actionSupport event="onchange" action="{!ticketToTeam}" reRender="frmId" status="status"/>
+				</apex:selectList>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="QC Error Team" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!strSelectedTeam}" size="1" required="true">
+                            <apex:actionSupport event="onchange" action="{!subTeam}" reRender="frmId"/>
+                            <apex:selectOptions value="{!list_Teams}" />
+                        </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!IF(Contains(strSelectedTeam, 'Onboarding'), true, false)}">
+                    <apex:outputLabel value="QC Error Sub Team" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!objQCError.To_Sub_team__c}" size="1" required="true">
+                            <apex:actionSupport event="onchange" reRender="frmId" action="{!assignOwner}"/>
+                            <apex:selectOptions value="{!list_TeamsForQCError}" />
+                        </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!IF(Contains(objQCError.To_Sub_team__c, 'Fulfillment') ,true,false)}" >
+                	<apex:outputLabel value="Select Carrier Order" title="You can create QC Error only for carrier orders which have owner"/>
+                	<apex:actionRegion >
+                		<apex:outputPanel styleClass="requiredInput" layout="block" >
+                			<apex:outputPanel styleClass="requiredBlock" layout="block"/>
+	                 		<apex:selectList value="{!strSelectedCO}" size="1" title="You can create QC Error only for carrier orders which have owner">
+	                        	<apex:actionSupport event="onchange" reRender="frmId" action="{!assignOwnerFromCO}"/>
+	                        	<apex:selectOptions value="{!list_COsOwner}" />
+	                    	</apex:selectList>
+                    	</apex:outputPanel>
+                 	</apex:actionRegion>
+                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!IF(Contains(objQCError.To_Sub_team__c, 'Fulfillment') ,true,false)}" >
+                    <apex:outputLabel value="QC Error Owner" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputField value="{!objQCError.Error_Owner__c}" id="ticketOwner"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Error Type" />
+                    <apex:actionRegion >
+                        <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!strSelectedReason}" size="1">
+                            <apex:actionSupport event="onchange" action="{!ticketDetail}" reRender="detail"/>
+                            <apex:selectOptions value="{!list_Reasons}" />
+                        </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    
+                        <apex:outputLabel value="Error Type Detail" />
+                    <apex:outputPanel styleClass="requiredInput" id="detail">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block" rendered="{!IF(list_ReasonsDetail.size > 1, true, false)}"/>
+                        <apex:selectList value="{!strSelectedReasonDetail}" size="1">
+                            <apex:actionSupport event="onchange" action="{!updateTicketOwner}" />
+                            <apex:selectOptions value="{!list_ReasonsDetail}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Description" />
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                        <apex:inputField value="{!objQCError.Description__c}" id="Description" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputText value="{!strScript}" escape="false"></apex:outputText>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" rendered="{!objQCError.From_Sub_Team_s__c != null}">
+                <apex:commandButton action="{!saveQCError}" value="Save" reRender="frmId" status="status"/>
+                <apex:commandButton onClick="RefreshPrimaryTab();" value="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

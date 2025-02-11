@@ -1,0 +1,421 @@
+<apex:page sidebar="false" title="CreateEditOrderFacilitatorChecklist" standardController="Order" extensions="CreateEditOrderFacilitatorChecklistCtrl" id="mainPage" action="{!checkFirstTimeFacilitatorAccess}">
+     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+     <apex:includeScript value="/support/console/45.0/integration.js"/>
+     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
+     <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:slds />
+    <style>
+        .closeBtn {
+            position: fixed;
+            margin-top: -27px;
+            font-size: large;
+        }
+        .hideRow{ 
+            display:none;
+        }
+        
+        .fieldInput { 
+            width:200px; 
+            border-left:3px solid #c00;
+        }
+
+        .infoTooltip {
+            color:rgb(0, 0, 0); 
+            margin-top:2px; 
+            margin-left:5px; 
+            font-size: 14px;
+        }
+    </style>
+   <div class="slds-scope" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <apex:form id="orderChklstForm">
+            <c:ActionStatus />
+            <apex:actionFunction name="deleteChk" status="statusSave" action="{!removeChecklist}" rerender="newChecklistPanel">
+                <apex:param name="rowToBeDeleted" value="" assignTo="{!intIndxToBeRemoved}"></apex:param>
+                <apex:param name="isNewRecord" value="" assignTo="{!bool_IsNewChkToBeRemoved}"></apex:param>
+            </apex:actionFunction>
+            <apex:outputText style="color:red;" value="* Facilitator is not assigned on Order." rendered="{! NULL == objOrder.Data_Entry_assist__c}"/>
+            <apex:pageMessages id="msgs"/>
+            <!--<apex:sectionHeader title="Order Checklists"/>-->
+            
+                <apex:outputPanel id="checklistPanel" rendered="{!NULL != lstOrderChklstWrapper && lstOrderChklstWrapper.size > 0}">
+                    <apex:actionFunction action="{!selectAllchecklists}" status="statusSave" rerender="isChecked" name="callSelectAll"/>
+                    <apex:outputPanel rendered="{!isAuthUser}">
+                        <apex:outputPanel layout="block" styleClass="slds-card" style="border-color: #006dcc; margin-top:10px;" id="advocatePanel" rendered="{!IdloggedInUser == objOrder.OwnerId || isDelegatedAdvocate}">
+                            <div class="slds-card__header slds-grid slds-m-bottom_none slds-p-bottom_small" style="background: #006dcc;  color: #fff;">
+                                <h2 class="slds-card__header-title">Order Checklists</h2>
+                            </div>
+                            <div class="slds-card__body slds-card__body_inner">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr class="slds-text-title slds-line-height_reset">
+                                        <th></th>
+                                        <th scope="col"><apex:inputCheckbox value="{!selectAll}" onchange="callSelectAll();" /></th>
+                                        <th scope="col">Checklist Name</th>
+                                        <th scope="col">Blocked?</th>
+                                        <th scope="col">Completed?</th>
+                                        <th scope="col">Last Facilitator Comment</th>
+                                        <th scope="col">Last Advocate Comment</th>
+                                    </tr>                        
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!lstOrderChklstWrapper}" var="cWrap">
+                                        <tr class="slds-text-title detailRow">
+                                            <td>
+                                                <apex:commandLink value="X" status="statusSave" action="{!removeChecklist}" onclick="return confirm('Do you want to delete this checklist?');">
+                                                    <apex:param name="rowToBeDeleted" value="{!cWrap.indx}" assignTo="{!intIndxToBeRemoved}"></apex:param>
+                                                    <apex:param name="isNewRecord" value="false" assignTo="{!bool_IsNewChkToBeRemoved}"></apex:param>
+                                                </apex:commandLink>
+                                            </td>
+                                            <td> <apex:inputField styleClass="chk-list-box" id="isChecked" value="{!cWrap.objOrderChkLst.Is_Checked__c}"  /> </td>
+                                            <td style="min-width:272px !important;" width="25%" > 
+                                                <apex:inputField style="width:80%" id="chkName" value="{!cWrap.objOrderChkLst.Checklist_Name__c}"/> 
+                                                <apex:outputLink id="commentLink" rendered="{!NULL != cWrap.objOrderChkLst.Id}" styleclass="cmntLink" value="javascript:slideToggle({!cWrap.indx});" >
+                                                    <span class="slds-icon_container slds-icon-utility-announcement slds-current-color" title="Comments">
+                                                        <svg class="slds-icon slds-icon-text-default" >
+                                                            <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#comments')}"></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Comments</span>
+                                                    </span>
+                                                </apex:outputLink>
+                                                <div id="uwPanel{!cWrap.indx}" class="uwPanel" style="display:none;z-index: 999; position: fixed;top: 20%;left: 20%;margin-top: -60px;margin-left: -100px;width: 600px;height: 400px;overflow: auto;" >
+                                                    <div style="float:right;">
+                                                        <a href="javascript:" class="closeBtn" id="close{!cWrap.indx}" onClick="hideSlide({!cWrap.indx});" >
+                                                            <span class="slds-icon_container slds-icon-utility-announcement slds-current-color" title="close">
+                                                                <svg class="slds-icon slds-icon-text-default" >
+                                                                    <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Comments</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                    <iframe src="/apex/ShowChatterForOrderFacilitatorChklst?ChklistId={!cWrap.objOrderChkLst.Id}" width="100%" height="100%"></iframe>  
+                                                </div>
+                                            </td>
+                                            <td> 
+                                                <apex:inputField id="blockedInput" value="{!cWrap.objOrderChkLst.Is_Blocked__c}" >
+                                                    <apex:actionSupport event="onchange" action="{!toggleComplete}" rerender="completedInput, assignCheckBox" status="statusSave" onComplete="openComment({!cWrap.indx},'{!cWrap.objOrderChkLst.Id}',event);">
+                                                        <apex:param value="{!cWrap.indx}" name="wrapIndex" assignTo="{!intWrapIndex}"/>
+                                                        <apex:param value="Blocked" name="fieldName" assignTo="{!strFieldName}"/>
+                                                    </apex:actionSupport>
+                                                </apex:inputField> 
+                                            </td>
+                                            <td> 
+                                                <apex:inputField id="completedInput" value="{!cWrap.objOrderChkLst.Is_Completed__c}">
+                                                    <apex:actionSupport event="onchange" action="{!toggleComplete}" rerender="blockedInput" status="statusSave">
+                                                        <apex:param value="{!cWrap.indx}" name="wrapIndex" assignTo="{!intWrapIndex}"/>
+                                                        <apex:param value="Completed" name="fieldName" assignTo="{!strFieldName}"/>
+                                                    </apex:actionSupport>
+                                                </apex:inputField> 
+                                            </td>
+                                            <td style="white-space: break-spaces !important;"> <apex:outputText id="facilitatorCmnt" escape="false" value="{!cWrap.strLastFacilitatorComment}"/></td>
+                                            <td style="white-space: break-spaces !important;"> <apex:outputText id="advocateCmnt" escape="false" value="{!cWrap.strLastAdvocateComment}"/></td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                            </div>
+                            <apex:outputPanel id="newChecklistPanel">
+                                
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                    <tbody>
+                                    <apex:repeat value="{!lstNewOrderChk}" var="objNewChk">
+                                        <tr class="slds-text-title detailRow" >
+                                            <td width="3%">
+                                                <a href="javascript:void(0);" onclick="if(confirm('Do you want to delete this checklist?')){deleteChk({!objNewChk.indx},true);}" >
+                                                   X 
+                                                </a>
+                                            </td>
+                                            <td width="4%"></td>
+                                            <td style="min-width:272px !important;" width="25%" > 
+                                                <apex:inputField style="width:80%" value="{!objNewChk.objOrderChkLst.Checklist_Name__c}"/>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </apex:repeat>
+                                    </tbody>
+                                </table>
+                                
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="block" styleClass="slds-card" style="border-color: #006dcc; margin-top:10px;" id="facilitatorPanel" rendered="{!AND(IdloggedInUser != objOrder.OwnerId,NOT(isDelegatedAdvocate),IdloggedInUser == objOrder.Data_Entry_Assist__c)}">
+                            <div class="slds-card__header slds-grid slds-m-bottom_none slds-p-bottom_small" style="background: #006dcc;  color: #fff;">
+                                <h2 class="slds-card__header-title">Order Checklists</h2>
+                            </div>
+                            <div class="slds-card__body slds-card__body_inner">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered" >
+                                <thead>
+                                    <tr class="slds-text-title slds-line-height_reset">
+                                        <th scope="col" >Checklist Name</th>
+                                        <th scope="col" >Blocked?</th>
+                                        <th scope="col" >Completed?</th>
+                                        <th scope="col" >Last Advocate Comment</th>
+                                        <th scope="col" >Last Facilitator Comment</th>
+                                    </tr>                        
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!lstOrderChklstWrapper}" var="cWrap">
+                                        <tr class="slds-text-title detailRow">
+                                            <td> <apex:outputText value="{!cWrap.objOrderChkLst.Checklist_Name__c}"/> 
+                                                <apex:outputLink id="commentLink" rendered="{!NULL != cWrap.objOrderChkLst.Id}" styleclass="cmntLink" value="javascript:slideToggle({!cWrap.indx});" >
+                                                    <span class="slds-icon_container slds-icon-utility-announcement slds-current-color" title="Comments">
+                                                        <svg class="slds-icon slds-icon-text-default" >
+                                                            <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#comments')}"></use>
+                                                        </svg>
+                                                        <span class="slds-assistive-text">Comments</span>
+                                                    </span>
+                                                </apex:outputLink>
+                                                <div id="uwPanel{!cWrap.indx}" class="uwPanel" style="display:none;z-index: 999; position: fixed;top: 20%;left: 20%;margin-top: -60px;margin-left: -100px;width: 600px;height: 400px;overflow: auto;" >
+                                                   <div style="float:right;">
+                                                        <a href="javascript:" class="closeBtn" id="close{!cWrap.indx}" onClick="hideSlide({!cWrap.indx});" >
+                                                            <span class="slds-icon_container slds-icon-utility-announcement slds-current-color" title="close">
+                                                                <svg class="slds-icon slds-icon-text-default" >
+                                                                    <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Comments</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                   <iframe src="/apex/ShowChatterForOrderFacilitatorChklst?ChklistId={!cWrap.objOrderChkLst.Id}" width="100%" height="100%"></iframe>   
+                                                </div>                                          
+                                            </td>
+                                            <td> 
+                                                <apex:inputField id="blockedInputF" value="{!cWrap.objOrderChkLst.Is_Blocked__c}" >
+                                                    <apex:actionSupport event="onchange" action="{!toggleComplete}" rerender="completedInputF, assignCheckBox" status="statusSave" onComplete="openComment({!cWrap.indx},'{!cWrap.objOrderChkLst.Id}',event);">
+                                                        <apex:param value="{!cWrap.indx}" name="wrapIndex" assignTo="{!intWrapIndex}"/>
+                                                        <apex:param value="Blocked" name="fieldName" assignTo="{!strFieldName}"/>
+                                                    </apex:actionSupport>
+                                                </apex:inputField>
+                                            </td>
+                                            <td> 
+                                                <apex:inputField id="completedInputF" value="{!cWrap.objOrderChkLst.Is_Completed__c}">
+                                                    <apex:actionSupport event="onchange" action="{!toggleComplete}" rerender="blockedInputF, assignCheckBox" status="statusSave">
+                                                        <apex:param value="{!cWrap.indx}" name="wrapIndex" assignTo="{!intWrapIndex}"/>
+                                                        <apex:param value="Completed" name="fieldName" assignTo="{!strFieldName}"/>
+                                                    </apex:actionSupport>
+                                                </apex:inputField> 
+                                            </td>
+                                            <td style="white-space: break-spaces !important; width:20%"> <apex:outputText id="advocateCmntF" escape="false" value="{!cWrap.strLastAdvocateComment}"/></td>
+                                            <td style="white-space: break-spaces !important;"> <apex:outputText id="facilitatorCmntF" escape="false" value="{!cWrap.strLastFacilitatorComment}"/></td> 
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="block" styleClass="slds-card" style="border-color: #006dcc; margin-top:10px;" rendered="{!NOT(isAuthUser) && NULL != lstOrderChklstWrapper && lstOrderChklstWrapper.size > 0}">
+                        <div class="slds-card__header slds-grid slds-m-bottom_none slds-p-bottom_small" style="background: #006dcc;  color: #fff;">
+                            <h2 class="slds-card__header-title">Order Checklists</h2>
+                        </div>
+                        <div class="slds-card__body slds-card__body_inner">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr class="slds-text-title slds-line-height_reset">
+                                        <th scope="col">Checklist Name</th>
+                                        <th scope="col">Blocked?</th>
+                                        <th scope="col">Completed?</th>
+                                        <th scope="col">Last Advocate Comment</th>
+                                        <th scope="col">Last Facilitator Comment</th>
+                                    </tr>                        
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!lstOrderChklstWrapper}" var="cWrap">
+                                        <tr class="slds-text-title detailRow">
+                                            <td> <apex:outputText value="{!cWrap.objOrderChkLst.Checklist_Name__c}"/> </td>
+                                            <td> <apex:outputField value="{!cWrap.objOrderChkLst.Is_Blocked__c}"/> </td>
+                                            <td> <apex:outputField value="{!cWrap.objOrderChkLst.Is_Completed__c}"/> </td>
+                                            <td style="white-space: break-spaces !important;"> <apex:outputText escape="false" value="{!cWrap.strLastAdvocateComment}"/></td> 
+                                            <td style="white-space: break-spaces !important;"> <apex:outputText escape="false" value="{!cWrap.strLastFacilitatorComment}"/></td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                        </table>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!(NULL == lstOrderChklstWrapper || lstOrderChklstWrapper.size == 0)}" >
+                   No Checklists have been selected for this order.
+               </apex:outputPanel>
+               
+                <apex:outputPanel id="assignCheckBox">
+                    <apex:outputPanel rendered="{!IdloggedInUser == objOrder.Data_Entry_Assist__c  && blnAllCheckListCompleted==false && objOrder.Assign_to_Advocate__c==false}">      
+                        <div id="idFacilatorFollowUp" class="slds-card slds-m-top_medium slds-m-bottom_medium" style="border-color: #006dcc;" >
+                            <div class="slds-card__header slds-grid slds-m-bottom_none slds-p-bottom_small" style="background: #006dcc;  color: #fff;" title="Select a Follow Up Date for this Order to return to you. Use this option if you are unable to complete the Order, due to circumstances outside of yours and the Advocates control.">
+                                <h2 class="slds-card__header-title" > 
+                                    Set Follow Up
+                                    <i class="fas fa-info-circle" style="color:white; margin-top:2px; margin-left:5px; font-size: 14px;"></i>
+                                </h2>
+               
+                            </div>
+                            <div class="slds-card__body slds-card__body_inner">
+                            <div class="slds-form">
+                                <div class="slds-grid slds-wrap slds-gutters_large">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6" title="To select a follow up of today please enter the Blocked Reason">
+                                        <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="">Facilitator Follow Up Date</label>
+                                        <i class="fas fa-info-circle" styleClass="infoToolTip" ></i>
+                                        <div class="slds-form-element__control" style="width:200px;">
+                                            <apex:inputField id="idFollowUpDate" onchange="reAssignOrder();" value="{!objFollowUpOrder.Facilitator_Follow_Up_Date__c}" styleClass="slds-input"/>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-wrap slds-gutters_large">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                                        <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="">Blocked Reason</label>
+                                        <div class="slds-form-element__control" styleClass="fieldInput">
+                                            <apex:inputField id="idBlockedReason" onchange="reAssignOrder();" value="{!objFollowUpOrder.Blocked_Reason__c}" styleClass="slds-input"/>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div id="idFollowUpCode" class="slds-grid slds-wrap slds-gutters_large">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                                        <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="">Facilitator Follow Up Date Reason</label>
+                                        <div class="slds-form-element__control" style="width:200px; border-left:3px solid #c00;">
+                                            <apex:inputField id="idFollowUpReason" onchange="fetchReason(this.value);" value="{!objFollowUpOrder.Facilitator_Follow_Up_Date_Reason__c}" styleClass="slds-input"/>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                                        <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="">Jira Link</label>
+                                        <div id="jiraNumber" class="slds-form-element__control" style="width:200px; {!if(objFollowUpOrder.Facilitator_Follow_Up_Date_Reason__c=='EPD JIRA', ' border-left:3px solid #c00;' , '')}">
+                                           <apex:inputField value="{!objFollowUpOrder.Jira_Link__c}" styleClass="slds-input"/>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="idFollowUpNotes" class="slds-grid slds-wrap slds-gutters_large">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-6">
+                                        <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="">Facilitator Follow Up Notes</label>
+                                        <div class="slds-form-element__control">
+                                            <apex:inputField style="max-width:400px" value="{!objFollowUpOrder.Facilitator_Follow_Up_Notes__c}" styleClass="slds-input"/>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                
+                    
+                    <apex:outputPanel rendered="{!IdloggedInUser == objOrder.OwnerId && objOrder.OwnerId != objOrder.Data_Entry_Assist__c}" >            
+                        <div id="idFacilitator" class="slds-box slds-m-top_medium slds-m-bottom_medium" style="background: {!if(objOrder.Assign_Facilitator__c,'#dddbda;','#006dcc;')}" title="Select here to send the Order to the Facilitator, if there are action items for the Facilitator to complete.">
+                            <label class="slds-checkbox" >
+                                <apex:inputCheckbox id="idChkFacilitator" onchange="reAssignOrder();" value="{!objOrder.Assign_Facilitator__c}"/>   
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-p-left_x-small" id="labelFacilitator" style="{!if(objOrder.Assign_Facilitator__c, '', 'color: #fff;')}">Assign to Facilitator</span>
+                                <i class="fas fa-info-circle" style="color:{!if(objOrder.Assign_Facilitator__c,'black;','white;')} font-size: 14px;" ></i>    
+                            </label>
+                            
+                        </div>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!IdloggedInUser == objOrder.Data_Entry_Assist__c && blnAllCheckListCompleted == false}">      
+                        <div id="idAdvocate" class="slds-box slds-m-top_medium slds-m-bottom_medium" style="background: {!if(objOrder.Assign_to_Advocate__c,'#dddbda;','#006dcc;')} display:{!if(objFollowUpOrder.Facilitator_Follow_Up_Date__c!=null,'none;','')}"  title="Select here to send the Order back to the Advocate, if there are action items for the Advocate to complete. You will not be able to continue work on this Order until the Advocate sends it back to you.">
+                            <label class="slds-checkbox">
+                                <apex:inputCheckbox id="idChkAdvocate" onchange="reAssignOrder();" value="{!objOrder.Assign_to_Advocate__c}" disabled="{!blnAssignToAdvocate}"/>   
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="slds-p-left_x-small" id="labelAdvocate"  style="{!if(objOrder.Assign_to_Advocate__c, '', 'color: #fff;')}">Assign to Advocate</span>
+                                <i class="fas fa-info-circle" style="color:{!if(objOrder.Assign_to_Advocate__c,'black;','white;')} font-size: 14px;" ></i>   
+                            </label>  
+                           
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+
+                <div class="slds-align_absolute-center slds-m-top_small slds-m-bottom_small" style="display: {!if(blnAssignToAdvocate && isAuthUser && IdloggedInUser != objOrder.OwnerId, 'none;', '')}" >
+                    <apex:commandButton styleclass="slds-button slds-button_outline-brand" rendered="{!IdloggedInUser == objOrder.OwnerId || isDelegatedAdvocate}" value="New Checklist Item" status="statusSave" action="{!addNewCheckList}" rerender="newChecklistPanel"/>
+                    <apex:commandButton styleclass="slds-button slds-button_outline-brand" rendered="{!isAuthUser && null != lstOrderChklstWrapper && lstOrderChklstWrapper.size > 0 }" value="Save" status="statusSave" action="{!saveChecklistNRefresh}" reRender="msgs"/>
+                    <apex:commandButton styleclass="slds-button slds-button_outline-brand" rendered="{!(IdloggedInUser == objOrder.OwnerId || isDelegatedAdvocate) && bool_CopyButtonVisible}" title="Save & Copy Checklists to Other Orders" value="Save & Copy Checklists" status="statusSave" action="{!saveAndCopychecklists}" rerender="msgs"/>
+                    <apex:commandButton styleclass="slds-button slds-button_outline-brand" rendered="{!isAuthUser && null != lstOrderChklstWrapper &&  lstOrderChklstWrapper.size > 0}" value="Save & Close" status="statusSave" action="{!saveChecklists}" rerender="scriptPanel,msgs" onComplete="closeRecord();"/> 
+
+                    <apex:actionFunction name="reAssignOrder" action="{!reAssignOrder}" status="statusSave" reRender="assignCheckBox"/>
+                </div>
+                
+            <apex:actionFunction action="{!loadFeedItems}"  status="statusSave" name="reloadList" rerender="facilitatorCmnt,advocateCmnt,facilitatorCmntF,advocateCmntF"/>
+            <apex:outputPanel id="scriptPanel">
+                <script>
+                    var isAnyError = '{!boolErrorMessage}';
+                </script>
+            </apex:outputPanel>
+        </apex:form>
+    </div>
+    <script>
+        var isAnyError;
+        $(document).ready(function(){
+            $(".uwPanel").slideUp();
+            // $(".cmntLink").hover( slideToggleOnHover(), function(){reloadList();} );
+        });
+    
+        //$(".cmntLink").hover( function(e){slideToggleOnHover(e)}, function(){reloadList();} );
+        function slideToggle(indx){
+            $("#uwPanel"+indx).css('display','block');
+            $("#uwPanel"+indx).slideDown("slow");
+        }
+        function hideSlide(indx){
+            reloadList();
+            $("#uwPanel"+indx).slideUp();
+            $("#uwPanel"+indx).css('display','none');
+        }
+        $("body").click(function(event){    
+            if(event.target.class == "cmntLink")
+            return;
+            //For descendants of menu_content being clicked, remove this check if you do not want to put constraint on descendants.
+            if($(event.target).closest('.cmntLink').length)
+                return;             
+
+            //Do processing of click event here for every element except with id menu_content
+            $(".uwPanel").slideUp();
+            if($('.uwPanel').is(':visible')){
+                reloadList();
+            }
+        });
+        var orderId = '{!objOrder.Id}';
+        function closeRecord(){
+            var redirectUrl = '/'+orderId; 
+            
+            if(isAnyError == 'false'){ // if no exception in saving checklists, then close the subtab and refresh orderdetail
+                if(sforce.console.isInConsole()){
+                    sforce.console.getEnclosingTabId(function(enclosingResult){
+                        sforce.console.closeTab(enclosingResult.id);
+                    });
+                    sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                        if(primaryResult.id!='null'){
+                            sforce.console.refreshPrimaryTabById(primaryResult.id,true);
+                        }
+                    });
+                    
+                }
+                else{
+                    // for inline Vf
+                    window.open(redirectUrl, '_blank');
+                }
+            }
+        }
+        function openComment(indx,chkId,event){
+            var target = event.target.id;
+            if('' != chkId){
+                if(document.getElementById(target).checked == true){
+                    slideToggle(indx);
+                }
+            }
+        }
+        function fetchReason(obj){
+            console.log('----');
+            if(obj!=null && obj=='EPD JIRA'){
+                document.getElementById('jiraNumber').style.borderLeft  = '3px solid #c00';
+            }else{
+                document.getElementById('jiraNumber').style.borderLeft  = '0px solid #c00';
+            }
+        }
+    </script>
+</apex:page>

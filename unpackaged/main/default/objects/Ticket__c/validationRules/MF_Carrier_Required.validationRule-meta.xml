@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MF_Carrier_Required</fullName>
+    <active>true</active>
+    <description>Carrier is required if escalation reason is &apos;Exception Request&apos; or &apos;Waiting Period Discrepancy&apos;</description>
+    <errorConditionFormula>AND(
+ OR(
+   ISPICKVAL(Escalation_Reason__c, &quot;Exception Request&quot;),
+   ISPICKVAL(Escalation_Reason__c, &quot;Waiting Period&quot;)
+   ),
+ RecordType.Name = &apos;Member Fulfillment&apos;,
+ ISBLANK( Carrier__c )
+)</errorConditionFormula>
+    <errorDisplayField>Carrier__c</errorDisplayField>
+    <errorMessage>Carrier is required.</errorMessage>
+</ValidationRule>

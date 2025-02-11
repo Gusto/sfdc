@@ -1,0 +1,30 @@
+<!--
+    Purpose: BSS-825 VF page lays over the customer facing chat window in Gcorp and ZP.
+             Allows to grab the ChatKey from the Chat Transcript and append to the Qualtrics URL,
+             and provides the response of the survey back onto the Chat Transcript.
+    Written by: Pradeep Chary
+    Date: 09/28/2022
+-->
+<apex:page showHeader="false">
+    <!-- Iframe that displays customer facing Chat Qualtrics feedback window -->
+    <!-- Custom Label - Survey_Qualtrics_Url: https://gusto.az1.qualtrics.com/jfe/form/SV_1WTVLvTSsR8aD8q -->
+    <apex:iframe src="{!$Label.Survey_Qualtrics_Url}?ChatKey={!$CurrentPage.parameters.chatKey}"
+                 height="630px"
+                 width="295px"
+                 id="idIframe">
+    </apex:iframe>
+
+    <!-- This will present the errors if any occured on this page -->
+    <div id="details">
+        <h1>Post Chat Page</h1>   
+        <p>
+            Error: <apex:outputText value="{!$CurrentPage.parameters.error}" /><br />
+        </p>
+    </div>
+
+    <!-- Code to hide the post chat parameters data for the end-users -->
+    <script type="text/javascript">
+        document.getElementById("details").style.display = "none";
+    </script>
+
+</apex:page>

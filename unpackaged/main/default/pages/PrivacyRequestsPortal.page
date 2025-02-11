@@ -1,0 +1,255 @@
+<apex:page title="Privacy Request Portal" cache="false" lightningStylesheets="true" controller="PrivacyRequestsPortalCtrl" showHeader="false" docType="html-5.0" action="{!validateCookie}">	
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">	
+        <!--<script>	
+            function toggleSubmitButton() {	
+                var infoConfirm = document.querySelector("[id*='infoConfirm']");	
+                var deleteConfirm = document.querySelector("[id*='deleteConfirm']");	
+                var submitButton = document.querySelector("[id*='submitButton']");	
+                	
+                var submitToggle = false;	
+                if(infoConfirm.checked === true) {	
+                    submitToggle = true;	
+                    if(deleteConfirm !== null) {	
+                        if(deleteConfirm.checked === true) {	
+                            submitToggle = true;	
+                        } 	
+                        else submitToggle = false;	
+                    }	
+                }	
+                if(submitToggle === false) {	
+                    submitButton.disabled = true;	
+                }	
+                else {	
+                    submitButton.removeAttribute('disabled');	
+                }	
+            }	
+        </script>-->	
+        <style>	
+            #ssnToolTip:hover + .slds-popover.slds-popover_tooltip.slds-hide {	
+            display : block!important;	
+        }	
+        </style>	
+        <apex:slds />	
+        <div class="slds-scope">	
+            <div class="slds-grid">	
+                <div class="slds-col">
+                    <div class="slds-m-around_large">
+                        <a href="https://gusto.com/" target="_blank">
+                            <apex:image url="{!URLFOR($Resource.GustoLogo)}" width="92" height="36"/>
+                        </a>
+                    </div>
+                    <div class="slds-box slds-m-around_large">	
+                        <apex:form id="formId">	
+                            <apex:outputPanel id="pgMes">	
+                                <apex:pageMessages />	
+                            </apex:outputPanel>	
+                            <div class="slds-text-heading_large">{!If(boolIsSubmitted == true, 	
+                                    If(boolReadyToDisclose, 'Request Processed', 	
+                                        If(boolIsDenied, 'Request Denied', 'Request Submitted')), 	
+                                'Complete your request')}</div>	
+                            <div class="slds-text-body_small">The information you provide will be used for identification purposes only and will be destroyed after review.</div>
+                            <apex:actionRegion renderRegionOnly="false">	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Admin' || requestCase.User_Type__c == 'Signatory' || requestCase.User_Type__c == 'Employee' || requestCase.User_Type__c == 'Contractor (individual)' || requestCase.User_Type__c == 'Non Gusto User', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">	
+                                            {!$ObjectType.Case.Fields.SSN__c.Label} 	
+                                            <a id="ssnToolTip" href="javascript:void(0)" aria-describedby="help">(Why do we ask for your SSN?)</a>	
+                                            <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left slds-slide-from-bottom-to-top slds-hide" role="tooltip" id="help" style="position:absolute;top:-4em;left:10em">	
+                                                <div class="slds-popover__body">{!$ObjectType.Case.Fields.SSN__c.InlineHelpText}</div>	
+                                            </div>	
+                                        </label>	
+                                        <div class="slds-form-element__control">	
+                                            <apex:inputText styleClass="slds-input" value="{!strSSN}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <div class="slds-text-heading_small">{!strMaskedSSN}</div> <!-- =mask these characters-->	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Signatory', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">{!$ObjectType.Case.Fields.Privacy_Requester_Phone__c.Label}</label>	
+                                        <div class="slds-form-element__control">	
+                                            <apex:inputText styleClass="slds-input" value="{!strPhoneNumber}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <div class="slds-text-heading_small">{!strPhoneNumber}</div>	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Employee', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">{!$ObjectType.Case.Fields.Date_of_Birth__c.Label}</label>	
+                                        <div class="slds-form-element__control dateField">	
+                                            <apex:input type="date" styleClass="slds-input" value="{!dtDateOfBirth}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <apex:outputText styleClass="slds-text-heading_small" value="{0, date, MMMM d','  yyyy}">	
+                                                    <apex:param value="{!requestCase.Date_of_Birth__c}" /> 	
+                                                </apex:outputText>	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Employee', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">{!$ObjectType.Case.Fields.Date_of_Hire__c.Label}</label>	
+                                        <div class="slds-form-element__control dateField">	
+                                            <apex:input type="date" styleClass="slds-input" value="{!dtDateOfHire}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <apex:outputText styleClass="slds-text-heading_small" value="{0, date, MMMM d','  yyyy}">	
+                                                    <apex:param value="{!requestCase.Date_of_Hire__c}" /> 	
+                                                </apex:outputText>	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Signatory' || requestCase.User_Type__c == 'Contractor (business)', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">{!$ObjectType.Case.Fields.FEIN_Last_4_digits__c.Label}</label>	
+                                        <div class="slds-form-element__control">	
+                                            <apex:inputText styleClass="slds-input" value="{!strFEIN}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <div class="slds-text-heading_small">{!requestCase.FEIN_Last_4_digits__c}</div>	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Admin', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">{!$ObjectType.Case.Fields.Last_Employee_Hired__c.Label}</label>	
+                                        <div class="slds-form-element__control">	
+                                            <apex:inputText styleClass="slds-input" value="{!strLast_Employee_Hired}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <div class="slds-text-heading_small">{!requestCase.Last_Employee_Hired__c}</div>	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(requestCase.User_Type__c == 'Contractor (individual)', true, false)}">	
+                                    <div class="slds-form-element slds-p-top_small">	
+                                        <label class="slds-form-element__label">{!$ObjectType.Case.Fields.Name_of_Business__c.Label}</label>	
+                                        <div class="slds-form-element__control">	
+                                            <apex:inputText styleClass="slds-input" value="{!strName_of_Business}" rendered="{!!boolIsSubmitted}"/>	
+                                            <apex:outputPanel rendered="{!boolIsSubmitted}">	
+                                                <div class="slds-text-heading_small">{!requestCase.Name_of_Business__c}</div>	
+                                            </apex:outputPanel>	
+                                        </div>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{!!boolIsSubmitted}">	
+                                    <div class="slds-p-top_small">	
+                                        <label class="slds-form-element__label" for="fileToUpload">Please provide a copy of a California driver license, California identification card, or utility bill with an address in California.</label><br />	
+                                        <label class="slds-text-body_small" for="fileToUpload">Maximum file size allowed is 10MB.</label>	
+                                    </div>	
+                                    <div class="slds-form-element slds-m-bottom_xx-small">	
+                                        <div class="slds-form-element__control">	
+                                            <div class="slds-file-selector slds-file-selector_files">	
+                                                <div class="slds-file-selector__dropzone">	
+                                                    <apex:inputFile value="{!blobFile}" filename="{!strFileName}" />	
+                                                </div>	
+                                            </div>	
+                                        </div>	
+                                    </div>	
+                                    <apex:commandButton styleClass="slds-button slds-button_outline-brand" action="{!uploadFile}" value="Upload File"/>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{! If(attachments.size > 0, true, false)}">	
+                                    <div class="slds-p-top_small">	
+                                        <label class="slds-form-element__label">Saved files</label>	
+                                        <table>	
+                                            <tbody>	
+                                                <apex:repeat value="{!attachments}" var="file">	
+                                                    <tr>	
+                                                        <td>	
+                                                            <div>	
+                                                                <!--<apex:commandLink rendered="{!!boolIsSubmitted}" styleClass="slds-button slds-button_icon" action="{!deleteFile}">	
+                                                                    <apex:param name="fileToDelete" value="{!file.ContentDocumentId}" assignTo="{!strFileToDelete}" />	
+                                                                    <svg class="slds-button__icon">	
+                                                                        <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#delete')}"></use>	
+                                                                    </svg>	
+                                                                </apex:commandLink>-->	
+                                                                {!file.ContentDocument.Title}	
+                                                            </div>	
+                                                        </td>	
+                                                    </tr>	
+                                                </apex:repeat>	
+                                            </tbody>	
+                                        </table>	
+                                    </div>	
+                                </apex:outputPanel>	
+                                <apex:outputPanel rendered="{!!boolIsSubmitted}">	
+                                    <div class="slds-m-top_small">	
+                                        <div class="slds-form-element slds-p-top_small">	
+                                            <div class="slds-form-element__control">	
+                                                <div class="slds-text-body_small">	
+                                                    <abbr class="slds-required" title="required">*</abbr>	
+                                                    <apex:inputCheckbox value="{!boolInfoConfirm}" id="infoConfirm" /> <!-- onchange="toggleSubmitButton()" -->	
+                                                    By checking this box, I certify that the information submitted in this form is true and correct to the best of my knowledge.	
+                                                </div>	
+                                            </div>	
+                                        </div>	
+                                        <apex:outputPanel rendered="{!boolIsDelete}">	
+                                            <div class="slds-form-element slds-p-top_small">	
+                                                <div class="slds-form-element__control">	
+                                                    <div class="slds-text-body_small">	
+                                                        <abbr class="slds-required" title="required">*</abbr>	
+                                                        <apex:inputCheckbox value="{!boolDeleteConfirm}" id="deleteConfirm"/> <!--onchange="toggleSubmitButton()" -->	
+                                                        By checking this box, I confirm that I want my personal information (or the personal information of the individual on whose behalf I am acting) deleted.	
+                                                    </div>	
+                                                </div>	
+                                            </div>	
+                                        </apex:outputPanel>	
+                                    </div>	
+                                    <div class="slds-m-top_small">
+                                        <div class="slds-text-body_small slds-m-bottom_x-small">	
+                                            By submitting this request, I authorize Gusto to contact me if additional information is needed to verify my identity.	
+                                        </div>		
+                                        <apex:commandButton styleClass="slds-button slds-button_outline-brand" action="{!save}" value="Save" />	
+                                        <apex:commandButton styleClass="slds-button slds-button_brand" action="{!saveAndSubmit}" value="Save and Submit" />	
+                                    </div>	
+                                </apex:outputPanel>	
+                            </apex:actionRegion>	
+                        </apex:form>	
+                    </div>	
+                    <apex:form id="form2">	
+                        <!--<apex:outputPanel rendered="{!boolReadyToDisclose}">	
+                            <div class="slds-box slds-m-around_large">	
+                                <div class="slds-text-body_regular slds-m-bottom_large">	
+                                    Thank you for your inquiry. You may review our response to your request by clicking	
+                                    <apex:commandButton action="{!toggleShowInformation}" styleClass="slds-button" value="here" reRender="form2"/>.	
+                                </div>	
+                                <apex:outputPanel id="dcData" rendered="{!boolShowDataCollectionInfo}">	
+                                    <c:PrivacyRequestsDataCollectionInfo privacyRequestCase="{!requestCase}"/>	
+                                </apex:outputPanel>	
+                            </div>	
+                        </apex:outputPanel>-->	
+                        <apex:outputPanel rendered="{!boolIsDeniedLocation}">	
+                            <div class="slds-box slds-m-around_large">	
+                                <div class="slds-text-body_regular slds-m-bottom_large">	
+                                    Thank you for your inquiry. Unfortunately, we are unable to fulfill your request because you do not fall within one of the following categories: 	
+                                    (i) a natural person who is a California resident, 	
+                                    (ii) a natural person who is a California resident, acting on behalf of your minor child, or 	
+                                    (iii) a natural person or a person registered with the California Secretary of State, acting on behalf of a natural person who is a California resident and who has authorized you to act on their behalf. 	
+                                    Please refer to Gusto's 	
+                                    <a href="https://gusto.com/about/privacy" target="_blank">Privacy Policy</a>	
+                                    for information about our general business practices regarding the collection and maintenance of personal information.	
+                                </div>	
+                            </div>	
+                        </apex:outputPanel>	
+                        <apex:outputPanel rendered="{!boolIsDeniedIdentity}">	
+                            <div class="slds-box slds-m-around_large">	
+                                <div class="slds-text-body_regular slds-m-bottom_large">	
+                                    Thank you for your inquiry. Unfortunately, we are unable to fulfill your request because we cannot verify your identity based on the information you have provided to us. 	
+                                    Please refer to Gusto's <a href="https://gusto.com/about/privacy" target="_blank">Privacy Policy</a> for information about our general business practices regarding the collection and maintenance of personal information.	
+                                </div>	
+                            </div>	
+                        </apex:outputPanel>	
+                    </apex:form>	
+                </div>	
+                <div class="slds-docked-form-footer">	
+                    <div class="slds-text-heading_small slds-text-align_center">This session will expire automatically 10 minutes from the time of login. Any information not yet saved will be lost upon session timeout. 
+                        <br/> Please refer to Gusto's <a href="https://gusto.com/about/privacy" target="_blank">Privacy Policy</a> for information about our general business practices regarding the collection and maintenance of personal information.	</div>	
+                </div>	
+            </div>	
+        </div>	
+    </html>	
+</apex:page>

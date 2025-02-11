@@ -1,0 +1,893 @@
+<apex:page tabStyle="Task" controller="LogSmartCallingController" id="pg" standardStylesheets="false" docType="html-5.0"
+ sidebar="false">
+	<apex:includeScript value="/support/console/44.0/integration.js" />
+	<apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js" />
+
+	<!--Bootstrap CSS -->
+	<apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+	<apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+	<apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" />
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+	<link rel="stylesheet" href="/resources/demos/style.css" />
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<style>
+		.pbSubheader {
+			color: #fff !important;
+			background-color: #5cb85c !important;
+			border-color: #4cae4c !important;
+		}
+
+		select {
+			display: block !important;
+			width: auto;
+			height: 34px;
+			padding: 6px 12px;
+			font-size: 14px;
+			line-height: 1.42857143;
+			color: #555 !important;
+			background-color: #fff;
+			background-image: none;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+			transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+		}
+
+		.ui-datepicker {
+			width: 40% !important;
+		}
+
+		.ui-datepicker-calendar {
+			font-size: 12px !important;
+		}
+
+		.form-control {
+			font-size: 11px !important;
+		}
+
+		.multiSelectPicklistTable {
+			max-width: 140px !important;
+			font-size: 11px;
+			margin: 0px 0px 0px 0px !important;
+			padding: 0px 0px 0px 0px !important;
+		}
+
+		.imgclass:hover {
+			background-image: url(/img/help/helpOrbs.gif);
+			background-repeat: no-repeat;
+			width: 16px;
+			height: 15px;
+			background-position: right;
+		}
+
+		.imgclass {
+			background-image: url(/img/help/helpOrbs.gif);
+			background-repeat: no-repeat;
+			width: 16px;
+			height: 15px;
+		}
+	</style>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("input.btn").removeClass("btn");
+		});
+	</script>
+	<script>
+		function fillComment(val) {
+			if ('{!currentObject}' != 'Benefit Order' &&
+				(document.getElementById('pg:frm:phoneNumber').value == null || document.getElementById('pg:frm:phoneNumber').value == '') &&
+				(document.getElementById('pg:frm:hdWhoId').value == null || document.getElementById('pg:frm:hdWhoId').value == '')) {
+				alert('Attempting to log a call on wrong Contact!!!');
+			} else {
+				avlVal = document.getElementById('pg:frm:mainpb:pb6:txtArea').value;
+				var recordId = document.getElementById('pg:frm:recordId').value;
+				if (val == '') { return; }
+				if (avlVal.startsWith('Connect') || avlVal.startsWith('Voicemail') || avlVal.startsWith('Attempt')) {
+					avlVal = avlVal.replace(/^\S+/g, val);
+					document.getElementById('pg:frm:mainpb:pb6:txtArea').value = '';
+					document.getElementById('pg:frm:mainpb:pb6:txtArea').value = avlVal;
+				} else {
+					var comment = val + ' || ' + '{!DateTimeStr}' + ' || ' + '{!$User.FirstName}' + ' ' + '{!$User.LastName}';
+					comment = comment + '\n' + document.getElementById('pg:frm:mainpb:pb6:txtArea').value;
+					document.getElementById('pg:frm:mainpb:pb6:txtArea').value = comment;
+				}
+				if ('{!currentObject}' == 'Benefit Order') {
+					var notes = document.getElementById('pg:frm:mainpb:pb6:txtArea').value;
+					if (notes != undefined && notes.search('Notes:') == -1) {
+						document.getElementById('pg:frm:mainpb:pb6:txtArea').value = notes + '\nNotes: \n' + 'Action Items: \n';
+					}
+					return true;
+				}
+				avlSubject = document.getElementById('pg:frm:mainpb:pb6:txtSubject').value;
+				if (avlSubject.startsWith('Connect') || avlSubject.startsWith('Voicemail') || avlSubject.startsWith('Attempt')) {
+					avlSubject = avlSubject.replace(/^\S+/g, val);
+					document.getElementById('pg:frm:mainpb:pb6:txtSubject').value = '';
+					document.getElementById('pg:frm:mainpb:pb6:txtSubject').value = avlSubject;
+				} else {
+					var comment = val + ' || ' + '{!DateTimeStr}' + ' || ' + '{!$User.FirstName}' + ' ' + '{!$User.LastName}';
+					comment = comment + '\n' + document.getElementById('pg:frm:mainpb:pb6:txtSubject').value;
+					document.getElementById('pg:frm:mainpb:pb6:txtSubject').value = comment;
+				}
+			}
+			return true;
+		}
+		function removePrimaryTabParams() {
+			removeClass();
+			if ('{!currentObject}' == 'Benefit Order') {
+				sforce.console.getEnclosingPrimaryTabId(function (result) {
+					var objBOId = '{!objBenefitOrder.Id}';
+					var redirectUrl = '/' + objBOId + '?o=1';
+					sforce.console.getTabLink(sforce.console.TabLink.PARENT_AND_CHILDREN, result.id, function (tabLinkRes) {
+						var str = decodeURIComponent(tabLinkRes.tabLink).split('#')[1];
+						console.log(str);
+						var allURLs = str.split('|');
+
+						sforce.console.openPrimaryTab(result.id, redirectUrl, true, '{!objBenefitOrder.Name}', function (resultNew) {
+							console.log(allURLs);
+							for (var indx = 0; indx < allURLs.length; indx++) {
+								if (redirectUrl != allURLs[indx] && allURLs[indx] != '')
+									sforce.console.openSubtab(resultNew.id, allURLs[indx], false);
+							}
+						});
+					});
+
+				});
+			}
+		}
+
+		function validateForm() {
+			document.getElementById('disErr').innerHTML = '';
+
+			if (document.getElementById('pg:frm:mainpb:pb3:dispotion').value == '') {
+				document.getElementById('disErr').innerHTML = 'Please select Disposition.';
+				document.getElementById('pg:frm:mainpb:pb3:dispotion').focus();
+			} else if (('{!currentUserRole}' == 'sales_sb_ob_xx' || '{!currentUserRole}' == 'sales_sb_ob_sme') && document.getElementById('pg:frm:mainpb:pb3:dispotion').value == 'Connect' && document.getElementById('pg:frm:mainpb:pb3:objectives').value == '') {
+				document.getElementById('disErrObj').innerHTML = 'Please select a Call Objective.';
+				document.getElementById('pg:frm:mainpb:pb3:objectives').focus();
+			} else if ('{!currentObject}' != 'Benefit Order' &&
+				(document.getElementById('pg:frm:phoneNumber').value == null || document.getElementById('pg:frm:phoneNumber').value == '') &&
+				document.getElementById('pg:frm:hdWhoId').value == '') {
+				document.getElementById('disErrWhoId').innerHTML = 'Attempting to log a call on wrong Contact!!!';
+
+			} else if ('{!currentObject}' == 'Benefit Order') {
+
+				if (document.getElementById('pg:frm:mainpb:pb3:callType').value == null || document.getElementById('pg:frm:mainpb:pb3:callType').value == '') {
+					document.getElementById('disErrCallType').innerHTML = 'Please select Call Type.';
+				}
+				else if (document.getElementById('pg:frm:mainpb:pb3:reasonforCall').value == null || document.getElementById('pg:frm:mainpb:pb3:reasonforCall').value == '') {
+					document.getElementById('disErrReason').innerHTML = 'Please select Reason for Call.';
+				}
+				else if (document.getElementById('pg:frm:mainpb:pb3:calendly').value == null
+					|| document.getElementById('pg:frm:mainpb:pb3:calendly').value == ''
+					|| document.getElementById('pg:frm:mainpb:pb3:calendly').value == 'None') {
+					document.getElementById('disErrCalendly').innerHTML = 'Please select Calendly.';
+				}
+				else {
+					saveTask();
+				}
+			} else {
+				saveTask();
+			}
+			return false;
+		}
+
+		function processLTC() {
+			processLTCLead();
+		}
+
+		function processSaveWOCall() {
+			if ((document.getElementById('pg:frm:phoneNumber').value == null || document.getElementById('pg:frm:phoneNumber').value == '') &&
+				(document.getElementById('pg:frm:hdWhoId').value == null || document.getElementById('pg:frm:hdWhoId').value == '')) {
+				alert('Attempting to log a call on wrong Contact!!!');
+
+			}
+			/* BT - 17370 */
+			else if (('{!currentUserRole}' == 'sales_sb_ob_xx' || '{!currentUserRole}' == 'sales_sb_ob_sme') && document.getElementById('pg:frm:mainpb:pb3:dispotion').value == 'Connect' && document.getElementById('pg:frm:mainpb:pb3:objectives').value == '') {
+				document.getElementById('disErrObj').innerHTML = 'Please select a Call Objective.';
+				document.getElementById('pg:frm:mainpb:pb3:objectives').focus();
+			} else {
+				processTaskWOCall();
+			}
+			return false;
+		}
+
+		function setCaseContactId(val) {
+			console.log(val);
+			document.getElementById('pg:frm:caseWhoIdIn').value = val;
+			displayCases();
+		}
+
+		function setContactId(val) {
+			console.log(val);
+			document.getElementById('pg:frm:hdWhoId').value = val;
+		}
+
+		function setSelectedPhone(val) {
+			document.getElementById('pg:frm:selectedPhone').value = val;
+		}
+
+		function setHiOppDispaly() {
+			if (document.getElementById("pg:frm:mainpb:pb72:createHI").checked == true) {
+				document.getElementById("pg:frm:mainpb:hiOppSection").style.display = "block";
+			} else {
+				document.getElementById("pg:frm:mainpb:hiOppSection").style.display = "none";
+			}
+		}
+
+		function setPayrollOppDisplay() {
+			if (document.getElementById("pg:frm:mainpb:pb172:payrollOpp").checked == true) {
+				document.getElementById("pg:frm:mainpb:payrollOppSection").style.display = "block";
+			} else {
+				document.getElementById("pg:frm:mainpb:payrollOppSection").style.display = "none";
+			}
+		}
+
+		function removeClass() {
+			$('input.btn').removeClass('btn');
+		}
+
+		function checkDate() {
+			var idate = document.getElementById("datepicker"),
+				resultDiv = document.getElementById("datewarn"),
+				dateReg = /(0[1-9]|[12][0-9]|3[01])[\/](0[1-9]|1[012])[\/]201[4-9]|20[2-9][0-9]/;
+
+			if (!dateReg.test(idate.value)) {
+				resultDiv.innerHTML = "Invalid date!";
+				resultDiv.style.color = "red";
+				return;
+			}
+
+			if (isFutureDate(idate.value)) {
+				resultDiv.innerHTML = "Entered date is a future date";
+				resultDiv.style.color = "red";
+			} else {
+				resultDiv.innerHTML = "It's a valid date";
+				resultDiv.style.color = "green";
+			}
+		}
+
+		function startPlay(id) {
+			recordId = id;
+			if (id == '') {
+				alert('There are no records to play');
+			} else {
+				sforce.console.setCustomConsoleComponentVisible(false);
+				if (sforce.console.isInConsole())
+					sforce.console.getEnclosingTabId(openSubtab);
+				else
+					window.top.location.href = '/' + id;
+			}
+		}
+
+		var openSubtab = function openSubtab(result) {
+			//Now that we have the primary tab ID, we can open a new subtab in it
+			var primaryTabId = result.id;
+			sforce.console.openPrimaryTab(null, '/' + recordId + '?isplay=1', true);
+			sforce.console.closeTab(result.id);
+		};
+
+		function openRec(recordid) {
+			sforce.console.openPrimaryTab(null, "/" + recordid, true);
+		}
+		var getTabLink = function getTabLink(result) {
+			sforce.console.getTabLink(sforce.console.TabLink.TAB_ONLY,
+				result.id, showTabLink);
+		}
+		var showTabLink = function showTabLink(result) {
+			var link = result.tabLink;
+			var decoded = decodeURIComponent(link);
+			var phoneNumberlink = getUrlParameter('ani', decoded);
+			// For inbound calls, we get the phone and genid parameters from CreateSalesCallTrackingPage redirection on Benefit Order page
+			if (phoneNumberlink == undefined) {
+				phoneNumberlink = getUrlParameter('phone', decoded);
+			}
+
+			var genesysidlink = getUrlParameter('_c', decoded);
+			if (genesysidlink == undefined) {
+				genesysidlink = getUrlParameter('genid', decoded);
+			}
+
+			var recordIdLink = getUrlParameter('id', decoded);
+			document.getElementById('pg:frm:phoneNumber').value = phoneNumberlink;
+			document.getElementById('pg:frm:integrationId').value = genesysidlink;
+			document.getElementById('pg:frm:recordId').value = recordIdLink;
+
+			if (phoneNumberlink != '' && phoneNumberlink != null && phoneNumberlink != undefined && '{!currentObject}' == 'Benefit Order') {
+				document.getElementById('pg:frm:mainpb:pb3:dispotion').value = 'Connect';
+				document.getElementById('pg:frm:mainpb:pb3:callType').value = 'Inbound';
+				fillComment('Connect');
+			}
+		};
+
+		var getUrlParameter = function getUrlParameter(sParam, decodedLink) {
+			var sPageURL = decodedLink,
+				sURLVariables = sPageURL.split('&'),
+				sParameterName,
+				i;
+
+			for (i = 0; i < sURLVariables.length; i++) {
+				sParameterName = sURLVariables[i].split('=');
+
+				if (sParameterName[0] == sParam) {
+					return sParameterName[1];
+				}
+			}
+		};
+		window.onload = function () {
+			document.getElementById("pg:frm:mainpb:hiOppSection").style.display = 'none';
+			document.getElementById("pg:frm:mainpb:payrollOppSection").style.display = 'none';
+			document.getElementById(" pg:frm:mainpb:j_id113:j_id114:4:j_id115").className = 'form-control';
+
+		}
+		document.onready = function () {
+			sforce.console.getFocusedPrimaryTabId(getTabLink);
+		}
+	</script>
+
+	<apex:actionStatus id="waiting">
+		<apex:facet name="start">
+			<div style="
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					opacity: 0.75;
+					z-index: 1000;
+					background-color: black;
+				">
+				&nbsp;
+			</div>
+			<div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 30% 50%">
+				<img src="/img/loading.gif" />
+			</div>
+		</apex:facet>
+	</apex:actionStatus>
+
+	<apex:form id="frm" style="font-size: 12.5px; width: auto">
+		<apex:actionfunction name="displayCases" action="{!setDisplayCases}" reRender="mainpb,caseList" oncomplete="removeClass();"
+		 status="waiting"></apex:actionfunction>
+		<!--Yuvraj: 10-06-2020-->
+		<apex:actionFunction name="callBegain" action="{!callbegain}" reRender="mainpb" status="waiting">
+		</apex:actionFunction>
+		<apex:actionFunction name="callEnd" action="{!callend}" reRender="mainpb" status="waiting">
+		</apex:actionFunction>
+
+		<apex:actionFunction name="saveTask" action="{!save}" reRender="mainpb" oncomplete="removePrimaryTabParams();" status="waiting"></apex:actionFunction>
+		<apex:actionFunction name="processLTCLead" action="{!processLTCLead}" reRender="mainpb" oncomplete="removeClass();" status="waiting"></apex:actionFunction>
+		<apex:actionFunction name="processTaskWOCall" action="{!processTaskWOCall}" reRender="mainpb" oncomplete="removeClass();"
+		 status="waiting"></apex:actionFunction>
+		<apex:actionFunction name="renderPartnerTaskType" reRender="CallParetner,ParetnerType,PartnerSalesTaskType,ParetnerType"></apex:actionFunction>
+
+		<apex:pageBlock title="Log A Call" id="mainpb">
+			<apex:pageMessages id="msgId"></apex:pageMessages>
+			<span style="color: red" id="disErrWhoId"></span>
+			<apex:pageBlockSection columns="1" id="pbs1">
+				<apex:outputPanel layout="block">
+					<apex:pageBlockTable value="{!objLead}" var="role" rendered="{!!ISNULL(objLead)}" styleClass="table table-striped">
+						<apex:column headerValue="Contact Name" onclick="setContactId('{!role.Id}')">
+							<apex:facet name="Header">Contact Name</apex:facet>
+							<apex:outputField value="{!role.Name}" />
+							<br />
+							<apex:outputField value="{!role.Email}" rendered="{!role.Email!=null}" />
+						</apex:column>
+						<apex:column headerValue="Phone Info">
+							<apex:facet name="Header">Phone Info</apex:facet>
+							<apex:outputPanel rendered="{!!ISBLANK(role.Phone)}" onclick="setContactId('{!role.Id}'), setSelectedPhone('{!role.Phone}')">
+								<support:clickToDial number="{!role.Phone}" entityId="{!role.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!!ISBLANK(role.MobilePhone)}" onclick="setContactId('{!role.Id}'), setSelectedPhone('{!role.MobilePhone}')">
+								<support:clickToDial number="{!role.MobilePhone}" entityId="{!role.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!!ISBLANK(role.Secondary_Phone__c)}" onclick="setContactId('{!role.Id}'), setSelectedPhone('{!role.Secondary_Phone__c}')">
+								<support:clickToDial number="{!role.Secondary_Phone__c}" entityId="{!role.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+						</apex:column>
+					</apex:pageBlockTable>
+					<apex:pageBlockTable value="{!objOppContRole}" var="role" rendered="{!objOppContRole.size>0}" styleClass="table table-striped">
+						<apex:column headerValue="Contact Name" onclick="setContactId('{!role.Contact.Id}')">
+							<apex:facet name="Header">Contact Name</apex:facet>
+							<apex:outputField value="{!role.Contact.Name}" />
+							<br />
+							<apex:outputField value="{!role.Contact.Email}" rendered="{!role.Contact.Email!=null}" />
+						</apex:column>
+						<apex:column headerValue="Phone Info">
+							<apex:facet name="Header">Phone Info</apex:facet>
+							<apex:outputPanel rendered="{!!ISBLANK(role.Contact.Phone)}" onclick="setContactId('{!role.Contact.Id}'), setSelectedPhone('{!role.contact.Phone}')">
+								<support:clickToDial number="{!role.Contact.Phone}" entityId="{!role.contact.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!!ISBLANK(role.Contact.ZP_Phone__c)}" onclick="setContactId('{!role.Contact.Id}'), setSelectedPhone('{!role.contact.ZP_Phone__c}')">
+								<support:clickToDial number="{!role.Contact.ZP_Phone__c}" entityId="{!role.Contact.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!!ISBLANK(role.Contact.MobilePhone)}" onclick="setContactId('{!role.Contact.Id}'), setSelectedPhone('{!role.contact.MobilePhone}')">
+								<support:clickToDial number="{!role.Contact.MobilePhone}" entityId="{!role.Contact.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+						</apex:column>
+						<apex:column headerValue="Roles">
+							<apex:facet name="Header">Contact Roles</apex:facet>
+							<apex:outputText value="{!role.Role}" />
+						</apex:column>
+						<apex:column headerValue="Cases" style="width: 50px">
+							<div onclick="setCaseContactId('{!role.Contact.Id}')" style="cursor: pointer">
+								Display
+							</div>
+						</apex:column>
+					</apex:pageBlockTable>
+					<apex:pageBlockTable value="{!list_OppCRole}" var="contactRole" rendered="{!IF(list_OppCRole != NULL && list_OppCRole.size > 0 && currentObject == 'Benefit Order',true,false)}"
+					 styleClass="table table-striped">
+						<apex:column headerValue="Contact Name">
+							<apex:facet name="Header">Contact Name</apex:facet>
+							<apex:outputField value="{!contactRole.ContactId}" />
+							<br />
+							<apex:outputField value="{!contactRole.Contact.Email}" rendered="{!contactRole.Contact.Email!=null}" />
+						</apex:column>
+						<apex:column headerValue="Role">
+							<apex:facet name="Header">Role</apex:facet>
+							<apex:outputField value="{!contactRole.Role}" />
+						</apex:column>
+						<apex:column headerValue="Phone">
+							<apex:facet name="Header">Phone</apex:facet>
+							<apex:outputPanel rendered="{!!ISBLANK(contactRole.Contact.Phone)}" onclick="setContactId('{!contactRole.ContactId}'), setSelectedPhone('{!contactRole.Contact.Phone}')">
+								<support:clickToDial number="{!contactRole.Contact.Phone}" entityId="{!contactRole.ContactId}" params="" />
+								<br />
+							</apex:outputPanel>
+						</apex:column>
+					</apex:pageBlockTable>
+					<apex:pageBlockTable value="{!list_contactsList}" var="role" rendered="{!IF(list_contactsList.size>0 && currentObject != 'Benefit Order',true,false)}"
+					 styleClass="table table-striped">
+						<apex:column headerValue="Contact Name" onclick="setContactId('{!role.Id}')">
+							<apex:facet name="Header">Contact Name</apex:facet>
+							<apex:outputField value="{!role.Name}" />
+							<br />
+							<apex:outputField value="{!role.Email}" rendered="{!role.Email!=null}" />
+						</apex:column>
+						<apex:column headerValue="Phone Info">
+							<apex:facet name="Header">Phone Info</apex:facet>
+							<apex:outputPanel rendered="{!!ISBLANK(role.Phone)}" onclick="setContactId('{!role.Id}'), setSelectedPhone('{!role.Phone}')">
+								<support:clickToDial number="{!role.Phone}" entityId="{!role.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!!ISBLANK(role.ZP_Phone__c)}" onclick="setContactId('{!role.Id}'), setSelectedPhone('{!role.ZP_Phone__c}')">
+								<support:clickToDial number="{!role.ZP_Phone__c}" entityId="{!role.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+							<apex:outputPanel rendered="{!!ISBLANK(role.MobilePhone)}" onclick="setContactId('{!role.Id}'), setSelectedPhone('{!role.MobilePhone}')">
+								<support:clickToDial number="{!role.MobilePhone}" entityId="{!role.Id}" params="" />
+								<br />
+							</apex:outputPanel>
+						</apex:column>
+						<apex:column headerValue="Roles">
+							<apex:facet name="Header">Contact Roles</apex:facet>
+							<apex:outputText value="{!contactIdToRoleMap[role.Id]}" />
+						</apex:column>
+						<apex:column headerValue="Cases" style="width: 50px">
+							<div onclick="setCaseContactId('{!role.Id}')" style="cursor: pointer">Display</div>
+						</apex:column>
+					</apex:pageBlockTable>
+					<!--Account related opportunities for CX-->
+					<apex:pageBlockTable value="{!relatedOpportunities}" var="opp" rendered="{!relatedOpportunities.size >0}" styleClass="table table-striped">
+						<apex:column value="{!opp.Name}"> </apex:column>
+						<apex:column value="{!opp.Type}"> </apex:column>
+					</apex:pageBlockTable>
+				</apex:outputPanel>
+				<!-- Contact Related Case Info -->
+
+				<apex:pageBlockTable rendered="{!reRenderCases}" id="caseList" value="{!contactIdToCaseListMap[caseWhoid]}" var="cse" styleClass="table table-striped">
+					<apex:column headerValue="Case Number">
+						<apex:facet name="Header">Case Number</apex:facet>
+						<apex:outputLink value="/{!cse.Id}">{!cse.CaseNumber}</apex:outputLink>
+					</apex:column>
+					<apex:column headerValue="Case Type">
+						<apex:facet name="Header">Case Type</apex:facet>
+						<apex:outputText value="{!cse.Type}" />
+					</apex:column>
+					<apex:column headerValue="Case Status">
+						<apex:facet name="Header">Case Status</apex:facet>
+						<apex:outputText value="{!cse.Status}" />
+					</apex:column>
+					<apex:column headerValue="Case Description">
+						<apex:facet name="Header">Case Description</apex:facet>
+						<apex:outputText value="{!cse.Description}" />
+					</apex:column>
+				</apex:pageBlockTable>
+
+				<!-- Contact Related Case Info -->
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" id="pb3">
+				<apex:outputPanel >
+					<apex:outputLabel >Disposition</apex:outputLabel>
+					<apex:selectList id="dispotion" value="{!selDispostion}" size="1" styleClass="form-control" style="margin: -32px 0px 0px 86px; width: auto"
+					 onchange="return fillComment(this.value);">
+						<apex:selectoptions value="{!dispositionOptions}"></apex:selectoptions>
+					</apex:selectList>
+					<br />
+					<span style="color: red" id="disErr"></span>
+				</apex:outputPanel>
+				<!--adding new field for BT-17370-->
+				<apex:outputPanel rendered="{!IF(contains(CurrentUserRole,'sales_sb_ob_xx') || contains(CurrentUserRole,'sales_sb_ob_sme'),true,false)}">
+					<br />
+					<apex:outputLabel >Call Objective</apex:outputLabel>
+					<img src="/s.gif" class="imgclass" title="{!$ObjectType.Task.Fields.Primary_Call_Objective__c.inlineHelpText}" />
+					<apex:selectList id="objectives" value="{!strSelectedObjective}" size="1" styleClass="form-control" style="margin: -32px 0px 0px 110px; width: auto">
+						<apex:selectoptions value="{!list_objectiveOptions}"></apex:selectoptions>
+					</apex:selectList>
+					<br />
+					<span style="color: red" id="disErrObj"></span>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!IF((currentObject == 'Benefit Order'),true,false)}">
+					<apex:outputLabel >Call Type</apex:outputLabel>
+					<apex:selectList id="callType" value="{!strSelectedCallType}" size="1" styleClass="form-control" style="width: auto">
+						<apex:selectoptions value="{!list_CallTypeOptions}"></apex:selectoptions>
+					</apex:selectList>
+					<br />
+					<span style="color: red" id="disErrCallType"></span>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!IF((currentObject == 'Benefit Order'),true,false)}">
+					<apex:outputLabel >Reason for Call</apex:outputLabel>
+					<apex:inputField id="reasonforCall" value="{!objCallTrackPlaceholder.Reason_for_Call__c}" styleClass="form-control" style="width: auto"
+					/>
+					<br />
+					<span style="color: red" id="disErrReason"></span>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!IF((currentObject == 'Benefit Order'),true,false)}">
+					<apex:outputLabel >Was this a scheduled call (calendly)?</apex:outputLabel>
+					<apex:inputField id="calendly" styleClass="form-control" style="width: auto" value="{!objCallTrackPlaceholder.Was_this_a_scheduled_call_calendly__c}"
+					/>
+					<br />
+					<span style="color: red" id="disErrCalendly"></span>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection columns="1" id="pb6">
+				<!--<apex:outputPanel rendered="{!IF($Profile.Name=='Benefits User',true,false)}"><!--Yuvraj : 20-05-2020-->
+				<apex:actionRegion >
+					<apex:outputPanel rendered="{!IF(TaskTypeOptionsByProfile.size>0,true,false)}">
+						<!--BY:Prashant:24-06-2020-->
+						<apex:outputLabel >Type</apex:outputLabel>
+
+						<apex:selectList id="Type" value="{!str_taskType}" size="1" title="Type" StyleClass="form-control" style="margin: -30px 0px 0px 86px; width: auto"
+						 onchange="{!renderPartnerTaskType}">
+							<!--<apex:selectOption itemLabel="New Cold Call" itemValue="New Cold Call"></apex:selectOption>
+                        <apex:selectOption itemLabel="Regular Call" itemValue="Regular Call"></apex:selectOption>
+                        <apex:selectOption itemLabel="Pitch/Demo" itemValue="Pitch/Demo"></apex:selectOption>-->
+							<apex:selectOptions value="{!TaskTypeOptionsByProfile}"></apex:selectOptions>
+							<apex:actionSupport action="{!updateFieldFilterConditions}" event="onchange" reRender="PartnerSales">
+							</apex:actionSupport>
+						</apex:selectList>
+					</apex:outputPanel>
+				</apex:actionRegion>
+				<!--Yuvraj : 06-08-2020-->
+				<apex:outputPanel id="ParetnerType" layout="block" style="" rendered="{!IF((currentObject == 'Account' || currentObject == 'Opportunity') && contains(CurrentUserRole,'partner'),true,false)}">
+					<apex:outputLabel >Partner Sales
+						<br /> Task Type</apex:outputLabel>
+					<apex:selectList id="PartnerSales" value="{!strPartnerTaskType}" size="1" title="Partner Sales" StyleClass="form-control"
+					 style="margin: -30px 0px 0px 86px; width: auto">
+						<apex:selectOptions value="{!list_PartnerSalesPickListValueInto}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:outputPanel>
+				<!-- render subject in case it's benefits user or partner rep -->
+				<apex:outputPanel rendered="{!IF( $Profile.Name=='Benefits User' || contains(CurrentUserRole,'partner'),true,false)}">
+					<!--Yuvraj : 10-06-2020-->
+					<apex:outputLabel >Subject</apex:outputLabel>
+					<apex:inputText id="txtSubject" styleClass="form-control" style="margin: -22px 0px 0px 86px; width: 223px" value="{!taskSubject}"
+					/>
+				</apex:outputPanel>
+
+				<apex:outputPanel layout="block" style="">
+					<apex:outputLabel >Notes</apex:outputLabel>
+					<apex:inputTextarea id="txtArea" styleClass="form-control" style="margin: -18px 0px 0px 86px; height: 123px; width: 223px"
+					 value="{!agentNotes}" />
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" rendered="{!wrapSections.bol_InboundCall}">
+					<apex:outputLabel >Inbound Call</apex:outputLabel>
+					<apex:inputCheckbox value="{!bol_InboundCall}" style="margin-left: 32px" />
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" style="" rendered="{!wrapSections.bol_OutboundEmail}">
+					<apex:outputLabel >Outbound Email</apex:outputLabel>
+					<apex:inputCheckbox value="{!bol_OutboundEmail}" style="margin-left: 12px" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<!-- Current record sections for account,lead and opporunity-->
+			<!--Lead Current Record section-->
+			<apex:pageBlockSection title="{! If(leadFieldset!=null ,'Lead detail','') }" columns="1" rendered="{!!ISNULL(leadFieldset)}">
+				<apex:repeat value="{!lstFields}" var="fieldValue">
+					<apex:inputField value="{!leadFieldset[fieldValue]}" styleClass="form-control" style="color: black; width: auto" rendered="{!if(fieldValue!='State' && fieldValue.type!='date',true,false)}"
+					/>
+					<apex:selectList id="state" value="{!leadFieldset[fieldValue]}" size="1" styleClass="form-control" style="color: black; width: auto"
+					 rendered="{!if(fieldValue =='State',true,false)}">
+						<apex:selectOptions value="{!stateOptions}"></apex:selectOptions>
+					</apex:selectList>
+					<apex:inputField value="{!leadFieldset[fieldValue]}" id="datepicker_lead" showDatePicker="false" onmouseover=" $( this ).datepicker();"
+					 onmouseout="checkDate();" styleClass="form-control" rendered="{!if(fieldValue.type=='date',true, false)}" style="color: black; width: auto"
+					/>
+				</apex:repeat>
+			</apex:pageBlockSection>
+			<!--Opportunity Current Record section-->
+			<apex:pageBlockSection title="{! If(objOpp!=null ,'Opportunity Detail','') }" columns="1" rendered="{!!ISNULL(objOpp)}">
+				<apex:repeat value="{!lstFields}" var="fieldValue">
+					<apex:Inputfield value="{!objOpp[fieldValue]}" styleClass="form-control" style="color: black; width: auto" rendered="{!if(fieldValue.type!='date',true, false)}"
+					/>
+					<apex:inputField value="{!objOpp[fieldValue]}" id="datepicker_Opp" showDatePicker="false" onmouseover=" $( this ).datepicker();"
+					 onmouseout="checkDate();" styleClass="form-control" rendered="{!if(fieldValue.type=='date',true, false)}" style="color: black; width: auto"
+					/>
+				</apex:repeat>
+			</apex:pageBlockSection>
+			<!--Opportunity Info section-->
+			<apex:pageBlockSection columns="1" id="pb8" title="{! If(theOpportunity!=null ,'Opportunity Info','') }" rendered="{!IF($Profile.Name=='Benefits User' || wrapSections.bol_AdditionalInfo  ,true,false)}">
+				<apex:outputPanel layout="block" style="" rendered="{!IF(wrapSections.bol_AdditionalInfo && wrapSections.blnShowNoPhoneBadNumber, true, false)}">
+					<apex:outputLabel >Bad Phone</apex:outputLabel>
+					<apex:Inputfield value="{!theOpportunity.No_Phone_Bad_Number__c}" style="margin: -31px 45px 0" />
+					<!--Yuvraj : 19-05-2020-->
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" style="" rendered="{!IF(wrapSections.bol_AdditionalInfo && wrapSections.blnShowSoldNotSold, true, false)}">
+					<apex:outputLabel >Sold/Not Sold</apex:outputLabel>
+					<apex:inputField id="Sold_Not_Sold__c" value="{!theOpportunity.Sold_Not_Sold__c}" styleClass="form-control" style="color: black; margin: -25px 0 0 100px; width: auto"
+					/>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!IF($Profile.Name=='Benefits User' && theOpportunity!=null,true,false)}">
+					<!--Yuvraj : 20-05-2020-->
+					<apex:outputLabel >Benefits Notes</apex:outputLabel>
+					<apex:inputField value="{!theOpportunity.Benefits_Notes__c}" styleClass="form-control" style="color: black; margin: -25px 0 0 100px; width: auto"
+					/>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!IF($Profile.Name=='Benefits User' && theAccount!=null,true,false)}">
+					<!--Yuvraj : 09-06-2020-->
+					<apex:outputLabel >Benefits Notes</apex:outputLabel>
+					<apex:inputField value="{!theAccount.Benefits_Notes__c}" styleClass="form-control" style="color: black; margin: -25px 0 0 100px; width: auto"
+					/>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<!--Account Current Record section-->
+			<apex:pageBlockSection title="{! If(objAccount!=null ,'Account Detail','') }" columns="1" rendered="{!!ISNULL(objAccount)}">
+				<apex:repeat value="{!lstFields}" var="fieldValue">
+					<apex:Inputfield value="{!objAccount[fieldValue]}" styleClass="{!if(fieldValue.type!='multipicklist','form-control', 'multiSelectPicklistTable')}"
+					 style="color: black; width: auto" rendered="{!if(fieldValue.type!='date',true, false)}" />
+					<apex:inputField value="{!objAccount[fieldValue]}" id="datepicker_Account" showDatePicker="false" onmouseover=" $( this ).datepicker();"
+					 onmouseout="checkDate();" styleClass="form-control" rendered="{!if(fieldValue.type=='date',true, false)}" style="color: black; width: auto"
+					/>
+				</apex:repeat>
+			</apex:pageBlockSection>
+			<!-- DO NOT CALL-->
+			<apex:pageBlockSection columns="1" id="doNotCallBlock" rendered="{!wrapSections.bol_DoNotCall}">
+				<apex:outputPanel layout="block" style="">
+					<apex:outputLabel >Do Not Call</apex:outputLabel>
+					<apex:inputCheckBox id="doNotCall" value="{!bol_DoNotCall}" style="margin-left: 32px" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<!-- Follow Up Acivity -->
+			<apex:pageBlockSection id="followUp" columns="1" collapsible="true" title="Follow Up Activity" rendered="{!wrapSections.bol_FollowUpSection}">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Follow Up Date</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<!--<apex:inputField value="{!followTaskObj.ActivityDate}" id="datepicker" showDatePicker="false" onmouseover=" $( this ).datepicker();" onmouseout="alert();checkDate();" styleClass="form-control" style="color:black;width:auto;"/>-->
+						<apex:inputText value="{!followTaskObj.ActivityDate}" styleClass="form-control" onmouseover="$(this).datepicker();" onmouseout="checkDate();"
+						 style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Subject</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputField value="{!followTaskObj.Subject}" StyleClass="form-control" style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<!--Task type-->
+					<apex:outputLabel >Type</apex:outputLabel>
+					<apex:selectList id="state" value="{!followTaskObj.Type}" size="1" title="Type" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!wrapSections.list_taskTypeOptions}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<!--Task Priority-->
+					<apex:outputLabel >Priority</apex:outputLabel>
+					<apex:selectList id="Priority" value="{!followTaskObj.Priority}" size="1" title="Priority" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOption itemLabel="Normal" itemValue="Normal"></apex:selectOption>
+						<apex:selectOption itemLabel="Low" itemValue="Low"></apex:selectOption>
+						<apex:selectOption itemLabel="High" itemValue="High"></apex:selectOption>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<!-- Follow Up Acivity -->
+			<!-- Product Upsell -->
+			<apex:pageBlockSection id="prodUpsell" columns="1" collapsible="true" title="Product Upsell" rendered="{!wrapSections.bol_ProductUpsellSection}">
+				<!--Product Upsell Inforamtion-->
+				<apex:pageBlockSectionItem rendered="{!IF(wrapSections.bol_ProductUpsellSection && currentObject == 'Account',true,false)}">
+					<apex:outputLabel >Point Of Contact</apex:outputLabel>
+					<apex:selectList id="state" value="{!selectedPointOfContact}" size="1" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!pointOfContactOptions}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!IF(wrapSections.bol_ProductUpsellSection && currentObject == 'Account',true,false)}">
+					<apex:outputLabel >Upsell Tier</apex:outputLabel>
+					<apex:selectList id="tierUpsell" value="{!upsellTier.tierUpsellType}" size="1" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!tierUpselOptions}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Workers' Comp Interest</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputTextarea value="{!upsellTier.workersCompInterest}" StyleClass="form-control" style="color: black; width: auto"
+						/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >401k Interest</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputTextarea value="{!upsellTier.fourOonekInterest}" StyleClass="form-control" style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >529 Interest</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputTextarea value="{!upsellTier.twentynineInterese}" StyleClass="form-control" style="color: black; width: auto"
+						/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem rendered="{!IF(wrapSections.bol_ProductUpsellSection && currentObject == 'Account',true,false)}">
+					<apex:outputLabel >Upsell Notes</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputTextarea value="{!upsellTier.upsellNotes}" StyleClass="form-control" style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Send to Accounting Partner</apex:outputLabel>
+					<apex:selectList id="partner" value="{!upsellTier.strAccountingPartner}" size="1" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!list_AccountingPartners}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+				<!--Product Upsell Inforamtion-->
+			</apex:pageBlockSection>
+			<!-- Product Upsell -->
+			<apex:pageBlockSection columns="1" id="pb172" rendered="{!wrapSections.bol_PayrollOpsSection}">
+				<apex:outputPanel layout="block">
+					<apex:outputLabel styleClass="requiredBlock">Create Payroll Opportunity</apex:outputLabel>
+					<apex:inputCheckBox id="payrollOpp" value="{!createPayrollOpp}" style="margin-left: 15px" onClick="setPayrollOppDisplay();"
+					/>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<!--Payroll Opportunity Informatiton-->
+			<apex:pageBlockSection id="payrollOppSection" columns="1" collapsible="true" title="Create Payroll Opportunity" rendered="{!wrapSections.bol_PayrollOpsSection}">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Opportunity Name</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputText value="{!payrollOpp.oppName}" StyleClass="form-control" style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Opportunity Stage</apex:outputLabel>
+					<apex:selectList id="state" value="{!payrollOpp.oppStage}" size="1" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!payrollOppStageOptions}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Close Date</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:input type="date" value="{!payrollOpp.oppCloseDate}" StyleClass="form-control" style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<!--END Payroll Opportunity Informatiton-->
+			<apex:pageBlockSection columns="1" id="pb72" rendered="{!wrapSections.bol_HIOpsSection}">
+				<apex:outputPanel layout="block">
+					<apex:outputLabel styleClass="requiredBlock">Create HI Opportunity</apex:outputLabel>
+					<apex:inputCheckBox id="createHI" value="{!createHIOpp}" style="margin-left: 44px" onClick="setHiOppDispaly();" />
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<!--HI Opportunity Informatiton-->
+			<apex:pageBlockSection id="hiOppSection" columns="1" collapsible="true" title="Create HI Opportunity" rendered="{!wrapSections.bol_HIOpsSection}">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Opportunity Type</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:selectList id="oppType" value="{!hiOpportunity.hiOpportunityType}" size="1" required="{!createHIOpp}" StyleClass="form-control"
+						 style="color: black; width: auto">
+							<apex:selectoption itemLabel="HI Benefits New Plan" itemValue="HI Benefits New Plan"></apex:selectoption>
+							<apex:selectoption itemLabel="HI Benefits BoR" itemValue="HI Benefits BoR"></apex:selectoption>
+							<!--Yuvraj : 17-09-2020-->
+							<apex:selectoption itemLabel="HI Benefits BYOB" itemValue="HI Benefits BYOB"></apex:selectoption>
+						</apex:selectList>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >HI Opportunity Stage</apex:outputLabel>
+					<apex:selectList id="state" value="{!hiOpportunity.hiStage}" size="1" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!hiOppStageOptions}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >Close Date</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:input type="date" value="{!hiOpportunity.hiCloseDate}" StyleClass="form-control" style="color: black; width: auto"
+						/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >State</apex:outputLabel>
+					<apex:selectList id="state" value="{!hiOpportunity.hiAssignmentState}" size="1" StyleClass="form-control" style="color: black; width: auto">
+						<apex:selectOptions value="{!stateOptions}"></apex:selectOptions>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel ># Of Employees</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:input type="number" value="{!hiOpportunity.employeesNumber}" StyleClass="form-control" style="color: black; width: auto"
+						/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel >HI Notes</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputTextarea value="{!hiOpportunity.hiOppNotes}" StyleClass="form-control" style="color: black; width: auto" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<!--Yuvraj 22-06-2020-->
+				<apex:pageBlockSectionItem rendered="{!IF( $Profile.Name == 'MMPR User'|| contains(CurrentUserRole,'partner') || contains(CurrentUserRole,'sales_sb_ob_xx') || contains(CurrentUserRole,'sales_sb_ob_sme'),true,false)}">
+					<apex:outputLabel >Live HI Transfer</apex:outputLabel>
+					<apex:outputPanel layout="block">
+						<apex:outputPanel styleClass="requiredBlock" layout="block" />
+						<apex:inputCheckBox id="LiveHITransfer" value="{!hiOpportunity.hiOppLiveTransfer}" StyleClass="form-control" style="margin-top: -9px; color: black; width: auto"
+						/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons location="bottom">
+				<div id="buttons" role="group" aria-label="...">
+					<!-- @Neha, 12 Jan 2021, Save without call needs to be hidden for Benefit Order use case -->
+					<apex:commandButton styleClass="col-sm-1 btn btn-primary btn-sm" style="margin-top: 19px; width: fit-content; margin-left: 1%"
+					 value="Save W/O Call" id="SaveWCallBtn" reRender="mainpb,msgId" rendered="{!IF((currentObject == 'Benefit Order'),false,true)}"
+					 onclick="return processSaveWOCall();" />
+					<apex:commandButton styleClass="col-sm-2 btn btn-primary btn-sm" style="margin-top: 20px; width: auto; margin-left: 1%" rendered="{!displaySave}"
+					 value="Save" id="savebtn" reRender="mainpb,msgId" onclick="return validateForm();" />
+					<br />
+					<span style="color: green">{!sucessMsg}</span>
+					<span style="color: red">{!errorMsg}</span>
+					<apex:commandButton styleClass="col-sm-1 btn btn-primary btn-sm" style="margin-top: 2px; width: auto; margin-left: 1%" value="LTC"
+					 id="ltcBtn" rendered="{!displayLtc}" reRender="mainpb,msgId" onclick="return processLTC();" />
+					<br />
+					<span style="color: green">{!sucessMsg}</span>
+					<span style="color: red">{!errorMsg}</span>
+				</div>
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+		<!--Yuvraj : 19-05-2020-->
+		<apex:inputHidden id="integrationId" value="{!integrationId}" html-readonly="true" />
+		<apex:inputHidden id="hdWhoId" value="{!whoid}" />
+		<apex:inputHidden id="caseWhoIdIn" value="{!caseWhoid}" html-readonly="true" />
+		<apex:inputHidden id="phoneNumber" value="{!strPhoneNumber}" html-readonly="true" />
+		<apex:inputHidden id="selectedPhone" value="{!strSelectedPhoneNumber}" html-readonly="true" />
+		<apex:inputHidden id="recordId" value="{!strCurrentPageRecord}" html-readonly="true" />
+	</apex:form>
+</apex:page>

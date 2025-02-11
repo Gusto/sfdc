@@ -1,0 +1,322 @@
+<aura:component
+	implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"
+	controller="CareCaseButtons"
+>
+	<!-- Aura Handlers-->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:handler event="force:refreshView" action="{! c.doInit}" />
+
+	<aura:attribute name="recordId" type="String" />
+	<aura:attribute name="objCase" type="Case" default="{ 'sobjectType': 'Case' }" />
+	<aura:attribute name="blnIsLoading" type="Boolean" default="false" />
+	<aura:attribute name="strEscalationType" type="String" />
+	<aura:attribute name="strEscalationQueueName" type="String" />
+
+	<!-- Boolean attributes related to opening/closing modals -->
+	<aura:attribute name="blnChangeOwnerModal" type="Boolean" default="false" />
+	<aura:attribute name="blnCreateTicketModal" type="Boolean" default="false" />
+	<aura:attribute name="blnCreateFollowUpCaseModal" type="Boolean" default="false" />
+	<aura:attribute name="blnEscalateCaseModal" type="Boolean" default="false" />
+	<aura:attribute name="blnContactCarrierModal" type="Boolean" default="false" />
+	<aura:attribute name="blnFollowUpEscalationCaseModal" type="Boolean" default="false" />
+
+	<aura:attribute name="blnShowFollowUpButton" type="Boolean" default="false" />
+	<aura:attribute name="blnShowEscalateCaseButton" type="Boolean" default="false" />
+	<aura:attribute name="blnIsCaseClosed" type="Boolean" default="false" />
+	<aura:attribute name="blnHasSkipSurvey" type="Boolean" default="false" />
+	<aura:attribute name="blnShowConfirmDialog" type="Boolean" default="false" />
+	<aura:attribute name="strCurrentRecordType" type="String" default="" />
+	<aura:attribute name="blnShowCallBack" type="Boolean" />
+	<aura:attribute name="blnShowEscalate" type="Boolean" />
+	<aura:attribute name="blnShowCreateEscCase" type="Boolean" />
+	<aura:attribute name="blnShowChangeOwner" type="Boolean" />
+	<aura:attribute name="blnSocialEscalation" type="Boolean" default="false"/>
+	<aura:attribute name="blnShowSocialEscalation" type="Boolean" default="false"/>
+	<aura:attribute name="strCaseReasonsToSkip" type="String" access="public" />
+
+	<!--Event handlers for opening and closing of follow up case and carrier contact case modals-->
+	<aura:handler name="newEvent" event="c:closeModalHandler" action="{!c.handleCloseModal}" />
+	<aura:handler name="carrierEvent" event="c:closeModalHandler" action="{!c.handleCarrierModal}" />
+
+	<lightning:workspaceAPI aura:id="workspace" />
+	<lightning:navigation aura:id="navService" />
+
+	<div class="slds-dropdown-trigger slds-dropdown-trigger_hover" style="padding-right: 10px; padding-top: 3px">
+		<lightning:buttonIcon
+			iconName="utility:down"
+			size="x-small"
+			alternativeText="View More"
+			iconClass="slds-m-around_small"
+			title="View More"
+			variant="border-filled"
+		/>
+		<div class="slds-dropdown slds-dropdown_right slds-dropdown_actions">
+			<ul class="slds-dropdown__list" role="menu">
+				<li class="slds-dropdown__item" role="presentation">
+					<a
+						href="javascript:void(0);"
+						role="menuitem"
+						tabindex="-1"
+						onclick="{! c.toggleCreateTicketModal }"
+					>
+						<span class="slds-truncate" title="Create a Ticket">Create a Ticket</span>
+					</a>
+				</li>
+				<aura:if isTrue="{!v.blnShowFollowUpButton}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a
+							href="javascript:void(0);"
+							role="menuitem"
+							tabindex="-1"
+							onclick="{! c.toggleCreateFollowUpCaseModal}"
+						>
+							<span class="slds-truncate" title="Create Follow Up Case"
+								>Create Follow Up Case</span
+							>
+						</a>
+					</li>
+				</aura:if>
+				<li class="slds-dropdown__item" role="presentation">
+					<a
+						href="javascript:void(0);"
+						role="menuitem"
+						tabindex="-1"
+						onclick="{! c.toggleContactCarrierModal}"
+					>
+						<span class="slds-truncate" title="Contact Carrier">Contact Carrier</span>
+					</a>
+				</li>
+				<aura:if isTrue="{!v.blnShowCreateEscCase}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a
+							href="javascript:void(0);"
+							role="menuitem"
+							tabindex="-1"
+							onclick="{! c.toggleFollowUpEscalationModal}"
+						>
+							<span class="slds-truncate" title="Create Escalation Case"
+								>Create Escalation Case</span
+							>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!v.blnShowEscalate}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a
+							href="javascript:void(0);"
+							role="menuitem"
+							tabindex="-1"
+							onclick="{! c.toggleEscalateCaseModal}"
+						>
+							<span class="slds-truncate" title="Reroute Case to Gusto"
+								>Reroute Case to Gusto</span
+							>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!v.blnShowChangeOwner}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a
+							href="javascript:void(0);"
+							role="menuitem"
+							tabindex="-1"
+							onclick="{! c.toggleChangeOwnerModal}"
+						>
+							<span class="slds-truncate" title="Change Owner">Change Owner</span>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!!v.blnIsCaseClosed}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.mergeCase}">
+							<span class="slds-truncate" title="Merge Case">Merge Case</span>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!v.blnIsCaseClosed}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a
+							href="javascript:void(0);"
+							role="menuitem"
+							tabindex="-1"
+							onclick="{!c.handleConfirmDialog}"
+						>
+							<span class="slds-truncate" title="Unmerge Case">Unmerge Case</span>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!v.blnHasSkipSurvey}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a
+							href="javascript:void(0);"
+							role="menuitem"
+							tabindex="-1"
+							onclick="{!c.handleSkipSurvey}"
+						>
+							<span class="slds-truncate" title="Skip Survey">Skip Survey</span>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!v.blnShowCallBack}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.handleCallback}">
+							<span class="slds-truncate" title="Call Back">Call Back</span>
+						</a>
+					</li>
+				</aura:if>
+				<aura:if isTrue="{!v.blnShowSocialEscalation}">
+					<li class="slds-dropdown__item" role="presentation">
+						<a href="javascript:void(0);" role="menuitem" tabindex="-1" onclick="{!c.handleSocialEscalation}">
+							<span class="slds-truncate" title="Create Social or Executive Escalation">
+								Create Social or Executive Escalation
+							</span>
+						</a>
+					</li>
+				</aura:if>
+			</ul>
+		</div>
+	</div>
+	<aura:if isTrue="{!v.blnIsLoading}">
+		<lightning:spinner alternativeText="Loading" size="small" variant="brand" />
+	</aura:if>
+
+	<aura:renderIf isTrue="{!v.blnChangeOwnerModal}">
+		<section
+			role="dialog"
+			tabindex="-1"
+			aria-labelledby="modal-heading-01"
+			aria-modal="true"
+			aria-describedby="modal-content-id-1"
+			class="slds-modal slds-fade-in-open"
+		>
+			<div class="slds-modal__container">
+				<header class="slds-modal__header">
+					<lightning:buttonIcon
+						class="slds-modal__close slds-button_icon-inverse"
+						iconName="utility:close"
+						variant="bare"
+						onclick="{! c.toggleChangeOwnerModal }"
+						alternativeText="close"
+						title="close"
+					/>
+					<h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Change Owner</h2>
+				</header>
+				<div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-1">
+					<div class="slds-text-title slds-var-p-left_xxx-small">Owner</div>
+					<force:inputField aura:id="owner" value="{!v.objCase.OwnerId}" />
+				</div>
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" onclick="{!c.toggleChangeOwnerModal}">
+						Cancel
+					</button>
+					<button class="slds-button slds-button_brand" onclick="{!c.doChangeOwner}">Save</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</aura:renderIf>
+
+	<aura:if isTrue="{!v.blnCreateTicketModal}">
+		<c:createTicketModal onclosemodal="{! c.toggleCreateTicketModal }"></c:createTicketModal>
+	</aura:if>
+
+	<aura:if isTrue="{!v.blnCreateFollowUpCaseModal}">
+		<c:caseMergeAuraCmp
+			strRecordId="{!v.recordId}"
+			blnOpenModal="{!v.blnCreateFollowUpCaseModal}"
+			strCaseReasonsToSkip="{!v.strCaseReasonsToSkip}"
+		></c:caseMergeAuraCmp>
+	</aura:if>
+
+	<aura:if isTrue="{!v.blnContactCarrierModal}">
+		<c:CarrierCaseAuraCmp
+			strRecordId="{!v.recordId}"
+			blnOpenModal="{!v.blnContactCarrierModal}"
+		></c:CarrierCaseAuraCmp>
+	</aura:if>
+
+	<aura:if isTrue="{!v.blnFollowUpEscalationCaseModal}">
+		<c:followUpEscalationCaseCmp
+			strRecordId="{!v.recordId}"
+			blnOpenModal="{!v.blnFollowUpEscalationCaseModal}"
+			onclosemodal="{!c.handleFollowUpEscalationModal}"
+			strEscalationType="{!v.strEscalationType}"
+			strEscalationQueueName="{!v.strEscalationQueueName}"
+		>
+		</c:followUpEscalationCaseCmp>
+	</aura:if>
+
+	<aura:if isTrue="{!v.blnEscalateCaseModal}">
+		<c:caseEscalateCmp
+			strRecordId="{!v.recordId}"
+			blnOpenModal="{!v.blnEscalateCaseModal}"
+			onclosemodal="{!c.handleEscalationModal}"
+		></c:caseEscalateCmp>
+	</aura:if>
+
+	<!--Component Start-->
+
+	<aura:if isTrue="{!v.blnShowConfirmDialog}">
+		<!--Modal Box Start-->
+		<div role="dialog" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<!--Modal Box Header Start-->
+				<header class="slds-modal__header">
+					<h1 class="slds-text-heading_medium">Confirmation</h1>
+				</header>
+				<!--Modal Box Header End-->
+
+				<!--Modal Box Content Start-->
+				<div class="slds-modal__content slds-var-p-around--medium">
+					<center><b>Are you sure you want to Unmerge the current case?</b></center>
+				</div>
+				<!--Modal Box Content End-->
+
+				<!--Modal Box Button Start-->
+				<footer class="slds-modal__footer">
+					<lightning:button name="No" label="No" onclick="{!c.handleConfirmDialogNo}" />
+					<lightning:button
+						variant="brand"
+						name="Yes"
+						label="Yes"
+						onclick="{!c.handleConfirmDialogYes}"
+					/>
+				</footer>
+				<!--Modal Box Button End-->
+			</div>
+		</div>
+		<div class="slds-backdrop slds-backdrop--open"></div>
+	</aura:if>
+
+	<!-- Social & Executive Escalation creation-->
+	<aura:if isTrue="{!v.blnSocialEscalation}">
+		<!--Modal Box Start-->
+		<div role="dialog" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<!--Modal Box Header Start-->
+				<header class="slds-modal__header">
+					<h2 class="title slds-text-heading_medium slds-hyphenate">Create Social &amp; Executive Escalation</h2>
+					<lightning:buttonIcon 
+						class="slds-modal__close"
+						iconName="utility:close" 
+						variant="bare-inverse" 
+						title="Close" 
+						onclick="{!c.handleCloseModal}" 
+						alternativeText="Close window"
+						size="large"
+					/>
+					<span class="slds-assistive-text">Close</span>
+				</header>
+				<!--Modal Box Header End-->
+
+				<!--Modal Box Content Start-->
+				<div class="slds-modal__content slds-var-p-around_medium">
+					<lightning:flow aura:id="flowInterview" onstatuschange="{!c.handleFlowStatusChange}"></lightning:flow>
+				</div>
+				<!--Modal Box Content End-->
+			</div>
+		</div>
+		<div class="slds-backdrop slds-backdrop--open"></div>
+	</aura:if>
+	<!--Component End-->
+</aura:component>

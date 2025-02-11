@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <description>This flag is later used to determine when to invoke Forethought Triage</description>
+        <name>Set_Forethought_Solve_to_Complete</name>
+        <label>Set &apos;Forethought Solve Triggered&apos;</label>
+        <locationX>182</locationX>
+        <locationY>431</locationY>
+        <assignmentItems>
+            <assignToReference>CaseRecord</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Parent_Case_Record</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>CaseRecord.Solve_Processed__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Yes</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>If_the_case_has_a_valid_recommendation</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>This Flag is further used to whether or not to enable QA process for the case</description>
+        <name>Set_Has_A_Valid_Recommendation</name>
+        <label>Set &apos;Has A Valid Recommendation&apos;</label>
+        <locationX>50</locationX>
+        <locationY>647</locationY>
+        <assignmentItems>
+            <assignToReference>CaseRecord.Has_A_Valid_Recommendation__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>CaseRecord.Auto_Solve_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Eligible</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Parent_Case</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Forethought Solve inserts a record in this object even if there is no recommendation</description>
+        <name>If_the_case_has_a_valid_recommendation</name>
+        <label>If the case has a valid recommendation?</label>
+        <locationX>182</locationX>
+        <locationY>539</locationY>
+        <defaultConnector>
+            <targetReference>Update_Parent_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.forethought__EmailResponseName__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.forethought__EmailContentHTML__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Has_A_Valid_Recommendation</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>This flow is triggered on creation of &apos;Forethought Solve Conversation&apos; records to update the flags on the parent case
+BTE-4205 - Automate Auto-Solve Status on Case</description>
+    <environments>Default</environments>
+    <interviewLabel>Forethought Solve Conversation - Update Case Fields {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Forethought Solve Conversation - Update Case Fields</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Parent_Case_Record</name>
+        <label>Get Parent Case Record</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Set_Forethought_Solve_to_Complete</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.forethought__Case__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Has_A_Valid_Recommendation__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Parent_Case</name>
+        <label>Update Parent Case</label>
+        <locationX>182</locationX>
+        <locationY>839</locationY>
+        <inputReference>CaseRecord</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Parent_Case_Record</targetReference>
+        </connector>
+        <object>forethought__ForethoughtSolveEmailConversation__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>CaseRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

@@ -1,0 +1,52 @@
+<template>   
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <!-- Modal/Popup Box LWC header here -->
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small" ></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create New Case</h2>
+            </header>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <!-- Show Spinner (Loading) Icon Whenever we call Apex -->
+                <template if:true={blnIsLoading}>
+                    <lightning-spinner alternative-text="Loading" size="medium" class="spinnerClass"></lightning-spinner>
+                </template>
+                <lightning-record-edit-form object-api-name="Case" onload={handlePageLoading}
+                    onsubmit={handleCaseCreated} onsuccess={handleSuccess}>                    
+                    <lightning-input-field field-name="AccountId" value={strAccountId}>
+                    </lightning-input-field>
+                    <lightning-input-field field-name="ContactId" value={strContactId}>
+                    </lightning-input-field>
+                    <template for:each={list_EditableFieldAPINames} for:item="apiName">
+                        <lightning-input-field field-name={apiName} key={apiName}>
+                        </lightning-input-field>
+                    </template>
+                    <template if:true={blnAttachmentExist}>
+                        &nbsp;
+                        <div style="margin:10px;">
+                            <lightning-checkbox-group name="Related Attachments"
+                                                        label="Related Attachment"
+                                                        options={list_Attachments}
+                                                        value={attachmentValue}
+                                                        onchange={selectAttachment}>
+                            </lightning-checkbox-group>
+                        </div>
+                    </template>
+                    <lightning-button-group>
+                        <lightning-button label="Cancel" name="cancelBtn" onclick={closeModal}></lightning-button>
+                        <lightning-button label="Save" title="Save" type="submit" variant="brand" onclick={handleSubmitClick}></lightning-button>
+                    </lightning-button-group>                     
+                </lightning-record-edit-form>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>   
+</template>
