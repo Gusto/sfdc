@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_401k_Notes_for_401k_Email</fullName>
+    <active>false</active>
+    <errorConditionFormula>X401k_Interest__c = true &amp;&amp; ISBLANK(X401k_Notes__c)</errorConditionFormula>
+    <errorDisplayField>X401k_Notes__c</errorDisplayField>
+    <errorMessage>401k Notes are required to send an email with 401k Interest.</errorMessage>
+</ValidationRule>

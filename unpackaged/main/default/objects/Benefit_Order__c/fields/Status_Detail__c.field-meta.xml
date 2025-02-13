@@ -1,0 +1,839 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_Detail__c</fullName>
+    <description>The picklist values for the Status Detail on the Benefit Order and the Carrier Order must be kept in sync.</description>
+    <label>Order Status Detail</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Order_Status__c</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Carve out group</fullName>
+                <default>false</default>
+                <label>Carve out group</label>
+            </value>
+            <value>
+                <fullName>Duplicate: Changed Carrier (Bundle Ancillary)</fullName>
+                <default>false</default>
+                <label>Duplicate: Changed Carrier (Bundle Ancillary)</label>
+            </value>
+            <value>
+                <fullName>Duplicate: Changed Carrier (ER Choice)</fullName>
+                <default>false</default>
+                <label>Duplicate: Changed Carrier (ER Choice)</label>
+            </value>
+            <value>
+                <fullName>Duplicate: Changed Carrier (Failed QA)</fullName>
+                <default>false</default>
+                <label>Duplicate: Changed Carrier (Failed QA)</label>
+            </value>
+            <value>
+                <fullName>Duplicate: Other</fullName>
+                <default>false</default>
+                <label>Duplicate: Other</label>
+            </value>
+            <value>
+                <fullName>Effective Date Not Supported</fullName>
+                <default>false</default>
+                <label>Effective Date Not Supported</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Company not authorized in state</fullName>
+                <default>false</default>
+                <label>Ineligible: Company not authorized in state</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Existing Carrier - Transferred to BOR Opportunity</fullName>
+                <default>false</default>
+                <label>Ineligible: Existing Carrier - Transferred to BOR Opportunity</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Husband/Wife Only</fullName>
+                <default>false</default>
+                <label>Ineligible: Husband/Wife Only</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Insufficient Payroll</fullName>
+                <default>false</default>
+                <label>Ineligible: Insufficient Payroll</label>
+            </value>
+            <value>
+                <fullName>Ineligible: No eligible employees</fullName>
+                <default>false</default>
+                <label>Ineligible: No eligible employees</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Not enough EE&apos;s in state</fullName>
+                <default>false</default>
+                <label>Ineligible: Not enough EE&apos;s in state</label>
+            </value>
+            <value>
+                <fullName>Ineligible: No workers&apos; compensation</fullName>
+                <default>false</default>
+                <label>Ineligible: No workers&apos; compensation</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Owner Only</fullName>
+                <default>false</default>
+                <label>Ineligible: Owner Only</label>
+            </value>
+            <value>
+                <fullName>Ineligible: Unsupported State</fullName>
+                <default>false</default>
+                <label>Ineligible: Unsupported State</label>
+            </value>
+            <value>
+                <fullName>Nonpayment of premium under a previous policy</fullName>
+                <default>false</default>
+                <label>Nonpayment of premium under a previous policy</label>
+            </value>
+            <value>
+                <fullName>Non-Responsive Employer</fullName>
+                <default>false</default>
+                <label>Non-Responsive Employer</label>
+            </value>
+            <value>
+                <fullName>Owner only group</fullName>
+                <default>false</default>
+                <label>Owner only group</label>
+            </value>
+            <value>
+                <fullName>Participation: Ancillary Participation Not Met</fullName>
+                <default>false</default>
+                <label>Participation: Ancillary Participation Not Met</label>
+            </value>
+            <value>
+                <fullName>Participation: Medical Participation Not Met</fullName>
+                <default>false</default>
+                <label>Participation: Medical Participation Not Met</label>
+            </value>
+            <value>
+                <fullName>Participation rate not met</fullName>
+                <default>false</default>
+                <label>Participation rate not met</label>
+            </value>
+            <value>
+                <fullName>Post Signature Cancel</fullName>
+                <default>false</default>
+                <label>Post Signature Cancel</label>
+            </value>
+            <value>
+                <fullName>Post-Signature Cancel: Chose Competitor - Earlier Effective Date</fullName>
+                <default>false</default>
+                <label>Post-Signature Cancel: Chose Competitor - Earlier Effective Date</label>
+            </value>
+            <value>
+                <fullName>Post-Signature Cancel: Did Not Become Gusto Customer</fullName>
+                <default>false</default>
+                <label>Post-Signature Cancel: Did Not Become Gusto Customer</label>
+            </value>
+            <value>
+                <fullName>Post-Signature Cancel: No Longer Interested</fullName>
+                <default>false</default>
+                <label>Post-Signature Cancel: No Longer Interested</label>
+            </value>
+            <value>
+                <fullName>Post-Signature Cancel: Too Expensive</fullName>
+                <default>false</default>
+                <label>Post-Signature Cancel: Too Expensive</label>
+            </value>
+            <value>
+                <fullName>Post Signature Ineligible</fullName>
+                <default>false</default>
+                <label>Post Signature Ineligible</label>
+            </value>
+            <value>
+                <fullName>Renewal: Switched to new broker</fullName>
+                <default>false</default>
+                <label>Renewal: Switched to new broker</label>
+            </value>
+            <value>
+                <fullName>Renewal: Carrier Canceled - Nonpayment</fullName>
+                <default>false</default>
+                <label>Renewal: Carrier Canceled - Nonpayment</label>
+            </value>
+            <value>
+                <fullName>Renewal: Carrier Canceled - Recertification</fullName>
+                <default>false</default>
+                <label>Renewal: Carrier Canceled - Recertification</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Benefit Application Dismissed</fullName>
+                <default>false</default>
+                <label>Benefit Application Dismissed</label>
+            </value>
+            <value>
+                <fullName>TAdA Setup Pending</fullName>
+                <default>false</default>
+                <label>TAdA Setup Pending</label>
+            </value>
+            <value>
+                <fullName>ER Outreach</fullName>
+                <default>false</default>
+                <label>ER Outreach</label>
+            </value>
+            <value>
+                <fullName>Requires ER Outreach</fullName>
+                <default>false</default>
+                <label>Requires ER Outreach</label>
+            </value>
+            <value>
+                <fullName>Ready for TAdA Setup</fullName>
+                <default>false</default>
+                <label>Ready for TAdA Setup</label>
+            </value>
+            <value>
+                <fullName>TAdA Setup Complete</fullName>
+                <default>false</default>
+                <label>TAdA Setup Complete</label>
+            </value>
+            <value>
+                <fullName>Covid-19</fullName>
+                <default>false</default>
+                <label>Covid-19</label>
+            </value>
+            <value>
+                <fullName>Owner&apos;s Choice</fullName>
+                <default>false</default>
+                <label>Owner&apos;s Choice</label>
+            </value>
+            <value>
+                <fullName>Pre-ACA</fullName>
+                <default>false</default>
+                <label>Pre-ACA</label>
+            </value>
+            <value>
+                <fullName>Individual/Large Group coverage/Self Funded/Level Funded</fullName>
+                <default>false</default>
+                <label>Individual/Large Group coverage/Self Funded/Level Funded</label>
+            </value>
+            <value>
+                <fullName>Unsupported Carrier</fullName>
+                <default>false</default>
+                <label>Unsupported Carrier</label>
+            </value>
+            <value>
+                <fullName>Accidental Sign</fullName>
+                <default>false</default>
+                <label>Accidental Sign</label>
+            </value>
+            <value>
+                <fullName>Product Limitation</fullName>
+                <default>false</default>
+                <label>Product Limitation</label>
+            </value>
+            <value>
+                <fullName>Did not run payroll</fullName>
+                <default>false</default>
+                <label>Did not run payroll</label>
+            </value>
+            <value>
+                <fullName>Renewal Date</fullName>
+                <default>false</default>
+                <label>Renewal Date</label>
+            </value>
+            <value>
+                <fullName>Unsupported line of coverage</fullName>
+                <default>false</default>
+                <label>Unsupported line of coverage</label>
+            </value>
+            <value>
+                <fullName>Duplicate</fullName>
+                <default>false</default>
+                <label>Duplicate</label>
+            </value>
+            <value>
+                <fullName>Invoice disqualification before assignment</fullName>
+                <default>false</default>
+                <label>Invoice disqualification before assignment</label>
+            </value>
+            <value>
+                <fullName>Lidi - Basic life with voluntary buy up</fullName>
+                <default>false</default>
+                <label>Lidi - Basic life with voluntary buy up</label>
+            </value>
+            <value>
+                <fullName>Lidi - Voluntary life</fullName>
+                <default>false</default>
+                <label>Lidi - Voluntary life</label>
+            </value>
+            <value>
+                <fullName>Lidi - Voluntary disability</fullName>
+                <default>false</default>
+                <label>Lidi - Voluntary disability</label>
+            </value>
+            <value>
+                <fullName>Lidi - Post tax support</fullName>
+                <default>false</default>
+                <label>Lidi - Post tax support</label>
+            </value>
+            <value>
+                <fullName>Lidi - Contributory life</fullName>
+                <default>false</default>
+                <label>Lidi - Contributory life</label>
+            </value>
+            <value>
+                <fullName>Lidi - Contributory disability</fullName>
+                <default>false</default>
+                <label>Lidi - Contributory disability</label>
+            </value>
+            <value>
+                <fullName>Lidi - Mandatory life + ER paid buy up</fullName>
+                <default>false</default>
+                <label>Lidi - Mandatory life + ER paid buy up</label>
+            </value>
+            <value>
+                <fullName>Lidi - Child, spouse support for life</fullName>
+                <default>false</default>
+                <label>Lidi - Child, spouse support for life</label>
+            </value>
+            <value>
+                <fullName>Product Limitation - Class Based WP</fullName>
+                <default>false</default>
+                <label>Product Limitation - Class Based WP</label>
+            </value>
+            <value>
+                <fullName>Product Limitation - Unsupported WP</fullName>
+                <default>false</default>
+                <label>Product Limitation - Unsupported WP</label>
+            </value>
+            <value>
+                <fullName>Compliance - CS</fullName>
+                <default>false</default>
+                <label>Compliance - CS</label>
+            </value>
+            <value>
+                <fullName>Compliance - Class Based CS</fullName>
+                <default>false</default>
+                <label>Compliance - Class Based CS</label>
+            </value>
+            <value>
+                <fullName>Shareholders cannot participate</fullName>
+                <default>false</default>
+                <label>Shareholders cannot participate</label>
+            </value>
+            <value>
+                <fullName>Product dissatisfaction</fullName>
+                <default>false</default>
+                <label>Product dissatisfaction</label>
+            </value>
+            <value>
+                <fullName>Decided to not transfer at this time</fullName>
+                <default>false</default>
+                <label>Decided to not transfer at this time</label>
+            </value>
+            <value>
+                <fullName>Product limitation- CS</fullName>
+                <default>false</default>
+                <label>Product limitation- CS</label>
+            </value>
+            <value>
+                <fullName>Product limitation- post tax</fullName>
+                <default>false</default>
+                <label>Product limitation- post tax</label>
+            </value>
+            <value>
+                <fullName>Incorrect Carrier</fullName>
+                <default>false</default>
+                <label>Incorrect Carrier</label>
+            </value>
+            <value>
+                <fullName>Existing Group Coverage/BOR</fullName>
+                <default>false</default>
+                <label>Existing Group Coverage/BOR</label>
+            </value>
+            <value>
+                <fullName>Participation - 0 enrollees</fullName>
+                <default>false</default>
+                <label>Participation - 0 enrollees</label>
+            </value>
+            <value>
+                <fullName>Already Aligned</fullName>
+                <default>false</default>
+                <label>Already Aligned</label>
+            </value>
+            <value>
+                <fullName>Non-Actionable</fullName>
+                <default>false</default>
+                <label>Non-Actionable</label>
+            </value>
+            <value>
+                <fullName>Non-Standard Carrier</fullName>
+                <default>false</default>
+                <label>Non-Standard Carrier</label>
+            </value>
+            <value>
+                <fullName>Carrier Consolidation - Churn to BYB</fullName>
+                <default>false</default>
+                <label>Carrier Consolidation - Churn to BYB</label>
+            </value>
+            <value>
+                <fullName>Carrier Consolidation - Logo Churn (left Gusto entirely)</fullName>
+                <default>false</default>
+                <label>Carrier Consolidation - Logo Churn (left Gusto entirely)</label>
+            </value>
+            <value>
+                <fullName>Awaiting PI</fullName>
+                <default>false</default>
+                <label>Awaiting PI</label>
+            </value>
+            <value>
+                <fullName>Participation - medical participation not met</fullName>
+                <default>false</default>
+                <label>Participation - medical participation not met</label>
+            </value>
+            <value>
+                <fullName>Pending Items not provided</fullName>
+                <default>false</default>
+                <label>Pending Items not provided</label>
+            </value>
+            <value>
+                <fullName>Carrier Cancelled - Non Payment</fullName>
+                <default>false</default>
+                <label>Carrier Cancelled - Non Payment</label>
+            </value>
+            <value>
+                <fullName>Post-Signature Cancel: Broker not interested</fullName>
+                <default>false</default>
+                <label>Post-Signature Cancel: Broker not interested</label>
+            </value>
+            <value>
+                <fullName>Product limitation- Unsupported rating scheme</fullName>
+                <default>false</default>
+                <label>Product limitation- Unsupported rating scheme</label>
+            </value>
+            <value>
+                <fullName>Non-Responsive Broker</fullName>
+                <default>false</default>
+                <label>Non-Responsive Broker</label>
+            </value>
+            <value>
+                <fullName>Incomplete OE</fullName>
+                <default>false</default>
+                <label>Incomplete OE</label>
+            </value>
+            <value>
+                <fullName>Fulfilled Pending Case Comms</fullName>
+                <default>false</default>
+                <label>Fulfilled Pending Case Comms</label>
+            </value>
+            <value>
+                <fullName>Awaiting Census</fullName>
+                <default>false</default>
+                <label>Awaiting Census</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Blocked</controllingFieldValue>
+            <controllingFieldValue>With Advising</controllingFieldValue>
+            <controllingFieldValue>OE</controllingFieldValue>
+            <controllingFieldValue>Submission Prep</controllingFieldValue>
+            <controllingFieldValue>Ready for Qualification</controllingFieldValue>
+            <controllingFieldValue>Qualification</controllingFieldValue>
+            <controllingFieldValue>Ready for OE Prep</controllingFieldValue>
+            <controllingFieldValue>Ready for Submission Prep</controllingFieldValue>
+            <controllingFieldValue>With Sales</controllingFieldValue>
+            <controllingFieldValue>Awaiting Routing</controllingFieldValue>
+            <controllingFieldValue>Ready for Confirmation</controllingFieldValue>
+            <controllingFieldValue>OE Prep</controllingFieldValue>
+            <controllingFieldValue>OE Extended</controllingFieldValue>
+            <controllingFieldValue>OE Verification/Checking Participation</controllingFieldValue>
+            <valueName>ER Outreach</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Ineligible: Company not authorized in state</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Ineligible: Insufficient Payroll</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Ineligible: No eligible employees</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Ineligible: Not enough EE&apos;s in state</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Ineligible: No workers&apos; compensation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Ineligible: Owner Only</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Non-Responsive Employer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Post-Signature Cancel: Did Not Become Gusto Customer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Post-Signature Cancel: No Longer Interested</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Post-Signature Cancel: Too Expensive</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Benefit Application Dismissed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Owner&apos;s Choice</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Pre-ACA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Individual/Large Group coverage/Self Funded/Level Funded</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Unsupported Carrier</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Accidental Sign</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product Limitation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Unsupported line of coverage</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Duplicate</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Basic life with voluntary buy up</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Voluntary life</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Voluntary disability</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Post tax support</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Contributory life</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Contributory disability</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Mandatory life + ER paid buy up</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Lidi - Child, spouse support for life</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product Limitation - Class Based WP</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product Limitation - Unsupported WP</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Compliance - CS</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Compliance - Class Based CS</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product dissatisfaction</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Decided to not transfer at this time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product limitation- CS</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product limitation- post tax</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <valueName>Incorrect Carrier</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Existing Group Coverage/BOR</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Participation - 0 enrollees</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Carrier Consolidation - Churn to BYB</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Participation - medical participation not met</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Pending Items not provided</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Carrier Cancelled - Non Payment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Post-Signature Cancel: Broker not interested</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Product limitation- Unsupported rating scheme</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Admin</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Non-Responsive Broker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Carve out group</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Duplicate: Changed Carrier (Bundle Ancillary)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Duplicate: Changed Carrier (ER Choice)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Duplicate: Changed Carrier (Failed QA)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Duplicate: Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Effective Date Not Supported</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Ineligible: Existing Carrier - Transferred to BOR Opportunity</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Ineligible: Husband/Wife Only</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Ineligible: Unsupported State</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Nonpayment of premium under a previous policy</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Owner only group</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Participation: Ancillary Participation Not Met</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Participation: Medical Participation Not Met</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Participation rate not met</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Post Signature Cancel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Post-Signature Cancel: Chose Competitor - Earlier Effective Date</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Post Signature Ineligible</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Renewal: Switched to new broker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Renewal: Carrier Canceled - Nonpayment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Renewal: Carrier Canceled - Recertification</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Covid-19</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Carrier Consolidation - Logo Churn (left Gusto entirely)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Canceled</controllingFieldValue>
+            <valueName>Incomplete OE</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>With Advising</controllingFieldValue>
+            <controllingFieldValue>Approved</controllingFieldValue>
+            <controllingFieldValue>OE</controllingFieldValue>
+            <controllingFieldValue>Submission Prep</controllingFieldValue>
+            <controllingFieldValue>Ready for Alignment</controllingFieldValue>
+            <controllingFieldValue>Alignment Approved</controllingFieldValue>
+            <controllingFieldValue>Alignment Denied</controllingFieldValue>
+            <controllingFieldValue>Alignment Approved Post Renewal</controllingFieldValue>
+            <controllingFieldValue>Ready for Qualification</controllingFieldValue>
+            <controllingFieldValue>Qualification</controllingFieldValue>
+            <controllingFieldValue>Ready for OE Prep</controllingFieldValue>
+            <controllingFieldValue>Ready for Submission Prep</controllingFieldValue>
+            <controllingFieldValue>With Sales</controllingFieldValue>
+            <controllingFieldValue>Awaiting Routing</controllingFieldValue>
+            <controllingFieldValue>Ready for Confirmation</controllingFieldValue>
+            <controllingFieldValue>Pending Confirmation</controllingFieldValue>
+            <controllingFieldValue>OE Prep</controllingFieldValue>
+            <controllingFieldValue>OE Extended</controllingFieldValue>
+            <controllingFieldValue>OE Verification/Checking Participation</controllingFieldValue>
+            <valueName>Requires ER Outreach</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Fulfilled</controllingFieldValue>
+            <valueName>Fulfilled Pending Case Comms</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Alignment Denied</controllingFieldValue>
+            <valueName>Already Aligned</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Alignment Denied</controllingFieldValue>
+            <valueName>Non-Actionable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Alignment Denied</controllingFieldValue>
+            <valueName>Non-Standard Carrier</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Ready for OE Prep</controllingFieldValue>
+            <valueName>Ready for TAdA Setup</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OE Verification/Checking Participation</controllingFieldValue>
+            <valueName>Awaiting PI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Implementing Plans</controllingFieldValue>
+            <valueName>Awaiting Census</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

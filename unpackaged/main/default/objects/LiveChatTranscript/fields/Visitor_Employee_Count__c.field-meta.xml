@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Visitor_Employee_Count__c</fullName>
+    <description>To store employee count entered by visitor on chat bot. Created during Gcorp - v2 build</description>
+    <label>Visitor Employee Count</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>0-9 Employees</fullName>
+                <default>false</default>
+                <label>0-9 Employees</label>
+            </value>
+            <value>
+                <fullName>10-24 Employees</fullName>
+                <default>false</default>
+                <label>10-24 Employees</label>
+            </value>
+            <value>
+                <fullName>25-99 Employees</fullName>
+                <default>false</default>
+                <label>25-99 Employees</label>
+            </value>
+            <value>
+                <fullName>100+ Employees</fullName>
+                <default>false</default>
+                <label>100+ Employees</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Global_Require_Lead_Source</fullName>
+    <active>true</active>
+    <description>Excludes Administrators</description>
+    <errorConditionFormula>AND(
+  ISBLANK(TEXT(LeadSource)),
+  NOT( $User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorDisplayField>LeadSource</errorDisplayField>
+    <errorMessage>&apos;Lead Source&apos; is required</errorMessage>
+</ValidationRule>

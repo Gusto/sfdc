@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_Method__c</fullName>
+    <description>This field is for Member Operations to record approval method.</description>
+    <label>Approval Method</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Approved using portal and/or invoice</fullName>
+                <default>false</default>
+                <label>Approved using portal and/or invoice</label>
+            </value>
+            <value>
+                <fullName>Approved using phone call or email</fullName>
+                <default>false</default>
+                <label>Approved using phone call or email</label>
+            </value>
+            <value>
+                <fullName>Approved using renewal packet</fullName>
+                <default>false</default>
+                <label>Approved using renewal packet</label>
+            </value>
+            <value>
+                <fullName>Approved using HI automation</fullName>
+                <default>false</default>
+                <label>Approved using HI automation</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

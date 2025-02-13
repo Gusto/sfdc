@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_House_Account_Flag</fullName>
+    <active>true</active>
+    <description>BTE-3527: prevent the account flag value from being added to an account that has a TAM assigned</description>
+    <errorConditionFormula>(ISNEW() &amp;&amp; 
+NOT(ISBLANK(Technical_Account_Manager__c)) &amp;&amp;
+NOT(ISBLANK(CX_Engagement_Flag__c)))
+||
+(ISCHANGED(CX_Engagement_Flag__c) &amp;&amp;
+NOT(ISBLANK(CX_Engagement_Flag__c)) &amp;&amp;
+NOT(ISBLANK(Technical_Account_Manager__c)))</errorConditionFormula>
+    <errorDisplayField>CX_Engagement_Flag__c</errorDisplayField>
+    <errorMessage>Cannot change House Account Flag when a TAM is assigned</errorMessage>
+</ValidationRule>

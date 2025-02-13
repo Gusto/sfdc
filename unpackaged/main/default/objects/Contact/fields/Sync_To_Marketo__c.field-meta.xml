@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sync_To_Marketo__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Field to determine which contacts sync to Marketo from Salesforce. 
+08/11/2023 - We do not sync Employee and Contractor contacts with Marketo.
+July/24 - This field is being repurposed for BSS-2391. Going forward this will indicate whether the contact needs to be synced to Marketo.</description>
+    <inlineHelpText>Field used to indicate if a contact needs to be deleted from Marketo</inlineHelpText>
+    <label>Delete from Marketo</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

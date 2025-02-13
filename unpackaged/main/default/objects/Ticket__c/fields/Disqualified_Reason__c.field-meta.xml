@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disqualified_Reason__c</fullName>
+    <description>The reason for disqualification</description>
+    <label>Disqualified Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>After contract review</fullName>
+                <default>false</default>
+                <label>After contract review</label>
+            </value>
+            <value>
+                <fullName>Does not qualify</fullName>
+                <default>false</default>
+                <label>Does not qualify</label>
+            </value>
+            <value>
+                <fullName>High risk industry</fullName>
+                <default>false</default>
+                <label>High risk industry</label>
+            </value>
+            <value>
+                <fullName>Not enough four part info</fullName>
+                <default>false</default>
+                <label>Not enough four part info</label>
+            </value>
+            <value>
+                <fullName>R&amp;D outside the US</fullName>
+                <default>false</default>
+                <label>R&amp;D outside the US</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

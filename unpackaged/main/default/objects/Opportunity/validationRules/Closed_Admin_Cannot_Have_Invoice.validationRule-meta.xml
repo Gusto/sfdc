@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closed_Admin_Cannot_Have_Invoice</fullName>
+    <active>true</active>
+    <description>Prevents updating an opportunity to Closed Admin if it has a payment invoice.</description>
+    <errorConditionFormula>ISCHANGED(StageName) &amp;&amp;
+ISPICKVAL(StageName, &apos;Closed Admin&apos;) &amp;&amp;
+NOT( ISBLANK( Payment_Invoice__c))</errorConditionFormula>
+    <errorMessage>An opportunity with an invoice cannot be Closed Admin.</errorMessage>
+</ValidationRule>

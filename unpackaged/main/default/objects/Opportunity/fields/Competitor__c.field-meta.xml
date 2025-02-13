@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Competitor__c</fullName>
+    <label>Competitor</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>StageName</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>ADP</fullName>
+                <default>false</default>
+                <label>ADP</label>
+            </value>
+            <value>
+                <fullName>ADP Run</fullName>
+                <default>false</default>
+                <label>ADP Run</label>
+            </value>
+            <value>
+                <fullName>ADP-Workforce/Resource/Other</fullName>
+                <default>false</default>
+                <label>ADP-Workforce/Resource/Other</label>
+            </value>
+            <value>
+                <fullName>Intuit</fullName>
+                <default>false</default>
+                <label>Intuit</label>
+            </value>
+            <value>
+                <fullName>Intuit-QuickBooks</fullName>
+                <default>false</default>
+                <label>Intuit-QuickBooks</label>
+            </value>
+            <value>
+                <fullName>Ovation (Heartland)</fullName>
+                <default>false</default>
+                <label>Ovation (Heartland)</label>
+            </value>
+            <value>
+                <fullName>Paychex</fullName>
+                <default>false</default>
+                <label>Paychex</label>
+            </value>
+            <value>
+                <fullName>Paycom</fullName>
+                <default>false</default>
+                <label>Paycom</label>
+            </value>
+            <value>
+                <fullName>Paylocity</fullName>
+                <default>false</default>
+                <label>Paylocity</label>
+            </value>
+            <value>
+                <fullName>Sage</fullName>
+                <default>false</default>
+                <label>Sage</label>
+            </value>
+            <value>
+                <fullName>SurePayroll</fullName>
+                <default>false</default>
+                <label>SurePayroll</label>
+            </value>
+            <value>
+                <fullName>Wave</fullName>
+                <default>false</default>
+                <label>Wave</label>
+            </value>
+            <value>
+                <fullName>Xero</fullName>
+                <default>false</default>
+                <label>Xero</label>
+            </value>
+            <value>
+                <fullName>Zenefits</fullName>
+                <default>false</default>
+                <label>Zenefits</label>
+            </value>
+            <value>
+                <fullName>(Payroll) - Financial Institution</fullName>
+                <default>false</default>
+                <label>(Payroll) - Financial Institution</label>
+            </value>
+            <value>
+                <fullName>(Payroll) - Local Provider</fullName>
+                <default>false</default>
+                <label>(Payroll) - Local Provider</label>
+            </value>
+            <value>
+                <fullName>(Payroll) - Manual</fullName>
+                <default>false</default>
+                <label>(Payroll) - Manual</label>
+            </value>
+            <value>
+                <fullName>(Payroll) - Other</fullName>
+                <default>false</default>
+                <label>(Payroll) - Other</label>
+            </value>
+            <value>
+                <fullName>(PEO) - ADP TotalSource</fullName>
+                <default>false</default>
+                <label>(PEO) - ADP TotalSource</label>
+            </value>
+            <value>
+                <fullName>(PEO) - Insperity</fullName>
+                <default>false</default>
+                <label>(PEO) - Insperity</label>
+            </value>
+            <value>
+                <fullName>(PEO) - Justworks</fullName>
+                <default>false</default>
+                <label>(PEO) - Justworks</label>
+            </value>
+            <value>
+                <fullName>(PEO) - Other</fullName>
+                <default>false</default>
+                <label>(PEO) - Other</label>
+            </value>
+            <value>
+                <fullName>(PEO) - Sequoia</fullName>
+                <default>false</default>
+                <label>(PEO) - Sequoia</label>
+            </value>
+            <value>
+                <fullName>(PEO) - TriNet</fullName>
+                <default>false</default>
+                <label>(PEO) - TriNet</label>
+            </value>
+            <value>
+                <fullName>Accountant</fullName>
+                <default>false</default>
+                <label>Accountant</label>
+            </value>
+            <value>
+                <fullName>ADP Total Source</fullName>
+                <default>false</default>
+                <label>ADP Total Source</label>
+            </value>
+            <value>
+                <fullName>ADP Workforce Now</fullName>
+                <default>false</default>
+                <label>ADP Workforce Now</label>
+            </value>
+            <value>
+                <fullName>BambooHR</fullName>
+                <default>false</default>
+                <label>BambooHR</label>
+            </value>
+            <value>
+                <fullName>Bank or Financial Institution</fullName>
+                <default>false</default>
+                <label>Bank or Financial Institution</label>
+            </value>
+            <value>
+                <fullName>Direct to Carrier</fullName>
+                <default>false</default>
+                <label>Direct to Carrier</label>
+            </value>
+            <value>
+                <fullName>Eaze Central</fullName>
+                <default>false</default>
+                <label>Eaze Central</label>
+            </value>
+            <value>
+                <fullName>eHealth</fullName>
+                <default>false</default>
+                <label>eHealth</label>
+            </value>
+            <value>
+                <fullName>GoCo</fullName>
+                <default>false</default>
+                <label>GoCo</label>
+            </value>
+            <value>
+                <fullName>Insperity</fullName>
+                <default>false</default>
+                <label>Insperity</label>
+            </value>
+            <value>
+                <fullName>Intuit or Quickbooks</fullName>
+                <default>false</default>
+                <label>Intuit or Quickbooks</label>
+            </value>
+            <value>
+                <fullName>JustWorks</fullName>
+                <default>false</default>
+                <label>JustWorks</label>
+            </value>
+            <value>
+                <fullName>Local Broker</fullName>
+                <default>false</default>
+                <label>Local Broker</label>
+            </value>
+            <value>
+                <fullName>Manual (In-House)</fullName>
+                <default>false</default>
+                <label>Manual (In-House)</label>
+            </value>
+            <value>
+                <fullName>Namely</fullName>
+                <default>false</default>
+                <label>Namely</label>
+            </value>
+            <value>
+                <fullName>OnPay</fullName>
+                <default>false</default>
+                <label>OnPay</label>
+            </value>
+            <value>
+                <fullName>Other Competitor</fullName>
+                <default>false</default>
+                <label>Other Competitor</label>
+            </value>
+            <value>
+                <fullName>Ovation (Heartland Payroll)</fullName>
+                <default>false</default>
+                <label>Ovation (Heartland Payroll)</label>
+            </value>
+            <value>
+                <fullName>Patriot</fullName>
+                <default>false</default>
+                <label>Patriot</label>
+            </value>
+            <value>
+                <fullName>Rippling</fullName>
+                <default>false</default>
+                <label>Rippling</label>
+            </value>
+            <value>
+                <fullName>Simply Insured</fullName>
+                <default>false</default>
+                <label>Simply Insured</label>
+            </value>
+            <value>
+                <fullName>Square</fullName>
+                <default>false</default>
+                <label>Square</label>
+            </value>
+            <value>
+                <fullName>Tech Broker</fullName>
+                <default>false</default>
+                <label>Tech Broker</label>
+            </value>
+            <value>
+                <fullName>Traditional Broker</fullName>
+                <default>false</default>
+                <label>Traditional Broker</label>
+            </value>
+            <value>
+                <fullName>Trinet</fullName>
+                <default>false</default>
+                <label>Trinet</label>
+            </value>
+            <value>
+                <fullName>Zenefits [One Digital]</fullName>
+                <default>false</default>
+                <label>Zenefits [One Digital]</label>
+            </value>
+            <value>
+                <fullName>Unsure</fullName>
+                <default>false</default>
+                <label>Unsure</label>
+            </value>
+            <value>
+                <fullName>None</fullName>
+                <default>false</default>
+                <label>None</label>
+            </value>
+            <value>
+                <fullName>Decisely</fullName>
+                <default>false</default>
+                <label>Decisely</label>
+            </value>
+            <value>
+                <fullName>Sequoia</fullName>
+                <default>false</default>
+                <label>Sequoia</label>
+            </value>
+            <value>
+                <fullName>OneDigital</fullName>
+                <default>false</default>
+                <label>OneDigital</label>
+            </value>
+            <value>
+                <fullName>Kelly Associates</fullName>
+                <default>false</default>
+                <label>Kelly Associates</label>
+            </value>
+            <value>
+                <fullName>Group Benefits Services</fullName>
+                <default>false</default>
+                <label>Group Benefits Services</label>
+            </value>
+            <value>
+                <fullName>Vimly</fullName>
+                <default>false</default>
+                <label>Vimly</label>
+            </value>
+            <value>
+                <fullName>Sedera</fullName>
+                <default>false</default>
+                <label>Sedera</label>
+            </value>
+            <value>
+                <fullName>Gusto is Broker</fullName>
+                <default>false</default>
+                <label>Gusto is Broker</label>
+            </value>
+            <value>
+                <fullName>Accountant / CPA</fullName>
+                <default>false</default>
+                <label>Accountant / CPA</label>
+            </value>
+            <value>
+                <fullName>Mainstreet</fullName>
+                <default>false</default>
+                <label>Mainstreet</label>
+            </value>
+            <value>
+                <fullName>Clarus</fullName>
+                <default>false</default>
+                <label>Clarus</label>
+            </value>
+            <value>
+                <fullName>boast.AI</fullName>
+                <default>false</default>
+                <label>boast.AI</label>
+            </value>
+            <value>
+                <fullName>Neo.tax</fullName>
+                <default>false</default>
+                <label>Neo.tax</label>
+            </value>
+            <value>
+                <fullName>Taxtaker</fullName>
+                <default>false</default>
+                <label>Taxtaker</label>
+            </value>
+            <value>
+                <fullName>ER going to DIY</fullName>
+                <default>false</default>
+                <label>ER going to DIY</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>ADP</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>ADP Run</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>ADP-Workforce/Resource/Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Intuit</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Intuit-QuickBooks</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Ovation (Heartland)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Paychex</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Paycom</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Paylocity</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Sage</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>SurePayroll</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Wave</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Xero</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Zenefits</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(Payroll) - Financial Institution</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(Payroll) - Local Provider</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(Payroll) - Manual</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(Payroll) - Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(PEO) - ADP TotalSource</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(PEO) - Insperity</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(PEO) - Justworks</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(PEO) - Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(PEO) - Sequoia</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>(PEO) - TriNet</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Won</controllingFieldValue>
+            <controllingFieldValue>SAL</controllingFieldValue>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <controllingFieldValue>Open</controllingFieldValue>
+            <controllingFieldValue>Recommendation Sent</controllingFieldValue>
+            <controllingFieldValue>Default Offering Complete</controllingFieldValue>
+            <valueName>Unsure</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Accountant</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>ADP Total Source</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>ADP Workforce Now</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>BambooHR</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Bank or Financial Institution</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Direct to Carrier</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Eaze Central</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>eHealth</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>GoCo</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Insperity</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Intuit or Quickbooks</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>JustWorks</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Local Broker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Manual (In-House)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Namely</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>OnPay</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Other Competitor</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Ovation (Heartland Payroll)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Patriot</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Rippling</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Simply Insured</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Square</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Tech Broker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Traditional Broker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Trinet</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Zenefits [One Digital]</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>None</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Decisely</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Sequoia</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>OneDigital</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Kelly Associates</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Group Benefits Services</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Vimly</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Sedera</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Accountant / CPA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Mainstreet</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Clarus</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>boast.AI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Neo.tax</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>Taxtaker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <valueName>ER going to DIY</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed Lost</controllingFieldValue>
+            <controllingFieldValue>Order Lost</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

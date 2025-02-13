@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Application_Id__c</fullName>
+    <externalId>false</externalId>
+    <formula>SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(Source_ID__c,&quot;hawaiian_ice-renewal-&quot;, &quot;&quot;) ,&quot;hawaiian_ice-new_plans_application-&quot;, &quot;&quot;),&quot;hawaiian_ice-commuter_benefit-&quot;, &quot;&quot;),&quot;hawaiian_ice-benefit_change_application-&quot;,&quot;&quot;),&quot;hawaiian_ice-account_benefit_interest-&quot;,&quot;&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Application Id</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

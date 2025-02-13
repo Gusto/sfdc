@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Benefits_BYOB</fullName>
+    <active>true</active>
+    <compactLayoutAssignment>BYB_Compact_Layout</compactLayoutAssignment>
+    <description>Used for BYB Benefits</description>
+    <label>Benefits BYB</label>
+    <picklistValues>
+        <picklist>Application_Status__c</picklist>
+        <values>
+            <fullName>Blocked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked Employee Details Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blocked Plan Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BoR Complete</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BoR Processed by All Carriers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Canceled%2F Rescinded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carriers Selected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Employee Details Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Employees Implemented</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Forms Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Forms Signed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Implementing Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Eligibility Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Employee Details Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Missing Emails Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Owners Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Plan Confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Shareholders Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plans Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plans Implemented</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Processing BoR with Carriers</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Blocked_Reason__c</picklist>
+        <values>
+            <fullName>Broker Delay</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier Delay</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Payroll</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unresponsive Admin</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Broker_Name__c</picklist>
+        <values>
+            <fullName>360 Corporate Benefit Advisors %28CBA%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>A%2EJ%2E Kuzneski Jr%2E%2C Inc%2E DBA Kuzneski Insurance Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ASI Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>About Health Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Abrams %26 Associates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Advanced Corporate Solutions LTD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Advanced Insurance Designs%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aims Health Plan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AllianceBenefits%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alliant</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Allied Health Insurance Agency%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alongi Santas Moss Insurance Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amanda V Moore</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Arrow Benefits Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Avalon Insurance Services%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BSB Consultants</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bateman%2C Gordon %26 Sands%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bedrosian %26 Associates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Been Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BenefitEdge Insurance Services%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bennie</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bolton %26 Company</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Brennan Consulting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Brown %26 Brown Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Business Benefits Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Business Insurance %26 Benefits Services of MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CC Services%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CLG Employer Resources</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CREST Insurance Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Caffrey Insurance Solutions%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cambridge Insurance Advisors</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Caribou Insurance Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Corporate Risk Management Inc %26 CRM Benefits Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cragg1%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Crum-Halsted Agency Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DCD Financial and Insurance Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dee T%2E Togikawa Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversified Human Solutions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Diversified Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EPIC Insurance Brokers - Susan English</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EVCO Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EbenConcepts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eilers Financial Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Emily Molstad</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Epic Brokers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Excel Benefits%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FNIC Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Filice Insurance Services LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Finvisor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First Person Advisors</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Folesy Insurance Agency %28DBA%3A Capstone Group%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Foresight ASG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GBS Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GBS Benefits%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GCG Financial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GSR INC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gallagher</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gallagher Benefits Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>George W Blaisdell Insurance Broker</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Get-Benefits Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gibson %26 Associates%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HPB Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hailstone Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hailstone Insurance Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Heffernan Insurance Brokers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Herbert Insurance Agency LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Higginbotham</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hub International</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ICS-Insurance%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Insurance Management Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Insurica</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>JCM Financial Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>John M Hiney Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Johnson%2C Kendall %26 Johnson</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Jonathan T%2E Gilmour Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>K2K Associates%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kapnick Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kelsey Benefits dba Intermountain Insurance Services</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Key Benefit Administrators</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kibble %26 Prentice Holding Company %28USI Insurance%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LMR Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LaPorte Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LaSalle Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lauren Fifield</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Leavitt Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MDG Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MEBO Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Marissa C Sweet LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Marsh %26 McLean</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Marsh Mclennan Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mindful Insurance Agency%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>My Advisor Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NFP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NFP%2C Corp%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nava Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nick Paloukos</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Northwestern Mutual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>One Source Advisors</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OneDigital</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Patriot Growth Insurance Services dba Arrow Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Peak Benefit Solutions%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plastridge Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Preferred Care Management</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Premier Financial Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prevot %26 Associates Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Professional Benefit Services%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rampart Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rice Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Risk Strategies Company</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rosenthal Bros%2E%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sahouri Insurance and Financial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sana Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Schill Insurance Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Schneider and Carmel Insurance Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Second Act Benefits dba Strategic Benefits of Cincinnati</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sequoia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shadrach Insurance Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Smith Brothers Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Spaich Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sprague Israel Giles Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stitz %26 Associates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tax %26 Financial Group %28AKA%3A TFG Benefits%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The Bennett Agency%2C Inc%2E</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The Capital Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The Eriksen Insurance Group%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The Haberman Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The Insurance Man %26 Associates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The Lowe Company</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trustmark Benefits</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>USI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>USI Insurance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>VCG Consultants</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vantage Point Benefit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>VantagePoint Benefit Administrators</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Vita Insurance Associates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warner Pacific</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Way Finder Insurance and Financial LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Webber and Grinnell Insurance Agency</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Documents_Status__c</picklist>
+        <values>
+            <fullName>None</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>all_completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>all_uploaded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>in_progress</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>External_Deductions__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>External_Deductions_for_LiDi__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Has_the_group_ever_offered_benefits__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Order_Status__c</picklist>
+        <values>
+            <fullName>Blocked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Canceled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed Admin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collecting Documents</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fulfilled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fulfillment prep</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Implementing Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE Prep</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OE Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plan Review Sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plans Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready for Implementing Plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready for Intro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>With Sales</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Previous_Order_Status__c</picklist>
+        <values>
+            <fullName>Post-Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pre-Submission</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Qualification</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Push_Rate_Reason__c</picklist>
+        <values>
+            <fullName>Covid-19</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Didn%E2%80%99t complete OE on time</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ER decided they%E2%80%99re not ready yet</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not enough EE enrolled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not enough payroll history</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Only owner%28s%29 enrolled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Problem with coverage area%3F%2FOOS EE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Too expensive%2Fneed more time to think about plans</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unresponsive ER</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Want to make changes to selections</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Special_Processing__c</picklist>
+        <values>
+            <fullName>External OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Passive OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plan Info Provided Outside of Gusto</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status_Detail__c</picklist>
+        <values>
+            <fullName>Awaiting Census</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Duplicate</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Existing Group Coverage%2FBOR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fulfilled Pending Case Comms</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Responsive Broker</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Responsive Employer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A Broker not interested</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A Did Not Become Gusto Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A No Longer Interested</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post-Signature Cancel%3A Too Expensive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Limitation - Class Based WP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product dissatisfaction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product limitation- CS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product limitation- Unsupported rating scheme</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product limitation- post tax</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unsupported line of coverage</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type__c</picklist>
+        <values>
+            <fullName>BOR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BOR %2B TAdA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BOR TAdA Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BYB Renewal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carrier switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gusto to BYB - Midyear</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gusto to BYB - Renewal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New Line of Coverage</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New to BYB - No OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New to BYB - OE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New to Gusto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Renewal Alignment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Same carrier%2C NO plan%2Fgroup level changes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Same carrier%2C plan%2Fgroup level changes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TAdA%3A No Pre OE Setup</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TAdA%3A Pre OE Setup</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Useful_docs_in_attachments__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

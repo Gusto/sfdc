@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>P2P_Referrer__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Field to identify which Partner Firm referred this Individual</description>
+    <inlineHelpText>The Reseller Account that referred this Accountant</inlineHelpText>
+    <label>P2P Referrer</label>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>Leads (P2P Referrer)</relationshipLabel>
+    <relationshipName>Leads4</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

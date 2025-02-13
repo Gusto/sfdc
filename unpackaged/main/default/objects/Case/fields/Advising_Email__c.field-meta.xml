@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Advising_Email__c</fullName>
+    <description>Introduced in the &quot;Advising Email Automation&quot; module.</description>
+    <externalId>false</externalId>
+    <formula>IF ( INCLUDES ( Opportunity__r.Advising_Email__c, &quot;Intro Email&quot; ), &quot;Intro Email; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Advising_Email__c, &quot;Followup Email&quot; ), &quot;Followup Email; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Advising_Email__c, &quot;Final Reminder Email&quot; ), &quot;Final Reminder Email; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Advising_Email__c, &quot;Auto Renewal Email&quot; ), &quot;Auto Renewal Email; &quot;,null )</formula>
+    <label>Advising Email</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

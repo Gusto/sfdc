@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Align_role_with_title</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT(CONTAINS(BLANKVALUE(Title,&apos;&apos;),
+CASE(UserRole.Name,
+&apos;fs&apos;, &apos;Full Stack Advisor&apos;, 
+&apos;np&apos;, &apos;New Plan Advisor&apos;, 
+&apos;pr&apos;, &apos;Payroll Rep&apos;, 
+&apos;ib&apos;, &apos;Inbound Rep&apos;, 
+&apos;ob&apos;, &apos;Outbound Rep&apos;, 
+&apos;am&apos;, &apos;Account Manager&apos;, 
+&apos;ae&apos;, &apos;Account Executive&apos;, 
+&apos;admin&apos;, &apos;Administrator&apos;,
+&apos;&apos;)))</errorConditionFormula>
+    <errorMessage>The title must match the user&apos;s role.</errorMessage>
+</ValidationRule>

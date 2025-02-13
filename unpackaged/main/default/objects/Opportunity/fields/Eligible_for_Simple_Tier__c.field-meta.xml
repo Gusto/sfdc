@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Eligible_for_Simple_Tier__c</fullName>
+    <description>Temp field for simple tier eligibility A/B test launching 6/1</description>
+    <formula>AND(
+  ISPICKVAL(Account.A_B_Test_Name__c, &apos;Simple Tier 9-&apos;),
+  ISPICKVAL(Account.A_B_Test_Group__c, &apos;Test&apos;)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>If checked, is eligible. If not check, is not eligible.</inlineHelpText>
+    <label>Eligible for Simple Tier</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

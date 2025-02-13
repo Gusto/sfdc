@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Order_Type__c</fullName>
+    <label>Order Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Same carrier, plan/group level changes</fullName>
+                <default>false</default>
+                <label>Same carrier, plan/group level changes</label>
+            </value>
+            <value>
+                <fullName>Same carrier, NO plan/group level changes</fullName>
+                <default>false</default>
+                <label>Same carrier, NO plan/group level changes</label>
+            </value>
+            <value>
+                <fullName>New Line of Coverage</fullName>
+                <default>false</default>
+                <label>New Line of Coverage</label>
+            </value>
+            <value>
+                <fullName>Carrier switch</fullName>
+                <default>false</default>
+                <label>Carrier switch</label>
+            </value>
+            <value>
+                <fullName>New to Gusto</fullName>
+                <default>false</default>
+                <label>New to Gusto</label>
+            </value>
+            <value>
+                <fullName>TAdA: No Pre OE Setup</fullName>
+                <default>false</default>
+                <label>TAdA: No Pre OE Setup</label>
+            </value>
+            <value>
+                <fullName>TAdA: Pre OE Setup</fullName>
+                <default>false</default>
+                <label>TAdA: Pre OE Setup</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

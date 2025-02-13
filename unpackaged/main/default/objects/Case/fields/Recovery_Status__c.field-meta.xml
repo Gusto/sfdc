@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recovery_Status__c</fullName>
+    <label>Recovery Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending</fullName>
+                <default>false</default>
+                <label>Pending</label>
+            </value>
+            <value>
+                <fullName>Recovered</fullName>
+                <default>false</default>
+                <label>Recovered</label>
+            </value>
+            <value>
+                <fullName>awaiting_manual_recovery</fullName>
+                <default>false</default>
+                <label>Awaiting Manual Recovery</label>
+            </value>
+            <value>
+                <fullName>awaiting_recovery_case</fullName>
+                <default>false</default>
+                <label>Awaiting Recovery Case</label>
+            </value>
+            <value>
+                <fullName>awaiting_debit_clearance</fullName>
+                <default>false</default>
+                <label>Awaiting Debit Clearance</label>
+            </value>
+            <value>
+                <fullName>Loss</fullName>
+                <default>false</default>
+                <label>Loss</label>
+            </value>
+            <value>
+                <fullName>awaiting_tax_recovery</fullName>
+                <default>false</default>
+                <label>Awaiting Tax Recovery</label>
+            </value>
+            <value>
+                <fullName>awaiting_bad_debt_approval</fullName>
+                <default>false</default>
+                <label>Awaiting Bad Debt Approval</label>
+            </value>
+            <value>
+                <fullName>waiting_external_dependency</fullName>
+                <default>false</default>
+                <label>Waiting External Dependency</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

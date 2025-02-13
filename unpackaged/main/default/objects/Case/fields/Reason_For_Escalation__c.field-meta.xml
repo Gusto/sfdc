@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_For_Escalation__c</fullName>
+    <description>What was the reason for the escalation?</description>
+    <inlineHelpText>What was the reason for the escalation?</inlineHelpText>
+    <label>Reason for Escalation</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Clarifying Questions</fullName>
+                <default>false</default>
+                <label>Clarifying Questions</label>
+            </value>
+            <value>
+                <fullName>Delays in Response</fullName>
+                <default>false</default>
+                <label>Delays in Response</label>
+            </value>
+            <value>
+                <fullName>N/A Review Site</fullName>
+                <default>false</default>
+                <label>N/A Review Site</label>
+            </value>
+            <value>
+                <fullName>Poor Support Experience</fullName>
+                <default>false</default>
+                <label>Poor Support Experience</label>
+            </value>
+            <value>
+                <fullName>Product Feature Request</fullName>
+                <default>false</default>
+                <label>Product Feature Request</label>
+            </value>
+            <value>
+                <fullName>Received Inadequate or Incorrect Info</fullName>
+                <default>false</default>
+                <label>Received Inadequate or Incorrect Info</label>
+            </value>
+            <value>
+                <fullName>Software Bug</fullName>
+                <default>false</default>
+                <label>Software Bug</label>
+            </value>
+            <value>
+                <fullName>Unable to Get Support via Regular Channels</fullName>
+                <default>false</default>
+                <label>Unable to Get Support via Regular Channels</label>
+            </value>
+            <value>
+                <fullName>Urgency of Issue</fullName>
+                <default>false</default>
+                <label>Urgency of Issue</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Not Applicable</fullName>
+                <default>false</default>
+                <label>Not Applicable</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

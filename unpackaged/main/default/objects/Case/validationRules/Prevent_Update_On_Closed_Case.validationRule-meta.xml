@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Update_On_Closed_Case</fullName>
+    <active>true</active>
+    <description>Engagement cases should not be editable once it is closed</description>
+    <errorConditionFormula>AND(
+IsClosed,
+NOT(ISNEW()),
+$User.Id &lt;&gt; &apos;00516000005Amjp&apos;,
+$User.Id &lt;&gt; &apos;00516000005AmjpAAC&apos;,
+$User.Id &lt;&gt; &apos;0051M000007eVA6&apos;,
+$User.Id &lt;&gt; &apos;0051M000007eVA6QAM&apos;,
+RecordType.Name = &apos;Engagement&apos;,
+($Profile.Name &lt;&gt; $Label.ZP_System_Administrator &amp;&amp; $Profile.Name &lt;&gt; $Label.System_Administrator),
+NOT($Permission.Engagement_Admin),
+NOT($Permission.Engagement_Lead),  
+NOT( ISCHANGED( Number_of_Audit_Logs__c )),
+NOT( ISCHANGED( Handle_Time_Seconds__c )),
+NOT( ISCHANGED( Handle_Time_Seconds_Adjusted__c )),
+NOT( ISCHANGED( Long_Running_Calls__c )),
+NOT( ISCHANGED( Total_Number_of_Touchpoints__c )),
+NOT( ISCHANGED( Live_Channel_Wait_Time_Seconds__c )),
+NOT( ISCHANGED( Cumulative_Time__c )),
+NOT( ISCHANGED( ParentId) ),
+NOT( ISCHANGED( Closed_Reason__c )),
+NOT( ISCHANGED( To_Email_Address__c )),
+NOT( ISCHANGED(  Survey_Sent__c )),
+NOT( ISCHANGED( Survey_Sent_Date_Time__c  )),
+$User.Exempt_from_Validation_Rules__c = false,
+$Setup.Case_Merge_Skip_Validation__c.Disable_Validation__c = False
+)</errorConditionFormula>
+    <errorMessage>Cannot edit case in closed status</errorMessage>
+</ValidationRule>

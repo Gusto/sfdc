@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Request_Type__c</fullName>
+    <description>Internal chat. What type of case is requester asking about.</description>
+    <label>Request Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Internal Benefits</fullName>
+                <default>false</default>
+                <label>Internal Benefits</label>
+            </value>
+            <value>
+                <fullName>External Benefits</fullName>
+                <default>false</default>
+                <label>External Benefits</label>
+            </value>
+            <value>
+                <fullName>Payroll</fullName>
+                <default>false</default>
+                <label>Payroll</label>
+            </value>
+            <value>
+                <fullName>Benefits</fullName>
+                <default>false</default>
+                <label>Benefits</label>
+            </value>
+            <value>
+                <fullName>Taxes</fullName>
+                <default>false</default>
+                <label>Taxes</label>
+            </value>
+            <value>
+                <fullName>TAdA</fullName>
+                <default>false</default>
+                <label>TAdA</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

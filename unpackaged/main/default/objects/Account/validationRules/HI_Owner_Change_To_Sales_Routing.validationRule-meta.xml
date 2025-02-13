@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>HI_Owner_Change_To_Sales_Routing</fullName>
+    <active>true</active>
+    <description>Temporary validation rule that will fire when any one updates HI owner to Sales Routing.</description>
+    <errorConditionFormula>ISCHANGED(HI_Owner__c) &amp;&amp;
+HI_Owner__c = &apos;0058Y000009wXHM&apos; &amp;&amp; 
+CONTAINS($Label.Benefits_Roles , $UserRole.Name)</errorConditionFormula>
+    <errorDisplayField>HI_Owner__c</errorDisplayField>
+    <errorMessage>HI owner cannot be changed to Sales Routing</errorMessage>
+</ValidationRule>

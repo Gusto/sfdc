@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Req_Task_Sub_Desc_if_Task_Desc_selected</fullName>
+    <active>true</active>
+    <description>The field TC Task Sub-description is required if you have a TC Task Description before saving a Task.</description>
+    <errorConditionFormula>RecordType.DeveloperName == &apos;Standard&apos; 
+&amp;&amp; !ISPICKVAL(TC_Task_Description__c, &quot;&quot;)
+&amp;&amp; !ISPICKVAL(TC_Task_Description__c, &quot;Credit Reapproval&quot;)
+&amp;&amp; !ISPICKVAL(TC_Task_Description__c, &quot;Pull Through Funnel&quot;)
+&amp;&amp; !ISPICKVAL(TC_Task_Description__c, &quot;Qualification&quot;)
+&amp;&amp; !ISPICKVAL(TC_Task_Description__c, &quot;Utilization Determination&quot;)
+&amp;&amp;  ISPICKVAL(TC_Task_Sub_Description__c, &quot;&quot;)</errorConditionFormula>
+    <errorMessage>Please select a TC Task Sub-description if you have selected a TC Task Description before saving the Task</errorMessage>
+</ValidationRule>

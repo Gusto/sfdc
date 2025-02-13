@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Owner__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Owner of a Tax Res Case at the time of status change.</description>
+    <label>Current Owner</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Case_Audit_Logs3</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

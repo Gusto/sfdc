@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Confirmation_Handle_Time__c</fullName>
+    <label>Confirmation Handle Time</label>
+    <summarizedField>Tax_Ops_Task_Log__c.Duration_In_Minutes__c</summarizedField>
+    <summaryFilterItems>
+        <field>Tax_Ops_Task_Log__c.Process_Step__c</field>
+        <operation>equals</operation>
+        <value>Confirmation</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Tax_Ops_Task_Log__c.From_Status__c</field>
+        <operation>equals</operation>
+        <value>In Progress</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Tax_Ops_Task_Log__c.Tax_Ops_Task__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

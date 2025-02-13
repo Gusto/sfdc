@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_529_Notes_for_529_Email</fullName>
+    <active>true</active>
+    <errorConditionFormula>X529_Interest__c = true &amp;&amp; ISBLANK(X529_Notes__c)</errorConditionFormula>
+    <errorDisplayField>X529_Notes__c</errorDisplayField>
+    <errorMessage>529 Notes are required to send an email with 529 Interest.</errorMessage>
+</ValidationRule>

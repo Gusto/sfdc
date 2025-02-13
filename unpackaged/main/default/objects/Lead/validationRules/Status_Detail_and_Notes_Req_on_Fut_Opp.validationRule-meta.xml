@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_Detail_and_Notes_Req_on_Fut_Opp</fullName>
+    <active>true</active>
+    <description>Status Notes and Lead Status Detail required when moving lead from MQL to Future Opportunity</description>
+    <errorConditionFormula>AND( 
+RecordType.Name = &quot;Reseller&quot;, 
+ISCHANGED( Status ), 
+ISPICKVAL( Status, &apos;Future Opportunity&apos;), 
+TEXT(PRIORVALUE(Status)) = &apos;MQL&apos;, 
+OR( 
+ISBLANK( Status_Notes__c ), 
+ISPICKVAL( Lead_Status_Detail__c, &quot;&quot;)) 
+)</errorConditionFormula>
+    <errorDisplayField>Lead_Status_Detail__c</errorDisplayField>
+    <errorMessage>Status Notes and Lead Status Detail required when moving lead from MQL to Future Opportunity</errorMessage>
+</ValidationRule>

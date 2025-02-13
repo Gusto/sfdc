@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_ATO_Two_Factor_Activity</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL(Escalation_Reason__c, &quot;Two-Factor Activity&quot;),
+ISBLANK(User_Link__c)
+)</errorConditionFormula>
+    <errorDisplayField>User_Link__c</errorDisplayField>
+    <errorMessage>User link is required</errorMessage>
+</ValidationRule>

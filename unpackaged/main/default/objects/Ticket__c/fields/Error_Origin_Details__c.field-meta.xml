@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Error_Origin_Details__c</fullName>
+    <description>This field is a dependent of Error Origin for Benefit Compliance tickets.</description>
+    <label>Error Origin Details</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Error_Origin__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>BOR Sales</fullName>
+                <default>false</default>
+                <label>BOR Sales</label>
+            </value>
+            <value>
+                <fullName>New Plan Sales</fullName>
+                <default>false</default>
+                <label>New Plan Sales</label>
+            </value>
+            <value>
+                <fullName>Qualification</fullName>
+                <default>false</default>
+                <label>Qualification</label>
+            </value>
+            <value>
+                <fullName>Onboard Advocate</fullName>
+                <default>false</default>
+                <label>Onboard Advocate</label>
+            </value>
+            <value>
+                <fullName>Submission</fullName>
+                <default>false</default>
+                <label>Submission</label>
+            </value>
+            <value>
+                <fullName>Case Team (submission &amp; Followup)</fullName>
+                <default>false</default>
+                <label>Case Team (submission &amp; Followup)</label>
+            </value>
+            <value>
+                <fullName>Order team (confirmation)</fullName>
+                <default>false</default>
+                <label>Order team (confirmation)</label>
+            </value>
+            <value>
+                <fullName>Escalations/ Audits</fullName>
+                <default>false</default>
+                <label>Escalations/ Audits</label>
+            </value>
+            <value>
+                <fullName>Cobra Team</fullName>
+                <default>false</default>
+                <label>Cobra Team</label>
+            </value>
+            <value>
+                <fullName>Advising Operations (Benefits Designer &amp; NSA)</fullName>
+                <default>false</default>
+                <label>Advising Operations (Benefits Designer &amp; NSA)</label>
+            </value>
+            <value>
+                <fullName>Customer Facing Advising</fullName>
+                <default>false</default>
+                <label>Customer Facing Advising</label>
+            </value>
+            <value>
+                <fullName>Onboarding Advocates</fullName>
+                <default>false</default>
+                <label>Onboarding Advocates</label>
+            </value>
+            <value>
+                <fullName>Group Submission</fullName>
+                <default>false</default>
+                <label>Group Submission</label>
+            </value>
+            <value>
+                <fullName>Group Confirmation</fullName>
+                <default>false</default>
+                <label>Group Confirmation</label>
+            </value>
+            <value>
+                <fullName>New Hire Enrollment</fullName>
+                <default>false</default>
+                <label>New Hire Enrollment</label>
+            </value>
+            <value>
+                <fullName>QLE</fullName>
+                <default>false</default>
+                <label>QLE</label>
+            </value>
+            <value>
+                <fullName>Terminations</fullName>
+                <default>false</default>
+                <label>Terminations</label>
+            </value>
+            <value>
+                <fullName>Mid Market NP Sales</fullName>
+                <default>false</default>
+                <label>Mid Market NP Sales</label>
+            </value>
+            <value>
+                <fullName>Small Biz NP Sales</fullName>
+                <default>false</default>
+                <label>Small Biz NP Sales</label>
+            </value>
+            <value>
+                <fullName>System Error (Bug)</fullName>
+                <default>false</default>
+                <label>System Error (Bug)</label>
+            </value>
+            <value>
+                <fullName>Automation Error</fullName>
+                <default>false</default>
+                <label>Automation Error</label>
+            </value>
+            <value>
+                <fullName>System Limitation</fullName>
+                <default>false</default>
+                <label>System Limitation</label>
+            </value>
+            <value>
+                <fullName>Benefits Care</fullName>
+                <default>false</default>
+                <label>Benefits Care</label>
+            </value>
+            <value>
+                <fullName>Payroll Care</fullName>
+                <default>false</default>
+                <label>Payroll Care</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Advising</controllingFieldValue>
+            <valueName>Advising Operations (Benefits Designer &amp; NSA)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Advising</controllingFieldValue>
+            <valueName>Customer Facing Advising</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>New &amp; Renewed Onboarding</controllingFieldValue>
+            <valueName>Onboarding Advocates</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>New &amp; Renewed Onboarding</controllingFieldValue>
+            <valueName>Group Submission</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>New &amp; Renewed Onboarding</controllingFieldValue>
+            <valueName>Group Confirmation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Benefit Services</controllingFieldValue>
+            <valueName>New Hire Enrollment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Benefit Services</controllingFieldValue>
+            <valueName>QLE</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Benefit Services</controllingFieldValue>
+            <valueName>Terminations</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Product/Automation</controllingFieldValue>
+            <valueName>System Error (Bug)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Product/Automation</controllingFieldValue>
+            <valueName>Automation Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Product/Automation</controllingFieldValue>
+            <valueName>System Limitation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Care</controllingFieldValue>
+            <valueName>Benefits Care</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Care</controllingFieldValue>
+            <valueName>Payroll Care</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>New/ Renewed Onboarding</controllingFieldValue>
+            <valueName>Qualification</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>New/ Renewed Onboarding</controllingFieldValue>
+            <valueName>Onboard Advocate</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>New/ Renewed Onboarding</controllingFieldValue>
+            <valueName>Submission</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Member Operations</controllingFieldValue>
+            <valueName>Case Team (submission &amp; Followup)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Member Operations</controllingFieldValue>
+            <valueName>Order team (confirmation)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Member Operations</controllingFieldValue>
+            <valueName>Escalations/ Audits</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Member Operations</controllingFieldValue>
+            <valueName>Cobra Team</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>BOR Sales</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>Mid Market NP Sales</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>Small Biz NP Sales</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

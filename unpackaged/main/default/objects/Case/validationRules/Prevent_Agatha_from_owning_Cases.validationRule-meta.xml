@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Agatha_from_owning_Cases</fullName>
+    <active>true</active>
+    <errorConditionFormula>!CONTAINS($User.Username, &apos;agatha.answers@gusto.com&apos;) &amp;&amp; !$User.Exempt_from_Validation_Rules__c &amp;&amp; ISCHANGED(OwnerId) &amp;&amp;   CONTAINS(Owner:User.Username , &apos;agatha.answers@gusto.com&apos;)</errorConditionFormula>
+    <errorMessage>Case cannot be assigned to Agatha Answers.</errorMessage>
+</ValidationRule>

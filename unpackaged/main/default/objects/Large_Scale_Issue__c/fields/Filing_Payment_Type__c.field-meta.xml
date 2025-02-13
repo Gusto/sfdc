@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Filing_Payment_Type__c</fullName>
+    <label>Filing/Payment Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Filing - Paper</fullName>
+                <default>false</default>
+                <label>Filing - Paper</label>
+            </value>
+            <value>
+                <fullName>Filing - E-file</fullName>
+                <default>false</default>
+                <label>Filing - E-file</label>
+            </value>
+            <value>
+                <fullName>Filing - Mag Media</fullName>
+                <default>false</default>
+                <label>Filing - Mag Media</label>
+            </value>
+            <value>
+                <fullName>Payment - EFT Debit</fullName>
+                <default>false</default>
+                <label>Payment - EFT Debit</label>
+            </value>
+            <value>
+                <fullName>Payment - EFT Credit</fullName>
+                <default>false</default>
+                <label>Payment - EFT Credit</label>
+            </value>
+            <value>
+                <fullName>Payment - Batch Check</fullName>
+                <default>false</default>
+                <label>Payment - Batch Check</label>
+            </value>
+            <value>
+                <fullName>Payment - Individual Check</fullName>
+                <default>false</default>
+                <label>Payment - Individual Check</label>
+            </value>
+            <value>
+                <fullName>Payment - Wire</fullName>
+                <default>false</default>
+                <label>Payment - Wire</label>
+            </value>
+            <value>
+                <fullName>None</fullName>
+                <default>false</default>
+                <label>None</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

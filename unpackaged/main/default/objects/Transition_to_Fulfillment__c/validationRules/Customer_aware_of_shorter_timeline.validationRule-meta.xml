@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_aware_of_shorter_timeline</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordType.Name=&apos;Payroll Transfer&apos;, ISPICKVAL(  Exception_Request__c  , &quot;Yes&quot;), ISBLANK(  Customer_Aware_of_Shorter_timeline__c  )  )</errorConditionFormula>
+    <errorDisplayField>Customer_Aware_of_Shorter_timeline__c</errorDisplayField>
+    <errorMessage>Please enter if customer is aware of shorter timeline</errorMessage>
+</ValidationRule>

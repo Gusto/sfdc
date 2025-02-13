@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Outbound_PRE__c</fullName>
+    <description>This field is created to see if the Outbound PRE field is marked on the Opportunity object.</description>
+    <externalId>false</externalId>
+    <formula>IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;Recert&quot; ), &quot;Recert; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;Address Change&quot; ), &quot;Address Change; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;SIC Code&quot; ), &quot;SIC Code; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;0 enrollees&quot; ), &quot;0 enrollees; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;Termination&quot; ), &quot;Termination; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;BOR away&quot; ), &quot;BOR away; &quot;,null ) &amp;
+IF ( INCLUDES ( Opportunity__r.Outbound_PRE__c, &quot;Other&quot; ), &quot;Other; &quot;,null )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Outbound PRE</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Partner_Owner_Slack_Id__c</fullName>
+    <description>Displays Partner Account Owner Slack Id (Based on Sold By/Referred By).
+Used in Workato recipe - Slack notification for &quot;partner-client-adds&quot;.</description>
+    <externalId>false</externalId>
+    <formula>if(
+Sold_By__c != null, Sold_By__r.Owner_Slack_Id__c,
+if(
+Referred_By__c != null, Referred_By__r.Owner_Slack_Id__c, null
+)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Partner Owner Slack Id</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

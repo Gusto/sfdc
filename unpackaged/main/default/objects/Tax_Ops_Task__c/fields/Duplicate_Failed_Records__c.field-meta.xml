@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duplicate_Failed_Records__c</fullName>
+    <label>Duplicate Failed Records</label>
+    <summaryFilterItems>
+        <field>Tax_Ops_Failed_Record__c.isDuplicate__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Tax_Ops_Failed_Record__c.Tax_Ops_Task__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Query_Return_Type__c</fullName>
+    <description>Indicates if query returns integer or an aggregate query</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Query Return Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Integer</fullName>
+                <default>true</default>
+                <label>Integer</label>
+            </value>
+            <value>
+                <fullName>Aggregate</fullName>
+                <default>false</default>
+                <label>Aggregate</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

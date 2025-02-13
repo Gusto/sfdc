@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_Detail__c</fullName>
+    <description>Additional detail dependent on the current status.</description>
+    <label>Status Detail</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Status</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Unresponsive Employer</fullName>
+                <default>false</default>
+                <label>Unresponsive Employer</label>
+            </value>
+            <value>
+                <fullName>Missing Migration Information</fullName>
+                <default>false</default>
+                <label>Missing Migration Information</label>
+            </value>
+            <value>
+                <fullName>Previous Provider Error</fullName>
+                <default>false</default>
+                <label>Previous Provider Error</label>
+            </value>
+            <value>
+                <fullName>Sales Passback</fullName>
+                <default>false</default>
+                <label>Sales Passback</label>
+            </value>
+            <value>
+                <fullName>Lacking Product Feature</fullName>
+                <default>false</default>
+                <label>Lacking Product Feature</label>
+            </value>
+            <value>
+                <fullName>Customer Choice</fullName>
+                <default>false</default>
+                <label>Customer Choice</label>
+            </value>
+            <value>
+                <fullName>Missing Info</fullName>
+                <default>false</default>
+                <label>Missing Info</label>
+            </value>
+            <value>
+                <fullName>Waiting on ER</fullName>
+                <default>false</default>
+                <label>Waiting on ER</label>
+            </value>
+            <value>
+                <fullName>Escalated to Sales</fullName>
+                <default>false</default>
+                <label>Escalated to Sales</label>
+            </value>
+            <value>
+                <fullName>Pushed Date (2x)</fullName>
+                <default>false</default>
+                <label>Pushed Date (2x)</label>
+            </value>
+            <value>
+                <fullName>Employer Choice</fullName>
+                <default>false</default>
+                <label>Employer Choice</label>
+            </value>
+            <value>
+                <fullName>Unqualified</fullName>
+                <default>false</default>
+                <label>Unqualified</label>
+            </value>
+            <value>
+                <fullName>Payroll Transfer Issue</fullName>
+                <default>false</default>
+                <label>Payroll Transfer Issue</label>
+            </value>
+            <value>
+                <fullName>Covid-19</fullName>
+                <default>false</default>
+                <label>Covid-19</label>
+            </value>
+            <value>
+                <fullName>Neg Net Pay</fullName>
+                <default>false</default>
+                <label>Neg Net Pay</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Unresponsive Employer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Missing Info</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Pushed Date (2x)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Employer Choice</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Unqualified</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Payroll Transfer Issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Covid-19</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Closed: Canceled</controllingFieldValue>
+            <valueName>Neg Net Pay</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

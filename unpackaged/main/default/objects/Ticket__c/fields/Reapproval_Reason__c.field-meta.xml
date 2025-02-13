@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reapproval_Reason__c</fullName>
+    <description>To specify reason for re-approval</description>
+    <label>Reapproval Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>280(c) election</fullName>
+                <default>false</default>
+                <label>280(c) election</label>
+            </value>
+            <value>
+                <fullName>Change in calc method</fullName>
+                <default>false</default>
+                <label>Change in calc method</label>
+            </value>
+            <value>
+                <fullName>Internal QA</fullName>
+                <default>false</default>
+                <label>Internal QA</label>
+            </value>
+            <value>
+                <fullName>Payment plan adjustment</fullName>
+                <default>false</default>
+                <label>Payment plan adjustment</label>
+            </value>
+            <value>
+                <fullName>Provider error</fullName>
+                <default>false</default>
+                <label>Provider error</label>
+            </value>
+            <value>
+                <fullName>QRE adjustment</fullName>
+                <default>false</default>
+                <label>QRE adjustment</label>
+            </value>
+            <value>
+                <fullName>Utilization change</fullName>
+                <default>false</default>
+                <label>Utilization change</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

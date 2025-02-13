@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Record_Type</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordType.Name &lt;&gt; &apos;Company&apos;, RecordType.Name &lt;&gt; &apos;Reseller&apos;) &amp;&amp; $User.Is_Api_Integration__c = false</errorConditionFormula>
+    <errorMessage>A lead must be a &apos;Company&apos; or &apos;Reseller&apos; record type.</errorMessage>
+</ValidationRule>

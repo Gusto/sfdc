@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tax_Notice_Range_Validation</fullName>
+    <active>true</active>
+    <description>Tax Notice Date field can&apos;t be populated if Tax Notice Date range date fields are populated.</description>
+    <errorConditionFormula>RecordType.DeveloperName = &apos;Auto_Solve_Batch&apos; &amp;&amp; (( ISBLANK(  Tax_Notice_Date__c )  &amp;&amp;   NOT( ISBLANK(  Tax_Notice_Start_Date__c )) &amp;&amp; ISBLANK(  Tax_Notice_End_Date__c )) 
+
+||
+
+( ISBLANK(  Tax_Notice_Date__c ) &amp;&amp; ISBLANK(  Tax_Notice_Start_Date__c ) &amp;&amp; NOT( ISBLANK(  Tax_Notice_End_Date__c ))) 
+
+||
+
+( NOT( ISBLANK(  Tax_Notice_Date__c ) )  &amp;&amp; ( NOT( ISBLANK(  Tax_Notice_Start_Date__c )) || NOT( ISBLANK(  Tax_Notice_End_Date__c ))) ))</errorConditionFormula>
+    <errorMessage>Auto Solve Packages can not have a single Tax Notice Date plus Start and End Dates. Also, if you pick a date range please include Tax Notice Start and end Dates.</errorMessage>
+</ValidationRule>

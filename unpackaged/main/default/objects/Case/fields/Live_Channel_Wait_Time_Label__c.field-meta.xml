@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Live_Channel_Wait_Time_Label__c</fullName>
+    <externalId>false</externalId>
+    <formula>if( Live_Channel_Wait_Time_Seconds__c/60&lt;=3,&apos;&lt; 3 mins&apos; ,&apos;&gt; 3 mins&apos;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Live Channel Wait Time Label</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

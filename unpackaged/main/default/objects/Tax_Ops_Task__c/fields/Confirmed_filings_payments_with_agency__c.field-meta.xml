@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Confirmed_filings_payments_with_agency__c</fullName>
+    <inlineHelpText>Email: ZD ticket link (Did you receive our X filings / pmts, can you spot check these companies)
+Site spot check: Example company name
+Phone: Agent name</inlineHelpText>
+    <label>Confirmed filings &amp; payments with agency</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>Confirmed via web portal</fullName>
+                <default>false</default>
+                <label>Confirmed via web portal</label>
+            </value>
+            <value>
+                <fullName>Confirmed via email</fullName>
+                <default>false</default>
+                <label>Confirmed via email</label>
+            </value>
+            <value>
+                <fullName>Confirmed via phone</fullName>
+                <default>false</default>
+                <label>Confirmed via phone</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

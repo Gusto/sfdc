@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Blocked_Reason__c</fullName>
+    <description>If &apos;Blocked Reason&apos; is populated, order will NOT be playable</description>
+    <label>Blocked Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pausing this account for urgent 2FA access elsewhere</fullName>
+                <default>false</default>
+                <label>Pausing this account for urgent 2FA access elsewhere</label>
+            </value>
+            <value>
+                <fullName>Became unblocked on a higher priority order</fullName>
+                <default>false</default>
+                <label>Became unblocked on a higher priority order</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

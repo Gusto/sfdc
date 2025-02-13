@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SubmissionAdv_Close_Reason_Required</fullName>
+    <active>true</active>
+    <description>Close Reason is required for Benefits Onboarding Renewals and Benefits Onboarding New Plan</description>
+    <errorConditionFormula>AND(
+  OR(
+    RecordType.DeveloperName == &apos;New_Plan_Fulfillment&apos;, 
+    RecordType.DeveloperName == &apos;Renewed_Fulfillment&apos;
+  ),
+  OR(
+    AND(
+      ISCHANGED(Status__c),
+      ISPICKVAL(Status__c, &apos;Closed&apos;)
+    ),
+    AND(
+      ISPICKVAL(Status__c, &apos;Closed&apos;),
+      NOT(ISBLANK(PRIORVALUE(Close_Reason__c)))
+    )
+  ),
+  ISBLANK(Close_Reason__c)
+)</errorConditionFormula>
+    <errorDisplayField>Close_Reason__c</errorDisplayField>
+    <errorMessage>Close Reason is required for Ticket with Closed status.</errorMessage>
+</ValidationRule>

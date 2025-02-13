@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Product_Area__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Sub Product Area</label>
+    <lookupFilter>
+        <active>false</active>
+        <filterItems>
+            <field>$Source.Product_Area__c</field>
+            <operation>equals</operation>
+            <valueField>Sub_Product_Area__c.Product_Area__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Sub_Product_Area__c</referenceTo>
+    <relationshipLabel>Cases</relationshipLabel>
+    <relationshipName>Cases</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

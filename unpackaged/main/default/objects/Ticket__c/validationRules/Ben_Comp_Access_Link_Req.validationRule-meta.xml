@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ben_Comp_Access_Link_Req</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL( Escalation_Reason__c, &quot;Access&quot;),
+ISBLANK( Access_Link__c )
+)</errorConditionFormula>
+    <errorDisplayField>Access_Link__c</errorDisplayField>
+    <errorMessage>Link to requested access required</errorMessage>
+</ValidationRule>

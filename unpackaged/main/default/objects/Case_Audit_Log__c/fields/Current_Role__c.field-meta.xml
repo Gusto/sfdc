@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Current_Role__c</fullName>
+    <description>Indicates the role of the current owner of a Tax Res Case</description>
+    <label>Current Role</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Account Specialist</fullName>
+                <default>false</default>
+                <label>Account Specialist</label>
+            </value>
+            <value>
+                <fullName>Owner</fullName>
+                <default>false</default>
+                <label>Owner</label>
+            </value>
+            <value>
+                <fullName>Coordinator</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Coordinator</label>
+            </value>
+            <value>
+                <fullName>Notice Analyst</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Notice Analyst</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

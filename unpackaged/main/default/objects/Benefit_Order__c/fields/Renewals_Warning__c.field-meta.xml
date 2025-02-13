@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Renewals_Warning__c</fullName>
+    <description>Used by Benefit Transfer team</description>
+    <externalId>false</externalId>
+    <formula>IMAGE (IF( Opportunity__r.HI_Effective_Date__c - TODAY() &gt; 90, &quot;/img/samples/flag_green.gif&quot;,
+IF( AND(Opportunity__r.HI_Effective_Date__c - TODAY() &lt; 90,
+Opportunity__r.HI_Effective_Date__c - TODAY() &gt; 74), &quot;/img/samples/flag_yellow.gif&quot;, &quot;/img/samples/flag_red.gif&quot;)),
+&quot;Status Flag&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>This field calculates the amount of time between the Coverage Effective Date and today.
+&gt;90 days out = green flag
+75-90 days out = yellow flag
+&lt;75 days out = red flag</inlineHelpText>
+    <label>Renewals Warning</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

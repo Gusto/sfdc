@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reseller_No_Clients_Payroll</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+  RecordType.Name = &apos;Reseller&apos;, 
+  ISBLANK(No_Clients_Payroll__c), 
+  ISPICKVAL(Status, &apos;Qualified&apos;), 
+  NOT( $User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorDisplayField>No_Clients_Payroll__c</errorDisplayField>
+    <errorMessage>&apos;No. Clients (Payroll)&apos; is required</errorMessage>
+</ValidationRule>

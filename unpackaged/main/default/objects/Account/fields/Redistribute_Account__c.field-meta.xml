@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Redistribute_Account__c</fullName>
+    <description>Redistribute the Account based off of Closed Lost Opportunity Reasons or Employee Size</description>
+    <label>Redistribute Account</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>to BFA</fullName>
+                <default>false</default>
+                <label>to BFA</label>
+            </value>
+            <value>
+                <fullName>to New Plan</fullName>
+                <default>false</default>
+                <label>to New Plan</label>
+            </value>
+            <value>
+                <fullName>to BoR</fullName>
+                <default>false</default>
+                <label>to BoR</label>
+            </value>
+            <value>
+                <fullName>redistributed</fullName>
+                <default>false</default>
+                <label>redistributed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

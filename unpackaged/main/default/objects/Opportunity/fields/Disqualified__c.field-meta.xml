@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disqualified__c</fullName>
+    <description>This will indicate that an account will never be Qualified so that we can exclude it from future follow ups.</description>
+    <label>Disqualified</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Never be Qualified</fullName>
+                <default>false</default>
+                <label>Never be Qualified</label>
+            </value>
+            <value>
+                <fullName>Not Qualified in the current tax year</fullName>
+                <default>false</default>
+                <label>Not Qualified in the current tax year</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

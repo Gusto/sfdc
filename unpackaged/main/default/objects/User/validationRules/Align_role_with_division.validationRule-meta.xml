@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Align_role_with_division</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT(CONTAINS(BLANKVALUE(Division,&apos;&apos;),
+CASE(UserRole.Name,
+&apos;mm&apos;,&apos;Middle Market&apos;,
+&apos;partner&apos;,&apos;Partner&apos;,
+&apos;sb&apos;,&apos;Small Business&apos;,
+&apos;ben&apos;,&apos;Benefits&apos;,
+&apos;&apos;)))</errorConditionFormula>
+    <errorMessage>The division must match the user&apos;s role.</errorMessage>
+</ValidationRule>

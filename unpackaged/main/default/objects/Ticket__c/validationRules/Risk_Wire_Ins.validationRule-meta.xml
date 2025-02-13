@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Wire_Ins</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ ISPICKVAL(Escalation_Reason_Detail__c, &apos;Wire-Ins&apos;),
+ ISBLANK( Payroll_Link__c ))</errorConditionFormula>
+    <errorMessage>Must provide &apos;Payroll Link&apos;</errorMessage>
+</ValidationRule>

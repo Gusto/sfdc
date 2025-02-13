@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Upsell_Tier__c</fullName>
+    <description>The Tier that Sales is trying to upgrade the Company Account to. This value can change if the upgraded tier differs from the previously selected Upsell Tier.</description>
+    <inlineHelpText>The Tier that Sales is trying to upgrade the Company Account to. This value can change if the upgraded tier differs from the previously selected Upsell Tier. The value will be updated to the Tier that the Company upgraded to once selected in Panda.</inlineHelpText>
+    <label>Upsell Tier</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Current_Tier__c</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Legacy Premium</fullName>
+                <default>false</default>
+                <label>Legacy Premium</label>
+            </value>
+            <value>
+                <fullName>Premium CRB</fullName>
+                <default>false</default>
+                <label>Premium CRB</label>
+            </value>
+            <value>
+                <fullName>Premium Multi-EIN</fullName>
+                <default>false</default>
+                <label>Premium Multi-EIN</label>
+            </value>
+            <value>
+                <fullName>Simple</fullName>
+                <default>false</default>
+                <label>Simple</label>
+            </value>
+            <value>
+                <fullName>Plus</fullName>
+                <default>false</default>
+                <label>Plus</label>
+            </value>
+            <value>
+                <fullName>Plus with Priority Support</fullName>
+                <default>false</default>
+                <label>Plus with Priority Support</label>
+            </value>
+            <value>
+                <fullName>Premium</fullName>
+                <default>false</default>
+                <label>Premium</label>
+            </value>
+            <value>
+                <fullName>Employer of Record</fullName>
+                <default>false</default>
+                <label>Employer of Record</label>
+            </value>
+            <value>
+                <fullName>International Contractor Payment</fullName>
+                <default>false</default>
+                <label>International Contractor Payment</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Legacy Premium</controllingFieldValue>
+            <controllingFieldValue>Premium CRB</controllingFieldValue>
+            <controllingFieldValue>Premium Multi-EIN</controllingFieldValue>
+            <controllingFieldValue>Core</controllingFieldValue>
+            <controllingFieldValue>Complete</controllingFieldValue>
+            <controllingFieldValue>Concierge</controllingFieldValue>
+            <controllingFieldValue>Contractor Only</controllingFieldValue>
+            <controllingFieldValue>Simple</controllingFieldValue>
+            <controllingFieldValue>Plus</controllingFieldValue>
+            <controllingFieldValue>Premium</controllingFieldValue>
+            <controllingFieldValue>contractor_only</controllingFieldValue>
+            <valueName>Employer of Record</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Legacy Premium</controllingFieldValue>
+            <controllingFieldValue>Premium CRB</controllingFieldValue>
+            <controllingFieldValue>Premium Multi-EIN</controllingFieldValue>
+            <controllingFieldValue>Core</controllingFieldValue>
+            <controllingFieldValue>Complete</controllingFieldValue>
+            <controllingFieldValue>Concierge</controllingFieldValue>
+            <controllingFieldValue>Contractor Only</controllingFieldValue>
+            <controllingFieldValue>Simple</controllingFieldValue>
+            <controllingFieldValue>Plus</controllingFieldValue>
+            <controllingFieldValue>Premium</controllingFieldValue>
+            <controllingFieldValue>contractor_only</controllingFieldValue>
+            <valueName>International Contractor Payment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Core</controllingFieldValue>
+            <controllingFieldValue>Contractor Only</controllingFieldValue>
+            <controllingFieldValue>Simple</controllingFieldValue>
+            <controllingFieldValue>contractor_only</controllingFieldValue>
+            <valueName>Plus</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Core</controllingFieldValue>
+            <controllingFieldValue>Complete</controllingFieldValue>
+            <controllingFieldValue>Contractor Only</controllingFieldValue>
+            <controllingFieldValue>Simple</controllingFieldValue>
+            <controllingFieldValue>Plus</controllingFieldValue>
+            <controllingFieldValue>contractor_only</controllingFieldValue>
+            <valueName>Plus with Priority Support</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Core</controllingFieldValue>
+            <controllingFieldValue>Complete</controllingFieldValue>
+            <controllingFieldValue>Concierge</controllingFieldValue>
+            <controllingFieldValue>Contractor Only</controllingFieldValue>
+            <controllingFieldValue>Simple</controllingFieldValue>
+            <controllingFieldValue>Plus</controllingFieldValue>
+            <controllingFieldValue>contractor_only</controllingFieldValue>
+            <valueName>Premium</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Contractor Only</controllingFieldValue>
+            <controllingFieldValue>contractor_only</controllingFieldValue>
+            <valueName>Simple</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

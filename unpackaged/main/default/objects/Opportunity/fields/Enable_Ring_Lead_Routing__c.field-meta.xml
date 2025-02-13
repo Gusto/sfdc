@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enable_Ring_Lead_Routing__c</fullName>
+    <description>Enable routing through Ring lead based on qualifying criteria. Introduced to enable Ardius opportunity routing, but can scale to support others.</description>
+    <formula>AND(
+    RecordType.DeveloperName = &quot;Tax_Credits&quot;,
+    ISPICKVAL(StageName, &quot;New&quot;),
+    Account.Is_Active_Customer__c = true,
+    NOT(ISPICKVAL(Account.ZP_Company_Overall_Status__c, &quot;Suspended&quot;)),
+    Owner.User_Role_Identifier__c = &quot;Integration User&quot;
+)</formula>
+    <label>Enable Ring Lead Routing</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

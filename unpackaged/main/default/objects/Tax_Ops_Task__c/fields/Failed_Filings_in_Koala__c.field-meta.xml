@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Failed_Filings_in_Koala__c</fullName>
+    <label># Failed Filings in Koala</label>
+    <summaryFilterItems>
+        <field>Tax_Ops_Failed_Record__c.RecordTypeId</field>
+        <operation>equals</operation>
+        <value>Failed Filing</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Tax_Ops_Failed_Record__c.Uploaded_to_Koala__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Tax_Ops_Failed_Record__c.isDuplicate__c</field>
+        <operation>notEqual</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Tax_Ops_Failed_Record__c.Inactive__c</field>
+        <operation>notEqual</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Tax_Ops_Failed_Record__c.Tax_Ops_Task__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

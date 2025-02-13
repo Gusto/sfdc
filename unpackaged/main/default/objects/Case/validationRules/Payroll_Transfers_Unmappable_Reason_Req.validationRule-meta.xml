@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payroll_Transfers_Unmappable_Reason_Req</fullName>
+    <active>true</active>
+    <description>Reason is required if custom doc is unmappable.</description>
+    <errorConditionFormula>AND(
+
+ISPICKVAL( Is_Document_Mappable__c, &quot;No&quot;),
+ISBLANK(Text(( Unmappable_Reason__c )))
+)</errorConditionFormula>
+    <errorDisplayField>Unmappable_Reason__c</errorDisplayField>
+    <errorMessage>Unmappable reason required</errorMessage>
+</ValidationRule>

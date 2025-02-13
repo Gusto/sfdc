@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MDR_Response_time__c</fullName>
+    <description>Holds information about how log it took for MDR rep to complete activity post assignment to MQL Lead.</description>
+    <externalId>false</externalId>
+    <formula>MDR_First_call_date__c - MDR_Rep_assignment_date__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>MDR Response time</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Average_Days_To_Submit__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE(Order_Type__c,&quot;New to Gusto&quot;,20,&quot;Carrier Switch&quot;,16,&quot;Same carrier, plan/group level changes&quot;,12,&quot;Same carrier, NO plan/group level changes&quot;,10,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Average Days To Submit</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

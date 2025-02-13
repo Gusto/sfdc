@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigned_Quantity__c</fullName>
+    <description>Quantity for products that have a specific person assigned to a product. This field will pass to Salesforce as employees-X:contractors-X:international_contractors-X:international_employees-X where X is the number assigned for the person type. Salesforce will parse this into the Quantity field on Opportunity Product Lines for each product set up for the add on.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Quantity for products that have a specific person assigned to a product. This field will pass to Salesforce as employees-X:contractors-X:international_contractors-X:international_employees-X where X is the number assigned for the person type. Salesforce will parse this into the Quantity field on Opportunity Product Lines for each product set up for the add on.</inlineHelpText>
+    <label>Assigned Quantity</label>
+    <length>255</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_for_Exception_Request</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordType.Name=&apos;Payroll Transfer&apos;, ISPICKVAL(  Exception_Request__c , &quot;Yes&quot;), ISBLANK(  Reason_for_exception_request__c  )  )</errorConditionFormula>
+    <errorDisplayField>Reason_for_exception_request__c</errorDisplayField>
+    <errorMessage>Please enter Reason for Exception request</errorMessage>
+</ValidationRule>

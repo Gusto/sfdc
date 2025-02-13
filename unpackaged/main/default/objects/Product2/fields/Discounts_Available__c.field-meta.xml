@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Discounts_Available__c</fullName>
+    <description>API Name is Discounts_Available. Field is used to indicate which discount types the product allows. Field is used in applying discounts from Product Discount records to Opportunity Product Line Items.</description>
+    <inlineHelpText>API Name is Discounts_Available. Field is used to indicate which discount types the product allows. Field is used in applying discounts from Product Discount records to Opportunity Product Line Items.</inlineHelpText>
+    <label>Discounts Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>accountant</fullName>
+                <default>false</default>
+                <label>Accountant</label>
+            </value>
+            <value>
+                <fullName>premium_tier_discount</fullName>
+                <default>false</default>
+                <label>Premium Tier</label>
+            </value>
+            <value>
+                <fullName>international_payroll_discount</fullName>
+                <default>false</default>
+                <label>International Payroll</label>
+            </value>
+            <value>
+                <fullName>wholesale_partner_discount</fullName>
+                <default>false</default>
+                <label>Wholesale Partner Discount</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

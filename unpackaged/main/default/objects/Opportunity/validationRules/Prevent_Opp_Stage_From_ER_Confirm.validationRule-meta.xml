@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Opp_Stage_From_ER_Confirm</fullName>
+    <active>true</active>
+    <description>Preventing the opportunity to move from ER Confirm</description>
+    <errorConditionFormula>ISPICKVAL(PRIORVALUE(StageName),&apos;ER Confirm&apos;)
+&amp;&amp; (RecordType.Name = &apos;Benefits New Plan&apos; || RecordType.Name = &apos;Benefits Renewal&apos;)
+&amp;&amp; (
+ISPICKVAL(StageName,&apos;Raw&apos;) ||
+ISPICKVAL(StageName,&apos;Attempting Contact&apos;) ||
+ISPICKVAL(StageName,&apos;Discovery Call Scheduled&apos;) ||
+ISPICKVAL(StageName,&apos;Discovery&apos;) ||
+ISPICKVAL(StageName,&apos;Qualified&apos;) ||
+ISPICKVAL(StageName,&apos;Commit&apos;) ||
+ISPICKVAL(StageName,&apos;Engaged&apos;) ||
+ISPICKVAL(StageName,&apos;Open&apos;) ||
+ISPICKVAL(StageName,&apos;Alignment In Progress&apos;) ||
+ISPICKVAL(StageName,&apos;Alignment Complete&apos;) ||
+ISPICKVAL(StageName,&apos;Ready for Default Package&apos;) ||
+ISPICKVAL(StageName,&apos;Default Offering Complete&apos;) ||
+ISPICKVAL(StageName,&apos;No Recommendation&apos;) ||
+ISPICKVAL(StageName,&apos;Recommendation Complete&apos;) ||
+ISPICKVAL(StageName,&apos;Recommendation Sent&apos;) ||
+ISPICKVAL(StageName,&apos;In Escalation&apos;) 
+)&amp;&amp;
+NOT($User.Exempt_from_Validation_Rules__c)</errorConditionFormula>
+    <errorMessage>Opportunities stage cannot be changed after stage becomes &apos;ER Confirm&apos;</errorMessage>
+</ValidationRule>

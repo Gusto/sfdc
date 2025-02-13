@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OrderSubmissionEmployeeCountValidation</fullName>
+    <active>true</active>
+    <description>Checks for Active and Inactive Employee counts for submitting a single migration order for approval.</description>
+    <errorConditionFormula>AND( ISBLANK(Bulk_Migration__c), ISCHANGED(Status), ISPICKVAL( Status , &apos;Sales Submitted&apos;), OR ( ISBLANK(Active_Employee_Count__c), ISBLANK(Inactive_Employee_Count__c) ) )</errorConditionFormula>
+    <errorMessage>Please fill the Active and Inactive Employee Counts !</errorMessage>
+</ValidationRule>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Percent_of_TAM__c</fullName>
+    <description>Created to track Gusto&apos;s penetration within existing reseller accounts.  See Jira: BT-7930</description>
+    <formula>IF( RecordType.Name= &quot;Reseller&quot;, 
+    IF( OR(No_of_Clients__c = 0, ISBLANK(No_of_Clients__c)), null, 
+        IF( Customers_Total__c  /  No_of_Clients__c  &gt;= 1, 1, 
+           Customers_Total__c / No_of_Clients__c )
+       )
+   , null)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>% of TAM</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Percent</type>
+</CustomField>

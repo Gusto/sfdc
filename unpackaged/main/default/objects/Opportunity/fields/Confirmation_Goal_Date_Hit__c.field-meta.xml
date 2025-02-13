@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Confirmation_Goal_Date_Hit__c</fullName>
+    <formula>(Renewal_Date__c - DATEVALUE(Completed__c)) &gt; 42</formula>
+    <inlineHelpText>Will be checked if rep hit confirmation date goal (ER confirmation 6 weeks before renewal date)</inlineHelpText>
+    <label>Confirmation Goal Date Hit</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

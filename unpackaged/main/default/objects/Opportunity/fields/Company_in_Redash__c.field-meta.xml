@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Company_in_Redash__c</fullName>
+    <description>The company opened in Redash</description>
+    <externalId>false</externalId>
+    <formula>IF
+( 
+ ISPICKVAL($User.Secondary_Role__c, &apos;Customer Success&apos;),
+ HYPERLINK(&quot;https://redash.zp-int.com/dashboard/advising-company-attributes-dashboard?p_company_id=&quot; &amp; 
+ Account.ZP_Company_ID__c , &quot;Redash&quot;), 
+ HYPERLINK(&quot;https://redash.zp-int.com/dashboard/chs-v2-company-dashboard?p_company_id=&quot; &amp; 
+ Account.ZP_Company_ID__c &amp; &quot;&amp;p_num_features=10&quot;, &quot;Redash&quot;)
+)</formula>
+    <label>Company in Redash</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

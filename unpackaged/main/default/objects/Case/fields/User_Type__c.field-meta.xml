@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>User_Type__c</fullName>
+    <description>CCPA user type.
+Admin: I am an administrator of a business that uses Gusto&apos;s software.
+
+Signatory: I am the signatory or business owner of a business that uses Gusto&apos;s software.
+
+Accountant/Firm: I am an accountant partner of Gusto.
+
+Employee: I am an employee of a business that uses Gusto&apos;s software.
+
+Contractor (individual): I am an independent contractor working for a business that uses Gusto&apos;s software.
+
+Contractor (business): I represent a company that has been contracted out by a business that uses Gusto&apos;s software.
+
+Non Gusto User: I do not have a business relationship with Gusto.</description>
+    <inlineHelpText>[Admin] of a biz that uses Gusto&apos;s software
+[Signatory]/biz owner of a biz that uses Gusto&apos;s software
+[Accountant/firm] partner of Gusto
+[Employee] of a biz that uses Gusto&apos;s software
+independent contractor working for a biz that uses Gusto&apos;s software</inlineHelpText>
+    <label>User Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Admin</fullName>
+                <default>false</default>
+                <label>Admin</label>
+            </value>
+            <value>
+                <fullName>Signatory</fullName>
+                <default>false</default>
+                <label>Signatory</label>
+            </value>
+            <value>
+                <fullName>Accountant/Firm</fullName>
+                <default>false</default>
+                <label>Accountant/Firm</label>
+            </value>
+            <value>
+                <fullName>Employee</fullName>
+                <default>false</default>
+                <label>Employee</label>
+            </value>
+            <value>
+                <fullName>Contractor (individual)</fullName>
+                <default>false</default>
+                <label>Contractor (individual)</label>
+            </value>
+            <value>
+                <fullName>Contractor (business)</fullName>
+                <default>false</default>
+                <label>Contractor (business)</label>
+            </value>
+            <value>
+                <fullName>Non Gusto User</fullName>
+                <default>false</default>
+                <label>Non Gusto User</label>
+            </value>
+            <value>
+                <fullName>Gusto Employee</fullName>
+                <default>false</default>
+                <label>Gusto Employee</label>
+            </value>
+            <value>
+                <fullName>Gusto Partner</fullName>
+                <default>false</default>
+                <label>Gusto Partner</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closed_Restrict_Coverage_Effective_Date</fullName>
+    <active>true</active>
+    <description>Restrict changes to the coverage effective date once closed.</description>
+    <errorConditionFormula>AND(
+  Closed__c,
+  NOT($User.Exempt_from_Validation_Rules__c),
+  OR(
+    ISCHANGED(Coverage_Effective_Date__c),
+    ISCHANGED(Coverage_Expiration_Date__c)
+  )
+)</errorConditionFormula>
+    <errorDisplayField>Coverage_Effective_Date__c</errorDisplayField>
+    <errorMessage>The coverage effective date cannot be changed on a closed benefit order.</errorMessage>
+</ValidationRule>

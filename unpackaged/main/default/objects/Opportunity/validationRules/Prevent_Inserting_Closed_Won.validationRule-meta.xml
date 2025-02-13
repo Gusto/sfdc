@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Inserting_Closed_Won</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISNEW() &amp;&amp;
+IsWon &amp;&amp; NOT($User.Exempt_from_Validation_Rules__c)&amp;&amp; Text(Upsell_Tier__c) != &apos;International Contractor Payment&apos;</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>You cannot Closed Won an Opportunity upon creation.</errorMessage>
+</ValidationRule>

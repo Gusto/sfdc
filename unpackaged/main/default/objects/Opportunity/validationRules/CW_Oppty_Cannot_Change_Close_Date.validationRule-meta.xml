@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CW_Oppty_Cannot_Change_Close_Date</fullName>
+    <active>true</active>
+    <description>Any oppty in Closed Won cannot have Close Date change</description>
+    <errorConditionFormula>AND( 
+NOT(ISCHANGED(StageName)), 
+
+ISPICKVAL (StageName, &quot;Closed Won&quot;),
+
+ISCHANGED (CloseDate),
+
+Contains ($UserRole.Name,&quot;sales&quot;))</errorConditionFormula>
+    <errorDisplayField>CloseDate</errorDisplayField>
+    <errorMessage>You cannot change the close date of a won opportunity.</errorMessage>
+</ValidationRule>

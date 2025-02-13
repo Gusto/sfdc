@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validate_Solve_Case_for_Potential_LSI</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+NOT($User.Exempt_from_Validation_Rules__c),
+Large_Scale_Issue_Classification__r.Name == &apos;Potential LSI&apos;,
+ISPICKVAL(Status, &apos;Solved&apos;)
+)</errorConditionFormula>
+    <errorMessage>Cannot solve a case with Large Scale Issue Classification as &quot;Potential LSI&quot;. Please select some other value to solve the case.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Block_Cases_with_Exact_Sub_Contact_Match</fullName>
+    <active>true</active>
+    <description>This validation rule is used to block cases belonging to a specific contact and start with a specific subject line</description>
+    <errorConditionFormula>AND( RecordType.Name = &quot;Engagement&quot;, ISNEW(),  OR( AND(ContactId = &apos;0031M000039gcS6&apos;, BEGINS(Subject,&quot;[External] : Agility Software Solutions needs to pay you for your services&quot;)), AND(ContactId = &apos;0031M00002jmKNY&apos;, (RIGHT(Subject,44)= &quot;How would you rate the support you received?&quot;)) ) )</errorConditionFormula>
+    <errorMessage>Blocked by Block_Cases_with_Exact_Sub_Contact_Match validation rule</errorMessage>
+</ValidationRule>

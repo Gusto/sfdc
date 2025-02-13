@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Panda_Portal_URL__c</fullName>
+    <description>This field holds the panda URL of the linked Account</description>
+    <externalId>false</externalId>
+    <formula>IF(AND(NOT(ISBLANK(Account__r.Ardius_Company_ID__c)),NOT(ISNULL(Account__r.Ardius_Company_ID__c))), HYPERLINK( $Label.Panda_URL &amp; Account__r.Ardius_Company_ID__c , &quot;Panda Portal URL &quot;), &quot;&quot;)</formula>
+    <label>Panda Portal URL</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

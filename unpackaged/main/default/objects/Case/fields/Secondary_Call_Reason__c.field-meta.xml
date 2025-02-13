@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Secondary_Call_Reason__c</fullName>
+    <description>This is mostly prepopuated from task sub-contact reason field</description>
+    <label>Sub-Contact Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Primary_Call_Reason__c</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Company’s Address</fullName>
+                <default>false</default>
+                <label>Company’s Address</label>
+            </value>
+            <value>
+                <fullName>Add accountant</fullName>
+                <default>false</default>
+                <label>Add accountant</label>
+            </value>
+            <value>
+                <fullName>Explore Benefits</fullName>
+                <default>false</default>
+                <label>Explore Benefits</label>
+            </value>
+            <value>
+                <fullName>Add Employees | Add Contractors</fullName>
+                <default>false</default>
+                <label>Add Employees | Add Contractors</label>
+            </value>
+            <value>
+                <fullName>Set Up Federal Taxes</fullName>
+                <default>false</default>
+                <label>Set Up Federal Taxes</label>
+            </value>
+            <value>
+                <fullName>Set Up State Taxes</fullName>
+                <default>false</default>
+                <label>Set Up State Taxes</label>
+            </value>
+            <value>
+                <fullName>Bank Account | Verify Bank Account</fullName>
+                <default>false</default>
+                <label>Bank Account | Verify Bank Account</label>
+            </value>
+            <value>
+                <fullName>Select A Payroll Schedule</fullName>
+                <default>false</default>
+                <label>Select A Payroll Schedule</label>
+            </value>
+            <value>
+                <fullName>Report Previous Paystubs</fullName>
+                <default>false</default>
+                <label>Report Previous Paystubs</label>
+            </value>
+            <value>
+                <fullName>Sign Documents | Add Signatory</fullName>
+                <default>false</default>
+                <label>Sign Documents | Add Signatory</label>
+            </value>
+            <value>
+                <fullName>Unpaid Tax Liabilities</fullName>
+                <default>false</default>
+                <label>Unpaid Tax Liabilities</label>
+            </value>
+            <value>
+                <fullName>Workers Compensation</fullName>
+                <default>false</default>
+                <label>Workers Compensation</label>
+            </value>
+            <value>
+                <fullName>R&amp;D Tax Credit</fullName>
+                <default>false</default>
+                <label>R&amp;D Tax Credit</label>
+            </value>
+            <value>
+                <fullName>Discover App, Integration, or Partner</fullName>
+                <default>false</default>
+                <label>Discover App, Integration, or Partner</label>
+            </value>
+            <value>
+                <fullName>Choose A Plan</fullName>
+                <default>false</default>
+                <label>Choose A Plan</label>
+            </value>
+            <value>
+                <fullName>RFI / Assurance</fullName>
+                <default>false</default>
+                <label>RFI / Assurance</label>
+            </value>
+            <value>
+                <fullName>Run Payroll</fullName>
+                <default>false</default>
+                <label>Run Payroll</label>
+            </value>
+            <value>
+                <fullName>After Payroll / Not transferred</fullName>
+                <default>false</default>
+                <label>After Payroll / Not transferred</label>
+            </value>
+            <value>
+                <fullName>JIRA - please post link in notes</fullName>
+                <default>false</default>
+                <label>JIRA - please post link in notes</label>
+            </value>
+            <value>
+                <fullName>Sold | Notate APD</fullName>
+                <default>false</default>
+                <label>Sold | Notate APD</label>
+            </value>
+            <value>
+                <fullName>Running it by decision maker</fullName>
+                <default>false</default>
+                <label>Running it by decision maker</label>
+            </value>
+            <value>
+                <fullName>25+ Employees | Pass To Another Team</fullName>
+                <default>false</default>
+                <label>25+ Employees | Pass To Another Team</label>
+            </value>
+            <value>
+                <fullName>Not Sold | Determine Closed Lost</fullName>
+                <default>false</default>
+                <label>Not Sold | Determine Closed Lost</label>
+            </value>
+            <value>
+                <fullName>Bad Transfer from Care (not an FEIN change)</fullName>
+                <default>false</default>
+                <label>Bad Transfer from Care (not an FEIN change)</label>
+            </value>
+            <value>
+                <fullName>Transfer to Care</fullName>
+                <default>false</default>
+                <label>Transfer to Care</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>Sold | Notate APD</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>Running it by decision maker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>25+ Employees | Pass To Another Team</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Sales</controllingFieldValue>
+            <valueName>Not Sold | Determine Closed Lost</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Company’s Address</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Add accountant</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Explore Benefits</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Add Employees | Add Contractors</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Set Up Federal Taxes</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Set Up State Taxes</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Bank Account | Verify Bank Account</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Select A Payroll Schedule</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Report Previous Paystubs</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Sign Documents | Add Signatory</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Unpaid Tax Liabilities</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Workers Compensation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>R&amp;D Tax Credit</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Discover App, Integration, or Partner</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Choose A Plan</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>RFI / Assurance</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>Run Payroll</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>After Payroll / Not transferred</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <valueName>JIRA - please post link in notes</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Transfer</controllingFieldValue>
+            <valueName>Bad Transfer from Care (not an FEIN change)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Transfer</controllingFieldValue>
+            <valueName>Transfer to Care</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Transfer</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

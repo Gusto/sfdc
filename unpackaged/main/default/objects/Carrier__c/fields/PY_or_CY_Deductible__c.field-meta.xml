@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PY_or_CY_Deductible__c</fullName>
+    <label>PY or CY Deductible</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>CY</fullName>
+                <default>false</default>
+                <label>CY</label>
+            </value>
+            <value>
+                <fullName>PY</fullName>
+                <default>false</default>
+                <label>PY</label>
+            </value>
+            <value>
+                <fullName>Both(CY &amp; PY)</fullName>
+                <default>false</default>
+                <label>Both(CY &amp; PY)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

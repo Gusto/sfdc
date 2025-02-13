@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Show_Create_Follow_Up_Button__c</fullName>
+    <description>Formula field to determine to show the Create Follow Up case button or not on the LWC and Aura components</description>
+    <formula>IF(
+    OR(
+        (Text(Origin) == &apos;Chat&apos; || Text(Origin) == &apos;Phone&apos;),
+        (Text(Origin) == &apos;Gusto&apos; &amp;&amp; (Channel__c == &apos;Chat&apos; || Channel__c == &apos;Phone&apos;)),
+        (Text(Origin) == &apos;Email&apos; &amp;&amp; OR(CONTAINS(CCEmailAddress__c, $Label.NoReply_Trust_Mineral_Email_Address), CONTAINS(CCEmailAddress__c,  $Label.NoReply_My_HR_Support_Center_Email ))  &amp;&amp; Text(Routing_Case_Reason__c) == $Label.DSP_HR_Resource_Question),
+        (Text(Origin) == &apos;Gusto&apos; &amp;&amp; Channel__c == &apos;Email&apos; &amp;&amp; OR(CONTAINS(CCEmailAddress__c, $Label.NoReply_Trust_Mineral_Email_Address), CONTAINS(CCEmailAddress__c,  $Label.NoReply_My_HR_Support_Center_Email )) &amp;&amp; Text(Routing_Case_Reason__c) == $Label.DSP_HR_Resource_Question)
+    ), 
+    true,
+    false
+)</formula>
+    <label>Show Create Follow Up Button</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

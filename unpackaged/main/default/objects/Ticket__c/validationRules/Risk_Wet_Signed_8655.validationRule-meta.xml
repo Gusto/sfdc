@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Wet_Signed_8655</fullName>
+    <active>true</active>
+    <description>&quot;Manual Signatory Verification&quot; Risk Ticket Reason required fields when submitting ticket.</description>
+    <errorConditionFormula>RecordType.DeveloperName = &apos;Risk_Assurance&apos; &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason__c, &apos;Company Onboarding&apos;) &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason_Detail__c, &apos;Manual Signatory Verification&apos;) &amp;&amp;
+ Wet_signed_8655_uploaded_to_secure_URL__c = FALSE</errorConditionFormula>
+    <errorDisplayField>Wet_signed_8655_uploaded_to_secure_URL__c</errorDisplayField>
+    <errorMessage>Please assist the customer in uploading a wet-signed copy of their 8655 to their Gusto account.</errorMessage>
+</ValidationRule>

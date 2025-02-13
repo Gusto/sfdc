@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>First_Day_of_Invoice_Month__c</fullName>
+    <description>Formula field that converts the Invoice Month to full date format with the day as 1. Converts YYYY-MM to mm/dd/yyyy format.</description>
+    <formula>DATE( VALUE(LEFT(For_Month__c, 4)), VALUE(RIGHT(For_Month__c, 2)), 1 )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Formula field that converts the Invoice Month to full date format with the day as 1. Converts YYYY-MM to mm/dd/yyyy format.</inlineHelpText>
+    <label>First Day of Invoice Month</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

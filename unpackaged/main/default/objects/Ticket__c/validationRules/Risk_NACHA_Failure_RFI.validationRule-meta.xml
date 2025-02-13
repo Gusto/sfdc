@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_NACHA_Failure_RFI</fullName>
+    <active>true</active>
+    <description>Risk Ticket Reason = Payroll Blocker and Ticket Reason Detail = NACHA Failure RFI. The admin has completed the RFI checkbox required for Risk Assurance Tickets.</description>
+    <errorConditionFormula>RecordType.DeveloperName = &apos;Risk_Assurance&apos; &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason__c, &apos;Payroll Blocker&apos;) &amp;&amp;
+ ISPICKVAL( Risk_Ticket_Reason_Detail__c, &apos;NACHA Failure RFI&apos;) &amp;&amp;
+ The_admin_has_completed_the_RFI__c = FALSE</errorConditionFormula>
+    <errorDisplayField>The_admin_has_completed_the_RFI__c</errorDisplayField>
+    <errorMessage>Please click the (?) on the “RFI Pending” pill on the company’s Panda and confirm the Submission State is “Pending Review”.</errorMessage>
+</ValidationRule>

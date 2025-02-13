@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Root_Cause_of_Complaint__c</fullName>
+    <description>Sub Root Cause of Complaint</description>
+    <label>Sub Root Cause of Complaint</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Root_Cause_of_Complaint__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Carrier delay in response time</fullName>
+                <default>false</default>
+                <label>Carrier delay in response time</label>
+            </value>
+            <value>
+                <fullName>Account Rejected for Fraud</fullName>
+                <default>false</default>
+                <label>Account Rejected for Fraud</label>
+            </value>
+            <value>
+                <fullName>Account Takeover</fullName>
+                <default>false</default>
+                <label>Account Takeover</label>
+            </value>
+            <value>
+                <fullName>Benefits Issue</fullName>
+                <default>false</default>
+                <label>Benefits Issue</label>
+            </value>
+            <value>
+                <fullName>Company Business Dispute</fullName>
+                <default>false</default>
+                <label>Company Business Dispute</label>
+            </value>
+            <value>
+                <fullName>Failed Tax Filing or Payment</fullName>
+                <default>false</default>
+                <label>Failed Tax Filing or Payment</label>
+            </value>
+            <value>
+                <fullName>Incorrect Account information</fullName>
+                <default>false</default>
+                <label>Incorrect Account information</label>
+            </value>
+            <value>
+                <fullName>issue with Payroll</fullName>
+                <default>false</default>
+                <label>issue with Payroll</label>
+            </value>
+            <value>
+                <fullName>Missed Deadline</fullName>
+                <default>false</default>
+                <label>Missed Deadline</label>
+            </value>
+            <value>
+                <fullName>Incorrect information recorded in Panda or Hippo</fullName>
+                <default>false</default>
+                <label>Incorrect information recorded in Panda or Hippo</label>
+            </value>
+            <value>
+                <fullName>Customer given incorrect info or inadequate instructions</fullName>
+                <default>false</default>
+                <label>Customer given incorrect info or inadequate instructions</label>
+            </value>
+            <value>
+                <fullName>Delay in response time</fullName>
+                <default>false</default>
+                <label>Delay in response time</label>
+            </value>
+            <value>
+                <fullName>Operation/Processing Error</fullName>
+                <default>false</default>
+                <label>Operation/Processing Error</label>
+            </value>
+            <value>
+                <fullName>Agency/carrier deadline missed</fullName>
+                <default>false</default>
+                <label>Agency/carrier deadline missed</label>
+            </value>
+            <value>
+                <fullName>Gusto caused LSI</fullName>
+                <default>false</default>
+                <label>Gusto caused LSI</label>
+            </value>
+            <value>
+                <fullName>Did not follow correct escalation process</fullName>
+                <default>false</default>
+                <label>Did not follow correct escalation process</label>
+            </value>
+            <value>
+                <fullName>Misleading advertising</fullName>
+                <default>false</default>
+                <label>Misleading advertising</label>
+            </value>
+            <value>
+                <fullName>Unclear language In-App</fullName>
+                <default>false</default>
+                <label>Unclear language In-App</label>
+            </value>
+            <value>
+                <fullName>Missing information in Help Center</fullName>
+                <default>false</default>
+                <label>Missing information in Help Center</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Gusto Partner contract breached</fullName>
+                <default>false</default>
+                <label>Gusto Partner contract breached</label>
+            </value>
+            <value>
+                <fullName>Repeated Partner Error</fullName>
+                <default>false</default>
+                <label>Repeated Partner Error</label>
+            </value>
+            <value>
+                <fullName>LSI</fullName>
+                <default>false</default>
+                <label>LSI</label>
+            </value>
+            <value>
+                <fullName>EPD Error</fullName>
+                <default>false</default>
+                <label>EPD Error</label>
+            </value>
+            <value>
+                <fullName>New tax/form not supported</fullName>
+                <default>false</default>
+                <label>New tax/form not supported</label>
+            </value>
+            <value>
+                <fullName>Existing tax/form not supported/needing to be updated</fullName>
+                <default>false</default>
+                <label>Existing tax/form not supported/needing to be updated</label>
+            </value>
+            <value>
+                <fullName>Product does not accommodate use case</fullName>
+                <default>false</default>
+                <label>Product does not accommodate use case</label>
+            </value>
+            <value>
+                <fullName>Product does not meet existing local, state or federal requirements</fullName>
+                <default>false</default>
+                <label>Product does not meet existing local, state or federal requirements</label>
+            </value>
+            <value>
+                <fullName>Product does not meet upcoming local, state or federal requirements</fullName>
+                <default>false</default>
+                <label>Product does not meet upcoming local, state or federal requirements</label>
+            </value>
+            <value>
+                <fullName>Notice repeatedly re-opens</fullName>
+                <default>false</default>
+                <label>Notice repeatedly re-opens</label>
+            </value>
+            <value>
+                <fullName>Issue continuously happens for customer (ex: soft suspend)</fullName>
+                <default>false</default>
+                <label>Issue continuously happens for customer (ex: soft suspend)</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Repeating Issues</controllingFieldValue>
+            <valueName>Notice repeatedly re-opens</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Repeating Issues</controllingFieldValue>
+            <valueName>Issue continuously happens for customer (ex: soft suspend)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Texas TaskUs Vendor Error</controllingFieldValue>
+            <controllingFieldValue>State/IRS Agency Error</controllingFieldValue>
+            <controllingFieldValue>Manila TaskUs Vendor Error</controllingFieldValue>
+            <controllingFieldValue>Sales Error</controllingFieldValue>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <controllingFieldValue>Product is non-compliant of has limited functionality</controllingFieldValue>
+            <valueName>Other</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Carrier Error</controllingFieldValue>
+            <valueName>Carrier delay in response time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Account Rejected for Fraud</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Account Takeover</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Benefits Issue</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Company Business Dispute</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Failed Tax Filing or Payment</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Incorrect Account information</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>issue with Payroll</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Error</controllingFieldValue>
+            <valueName>Missed Deadline</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Incorrect information recorded in Panda or Hippo</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Customer given incorrect info or inadequate instructions</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Delay in response time</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Operation/Processing Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Agency/carrier deadline missed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Gusto caused LSI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Team Error</controllingFieldValue>
+            <valueName>Did not follow correct escalation process</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Marketing/UX Error</controllingFieldValue>
+            <valueName>Misleading advertising</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Marketing/UX Error</controllingFieldValue>
+            <valueName>Unclear language In-App</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Marketing/UX Error</controllingFieldValue>
+            <valueName>Missing information in Help Center</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Partner Error</controllingFieldValue>
+            <valueName>Gusto Partner contract breached</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gusto Partner Error</controllingFieldValue>
+            <valueName>Repeated Partner Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>LSI</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>EPD Error</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>New tax/form not supported</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>Existing tax/form not supported/needing to be updated</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>Product does not accommodate use case</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>Product does not meet existing local, state or federal requirements</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Software Issue</controllingFieldValue>
+            <valueName>Product does not meet upcoming local, state or federal requirements</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

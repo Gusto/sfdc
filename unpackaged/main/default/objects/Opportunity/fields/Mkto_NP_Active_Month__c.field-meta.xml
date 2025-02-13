@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mkto_NP_Active_Month__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF (CloseDate = DATE(2016,09,01), &quot;September&quot;,
+
+IF (CloseDate = DATE(2016,10 ,01), &quot;October&quot;, 
+
+IF (CloseDate = DATE(2016,11,01), &quot;November&quot;, 
+
+IF (CloseDate = DATE(2016,12,01), &quot;December&quot;, 
+
+IF (CloseDate = DATE(2017,01 ,01), &quot;January&quot;, 
+
+IF (CloseDate = DATE(2017,02,01), &quot;February&quot;, 
+
+IF (CloseDate = DATE(2017,03,01), &quot;March&quot;, 
+
+IF (CloseDate = DATE(2017,04,01), &quot;April&quot;, 
+
+IF (CloseDate = DATE(2017,05,01), &quot;May&quot;, 
+
+IF (CloseDate = DATE(2017,06,01), &quot;June&quot;, 
+
+IF (CloseDate = DATE(2017,07,01), &quot;July&quot;, 
+
+IF (CloseDate = DATE(2017,08,01), &quot;August&quot;, 
+
+&quot; &quot; ))))))))))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Mkto - NP Active Month</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

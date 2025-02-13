@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ben_Comp_Review_and_Research_Creation</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL(Status__c,&quot;New&quot;),
+ISPICKVAL(Escalation_Reason__c, &quot;Research &amp; Review&quot;),
+ISPICKVAL(Escalation_Reason_Detail__c, &quot;&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>Escalation_Reason_Detail__c</errorDisplayField>
+    <errorMessage>Escalation Reason Detail is required.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Workers_Comp_Status__c</fullName>
+    <description>Indicates the Workers Compensation Status from In App. Populated from zp company.</description>
+    <inlineHelpText>Indicates the Workers Compensation Status from In App. Populated from zp company.</inlineHelpText>
+    <label>Workers Comp Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>true</sorted>
+            <value>
+                <fullName>eligible_for_renewal</fullName>
+                <default>false</default>
+                <label>Eligible for Renewal</label>
+            </value>
+            <value>
+                <fullName>external_policy</fullName>
+                <default>false</default>
+                <label>External Policy</label>
+            </value>
+            <value>
+                <fullName>has_zp_policy</fullName>
+                <default>false</default>
+                <label>Has ZP Policy</label>
+            </value>
+            <value>
+                <fullName>no_policy</fullName>
+                <default>false</default>
+                <label>No Policy</label>
+            </value>
+            <value>
+                <fullName>pending_transfer_approval</fullName>
+                <default>false</default>
+                <label>Pending Transfer Approval</label>
+            </value>
+            <value>
+                <fullName>quoting</fullName>
+                <default>false</default>
+                <label>Quoting</label>
+            </value>
+            <value>
+                <fullName>switch_bor</fullName>
+                <default>false</default>
+                <label>Switch BoR</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Event__c</fullName>
+    <description>Used by Benefit Transfer team</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Event</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Status Update</fullName>
+                <default>true</default>
+                <label>Status Update</label>
+            </value>
+            <value>
+                <fullName>Facilitator Assignment</fullName>
+                <default>false</default>
+                <label>Facilitator Assignment</label>
+            </value>
+            <value>
+                <fullName>Checklist</fullName>
+                <default>false</default>
+                <label>Checklist</label>
+            </value>
+            <value>
+                <fullName>Order Field Update</fullName>
+                <default>false</default>
+                <label>Order Field Update</label>
+            </value>
+            <value>
+                <fullName>Email Status Change</fullName>
+                <default>false</default>
+                <label>Email Status Change</label>
+            </value>
+            <value>
+                <fullName>Web</fullName>
+                <default>false</default>
+                <label>Web</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

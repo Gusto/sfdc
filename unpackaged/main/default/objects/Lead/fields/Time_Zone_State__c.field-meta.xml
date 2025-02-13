@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Time_Zone_State__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( ISBLANK( State ) , &quot;&quot; ,
+  IF( CONTAINS( $Label.EST_Mailing_States , State ) , &quot;EST&quot; ,
+    IF( CONTAINS( $Label.CST_Mailing_States , State ) , &quot;CST&quot; ,
+      IF( CONTAINS( $Label.MST_Mailing_States , State ) , &quot;MST&quot; ,
+        IF( CONTAINS( $Label.PST_Mailing_States , State ) , &quot;PST&quot; , 
+          IF( State = &quot;Hawaii&quot; , &quot;HST&quot; ,
+            IF( State = &quot;Alaska&quot; , &quot;AKST&quot; , &quot;&quot;
+            )
+          )
+        )
+      )
+    )
+  )
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Time Zone (State)</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

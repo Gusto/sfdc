@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PayrollOR_Oppty_Cannot_Move_CW_by_user</fullName>
+    <active>true</active>
+    <description>Any oppty in Closed Won cannot move to another stage.</description>
+    <errorConditionFormula>AND( 
+ISPICKVAL( PRIORVALUE(StageName) , &quot;Pending PR&quot;) , ISPICKVAL( StageName , &quot;Closed Won&quot;) , 
+NOT($User.Exempt_from_Validation_Rules__c) ,OR(RecordType.Name = &apos;Benefits BoR&apos;, RecordType.Name = &apos;Benefits New Plan&apos;), ISBLANK( Account.Joined_Date_Panda__c ) 
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>Opportunity cannot be updated to closed won without payroll closed won opportunity. Please close the payroll opportunity to closed won.</errorMessage>
+</ValidationRule>

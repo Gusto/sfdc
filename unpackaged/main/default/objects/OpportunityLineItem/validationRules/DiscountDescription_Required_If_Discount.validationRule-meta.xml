@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DiscountDescription_Required_If_Discount</fullName>
+    <active>true</active>
+    <description>Ardius - Discount Description field is required if user enters a Discount value.</description>
+    <errorConditionFormula>ISPICKVAL(Product2.Family, &apos;Ardius&apos;) 
+&amp;&amp; ISPICKVAL(Discount_Description__c , &apos;&apos;) 
+&amp;&amp; !ISNULL(Discount) 
+&amp;&amp; Discount &gt; 0</errorConditionFormula>
+    <errorDisplayField>Discount_Description__c</errorDisplayField>
+    <errorMessage>Discount Description is required.</errorMessage>
+</ValidationRule>

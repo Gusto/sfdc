@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Eligibility_for_Order_Submission</fullName>
+    <active>true</active>
+    <description>Makes Eligible for final steps on Run Date as mandatory to move order to Sales Submitted stage if order is marked as Exception Request.</description>
+    <errorConditionFormula>AND(  Exception_Request__c ,  ISPICKVAL( Status , &apos;Sales Submitted&apos;), NOT(Eligible_for_final_steps_on_Run_Date__c)   )</errorConditionFormula>
+    <errorDisplayField>Eligible_for_final_steps_on_Run_Date__c</errorDisplayField>
+    <errorMessage>Please mark Agrees to do Final Steps on Run Date as true before submitting Exception Requests for Approval.</errorMessage>
+</ValidationRule>

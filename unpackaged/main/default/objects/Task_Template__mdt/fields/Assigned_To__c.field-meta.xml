@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigned_To__c</fullName>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Assigned To</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Queue</fullName>
+                <default>true</default>
+                <label>Queue</label>
+            </value>
+            <value>
+                <fullName>Owner of Target Object</fullName>
+                <default>false</default>
+                <label>Owner of Target Object</label>
+            </value>
+            <value>
+                <fullName>Permission Set User</fullName>
+                <default>false</default>
+                <label>Permission Set User</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

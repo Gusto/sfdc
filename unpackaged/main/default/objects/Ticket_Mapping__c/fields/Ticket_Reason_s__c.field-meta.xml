@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ticket_Reason_s__c</fullName>
+    <label>Ticket Reason(s)</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Mismatch info between SFDC and HIPPO</fullName>
+                <default>false</default>
+                <label>Mismatch info between SFDC and HIPPO</label>
+            </value>
+            <value>
+                <fullName>Contribution Scheme Tied to a Ghost Plan</fullName>
+                <default>false</default>
+                <label>Contribution Scheme Tied to a Ghost Plan</label>
+            </value>
+            <value>
+                <fullName>Customer Change Request</fullName>
+                <default>false</default>
+                <label>Customer Change Request</label>
+            </value>
+            <value>
+                <fullName>Employer Requested Contact</fullName>
+                <default>false</default>
+                <label>Employer Requested Contact</label>
+            </value>
+            <value>
+                <fullName>Group Did Not Meet Participation Requirements</fullName>
+                <default>false</default>
+                <label>Group Did Not Meet Participation Requirements</label>
+            </value>
+            <value>
+                <fullName>Group Set Up Issue</fullName>
+                <default>false</default>
+                <label>Group Set Up Issue</label>
+            </value>
+            <value>
+                <fullName>Employee Set Up Issue</fullName>
+                <default>false</default>
+                <label>Employee Set Up Issue</label>
+            </value>
+            <value>
+                <fullName>Concession request</fullName>
+                <default>false</default>
+                <label>Concession request</label>
+            </value>
+            <value>
+                <fullName>Issue Clarification</fullName>
+                <default>false</default>
+                <label>Issue Clarification</label>
+            </value>
+            <value>
+                <fullName>Follow up on EE Comm</fullName>
+                <default>false</default>
+                <label>Follow up on EE Comm</label>
+            </value>
+            <value>
+                <fullName>Follow up on Partner Comm</fullName>
+                <default>false</default>
+                <label>Follow up on Partner Comm</label>
+            </value>
+            <value>
+                <fullName>Payroll Issue Outside of Onboarding</fullName>
+                <default>false</default>
+                <label>Payroll Issue Outside of Onboarding</label>
+            </value>
+            <value>
+                <fullName>New Hire Employee not Enrolled</fullName>
+                <default>false</default>
+                <label>New Hire Employee not Enrolled</label>
+            </value>
+            <value>
+                <fullName>Cancel</fullName>
+                <default>false</default>
+                <label>Cancel</label>
+            </value>
+            <value>
+                <fullName>Unresponsive ER</fullName>
+                <default>false</default>
+                <label>Unresponsive ER</label>
+            </value>
+            <value>
+                <fullName>Escalation Support</fullName>
+                <default>false</default>
+                <label>Escalation Support</label>
+            </value>
+            <value>
+                <fullName>Missing Documents</fullName>
+                <default>false</default>
+                <label>Missing Documents</label>
+            </value>
+            <value>
+                <fullName>Missing Notes</fullName>
+                <default>false</default>
+                <label>Missing Notes</label>
+            </value>
+            <value>
+                <fullName>Notes Required Clarity</fullName>
+                <default>false</default>
+                <label>Notes Required Clarity</label>
+            </value>
+            <value>
+                <fullName>Qualification</fullName>
+                <default>false</default>
+                <label>Qualification</label>
+            </value>
+            <value>
+                <fullName>Alignment</fullName>
+                <default>false</default>
+                <label>Alignment</label>
+            </value>
+            <value>
+                <fullName>Benefit Suspension/BoR Away</fullName>
+                <default>false</default>
+                <label>Benefit Suspension/BoR Away</label>
+            </value>
+            <value>
+                <fullName>Carrier Info Discrepancy</fullName>
+                <default>false</default>
+                <label>Carrier Info Discrepancy</label>
+            </value>
+            <value>
+                <fullName>Notes</fullName>
+                <default>false</default>
+                <label>Notes</label>
+            </value>
+            <value>
+                <fullName>Offering is Incorrect</fullName>
+                <default>false</default>
+                <label>Offering is Incorrect</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Rates</fullName>
+                <default>false</default>
+                <label>Rates</label>
+            </value>
+            <value>
+                <fullName>Recertification</fullName>
+                <default>false</default>
+                <label>Recertification</label>
+            </value>
+            <value>
+                <fullName>Class-based contribution</fullName>
+                <default>false</default>
+                <label>Class-based contribution</label>
+            </value>
+            <value>
+                <fullName>Research &amp; Review</fullName>
+                <default>false</default>
+                <label>Research &amp; Review</label>
+            </value>
+            <value>
+                <fullName>Business setup issues</fullName>
+                <default>false</default>
+                <label>Business setup issues</label>
+            </value>
+            <value>
+                <fullName>Clarity required - NP or Bor Gustomer</fullName>
+                <default>false</default>
+                <label>Clarity required - NP or Bor Gustomer</label>
+            </value>
+            <value>
+                <fullName>Class-based setup: Selected Carrier Does Not Allow</fullName>
+                <default>false</default>
+                <label>Class-based setup: Selected Carrier Does Not Allow</label>
+            </value>
+            <value>
+                <fullName>ER Outreach Required</fullName>
+                <default>false</default>
+                <label>ER Outreach Required</label>
+            </value>
+            <value>
+                <fullName>Dependent Incorrectly Enrolled</fullName>
+                <default>false</default>
+                <label>Dependent Incorrectly Enrolled</label>
+            </value>
+            <value>
+                <fullName>Dependent Not Enrolled</fullName>
+                <default>false</default>
+                <label>Dependent Not Enrolled</label>
+            </value>
+            <value>
+                <fullName>Employee Incorrectly Enrolled</fullName>
+                <default>false</default>
+                <label>Employee Incorrectly Enrolled</label>
+            </value>
+            <value>
+                <fullName>Employee not Enrolled</fullName>
+                <default>false</default>
+                <label>Employee not Enrolled</label>
+            </value>
+            <value>
+                <fullName>Subscription Not Processed</fullName>
+                <default>false</default>
+                <label>Subscription Not Processed</label>
+            </value>
+            <value>
+                <fullName>Subscription Start Date Mismatch</fullName>
+                <default>false</default>
+                <label>Subscription Start Date Mismatch</label>
+            </value>
+            <value>
+                <fullName>Incomplete Notes</fullName>
+                <default>false</default>
+                <label>Incomplete Notes</label>
+            </value>
+            <value>
+                <fullName>Out of State EE on HMO</fullName>
+                <default>false</default>
+                <label>Out of State EE on HMO</label>
+            </value>
+            <value>
+                <fullName>Ghost Plans Not Removed</fullName>
+                <default>false</default>
+                <label>Ghost Plans Not Removed</label>
+            </value>
+            <value>
+                <fullName>Manual OE not Complete</fullName>
+                <default>false</default>
+                <label>Manual OE not Complete</label>
+            </value>
+            <value>
+                <fullName>Follow up on ER Comm</fullName>
+                <default>false</default>
+                <label>Follow up on ER Comm</label>
+            </value>
+            <value>
+                <fullName>Benefit Suspension Due to Non Payment</fullName>
+                <default>false</default>
+                <label>Benefit Suspension Due to Non Payment</label>
+            </value>
+            <value>
+                <fullName>Class-based setup: Selected Carrier Does Not Allow - Does not Require License</fullName>
+                <default>false</default>
+                <label>Class-based setup: Selected Carrier Does Not Allow - Does not Require License</label>
+            </value>
+            <value>
+                <fullName>Pending Items</fullName>
+                <default>false</default>
+                <label>Pending Items</label>
+            </value>
+            <value>
+                <fullName>Rate Discrepancy</fullName>
+                <default>false</default>
+                <label>Rate Discrepancy</label>
+            </value>
+            <value>
+                <fullName>Denial</fullName>
+                <default>false</default>
+                <label>Denial</label>
+            </value>
+            <value>
+                <fullName>Incorrect package submitted to carrier</fullName>
+                <default>false</default>
+                <label>Incorrect package submitted to carrier</label>
+            </value>
+            <value>
+                <fullName>TAdA</fullName>
+                <default>false</default>
+                <label>TAdA</label>
+            </value>
+            <value>
+                <fullName>SFDC/Hippo</fullName>
+                <default>false</default>
+                <label>SFDC/Hippo</label>
+            </value>
+            <value>
+                <fullName>BoR not NP</fullName>
+                <default>false</default>
+                <label>BoR not NP</label>
+            </value>
+            <value>
+                <fullName>Plans</fullName>
+                <default>false</default>
+                <label>Plans</label>
+            </value>
+            <value>
+                <fullName>Carrier Requirements</fullName>
+                <default>false</default>
+                <label>Carrier Requirements</label>
+            </value>
+            <value>
+                <fullName>Carrier Error</fullName>
+                <default>false</default>
+                <label>Carrier Error</label>
+            </value>
+            <value>
+                <fullName>Change carrier / plan</fullName>
+                <default>false</default>
+                <label>Change carrier / plan</label>
+            </value>
+            <value>
+                <fullName>ER Requested Contact - Advising Required</fullName>
+                <default>false</default>
+                <label>ER Requested Contact - Advising Required</label>
+            </value>
+            <value>
+                <fullName>Missed Participation</fullName>
+                <default>false</default>
+                <label>Missed Participation</label>
+            </value>
+            <value>
+                <fullName>Participation Not Met</fullName>
+                <default>false</default>
+                <label>Participation Not Met</label>
+            </value>
+            <value>
+                <fullName>Company Address Change</fullName>
+                <default>false</default>
+                <label>Company Address Change</label>
+            </value>
+            <value>
+                <fullName>Invalid Contribution Scheme</fullName>
+                <default>false</default>
+                <label>Invalid Contribution Scheme</label>
+            </value>
+            <value>
+                <fullName>Competitive Renewals</fullName>
+                <default>false</default>
+                <label>Competitive Renewals</label>
+            </value>
+            <value>
+                <fullName>Payroll</fullName>
+                <default>false</default>
+                <label>Payroll</label>
+            </value>
+            <value>
+                <fullName>Invalid Waiting Period</fullName>
+                <default>false</default>
+                <label>Invalid Waiting Period</label>
+            </value>
+            <value>
+                <fullName>Missed/Incorrect Dependent Enrollment</fullName>
+                <default>false</default>
+                <label>Missed/Incorrect Dependent Enrollment</label>
+            </value>
+            <value>
+                <fullName>UW Requires Company Address Change</fullName>
+                <default>false</default>
+                <label>UW Requires Company Address Change</label>
+            </value>
+            <value>
+                <fullName>TTQ Missing Fields</fullName>
+                <default>false</default>
+                <label>TTQ Missing Fields</label>
+            </value>
+            <value>
+                <fullName>Missed/Incorrect EE Enrollment</fullName>
+                <default>false</default>
+                <label>Missed/Incorrect EE Enrollment</label>
+            </value>
+            <value>
+                <fullName>S-Corporation</fullName>
+                <default>false</default>
+                <label>S-Corporation</label>
+            </value>
+            <value>
+                <fullName>Invalid Plan Combo</fullName>
+                <default>false</default>
+                <label>Invalid Plan Combo</label>
+            </value>
+            <value>
+                <fullName>Audit Error Found</fullName>
+                <default>false</default>
+                <label>Audit Error Found</label>
+            </value>
+            <value>
+                <fullName>Missing Group/Policy Number</fullName>
+                <default>false</default>
+                <label>Missing Group/Policy Number</label>
+            </value>
+            <value>
+                <fullName>Missed EE enrollment</fullName>
+                <default>false</default>
+                <label>Missed EE enrollment</label>
+            </value>
+            <value>
+                <fullName>Incorrect EE enrollment [plan, demographic info]</fullName>
+                <default>false</default>
+                <label>Incorrect EE enrollment [plan, demographic info]</label>
+            </value>
+            <value>
+                <fullName>Missed dependent enrollment</fullName>
+                <default>false</default>
+                <label>Missed dependent enrollment</label>
+            </value>
+            <value>
+                <fullName>Incorrect dependent enrollment [plan, demographic info]</fullName>
+                <default>false</default>
+                <label>Incorrect dependent enrollment [plan, demographic info]</label>
+            </value>
+            <value>
+                <fullName>Confirmation Error</fullName>
+                <default>false</default>
+                <label>Confirmation Error</label>
+            </value>
+            <value>
+                <fullName>Coverage terminated</fullName>
+                <default>false</default>
+                <label>Coverage terminated</label>
+            </value>
+            <value>
+                <fullName>Insufficient Data</fullName>
+                <default>false</default>
+                <label>Insufficient Data</label>
+            </value>
+            <value>
+                <fullName>Incorrect Plan Review Information</fullName>
+                <default>false</default>
+                <label>Incorrect Plan Review Information</label>
+            </value>
+            <value>
+                <fullName>Incorrect Enrollment Review Information</fullName>
+                <default>false</default>
+                <label>Incorrect Enrollment Review Information</label>
+            </value>
+            <value>
+                <fullName>Payroll not run</fullName>
+                <default>false</default>
+                <label>Payroll not run</label>
+            </value>
+            <value>
+                <fullName>Recission Prevention</fullName>
+                <default>false</default>
+                <label>Recission Prevention</label>
+            </value>
+            <value>
+                <fullName>TTF Notes</fullName>
+                <default>false</default>
+                <label>TTF Notes</label>
+            </value>
+            <value>
+                <fullName>Unresponsive Customer</fullName>
+                <default>false</default>
+                <label>Unresponsive Customer</label>
+            </value>
+            <value>
+                <fullName>Noncompliant Contribution Scheme</fullName>
+                <default>false</default>
+                <label>Noncompliant Contribution Scheme</label>
+            </value>
+            <value>
+                <fullName>External deductions not signed for</fullName>
+                <default>false</default>
+                <label>External deductions not signed for</label>
+            </value>
+            <value>
+                <fullName>Resign Required</fullName>
+                <default>false</default>
+                <label>Resign Required</label>
+            </value>
+            <value>
+                <fullName>Carrier cannot find group</fullName>
+                <default>false</default>
+                <label>Carrier cannot find group</label>
+            </value>
+            <value>
+                <fullName>New Hire enrollments not offered</fullName>
+                <default>false</default>
+                <label>New Hire enrollments not offered</label>
+            </value>
+            <value>
+                <fullName>2% shareholder</fullName>
+                <default>false</default>
+                <label>2% shareholder</label>
+            </value>
+            <value>
+                <fullName>MF Events</fullName>
+                <default>false</default>
+                <label>MF Events</label>
+            </value>
+            <value>
+                <fullName>COBRA</fullName>
+                <default>false</default>
+                <label>COBRA</label>
+            </value>
+            <value>
+                <fullName>TAdAs set up incorrectly</fullName>
+                <default>false</default>
+                <label>TAdAs set up incorrectly</label>
+            </value>
+            <value>
+                <fullName>Weekly update not sent to ER</fullName>
+                <default>false</default>
+                <label>Weekly update not sent to ER</label>
+            </value>
+            <value>
+                <fullName>External deductions not turned off</fullName>
+                <default>false</default>
+                <label>External deductions not turned off</label>
+            </value>
+            <value>
+                <fullName>Assistance needed from ER</fullName>
+                <default>false</default>
+                <label>Assistance needed from ER</label>
+            </value>
+            <value>
+                <fullName>No active enrollees</fullName>
+                <default>false</default>
+                <label>No active enrollees</label>
+            </value>
+            <value>
+                <fullName>Mid-year recertification</fullName>
+                <default>false</default>
+                <label>Mid-year recertification</label>
+            </value>
+            <value>
+                <fullName>TAdA Termination</fullName>
+                <default>false</default>
+                <label>TAdA Termination</label>
+            </value>
+            <value>
+                <fullName>Milestones/auth date not marked off in hippo</fullName>
+                <default>false</default>
+                <label>Milestones/auth date not marked off in hippo</label>
+            </value>
+            <value>
+                <fullName>Census missing dependent info</fullName>
+                <default>false</default>
+                <label>Census missing dependent info</label>
+            </value>
+            <value>
+                <fullName>Cannot support group</fullName>
+                <default>false</default>
+                <label>Cannot support group</label>
+            </value>
+            <value>
+                <fullName>Census missing DOBs</fullName>
+                <default>false</default>
+                <label>Census missing DOBs</label>
+            </value>
+            <value>
+                <fullName>Missing Rates</fullName>
+                <default>false</default>
+                <label>Missing Rates</label>
+            </value>
+            <value>
+                <fullName>Existing Group Coverage/BOR</fullName>
+                <default>false</default>
+                <label>Existing Group Coverage/BOR</label>
+            </value>
+            <value>
+                <fullName>Communication Review</fullName>
+                <default>false</default>
+                <label>Communication Review</label>
+            </value>
+            <value>
+                <fullName>Internal Process Review</fullName>
+                <default>false</default>
+                <label>Internal Process Review</label>
+            </value>
+            <value>
+                <fullName>Licensing</fullName>
+                <default>false</default>
+                <label>Licensing</label>
+            </value>
+            <value>
+                <fullName>Concession/Reimbursement</fullName>
+                <default>false</default>
+                <label>Concession/Reimbursement</label>
+            </value>
+            <value>
+                <fullName>Carrier Compliance</fullName>
+                <default>false</default>
+                <label>Carrier Compliance</label>
+            </value>
+            <value>
+                <fullName>ACA Filings (1095)</fullName>
+                <default>false</default>
+                <label>ACA Filings (1095)</label>
+            </value>
+            <value>
+                <fullName>TAdA New Request</fullName>
+                <default>false</default>
+                <label>TAdA New Request</label>
+            </value>
+            <value>
+                <fullName>TAdA Transfer Request</fullName>
+                <default>false</default>
+                <label>TAdA Transfer Request</label>
+            </value>
+            <value>
+                <fullName>Carrier Escalation</fullName>
+                <default>false</default>
+                <label>Carrier Escalation</label>
+            </value>
+            <value>
+                <fullName>Automation Error</fullName>
+                <default>false</default>
+                <label>Automation Error</label>
+            </value>
+            <value>
+                <fullName>Past Sales Deadline</fullName>
+                <default>false</default>
+                <label>Past Sales Deadline</label>
+            </value>
+            <value>
+                <fullName>BYB Unresponsive Customer</fullName>
+                <default>false</default>
+                <label>BYB Unresponsive Customer</label>
+            </value>
+            <value>
+                <fullName>BYB Qualification</fullName>
+                <default>false</default>
+                <label>BYB Qualification</label>
+            </value>
+            <value>
+                <fullName>BYB ER requested Contact - sales contact required</fullName>
+                <default>false</default>
+                <label>BYB ER requested Contact - sales contact required</label>
+            </value>
+            <value>
+                <fullName>BYB Confirmation on customer’s intentions</fullName>
+                <default>false</default>
+                <label>BYB Confirmation on customer’s intentions</label>
+            </value>
+            <value>
+                <fullName>BYB Multiple brokers - Split lines of coverage</fullName>
+                <default>false</default>
+                <label>BYB Multiple brokers - Split lines of coverage</label>
+            </value>
+            <value>
+                <fullName>BYB Information/clarity needed</fullName>
+                <default>false</default>
+                <label>BYB Information/clarity needed</label>
+            </value>
+            <value>
+                <fullName>BYB ER requesting update</fullName>
+                <default>false</default>
+                <label>BYB ER requesting update</label>
+            </value>
+            <value>
+                <fullName>BYB Implementation error</fullName>
+                <default>false</default>
+                <label>BYB Implementation error</label>
+            </value>
+            <value>
+                <fullName>BYB Change request</fullName>
+                <default>false</default>
+                <label>BYB Change request</label>
+            </value>
+            <value>
+                <fullName>BYB Expedite Enrollment</fullName>
+                <default>false</default>
+                <label>BYB Expedite Enrollment</label>
+            </value>
+            <value>
+                <fullName>Universal Inbox</fullName>
+                <default>false</default>
+                <label>Universal Inbox</label>
+            </value>
+            <value>
+                <fullName>Affiliate Company</fullName>
+                <default>false</default>
+                <label>Affiliate Company</label>
+            </value>
+            <value>
+                <fullName>Blocked Submission</fullName>
+                <default>false</default>
+                <label>Blocked Submission</label>
+            </value>
+            <value>
+                <fullName>Carrier Requires ER Signature</fullName>
+                <default>false</default>
+                <label>Carrier Requires ER Signature</label>
+            </value>
+            <value>
+                <fullName>Change Effective Date</fullName>
+                <default>false</default>
+                <label>Change Effective Date</label>
+            </value>
+            <value>
+                <fullName>Confirmed with Errors</fullName>
+                <default>false</default>
+                <label>Confirmed with Errors</label>
+            </value>
+            <value>
+                <fullName>EE Change Request - Post-Submission</fullName>
+                <default>false</default>
+                <label>EE Change Request - Post-Submission</label>
+            </value>
+            <value>
+                <fullName>EE Plan Change Required</fullName>
+                <default>false</default>
+                <label>EE Plan Change Required</label>
+            </value>
+            <value>
+                <fullName>EE/Dependent Clarification</fullName>
+                <default>false</default>
+                <label>EE/Dependent Clarification</label>
+            </value>
+            <value>
+                <fullName>Effective Date Change - Requires Resubmission</fullName>
+                <default>false</default>
+                <label>Effective Date Change - Requires Resubmission</label>
+            </value>
+            <value>
+                <fullName>ER Change Request - Post-Submission</fullName>
+                <default>false</default>
+                <label>ER Change Request - Post-Submission</label>
+            </value>
+            <value>
+                <fullName>Group Level Change Request</fullName>
+                <default>false</default>
+                <label>Group Level Change Request</label>
+            </value>
+            <value>
+                <fullName>Incomplete Open Enrollment</fullName>
+                <default>false</default>
+                <label>Incomplete Open Enrollment</label>
+            </value>
+            <value>
+                <fullName>Incorrect Carrier Order Details Blocking Automation</fullName>
+                <default>false</default>
+                <label>Incorrect Carrier Order Details Blocking Automation</label>
+            </value>
+            <value>
+                <fullName>Incorrect Carrier Order Information</fullName>
+                <default>false</default>
+                <label>Incorrect Carrier Order Information</label>
+            </value>
+            <value>
+                <fullName>Incorrect Package Submitted to the Carrier</fullName>
+                <default>false</default>
+                <label>Incorrect Package Submitted to the Carrier</label>
+            </value>
+            <value>
+                <fullName>Missing Exception Request</fullName>
+                <default>false</default>
+                <label>Missing Exception Request</label>
+            </value>
+            <value>
+                <fullName>Missing/Incorrect Enrollment</fullName>
+                <default>false</default>
+                <label>Missing/Incorrect Enrollment</label>
+            </value>
+            <value>
+                <fullName>No Fulfillment in Progress</fullName>
+                <default>false</default>
+                <label>No Fulfillment in Progress</label>
+            </value>
+            <value>
+                <fullName>Plan Add Requested</fullName>
+                <default>false</default>
+                <label>Plan Add Requested</label>
+            </value>
+            <value>
+                <fullName>Renewals</fullName>
+                <default>false</default>
+                <label>Renewals</label>
+            </value>
+            <value>
+                <fullName>Task List Incomplete</fullName>
+                <default>false</default>
+                <label>Task List Incomplete</label>
+            </value>
+            <value>
+                <fullName>Termination Request - Post-Submission</fullName>
+                <default>false</default>
+                <label>Termination Request - Post-Submission</label>
+            </value>
+            <value>
+                <fullName>TTS Notes Require Clarity</fullName>
+                <default>false</default>
+                <label>TTS Notes Require Clarity</label>
+            </value>
+            <value>
+                <fullName>Contribution Scheme</fullName>
+                <default>false</default>
+                <label>Contribution Scheme</label>
+            </value>
+            <value>
+                <fullName>Contribution Change</fullName>
+                <default>false</default>
+                <label>Contribution Change</label>
+            </value>
+            <value>
+                <fullName>Group Termination</fullName>
+                <default>false</default>
+                <label>Group Termination</label>
+            </value>
+            <value>
+                <fullName>Underwriting Research</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Underwriting Research</label>
+            </value>
+            <value>
+                <fullName>Underwriting Update</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Underwriting Update</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

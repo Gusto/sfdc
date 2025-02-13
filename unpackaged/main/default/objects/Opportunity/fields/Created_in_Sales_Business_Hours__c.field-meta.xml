@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Created_in_Sales_Business_Hours__c</fullName>
+    <description>If created between 6am MST and 7pm MST then this box is checked.</description>
+    <formula>AND(
+WEEKDAY(DATEVALUE(CreatedDate)) &lt;&gt; 1,
+WEEKDAY(DATEVALUE(CreatedDate)) &lt;&gt; 7,
+OR(
+HOUR(TIMEVALUE(CreatedDate))-7 = 6,
+HOUR(TIMEVALUE(CreatedDate))-7 = 7,
+HOUR(TIMEVALUE(CreatedDate))-7 = 8,
+HOUR(TIMEVALUE(CreatedDate))-7 = 9,
+HOUR(TIMEVALUE(CreatedDate))-7 = 10,
+HOUR(TIMEVALUE(CreatedDate))-7 = 11,
+HOUR(TIMEVALUE(CreatedDate))-7 = 12,
+HOUR(TIMEVALUE(CreatedDate))-7 = 13,
+HOUR(TIMEVALUE(CreatedDate))-7 = 14,
+HOUR(TIMEVALUE(CreatedDate))-7 = 15,
+HOUR(TIMEVALUE(CreatedDate))-7 = 16,
+HOUR(TIMEVALUE(CreatedDate))-7 = 17,
+HOUR(TIMEVALUE(CreatedDate))-7 = -6,
+HOUR(TIMEVALUE(CreatedDate))-7 = -7
+)
+)</formula>
+    <inlineHelpText>If created between 6am MST and 7pm MST then this box is checked.</inlineHelpText>
+    <label>Created in Sales Business Hours</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

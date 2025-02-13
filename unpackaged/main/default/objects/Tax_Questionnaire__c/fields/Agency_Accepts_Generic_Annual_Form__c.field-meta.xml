@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agency_Accepts_Generic_Annual_Form__c</fullName>
+    <description>Agency Accepts Generic Annual Form?</description>
+    <label>Agency Accepts Generic Annual Form?</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>N/A - No Annual Form Needed</fullName>
+                <default>false</default>
+                <label>N/A - No Annual Form Needed</label>
+            </value>
+            <value>
+                <fullName>Yes - Accepts Gusto&apos;s Generic Form</fullName>
+                <default>false</default>
+                <label>Yes - Accepts Gusto&apos;s Generic Form</label>
+            </value>
+            <value>
+                <fullName>No - Agency Requires Official Form</fullName>
+                <default>false</default>
+                <label>No - Agency Requires Official Form</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Task_Template_Identifier__c</fullName>
+    <description>The auto generated task identifier when Ticket status(Ardius) changes.</description>
+    <externalId>false</externalId>
+    <formula>IF(ISPICKVAL(Status__c, &apos;New&apos;) &amp;&amp;  Qualification_Status__c = &apos;Survey Complete&apos; &amp;&amp; LOWER(Experiment_Code__c) = &apos;fall ownership&apos;, &apos;EC New - Survey Complete&apos; 
+,IF(ISPICKVAL(Status__c, &apos;Ready for Additional Qualitative&apos;) &amp;&amp; Amendment_Eligible__c &amp;&amp; LOWER(Experiment_Code__c) = &apos;fall ownership&apos;, &apos;EC Ready for Additional Qualitative - Amendment Eligible&apos;
+,IF(ISPICKVAL(Status__c, &apos;Ready for Additional Qualitative&apos;) &amp;&amp; !Amendment_Eligible__c &amp;&amp; Federal_Credit_Amount__c &gt;= 50000 &amp;&amp; LOWER(Experiment_Code__c) = &apos;fall ownership&apos;, &apos;EC Ready for Additional Qualitative - Non Amendment Eligible&apos;
+,IF(ISPICKVAL(Status__c, &apos;Ready for Additional Qualitative&apos;) &amp;&amp; !Amendment_Eligible__c &amp;&amp; LOWER(Experiment_Code__c) = &apos;fall ownership&apos; &amp;&amp;
+(ISBLANK(Federal_Credit_Amount__c )|| Federal_Credit_Amount__c &lt; 50000) , &apos;EC Ready for Additional Qualitative - Non Amendment Eligible FD_less50k&apos;
+,IF(LOWER(Experiment_Code__c) = &apos;fall ownership&apos; &amp;&amp; NOT(ISBLANK(TEXT(Status__c))), &apos;EC&apos;+&apos; &apos;+ TEXT(Status__c)
+,IF(ISPICKVAL(Status__c, &apos;New&apos;) &amp;&amp;  Qualification_Status__c = &apos;Survey Complete&apos; , &apos;New - Survey Complete&apos; 
+,IF(ISPICKVAL(Status__c, &apos;Ready for Additional Qualitative&apos;) &amp;&amp; Amendment_Eligible__c  , &apos;Ready for Additional Qualitative - Amendment Eligible&apos;
+,IF(ISPICKVAL(Status__c, &apos;Ready for Additional Qualitative&apos;) &amp;&amp; !Amendment_Eligible__c &amp;&amp; Federal_Credit_Amount__c &gt;= 50000 , &apos;Ready for Additional Qualitative - Non Amendment Eligible&apos;
+,IF(ISPICKVAL(Status__c, &apos;Ready for Additional Qualitative&apos;) &amp;&amp; !Amendment_Eligible__c &amp;&amp; (ISBLANK(Federal_Credit_Amount__c )|| Federal_Credit_Amount__c &lt; 50000) , &apos;Ready for Additional Qualitative - Non Amendment Eligible FD_less50k&apos;
+, TEXT(Status__c))))))))))</formula>
+    <label>Task Template Identifier</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

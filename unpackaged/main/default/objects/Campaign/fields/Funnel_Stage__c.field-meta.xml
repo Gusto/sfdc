@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Funnel_Stage__c</fullName>
+    <description>https://jira.gustocorp.com/browse/BMM-298</description>
+    <label>Funnel Stage</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>TOFU</fullName>
+                <default>false</default>
+                <label>TOFU</label>
+            </value>
+            <value>
+                <fullName>MOFU</fullName>
+                <default>false</default>
+                <label>MOFU</label>
+            </value>
+            <value>
+                <fullName>BOFU</fullName>
+                <default>false</default>
+                <label>BOFU</label>
+            </value>
+            <value>
+                <fullName>Ramp</fullName>
+                <default>false</default>
+                <label>Ramp</label>
+            </value>
+            <value>
+                <fullName>Expansion</fullName>
+                <default>false</default>
+                <label>Expansion</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

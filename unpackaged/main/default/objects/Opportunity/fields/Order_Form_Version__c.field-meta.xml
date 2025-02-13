@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Order_Form_Version__c</fullName>
+    <description>Display which form was signed as part of TOS</description>
+    <label>Order Form Version</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Ardius Order Form tos_v1, &quot;pricing 1.0&quot;</fullName>
+                <default>false</default>
+                <label>Ardius Order Form tos_v1, &quot;pricing 1.0&quot;</label>
+            </value>
+            <value>
+                <fullName>Ardius Order Form tos_v2, &quot;pricing 2.0&quot;</fullName>
+                <default>false</default>
+                <label>Ardius Order Form tos_v2, &quot;pricing 2.0&quot;</label>
+            </value>
+            <value>
+                <fullName>Ardius Order Form tos_v2, &quot;pricing 2.1&quot;</fullName>
+                <default>false</default>
+                <label>Ardius Order Form tos_v2, &quot;pricing 2.1&quot;</label>
+            </value>
+            <value>
+                <fullName>Gusto Order Form tos_v2, &quot;pricing 2.1&quot;</fullName>
+                <default>false</default>
+                <label>Gusto Order Form tos_v2, &quot;pricing 2.1&quot;</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

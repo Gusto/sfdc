@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Two_Day_Approval</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ ISPICKVAL( Escalation_Reason_Detail__c , &quot;2-Day Approval&quot;),OR(
+ NOT(Marked_for_2_Day_Approval__c),
+(ISBLANK(TEXT(Statements_In_Company_Uploaded_Files__c)))))</errorConditionFormula>
+    <errorMessage>Must mark &apos;Marked for 2-Day Approval&apos; and &apos;Statements in Company Uploaded Files&apos; to submit for 2-Day Approval</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gusto_Your_Account_Has_Been_Approved</fullName>
+    <availability>online</availability>
+    <description>Gusto | Your Account Has Been Approved</description>
+    <displayType>button</displayType>
+    <encodingKey>UTF-8</encodingKey>
+    <linkType>url</linkType>
+    <masterLabel>Approved</masterLabel>
+    <openType>replace</openType>
+    <protected>false</protected>
+    <url>/_ui/core/email/author/EmailAuthor?rtype=003&amp;p2_lkid={!Contact.Id}&amp;p3_lkid={!Opportunity.Id}&amp;p5={!$User.Email}&amp;template_id=00X1M000001u5wY&amp;retURL=%2F{!Opportunity.Id}</url>
+</WebLink>

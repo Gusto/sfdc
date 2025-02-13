@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Company_Size_Qualification__c</fullName>
+    <description>Company categorization based on the number of employees. Ceiling limit set to 500.</description>
+    <externalId>false</externalId>
+    <formula>IF(
+  ISBLANK(NumberOfEmployees), 
+  &quot;Unknown&quot;,
+  IF(
+    NumberOfEmployees &lt; 10, 
+    &quot;Small Business&quot;,
+    IF(
+      NumberOfEmployees &lt; 500,
+      &quot;Middle Market&quot;,
+      &quot;Size Exceeded&quot;
+    )
+  )
+)</formula>
+    <inlineHelpText>Returns ‘Unknown’ if the employees field is blank.
+Returns ‘Small Business’ if the employees is less than ten.
+Returns ‘Middle Market’ if the employees is less than five-hundred.
+Returns &apos;Size Exceeded&apos; if the employees exceeds five-hundred.</inlineHelpText>
+    <label>Company Size Qualification</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

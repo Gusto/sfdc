@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Legal_Threat</fullName>
+    <active>true</active>
+    <compactLayoutAssignment>Client_Relations_Compact_Layout</compactLayoutAssignment>
+    <description>Record Type for Legal Threat Escalation</description>
+    <label>Legal Threat</label>
+    <picklistValues>
+        <picklist>Attorney_Involvement__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Audience_Size__c</picklist>
+        <values>
+            <fullName>Influencer%3A %3C100%2C000 followers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Large - 50%2C000 - 100%2C000 followers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medium%3A 10%2C000 - 50%2C000 followers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Micro%3A %3E 5%2C000 followers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Small%3A 5%2C000 - 10%2C000 followers</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Complaint_Type__c</picklist>
+        <values>
+            <fullName>Advertising Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Billing or Collection Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contract Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Service Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delivery Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Guarantee or Waranty Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund%2FExhange Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Repair Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service Issues</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Customer_Comms__c</picklist>
+        <values>
+            <fullName>Demand for compensation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>File a regulatory or government complaint</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Get an attorney %28lawyer%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Take legal action against Gusto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Talk to Gusto%27s legal team</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Customer_Identification__c</picklist>
+        <values>
+            <fullName>Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer List</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Success</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Customer_Relationship_with_G2_0__c</picklist>
+        <values>
+            <fullName>No Relationship</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other Relationship</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Personal Relationship</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>VC Relationship</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Demand_Letter_Received__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Desired_Outcome_Settlement__c</picklist>
+        <values>
+            <fullName>Billing Adjustment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contact by the business</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Finish the Job</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Replacement</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Escalation_Post_Type__c</picklist>
+        <values>
+            <fullName>DM or private message</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Public comment on one of Gusto%27s posts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Public comment on random post tagging or referencing Gusto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Public post to their account tagging Gusto</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Escalation_Type__c</picklist>
+        <values>
+            <fullName>Legal Threat</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Good_Outcomes__c</picklist>
+        <values>
+            <fullName>Answered the customer%27s general questions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer was granted an exception by a cross-functional team</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Positive customer sentiment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Proactive customer education provided</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The customer%27s open issue or case was resolved</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Gov_Agency_Contact__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Gustie_Escalation_Channel__c</picklist>
+        <values>
+            <fullName>Facebook</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gusto Email Address</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Instagram</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LinkedIn</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Personal Call %2F Email %2F Text</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Twitter</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>NPS_Score__c</picklist>
+        <values>
+            <fullName>0</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>7</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Personal_Connection_To_Gustie__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Post_Sentiment__c</picklist>
+        <values>
+            <fullName>Negative</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Neutral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Positive</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Reasonable_Escalation__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Top_3_Risk_Factors__c</picklist>
+        <values>
+            <fullName>Company age</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Detractor in the previous 30 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Downgraded in the previous 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Escalation in the previous 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Expander in the previous 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Failed filing in previous 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Growth in prev 30 day in-scope cases</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>High in-scope case count in prev 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Multi-state</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New employer when joining Gusto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Overlapping open cases in prev 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Previous month revenue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recovery case in the previous 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tax notice in the previous 60 days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upgraded tier in the previous 60 days</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Venture_Capital_Startup__c</picklist>
+        <values>
+            <fullName>A 16 Z</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tech Stars</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y Combinator</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

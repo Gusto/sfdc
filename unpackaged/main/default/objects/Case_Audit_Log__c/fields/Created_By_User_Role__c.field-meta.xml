@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Created_By_User_Role__c</fullName>
+    <description>This tells you which role the person actually moving the case is in</description>
+    <externalId>false</externalId>
+    <formula>IF (CreatedBy.Id == Case__r.Account_Specialist__c, &apos;Account Speciaist&apos;, &apos;Coordinator&apos;)</formula>
+    <label>Created By User Role</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

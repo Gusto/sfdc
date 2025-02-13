@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Demo_Validate_Manually_Closed_Cases</fullName>
+    <active>true</active>
+    <description>block customer comms case from getting moved to &apos;Closed&apos; status manually</description>
+    <errorConditionFormula>IF(
+AND(
+AND(
+$User.Id &lt;&gt; &quot;00516000005BehJ&quot;,
+$User.Id &lt;&gt; &quot;0051M000007FVe1&quot;,
+$User.Id &lt;&gt; &quot;005G0000002lw11&quot;),
+OR(
+RecordType.Name = &apos;Benefits New Plan Case&apos;,
+RecordType.Name = &apos;Benefits Renewal Case&apos;,
+RecordType.Name = &apos;Benefits Change Case&apos;,
+RecordType.Name = &apos;Benefits BoR&apos;),
+OR(
+CONTAINS( Integration_Id__c , &apos;hippo-Benefits_New_Plan-&apos;),
+CONTAINS( Integration_Id__c , &apos;hippo-Benefits_Renewal-&apos;),
+CONTAINS( Integration_Id__c , &apos;hippo-Benefits_Change-&apos;),
+CONTAINS( Integration_Id__c , &apos;hippo-Benefits_BoR-&apos;) ),
+ISCHANGED( Status ),
+ISPICKVAL(Status , &apos;Closed&apos;)
+),
+IF(
+AND(
+NOT(ISBLANK(Opportunity__c)),
+ISBLANK( Benefit_Order__c ),
+OR(
+NOT(
+OR(ISPICKVAL( Opportunity__r.StageName , &apos;Closed Admin&apos;),
+ISPICKVAL( Opportunity__r.StageName , &apos;Closed Lost&apos;),
+ISPICKVAL( Opportunity__r.StageName , &apos;Closed Won&apos;),
+ISPICKVAL( Opportunity__r.StageName , &apos;Order Lost&apos;)) ),
+Close_Date__c &gt; TODAY() )
+),
+TRUE,
+
+IF(
+AND(
+NOT(ISBLANK(Benefit_Order__c )),
+ISBLANK(Opportunity__c),
+OR(
+NOT(
+OR(ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Canceled&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Closed Admin&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Closed Lost&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Fulfilled&apos;)) ),
+Close_Date__c &gt; TODAY() )
+),
+TRUE,
+
+IF(
+AND(
+NOT(ISBLANK(Benefit_Order__c )),
+NOT(ISBLANK(Opportunity__c)),
+OR(
+NOT(
+OR(ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Canceled&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Closed Admin&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Alignment Approved&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Closed Lost&apos;),
+ISPICKVAL(Benefit_Order__r.Order_Status__c, &apos;Fulfilled&apos;)) ),
+NOT(
+OR(ISPICKVAL( Opportunity__r.StageName , &apos;Closed Admin&apos;),
+ISPICKVAL( Opportunity__r.StageName , &apos;Closed Lost&apos;),
+ISPICKVAL( Opportunity__r.StageName , &apos;Closed Won&apos;),
+ISPICKVAL( Opportunity__r.StageName , &apos;Order Lost&apos;)) ),
+Close_Date__c &gt; TODAY() )
+),
+TRUE,
+FALSE
+)
+)
+),
+FALSE)</errorConditionFormula>
+    <errorMessage>Customer comms case cannot be closed while BO or Opportunity are open</errorMessage>
+</ValidationRule>

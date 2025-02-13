@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BOR_Opps_No_line_items</fullName>
+    <active>false</active>
+    <description>No line items are allowed for BOR opportunities</description>
+    <errorConditionFormula>Opportunity.Opportunity_Record_Type_Name__c  = &quot;Benefits BoR&quot;</errorConditionFormula>
+    <errorMessage>BOR opps cannot have line items</errorMessage>
+</ValidationRule>

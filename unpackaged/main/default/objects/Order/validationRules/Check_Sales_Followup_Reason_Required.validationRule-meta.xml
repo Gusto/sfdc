@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check_Sales_Followup_Reason_Required</fullName>
+    <active>true</active>
+    <description>Make Sales Follow Up Reason mandatory if Sales Follow Up has value.</description>
+    <errorConditionFormula>AND(NOT(ISBLANK( Sales_Follow_Up__c )),ISBLANK(TEXT(Sales_Follow_Up_Reason__c)))</errorConditionFormula>
+    <errorDisplayField>Sales_Follow_Up_Reason__c</errorDisplayField>
+    <errorMessage>Please enter a value in Sales Follow Up Reason.</errorMessage>
+</ValidationRule>

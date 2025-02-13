@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Status__c</fullName>
+    <description>Used in inContact call routing. Do not change without notifying Support Ops.</description>
+    <label>Account Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Onboarding</fullName>
+                <default>true</default>
+                <label>Onboarding</label>
+            </value>
+            <value>
+                <fullName>Engaged - Removed from Fallout</fullName>
+                <default>false</default>
+                <label>Engaged - Removed from Fallout</label>
+            </value>
+            <value>
+                <fullName>Unqualified - Closed/Lost</fullName>
+                <default>false</default>
+                <label>Unqualified - Closed/Lost</label>
+            </value>
+            <value>
+                <fullName>Future Opportunity</fullName>
+                <default>false</default>
+                <label>Future Opportunity</label>
+            </value>
+            <value>
+                <fullName>Suspended In-Setup</fullName>
+                <default>false</default>
+                <label>Suspended In-Setup</label>
+            </value>
+            <value>
+                <fullName>Migrating - Removed from Fallout</fullName>
+                <default>false</default>
+                <label>Migrating - Removed from Fallout</label>
+            </value>
+            <value>
+                <fullName>Sign-up Completed</fullName>
+                <default>false</default>
+                <label>Sign-up Completed</label>
+            </value>
+            <value>
+                <fullName>Customer</fullName>
+                <default>false</default>
+                <label>Customer</label>
+            </value>
+            <value>
+                <fullName>Suspended Customer</fullName>
+                <default>false</default>
+                <label>Suspended Customer</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Metric_Type__c</fullName>
+    <description>To distinguish between the type of metric we are tracking</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Metric Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Processing Time</fullName>
+                <default>true</default>
+                <label>Processing Time</label>
+            </value>
+            <value>
+                <fullName>Cycle Time</fullName>
+                <default>false</default>
+                <label>Cycle Time</label>
+            </value>
+            <value>
+                <fullName>Wait Time</fullName>
+                <default>false</default>
+                <label>Wait Time</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tax_Notice_Date_Validation</fullName>
+    <active>true</active>
+    <description>Tax Notice Start Date can not be greater than Tax Notice End Date and vice versa.</description>
+    <errorConditionFormula>RecordType.DeveloperName = &apos;Auto_Solve_Batch&apos; &amp;&amp; (( Tax_Notice_Start_Date__c &gt;  Tax_Notice_End_Date__c || Tax_Notice_End_Date__c &lt; Tax_Notice_Start_Date__c ))</errorConditionFormula>
+    <errorMessage>Tax Notice Start Date can not be greater than Tax Notice End Date and vice versa.</errorMessage>
+</ValidationRule>

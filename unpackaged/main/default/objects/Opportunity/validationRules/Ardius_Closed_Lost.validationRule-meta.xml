@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ardius_Closed_Lost</fullName>
+    <active>true</active>
+    <description>Before close lost an Ardius opportunity Stage Detail &amp; Detail2 are required.</description>
+    <errorConditionFormula>RecordType.DeveloperName == &apos;Tax_Credits&apos;
+&amp;&amp; ISPICKVAL(StageName, &apos;Closed Lost&apos;)
+&amp;&amp; !(
+     !ISPICKVAL(Stage_Detail__c, &apos;&apos;)
+     &amp;&amp; (
+          !ISPICKVAL(Stage_Detail_2__c, &apos;&apos;) ||
+          ISPICKVAL(Stage_Detail__c, &quot;Out of business&quot;) ||
+          ISPICKVAL(Stage_Detail__c, &quot;Account suspended&quot;) ||
+          ISPICKVAL(Stage_Detail__c, &quot;Disqualified&quot;) ||
+          ISPICKVAL(Stage_Detail__c, &quot;Duplicate&quot;)
+     )
+)
+&amp;&amp; !$User.Exempt_from_Validation_Rules__c</errorConditionFormula>
+    <errorMessage>Please Select a Stage Detail and Stage Detail 2 Before Closing the Opportunity.</errorMessage>
+</ValidationRule>

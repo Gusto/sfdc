@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Has_Previous_Payroll_Provider__c</fullName>
+    <label>Has Previous Payroll Provider</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Yes, we have</fullName>
+                <default>false</default>
+                <label>Yes, we have</label>
+            </value>
+            <value>
+                <fullName>No, we’ve only paid 1099 contractors</fullName>
+                <default>false</default>
+                <label>No, we’ve only paid 1099 contractors</label>
+            </value>
+            <value>
+                <fullName>No, we haven’t paid anyone</fullName>
+                <default>false</default>
+                <label>No, we haven’t paid anyone</label>
+            </value>
+            <value>
+                <fullName>I don’t know</fullName>
+                <default>false</default>
+                <label>I don’t know</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

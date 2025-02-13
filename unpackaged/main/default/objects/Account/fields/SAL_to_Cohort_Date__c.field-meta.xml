@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SAL_to_Cohort_Date__c</fullName>
+    <description>Calculates number of days between when Reseller account was created and what&apos;s cohort date.</description>
+    <externalId>false</externalId>
+    <formula>IF(AND(NOT(ISNULL(Cohort_Date__c)), RecordType.DeveloperName = &apos;Reseller&apos;),
+Cohort_Date__c - DATEVALUE(CreatedDate) ,
+null)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>SAL to Cohort Date</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

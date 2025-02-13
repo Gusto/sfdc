@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SingleOrderMigrationApprovalValidation</fullName>
+    <active>false</active>
+    <description>Checks for mandatory fields for submitting a single migration order for approvals.</description>
+    <errorConditionFormula>AND( ISBLANK(Bulk_Migration__c), ISCHANGED(Status), ISPICKVAL( Status , &apos;Sales Submitted&apos;), OR (ISBLANK(States__c), ISBLANK(TEXT(Pay_Schedules__c)), ISBLANK(Active_Employee_Count__c), ISBLANK(Inactive_Employee_Count__c), ISBLANK(Contractor_Count__c), ISBLANK(TEXT(Is_this_a_winback_migration__c)), ISBLANK(First_Check_Date__c), ISBLANK( Payroll_Run_Date__c ) ) )</errorConditionFormula>
+    <errorMessage>Please enter information in below fields before submitting the Order for approval - 
+States, 
+Pay Schedule, 
+Active Employee Count, 
+Inactive Employee Count, 
+Contractor Count, 
+First Check Date, 
+Payroll Run Date and 
+Is this a Winback Migration?</errorMessage>
+</ValidationRule>

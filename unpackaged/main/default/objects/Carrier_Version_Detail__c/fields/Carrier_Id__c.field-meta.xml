@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Carrier_Id__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>This field is populated from HI Carrier Version table, used to create QA lines of coverage and displayed in TTIA, TTS, TTC templates for onboarding team.</description>
+    <label>Carrier</label>
+    <referenceTo>Carrier__c</referenceTo>
+    <relationshipLabel>Carrier Version Details</relationshipLabel>
+    <relationshipName>Carrier_Versions</relationshipName>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
