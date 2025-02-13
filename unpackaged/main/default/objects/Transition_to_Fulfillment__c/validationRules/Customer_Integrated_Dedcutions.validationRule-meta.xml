@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Customer_Integrated_Dedcutions</fullName>
-    <active>true</active>
-    <description>This validation rule is created to select benefits when customer has benefit enforced strict timelines</description>
-    <errorConditionFormula>AND(RecordType.Name=&apos;Payroll Transfer&apos;, ISBLANK( how_will_the_handle_moving_forward__c ) ,  ISPICKVAL(    Does_customer_have_integrated_deductions__c  , &quot;Yes&quot;)  )</errorConditionFormula>
-    <errorDisplayField>how_will_the_handle_moving_forward__c</errorDisplayField>
-    <errorMessage>Please enter how the customer plans on handling deductions.</errorMessage>
-</ValidationRule>

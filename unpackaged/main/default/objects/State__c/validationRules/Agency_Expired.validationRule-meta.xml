@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Agency_Expired</fullName>
-    <active>true</active>
-    <description>Prevents an Agency from being licensed if the expiration date is in the past.</description>
-    <errorConditionFormula>Agency_State_License_Expiration_Date__c &lt; TODAY() &amp;&amp; ISPICKVAL(Agency_Licensed_in_State__c,&apos;Yes&apos;)</errorConditionFormula>
-    <errorDisplayField>Agency_State_License_Expiration_Date__c</errorDisplayField>
-    <errorMessage>The expiration date has passed.</errorMessage>
-</ValidationRule>

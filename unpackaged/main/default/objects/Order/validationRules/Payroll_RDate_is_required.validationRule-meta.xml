@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Payroll_RDate_is_required</fullName>
-    <active>true</active>
-    <description>Requested Pay date is mandatory for Assigned Order</description>
-    <errorConditionFormula>AND(  ISCHANGED(Status),   ISPICKVAL( PRIORVALUE(Status) , &quot;Assigned&quot;) , ISBLANK(  Payroll_Run_Date__c  ) ,  NOT( $User.Exempt_from_Validation_Rules__c ) )</errorConditionFormula>
-    <errorDisplayField>Payroll_Run_Date__c</errorDisplayField>
-    <errorMessage>Required: Payroll Run Date for Assigned Orders</errorMessage>
-</ValidationRule>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Mandatory_Benefits_Enforeced_timeline</fullName>
-    <active>true</active>
-    <description>This validation rule is created to select benefits when customer has benefit enforced strict timelines</description>
-    <errorConditionFormula>AND(RecordType.Name=&apos;Payroll Transfer&apos;, ISBLANK(TEXT(   Select_Benefits__c  )) ,  ISPICKVAL(   Benefits_enforced_timeline__c , &quot;Yes&quot;)  )</errorConditionFormula>
-    <errorDisplayField>Select_Benefits__c</errorDisplayField>
-    <errorMessage>Please select benefits either NP or BOR</errorMessage>
-</ValidationRule>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Require_fields_for_Accountant_Referral</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND(Referral_for_Accounting_Services__c = TRUE, OR(ISBLANK(Accountant_Referral_Notes__c),ISBLANK(Accounting_Service_s_Needed__c)))</errorConditionFormula>
-    <errorDisplayField>Accounting_Service_s_Needed__c</errorDisplayField>
-    <errorMessage>Please indicate Accounting Services Needed and Accountant Referral Notes</errorMessage>
-</ValidationRule>

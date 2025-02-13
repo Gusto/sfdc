@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Bulk_Deal_link_to_spreadsheet</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND(RecordType.Name=&apos;Payroll Transfer&apos;, ISPICKVAL( Bulk_Deal__c , &quot;Yes&quot;), ISBLANK( Link_to_Spreadsheet__c )  )</errorConditionFormula>
-    <errorDisplayField>Link_to_Spreadsheet__c</errorDisplayField>
-    <errorMessage>Please add the link to spreadsheet</errorMessage>
-</ValidationRule>

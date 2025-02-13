@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Agency_Information_Validation</fullName>
-    <active>false</active>
-    <description>If Agency Information Lookup is populated Related Agency String can not be updated.</description>
-    <errorConditionFormula>RecordType.DeveloperName = &apos;Auto_Solve_Batch&apos; &amp;&amp; ISBLANK(Related_Agency_IDs__c ) &amp;&amp; ISBLANK(  Agency_Information__c )</errorConditionFormula>
-    <errorMessage>Agency Information and Related Agency Information can not both be populated. If Related Agency Information is populated this Package looks at multiple Agencies.</errorMessage>
-</ValidationRule>

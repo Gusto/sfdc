@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__RecordAction</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="displayAuthenticated" type="Boolean" label="Authenticated" description="Boolean for button Authenticated"/>
+            <property name="displayTokenMatch" type="Boolean" label="Token Match" description="Boolean for button Token Match"/>
+            <property name="displayUnauthenticated" type="Boolean" label="Unauthenticated" description="Boolean for button Unauthenticated"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

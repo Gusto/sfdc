@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Same_Day_Call__c</fullName>
-    <formula>IF(DATEVALUE(Opportunity_Created_Date__c) = DATEVALUE(First_Call_Date__c), true, false)</formula>
-    <label>Same Day Call</label>
-    <trackTrending>false</trackTrending>
-    <type>Checkbox</type>
-</CustomField>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Include_For_Handle_Time__c</fullName>
-    <formula>ISPICKVAL(Event_Type__c ,&apos;Phone&apos;) || ISPICKVAL(Event_Type__c ,&apos;Chat&apos;) || (ISPICKVAL(From_Status__c ,&apos;In Progress&apos;))</formula>
-    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <label>Include For Handle Time</label>
-    <trackTrending>false</trackTrending>
-    <type>Checkbox</type>
-</CustomField>

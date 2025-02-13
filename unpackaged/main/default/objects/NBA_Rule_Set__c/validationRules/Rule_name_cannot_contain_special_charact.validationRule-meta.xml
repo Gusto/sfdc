@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Rule_name_cannot_contain_special_charact</fullName>
-    <active>true</active>
-    <errorConditionFormula>CONTAINS(Rule_Name__c,&quot;-&quot;)</errorConditionFormula>
-    <errorDisplayField>Rule_Name__c</errorDisplayField>
-    <errorMessage>Please remove dashes from the Rule Name to save.</errorMessage>
-</ValidationRule>

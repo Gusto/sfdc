@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Deployed_must_have_a_date</fullName>
-    <active>true</active>
-    <errorConditionFormula>Deployed__c  = TRUE  &amp;&amp;   ISBLANK(Deployment_Date__c)</errorConditionFormula>
-    <errorMessage>Please provide a date that is close to the day this project was deployed.</errorMessage>
-</ValidationRule>

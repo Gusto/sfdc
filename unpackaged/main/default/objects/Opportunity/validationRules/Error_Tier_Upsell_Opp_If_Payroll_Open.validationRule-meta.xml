@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Error_Tier_Upsell_Opp_If_Payroll_Open</fullName>
-    <active>true</active>
-    <description>Error out tier upsell opp creation if payroll is open.</description>
-    <errorConditionFormula>ISNEW() &amp;&amp; RecordType.DeveloperName = &apos;Tier_Upsell_Opportunity&apos; &amp;&amp; Text(Upsell_Tier__c) != &apos;Employer of Record&apos; &amp;&amp; 
-Text(Upsell_Tier__c) != &apos;International Contractor Payment&apos; &amp;&amp; Account.Number_Of_Open_Payroll_Opps__c &gt; 0 &amp;&amp; $User.Exempt_from_Validation_Rules__c=FALSE</errorConditionFormula>
-    <errorMessage>Tier Upsell Opp cannot be created if Payroll Opp is open, except when Upsell Tier is Employer of Record.</errorMessage>
-</ValidationRule>

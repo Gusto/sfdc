@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Ben_Setup_Updated_After_Close__c</fullName>
-    <formula>AND(Benefits_Setup_Last_Updated__c-DATETIMEVALUE(CloseDate)&gt;1,ISPICKVAL( StageName ,&quot;Closed Lost&quot;))</formula>
-    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <label>Ben Setup Updated After Close</label>
-    <trackHistory>false</trackHistory>
-    <type>Checkbox</type>
-</CustomField>

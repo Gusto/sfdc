@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Risk_Manual_Signatory_Verification</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND(ISPICKVAL( Escalation_Reason_Detail__c , &quot;Manual Signatory Verification&quot;),OR(
-X8655_Uploaded__c = FALSE,
-ID_Passport_Uploaded__c = FALSE))</errorConditionFormula>
-    <errorMessage>Must mark &apos;ID/Passport Uploaded&apos; and &apos;8655 Uploaded&apos; in order to submit request to manually verify signatory</errorMessage>
-</ValidationRule>

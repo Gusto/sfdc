@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>MF_Member_Case_Cannot_Assi_To_API_Heroku</fullName>
-    <active>true</active>
-    <errorConditionFormula>ISCHANGED( OwnerId )&amp;&amp; Owner:User.Alias = &quot;heroku&quot; &amp;&amp; RecordType.DeveloperName = &quot;MF_Member_Group_Updates&quot; &amp;&amp; $User.Exempt_from_Validation_Rules__c &lt;&gt; TRUE</errorConditionFormula>
-    <errorMessage>MF Member Group Updates case cannot assigned to API heroku user.</errorMessage>
-</ValidationRule>

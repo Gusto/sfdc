@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Restrict_Update_Benefits_Item_Won_Opp</fullName>
-    <active>true</active>
-    <errorConditionFormula>ISPICKVAL(Opportunity.StageName,&apos;Closed Won&apos;) &amp;&amp; ISPICKVAL(Product2.Family, &apos;Benefit&apos;) &amp;&amp;  
-NOT(CONTAINS($Label.Benefits_Allowed_Roles, $UserRole.DeveloperName)) &amp;&amp;
-NOT($User.Exempt_from_Validation_Rules__c)</errorConditionFormula>
-    <errorMessage>Only Benefits fulfillment team or Onboarding Advocate members can add or update products on closed won opportunities.</errorMessage>
-</ValidationRule>

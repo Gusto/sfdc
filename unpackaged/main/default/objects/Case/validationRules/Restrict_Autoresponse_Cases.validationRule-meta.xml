@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Restrict_Autoresponse_Cases</fullName>
-    <active>true</active>
-    <description>This validation rule is used to restrict multiple cases being created from autoresponse.</description>
-    <errorConditionFormula>IF(AND(REGEX(Subject,&quot;(.)*(RE:RE:\\s){2,}+(.)*&quot;), RecordType.Name = &quot;Engagement&quot;, isNew()),true,false)</errorConditionFormula>
-    <errorMessage>Autoresponse cases cannot be created.</errorMessage>
-</ValidationRule>

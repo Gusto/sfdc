@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Require_Push_Rate_reason_for_New_Plan</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND( NOT($User.Exempt_from_Validation_Rules__c) ,RecordType.Name=&apos;New Plan&apos;, OR( ISCHANGED( Coverage_Effective_Date__c ), IsCoverageEffectiveDateChanged__c  = TRUE ) , ISBLANK( TEXT(Push_Rate_Reason__c )) )</errorConditionFormula>
-    <errorDisplayField>Push_Rate_Reason__c</errorDisplayField>
-    <errorMessage>Push Rate Reason is required due to change in coverage effective date</errorMessage>
-</ValidationRule>

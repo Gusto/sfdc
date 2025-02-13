@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Risk_New_Limit_Amount</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND (
- ISPICKVAL( Escalation_Reason_Detail__c ,&apos;Limit Increase&apos;), 
-ISBLANK(New_Limit_Requested__c))</errorConditionFormula>
-    <errorMessage>Must fill out &apos;New Limit Requested&apos;</errorMessage>
-</ValidationRule>

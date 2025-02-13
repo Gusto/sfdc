@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Chronological_Dates</fullName>
-    <active>true</active>
-    <errorConditionFormula>IF(AND(NOT(ISBLANK(Date_Completed__c)), NOT(ISBLANK(Start_Date__c))) , Date_Completed__c &lt;  Start_Date__c, null)</errorConditionFormula>
-    <errorMessage>The end date must occur after the start date</errorMessage>
-</ValidationRule>

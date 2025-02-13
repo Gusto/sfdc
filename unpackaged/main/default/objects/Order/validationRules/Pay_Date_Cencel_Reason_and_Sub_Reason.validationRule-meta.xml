@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Pay_Date_Cencel_Reason_and_Sub_Reason</fullName>
-    <active>true</active>
-    <description>Pay Date Cancel Reason and Pay Date Cancel Sub Reason is required for Closed: Canceled order</description>
-    <errorConditionFormula>AND(  ISCHANGED(Status),   ISPICKVAL((Status) , &quot;Closed: Canceled&quot;) , OR((ISBLANK(TEXT(Pay_Date_Cancel_Reason__c))),(ISBLANK(Pay_Date_Cancel_Sub_Reason__c))),  NOT( $User.Exempt_from_Validation_Rules__c ) )</errorConditionFormula>
-    <errorMessage>Required: Pay Date Cancel Reason and Pay Date Cancel Sub Reason</errorMessage>
-</ValidationRule>

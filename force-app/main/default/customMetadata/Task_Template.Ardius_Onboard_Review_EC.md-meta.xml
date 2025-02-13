@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Ardius-Onboard Review EC</label>
+    <protected>false</protected>
+    <values>
+        <field>Assign_To_Queue_If_Target_Owner_Is_Queue__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Assign_To_Queue_Name__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Assigned_To__c</field>
+        <value xsi:type="xsd:string">Owner of Target Object</value>
+    </values>
+    <values>
+        <field>Comments__c</field>
+        <value xsi:type="xsd:string">•• Remove the Method NOT Being Applied
+Regular Method: 2019-2022 TRs and 2023 QREs
+ASC Method: 2020-2023 QREs OR 2023 QREs w/ Inc Date: 2021+
+
+CA Calc Needed: Y/N
+FYE: Y/N
+Control Group (linked in portal): Y/N
+
+TY 2023 Items Rec&apos;d:
+•• Wages:
+•• Expenses:
+•• Taxes:
+
+Confirm Tax Return info match:
+•• Company Name: Y/N
+•• EIN: Y/N
+•• Inc Date: Y/N
+
+Additional Items Requested:
+Wages:
+Expenses:
+Taxes:
+CG:
+FYE:</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Merge_Fields__c</field>
+        <value xsi:type="xsd:string">Account__r.Name</value>
+    </values>
+    <values>
+        <field>No_of_Business_Days_from_Creation_to_Due__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>No_of_Hours_from_Creation_to_Due__c</field>
+        <value xsi:type="xsd:double">24.0</value>
+    </values>
+    <values>
+        <field>Permission_Set_Name__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Priority__c</field>
+        <value xsi:type="xsd:string">Normal</value>
+    </values>
+    <values>
+        <field>Status__c</field>
+        <value xsi:type="xsd:string">Open</value>
+    </values>
+    <values>
+        <field>Sub_Type__c</field>
+        <value xsi:type="xsd:string">EC Onboard Review</value>
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">Onboard Review - {{Account__r.Name}}</value>
+    </values>
+    <values>
+        <field>Task_Identifier__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Task_Record_Type_Name__c</field>
+        <value xsi:type="xsd:string">Standard</value>
+    </values>
+    <values>
+        <field>Task_Type__c</field>
+        <value xsi:type="xsd:string">Follow Up</value>
+    </values>
+    <values>
+        <field>Type__c</field>
+        <value xsi:type="xsd:string">Ardius</value>
+    </values>
+</CustomMetadata>

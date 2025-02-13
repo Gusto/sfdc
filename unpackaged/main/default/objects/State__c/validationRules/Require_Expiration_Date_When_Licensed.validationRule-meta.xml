@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Require_Expiration_Date_When_Licensed</fullName>
-    <active>true</active>
-    <errorConditionFormula>ISBLANK(Agency_State_License_Expiration_Date__c) &amp;&amp;
-ISPICKVAL(Agency_Licensed_in_State__c,&apos;Yes&apos;)</errorConditionFormula>
-    <errorDisplayField>Agency_State_License_Expiration_Date__c</errorDisplayField>
-    <errorMessage>Agency expiration date is required.</errorMessage>
-</ValidationRule>

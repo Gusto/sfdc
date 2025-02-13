@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Duplicate Notice FalsePositiveFilters</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Filter_Type__c</field>
+        <value xsi:type="xsd:string">WhereClause</value>
+    </values>
+    <values>
+        <field>Filter_Value__c</field>
+        <value xsi:type="xsd:string">AND Case__r.Status = &apos;Closed&apos; AND Case__r.Mass_Email_Step__c IN (&apos;SUI Rate Auto-Solve fired&apos;, &apos;Prior to Gusto Auto-Solve fired&apos;, &apos;No Notice Attached Auto-Solve fired&apos;, &apos;After Gusto Auto-Solve fired&apos;, &apos;Duplicate Notice Auto-Solve fired&apos;, &apos;Previously Answered Auto-Solve Fired&apos;, &apos;Previously Answered Auto-Solve Fired Closed/Solved&apos;, &apos;Below Tolerance Auto-Solve fired&apos;, &apos;P&amp;I Late Deposit/Amendment Auto-Solve Fired&apos;)</value>
+    </values>
+    <values>
+        <field>Order_by_records__c</field>
+        <value xsi:type="xsd:string">ORDER BY CreatedDate ASC LIMIT 1</value>
+    </values>
+    <values>
+        <field>Play_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Priority__c</field>
+        <value xsi:type="xsd:string">2</value>
+    </values>
+    <values>
+        <field>Skill_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Team__c</field>
+        <value xsi:type="xsd:string">Feature</value>
+    </values>
+</CustomMetadata>

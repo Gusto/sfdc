@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Call_Recording_Required</fullName>
-    <active>true</active>
-    <description>Fields required to submit a Call Recording Ticket request.</description>
-    <errorConditionFormula>RecordType.Name = &apos;Call Recording&apos; &amp;&amp;
- ( Case__r.Genesys_Call_Id__c = NULL ||  Case__c = NULL )</errorConditionFormula>
-    <errorMessage>Please validate you have Case populated on your ticket request and the Case is related to a phone call with a conversation ID.</errorMessage>
-</ValidationRule>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Renewals_Cant_Edit_Assign_at_Creation</fullName>
-    <active>true</active>
-    <errorConditionFormula>ISCHANGED( Assign_to__c )</errorConditionFormula>
-    <errorDisplayField>Assign_to__c</errorDisplayField>
-    <errorMessage>Can&apos;t edit this field after ticket is created. Please update &apos;Owner&apos; field instead.</errorMessage>
-</ValidationRule>

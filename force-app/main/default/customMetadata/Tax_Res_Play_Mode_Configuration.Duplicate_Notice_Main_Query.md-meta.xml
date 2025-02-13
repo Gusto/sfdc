@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Duplicate Notice Main Query</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Filter_Type__c</field>
+        <value xsi:type="xsd:string">MainQuery</value>
+    </values>
+    <values>
+        <field>Filter_Value__c</field>
+        <value xsi:type="xsd:string">SELECT Id, Case__c, RAF_Indicator__c, Agency_Information__r.Name, Client_Name__r.Name FROM Tax_Notice_Index__c WHERE RecordType.Name = &apos;Manual Indexing&apos; AND Agency_Information__c = : strAgentInfo AND Client_Name__c = : strClientName AND Segment__c = : strSegment AND Tier__c = : strTier AND Partner_Tier__c = : strPartnerTier AND Yr_Qtr__c = : strYearQuarter AND Tax_Notice_Form_Number__c = :strTaxNoticeFormNumber AND Tax_Notice_Date__c = : dtTaxNoticeDate AND Tax_Notice_Type__c = : strTaxNoticeType AND Tax_Notice_Tax_Amount__c = : decTaxAmount AND Tax_Notice_Amount_Total__c = : dbTaxNoticeAmountTotal AND Assigned_Client_Tax_ID_Agency_Assigned__c = : strAgencyAssigned</value>
+    </values>
+    <values>
+        <field>Order_by_records__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Play_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Priority__c</field>
+        <value xsi:type="xsd:string">0</value>
+    </values>
+    <values>
+        <field>Skill_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Team__c</field>
+        <value xsi:type="xsd:string">Feature</value>
+    </values>
+</CustomMetadata>

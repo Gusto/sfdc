@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>MO_Carrier_and_Account_Required</fullName>
-    <active>true</active>
-    <description>Carrier and Account are required if record type is &apos;Member Operation&apos; and status is closed</description>
-    <errorConditionFormula>(RecordType.DeveloperName ==&apos;Member_Operations&apos; &amp;&amp; ((((ISCHANGED( Status__c ) &amp;&amp; Text(Status__c) == &apos;Closed&apos;) || (ISNEW() &amp;&amp; Text(Status__c) == &apos;Closed&apos;)) &amp;&amp; (ISBLANK( Account__c)  ||  ISBLANK( Carrier__c))) || ((ISCHANGED( Account__c ) || ISCHANGED( Carrier__c )) &amp;&amp; Text(Status__c) == &apos;Closed&apos; &amp;&amp; (ISBLANK( Account__c)  ||  ISBLANK( Carrier__c))))) &amp;&amp; $User.Exempt_from_Validation_Rules__c &lt;&gt; TRUE</errorConditionFormula>
-    <errorMessage>Account and Carrier can not be blank if status is closed</errorMessage>
-</ValidationRule>

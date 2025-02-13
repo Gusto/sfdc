@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Require_Case_Reason_ClassificationLookup</fullName>
-    <active>true</active>
-    <description>Sub Case Reason Classification should only be created with an associated Case Reason Classification Record. If new record is created without the association our EngagementCaseViewExtesion class will throw validations.</description>
-    <errorConditionFormula>ISBLANK( Case_Reason__c ) &amp;&amp;
-Active__c = true</errorConditionFormula>
-    <errorMessage>Please add a Confirm Case Reason before activating a new Sub Case Reason Classification.</errorMessage>
-</ValidationRule>

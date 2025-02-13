@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Payroll_Transfer_Blank_Opportunity_check</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND( RecordType.Name =&apos;Payroll Transfer&apos;, NOT(  ISPICKVAL( TTF_Status__c , &apos;&apos;) ), ISBLANK( Opportunity__c )  )</errorConditionFormula>
-    <errorMessage>The transition to fulfillment does not have an Opportunity, please assign an Opportunity.</errorMessage>
-</ValidationRule>

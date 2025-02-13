@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Package_Name_is_not_populated</fullName>
-    <active>true</active>
-    <description>Every Record needs to have a Package name and can not change</description>
-    <errorConditionFormula>RecordType.DeveloperName = &apos;Auto_Solve_Batch&apos; &amp;&amp; (  ISCHANGED(  Name ) ||  ISBLANK( Name ) )</errorConditionFormula>
-    <errorMessage>Auto Solve Packages have to have a Package Name and can not be changed.</errorMessage>
-</ValidationRule>

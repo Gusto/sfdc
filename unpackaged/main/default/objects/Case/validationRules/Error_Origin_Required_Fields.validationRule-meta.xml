@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Error_Origin_Required_Fields</fullName>
-    <active>true</active>
-    <description>Required fields when Error Origin is populated on Engagement Cases</description>
-    <errorConditionFormula>NOT(ISBLANK(TEXT(Error_Origin__c))) &amp;&amp; NOT(ISPICKVAL( Error_Origin__c, &apos;No Error&apos;)) &amp;&amp; (ISBLANK(Error_Origin_Root_Cause__c)|| ISBLANK( Error_Origin_Date__c)) &amp;&amp;
-(RecordType.Name = &apos;Engagement&apos;) &amp;&amp; $User.Exempt_from_Validation_Rules__c = FALSE</errorConditionFormula>
-    <errorMessage>Please fill out the Error Origin Root Cause and Error Origin Date fields.</errorMessage>
-</ValidationRule>

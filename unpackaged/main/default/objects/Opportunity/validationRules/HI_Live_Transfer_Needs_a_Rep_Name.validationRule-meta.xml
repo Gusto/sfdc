@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>HI_Live_Transfer_Needs_a_Rep_Name</fullName>
-    <active>true</active>
-    <description>HI Live Transfer if checked on Onboarding Created Opportunity needs a rep name attached</description>
-    <errorConditionFormula>AND(ISPICKVAL(LeadSource,&apos;Benefits during Onboarding&apos;),  Live_HI_Transfer__c = TRUE,  ISBLANK(rep__c) )</errorConditionFormula>
-    <errorDisplayField>rep__c</errorDisplayField>
-    <errorMessage>Required Field</errorMessage>
-</ValidationRule>

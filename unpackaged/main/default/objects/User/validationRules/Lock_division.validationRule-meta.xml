@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Lock_division</fullName>
-    <active>false</active>
-    <errorConditionFormula>ISCHANGED(Division) &amp;&amp;
-NOT($Profile.Name = &apos;ZP System Administrator&apos;)</errorConditionFormula>
-    <errorMessage>Changes to division are restricted.</errorMessage>
-</ValidationRule>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Product_Specific_Require_Start_Date</fullName>
-    <active>true</active>
-    <description>For all product-specific discounts, a start date is required. (Global discounts like accountant discounts do not require a start date.)</description>
-    <errorConditionFormula>! ISBLANK( ZP_Product_Id__c ) &amp;&amp; ISBLANK(  Date_Start__c )</errorConditionFormula>
-    <errorDisplayField>Date_Start__c</errorDisplayField>
-    <errorMessage>Product-specific discounts require a Start Date. If ZP Product Id is filled, provide a Start Date.</errorMessage>
-</ValidationRule>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Has_Lead_Activity__c</fullName>
-    <description>Checks if there is a first call date before the created date of the opportunity.</description>
-    <formula>IF(First_Call_Date__c&lt;Opportunity_Created_Date__c, TRUE, FALSE)</formula>
-    <label>Has Lead Activity</label>
-    <trackTrending>false</trackTrending>
-    <type>Checkbox</type>
-</CustomField>
