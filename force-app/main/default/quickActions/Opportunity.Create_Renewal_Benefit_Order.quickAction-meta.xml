@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Generate a renewal benefit order from an opportunity.</description>
+    <fieldOverrides>
+        <field>Account__c</field>
+        <formula>Opportunity.AccountId</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Coverage_Effective_Date__c</field>
+        <formula>Opportunity.HI_Effective_Date__c</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Name</field>
+        <formula>LEFT( Opportunity.Account.Name, (80 - LEN(&apos; - &apos; + RecordType.Name))) + &apos; - &apos; + RecordType.Name</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Opportunity__c</field>
+        <formula>Opportunity.Id</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Start_Date__c</field>
+        <formula>TODAY()</formula>
+    </fieldOverrides>
+    <label>Create Renewal Benefit Order</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Opportunity__c</field>
+                <uiBehavior>Required</uiBehavior>
+            </quickActionLayoutItems>
+        </quickActionLayoutColumns>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <targetObject>Benefit_Order__c</targetObject>
+    <targetParentField>Opportunity__c</targetParentField>
+    <targetRecordType>Benefit_Order__c.Renewal</targetRecordType>
+    <type>Create</type>
+</QuickAction>

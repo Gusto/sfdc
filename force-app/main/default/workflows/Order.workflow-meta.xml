@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Notify_Advocate_Facilitator</fullName>
+        <description>Notify Advocate &amp; Facilitator</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <recipients>
+            <field>Data_Entry_Assist__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notify_Advocate_and_Facilitator</template>
+    </alerts>
+    <alerts>
+        <fullName>Notify_New_Order_Owner</fullName>
+        <description>Notify New Order Owner</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Notify_Order_Owner</template>
+    </alerts>
+    <alerts>
+        <fullName>PT_Order_Approval_Notification</fullName>
+        <description>PT Order Approval Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Approval_Submitted_By__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notification_on_Order_Approval</template>
+    </alerts>
+    <alerts>
+        <fullName>PT_Order_Rejection_Notification</fullName>
+        <description>PT Order Rejection Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Approval_Submitted_By__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notification_on_Order_Rejection</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Order_Advocate_Assignment_Failure_Notification</fullName>
+        <description>Payroll Transfer Order Advocate Assignment Failure Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>diego.long@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Order_Advocate_Assignment_Failure_Message</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfer_Order_Assignment_Failure_Notification</fullName>
+        <description>Payroll Transfer Order Assignment Failure Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>Payroll_Transfer_Fulfillment</recipient>
+            <type>role</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Auto_Responses/Notify_Order_Owner</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Transfers_Ticket_Creation_Notification</fullName>
+        <description>Payroll Transfers Ticket Creation Notification</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notify_Order_Owner_on_Ticket_Creation</template>
+    </alerts>
+    <alerts>
+        <fullName>Payroll_Trasnfer_Order_Facilitator_Assignment_Email_Alert</fullName>
+        <description>Payroll Trasnfer: Order Facilitator Assignment Email Alert</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Data_Entry_Assist__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>no-reply@gusto.com</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>Payroll_Transfers_Auto_Emails/Notify_Facilitator_on_assignment</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Update_Order_Approval</fullName>
+        <field>Order_Submitted__c</field>
+        <literalValue>0</literalValue>
+        <name>Update Order Approval</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Order_Rejection</fullName>
+        <field>Order_Submitted__c</field>
+        <literalValue>0</literalValue>
+        <name>Update Order Rejection</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Order_Status_to_Collecting_Docs</fullName>
+        <description>Used to update Order Status post approval.</description>
+        <field>Status</field>
+        <literalValue>Collecting Documents</literalValue>
+        <name>Update Order Status to Collecting Docs</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Order_Status_to_Sales_Follow_Up</fullName>
+        <description>Used to update Order Status post rejection.</description>
+        <field>Status</field>
+        <literalValue>Sales Follow-up</literalValue>
+        <name>Update Order Status to Sales Follow-Up</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Order_Submission</fullName>
+        <field>Order_Submitted__c</field>
+        <literalValue>1</literalValue>
+        <name>Update Order Submission</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Order_Submitted_Date</fullName>
+        <description>Updates the date time field when order status changes to Sales Submitted</description>
+        <field>Order_Submitted_Date__c</field>
+        <formula>NOW()</formula>
+        <name>Update Order Submitted Date</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <tasks>
+        <fullName>Approve_2_day</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>-5</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Approve 2-day</subject>
+    </tasks>
+    <tasks>
+        <fullName>Approve_4_day</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>-7</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Approve 4-day</subject>
+    </tasks>
+    <tasks>
+        <fullName>Approve_account</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>-5</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Approve account</subject>
+    </tasks>
+    <tasks>
+        <fullName>Assign_specialist</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>1</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.EffectiveDate</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Assign specialist</subject>
+    </tasks>
+    <tasks>
+        <fullName>Assists_with_final_onboarding_steps_8_10</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>-5</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Assists with final onboarding (steps 8-10)</subject>
+    </tasks>
+    <tasks>
+        <fullName>Consultant_QA_Paystub_Info</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>-6</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>QA Paystub Info</subject>
+    </tasks>
+    <tasks>
+        <fullName>Enter_company_info_steps_1_3_6</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>1</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.EffectiveDate</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Enter company info (steps 1 &amp; 3-6)</subject>
+    </tasks>
+    <tasks>
+        <fullName>Run_payroll</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Consultant</description>
+        <dueDateOffset>-4</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Run payroll</subject>
+    </tasks>
+    <tasks>
+        <fullName>Specialist_Enter_employee_information</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Specialist</description>
+        <dueDateOffset>-9</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Enter employee information</subject>
+    </tasks>
+    <tasks>
+        <fullName>Specialist_Enter_paystub_information</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Specialist</description>
+        <dueDateOffset>-7</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Enter paystub information</subject>
+    </tasks>
+    <tasks>
+        <fullName>Specialist_QA_EE_Info</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Specialist</description>
+        <dueDateOffset>-9</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>QA EE Info</subject>
+    </tasks>
+    <tasks>
+        <fullName>Specialist_QA_paystub_info</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Specialist</description>
+        <dueDateOffset>-7</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>QA Paystub info</subject>
+    </tasks>
+    <tasks>
+        <fullName>Specialist_Upload_Company_Documents</fullName>
+        <assignedToType>owner</assignedToType>
+        <description>Assigned to: Specialist</description>
+        <dueDateOffset>-7</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <offsetFromField>Order.Requested_Pay_Date__c</offsetFromField>
+        <priority>Normal</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Upload Company Documents</subject>
+    </tasks>
+</Workflow>

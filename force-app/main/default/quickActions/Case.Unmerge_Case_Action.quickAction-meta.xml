@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldOverrides>
+        <field>Closed_Reason__c</field>
+        <formula>&apos;-&apos;</formula>
+        <literalValue>Merged Duplicate</literalValue>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Status</field>
+        <literalValue>Open</literalValue>
+    </fieldOverrides>
+    <label>Unmerge Case (Action)</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns/>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <successMessage>Case succesfully unmerged</successMessage>
+    <type>Update</type>
+</QuickAction>
