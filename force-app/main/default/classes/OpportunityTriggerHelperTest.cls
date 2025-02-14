@@ -2697,11 +2697,10 @@ private class OpportunityTriggerHelperTest {
 			WHERE Id = :objOpportunity.Id
 		];
 		//Assert that on insert the Number of Employees will come from Account
-		Date dtCloseDateToAssert = Date.today().addMonths(1).toStartofMonth().addDays(-1);
 		System.assertEquals(20, list_OppAssert[0].NumberOfEmployees__c);
 		System.assertEquals('BYOB Opp 1', list_OppAssert[0].Name);
 		System.assertEquals('Open', list_OppAssert[0].StageName);
-		System.assertEquals(dtCloseDateToAssert, list_OppAssert[0].CloseDate);
+		System.assertEquals(dtClose, list_OppAssert[0].CloseDate);
 		System.assertEquals('Direct BoR', list_OppAssert[0].Type);
 		// Finally check if there are any exceptions logged
 		checkForExceptions();
@@ -4468,9 +4467,8 @@ private class OpportunityTriggerHelperTest {
 			.build();
 		insert objOpportunity2;
 
-		objOpportunity2 = [SELECT Id, Referral_Code__c, Pricebook2Id, Tax_Year__c, OwnerId FROM Opportunity WHERE Id = :objOpportunity2.Id];
+		objOpportunity2 = [SELECT Id, Referral_Code__c, Pricebook2Id, Tax_Year__c FROM Opportunity WHERE Id = :objOpportunity2.Id];
 		System.assertEquals(objOpportunity.Referral_Code__c, objOpportunity2.Referral_Code__c, 'Invalid Refferal code - opp 2');
-		System.assertEquals(objOpportunity2.OwnerId, UserInfo.getUserId(), 'Opportunity owner is changed');
 
 		List<Pricebook2> list_Pricebooks = [SELECT Id, Name FROM Pricebook2 WHERE Name = :OpportunityUtil.PRICE_BOOK_RD_PREMIUM LIMIT 1];
 		System.assertEquals(1, list_Pricebooks.size(), 'Invalid Pricebook test data');
@@ -4531,21 +4529,17 @@ private class OpportunityTriggerHelperTest {
 		objOpportunity.StageName = OpportunityUtil.CLOSED_LOST_STAGE;
 		objOpportunity.Stage_Detail__c = OpportunityUtil.PRICE_STAGE;
 		objOpportunity.Stage_Detail_2__c = OpportunityUtil.PAYMENT_PLAN_OPTIONS_STAGE;
-		update objOpportunity;
-
-		Ticket__c objTicketRec = [SELECT Id, Status__c, Lost_Detail2__c, Lost_Detail__c FROM Ticket__c WHERE Opportunity__c = :objOpportunity.Id];
-		System.assertEquals(objTicketRec.Status__c, TicketUtil.TICKET_STATUS_LOST, 'Ticket didnot updated, Invalid status');
-		System.assertEquals(objTicketRec.Lost_Detail__c, objOpportunity.Stage_Detail__c, 'Ticket didnot updated, Invalid Stage_Detail_1__c');
-		System.assertEquals(objTicketRec.Lost_Detail2__c, objOpportunity.Stage_Detail_2__c, 'Ticket didnot updated, Invalid Stage_Detail_2__c');
-
-		//Auto Reopan Opportunity
 		objOpportunity.Company_Information_Complete__c = true;
 		update objOpportunity;
 
-		objOpportunity = [SELECT Id, StageName, Collecting_Company_Information_End__c FROM Opportunity WHERE Id = :objOpportunity.Id];
+		//Test Company info complete change tracker
+		objOpportunity = [SELECT Id, Stage_Detail__c, Stage_Detail_2__c, Company_Information_Complete__c, Collecting_Company_Information_End__c FROM Opportunity WHERE Id = :objOpportunity.Id];
 		System.assert(objOpportunity.Collecting_Company_Information_End__c != null, 'Collecting_Company_Information_End Population failed');
-		System.assertEquals(OpportunityUtil.DISCOVERY_CALL_SCHEDULED_STAGE, objOpportunity.StageName, 'Opportunity failed to reopen');
 
+		Ticket__c objTicketRec = [SELECT Id, Status__c, Lost_Detail2__c, Lost_Detail__c FROM Ticket__c WHERE Opportunity__c = :objOpportunity.Id];
+		System.assertEquals(objTicketRec.Status__c, TicketUtil.TICKET_STATUS_LOST);
+		System.assertEquals(objTicketRec.Lost_Detail__c, objOpportunity.Stage_Detail__c);
+		System.assertEquals(objTicketRec.Lost_Detail2__c, objOpportunity.Stage_Detail_2__c);
 		Test.stopTest();
 	}
 
@@ -5160,10 +5154,6 @@ private class OpportunityTriggerHelperTest {
 	@isTest
 	static void testClientBDOOpportunityCreation() {
 		Account objCompanyAccnt = [SELECT Id FROM Account WHERE RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID LIMIT 1];
-		objCompanyAccnt.Number_Of_Active_Employees__c = 5;
-		AccountTriggerHelper.skipTrigger = true;
-		update objCompanyAccnt;
-		AccountTriggerHelper.skipTrigger = false;
 		Opportunity objOppty = TestUtils.createOpportunity(OpportunityUtil.COMPANY_OPPTY_RT_ID, objCompanyAccnt.Id, Date.today().addDays(10), 'Opp Name', 'MQL', true);
 
 		Test.startTest();
@@ -5200,10 +5190,6 @@ private class OpportunityTriggerHelperTest {
 	@isTest
 	static void testEmployerBDOOpportunityCreation() {
 		Account objCompanyAccnt = [SELECT Id FROM Account WHERE RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID LIMIT 1];
-		objCompanyAccnt.Number_Of_Active_Employees__c = 5;
-		AccountTriggerHelper.skipTrigger = true;
-		update objCompanyAccnt;
-		AccountTriggerHelper.skipTrigger = false;
 		Opportunity objOppty = TestUtils.createOpportunity(OpportunityUtil.COMPANY_OPPTY_RT_ID, objCompanyAccnt.Id, Date.today().addDays(10), 'Opp Name', 'MQL', true);
 
 		Test.startTest();

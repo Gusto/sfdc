@@ -245,7 +245,7 @@ public class TicketTriggerHelper {
 
 		if (!set_COrderIds.isEmpty()) {
 			for (Carrier_Order__c objCarrierOrder : [
-				SELECT Id, OwnerId, Owner.Name,TAdA__c
+				SELECT Id, OwnerId, Owner.Name
 				FROM Carrier_Order__c
 				WHERE ID IN :set_COrderIds AND Implementation_Stage__c NOT IN :CarrierOrderUtil.set_EarlySubmissionImplementationStages
 			]) {
@@ -391,7 +391,7 @@ public class TicketTriggerHelper {
 				Coverage_Effective_Year__c,
 				Account__r.Priority_Support__c,
 				(
-					SELECT Id, Implementation_Stage__c, Benefit_Order__c, TAdA__c
+					SELECT Id, Implementation_Stage__c, Benefit_Order__c
 					FROM Carrier_Orders__r
 					WHERE
 						RecordtypeId != NULL
@@ -594,7 +594,7 @@ public class TicketTriggerHelper {
 					OwnerId,
 					UW_Owner__c,
 					(
-						SELECT Id, Implementation_Stage__c, Carrier__c, Order_Type__c, OwnerId, TAdA__c
+						SELECT Id, Implementation_Stage__c, Carrier__c, Order_Type__c, OwnerId
 						FROM Carrier_Orders__r
 						WHERE
 							Order_Type__c != :TicketUtil.TERMINATED_ORDER
@@ -628,8 +628,7 @@ public class TicketTriggerHelper {
 					Carrier__c,
 					Follow_Up_Date__c,
 					OwnerId,
-					Benefit_Order__r.UW_Owner__c,
-					TAdA__c
+					Benefit_Order__r.UW_Owner__c
 				FROM Carrier_Order__c
 				WHERE Id IN :set_CarrierOrderIds AND Implementation_Stage__c NOT IN :CarrierOrderUtil.set_EarlySubmissionImplementationStages
 			]) {
@@ -642,7 +641,7 @@ public class TicketTriggerHelper {
 			}
 			if (!set_COIdMultiEIN.isEmpty()) {
 				lst_MultiEINCO = [
-					SELECT Id, Parent_Carrier_Order__c, Carrier__c, Implementation_Stage__c, OwnerId, TAdA__c
+					SELECT Id, Parent_Carrier_Order__c, Carrier__c, Implementation_Stage__c, OwnerId
 					FROM Carrier_Order__c
 					WHERE Parent_Carrier_Order__c IN :set_COIdMultiEIN AND Is_Multi_EIN__c = TRUE AND Implementation_Stage__c NOT IN :CarrierOrderUtil.set_EarlySubmissionImplementationStages
 				];
@@ -933,9 +932,48 @@ public class TicketTriggerHelper {
 		if (!map_objBenefitOrdersToUpdate.isEmpty()) {
 			update map_objBenefitOrdersToUpdate.values();
 		}
+		if(!map_objCarrierOrdersToUpdate.isEmpty()){
+			Map<Id, Carrier_Order__c> map_COToUpdate = new Map<Id, Carrier_Order__c>();	
+			Set<Id> set_CarrierOrderTasksIds = new Set<Id>();
+			Map<Id, List<Task>> map_OpenTasks = new Map<Id, List<Task>>();
+			for (Carrier_Order__c objCo : map_objCarrierOrdersToUpdate.values()) {
+				 if(objCo.Implementation_Stage__c == CarrierOrderUtil.CO_STATUS_APPROVED || objCo.Implementation_Stage__c == CarrierOrderUtil.CO_STATUS_APPROVED_PENDING_EE_AUDIT){
+					set_CarrierOrderTasksIds.add(objCo.Id);
+				 }
+			}
 
-		if (!map_objCarrierOrdersToUpdate.isEmpty()) {
-			update map_objCarrierOrdersToUpdate.values();
+			if (!set_CarrierOrderTasksIds.isEmpty()) {
+				
+		
+				for (Task objTask :  [
+					SELECT Id, Status, WhatId 
+					FROM Task 
+					WHERE WhatId IN :set_CarrierOrderTasksIds AND Status != 'Completed'
+				]) {
+					if (!map_OpenTasks.isEmpty() || !map_OpenTasks.containsKey(objTask.WhatId)) {
+						map_OpenTasks.get(objTask.WhatId).add(objTask);
+					}
+				}
+
+			}
+			if(!map_OpenTasks.isEmpty()){
+				for (Ticket__c objTicket : list_objTickets) {
+					if (objTicket.Carrier_Order__c != null && map_objCarrierOrdersToUpdate.containsKey(objTicket.Carrier_Order__c) && map_OpenTasks.containsKey(objTicket.Carrier_Order__c)) {
+						objTicket.addError(TicketUtil.ERR_CARRIER_ORDER_HAS_OPEN_TASK);
+					}
+				}
+				for (Carrier_Order__c objCo : map_objCarrierOrdersToUpdate.values()) {
+					if(!map_OpenTasks.containsKey(objCo.Id)){
+						map_COToUpdate.put(objCo.Id,objCo);
+					}
+			   }
+			}else{
+				map_COToUpdate = map_objCarrierOrdersToUpdate;
+			}
+
+			if(!map_COToUpdate.isEmpty()){
+				update map_COToUpdate.values();
+			}			
 		}
 		CaseTriggerHelper.skipTrigger = false;
 	}
@@ -1086,7 +1124,7 @@ public class TicketTriggerHelper {
 		Map<Id, List<Carrier_Order__c>> map_BOWithCOs = new Map<Id, List<Carrier_Order__c>>();
 		List<Carrier_Order__c> list_COs = new List<Carrier_Order__c>();
 		for (Carrier_Order__c objCO : [
-			SELECT Id, Implementation_Stage__c, Carrier__c, Order_Type__c, OwnerId, Benefit_Order__c, TAdA__c
+			SELECT Id, Implementation_Stage__c, Carrier__c, Order_Type__c, OwnerId, Benefit_Order__c
 			FROM Carrier_Order__c
 			WHERE
 				Benefit_Order__c IN :map_BOFulfilled.keySet()
@@ -1230,7 +1268,6 @@ public class TicketTriggerHelper {
 
 			if (
 				objTicket.Opportunity__c != null &&
-				objTicket.Opportunity_Stage__c == OpportunityUtil.CLOSED_LOST_STAGE &&
 				objTicket.RecordTypeId == TicketUtil.ARDIUS_TICKET_RT_ID &&
 				objTicket.Status__c != TicketUtil.TICKET_STATUS_CLOSED &&
 				(objOldTicket == null || (objTicket.Status__c != objOldTicket.Status__c && objOldTicket.Status__c == TicketUtil.TICKET_STATUS_LOST))
@@ -1334,6 +1371,10 @@ public class TicketTriggerHelper {
 				}
 			}
 
+			if (map_OldTickets != null && (objTicket.Status__c != map_OldTickets?.get(objTicket.Id).Status__c) && objTicket.Status__c == TicketUtil.TICKET_STATUS_CALC_APPROVAL_PENDING) {
+				setTaskIdentifiers.add(TaskUtil.TASK_FEATURE_REQUEST);
+			}
+
 			Map<String, String> map_OverrideTaskFields = new Map<String, String>{ TicketUtil.TASK_FIELD_PRIORITY => objTicket.Task_Priority__c };
 			for (String strTemplateIdentifier : setTaskIdentifiers) {
 				list_TaskTemplateTypes.add(new TaskTemplateUtil.TemplateType(objTicket.Id, TicketUtil.ARDIUS_TICKET_TEMPLATE, strTemplateIdentifier, map_OverrideTaskFields));
@@ -1413,8 +1454,7 @@ public class TicketTriggerHelper {
 
 		if (objOldTicket != null) {
 			if (
-				(objTicket.Status__c == TicketUtil.TICKET_STATUS_INPROGRESS ||
-				objTicket.Status__c == TicketUtil.TICKET_STATUS_IN_PROGRESS) &&
+				objTicket.Status__c == TicketUtil.TICKET_STATUS_INPROGRESS &&
 				objOldTicket.Status__c == TicketUtil.TICKET_STATUS_NEW &&
 				objTicket.Status__c != objOldTicket.Status__c &&
 				(objTicket.RecordTypeId == TicketUtil.BENEFITS_COMPLIANCE_TICKET_RT_ID ||
@@ -1859,7 +1899,7 @@ public class TicketTriggerHelper {
 				List<Carrier_Order__c> list_COs = new List<Carrier_Order__c>();
 				Boolean blnNoTicketForCOOwner = true;
 				for (Carrier_Order__c objCO : [
-					SELECT Id, OwnerId, Ticket_Action_Required__c,TAdA__c, (SELECT Id, OwnerId FROM Tickets__r WHERE Status__c != :strClosedStatus)
+					SELECT Id, OwnerId, Ticket_Action_Required__c, (SELECT Id, OwnerId FROM Tickets__r WHERE Status__c != :strClosedStatus)
 					FROM Carrier_Order__c
 					WHERE Id IN :set_COIds
 				]) {
@@ -1911,9 +1951,9 @@ public class TicketTriggerHelper {
 		//Reopen opportunity if ticket is created or related ticket status changed from 'lost' to any other open status
 		for (Id idOppty : set_OpptyIdsToReOpen) {
 			if (map_OpportunitiesToUpdate.containsKey(idOppty)) {
-				map_OpportunitiesToUpdate.get(idOppty).StageName = OpportunityUtil.DISCOVERY_CALL_SCHEDULED_STAGE;
+				map_OpportunitiesToUpdate.get(idOppty).StageName = OpportunityUtil.NEW_STAGE;
 			} else {
-				map_OpportunitiesToUpdate.put(idOppty, new Opportunity(Id = idOppty, StageName = OpportunityUtil.DISCOVERY_CALL_SCHEDULED_STAGE));
+				map_OpportunitiesToUpdate.put(idOppty, new Opportunity(Id = idOppty, StageName = OpportunityUtil.NEW_STAGE));
 			}
 		}
 
@@ -1933,7 +1973,7 @@ public class TicketTriggerHelper {
 				OpportunityTriggerHelper.skipTrigger = false;
 			}
 		} catch (Exception objExp) {
-			ExceptionLogUtil.logException('TicketTriggerHelper', 'updateRelatedOpportunity', objExp.getMessage(), objExp.getStackTraceString());
+			ExceptionLogUtil.logException('TicketTriggerHelper', 'updateOpportunityToClosedWon', objExp.getMessage(), objExp.getStackTraceString());
 		}
 		set_OpptyIdsToClosedWon.clear();
 		set_OpptyIdsToReOpen.clear();

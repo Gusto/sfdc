@@ -26,7 +26,7 @@ class UpdateCarrierPlayInfoCtrlTest {
 		List<Carrier__c> list_Carriers = new List<Carrier__c>{
 			new TestDataFactory.CarrierBuilder().setName('Test Care California').setUniqueName('Test Care').setState('CA').setId('CarrierId1').build(),
 			new TestDataFactory.CarrierBuilder().setName('Test Care New York').setUniqueName('Test Care').setState('NY').setId('CarrierId2').build(),
-			new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setState('NY;TX;CA,MO').setId('CarrierId3').setPartnerType('TAdA').build()
+			new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setState('NY;TX;CA,MO').setId('CarrierId3').build()
 		};
 		insert list_Carriers;
 	}

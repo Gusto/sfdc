@@ -11,9 +11,23 @@
                         </valueListItems>
                         <valueListItems>
                             <value>CustomButton.Ticket__c.ER_Outreach</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!$Permission.CustomPermission.Benefits_Fulfillment_Team}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>true</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>CustomButton.Ticket__c.Ready_For_PI_Submission</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Escalation_Reason__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Pending Items</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>ChangeOwnerOne</value>
@@ -180,16 +194,6 @@
                 <identifier>RecordDescription_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Ready_for_Submission_Comments__c</fieldItem>
-                <identifier>RecordReady_for_Submission_Comments_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
         <name>Facet-4e5faff6-4ea1-44a8-a31f-efa663181dd7</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -200,8 +204,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ER_Outreach_Comments__c</fieldItem>
-                <identifier>RecordER_Outreach_Comments_cField</identifier>
+                <fieldItem>Record.Ready_for_Submission_Comments__c</fieldItem>
+                <identifier>RecordReady_for_Submission_Comments_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-3cbe5429-f203-4046-bd09-c4f34201fd71</name>
@@ -229,6 +233,160 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-416ee918-ebf7-4de1-bd6b-437e56fca4dd</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Renewal_Date__c</fieldItem>
+                <identifier>RecordRenewal_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Requires_License__c</fieldItem>
+                <identifier>RecordRequires_License_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Complexity__c</fieldItem>
+                <identifier>RecordComplexity_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-c0696271-a83b-438f-ac9e-42a6f773aa10</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Fulfillment_Case__c</fieldItem>
+                <identifier>RecordFulfillment_Case_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Recert_Status__c</fieldItem>
+                <identifier>RecordRecert_Status_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-f2c68837-40a0-48d6-9ed9-5800a9678745</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-c0696271-a83b-438f-ac9e-42a6f773aa10</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column13</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-f2c68837-40a0-48d6-9ed9-5800a9678745</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column14</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-fdfe294f-f335-4408-a44c-345f6139cab8</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ER_Outreach_Date__c</fieldItem>
+                <identifier>RecordER_Outreach_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ER_Outreach_Comments__c</fieldItem>
+                <identifier>RecordER_Outreach_Comments_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-440d5e08-59af-43d5-a521-15c56500bbb0</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ER_Outreach_Count__c</fieldItem>
+                <identifier>RecordER_Outreach_Count_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.PI_Submission_Date__c</fieldItem>
+                <identifier>RecordPI_Submission_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-f5238330-0820-418b-9f7f-e37d370375d6</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-440d5e08-59af-43d5-a521-15c56500bbb0</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column11</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-f5238330-0820-418b-9f7f-e37d370375d6</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column12</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-6dfcd552-74cf-429d-8fbb-4256532cba72</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -304,6 +462,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Carrier_Order__c</fieldItem>
                 <identifier>RecordCarrier_Order_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.States__c</fieldItem>
+                <identifier>RecordStates_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-d42fe914-aeef-4887-93a4-d911a862f197</name>
@@ -390,10 +558,20 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.CreatedById</fieldItem>
+                <identifier>RecordCreatedByIdField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ER_Outreach_Date__c</fieldItem>
-                <identifier>RecordER_Outreach_Date_cField</identifier>
+                <fieldItem>Record.Ticket_Status_Change_Date__c</fieldItem>
+                <identifier>RecordTicket_Status_Change_Date_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -403,7 +581,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.PI_Submission_Date__c</fieldItem>
-                <identifier>RecordPI_Submission_Date_cField</identifier>
+                <identifier>RecordPI_Submission_Date_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -414,6 +592,30 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.RecordTypeId</fieldItem>
                 <identifier>RecordRecordTypeIdField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-7e309edb-e0d9-400f-8380-d189e612f533</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.LastModifiedById</fieldItem>
+                <identifier>RecordLastModifiedByIdField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Coverage_Effective_Date__c</fieldItem>
+                <identifier>RecordCoverage_Effective_Date_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -434,60 +636,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Close_Date__c</fieldItem>
                 <identifier>RecordClose_Date_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-7e309edb-e0d9-400f-8380-d189e612f533</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ER_Outreach_Count__c</fieldItem>
-                <identifier>RecordER_Outreach_Count_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.CreatedById</fieldItem>
-                <identifier>RecordCreatedByIdField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Coverage_Effective_Date__c</fieldItem>
-                <identifier>RecordCoverage_Effective_Date_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Ticket_Status_Change_Date__c</fieldItem>
-                <identifier>RecordTicket_Status_Change_Date_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.LastModifiedById</fieldItem>
-                <identifier>RecordLastModifiedByIdField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-0e26cd5f-df6a-4ca9-bfa0-ba0eded900f3</name>
@@ -552,6 +700,55 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>Facet-fdfe294f-f335-4408-a44c-345f6139cab8</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Advising Details</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection7</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 OR 2</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.RecordType.Name}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Advising Fulfillment</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.RecordType.Name}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Advising Fulfillment Care</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>Facet-6dfcd552-74cf-429d-8fbb-4256532cba72</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>ER Outreach</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection6</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -809,6 +1006,32 @@
                 </componentInstanceProperties>
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Ticket__c.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>S3_Files__r</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-f4181daa-ff13-4bb3-89f3-2b6814713d52</name>

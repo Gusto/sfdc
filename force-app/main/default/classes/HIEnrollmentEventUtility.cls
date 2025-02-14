@@ -72,7 +72,7 @@ public class HIEnrollmentEventUtility {
 	public static final String STATE_CARRIER_KEY_MISSING = 'State Carrier Key: field value is missing in the record.';
 	public static final String EXCEPTION_WHILE_PROCESSING = 'An exception occurred while processing the event';
 	public static final String SUCCESS_MESSAGE = 'Data successfully Processed';
-	public static final String TAdA_INFO_MISSING = 'Tada Info is missing.';
+	public static final String ALEGEUS_INFO_MISSING = 'Alegeus Info is missing.';
 	public static final String FSA_HSA_MISSING = 'Both FSA and HSA information are missing.';
 	public static final String EMPLOYEE_DOES_NOT_EXIST = 'Employee record does not exist.';
 	public static final String BENEFIT_ITEM_MISSING = 'Benefit Item is missing in the record.';
@@ -113,11 +113,11 @@ public class HIEnrollmentEventUtility {
 
 	public static final String CASE_TYPE_CANCELLATION = 'Cancellation';
 
-	public static final String TAdA_BENEFIT_TYPE_HSA = 'hsa';
-	public static final String TAdA_BENEFIT_TYPE_FSA = 'fsa';
-	public static final String TAdA_BENEFIT_TYPE_DCA = 'dca';
-	public static final String TAdA_FULFILLMENT_TYPE_HSA = 'HSA Enrollment';
-	public static final String TAdA_FULFILLMENT_TYPE_FSA_DCA = 'FSA/DCA Enrollment';
+	public static final String ALEGEUS_BENEFIT_TYPE_HSA = 'hsa';
+	public static final String ALEGEUS_BENEFIT_TYPE_FSA = 'fsa';
+	public static final String ALEGEUS_BENEFIT_TYPE_DCA = 'dca';
+	public static final String ALEGEUS_FULFILLMENT_TYPE_HSA = 'HSA Enrollment';
+	public static final String ALEGEUS_FULFILLMENT_TYPE_FSA_DCA = 'FSA/DCA Enrollment';
 
 	public static final Set<String> set_UnsubmittedCaseStatuses = new Set<String>{ CASE_STATUS_NEW, CASE_STATUS_DRAFT, CASE_STATUS_HOLD };
 
@@ -160,6 +160,7 @@ public class HIEnrollmentEventUtility {
 
 	public static final String PAYROLL_SUSPENSION_AUDIT_DESCRIPTION = 'Please make at least 3 attempts to reach all Full Access admins on this group’s Gusto account, and give them adequate time to respond to our request. This will help ensure we offboard this group’s benefits in a compliant manner. For more information on how to process this, see the following Wiki article on Payroll Suspension Audits. https://confluence.gustocorp.com/pages/viewpage.action?spaceKey=hitops&title=Payroll+Suspension+Audit';
 
+	public static final String CARRIER_NAME_ALEGEUS = 'alegeus';
 	public static final String SUBMITTED_CASE_MESSAGE = 'This employee has made changes to their benefits. Please refer to hippo to confirm this EE\'s selections. If the EE no longer has benefits with this Carrier, send a termination';
 
 	public static final Set<String> set_UnsubmittedCaseStatusesForEmpUpdates = new Set<String>{ CASE_STATUS_NEW, CASE_STATUS_DRAFT, CASE_STATUS_PENDING, CASE_STATUS_HOLD };
@@ -573,6 +574,7 @@ public class HIEnrollmentEventUtility {
 		String strUUID,
 		String strBenefitTypeUIValue,
 		String strBenefitType,
+		Boolean blnAlegeus,
 		String strEventId,
 		Database.DMLOptions objDMLOption
 	) {
@@ -811,7 +813,7 @@ public class HIEnrollmentEventUtility {
 	public static Map<String, MF_Audit_Descriptions__mdt> getMFAuditDescrptions() {
 		Map<String, MF_Audit_Descriptions__mdt> map_MFAuditDescriptions = new Map<String, MF_Audit_Descriptions__mdt>();
 
-		for (MF_Audit_Descriptions__mdt objMFAudit : [SELECT Audit_Type__c, Description__c, Relative_Object__c, Parent_Cases__c, TAdA_Type__c, Audit_Payload__c FROM MF_Audit_Descriptions__mdt]) {
+		for (MF_Audit_Descriptions__mdt objMFAudit : [SELECT Audit_Type__c, Description__c, Relative_Object__c, Parent_Cases__c, Alegeus_Type__c, Audit_Payload__c FROM MF_Audit_Descriptions__mdt]) {
 			map_MFAuditDescriptions.put(objMFAudit.Audit_Type__c, objMFAudit);
 		}
 

@@ -13,7 +13,6 @@ export default class OmniSkillsBacklog extends LightningElement {
 	@track list_SelectedPillars = [];
 	@track list_SelectedSubPillars = [];
 	@track list_SelectedWFMQueues = [];
-	@track list_ChatButtons = [];
 	blnIsLoading = false;
 	blnDisableFilter = true;
 	blnDisableClear = true;
@@ -22,12 +21,10 @@ export default class OmniSkillsBacklog extends LightningElement {
 	strPriority = "";
 	strSortedBy = "";
 	strSortDirection = "";
-	strAgentId = "";
-	strChatButtonId = "";
 
 	columns = [
 		{
-			label: "Work Item",
+			label: "Case Number",
 			fieldName: "strCaseNumber",
 			type: "customColumn",
 			sortable: true,
@@ -41,23 +38,8 @@ export default class OmniSkillsBacklog extends LightningElement {
 		{ label: "Pillar", fieldName: "strPillar", sortable: true },
 		{ label: "Sub-Pillar", fieldName: "strSubPillar", sortable: true },
 		{ label: "WFM Queue Tag", fieldName: "strWFMQueue", sortable: true },
-		{ label: "Owner", fieldName: "strOwner" },
 		{ label: "Owner Active", fieldName: "strOwnerActive" },
 		{ label: "PE", fieldName: "strPE" },
-		{
-			label: "Requested Time",
-			fieldName: "dtmRequestedTime",
-			type: "date",
-			sortable: true,
-			typeAttributes: {
-				weekday: "short",
-				year: "numeric",
-				month: "short",
-				day: "2-digit",
-				hour: "2-digit",
-				minute: "2-digit"
-			}
-		},
 		{
 			label: "First Response Time",
 			fieldName: "dtmFirstResponse",
@@ -103,11 +85,6 @@ export default class OmniSkillsBacklog extends LightningElement {
 				label: wfmqueue,
 				value: wfmqueue
 			}));
-
-			this.list_ChatButtons = data.list_ChatButtons.map((chatbutton) => ({
-				label: chatbutton.MasterLabel,
-				value: chatbutton.Id
-			}));
 		} else if (error) {
 			console.error("Error fetching skills", error);
 		}
@@ -124,9 +101,7 @@ export default class OmniSkillsBacklog extends LightningElement {
 			list_SubPillars: this.list_SelectedSubPillars,
 			list_WFMQueues: this.list_SelectedWFMQueues,
 			strCaseNumber: this.strCaseNumber,
-			strPriority: this.strPriority,
-			strOwnerId: this.strAgentId,
-			strChatButtonId: this.strChatButtonId
+			strPriority: this.strPriority
 		})
 			.then((result) => {
 				let list_Temp = [];
@@ -227,16 +202,12 @@ export default class OmniSkillsBacklog extends LightningElement {
 		this.list_SelectedSubPillars = [];
 		this.list_SelectedWFMQueues = [];
 		this.strCaseNumber = "";
-		this.strAgentId = "";
 		this.strPriority = "";
 		this.list_FilteredData = this.list_MasterData;
 		this.intBacklogCount = this.list_FilteredData.length;
-		const recordPicker = this.template.querySelector('lightning-record-picker');
-		recordPicker.clearSelection();
 		this.blnDisableClear = true;
 		this.blnDisableFilter = true;
 		this.blnIsLoading = false;
-		this.strChatButtonId = "";
 	}
 
 	/**
@@ -267,30 +238,5 @@ export default class OmniSkillsBacklog extends LightningElement {
 			return isReverse * ((x > y) - (y > x));
 		});
 		return data;
-	}
-
-	get priorityOptions() {
-		return [
-			{ label: '0', value: '0' },
-			{ label: '1', value: '1' },
-			{ label: '2', value: '2' },
-			{ label: '3', value: '3' },
-			{ label: '4', value: '4' },
-			{ label: '5', value: '5' },
-			{ label: '6', value: '6' },
-			{ label: '7', value: '7' },
-			{ label: '8', value: '8' },
-			{ label: '9', value: '9' }
-		];
-	}
-
-	handleAgentChange(event) {
-		this.strAgentId = event.detail.recordId;
-		this.blnDisableFilter = false;
-	}
-
-	handleButtonChange(event) {
-		this.strChatButtonId = event.detail.value;
-		this.blnDisableFilter = false;
 	}
 }

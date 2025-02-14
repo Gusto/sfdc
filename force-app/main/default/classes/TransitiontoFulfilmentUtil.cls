@@ -5,6 +5,7 @@
 **/
 public class TransitiontoFulfilmentUtil {
 	public static final String CARRIER_NAME_BASIC = 'BASIC';
+	public static final String CARRIER_NAME_ALEGEUS = 'Alegeus';
 	public static final String CO_CANCELED_STAGE = 'Canceled';
 	public static final String CO_APPROVED_STAGE = 'Approved';
 	public static final String CO_ORDER_TYPE_NEW_TO_GUSTO = 'New to Gusto';

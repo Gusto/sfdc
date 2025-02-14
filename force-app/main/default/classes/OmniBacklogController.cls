@@ -5,8 +5,6 @@
 * @see         OmniBacklogControllerTest
 */
 public class OmniBacklogController {
-	public static final Schema.SObjectType TYPE_CASE = Case.SObjectType;
-	public static final Schema.SObjectType TYPE_CHAT = LiveChatTranscript.SObjectType;
 	/**
 	 * @author:         Ankit CS
 	 * @description:    Retrieve the list of Skills, Pillars, Sub-pillars and WFM queues
@@ -18,7 +16,6 @@ public class OmniBacklogController {
 		List<String> list_TempPillars = new List<String>();
 		List<String> list_TempSubPillars = new List<String>();
 		List<String> list_TempWFMQueues = new List<String>();
-		List<LiveChatButton> list_TempChatButtons = new List<LiveChatButton>();
 		List<String> list_SkillTypes = new List<String>{
 			'Specialization', 
 			'Engagement_Alert', 
@@ -29,10 +26,6 @@ public class OmniBacklogController {
 			'Team', 
 			'QA_Skill'
 		};
-		List<String> list_ExcludeChatButtons = new List<String>{
-			'NOT IN USE'
-		};
-
 		try {
 			for (Skill objSkill : [SELECT Id, DeveloperName, MasterLabel, Type.DeveloperName FROM Skill WHERE Type.DeveloperName IN :list_SkillTypes OR DeveloperName = 'Gusto_Global' ORDER BY Type.DeveloperName]) {
 				if (!objSkill.MasterLabel.contains('deprecated')) {
@@ -53,18 +46,11 @@ public class OmniBacklogController {
 					list_TempWFMQueues.add(objMapping.WFM_Queue_Tag__c);
 				}
 			}
-
-			for (LiveChatButton objChatButton : [SELECT Id, DeveloperName, MasterLabel, Queue.Name FROM LiveChatButton ORDER BY MasterLabel]) {
-				if (!list_ExcludeChatButtons.contains(objChatButton.MasterLabel) && !objChatButton.MasterLabel.containsIgnoreCase('test')) {
-					list_TempChatButtons.add(objChatButton);
-				}
-			}
 			
 			objWrapper.list_Skills = list_TempSkills;
 			objWrapper.list_Pillars = list_TempPillars;
 			objWrapper.list_SubPillars = list_TempSubPillars;
 			objWrapper.list_WFMQueues = list_TempWFMQueues;
-			objWrapper.list_ChatButtons = list_TempChatButtons;
 			return objWrapper;
 		} catch (Exception objException) {
 			ExceptionLogUtil.logException(
@@ -89,110 +75,50 @@ public class OmniBacklogController {
 	 * @return:         List<PendingRoutingWrapper> - List of PendingRoutingWrapper
 	*/
 	@AuraEnabled(cacheable=true)
-	public static List<PendingRoutingWrapper> getBacklogItems(
-		List<Id> list_SkillIds, 
-		List<String> list_Pillars, 
-		List<String> list_SubPillars, 
-		List<String> list_WFMQueues, 
-		String strCaseNumber, 
-		String strPriority, 
-		String strOwnerId,
-		String strChatButtonId
-	) {
+	public static List<PendingRoutingWrapper> getBacklogItems(List<Id> list_SkillIds, List<String> list_Pillars, List<String> list_SubPillars, List<String> list_WFMQueues, String strCaseNumber, String strPriority) {
 		List<PendingServiceRouting> list_PSRs;
 		List<PendingRoutingWrapper> list_Results = new List<PendingRoutingWrapper>();
 		Map<Id, User> map_UserById = new Map<Id, User>();
-		Map<Id, Case> map_CaseById = new Map<Id, Case>();
-		Map<Id, LiveChatTranscript> map_ChatById = new Map<Id, LiveChatTranscript>();
 		Set<Id> set_OwnerIds = new Set<Id>();
-		Set<Id> set_CaseIds = new Set<Id>();
-		Set<Id> set_ChatIds = new Set<Id>();
 		strCaseNumber = strCaseNumber.trim();
 		strPriority = strPriority.trim();
-		String strQuery = 'SELECT Id, WorkItemId, WorkItem.OwnerId, CreatedDate, RoutingPriority,'
+		String strQuery = 'SELECT Id, WorkItemId, CreatedDate, WorkItem.CaseNumber,'
+			+ 'WorkItem.First_Response_Time__c, WorkItem.Case_Pillar__c, WorkItem.Sub_Pillar__c,'
+			+ 'WorkItem.WFM_Queue_Tag__c, WorkItem.OwnerId, WorkItem.Owner.IsActive, RoutingPriority,'
 			+ '(SELECT Skill.MasterLabel, SkillLevel FROM SkillRequirements)'
-			+ 'FROM PendingServiceRouting ';
+			+ 'FROM PendingServiceRouting WHERE WorkItem.CaseNumber != null';
 		String strWhereClause = '';
 		if (!list_SkillIds.isEmpty()) {
-			strWhereClause += ' WHERE Id IN (SELECT RelatedRecordId FROM SkillRequirement WHERE SkillId = :list_SkillIds)';
+			strWhereClause += ' AND Id IN (SELECT RelatedRecordId  FROM SkillRequirement WHERE SkillId = :list_SkillIds)';
 		}
-
-		if (String.isNotBlank(strPriority)) {
-			Integer intPriority = Integer.valueOf(strPriority);
-			if (String.isBlank(strWhereClause)) {
-				strWhereClause += ' WHERE RoutingPriority = :intPriority';
-			} else {
-				strWhereClause += ' AND RoutingPriority = :intPriority';
-			}
-		}
-
-		strQuery += strWhereClause + ' ORDER BY CreatedDate';
-		list_PSRs = Database.query(strQuery);
-
-		for (PendingServiceRouting objPSR : list_PSRs) {
-			if (objPSR.WorkItemId.getSobjectType() == TYPE_CASE) {
-				set_CaseIds.add(objPSR.WorkItemId);
-			} else if (objPSR.WorkItemId.getSobjectType() == TYPE_CHAT) {
-				set_ChatIds.add(objPSR.WorkItemId);
-			}
-		}
-
-		strQuery = '';
-		strWhereClause = '';
-		strQuery = 'SELECT Id, CaseNumber, First_Response_Time__c, Case_Pillar__c, Sub_Pillar__c, WFM_Queue_Tag__c,'
-			+ ' OwnerId, Owner.IsActive, Owner.Name FROM Case WHERE Id IN :set_CaseIds ';
 		
 		if (!list_Pillars.isEmpty()) {
-			strWhereClause += ' AND Case_Pillar__c IN :list_Pillars';
+			strWhereClause += ' AND WorkItem.Case_Pillar__c IN :list_Pillars';
 		}
 		
 		if (!list_SubPillars.isEmpty()) {
-			strWhereClause += ' AND Sub_Pillar__c IN :list_SubPillars';
+			strWhereClause += ' AND WorkItem.Sub_Pillar__c IN :list_SubPillars';
 		}
 		
 		if (!list_WFMQueues.isEmpty()) {
-			strWhereClause += ' AND WFM_Queue_Tag__c IN :list_WFMQueues';
+			strWhereClause += ' AND WorkItem.WFM_Queue_Tag__c IN :list_WFMQueues';
 		}
 		
 		if (String.isNotBlank(strCaseNumber)) {
-			strWhereClause += ' AND CaseNumber = :strCaseNumber';
+			strWhereClause += ' AND WorkItem.CaseNumber = :strCaseNumber';
 		}
-
-		if (String.isNotBlank(strOwnerId)) {
-			strWhereClause += ' AND OwnerId = :strOwnerId';
-		}
-
-		strQuery += strWhereClause;
-		map_CaseById = new Map<Id, Case>((List<Case>)Database.query(strQuery));
-
-		for (Case objCase : map_CaseById.values()) {
-			if (String.valueOf(objCase.OwnerId).startsWith(CaseUtils.USER_ID_PREFIX)) {
-				set_OwnerIds.add(objCase.OwnerId);
-			}
-		}
-
-		strQuery = '';
-		strWhereClause = '';
-		strQuery = 'SELECT Id, Name, WFM_Queue_Tag__c, Owner.Name FROM LiveChatTranscript WHERE Id IN :set_ChatIds ';
 		
-		if (!list_WFMQueues.isEmpty()) {
-			strWhereClause += ' AND WFM_Queue_Tag__c IN :list_WFMQueues';
+		if (String.isNotBlank(strPriority)) {
+			Integer intPriority = Integer.valueOf(strPriority);
+			strWhereClause += ' AND RoutingPriority = :intPriority';
 		}
-
-		if (String.isNotBlank(strOwnerId)) {
-			strWhereClause += ' AND OwnerId = :strOwnerId';
-		}
-
-		if (String.isNotBlank(strChatButtonId)) {
-			strWhereClause += ' AND LiveChatButtonId = :strChatButtonId';
-		}
-
+		
 		strQuery += strWhereClause;
-		map_ChatById = new Map<Id, LiveChatTranscript>((List<LiveChatTranscript>)Database.query(strQuery));
-
-		for (LiveChatTranscript objChat : map_ChatById.values()) {
-			if (String.valueOf(objChat.OwnerId).startsWith(CaseUtils.USER_ID_PREFIX)) {
-				set_OwnerIds.add(objChat.OwnerId);
+		list_PSRs = Database.query(strQuery);
+		
+		for (PendingServiceRouting objPSR : list_PSRs) {
+			if (String.valueOf(objPSR.WorkItem.OwnerId).startsWith(CaseUtils.USER_ID_PREFIX)) {
+				set_OwnerIds.add(objPSR.WorkItem.OwnerId);
 			}
 		}
 		
@@ -201,34 +127,21 @@ public class OmniBacklogController {
 		}
 		
 		for (PendingServiceRouting objPSR : list_PSRs) {
-			if (!map_CaseById.containsKey(objPSR.WorkItemId) && !map_ChatById.containsKey(objPSR.WorkItemId)) {
-				continue;
-			}
-
 			PendingRoutingWrapper objWrapper = new PendingRoutingWrapper();
 			objWrapper.idCase = objPSR.WorkItemId;
+			objWrapper.dtmFirstResponse = objPSR.WorkItem.First_Response_Time__c;
+			objWrapper.strCaseNumber = objPSR.WorkItem.CaseNumber;
 			objWrapper.intPriority = Integer.valueOf(objPSR.RoutingPriority);
-			objWrapper.dtmRequestedTime = objPSR.CreatedDate;
+			objWrapper.strPillar = objPSR.WorkItem.Case_Pillar__c ;
+			objWrapper.strSubPillar = objPSR.WorkItem.Sub_Pillar__c;
+			objWrapper.strWFMQueue = objPSR.WorkItem.WFM_Queue_Tag__c;
 			if (map_UserById.containsKey(objPSR.WorkItem.OwnerId)) {
 				objWrapper.strOwnerActive = map_UserById.get(objPSR.WorkItem.OwnerId).IsActive
 					? 'Yes'
 					: 'No';
 				objWrapper.strPE = map_UserById.get(objPSR.WorkItem.OwnerId).PE__c;
 			}
-
-			if (objPSR.WorkItemId.getSobjectType() == TYPE_CASE && map_CaseById.containsKey(objPSR.WorkItemId)) {
-				objWrapper.dtmFirstResponse = map_CaseById.get(objPSR.WorkItemId).First_Response_Time__c;
-				objWrapper.strCaseNumber = map_CaseById.get(objPSR.WorkItemId).CaseNumber;
-				objWrapper.strPillar = map_CaseById.get(objPSR.WorkItemId).Case_Pillar__c ;
-				objWrapper.strSubPillar = map_CaseById.get(objPSR.WorkItemId).Sub_Pillar__c;
-				objWrapper.strWFMQueue = map_CaseById.get(objPSR.WorkItemId).WFM_Queue_Tag__c;
-				objWrapper.strOwner = map_CaseById.get(objPSR.WorkItemId).Owner.Name;
-			} else if (objPSR.WorkItemId.getSobjectType() == TYPE_CHAT && map_ChatById.containsKey(objPSR.WorkItemId)) {
-				objWrapper.strCaseNumber = map_ChatById.get(objPSR.WorkItemId).Name;
-				objWrapper.strWFMQueue = map_ChatById.get(objPSR.WorkItemId).WFM_Queue_Tag__c;
-				objWrapper.strOwner = map_ChatById.get(objPSR.WorkItemId).Owner.Name;
-			}
-
+			
 			objWrapper.skills = new List<String>();
 			for (SkillRequirement skillReq : objPSR.SkillRequirements) {
 				Integer intSkillLevel = skillReq.SkillLevel != null
@@ -254,12 +167,10 @@ public class OmniBacklogController {
 		@AuraEnabled public String strPillar;
 		@AuraEnabled public String strSubPillar;
 		@AuraEnabled public String strWFMQueue;
-		@AuraEnabled public String strOwner;
 		@AuraEnabled public DateTime dtmFirstResponse;
 		@AuraEnabled public String strOwnerActive;
 		@AuraEnabled public String strPE;
 		@AuraEnabled public List<String> skills;
-		@AuraEnabled public DateTime dtmRequestedTime;
 	}
 	
 	/**
@@ -272,6 +183,5 @@ public class OmniBacklogController {
 		@AuraEnabled public List<String> list_Pillars;
 		@AuraEnabled public List<String> list_SubPillars;
 		@AuraEnabled public List<String> list_WFMQueues;
-		@AuraEnabled public List<LiveChatButton> list_ChatButtons;
 	}
 }

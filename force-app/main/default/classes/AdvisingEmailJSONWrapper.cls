@@ -8,6 +8,12 @@ public class AdvisingEmailJSONWrapper {
   //Intro Email Nodes Start
   public String survey_completed_by;
   public Boolean tada_interest_from_survey;
+  public String alternate_recommendation_type;
+  public String default_renewal_rate_change;
+  public String alternate_package_savings;
+  public String default_cost_breakdown_pdf;
+  public String alternate_cost_breakdown_pdf;
+  public String alternate_package_carrier;
   public Benefit_Address benefit_address;
   public Boolean scorp;
   public class Benefit_Address {

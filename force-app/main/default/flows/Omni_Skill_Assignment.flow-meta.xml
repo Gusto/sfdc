@@ -55,22 +55,6 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_Auto_Solve_Status</name>
-        <label>Assign Auto-Solve Status</label>
-        <locationX>1007</locationX>
-        <locationY>3179</locationY>
-        <assignmentItems>
-            <assignToReference>updatableCase.Auto_Solve_Status__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>Eligible</stringValue>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Validate_Skill_Routing_Fields</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <description>To assign the value of Case In Route field before its get updated to false in this flow.</description>
         <name>Assign_Case_In_Route_value</name>
         <label>Assign Case In Route value</label>
@@ -84,7 +68,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Case_Re_routed</targetReference>
+            <targetReference>Validate_Skill_Routing_Fields</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -702,31 +686,6 @@
             <targetReference>Default_Routing_Team</targetReference>
         </connector>
     </assignments>
-    <decisions>
-        <name>Case_Re_routed</name>
-        <label>Case Re-routed?</label>
-        <locationX>1293</locationX>
-        <locationY>2747</locationY>
-        <defaultConnector>
-            <targetReference>Validate_Skill_Routing_Fields</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Re_route</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Case_In_Route__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_Forethought_Solve_Response</targetReference>
-            </connector>
-            <label>Re-route</label>
-        </rules>
-    </decisions>
     <decisions>
         <description>If Case Type is null populate this field with our default value of Payroll. 
 If Case Type is not one of the restricted picklist values for Engagement, Payroll Care, or benefits Care update the Case type to our Default value.</description>
@@ -1658,45 +1617,6 @@ If Case Type is not one of the restricted picklist values for Engagement, Payrol
         </rules>
     </decisions>
     <decisions>
-        <name>Valid_Auto_Solve_Response</name>
-        <label>Valid Auto-Solve Response</label>
-        <locationX>1139</locationX>
-        <locationY>3071</locationY>
-        <defaultConnector>
-            <targetReference>Validate_Skill_Routing_Fields</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Response_Exists</name>
-            <conditionLogic>(1 AND 2) OR 3</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Forethought_Solve_Response</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Get_Forethought_Solve_Response.forethought__EmailContentHTML__c</leftValueReference>
-                <operator>IsBlank</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Get_Internal_Solve_Response</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_Auto_Solve_Status</targetReference>
-            </connector>
-            <label>Response Exists</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Validate_Skill_Routing_Fields</name>
         <label>Validate Skill Routing Fields</label>
         <locationX>1293</locationX>
@@ -1741,30 +1661,6 @@ If Case Type is not one of the restricted picklist values for Engagement, Payrol
     </decisions>
     <description>PLEASE make changes on top of this version going forward
 
-- Added TAM case routing
-- Added Engagement Alert routing
-- Synced with V13 entry criteria to resolve purgatory cases
-- Added Case in Route assignment for reroute prioritization
-- Added exception for Send Auto Email Behavior as these cases will be in Awaiting Response - fixed v2
-- Used Custom setting to get Engagement Case Queue ID
-- Added all origins/channels 
-- Add OOS sub flow
-- Removed queue assignment
-- Updated case reason logic
-- Updated case record
-- Added Null Check for Routing Team
-- Change Trigger only on update
-- Adding Custom Setting references and expanding omni routing criteria
-- Added condition to allow awaiting response cases to route
-- Adding Prior User OOO and Inactive check and route case to Queue
-- Added CaseInRoute in entry criteria
-- Added TAM Routing and new criteria for TAM decision
-- Added Entry condition, if Case Type is Gusto Global, Case Status should not be Closed
-- Email Alert Routing to General Alert Skill
-- Added logic for a new cloned case routing
-- Confidential Project (new TAM use case)
-- Added logic for updating case with required fields only (SG)
-- Removed IsEscalated logic
 - Adding TAM User OOO and Inactive check and route case to TAM skills
 - Integrate with Solve
 - BTE-4006 - Route QA Eligible Cases to QA Queue via Omni - Updated Logic
@@ -1815,10 +1711,16 @@ NOT( CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Chann
         <name>strCaseOrigin</name>
         <dataType>String</dataType>
         <expression>IF(
-  (ISPICKVAL({!$Record.Origin}, &apos;Email&apos;) || {!$Record.Channel__c} = &apos;Email&apos;), 
+  (
+    ISPICKVAL({!$Record.Origin}, &apos;Email&apos;) || 
+    (ISPICKVAL({!$Record.Origin}, &apos;Gusto&apos;) &amp;&amp; {!$Record.Channel__c} = &apos;Email&apos;)
+  ), 
   &apos;Email&apos;, 
   IF(
-    (ISPICKVAL({!$Record.Origin}, &apos;Chat&apos;) || {!$Record.Channel__c} = &apos;Chat&apos;),
+    (
+     ISPICKVAL({!$Record.Origin}, &apos;Chat&apos;) || 
+     (ISPICKVAL({!$Record.Origin}, &apos;Gusto&apos;) &amp;&amp; {!$Record.Channel__c} = &apos;Chat&apos;)
+    ),
     &apos;Chat&apos;,
     &apos;&apos;
   )
@@ -1885,72 +1787,6 @@ NOT( CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Chann
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Case_Pillar_Mapping__c</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_Forethought_Solve_Response</name>
-        <label>Get Forethought Solve Response</label>
-        <locationX>1139</locationX>
-        <locationY>2855</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Get_Internal_Solve_Response</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>forethought__Case__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>forethought__EmailResponseName__c</field>
-            <operator>IsNull</operator>
-            <value>
-                <booleanValue>false</booleanValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>forethought__ForethoughtSolveEmailConversation__c</object>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>forethought__EmailContentHTML__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_Internal_Solve_Response</name>
-        <label>Get Internal Solve Response</label>
-        <locationX>1139</locationX>
-        <locationY>2963</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Valid_Auto_Solve_Response</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Case__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Valid_Request__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>valid_request</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Return_Response__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>True</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>InternalAISolveEmailConversation__c</object>
-        <queriedFields>Id</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>

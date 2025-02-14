@@ -952,11 +952,7 @@ public class CarrierOrderHelperFunctions {
 					}
 					if (map_OppIdToBO.containsKey(idOpp)) {
 						for (Policy__c objPolicy : map_OppIdToPolicy.get(idOpp)) {
-							if(objPolicy.Benefit_Type__c == CarrierOrderUtil.TADA_BEN_TYPE_HSA && map_BOIdVSOppId != null && !map_BOIdVSOppId.isEmpty() && 
-								map_OppIdVSQASheet != null && !map_OppIdVSQASheet.isEmpty() &&
-								map_BOIdVSOppId.containsKey(map_OppIdToBO.get(idOpp).Id) && 
-								map_OppIdVSQASheet.containsKey(map_BOIdVSOppId.get(map_OppIdToBO.get(idOpp).Id)) &&
-								String.isNotEmpty(map_OppIdVSQASheet.get(map_BOIdVSOppId.get(map_OppIdToBO.get(idOpp).Id)).Renewing_TAdAs__c) &&
+							if(objPolicy.Benefit_Type__c == CarrierOrderUtil.TADA_BEN_TYPE_HSA &&
 								map_OppIdVSQASheet.get(map_BOIdVSOppId.get(map_OppIdToBO.get(idOpp).Id)).Renewing_TAdAs__c.contains(CarrierOrderUtil.TADA_BEN_TYPE_HSA)){
 								continue;
 							}
@@ -1089,6 +1085,7 @@ public class CarrierOrderHelperFunctions {
 					}
 				}
 			}
+
 			if (list_COsToInsert.size() > 0) {
 				map<Id, list<Carrier_Order__c>> map_ParentCOs = new Map<Id, list<Carrier_Order__c>>();
 				if (map_ChildToParentBO != null && map_ChildToParentBO.size() > 0) {

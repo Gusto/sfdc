@@ -73,7 +73,7 @@
             <assignToReference>caseToCreate.Support_Level__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Tier 1</stringValue>
+                <elementReference>supportValue</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -259,6 +259,11 @@
         <name>subjectValue</name>
         <dataType>String</dataType>
         <expression>IF( {!Case_Purpose_1} = {!Benefits_Reversal}, {!reversalSubject}, &apos;&apos; )</expression>
+    </formulas>
+    <formulas>
+        <name>supportValue</name>
+        <dataType>String</dataType>
+        <expression>IF( {!Case_Purpose_1} = {!Benefits_Reversal}, &apos;Tier 2&apos;, &apos;Tier 1&apos; )</expression>
     </formulas>
     <formulas>
         <name>TeamValue</name>

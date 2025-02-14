@@ -127,10 +127,6 @@ public without sharing class CaseUtils {
 	public static final String AUTO_SOLVE_STATUS_ATTEMPTED = 'Attempted';
 	public static final String AUTO_SOLVE_STATUS_CUSTOMER_RESPONDED = 'Customer Responded';
 
-	//Intenral AI Processed values
-	public static final String INTERNAL_AI_PROCESSED_YES = 'Yes';
-	public static final String INTERNAL_AI_PROCESSED_NO = 'No';
-
 	//Company Size
 	public static final String COMPANY_SIZE_MICRO = 'Micro 0-4';
 
@@ -143,6 +139,7 @@ public without sharing class CaseUtils {
 	public static final String PRIORITY_HIGH = 'High';
 
 	//Case reasons
+	public static final String SPAM_CASE_REASON = 'Spam';
 	public static final String UNAUTHORIZED_USER_CASE_REASON = 'Unauthorized User';
 	public static final String BENEFIT_REVERSAL_CASE_REASON = 'Benefit Reversal';
 	public static final String MIDDESK_REGISTRATION = 'Middesk State Tax Registration';
@@ -170,10 +167,10 @@ public without sharing class CaseUtils {
 	public static String SMS_TEXT_FNAME_GUSTO = 'Gusto';
 	public static String SMS_TEXT_CASE_ID = '<<caseId>>';
 	public static String SMS_TEXT_OWNER_ID = '<<ownerid>>';
-	public static String CHANNEL_EMAIL = 'Email';
 
 	//Channel
 	public static String CHANNEL_PHONE = 'Phone';
+	public static String CHANNEL_EMAIL = 'Email';
 	public static String NO_REPLY_EMAIL = 'no-reply@gusto.com';
 	//Record Type
 	public static final Id RECTYPE_BENEFITS_CARE = Cache.getRecordTypeId('Case', 'Benefits Care');
@@ -215,6 +212,7 @@ public without sharing class CaseUtils {
 	public static final Id RECTYPE_CASE_COMPLIANCE = Cache.getRecordTypeId('Case', 'Compliance');
 	public static final Id R_D_TAX_CREDITS = Cache.getRecordTypeId('Case', 'R&D Tax Credits');
 	public static final Set<String> set_EngagementRecordTypes = new Set<String>{ RECTYPE_PAYROLL_CARE, RECTYPE_ENGAGEMENT };
+	public static final Id RECTYPE_CLIENT_RELATIONS = Cache.getRecordTypeId('Case', 'Client Relations');
 
 	//Record Type Name:
 	public static final String RECTYPE_NAME_SALES_CASES = 'Sales Cases';
@@ -234,8 +232,9 @@ public without sharing class CaseUtils {
 	public static final String QUEUE_NAME_PAYROLL_CARE_NON_ACTIONABLE = 'Payroll_Care_Non_Actionable';
 	public static final String QUEUE_NAME_ENGAGEMENT_CANCELED_CHATS = 'Engagement_Canceled_Chats';
 	public static final String QUEUE_NAME_CARE_VISITOR_ABANDONED_CHATS = 'Care_Visitor_Abandoned_Chats';
-	public static final String QUEUE_NAME_MODERN_BANK_ROUTING = 'Modern_Bank_Routing';
 	public static final String QUEUE_NAME_GEP_CX_QUEUE = 'GEP_CX_Queue';
+	public static final String QUEUE_NAME_MODERN_BANK_ROUTING = 'Modern_Bank_Routing';
+
 	//Case Specialization Values
 	public static final String COBRA_SPECIALIZATION = 'COBRA';
 	public static final String SPANISH_SPECIALIZATION = 'Spanish';
@@ -251,7 +250,6 @@ public without sharing class CaseUtils {
 	//specialist round robin variable
 	public static final String TEXT_ROUND_ROBIN = 'Round_Robin';
 	public static final Set<String> set_OpenCaseStatuses = new Set<String>{ CaseUtils.CASE_STATUS_READY_FOR_RESEARCH, CaseUtils.CASE_STATUS_RESEARCH_IN_PROGRESS, 'Shelved', 'Blocked' };
-
 	public static final Set<String> set_ClosedCaseStatuses = new Set<String>{ CaseUtils.STATUS_CLOSED, 'Request Denied', 'Will not support', 'Reject', 'Informational' };
 
 	public static final String MEMBER_OPS_QUEUE = 'Member Ops';
@@ -305,7 +303,7 @@ public without sharing class CaseUtils {
 	public static final String STR_SUCCESSFULLY_CASE_CREATED_IN_ASANA = 'Successfully created in Asana';
 
 	//Tax Compliance Email Handler
-	public static final String STRG_TAX_COMPLIANCE_EMAIL = System.label.STRG_TAX_COMPLIANCE_EMAIL;
+	public static final String STRG_TAX_COMPLIANCE_EMAIL = 'taxcompliance@gusto.com';
 	public static final String STRG_MEDIUM = 'Medium';
 	public static final String STRG_QUEUE = 'Queue';
 	public static final String STRG_PAYROLL_COMP_QUEUE = 'Payroll Product Compliance';
@@ -335,6 +333,11 @@ public without sharing class CaseUtils {
 	public static final String PAYROLL_CASE_PILLAR = 'Payroll';
 	public static final String BENEFITS_CASE_PILLAR = 'Benefits';
 	public static final String TAXES_CASE_PILLAR = 'Taxes';
+	//Case Sub Pillars
+    public static final String CARE_PREMIER_PAYROLL = 'Care Premier Payroll';
+    public static final String CARE_PREMIER_TAXES ='Care Premier Taxes';
+    public static final String CARE_MEMBERS ='Care Members';
+    public static final String CARE_PREMIER_BENEFITS ='Care Premier Benefits';
 
 	//Support Levels
 	public static final String TIER_1 = 'Tier 1';
@@ -1177,5 +1180,22 @@ public without sharing class CaseUtils {
 				objCase.Type = TYPE_TAX_RES;
 			}
 		}
+	}
+
+	/**
+	 * @Author      : Ankit C
+	 * @Sescription : This method is invoked from flow to update the pillar fields on Case
+	 * @Param       : list_Cases - List of Cases to be updated
+	 * @Return      : List of cases
+	 */
+	@InvocableMethod(label='Update Case Pillar' description='Updates the pillar fields on Case' category='Case')
+	public static List<Case> updateCasePillarFields(List<Case> list_Cases) {
+		Case objCase = new Case();
+		if (!list_Cases.isEmpty()) {
+			objCase = list_Cases.get(0);
+			CaseTriggerHelper.updateCasePillar(objCase, null);
+		}
+
+		return new List<Case> { objCase };
 	}
 }

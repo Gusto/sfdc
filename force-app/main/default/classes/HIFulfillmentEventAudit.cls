@@ -1813,32 +1813,32 @@ public with sharing class HIFulfillmentEventAudit {
 			}
 			when 'hsa' {
 				objCase.HSA_UUID__c = strUUID;
-				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA)) {
-					objCase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA.toUpperCase() + ';';
+				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA)) {
+					objCase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA.toUpperCase() + ';';
 				}
 			}
 			when 'flexible_spending_account_medical' {
 				objCase.FSA_UUID__c = strUUID;
-				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objCase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA.toUpperCase() + ';';
+				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objCase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA.toUpperCase() + ';';
 				}
 			}
 			when 'fsa' {
 				objCase.FSA_UUID__c = strUUID;
-				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objCase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA.toUpperCase() + ';';
+				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objCase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA.toUpperCase() + ';';
 				}
 			}
 			when 'flexible_spending_account_dependent_care' {
 				objCase.DCA_UUID__c = strUUID;
-				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objCase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA.toUpperCase() + ';';
+				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objCase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA.toUpperCase() + ';';
 				}
 			}
 			when 'dca' {
 				objCase.DCA_UUID__c = strUUID;
-				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objCase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA.toUpperCase() + ';';
+				if (!objCase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objCase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA.toUpperCase() + ';';
 				}
 			}
 		}

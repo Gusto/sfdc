@@ -14,6 +14,7 @@ public with sharing class HIHSABenefitTriggerHelper extends TriggerHandler {
     public static String strInvalidSourceType = 'Invalid Source Type.';
     public static String strRequiredExternalKey = 'External key is empty.';
     public static String strHSA = 'HSA';
+    public static String strHSAPolicyName = 'Alegeus HSA';
     //Added for BBO-1967
     public static String strGeneralHSAPOlicyName = 'HSA Benefit';
     public Map<String,Carrier__c> map_ProviderKeyWithCarrier = new Map<String,Carrier__c>(); // Added for BBO-1967

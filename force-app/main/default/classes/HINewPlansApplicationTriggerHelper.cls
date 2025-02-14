@@ -53,7 +53,7 @@ public without sharing class HINewPlansApplicationTriggerHelper extends TriggerH
 	public Opportunity mapOpportunityFields(HI_New_Plans_Application__c hiNPApplication, Account acc, map<string, Opportunity> opportunityMap, map<String, List<HI_Aasm_Event__c>> asamEvents) {
 		Opportunity opp = new Opportunity();
 		if (opportunityMap.containsKey(hiNPApplication.External_Key__c) == false) {
-			opp.StageName = OpportunityUtil.DEFAULT_HI_SALES_STAGE;
+			opp.StageName = 'Raw';
 			opp.LeadSource = NP_APPLICATION;
 		} else {
 			if (String.IsBlank(opportunityMap.get(hiNPApplication.External_Key__c).LeadSource)) {
@@ -72,9 +72,9 @@ public without sharing class HINewPlansApplicationTriggerHelper extends TriggerH
 		opp.HI_Effective_Date__c = hiNPApplication.Requested_Start_Date__c;
 		opp.Unsupported_SIC_Code__c = hiNPApplication.Unsupported_SIC_Code__c;
 		opp.Maestro__c = hiNPApplication.Maestro__c;
-		if (hiNPApplication.Dismissal_Reason__c != null) {
-			opp.Application_Dismissal_Reason__c = hiNPApplication.Dismissal_Reason__c;
-		}
+		// if (hiNPApplication.Dismissal_Reason__c != null) {
+		// 	opp.Application_Dismissal_Reason__c = hiNPApplication.Dismissal_Reason__c;
+		// }
 		opp.HI_New_Plan_App_Status__c = hiNPApplication.Status__c;
 		opp.Keep_Opportunity_Open_On_Dismissal__c = hiNPApplication.Keep_Opportunity_Open_On_Dismissal__c;
 		return opp;
@@ -150,7 +150,7 @@ public without sharing class HINewPlansApplicationTriggerHelper extends TriggerH
 							}
 							if (hiNPApplication.Status__c != null && hiNPApplication.Status__c != map_npApplicationsOld?.get(hiNPApplication.Id)?.Status__c) {
 								existingOpp.Benefits_Current_Setup_Step__c = null;
-								// existingOpp.StageName = OpportunityUtil.DEFAULT_HI_SALES_STAGE;
+								// existingOpp.StageName = 'Raw';
 								map_OpptysToUpdate.put(existingOpp.Id, existingOpp);
 							}
 						}
@@ -230,7 +230,8 @@ public without sharing class HINewPlansApplicationTriggerHelper extends TriggerH
 					ZP_Company_ID__c,
 					Name,
 					(
-						SELECT Id, Source_Id__c, Id__c, Name, RecordTypeId, StageName, IsClosed, IsWon, Benefits_Current_Setup_Step__c, Application_Dismissal_Reason__c, 
+						SELECT Id, Source_Id__c, Id__c, Name, RecordTypeId, StageName, IsClosed, IsWon, Benefits_Current_Setup_Step__c, 
+						//Application_Dismissal_Reason__c, 
 						Users_Email__c, LeadSource
 						FROM Opportunities
 						WHERE RecordTypeId = :newPlanRecordTypeId

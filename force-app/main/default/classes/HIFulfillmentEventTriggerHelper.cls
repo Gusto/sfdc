@@ -26,8 +26,10 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 			List<HI_Fulfillment_Event__c> list_ContinuationElectionEvent = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> terminationEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> enrollmentEventList = new List<HI_Fulfillment_Event__c>();
+			List<HI_Fulfillment_Event__c> enrollmentUnlockedEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> employeeUpdateEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> auditEventList = new List<HI_Fulfillment_Event__c>();
+			List<HI_Fulfillment_Event__c> commuterEnrollmentEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> hsaEnrollmentEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> dependentAgingOutList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> borNewHireList = new List<HI_Fulfillment_Event__c>();
@@ -65,6 +67,8 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 					event.Event_Type__c == 'employee_losing_commuter_eligibility' && (Label.HIFulfillmentTriggerSetting.indexOf('employee_losing_commuter_eligibility,') > -1 || test.isRunningTest())
 				) {
 					terminationEventList.add(event);
+				} else if (event.Event_Type__c == 'enrollment_unlocked' && (Label.HIFulfillmentTriggerSetting.indexOf('enrollment_unlocked,') > -1 || test.isRunningTest())) {
+					enrollmentUnlockedEventList.add(event);
 				} else if (
 					(event.Event_Type__c == 'employee_update' || event.Event_Type__c == 'company_update') &&
 					(Label.HIFulfillmentTriggerSetting.indexOf('employee_update,') > -1 ||
@@ -79,6 +83,8 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 					(Label.HIFulfillmentTriggerSetting.indexOf('employee_ambiguous_status_periods_event,') > -1 || test.isRunningTest())
 				) {
 					auditEventList.add(event);
+				} else if (event.Event_Type__c == 'employee_commuter_enrollment' && (Label.HIFulfillmentTriggerSetting.indexOf('employee_commuter_enrollment,') > -1 || test.isRunningTest())) {
+					commuterEnrollmentEventList.add(event);
 				} else if ((event.Event_Type__c == HIEnrollmentEventUtility.ETYPE_EMP_HSA_ENROLLMENT_AUTO_PROCESS || event.Event_Type__c == HIEnrollmentEventUtility.ETYPE_EMP_HSA_ENROLLMENT) && (Label.HIFulfillmentTriggerSetting.indexOf('employee_hsa_enrollment,') > -1 || test.isRunningTest())) {
 					hsaEnrollmentEventList.add(event);
 				} else if (event.Event_Type__c == 'dependent_aging_out' && (Label.HIFulfillmentTriggerSetting.indexOf('dependent_aging_out,') > -1 || test.isRunningTest())) {
@@ -125,6 +131,10 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 				HIFulfillmentEventEnrollment hifulfillmentEvent = new HIFulfillmentEventEnrollment();
 				hifulfillmentEvent.processInformation(enrollmentEventList);
 			}
+			if (enrollmentUnlockedEventList.size() > 0) {
+				HIFulfillmentEventEnrllmentUnlock hifulfillmentUnlockEvent = new HIFulfillmentEventEnrllmentUnlock();
+				hifulfillmentUnlockEvent.processInformation(enrollmentUnlockedEventList);
+			}
 			if (employeeUpdateEventList.size() > 0) {
 				HIFulfillmentEventEmployeeUpdate hifulfillmentEmployeeUpdateEvent = new HIFulfillmentEventEmployeeUpdate();
 				hifulfillmentEmployeeUpdateEvent.processInformation(employeeUpdateEventList);
@@ -132,6 +142,10 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 			if (auditEventList.size() > 0) {
 				HIFulfillmentEventAudit HIFulfillmentAuditEvent = new HIFulfillmentEventAudit();
 				HIFulfillmentAuditEvent.processInformation(auditEventList);
+			}
+			if (commuterEnrollmentEventList.size() > 0) {
+				HIFulfillmentEventCommuterEnrolment commuterEnrolllment = new HIFulfillmentEventCommuterEnrolment();
+				commuterEnrolllment.processInformation(commuterEnrollmentEventList);
 			}
 			if (hsaEnrollmentEventList.size() > 0) {
 				HIFulfillmentEventHsaEnrolment hsaEnrolllment = new HIFulfillmentEventHsaEnrolment();
@@ -214,8 +228,10 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 			List<HI_Fulfillment_Event__c> list_ContinuationElectionEvent = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> terminationEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> enrollmentEventList = new List<HI_Fulfillment_Event__c>();
+			List<HI_Fulfillment_Event__c> enrollmentUnlockedEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> employeeUpdateEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> auditEventList = new List<HI_Fulfillment_Event__c>();
+			List<HI_Fulfillment_Event__c> commuterEnrollmentEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> hsaEnrollmentEventList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> dependentAgingOutList = new List<HI_Fulfillment_Event__c>();
 			List<HI_Fulfillment_Event__c> borNewHireList = new List<HI_Fulfillment_Event__c>();
@@ -253,6 +269,8 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 					event.Event_Type__c == 'employee_losing_commuter_eligibility' && (Label.HIFulfillmentTriggerSetting.indexOf('employee_losing_commuter_eligibility,') > -1 || test.isRunningTest())
 				) {
 					terminationEventList.add(event);
+				} else if (event.Event_Type__c == 'enrollment_unlocked' && (Label.HIFulfillmentTriggerSetting.indexOf('enrollment_unlocked,') > -1 || test.isRunningTest())) {
+					enrollmentUnlockedEventList.add(event);
 				} else if (
 					(event.Event_Type__c == 'employee_update' || event.Event_Type__c == 'company_update') &&
 					(Label.HIFulfillmentTriggerSetting.indexOf('employee_update,') > -1 ||
@@ -267,6 +285,8 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 					(Label.HIFulfillmentTriggerSetting.indexOf('employee_ambiguous_status_periods_event,') > -1 || test.isRunningTest())
 				) {
 					auditEventList.add(event);
+				} else if (event.Event_Type__c == 'employee_commuter_enrollment' && (Label.HIFulfillmentTriggerSetting.indexOf('employee_commuter_enrollment,') > -1 || test.isRunningTest())) {
+					commuterEnrollmentEventList.add(event);
 				} else if ((event.Event_Type__c == HIEnrollmentEventUtility.ETYPE_EMP_HSA_ENROLLMENT_AUTO_PROCESS || event.Event_Type__c == HIEnrollmentEventUtility.ETYPE_EMP_HSA_ENROLLMENT) && (Label.HIFulfillmentTriggerSetting.indexOf('employee_hsa_enrollment,') > -1 || test.isRunningTest())) {
 					hsaEnrollmentEventList.add(event);
 				} else if (event.Event_Type__c == 'dependent_aging_out' && (Label.HIFulfillmentTriggerSetting.indexOf('dependent_aging_out,') > -1 || test.isRunningTest())) {
@@ -314,6 +334,10 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 				HIFulfillmentEventEnrollment hifulfillmentEvent = new HIFulfillmentEventEnrollment();
 				hifulfillmentEvent.processInformation(enrollmentEventList);
 			}
+			if (enrollmentUnlockedEventList.size() > 0) {
+				HIFulfillmentEventEnrllmentUnlock hifulfillmentUnlockEvent = new HIFulfillmentEventEnrllmentUnlock();
+				hifulfillmentUnlockEvent.processInformation(enrollmentUnlockedEventList);
+			}
 			if (employeeUpdateEventList.size() > 0) {
 				HIFulfillmentEventEmployeeUpdate hifulfillmentEmployeeUpdateEvent = new HIFulfillmentEventEmployeeUpdate();
 				hifulfillmentEmployeeUpdateEvent.processInformation(employeeUpdateEventList);
@@ -321,6 +345,10 @@ public class HIFulfillmentEventTriggerHelper extends TriggerHandler {
 			if (auditEventList.size() > 0) {
 				HIFulfillmentEventAudit HIFulfillmentAuditEvent = new HIFulfillmentEventAudit();
 				HIFulfillmentAuditEvent.processInformation(auditEventList);
+			}
+			if (commuterEnrollmentEventList.size() > 0) {
+				HIFulfillmentEventCommuterEnrolment commuterEnrolllment = new HIFulfillmentEventCommuterEnrolment();
+				commuterEnrolllment.processInformation(commuterEnrollmentEventList);
 			}
 			if (hsaEnrollmentEventList.size() > 0) {
 				HIFulfillmentEventHsaEnrolment hsaEnrolllment = new HIFulfillmentEventHsaEnrolment();

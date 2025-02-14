@@ -39,6 +39,7 @@ public with sharing class HIGroupEventAdvisingEmailAutomationTest {
 		' "short_term_disability": [ {"carrier_name": "HUMANA","plan_name": "HUMANA Smart Premium Plus 100/80/50/50-1500 + Adult Ortho (4A)" } ], "tadas": "fsa,dca"}';
 	public static String STR_JSON_AUTO_RENEWAL = '{"company_id":72397,"application_id":7239712,"application_type":"renewal","selection_deadline":"2021-01-25"}';
 	public static String STR_JSON_ERROR = '{"company":72397,"application_id":7239712,"application_type":"renewal","selection_deadline":"2021-01"}';
+	public static String STR_JSON_LF_INTRO = '{"application_id":7239712,"application_type":"renewal","company_id":72397,"survey_completed_by":70002,"tada_interest_from_survey":true,"selection_deadline":"2021-01-14","benefit_address":{"street_1":"1234 Not a street","street_2":"test street","city":"Fresno","state":"CA","zip":"94010","country":"USA"},"scorp":false,"alternate_recommendation_type":"carrier_switch","default_renewal_rate_change":"16%","alternate_package_savings":"28%","default_cost_breakdown_pdf":"zp/link/to/default_package_123.pdf","alternate_cost_breakdown_pdf":"zp/link/to/alternate_package_456.pdf","alternate_package_carrier":"United Healthcare"}';
 
 	@TestSetup
 	static void createTestData() {
@@ -52,6 +53,7 @@ public with sharing class HIGroupEventAdvisingEmailAutomationTest {
 		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('inbound_support_pilot_false').setBody('Test Body').build());
 		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('inbound_support_pilot_true').setBody('Test Body 123 - please call 415-463-1380').build());
 		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('advising_team_signature').setBody('Regards, Advising Team').build());
+		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('level_funded_intro_email_carrier_switch_non-TX').setBody(' level_funded_intro_email Regards, Advising Team').build());
 
 		insert list_EmailMacro;
 
@@ -433,5 +435,28 @@ public with sharing class HIGroupEventAdvisingEmailAutomationTest {
 
 		System.assertEquals(strExpectedMsg, list_HIEvents[0].Message__c, HIGroupEventAdvisingEmailAutomation.ERROR_MSG_INVALID_SELECTION_DEADLINE);
 		System.assertEquals(IntegrationUtils.DEAD_STATE, list_HIEvents[0].Processing_State__c, HIGroupEventAdvisingEmailAutomation.ERROR_MSG_INVALID_SELECTION_DEADLINE);
+	}
+
+	/**
+	 * @description  This method is used to test HI Group event process for level_funded_intro_email Event type.
+	 * @param        null
+	 * @return       null
+	 **/
+	@isTest
+	static void levelFundedTransitionAdvisingIntroEmail() {
+		Test.startTest();
+		HIGroupEvent__c objHIGroupEvent = new TestDataFactory.HIGroupEventBuilder()
+			.setEventId('ecbc176c-815e-4bc3-b545-58f3fe4deae81')
+			.setEventType(HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO )
+			.setEventInfo(STR_JSON_LF_INTRO)
+			.build();
+
+		insert objHIGroupEvent;
+		Test.stopTest();
+
+		List<Opportunity> list_Opp = [SELECT Id, Advising_Email__c, StageName FROM Opportunity LIMIT 1];
+
+		System.assert(list_Opp.size() > 0, 'Opportunity is Present.');
+		System.assertEquals(HIGroupEventAdvisingEmailAutomation.LFT_INTRO, list_Opp[0].Advising_Email__c, 'Level Funded Transition Advising Intro Email, scussfully sent.');
 	}
 }

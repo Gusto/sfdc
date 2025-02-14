@@ -49,7 +49,10 @@ private class BTTransitionToFulfilmentExtensionTest {
 		insert list_Contact;
 
 		list<Carrier__c> list_Carrier = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setKey('alegeus').setId('Alegeus54454321').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = TestUtility.Carrier();
+		objCarrier.Name = 'Alegeus';
+		objCarrier.Key__c = 'Alegeus54454321';
+		objCarrier.ID__c = 'Alegeus54454321';
 		list_Carrier.add(objCarrier);
 
 		Carrier__c objCarrier2 = TestUtility.Carrier();
@@ -67,7 +70,7 @@ private class BTTransitionToFulfilmentExtensionTest {
 		objCarrier4.ID__c = null;
 		objCarrier4.Name = 'Aetna';
 		list_Carrier.add(objCarrier4);
-		upsert list_Carrier;
+		update list_Carrier;
 
 		list<HI_BoR_Transfer__c> list_hiBOR = new List<HI_BoR_Transfer__c>();
 		HI_BoR_Transfer__c objHIBor = new HI_BoR_Transfer__c(
@@ -190,7 +193,7 @@ private class BTTransitionToFulfilmentExtensionTest {
 		objTTFRecord.FSA_Renewal_Date__c = date.newInstance(system.today().addMonths(1).year(), system.today().addMonths(1).month(), 1);
 		objTTFRecord.DCA_Renewal_Date__c = date.newInstance(system.today().addMonths(1).year(), system.today().addMonths(1).month(), 1);
 		objTTFRecord.Type_of_TADA_s__c = 'Flexible Spending Account - Dependent Care;Commuter';
-		objTTFRecord.Medical_Renewal_Date__c = 'alegeus>' + string.valueOf(system.today().addMonths(1).year()) + '/' + string.valueOf(system.today().addMonths(1).month()) + '/1';
+		objTTFRecord.Medical_Renewal_Date__c = 'Alegeus54454321>' + string.valueOf(system.today().addMonths(1).year()) + '/' + string.valueOf(system.today().addMonths(1).month()) + '/1';
 		objTTFRecord.Multi_EIN__c = 'Y';
 		objTTFRecord.RecordTypeId = idTTFBoRRecordTypeId;
 		insert objTTFRecord;

@@ -12,6 +12,7 @@ public class HIGroupEventTriggerHelper {
 
 	public void OnBeforeInsert(List<HIGroupEvent__c> list_HiGroupEvents) {
 		// Real-Time events
+		//Updated Condition for BBO-2141
 		if (
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_QA_SHEET_INFO ||
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_CONFIRMATION_AUTO ||
@@ -22,7 +23,12 @@ public class HIGroupEventTriggerHelper {
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_DOC_COLLECTION_STATUS ||
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_FINAL ||
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_TTS_NOTE_POST_OE_EMAIL ||
-			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_GROUP_TERM_CASE
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_GROUP_TERM_CASE || 
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO ||
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEW || 
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_INTRO_EMAIL || 
+            list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_CHECKIN_EMAIL || 
+            list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEWAL_EMAIL
 		) {
 			queue = true;
 			processEvents(list_HiGroupEvents);
@@ -65,7 +71,9 @@ public class HIGroupEventTriggerHelper {
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_SUBMISSION_AUTO ||
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_FINAL ||
 			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_TTS_NOTE_POST_OE_EMAIL ||
-			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_GROUP_TERM_CASE
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_GROUP_TERM_CASE ||
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO ||
+			list_HiGroupEvents.get(0).Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEW
 		) {
 			queue = true;
 			processEvents(list_HiGroupEvents);
@@ -91,10 +99,14 @@ public class HIGroupEventTriggerHelper {
 		List<HIEventWrapper> list_AdvisingIntroEmail = new List<HIEventWrapper>();
 		List<HIEventWrapper> list_AdvisingFollowUpEmail = new List<HIEventWrapper>();
 		List<HIEventWrapper> list_AdvisingFinalEmail = new List<HIEventWrapper>();
+        List<HIEventWrapper> list_AdvisingLevelFundedIntroEmail = new List<HIEventWrapper>();
+        List<HIEventWrapper> list_AdvisingLevelFundedCheckinEmail = new List<HIEventWrapper>();
+        List<HIEventWrapper> list_AdvisingLevelFundedAutoRenewalEmail = new List<HIEventWrapper>();
 		List<HIGroupEvent__c> list_GroupIntroEmails = new List<HIGroupEvent__c>();
 		List<HIGroupEvent__c> list_GroupRenewalsRequest = new List<HIGroupEvent__c>();
 		List<HIGroupEvent__c> list_TTSNotesPostOEEmail = new List<HIGroupEvent__c>();
 		List<HIGroupEvent__c> list_GroupTerminationCases = new List<HIGroupEvent__c>();
+		List<HIEventWrapper> list_LevelFundedIntroEmail = new List<HIEventWrapper>();
 		
 		for (HIGroupEvent__c objEvent : list_Events) {
 			if (objEvent.Processing_State__c == IntegrationUtils.DEAD_STATE || objEvent.Event_Id__c == null) {
@@ -125,6 +137,15 @@ public class HIGroupEventTriggerHelper {
 				list_DocCollectionStatusEvents.add(objEvent);
 			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_INTRO) {
 				list_AdvisingIntroEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
+			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_INTRO_EMAIL) {
+				//Added for BBO-2141
+                list_AdvisingLevelFundedIntroEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
+			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_CHECKIN_EMAIL) {
+				//Added for BBO-2141
+                list_AdvisingLevelFundedCheckinEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
+			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEWAL_EMAIL) {
+				//Added for BBO-2141
+                list_AdvisingLevelFundedAutoRenewalEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
 			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_FOLLOWUP) {
 				list_AdvisingFollowUpEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
 			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_FINAL) {
@@ -137,6 +158,10 @@ public class HIGroupEventTriggerHelper {
 				list_TTSNotesPostOEEmail.add(objEvent);
 			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_GROUP_TERM_CASE) {
 				list_GroupTerminationCases.add(objEvent);
+			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO) {
+				list_LevelFundedIntroEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
+			} else if (objEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEW) {
+				list_LevelFundedIntroEmail.add(new HIEventWrapper(objEvent.Event_Info__c, objEvent));
 			}
 		}
 
@@ -168,7 +193,17 @@ public class HIGroupEventTriggerHelper {
 		if (list_AdvisingFinalEmail != null && list_AdvisingFinalEmail.size() > 0) {
 			HIGroupEventAdvisingEmailAutomation.processFinalInformation(list_AdvisingFinalEmail);
 		}
-
+        //added for BBO-2141 Start
+        if (list_AdvisingLevelFundedIntroEmail != null && list_AdvisingLevelFundedIntroEmail.size() > 0) {
+			HIGroupEventAdvisingEmailAutomation.processIntroInformation(list_AdvisingLevelFundedIntroEmail);
+		}
+        if (list_AdvisingLevelFundedCheckinEmail != null && list_AdvisingLevelFundedCheckinEmail.size() > 0) {
+			HIGroupEventAdvisingEmailAutomation.processIntroInformation(list_AdvisingLevelFundedCheckinEmail);
+		}
+        if (list_AdvisingLevelFundedAutoRenewalEmail != null && list_AdvisingLevelFundedAutoRenewalEmail.size() > 0) {
+			HIGroupEventAdvisingEmailAutomation.processIntroInformation(list_AdvisingLevelFundedAutoRenewalEmail);
+		}
+        //BBO-2141 ends
 		if (list_GroupIntroEmails != null && list_GroupIntroEmails.size() > 0) {
 			HIGroupEventOAIntroEmail.processEvents(list_GroupIntroEmails);
 		}
@@ -183,6 +218,10 @@ public class HIGroupEventTriggerHelper {
 
 		if (list_GroupTerminationCases != null && !list_GroupTerminationCases.isEmpty()) {
 			HIGroupEventTerminationCases.processEvents(list_GroupTerminationCases);
+		}
+
+		if (list_LevelFundedIntroEmail != null && !list_LevelFundedIntroEmail.isEmpty()) {
+			HIGroupEventAdvisingEmailAutomation.processIntroInformation(list_LevelFundedIntroEmail);
 		}
 	}
 

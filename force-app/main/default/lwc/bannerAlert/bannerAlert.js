@@ -1,14 +1,14 @@
 import { LightningElement, track } from "lwc";
-import getBanner from "@salesforce/apex/AlertBannerCtrl.getHighlightBanner";
+import getBanner from "@salesforce/apex/AlertBannerCtrl.getBanner";
 
 export default class BannerAlert extends LightningElement {
-	@track list_Messages = [];
+	@track strMessage;
 
 	connectedCallback() {
 		getBanner()
 			.then((result) => {
-				if (result && result.length) {
-					this.list_Messages = result;
+				if (result) {
+					this.strMessage = result;
 				}
 			})
 			.catch((error) => {

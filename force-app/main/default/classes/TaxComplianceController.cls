@@ -320,9 +320,6 @@ public class TaxComplianceController {
             List<Tax_Compliance__c> list_NewComplianceRecords = new List<Tax_Compliance__c>();
             Tax_Compliance__c objTaxComplianceRecord = new Tax_Compliance__c();
             objTaxComplianceRecord.Case__c = objCase.Id;
-            objTaxComplianceRecord.Tier__c = CaseUtils.STRG_TIER;
-            objTaxComplianceRecord.Frequency_of_Update__c = CaseUtils.STRG_FREQUENCT_OF_UPDATE;
-            objTaxComplianceRecord.Classification_Type__c = CaseUtils.STRG_ClASSIFICATION_TYPE;
             list_NewComplianceRecords.add(objTaxComplianceRecord);
 
             // Insert the new Tax Compliance records

@@ -19,8 +19,11 @@ public class BTMultiEINAffiliateAssignmentCtrlTest {
 		OpportunityTriggerHelper.skipTrigger = false;
 		AccountTriggerHelper.skipTrigger = false;
 
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setKey('alegeus').setId('alegeus32199').setPartnerType('TAdA').build();
-        insert objCarrier;
+		Carrier__c objCarrier = TestUtility.Carrier();
+		objCarrier.Name = 'Alegeus';
+		objCarrier.Key__c = 'alegeus32199';
+		objCarrier.ID__c = 'alegeus32199';
+		update objCarrier;
 
 		Benefit_Order__c boRec = new Benefit_Order__c();
 		boRec.Opportunity__c = objOpp.id;
@@ -53,7 +56,7 @@ public class BTMultiEINAffiliateAssignmentCtrlTest {
 		list<HI_Carrier_Information__c> list_HICarrier = new List<HI_Carrier_Information__c>();
 		HI_Carrier_Information__c objHICarrier = new HI_Carrier_Information__c();
 		objHICarrier.BOR_Transfer_Id__c = 'zpEIN67890';
-		objHICarrier.Key__c = 'alegeus';
+		objHICarrier.Key__c = 'alegeus32199';
 		objHICarrier.Id__c = 'HI99654321';
 		objHICarrier.Plan_Type__c = 'LTD';
 		list_HICarrier.add(objHICarrier);
@@ -81,6 +84,11 @@ public class BTMultiEINAffiliateAssignmentCtrlTest {
 		OpportunityTriggerHelper.skipTrigger = false;
 		AccountTriggerHelper.skipTrigger = false;
 
+		Carrier__c objCarrier = TestUtility.Carrier();
+		objCarrier.Name = 'Alegeus';
+		objCarrier.Key__c = 'alegeus321991';
+		objCarrier.ID__c = 'alegeus321991';
+		update objCarrier;
 
 		Benefit_Order__c boRec = new Benefit_Order__c();
 		boRec.Opportunity__c = objOpp.id;
@@ -113,7 +121,7 @@ public class BTMultiEINAffiliateAssignmentCtrlTest {
 		list<HI_Carrier_Information__c> list_HICarrier = new List<HI_Carrier_Information__c>();
 		HI_Carrier_Information__c objHICarrier = new HI_Carrier_Information__c();
 		objHICarrier.BOR_Transfer_Id__c = 'zpEIN6789021';
-		objHICarrier.Key__c = 'alegeus';
+		objHICarrier.Key__c = 'alegeus32199';
 		objHICarrier.Id__c = 'HI996543211';
 		objHICarrier.Plan_Type__c = 'LTD';
 		list_HICarrier.add(objHICarrier);

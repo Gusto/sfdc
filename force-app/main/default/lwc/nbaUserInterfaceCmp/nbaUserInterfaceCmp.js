@@ -44,9 +44,15 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 	@track autoSaveEnabled = false;
 	@track list_ViewRecordsTemplate = [];
 	@track intDelayInMinutes;
+	// this is JSON array to store user name and user Id
+	@track list_ActiveUsers = [];
+	// master list of strings with user names
+	@track list_ActiveUsersMasterLabel = [];
+	// this is a temporary list to show the top 10 search results
+	@track list_ActiveUsersLabel = [];
 
 	//user lookup fieds that needs to be skiped
-	list_UserLookupsToSkip = ['ownerid', 'createdbyid', 'lastmodifiedbyid', 'served_user__c'];
+	list_UserLookupsToSkip = ["ownerid", "createdbyid", "lastmodifiedbyid", "served_user__c"];
 
 	// Filter type is Fields or SOQL query
 	get filtertype() {
@@ -71,6 +77,10 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 			{ label: "Nulls First", value: "NULLS FIRST" },
 			{ label: "Nulls Last", value: "NULLS LAST" }
 		];
+	}
+
+	get getfieldmapping() {
+		return [{ label: "Serving Field", value: "Serving Field" }];
 	}
 
 	get frequencyoptions() {
@@ -99,7 +109,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 	get usercustomfunctions() {
 		return [{ label: "MYSELF", value: "MYSELF" }];
 	}
-	
+
 	_fullDateTimeOptions = [
 		{ label: "Yesterday", value: "YESTERDAY" },
 		{ label: "Today", value: "TODAY" },
@@ -149,17 +159,13 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 
 	_dateTimeOptions = [
 		{ label: "N Business Days Ago", value: "N_BUSINESS_DAYS_AGO:n" },
-		{ label: "N Business Days Future", value: "N_BUSINESS_DAYS_FUTURE:n" },
+		{ label: "N Business Days Future", value: "N_BUSINESS_DAYS_FUTURE:n" }
 	];
 
 	_dateOptions = [
 		{ label: "N Business Days Ago", value: "N_D_BUSINESS_DAYS_AGO:n" },
-		{ label: "N Business Days Future", value: "N_D_BUSINESS_DAYS_FUTURE:n" },
+		{ label: "N Business Days Future", value: "N_D_BUSINESS_DAYS_FUTURE:n" }
 	];
-
-	connectedCallback() {
-		// this.handleOnLoad(false);
-	}
 
 	@api
 	handleOnLoad(afterSave) {
@@ -217,6 +223,16 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 
 					this.list_AllObjects = list_tempObjects;
 					this.blnViewOnlyAccess = !result.blnViewOnlyAccess;
+					this.list_ActiveUsers = result.list_ActiveUsers;
+					let counter = 0;
+					this.list_ActiveUsers.forEach((user) => {
+						this.list_ActiveUsersMasterLabel.push(user.Name);
+						counter = counter + 1;
+						if (counter < 10) {
+							this.list_ActiveUsersLabel.push(user.Name);
+						}
+					});
+
 					// show view only access error message
 					if (this.blnViewOnlyAccess) {
 						this.strHeaderErrorMessage = "You have view only access to this page.";
@@ -336,6 +352,11 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 
 						//add field mapping fields
 						let list_picklistFields = this.buildObjectPicklistOptions(result.map_AllFields);
+						let list_pickListLabels = [];
+
+						list_picklistFields.forEach((picklistField) => {
+							list_pickListLabels.push(picklistField.label);
+						});
 
 						// show error message or success message
 						let object = {
@@ -358,7 +379,8 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 							list_userLookupFields: list_userLookupFields,
 							userFieldsAssignment: [],
 							list_picklistFields: list_picklistFields,
-							blnAddFieldMapping: (list_picklistFields.length > 0 && !this.blnViewOnlyAccess) ? false : true,
+							blnAddFieldMapping: list_picklistFields.length > 0 && !this.blnViewOnlyAccess ? false : true,
+							list_picklistFieldsLabelsMaster: list_pickListLabels,
 							fieldMapping: [],
 							blnShowFieldMappingTable: false,
 							orderByField: {
@@ -463,6 +485,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 						if (!object.isMissingfields) {
 							object.servingObject = objectName;
 						}
+						this.setQueuesAvailable(object, result);
 					} else {
 						this.strHeaderErrorMessage = "Error in adding base object. Reason - " + result.strMessage;
 						this.blnHeaderErrorMessageVisible = true;
@@ -716,30 +739,56 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 			});
 		} else if (source == "display") {
 			filter = chosenObject.displayField;
-		} else if (source === 'picklist') {
+		} else if (source === "picklist") {
 			filter = chosenObject;
 		}
 
 		let list_filterFields = [];
-		let list_toSearch = (source === 'picklist') ? filter.list_picklistFieldsLabelsMaster : filter.list_fieldMasterLabels;
+		let list_toSearch = source === "picklist" ? filter.list_picklistFieldsLabelsMaster : filter.list_fieldMasterLabels;
+		if (source == "users") {
+			let int_fieldId = Number(event.target.dataset.picklist);
+			let field = chosenObject.fieldMapping.find((field) => field.fieldId === int_fieldId);
+			let int_Index = Number(event.target.dataset.index);
+			let mapping = field.mapping.find((mapValue) => mapValue.mappingId === int_Index);
+			let option = event.target.dataset.option;
+			if (option == "fromValue" && mapping.fromQueueEnabled) {
+				list_toSearch = chosenObject.list_Queues;
+			} else if (option == "toValue" && mapping.toQueueEnabled) {
+				list_toSearch = chosenObject.list_Queues;
+			} else {
+				list_toSearch = this.list_ActiveUsersMasterLabel;
+			}
+			list_filterFields = ["[Logged In User]"];
+			if (field && field.selectedField.toLowerCase() != "ownerid") {
+				list_filterFields.push("[Blank/Empty Value]");
+			}
+			if (option == "fromValue") {
+				list_filterFields.push("[Any Value]");
+			}
+		}
 
 		if (value) {
 			// not searching for every character. search only for every 3rd character
 			if (value.length % 3 === 0) {
+				value = value.trim();
 				let counter = 0;
 				list_toSearch.forEach((detail) => {
 					if (detail.toLowerCase().includes(value.toLowerCase())) {
 						if (counter < 10) {
-							list_filterFields.push(detail);
+							if (!list_filterFields.includes(detail)) {
+								list_filterFields.push(detail);
+							}
 							counter = counter + 1;
 						}
 					}
 				});
-				if (source === 'picklist') {
+				if (source === "picklist") {
 					filter.list_picklistFieldsLabels = list_filterFields;
+				} else if (source == "users") {
+					this.list_ActiveUsersLabel = list_filterFields;
 				} else {
 					filter.list_fieldLabels = list_filterFields;
-				}			
+				}
 			}
 		} else {
 			// show only 10 auto complete options when no value is entered
@@ -750,8 +799,10 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 					counter = counter + 1;
 				}
 			});
-			if (source === 'picklist') {
+			if (source === "picklist") {
 				filter.list_picklistFieldsLabels = list_filterFields;
+			} else if (source == "users") {
+				this.list_ActiveUsersLabel = list_filterFields;
 			} else {
 				filter.list_fieldLabels = list_filterFields;
 			}
@@ -796,7 +847,12 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		}
 
 		filter.isDateField = objField.strFieldType == "DATE" || objField.strFieldType == "DATETIME";
-		filter.dateOptions = (objField.strFieldType == "DATE") ? [...this._fullDateTimeOptions, ...this._dateOptions] : ( (objField.strFieldType == "DATETIME") ? [...this._fullDateTimeOptions, ...this._dateTimeOptions] : [] );
+		filter.dateOptions =
+			objField.strFieldType == "DATE"
+				? [...this._fullDateTimeOptions, ...this._dateOptions]
+				: objField.strFieldType == "DATETIME"
+				? [...this._fullDateTimeOptions, ...this._dateTimeOptions]
+				: [];
 		filter.isPicklistField = objField.strFieldType == "PICKLIST" || objField.strFieldType == "MULTIPICKLIST";
 		filter.isBooleanField = objField.strFieldType == "BOOLEAN";
 		filter.list_filterChoices = [];
@@ -1043,7 +1099,19 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 					this.checkNBAFields(object, result);
 					//replace the user lookup fieds with the serving object one
 					object.list_userLookupFields = this.buildObjectUserLookupOptions(result.map_AllFields);
+
+					let list_picklistFields = this.buildObjectPicklistOptions(result.map_AllFields);
+					let list_pickListLabels = [];
+
+					list_picklistFields.forEach((picklistField) => {
+						list_pickListLabels.push(picklistField.label);
+					});
+					object.list_picklistFieldsLabelsMaster = list_pickListLabels;
+					object.list_picklistFields = list_picklistFields;
+					object.blnAddFieldMapping = object.list_picklistFields.length > 0 && !this.blnViewOnlyAccess ? false : true;
 					object.userFieldsAssignment = [];
+
+					this.setQueuesAvailable(object, result);
 				})
 				.catch((error) => {
 					// in case of error - show error message in the UI
@@ -1216,13 +1284,6 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		object.dblTimeTakenSeconds = 0;
 	}
 
-	handleObjectChangeBoolean(event) {
-		let selectedObject = event.target.dataset.object;
-		let selectedAttribute = event.target.dataset.attribute;
-		let object = this.list_ChosenObjects.find((object) => object.baseObject == selectedObject);
-		object[selectedAttribute] = event.target.checked;
-	}
-
 	// used when user clicks the help section of the object
 	toggleCheatSheet(event) {
 		let selectedObject = event.target.dataset.object;
@@ -1356,7 +1417,6 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 						} else {
 							list_orderFieldsTemp.push(orderByField + " " + eachOrderBy.selectedOrder);
 						}
-						
 					} else {
 						orderByValidation = false;
 						orderByFieldCmp.setErrorMessage("Order by field already exists.");
@@ -1463,7 +1523,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 							if (result.dblTimeTakenSeconds < 1) {
 								object.performanceGreen = true;
 								object.strPerformance = "Excellent";
-							} else if (result.dblTimeTakenSeconds < 4) {
+							} else if (result.dblTimeTakenSeconds < 2) {
 								object.performanceBlue = true;
 								object.strPerformance = "Good";
 							} else {
@@ -1819,20 +1879,49 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 			//remove fieldMapping unused fields
 			object.fieldMapping.forEach((field) => {
 				delete field.uniqueId;
-            	delete field.blnAddMapping;
-            	delete field.blnDisabledDelete;
-            	delete field.fieldId;
-            	delete field.fieldLabel;
-            	delete field.fromOptions;
-            	delete field.toOptions;
-            	delete field.mappingSize;
+				delete field.blnAddMapping;
+				delete field.blnDisabledDelete;
+				delete field.fieldId;
+				delete field.fieldLabel;
+				delete field.fromOptions;
+				delete field.toOptions;
+				delete field.mappingSize;
 				field.mapping.forEach((mapping) => {
+					if (field.strFieldType == "REFERENCE") {
+						if (mapping.fromValue) {
+							if (mapping.fromQueueEnabled) {
+								for (const property in object.map_Queues) {
+									if (object.map_Queues[property] == mapping.fromValue) {
+										mapping.fromValue = property;
+									}
+								}
+							} else {
+								let userId = this.list_ActiveUsers.find((user) => user.Name == mapping.fromValue);
+								if (userId) {
+									mapping.fromValue = userId.Id;
+								}
+							}
+						}
+						if (mapping.toValue) {
+							if (mapping.toQueueEnabled) {
+								for (const property in object.map_Queues) {
+									if (object.map_Queues[property] == mapping.toValue) {
+										mapping.toValue = property;
+									}
+								}
+							} else {
+								let userId = this.list_ActiveUsers.find((user) => user.Name == mapping.toValue);
+								if (userId) {
+									mapping.toValue = userId.Id;
+								}
+							}
+						}
+					}
 					delete mapping.mappingId;
-              		delete mapping.fromId;
-            		delete mapping.toId;
+					delete mapping.fromId;
+					delete mapping.toId;
 				});
 			});
-
 
 			object.list_OrderByFields.forEach((eachOrderBy) => {
 				delete eachOrderBy.allFieldsList;
@@ -2139,7 +2228,6 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		object.dblTimeTakenSeconds = 0;
 	}
 
-
 	buildObjectUserLookupOptions(objectFields) {
 		//getting User Lookups for the new base object
 		let list_userLookupOptions = [];
@@ -2147,7 +2235,6 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 			this.validateUserLookupField(objectFields[fieldName], list_userLookupOptions);
 		}
 		return list_userLookupOptions;
-
 	}
 
 	buildObjectsUserLookupOptions(objectsFields) {
@@ -2163,7 +2250,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 	}
 
 	validateUserLookupField(field, list_userLookupOptions) {
-		if (field.strFieldType === 'REFERENCE' && field.strReferenceObject === 'User' && !this.list_UserLookupsToSkip.includes(field.strFieldAPIName)) {
+		if (field.strFieldType === "REFERENCE" && field.strReferenceObject === "User" && !this.list_UserLookupsToSkip.includes(field.strFieldAPIName)) {
 			list_userLookupOptions.push({ label: field.strFieldLabel, value: field.strFieldAPIName });
 		}
 	}
@@ -2192,17 +2279,49 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 
 	//validate from a list of fields which ones are picklist and adds the Any and Empty value properly
 	validatePicklistField(field, list_picklistOptions) {
-		if (field.strFieldType === 'PICKLIST') {
-			let list_FromOptions =  [];
-			let list_ToOptions =  [];
-			list_FromOptions.push({label: '[Any Value]', value: 'Any Value'});
-			list_FromOptions.push({label: '[Blank/Empty Value]', value: 'Empty Value'});
-			list_ToOptions.push({label: '[Blank/Empty Value]', value: 'Empty Value'});
-			field.list_PicklistValues.forEach( strOption => {
-				list_FromOptions.push({label: strOption, value: strOption});
-				list_ToOptions.push({label: strOption, value: strOption});
+		if (field.strFieldType === "PICKLIST" && field.strFieldAPIName != "served_up_rule__c") {
+			let list_FromOptions = [];
+			let list_ToOptions = [];
+			list_FromOptions.push({ label: "[Any Value]", value: "[Any Value]" });
+			list_FromOptions.push({ label: "[Blank/Empty Value]", value: "[Blank/Empty Value]" });
+			list_ToOptions.push({ label: "[Blank/Empty Value]", value: "[Blank/Empty Value]" });
+			field.list_PicklistValues.forEach((strOption) => {
+				list_FromOptions.push({ label: strOption, value: strOption });
+				list_ToOptions.push({ label: strOption, value: strOption });
 			});
-			list_picklistOptions.push({ label: field.strFieldLabel, value: field.strFieldAPIName, fromOptions: list_FromOptions, toOptions: list_ToOptions  });
+			list_picklistOptions.push({
+				label: field.strFieldLabel,
+				value: field.strFieldAPIName,
+				fromOptions: list_FromOptions,
+				toOptions: list_ToOptions,
+				placeholder: "Select picklist value",
+				strFieldType: field.strFieldType
+			});
+		} else if (field.strFieldType == "REFERENCE" && field.strReferenceObject == "User" && field.strFieldAPIName != "served_user__c") {
+			if (field.blnUpdateable) {
+				let list_FromOptions = [];
+				let list_ToOptions = [];
+				list_FromOptions.push({ label: "[Any Value]", value: "[Any Value]" });
+				list_FromOptions.push({ label: "[Logged In User]", value: "[Logged In User]" });
+				list_FromOptions.push({ label: "[Blank/Empty Value]", value: "[Blank/Empty Value]" });
+				if (field.blnNillable) {
+					list_ToOptions.push({ label: "[Blank/Empty Value]", value: "[Blank/Empty Value]" });
+				}
+				list_ToOptions.push({ label: "[Logged In User]", value: "[Logged In User]" });
+				this.list_ActiveUsers.forEach((user) => {
+					list_FromOptions.push({ label: user.Name, value: user.Id });
+					list_ToOptions.push({ label: user.Name, value: user.Id });
+				});
+				list_picklistOptions.push({
+					label: field.strFieldLabel,
+					value: field.strFieldAPIName,
+					fromOptions: list_FromOptions,
+					toOptions: list_ToOptions,
+					placeholder: "Select user value",
+					strFieldType: field.strFieldType,
+					strReferenceObject: field.strReferenceObject
+				});
+			}
 		}
 	}
 
@@ -2214,7 +2333,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 
 		// set data for current criteria and previous criteria
 		list_TempObjects.forEach((object) => {
-			//fieldMapping			
+			//fieldMapping
 			this.setExistingFieldMapping(object, result);
 			this.setExistingData(object, result, map_Objects);
 		});
@@ -2232,7 +2351,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		//user lookup fields
 		let list_userLookupFields = this.buildObjectsUserLookupOptions(result.map_ObjectFields);
 		object.list_userLookupFields = list_userLookupFields[object.servingObject];
-		object.userFieldsAssignment = (object.userFieldsAssignment === undefined || object.userFieldsAssignment.length === 0 ) ? [] : object.userFieldsAssignment;
+		object.userFieldsAssignment = object.userFieldsAssignment === undefined || object.userFieldsAssignment.length === 0 ? [] : object.userFieldsAssignment;
 		//field mapping
 		let list_picklistFields = this.buildObjectsPicklistOptions(result.map_ObjectFields);
 		list_picklistFields[object.servingObject].sort((a, b) => a.label.localeCompare(b.label));
@@ -2240,8 +2359,8 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		let picklistLabel = [];
 		let picklistLabelMaster = [];
 		let int_index = 0;
-		list_picklistFields[object.servingObject].forEach( item => {
-			if(int_index <= 10 ){
+		list_picklistFields[object.servingObject].forEach((item) => {
+			if (int_index <= 10) {
 				picklistLabel.push(item.label);
 			}
 			picklistLabelMaster.push(item.label);
@@ -2249,28 +2368,30 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		});
 		object.list_picklistFieldsLabels = picklistLabel;
 		object.list_picklistFieldsLabelsMaster = picklistLabelMaster;
-		object.blnAddFieldMapping = (object.list_picklistFields.length > 0 && !this.blnViewOnlyAccess) ? false : true;
+		object.blnAddFieldMapping = object.list_picklistFields.length > 0 && !this.blnViewOnlyAccess ? false : true;
+		object.blnQueuesAvailable = result.blnQueuesAvailable;
+		this.setQueuesAvailable(object, result);
 		let uniqueIndex = 1;
 		//iterates over the existing field mapping to add the attributes needed for the UI
 		if (object.fieldMapping !== undefined) {
-			object.fieldMapping.forEach( field => {
+			object.fieldMapping.forEach((field) => {
 				let metaField = object.list_picklistFields.find((metaField) => metaField.value === field.selectedField);
 				//attribute to be the uniqueId of the field
-				field.uniqueId = 'field-' + (uniqueIndex);
+				field.uniqueId = "field-" + uniqueIndex;
 				//attribute to disable the 'add mapping option'
-				field.blnAddMapping = (!this.blnViewOnlyAccess) ? false : true;
+				field.blnAddMapping = !this.blnViewOnlyAccess ? false : true;
 				//attribute to disable the 'delete mapping'
-				field.blnDisabledDelete = (this.blnViewOnlyAccess) ? true : ((field.mapping.length <= 1) ? true : false);
+				field.blnDisabledDelete = this.blnViewOnlyAccess ? true : field.mapping.length <= 1 ? true : false;
 				//attribute to show the index of the table
-				field.fieldId = (uniqueIndex);
+				field.fieldId = uniqueIndex;
 				//attribute to show the label field in the component
 				field.fieldLabel = field.selectedField;
 				//attribute to show the from options in each picklist value from
-				field.fromOptions = object.list_picklistFields.find( picklist => picklist.value === field.selectedField).fromOptions;
+				field.fromOptions = object.list_picklistFields.find((picklist) => picklist.value === field.selectedField).fromOptions;
 				//attribute to show the to options in each picklist value to
-				field.toOptions = object.list_picklistFields.find( picklist => picklist.value === field.selectedField).toOptions;
+				field.toOptions = object.list_picklistFields.find((picklist) => picklist.value === field.selectedField).toOptions;
 				//attribute for rowspan in the table
-				field.mappingSize = (field.mapping.length + 1);
+				field.mappingSize = field.mapping.length + 1;
 				//attribute for persist in the DB
 				field.selectedField = field.selectedField;
 				//attribute for show the input label
@@ -2278,22 +2399,42 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 				//attribute for the index mapping values
 				let int_mappingSize = 0;
 				//add the mapping attributes needed for the UI
-				field.mapping.forEach( mapping => {
+				field.mapping.forEach((mapping) => {
 					//attribute of the mapping
 					mapping.mappingId = int_mappingSize;
 					//attribute of the fromId for the combobox
-					mapping.fromId = 'field-' + (uniqueIndex)+'-from-' + int_mappingSize;
+					mapping.fromId = object.servingObject + "field-" + uniqueIndex + "-from-" + int_mappingSize;
 					//attribute of the toId for the combobox
-					mapping.toId = 'field-' + (uniqueIndex)+'-to-' + int_mappingSize;
+					mapping.toId = object.servingObject + "field-" + uniqueIndex + "-to-" + int_mappingSize;
 					int_mappingSize++;
+					if (metaField.strFieldType == "REFERENCE" && metaField.strReferenceObject == "User") {
+						let list_options = ["fromValue", "toValue"];
+						list_options.forEach((option) => {
+							if (mapping[option]) {
+								if (mapping[option].startsWith("005")) {
+									mapping[option] = this.list_ActiveUsers.find((user) => user.Id === mapping[option]).Name;
+								} else if (mapping[option].startsWith("00G")) {
+									for (const property in object.map_Queues) {
+										if (property == mapping[option]) {
+											mapping[option] = object.map_Queues[property];
+										}
+									}
+								}
+							}
+						});
+					}
 				});
+				field.strFieldType = metaField.strFieldType;
+				field.isSearchable = metaField.strFieldType == "REFERENCE";
+				field.isCheckbox = metaField.strFieldType == "BOOLEAN";
+				field.isQueueEligible = metaField.value.toLowerCase() == "ownerid" && object.blnQueuesAvailable;
 				uniqueIndex++;
 			});
 		}
 		//attribute list of all the existing mappings
-		object.fieldMapping = (object.fieldMapping !== undefined && object.fieldMapping.length > 0) ? object.fieldMapping : [];
+		object.fieldMapping = object.fieldMapping !== undefined && object.fieldMapping.length > 0 ? object.fieldMapping : [];
 		//attribute to show or not the field mapping
-		object.blnShowFieldMappingTable = (object.fieldMapping !== undefined && object.fieldMapping.length > 0) ? true : false;
+		object.blnShowFieldMappingTable = object.fieldMapping !== undefined && object.fieldMapping.length > 0 ? true : false;
 	}
 
 	setExistingData(object, result, map_Objects) {
@@ -2354,7 +2495,12 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 			filter.relationshipDepth = filter.innerTables.length == 0 ? 0 : filter.innerTables.length - 1;
 			filter.innerTableExists = filter.innerTables.length > 1;
 			filter.isDateField = filter.selectedFieldType == "DATE" || filter.selectedFieldType == "DATETIME";
-			filter.dateOptions = (filter.selectedFieldType == "DATE") ? [...this._fullDateTimeOptions, ...this._dateOptions] : ( (filter.selectedFieldType == "DATETIME") ? [...this._fullDateTimeOptions, ...this._dateTimeOptions] : [] );
+			filter.dateOptions =
+				filter.selectedFieldType == "DATE"
+					? [...this._fullDateTimeOptions, ...this._dateOptions]
+					: filter.selectedFieldType == "DATETIME"
+					? [...this._fullDateTimeOptions, ...this._dateTimeOptions]
+					: [];
 			filter.isPicklistField = filter.selectedFieldType == "PICKLIST" || filter.selectedFieldType == "MULTIPICKLIST";
 
 			if (filter.selectedFieldType == "BOOLEAN") {
@@ -2585,7 +2731,9 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 				}
 			});
 			this.list_ChosenObjects = list_TempObjects;
-			this.template.querySelector("c-multi-select-pick-list-cmp[data-object="+selectedObject+"]").refreshSelectedValues(userFieldsAssignment);
+			if (this.template.querySelector("c-multi-select-pick-list-cmp[data-object=" + selectedObject + "]")) {
+				this.template.querySelector("c-multi-select-pick-list-cmp[data-object=" + selectedObject + "]").refreshSelectedValues(userFieldsAssignment);
+			}
 			displayToast(this, "Previous version of " + newObject.objectLabel + " criteria loaded successfully ", "", "success", "");
 		}
 	}
@@ -3019,43 +3167,38 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		this.intDelayInMinutes = event.detail.value;
 	}
 
-	handleSelectUserLookups(event) {
-		let list_SelectedUserLookups = JSON.parse(JSON.stringify(event.detail));
-		//Iterate to save the current list of fields user lookup in the object
-		this.list_ChosenObjects.forEach((object) => {
-			// find the base object
-			if (object.baseObject === event.target.dataset.object) {
-				// replce the old list
-				object.userFieldsAssignment = list_SelectedUserLookups;
-			}
-		});
-	}
-
 	//Method to add a new Field Mapping to the table
 	handleAddFieldMapping(event) {
 		let object = this.list_ChosenObjects.find((obj) => obj.baseObject === event.target.dataset.object);
 		object.blnShowFieldMappingTable = true;
 		let int_mappingSize = object.fieldMapping.length;
 		object.fieldMapping.push({
-			uniqueId: object.servingObject + '-field-' + (int_mappingSize + 1),
-			blnAddMapping: (!this.blnViewOnlyAccess) ? false : true,
-			blnDisabledDelete: (!this.blnViewOnlyAccess) ? true : false,
-			fieldId: (int_mappingSize + 1),
+			fieldMappingType: "Serving Field",
+			uniqueId: object.servingObject + "-field-" + (int_mappingSize + 1),
+			blnAddMapping: !this.blnViewOnlyAccess ? false : true,
+			blnDisabledDelete: !this.blnViewOnlyAccess ? true : false,
+			fieldId: int_mappingSize + 1,
 			fieldLabel: object.list_picklistFields[0].label,
 			selectedField: object.list_picklistFields[0].value,
 			selectedFieldLabel: object.list_picklistFields[0].label,
 			fromOptions: object.list_picklistFields[0].fromOptions,
 			toOptions: object.list_picklistFields[0].toOptions,
 			mappingSize: 2,
-			mapping: [{
-				mappingId: 0,
-				fromId: object.servingObject + '-field-' + (int_mappingSize + 1)+'-from-0',
-				fromValue: '',
-				toValue: '',
-				toId: object.servingObject + '-field-' + (int_mappingSize + 1)+'-to-0',
-			}]
+			mapping: [
+				{
+					mappingId: 0,
+					fromId: object.servingObject + "-field-" + (int_mappingSize + 1) + "-from-0",
+					fromValue: "",
+					toValue: "",
+					toId: object.servingObject + "-field-" + (int_mappingSize + 1) + "-to-0"
+				}
+			],
+			strFieldType: object.list_picklistFields[0].strFieldType,
+			isSearchable: object.list_picklistFields[0].strFieldType == "REFERENCE",
+			isQueueEligible: object.list_picklistFields[0].value.toLowerCase() == "ownerid" && object.blnQueuesAvailable,
+			isCheckbox: object.list_picklistFields[0].strFieldType == "BOOLEAN"
 		});
-		object.blnAddFieldMapping = (object.fieldMapping.length >= object.list_picklistFields.length && !this.blnViewOnlyAccess) ? true : false;
+		object.blnAddFieldMapping = object.fieldMapping.length >= object.list_picklistFields.length && !this.blnViewOnlyAccess ? true : false;
 	}
 
 	//method that handle when the field changes from the dropdown
@@ -3065,20 +3208,18 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		let int_fieldId = Number(event.target.dataset.index);
 		let field = object.fieldMapping.find((field) => field.fieldId === int_fieldId);
 		let newField = {};
-		if (str_label === '') {
-			newField.label = '';
-			newField.value = '';
+		if (str_label === "") {
+			newField.label = "";
+			newField.value = "";
 			newField.fromOptions = [];
 			newField.toOptions = [];
 		} else {
 			newField = object.list_picklistFields.find((field) => field.label === str_label);
 		}
-		field.blnAddMapping = (!this.blnViewOnlyAccess) ? false : true;
-		field.blnDisabledDelete = (!this.blnViewOnlyAccess) ? true : false;
+		field.blnAddMapping = !this.blnViewOnlyAccess ? false : true;
+		field.blnDisabledDelete = !this.blnViewOnlyAccess ? true : false;
 		field.fieldLabel = newField.label;
-		field.selectedField = newField.value,
-		field.selectedFieldLabel = str_label,
-		field.fromOptions = newField.fromOptions;
+		(field.selectedField = newField.value), (field.selectedFieldLabel = str_label), (field.fromOptions = newField.fromOptions);
 		field.toOptions = newField.toOptions;
 		field.mappingSize = 2;
 		field.mapping = [
@@ -3090,6 +3231,10 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 				toId: field.uniqueId + "-to-0"
 			}
 		];
+		field.strFieldType = newField.strFieldType;
+		field.isSearchable = newField.strFieldType == "REFERENCE";
+		field.isQueueEligible = newField.value.toLowerCase() == "ownerid" && object.blnQueuesAvailable;
+		field.isCheckbox = newField.strFieldType == "BOOLEAN";
 		object.dblTimeTakenSeconds = 0;
 		this.validateDuplicateFields(object);
 	}
@@ -3099,20 +3244,20 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		let int_fieldId = Number(event.target.dataset.index);
 		let object = this.list_ChosenObjects.find((obj) => obj.baseObject === event.target.dataset.object);
 		let field = object.fieldMapping.find((field) => field.fieldId === int_fieldId);
-		field.blnDisabledDelete = (!this.blnViewOnlyAccess) ? false : true;
-		field.mappingSize = (field.mappingSize + 1);
+		field.blnDisabledDelete = !this.blnViewOnlyAccess ? false : true;
+		field.mappingSize = field.mappingSize + 1;
 		field.mapping.push({
 			mappingId: field.mappingSize - 2,
-			fromId: field.uniqueId +'-from-'+(field.mappingSize - 2),
-			fromValue: '',
-			toValue: '',
-			toId: field.uniqueId +'-to-'+(field.mappingSize - 2),
+			fromId: field.uniqueId + "-from-" + (field.mappingSize - 2),
+			fromValue: "",
+			toValue: "",
+			toId: field.uniqueId + "-to-" + (field.mappingSize - 2)
 		});
-		field.blnAddMapping = (field.mapping.length >= field.fromOptions.length && !this.blnViewOnlyAccess) ? true : false ;
+		field.blnAddMapping = field.mapping.length >= field.fromOptions.length && !this.blnViewOnlyAccess ? true : false;
 	}
 
 	//method to remove value mapping
-	handleRemoveMapping(event){
+	handleRemoveMapping(event) {
 		let int_mappingId = Number(event.target.dataset.index);
 		let int_fieldId = Number(event.target.dataset.picklist);
 		let object = this.list_ChosenObjects.find((obj) => obj.baseObject === event.target.dataset.object);
@@ -3125,16 +3270,16 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 					mappingId: intNewIndex,
 					fromValue: field.mapping[i].fromValue,
 					toValue: field.mapping[i].toValue,
-					fromId: field.uniqueId +'-from-'+intNewIndex,
-					toId: field.uniqueId +'-to-'+intNewIndex,
+					fromId: field.uniqueId + "-from-" + intNewIndex,
+					toId: field.uniqueId + "-to-" + intNewIndex
 				});
 				intNewIndex++;
 			}
 		}
 		field.mappingSize = list_NewMapping.length + 1;
 		field.mapping = list_NewMapping;
-		field.blnDisabledDelete = (this.blnViewOnlyAccess) ? true : ((field.mapping.length <= 1) ? true : false);
-		field.blnAddMapping = (field.mapping.length >= field.fromOptions.length && this.blnViewOnlyAccess) ? true : false ;
+		field.blnDisabledDelete = this.blnViewOnlyAccess ? true : field.mapping.length <= 1 ? true : false;
+		field.blnAddMapping = field.mapping.length >= field.fromOptions.length && this.blnViewOnlyAccess ? true : false;
 		this.validateDuplicatePicklistFromValues(field);
 	}
 
@@ -3152,30 +3297,40 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		this.validateDuplicatePicklistFromValues(field);
 		this.validatePicklistEmptyMapping(object);
 		this.validateDuplicateFields(object);
-
 	}
 
 	//validates if any picklist value mapping is empty
 	validatePicklistEmptyMapping(obj) {
 		let bln_isConfigurationValid = true;
+
 		let list_comboToUpdate = [];
-		let list_comboToReset = [];		
-		obj.fieldMapping.forEach( field => {
-			field.mapping.forEach( mapping => {
+		let list_comboToReset = [];
+
+		let list_searchBoxToUpdate = [];
+		let list_SearchBoxesToReset = [];
+
+		obj.fieldMapping.forEach((field) => {
+			field.mapping.forEach((mapping) => {
 				if (!mapping.fromValue) {
 					bln_isConfigurationValid = false;
-					list_comboToUpdate.push(this.template.querySelector('[data-uniqueid="' + mapping.fromId+ '"]'));
+					list_comboToUpdate.push(this.template.querySelector('[data-uniqueid="' + mapping.fromId + '"]'));
+					list_searchBoxToUpdate.push(this.template.querySelector('[data-searchid="' + mapping.fromId + '"]'));
 				}
 				if (!mapping.toValue) {
 					bln_isConfigurationValid = false;
 					list_comboToUpdate.push(this.template.querySelector('[data-uniqueid="' + mapping.toId + '"]'));
+					list_searchBoxToUpdate.push(this.template.querySelector('[data-searchid="' + mapping.toId + '"]'));
 				} else {
 					list_comboToReset.push(this.template.querySelector('[data-uniqueid="' + mapping.toId + '"]'));
+					list_SearchBoxesToReset.push(this.template.querySelector('[data-searchid="' + mapping.toId + '"]'));
 				}
-			})
+			});
 		});
-		this.setCustomValidityToList(list_comboToUpdate, 'Value is required.');
-		this.setCustomValidityToList(list_comboToReset, '');
+		this.setCustomValidityToList(list_comboToUpdate, "Value is required.");
+		this.setCustomValidityToList(list_comboToReset, "");
+
+		this.setSearchBoxCustomValidity(list_searchBoxToUpdate, "Value is required.");
+		this.setSearchBoxCustomValidity(list_SearchBoxesToReset, "");
 		return bln_isConfigurationValid;
 	}
 
@@ -3183,7 +3338,7 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 	validateDuplicateFields(obj) {
 		let list_fields = [];
 		let list_duplicatedFields = [];
-		obj.fieldMapping.forEach( field => {
+		obj.fieldMapping.forEach((field) => {
 			if (list_fields.includes(field.selectedField)) {
 				list_duplicatedFields.push(field.selectedField);
 			} else {
@@ -3192,23 +3347,23 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		});
 		let list_comboToUpdate = [];
 		let list_comboToReset = [];
-		obj.fieldMapping.forEach( field => {
+		obj.fieldMapping.forEach((field) => {
 			if (list_duplicatedFields.includes(field.selectedField)) {
 				list_comboToUpdate.push(this.template.querySelector('[data-uniqueid="' + field.uniqueId + '"]'));
-				this.template.querySelector('[data-uniqueid="' + field.uniqueId + '"]').setErrorMessage('Duplicate Field.');
+				this.template.querySelector('[data-uniqueid="' + field.uniqueId + '"]').setErrorMessage("Duplicate Field.");
 			} else {
 				list_comboToReset.push(this.template.querySelector('[data-uniqueid="' + field.uniqueId + '"]'));
-				this.template.querySelector('[data-uniqueid="' + field.uniqueId + '"]').setErrorMessage('');
+				this.template.querySelector('[data-uniqueid="' + field.uniqueId + '"]').setErrorMessage("");
 			}
 		});
-		return (list_comboToUpdate.length > 0 ) ? false : true;
+		return list_comboToUpdate.length > 0 ? false : true;
 	}
 
 	//validates if there are any from value duplicated in the same field
 	validateDuplicatePicklistFromValues(picklist) {
 		let list_currentMappnig = [];
 		let list_duplicatedValues = [];
-		picklist.mapping.forEach( map => {
+		picklist.mapping.forEach((map) => {
 			if (!list_currentMappnig.includes(map.fromValue)) {
 				list_currentMappnig.push(map.fromValue);
 			} else {
@@ -3217,23 +3372,44 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		});
 		let list_comboxToUpdate = [];
 		let list_comboToReset = [];
-		picklist.mapping.forEach( map => {
+
+		let list_searchBoxToUpdate = [];
+		let list_SearchBoxesToReset = [];
+
+		picklist.mapping.forEach((map) => {
 			if (list_duplicatedValues.includes(map.fromValue)) {
 				list_comboxToUpdate.push(this.template.querySelector('[data-uniqueid="' + map.fromId + '"]'));
+				list_searchBoxToUpdate.push(this.template.querySelector('[data-searchid="' + map.fromId + '"]'));
 			} else {
 				list_comboToReset.push(this.template.querySelector('[data-uniqueid="' + map.fromId + '"]'));
+				list_SearchBoxesToReset.push(this.template.querySelector('[data-searchid="' + map.fromId + '"]'));
 			}
 		});
-		this.setCustomValidityToList(list_comboxToUpdate, 'Duplicate From Value.');
-		this.setCustomValidityToList(list_comboToReset, '');
-		return (list_comboxToUpdate.length > 0) ? false : true;
+		this.setCustomValidityToList(list_comboxToUpdate, "Duplicate From Value.");
+		this.setCustomValidityToList(list_comboToReset, "");
+
+		this.setSearchBoxCustomValidity(list_searchBoxToUpdate, "Duplicate From Value.");
+		this.setSearchBoxCustomValidity(list_SearchBoxesToReset, "");
+
+		let validate = list_comboxToUpdate.length == 0 ? true : false;
+		return validate;
 	}
 
 	//add the validation to a list of inputs
 	setCustomValidityToList(list_inputs, message) {
-		list_inputs.forEach( combo => {
-			combo.setCustomValidity(message);
-			combo.reportValidity();
+		list_inputs.forEach((combo) => {
+			if (combo) {
+				combo.setCustomValidity(message);
+				combo.reportValidity();
+			}
+		});
+	}
+
+	setSearchBoxCustomValidity(list_inputs, message) {
+		list_inputs.forEach((combo) => {
+			if (combo) {
+				combo.setErrorMessage(message);
+			}
 		});
 	}
 
@@ -3253,7 +3429,80 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 			}
 		}
 		object.fieldMapping = list_tempFields;
-		object.blnAddFieldMapping = (object.fieldMapping.length >= object.list_picklistFields.length && !this.blnViewOnlyAccess) ? true : false;
-		object.blnShowFieldMappingTable = (object.fieldMapping.length > 0) ? true : false;
+		object.blnAddFieldMapping = object.fieldMapping.length >= object.list_picklistFields.length && !this.blnViewOnlyAccess ? true : false;
+		object.blnShowFieldMappingTable = object.fieldMapping.length > 0 ? true : false;
+	}
+
+	handleReferenceFieldChange(event) {
+		let str_label = event.detail ? event.detail : "";
+		let object = this.list_ChosenObjects.find((obj) => obj.baseObject === event.target.dataset.object);
+		let int_Index = Number(event.target.dataset.index);
+		let int_fieldId = Number(event.target.dataset.picklist);
+		let str_mapOption = event.target.dataset.option;
+		let field = object.fieldMapping.find((field) => field.fieldId === int_fieldId);
+		let mapping = field.mapping.find((mapValue) => mapValue.mappingId === int_Index);
+		mapping[str_mapOption] = str_label;
+		this.validateDuplicatePicklistFromValues(field);
+		this.validatePicklistEmptyMapping(object);
+		if (str_mapOption.includes("from")) {
+			this.template.querySelector('[data-searchid="' + mapping.fromId + '"]').setTextBox(str_label);
+		} else {
+			this.template.querySelector('[data-searchid="' + mapping.toId + '"]').setTextBox(str_label);
+		}
+	}
+
+	setQueuesAvailable(object, result) {
+		object.map_Queues = result.map_Queues;
+		if (result.map_Queues[object.servingObject]) {
+			let queue = result.map_Queues[object.servingObject];
+			object.map_Queues = queue;
+
+			let list_Queues = [];
+
+			for (const property in queue) {
+				list_Queues.push(queue[property]);
+			}
+			object.list_Queues = list_Queues;
+			object.blnQueuesAvailable = list_Queues.length > 0;
+		}
+	}
+
+	handleQueueSelection(event) {
+		let checked = event.target.checked;
+		let object = this.list_ChosenObjects.find((obj) => obj.baseObject === event.target.dataset.object);
+		let int_Index = Number(event.target.dataset.index);
+		let int_fieldId = Number(event.target.dataset.picklist);
+		let str_mapOption = event.target.dataset.option;
+		let source = event.target.dataset.source;
+
+		let field = object.fieldMapping.find((field) => field.fieldId === int_fieldId);
+		let mapping = field.mapping.find((mapValue) => mapValue.mappingId === int_Index);
+		mapping[str_mapOption] = checked;
+		mapping[source] = "";
+
+		let tempList = ["[Logged In User]"];
+		if (field && field.selectedField.toLowerCase() != "ownerid") {
+			tempList.push("[Blank/Empty Value]");
+		}
+
+		if (str_mapOption.includes("from")) {
+			tempList.push("[Any Value]");
+		}
+
+		this.list_ActiveUsersLabel = [];
+		if (checked) {
+			object.list_Queues.forEach((queue) => {
+				tempList.push(queue);
+			});
+		} else {
+			let counter = 0;
+			this.list_ActiveUsersMasterLabel.forEach((user) => {
+				counter = counter + 1;
+				if (counter < 10) {
+					tempList.push(user);
+				}
+			});
+		}
+		this.list_ActiveUsersLabel = tempList;
 	}
 }

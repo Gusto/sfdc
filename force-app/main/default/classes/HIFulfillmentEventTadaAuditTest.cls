@@ -30,7 +30,6 @@ private class HIFulfillmentEventTadaAuditTest {
 			.setState(
 				'AL; AK; AZ; AR; CA; CO; CT; DC; DE; FL; GA; HI; ID; IL; IN; IA; KS; KY; LA; ME; MD; MA; MI; MN; MS; MO; MT; NE; NV; NH; NJ; NM; NY; NC; ND; OH; OK; OR; PA; RI; SC; SD; TN; TX; UT; VT; VA; WA; WV; WI; WY'
 			)
-			.setPartnerType('TAdA')
 			.build();
 		objCarrier.Key__c = 'alegeus';
 		List<Carrier__c> list_Carrier = new List<Carrier__c>();

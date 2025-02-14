@@ -4,7 +4,7 @@
         <name>Approve_Send_Email</name>
         <label>Approve - Send Email</label>
         <locationX>1172</locationX>
-        <locationY>1754</locationY>
+        <locationY>1646</locationY>
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
         <connector>
@@ -72,7 +72,7 @@
         <name>Send_Email_to_Contact</name>
         <label>Send Email to Contact</label>
         <locationX>72</locationX>
-        <locationY>1322</locationY>
+        <locationY>1214</locationY>
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
         <connector>
@@ -129,7 +129,7 @@
         <name>Assign_Default_To_Addresses</name>
         <label>Assign Default To Addresses</label>
         <locationX>1766</locationX>
-        <locationY>1106</locationY>
+        <locationY>998</locationY>
         <assignmentItems>
             <assignToReference>DefaultToAddress</assignToReference>
             <operator>Assign</operator>
@@ -145,7 +145,7 @@
         <name>Assign_Default_ToAddresses</name>
         <label>Assign Default ToAddresses</label>
         <locationX>204</locationX>
-        <locationY>782</locationY>
+        <locationY>674</locationY>
         <assignmentItems>
             <assignToReference>DefaultToAddress</assignToReference>
             <operator>Assign</operator>
@@ -177,7 +177,7 @@
         <name>Capture_Rejection_Feedback</name>
         <label>Capture Rejection Feedback</label>
         <locationX>2096</locationX>
-        <locationY>1538</locationY>
+        <locationY>1430</locationY>
         <assignmentItems>
             <assignToReference>record.Has_A_Valid_Recommendation__c</assignToReference>
             <operator>Assign</operator>
@@ -235,7 +235,7 @@
         <name>Capture_values_from_the_Email_screen</name>
         <label>Capture values from the Email screen</label>
         <locationX>1172</locationX>
-        <locationY>1430</locationY>
+        <locationY>1322</locationY>
         <assignmentItems>
             <assignToReference>EmailMessageNew.FromAddress</assignToReference>
             <operator>Assign</operator>
@@ -294,7 +294,7 @@
         <name>Initialize_Fault_Path_Details</name>
         <label>Initialize Fault Path Details</label>
         <locationX>1832</locationX>
-        <locationY>1862</locationY>
+        <locationY>1754</locationY>
         <assignmentItems>
             <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
             <operator>Assign</operator>
@@ -342,7 +342,7 @@
         <name>Update_QA_details_on_Case</name>
         <label>Update QA details on Case</label>
         <locationX>1172</locationX>
-        <locationY>1646</locationY>
+        <locationY>1538</locationY>
         <assignmentItems>
             <assignToReference>record.Auto_Solve_Attempt__c</assignToReference>
             <operator>Assign</operator>
@@ -514,7 +514,7 @@
         <name>Email_Sent_Success</name>
         <label>Email Sent Success</label>
         <locationX>1172</locationX>
-        <locationY>1862</locationY>
+        <locationY>1754</locationY>
         <defaultConnectorLabel>Failure</defaultConnectorLabel>
         <rules>
             <name>Success</name>
@@ -569,7 +569,7 @@
         <name>Selected_Option</name>
         <label>Selected Option</label>
         <locationX>204</locationX>
-        <locationY>998</locationY>
+        <locationY>890</locationY>
         <defaultConnector>
             <targetReference>Capture_Rejection_Details</targetReference>
         </defaultConnector>
@@ -594,7 +594,7 @@
         <name>Send_Reject_Decision_Check</name>
         <label>Send/Reject Decision Check</label>
         <locationX>1766</locationX>
-        <locationY>1322</locationY>
+        <locationY>1214</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>SendAction</name>
@@ -669,53 +669,52 @@
 - BTE-4006 - Moved QA Fields to Case Object
 - BTE-4102 - Integrate Internal AI response to Solve UI
 - BTE-4205 - Automate Auto-Solve Status on Case
-- BTE-4293 - Auto-Solve UI Updates / QA Guidance
--BTE-4399-Add Customer Email into Auto-Solve Screen Flow</description>
+- BTE-4293 - Auto-Solve UI Updates / QA Guidance</description>
     <dynamicChoiceSets>
         <name>HelpfulResponse</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Was_the_response_helpful__c</picklistField>
         <picklistObject>InternalAISolveEmailConversation__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>IncompleteResponseChoiceSet</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Incomplete_Response_Details__c</picklistField>
         <picklistObject>InternalAISolveEmailConversation__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>IncorrectResponseChoiceSet</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Incorrect_Response_Details__c</picklistField>
         <picklistObject>InternalAISolveEmailConversation__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>NegativeFeedbackChoiceSet</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Negative_Feedback__c</picklistField>
         <picklistObject>InternalAISolveEmailConversation__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>PositiveFeedbackChoiceSet</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Positive_Feedback__c</picklistField>
         <picklistObject>InternalAISolveEmailConversation__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
         <name>RejectionFeedbackChoiceSet</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Rejection_Reason__c</picklistField>
         <picklistObject>forethought__ForethoughtSolveEmailConversation__c</picklistObject>
     </dynamicChoiceSets>
@@ -766,14 +765,14 @@
         <name>Exception_Log_Event</name>
         <label>Exception Log Event</label>
         <locationX>1832</locationX>
-        <locationY>1970</locationY>
+        <locationY>1862</locationY>
         <inputReference>objExceptionLogEvent</inputReference>
     </recordCreates>
     <recordCreates>
         <name>Insert_EmailMessage</name>
         <label>Insert EmailMessage</label>
         <locationX>72</locationX>
-        <locationY>1430</locationY>
+        <locationY>1322</locationY>
         <connector>
             <targetReference>Update_Approval_Details</targetReference>
         </connector>
@@ -826,7 +825,7 @@
         <name>Insert_EmailMessage_Record</name>
         <label>Insert EmailMessage Record</label>
         <locationX>776</locationX>
-        <locationY>1970</locationY>
+        <locationY>1862</locationY>
         <connector>
             <targetReference>Update_Case</targetReference>
         </connector>
@@ -843,7 +842,7 @@
         <locationY>890</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_First_Email_Message2</targetReference>
+            <targetReference>Assign_Default_To_Addresses</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -866,29 +865,6 @@
         <locationY>566</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_First_Email_Message</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>ParentId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>record.Id</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>EmailMessage</object>
-        <sortField>CreatedDate</sortField>
-        <sortOrder>Asc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_First_Email_Message</name>
-        <label>Get First Email Message</label>
-        <locationX>204</locationX>
-        <locationY>674</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
             <targetReference>Assign_Default_ToAddresses</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
@@ -897,43 +873,6 @@
             <operator>EqualTo</operator>
             <value>
                 <elementReference>record.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Incoming</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>EmailMessage</object>
-        <sortField>CreatedDate</sortField>
-        <sortOrder>Asc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_First_Email_Message2</name>
-        <label>Get First Email Message</label>
-        <locationX>1766</locationX>
-        <locationY>998</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Assign_Default_To_Addresses</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>ParentId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>record.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Incoming</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -991,7 +930,7 @@
         <name>Update_Approval_Details</name>
         <label>Update Approval Details</label>
         <locationX>72</locationX>
-        <locationY>1538</locationY>
+        <locationY>1430</locationY>
         <connector>
             <targetReference>Update_Case_on_Approval</targetReference>
         </connector>
@@ -1033,10 +972,7 @@
         <name>Update_Case</name>
         <label>Update Case</label>
         <locationX>776</locationX>
-        <locationY>2078</locationY>
-        <connector>
-            <targetReference>Recommendation_Used</targetReference>
-        </connector>
+        <locationY>1970</locationY>
         <faultConnector>
             <isGoTo>true</isGoTo>
             <targetReference>Initialize_Fault_Path_Details</targetReference>
@@ -1047,10 +983,7 @@
         <name>Update_Case_on_Approval</name>
         <label>Update Case on Approval</label>
         <locationX>72</locationX>
-        <locationY>1646</locationY>
-        <connector>
-            <targetReference>Recommendation_Used</targetReference>
-        </connector>
+        <locationY>1538</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -1095,10 +1028,7 @@
         <name>Update_Case_on_Rejection</name>
         <label>Update Case on Rejection</label>
         <locationX>336</locationX>
-        <locationY>1430</locationY>
-        <connector>
-            <targetReference>Recommendation_Used</targetReference>
-        </connector>
+        <locationY>1322</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -1137,7 +1067,7 @@
         <name>Update_Rejection_Details</name>
         <label>Update Rejection Details</label>
         <locationX>336</locationX>
-        <locationY>1322</locationY>
+        <locationY>1214</locationY>
         <connector>
             <targetReference>Update_Case_on_Rejection</targetReference>
         </connector>
@@ -1185,17 +1115,14 @@
         <name>Update_Rejection_QA_Details_on_Case</name>
         <label>Update Rejection QA Details on Case</label>
         <locationX>2096</locationX>
-        <locationY>1646</locationY>
-        <connector>
-            <targetReference>Recommendation_Used</targetReference>
-        </connector>
+        <locationY>1538</locationY>
         <inputReference>record</inputReference>
     </recordUpdates>
     <screens>
         <name>Capture_Rejection_Details</name>
         <label>Capture Rejection Details</label>
         <locationX>336</locationX>
-        <locationY>1106</locationY>
+        <locationY>998</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1271,7 +1198,7 @@
         <name>Capture_Rejection_Details_Read_Only</name>
         <label>Capture Rejection Details Read-Only</label>
         <locationX>336</locationX>
-        <locationY>1214</locationY>
+        <locationY>1106</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1382,7 +1309,7 @@
         <name>Internal_AI_Solve_Response</name>
         <label>Internal AI Solve Response</label>
         <locationX>204</locationX>
-        <locationY>890</locationY>
+        <locationY>782</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1390,98 +1317,57 @@
             <targetReference>Selected_Option</targetReference>
         </connector>
         <fields>
-            <name>Customer_Inquiry_utoSolve</name>
-            <fieldText>Customer_Inquiry</fieldText>
-            <fieldType>RegionContainer</fieldType>
-            <fields>
-                <name>Customer_Inquiry_utoSolve_Column1</name>
-                <fieldType>Region</fieldType>
-                <fields>
-                    <name>Customer_Inquiry</name>
-                    <fieldText>&lt;p&gt;{!Get_First_Email_Message.TextBody}&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                </fields>
-                <inputParameters>
-                    <name>width</name>
-                    <value>
-                        <stringValue>12</stringValue>
-                    </value>
-                </inputParameters>
-                <isRequired>false</isRequired>
-            </fields>
-            <isRequired>false</isRequired>
-            <regionContainerType>SectionWithHeader</regionContainerType>
+            <name>Helptext</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(71, 166, 71);&quot;&gt;This email can be edited&lt;/strong&gt;&lt;strong style=&quot;color: var(--custom-palette-color, inherit);&quot;&gt;.&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;If approved, you will be able to update and format the email before sending to the customer. &lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
-            <name>Auto_solve_response2</name>
-            <fieldText>Auto solve response</fieldText>
-            <fieldType>RegionContainer</fieldType>
-            <fields>
-                <name>Auto_solve_response2_Column1</name>
-                <fieldType>Region</fieldType>
-                <fields>
-                    <name>Helptext</name>
-                    <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(71, 166, 71);&quot;&gt;This email can be edited&lt;/strong&gt;&lt;strong style=&quot;color: var(--custom-palette-color, inherit);&quot;&gt;.&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;If approved, you will be able to update and format the email before sending to the customer. &lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                </fields>
-                <fields>
-                    <name>Internal_AI_Response</name>
-                    <extensionName>c:screenFlowRichText</extensionName>
-                    <fieldType>ComponentInstance</fieldType>
-                    <inputParameters>
-                        <name>visibleLines</name>
-                        <value>
-                            <numberValue>30.0</numberValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>disabledVar</name>
-                        <value>
-                            <booleanValue>false</booleanValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>fieldValue</name>
-                        <value>
-                            <elementReference>Get_InternalAISolveEmailConversation.Response__c</elementReference>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>fromSendPartnerFlow</name>
-                        <value>
-                            <booleanValue>false</booleanValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>fieldLabel</name>
-                        <value>
-                            <stringValue>Email Response</stringValue>
-                        </value>
-                    </inputParameters>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
-                    <isRequired>true</isRequired>
-                    <storeOutputAutomatically>true</storeOutputAutomatically>
-                </fields>
-                <fields>
-                    <name>Is_the_Response_helpful</name>
-                    <choiceReferences>HelpfulResponse</choiceReferences>
-                    <dataType>String</dataType>
-                    <fieldText>Is the Response helpful?</fieldText>
-                    <fieldType>DropdownBox</fieldType>
-                    <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;If the recommendation is partially accurate, select ‘Yes’. If the recommendation does not apply to the customer inquiry, select ‘No’.&lt;/span&gt;&lt;/p&gt;</helpText>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
-                    <isRequired>true</isRequired>
-                </fields>
-                <inputParameters>
-                    <name>width</name>
-                    <value>
-                        <stringValue>12</stringValue>
-                    </value>
-                </inputParameters>
-                <isRequired>false</isRequired>
-            </fields>
-            <isRequired>false</isRequired>
-            <regionContainerType>SectionWithHeader</regionContainerType>
+            <name>Internal_AI_Response</name>
+            <extensionName>c:screenFlowRichText</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>visibleLines</name>
+                <value>
+                    <numberValue>30.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>disabledVar</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fieldValue</name>
+                <value>
+                    <elementReference>Get_InternalAISolveEmailConversation.Response__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fromSendPartnerFlow</name>
+                <value>
+                    <booleanValue>false</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fieldLabel</name>
+                <value>
+                    <stringValue>Email Response</stringValue>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <fields>
+            <name>Is_the_Response_helpful</name>
+            <choiceReferences>HelpfulResponse</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Is the Response helpful?</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <helpText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, &amp;quot;system-ui&amp;quot;, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(23, 43, 77);&quot;&gt;If the recommendation is partially accurate, select ‘Yes’. If the recommendation does not apply to the customer inquiry, select ‘No’.&lt;/span&gt;&lt;/p&gt;</helpText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>NextMessageToEditScreen</name>
@@ -1538,7 +1424,7 @@
         <name>Recommendation_Used</name>
         <label>Recommendation Used</label>
         <locationX>976</locationX>
-        <locationY>2654</locationY>
+        <locationY>2606</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1555,7 +1441,7 @@
         <name>RejectScreen</name>
         <label>RejectScreen</label>
         <locationX>2096</locationX>
-        <locationY>1430</locationY>
+        <locationY>1322</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1608,7 +1494,7 @@
         <name>SendScreen</name>
         <label>SendScreen</label>
         <locationX>1172</locationX>
-        <locationY>1538</locationY>
+        <locationY>1430</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1685,12 +1571,6 @@
                     <booleanValue>true</booleanValue>
                 </value>
             </inputParameters>
-            <inputParameters>
-                <name>fieldLabel</name>
-                <value>
-                    <stringValue>Email Response</stringValue>
-                </value>
-            </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <storeOutputAutomatically>true</storeOutputAutomatically>
@@ -1708,7 +1588,7 @@
         <name>Success_Message</name>
         <label>Success Message</label>
         <locationX>72</locationX>
-        <locationY>1214</locationY>
+        <locationY>1106</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1779,12 +1659,6 @@
                     <booleanValue>false</booleanValue>
                 </value>
             </inputParameters>
-            <inputParameters>
-                <name>fieldLabel</name>
-                <value>
-                    <stringValue>Email Response</stringValue>
-                </value>
-            </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <storeOutputAutomatically>true</storeOutputAutomatically>
@@ -1803,7 +1677,7 @@
         <name>Use_Forethought_Solve_Recommendation</name>
         <label>Use Forethought Solve Recommendation</label>
         <locationX>1766</locationX>
-        <locationY>1214</locationY>
+        <locationY>1106</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -1811,178 +1685,129 @@
             <targetReference>Send_Reject_Decision_Check</targetReference>
         </connector>
         <fields>
-            <name>Customer_Inquiry_Label_rdyforRout1</name>
-            <fieldText>Customer Inquiry</fieldText>
-            <fieldType>RegionContainer</fieldType>
-            <fields>
-                <name>Customer_Inquiry_Label_rdyforRout1_Column1</name>
-                <fieldType>Region</fieldType>
-                <fields>
-                    <name>Customer_Inquiry_readyForRoute</name>
-                    <fieldText>&lt;p&gt;{!Get_First_Email_Message2.TextBody}&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                </fields>
-                <inputParameters>
-                    <name>width</name>
-                    <value>
-                        <stringValue>12</stringValue>
-                    </value>
-                </inputParameters>
-                <isRequired>false</isRequired>
-            </fields>
-            <isRequired>false</isRequired>
-            <regionContainerType>SectionWithHeader</regionContainerType>
+            <name>WarningMessage</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 12px; color: rgb(255, 0, 0);&quot;&gt;This email cannot be edited.&lt;/strong&gt;&lt;strong style=&quot;font-size: 12px;&quot;&gt; &lt;/strong&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;It is fully formatted and if approved will be sent to the customer as-is.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
-            <name>Auto_solve_response</name>
-            <fieldText>Auto solve response</fieldText>
-            <fieldType>RegionContainer</fieldType>
-            <fields>
-                <name>Auto_solve_response_Column1</name>
-                <fieldType>Region</fieldType>
-                <fields>
-                    <name>WarningMessage</name>
-                    <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 12px; color: rgb(255, 0, 0);&quot;&gt;This email cannot be edited.&lt;/strong&gt;&lt;strong style=&quot;font-size: 12px;&quot;&gt; &lt;/strong&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;It is fully formatted and if approved will be sent to the customer as-is.&lt;/span&gt;&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                </fields>
-                <fields>
-                    <name>EmailBody</name>
-                    <extensionName>c:screenFlowRichText</extensionName>
-                    <fieldType>ComponentInstance</fieldType>
-                    <inputParameters>
-                        <name>visibleLines</name>
-                        <value>
-                            <numberValue>30.0</numberValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>required</name>
-                        <value>
-                            <booleanValue>true</booleanValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>fieldValue</name>
-                        <value>
-                            <elementReference>Get_Forethought_Solve_Recommendations.forethought__EmailContentHTML__c</elementReference>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>fromSendPartnerFlow</name>
-                        <value>
-                            <booleanValue>true</booleanValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>disabledVar</name>
-                        <value>
-                            <booleanValue>true</booleanValue>
-                        </value>
-                    </inputParameters>
-                    <inputParameters>
-                        <name>fieldLabel</name>
-                        <value>
-                            <stringValue>Email Response</stringValue>
-                        </value>
-                    </inputParameters>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
-                    <isRequired>true</isRequired>
-                    <storeOutputAutomatically>true</storeOutputAutomatically>
-                </fields>
-                <fields>
-                    <name>ActionButtons</name>
-                    <choiceReferences>ApproveChoice</choiceReferences>
-                    <choiceReferences>RejectChoice</choiceReferences>
-                    <dataType>String</dataType>
-                    <fieldText>Accuracy Evaluation</fieldText>
-                    <fieldType>RadioButtons</fieldType>
-                    <helpText>&lt;p&gt;{!AccuracyEvaluationMessage}&lt;/p&gt;</helpText>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
-                    <isRequired>true</isRequired>
-                </fields>
-                <fields>
-                    <name>Rejection_Reason_1</name>
-                    <choiceReferences>RejectionFeedbackChoiceSet</choiceReferences>
-                    <dataType>String</dataType>
-                    <fieldText>Rejection Reason</fieldText>
-                    <fieldType>DropdownBox</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
-                    <isRequired>false</isRequired>
-                    <visibilityRule>
-                        <conditionLogic>and</conditionLogic>
-                        <conditions>
-                            <leftValueReference>RejectChoice</leftValueReference>
-                            <operator>WasSelected</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>Rejection_Feedback_1</name>
-                    <fieldText>Rejection Feedback</fieldText>
-                    <fieldType>LargeTextArea</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
-                    <isRequired>true</isRequired>
-                    <visibilityRule>
-                        <conditionLogic>and</conditionLogic>
-                        <conditions>
-                            <leftValueReference>RejectChoice</leftValueReference>
-                            <operator>WasSelected</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>Rejection_Reason_1</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Inaccurate Response</stringValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>AccuracyEvaluationApproveMessage</name>
-                    <fieldText>&lt;p&gt;Click &apos;Review’ to confirm the full email details before sending to the customer&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                    <visibilityRule>
-                        <conditionLogic>or</conditionLogic>
-                        <conditions>
-                            <leftValueReference>ApproveChoice</leftValueReference>
-                            <operator>WasSelected</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>AccuracyEvaluationRejectMessage</name>
-                    <fieldText>&lt;p&gt;Please provide feedback to help us improve future responses&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                    <visibilityRule>
-                        <conditionLogic>1</conditionLogic>
-                        <conditions>
-                            <leftValueReference>RejectChoice</leftValueReference>
-                            <operator>WasSelected</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <inputParameters>
-                    <name>width</name>
-                    <value>
-                        <stringValue>12</stringValue>
-                    </value>
-                </inputParameters>
-                <isRequired>false</isRequired>
-            </fields>
+            <name>EmailBody</name>
+            <extensionName>c:screenFlowRichText</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>visibleLines</name>
+                <value>
+                    <numberValue>30.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>required</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fieldValue</name>
+                <value>
+                    <elementReference>Get_Forethought_Solve_Recommendations.forethought__EmailContentHTML__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fromSendPartnerFlow</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>disabledVar</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>fieldLabel</name>
+                <value>
+                    <stringValue>Email Response</stringValue>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <fields>
+            <name>ActionButtons</name>
+            <choiceReferences>ApproveChoice</choiceReferences>
+            <choiceReferences>RejectChoice</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Accuracy Evaluation</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <helpText>&lt;p&gt;{!AccuracyEvaluationMessage}&lt;/p&gt;</helpText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Rejection_Reason_1</name>
+            <choiceReferences>RejectionFeedbackChoiceSet</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Rejection Reason</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
-            <regionContainerType>SectionWithHeader</regionContainerType>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>RejectChoice</leftValueReference>
+                    <operator>WasSelected</operator>
+                    <rightValue>
+                        <booleanValue>true</booleanValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>Rejection_Feedback_1</name>
+            <fieldText>Rejection Feedback</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>RejectChoice</leftValueReference>
+                    <operator>WasSelected</operator>
+                    <rightValue>
+                        <booleanValue>true</booleanValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Rejection_Reason_1</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Inaccurate Response</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>AccuracyEvaluationApproveMessage</name>
+            <fieldText>&lt;p&gt;Click &apos;Review’ to confirm the full email details before sending to the customer&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <visibilityRule>
+                <conditionLogic>or</conditionLogic>
+                <conditions>
+                    <leftValueReference>ApproveChoice</leftValueReference>
+                    <operator>WasSelected</operator>
+                    <rightValue>
+                        <booleanValue>true</booleanValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>RejectChoice</leftValueReference>
+                    <operator>WasSelected</operator>
+                    <rightValue>
+                        <booleanValue>true</booleanValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
         </fields>
         <nextOrFinishButtonLabel>Review</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
@@ -1993,7 +1818,7 @@
         <name>Use_Internal_AI_Solve_Recommendation</name>
         <label>Use Internal AI Solve Recommendation</label>
         <locationX>72</locationX>
-        <locationY>1106</locationY>
+        <locationY>998</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -2033,12 +1858,6 @@
                 <name>disabledVar</name>
                 <value>
                     <booleanValue>false</booleanValue>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>fieldLabel</name>
-                <value>
-                    <stringValue>Email Response</stringValue>
                 </value>
             </inputParameters>
             <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Benefit_Types__c</fullName>
+    <description>Stores the benefit types passed by the associated HI application record.</description>
+    <externalId>false</externalId>
+    <formula>if(Medical_Renewal__c, &apos;Medical; &apos;, &apos;&apos;) &amp;
+ if(Dental_Renewal__c, &apos;Dental; &apos;, &apos;&apos;) &amp;
+if(Vision_Renewal__c, &apos;Vision; &apos;, &apos;&apos;) &amp;
+if(Life_Renewal__c, &apos;Life; &apos;, &apos;&apos;) &amp;
+if(Long_Term_Disability_Renewal__c, &apos;LTD; &apos;, &apos;&apos;) &amp;
+if(Short_Term_Disability_Renewal__c, &apos;STD; &apos;, &apos;&apos;) &amp;
+if(FSA_Renewal__c, &apos;FSA; &apos;, &apos;&apos;) &amp;
+if(DCA_Renewal__c, &apos;DCA; &apos;, &apos;&apos;) &amp;
+if(HSA_Renewal__c, &apos;HSA; &apos;, &apos;&apos;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Stores the benefit types passed by the associated HI application record.</inlineHelpText>
+    <label>Benefit Types</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

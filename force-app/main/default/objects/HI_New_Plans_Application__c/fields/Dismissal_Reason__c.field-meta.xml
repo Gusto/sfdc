@@ -2,10 +2,12 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Dismissal_Reason__c</fullName>
     <description>This field captures dismissal reason for New Plan Applications in Hippo</description>
+    <externalId>false</externalId>
     <label>Dismissal Reason</label>
-    <length>1000</length>
+    <length>255</length>
+    <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>LongTextArea</type>
-    <visibleLines>10</visibleLines>
+    <type>Text</type>
+    <unique>false</unique>
 </CustomField>

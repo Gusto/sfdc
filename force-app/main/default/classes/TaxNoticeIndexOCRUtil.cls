@@ -49,7 +49,7 @@ public with sharing class TaxNoticeIndexOCRUtil {
 	static String AGENCY_ASSIGNED_DEFAULT = 'FEIN';
 	static String TAX_NOTICE_TYPE_DEFAULT = '941';
 	public static String TNDC_FORM_NUMBER_CP161 = 'CP161';
-    public static String TNDC_FORM_NUMBER_CP = 'CP';
+	public static String TNDC_FORM_NUMBER_CP = 'CP';
 	public static String TNDC_FORM_TYPE_940 = '940';
 	public static String TNDC_FORM_TYPE_941 = '941';
 	public static String TNDC_FORM_TYPE_944 = '944';
@@ -81,169 +81,6 @@ public with sharing class TaxNoticeIndexOCRUtil {
 		set_SUIAgencyIds.add(WA_AGENCY_ID_DEFAULT);
 	}
 
-	/**
-	 * @Author      : Pravesh Rana
-	 * @Description : contains logic to process TNDC records for eligible Cases
-	 * @Parm        : list_TaxNoticeIndexes - List of TNDC records
-	 *                map_OldTaxNoticeIndexes - old trigger map for Tax_Notice_Index__c records
-	 * @Return      : N/A
-	 **/
-	public void processOcrTNDCRecords(List<Tax_Notice_Index__c> list_TaxNoticeIndexes, Map<Id, Case> map_CaseRecords) {
-		Map<Tax_Notice_Index__c, Case> map_NewNoticeRelatedCases = new Map<Tax_Notice_Index__c, Case>();
-		Map<Id, Integer> map_CaseIdTNDCRecordCount = new Map<Id, Integer>();
-		List<String> paperMailExclusions = paperMailExclusionsSettings.Filter_Value__c.split(';');
-		Set<Id> set_CaseIdsToSkip = new Set<Id>();
-		map_TriggeredCaseRecords = map_CaseRecords;
-
-		String strClientNameSOSL = null;
-		if (map_CaseRecords.size() > 0) {
-			for (Tax_Notice_Index__c objNotice : list_TaxNoticeIndexes) {
-				if (String.isNotBlank(objNotice.Client_Name_Text__c) && String.isBlank(objNotice.Client_Name_Match__c) && String.isBlank(objNotice.Client_Name__c)) {
-					String strClientNameTextTemp = '';
-					// Remove all trailing spaces and convert to lowercase and add to set
-					strClientNameTextTemp = objNotice.Client_Name_Text__c?.normalizeSpace().toLowerCase();
-					objNotice.Client_Name_Match__c = strClientNameTextTemp;
-					set_OCRClientNameTextsQuery.add(strClientNameTextTemp + '%');
-
-					if (objNotice.Case__r.Physical_Mail__c) {
-						for (Integer i = 0; i < paperMailExclusions.size(); i++) {
-							String strExclusions = paperMailExclusions[i].toLowerCase();
-							if (strClientNameTextTemp.contains(strExclusions)) {
-								set_OCRClientNameTextsQuery.add(strClientNameTextTemp.replace(strExclusions, '').trim() + '%');
-								break;
-							}
-						}
-					}
-
-					// Remove all the words from ignore list and add to set.
-					if (set_stringsOnAcctsEndToIgnore?.size() > 0) {
-						for (String strLiteral : set_stringsOnAcctsEndToIgnore) {
-							if (strClientNameTextTemp.endsWithIgnoreCase(strLiteral)) {
-								strClientNameTextTemp = strClientNameTextTemp.removeEndIgnoreCase(strLiteral).trim();
-								if (String.isNotBlank(strClientNameTextTemp)) {
-									objNotice.Client_Name_Match__c = strClientNameTextTemp;
-									set_OCRClientNameTextsQuery.add(strClientNameTextTemp + '%');
-									break;
-								}
-							}
-						}
-					}
-
-					if (set_stringsOnAcctsFrontToIgnore?.size() > 0) {
-						for (String strLiteral : set_stringsOnAcctsFrontToIgnore) {
-							if (strClientNameTextTemp.startsWithIgnoreCase(strLiteral)) {
-								strClientNameTextTemp = strClientNameTextTemp.removeStartIgnoreCase(strLiteral).trim();
-								if (String.isNotBlank(strClientNameTextTemp)) {
-									objNotice.Client_Name_Match__c = strClientNameTextTemp;
-									set_OCRClientNameTextsQuery.add('%' + strClientNameTextTemp);
-									break;
-								}
-							}
-						}
-					}
-
-					if (String.isNotBlank(strClientNameTextTemp)) {
-						strClientNameSOSL = strClientNameTextTemp;
-					}
-				}
-			}
-
-			if (!set_OCRClientNameTextsQuery.isEmpty()) {
-				for (Account objAccount : [
-					SELECT Id, Name, Is_Active_Customer__c, RecordTypeId, Tier__c, AM_Tier__c, RecordType.Name
-					FROM Account
-					WHERE Name != NULL AND Is_Active_Customer__c = TRUE AND Name LIKE :set_OCRClientNameTextsQuery
-				]) {
-					map_AccountNames.put(objAccount.Name, objAccount);
-					map_AccountIds.put(objAccount.Id, objAccount);
-				}
-			}
-
-			if (map_AccountNames.isEmpty() && String.isNotBlank(strClientNameSOSL)) {
-				List<List<SObject>> list_Results = [
-					FIND :strClientNameSOSL
-					IN NAME FIELDS
-					RETURNING Account(Id, Name, Is_Active_Customer__c, RecordTypeId, Tier__c, AM_Tier__c, RecordType.Name WHERE Is_Active_Customer__c = TRUE)
-				];
-				for (Account objAccount : (List<Account>) list_Results[0]) {
-					map_AccountNames.put(objAccount.Name, objAccount);
-					map_AccountIds.put(objAccount.Id, objAccount);
-				}
-			}
-
-			for (Tax_Notice_Index__c objNotice : list_TaxNoticeIndexes) {
-				Id IdMatchedAccount;
-				Case objCase = map_CaseRecords.get(objNotice.Case__c);
-				if (String.isNotBlank(objNotice.Client_Name_Text__c) && String.isNotBlank(objNotice.Client_Name_Match__c) && String.isBlank(objNotice.Client_Name__c) && objNotice.Case__c != null) {
-					String strClientNameMatch = objNotice.Client_Name_Match__c;
-					if (map_AccountNames?.size() > 0) {
-						for (Account objAcc : map_AccountNames.values()) {
-							if (objAcc.Name.equalsIgnoreCase(objNotice.Client_Name_Text__c)) {
-								IdMatchedAccount = objAcc.Id;
-								break;
-							}
-						}
-
-						// check for physical email check
-						if (String.isBlank(IdMatchedAccount) && objNotice.Case__r.Physical_Mail__c) {
-							for (Integer i = 0; i < paperMailExclusions.size(); i++) {
-								String strNameTemp = objNotice.Client_Name_Text__c.replace(paperMailExclusions[i].toLowercase(), '').trim();
-								if (map_AccountNames.containsKey(strNameTemp)) {
-									IdMatchedAccount = map_AccountNames.get(strNameTemp).Id;
-									break;
-								}
-							}
-						}
-
-						if (String.isBlank(IdMatchedAccount)) {
-							for (Account objAcc : map_AccountNames.values()) {
-								if (objAcc.Name.containsIgnoreCase(strClientNameMatch) || strClientNameMatch.containsIgnoreCase(objAcc.Name)) {
-									//cloud 9 infosystems, inc. contains cloud 9 infosystems
-									IdMatchedAccount = objAcc.Id;
-									break;
-								}
-							}
-						}
-					}
-
-					if (IdMatchedAccount != null) {
-						objNotice.Client_Name__c = IdMatchedAccount;
-						objNotice.Automation_Message__c = STR_SFDC_SUCCESS_MSG;
-						objNotice.Processing_State__c = PROCESSINGSTATE_PROCESSED;
-					} else {
-						objNotice.Automation_Message__c = STR_SFDC_ERROR_ACCOUNTNOTFOUND_MSG;
-						objNotice.Processing_State__c = PROCESSINGSTATE_ERROR;
-					}
-				}
-
-				if (objNotice.Processing_State__c == PROCESSINGSTATE_ERROR) {
-					set_CaseIdsToSkip.add(objNotice.Case__c);
-				}
-
-				//skip error out TNDC records
-				if (set_CaseIdsToSkip.contains(objCase.Id)) {
-					objCase = moveCaseToSpecialist(objCase, STR_SFDC_ERROR_ACCOUNTNOTFOUND_MSG, STR_SFDC_ERROR_STATUS, false);
-					continue;
-				} else if (objCase.Status == CASE_STATUS_OCR_CAPTURE_COMPLETE && objCase.OCR_Status__c != STR_IB_FAILED_STATUS && objNotice.Processing_State__c != PROCESSINGSTATE_ERROR) {
-					Integer intCaseIndexRecordsCount = map_CaseIdTNDCRecordCount.containsKey(objCase.Id) ? map_CaseIdTNDCRecordCount.get(objCase.Id) : 0; //1
-					if (intCaseIndexRecordsCount == 0) {
-						Tax_Notice_Index__c objManualIndex = getNewTNDC(objNotice, true);
-						objManualIndex.Gusto_is_addressee_of_record__c = objCase.Physical_Mail__c;
-						map_NewNoticeRelatedCases.put(objManualIndex, objCase);
-						map_TNDCRecCaseId.put(objNotice.Id, objCase.Id);
-					} else {
-						map_NewNoticeRelatedCases.put(objNotice, getNewCase(objCase, objNotice));
-					}
-
-					map_CaseIdTNDCRecordCount.put(objCase.Id, intCaseIndexRecordsCount + 1); //2
-				}
-			}
-
-			if (map_NewNoticeRelatedCases?.size() > 0) {
-				//saveRecords(map_NewNoticeRelatedCases, map_CaseRecords, null);
-			}
-		}
-	}
 
 	/**
 	 * @Author      : Pravesh Rana
@@ -355,8 +192,8 @@ public with sharing class TaxNoticeIndexOCRUtil {
 
 			//update tax notice type update as per BPO-1831
 			if (
-                objNewIndex.Tax_Notice_Form_Number__c != null &&
-                (objNewIndex.Tax_Notice_Form_Number__c).startsWith(TNDC_FORM_NUMBER_CP) &&
+				objNewIndex.Tax_Notice_Form_Number__c != null &&
+				(objNewIndex.Tax_Notice_Form_Number__c).startsWith(TNDC_FORM_NUMBER_CP) &&
 				objNewIndex.Tax_Notice_Type__c != TNDC_FORM_TYPE_940 &&
 				objNewIndex.Tax_Notice_Type__c != TNDC_FORM_TYPE_941 &&
 				objNewIndex.Tax_Notice_Type__c != TNDC_FORM_TYPE_944

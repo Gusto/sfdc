@@ -28,6 +28,7 @@ public class BTBOSideViewCtrl {
 	public static final String BENEFIT_TRANSFER_QUEUE = 'Benefit_Transfer';
 	public string blnLoggedInUserType { get; set; }
 	public list<BenefitOrderWrapper> list_AllMultiBOWrapper { get; set; }
+	static string strTADACarrierName = Utils.strTADACarrierName;
 	static string strOrderStatus_Ready = 'Ready for Qualification';
 	static string strOrderStatus_ReadyDocCollection = 'Ready for Document Collection';
 	static string strOrderStatus_ERSignature = 'Pending ER Signature';
@@ -154,7 +155,6 @@ public class BTBOSideViewCtrl {
 						Carrier__r.Name,
 						Owner.Name,
 						Benefit_Types__c,
-						TAdA__c,
 						(SELECT Id, CaseNumber, Subject FROM Cases__r WHERE Carrier_Order__c != NULL ORDER BY createddate DESC)
 					FROM Carrier_Order__c
 					WHERE Benefit_Order__c = :IdBenefitOrder AND RecordType.Name = 'Benefits BoR'
@@ -163,13 +163,13 @@ public class BTBOSideViewCtrl {
 				if (lstCarrierOrder != null && lstCarrierOrder.size() > 0) {
 					list_CarrierOrderWrapper = new List<CarrierOrderWrapper>();
 					for (Carrier_Order__c co : lstCarrierOrder) {
-						if (blnIsADV == false || (blnIsADV == true && co.TAdA__c == false) || (co.Implementation_Stage__c == strOrderStatus_ERSignature)) {
+						if (blnIsADV == false || (blnIsADV == true && co.Carrier__r.Name != strTADACarrierName) || (co.Implementation_Stage__c == strOrderStatus_ERSignature)) {
 							CarrierOrderWrapper cow = new CarrierOrderWrapper();
 							cow.objCarrierOrder = co;
 							list_CarrierOrderWrapper.add(cow);
 						}
 						//If Any TADA Carrier take into another object to show on Advocate View
-						if (co.Implementation_Stage__c != strOrderStatus_ERSignature && co.TAdA__c == true) {
+						if (co.Implementation_Stage__c != strOrderStatus_ERSignature && co.Carrier__r.Name == strTADACarrierName) {
 							objCarrierOrder = co;
 
 							if (
@@ -314,7 +314,7 @@ public class BTBOSideViewCtrl {
 					if (blnCustomerSignedApp == true) {
 						cow.objCarrierOrder.Implementation_Stage__c = strOrderStatus_Ready;
 						//In BO has only TADA case
-						if (objBenefitOrder.Type__c == 'BOR TAdA Only' && cow.objCarrierOrder.TAdA__c == true) {
+						if (objBenefitOrder.Type__c == 'BOR TAdA Only' && cow.objCarrierOrder.Carrier__r.Name == strTADACarrierName) {
 							cow.objCarrierOrder.Implementation_Stage__c = strOrderStatus_ReadyDocCollection;
 						}
 						list_COsToUpdate.add(cow.objCarrierOrder);

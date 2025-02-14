@@ -5,8 +5,17 @@
     <formula>AND(
     RecordType.DeveloperName = &quot;Tax_Credits&quot;,
     ISPICKVAL(StageName, &quot;New&quot;),
+    ISBLANK(Referral_Code__c),
     Account.Is_Active_Customer__c = true,
     NOT(ISPICKVAL(Account.ZP_Company_Overall_Status__c, &quot;Suspended&quot;)),
+    NOT(ISBLANK(Account.NAICS_Code__c)),
+    OR(
+        BEGINS(Account.NAICS_Code__c, &quot;51&quot;),
+        BEGINS(Account.NAICS_Code__c, &quot;54&quot;),
+        BEGINS(Account.NAICS_Code__c, &quot;31&quot;),
+        BEGINS(Account.NAICS_Code__c, &quot;32&quot;),
+        BEGINS(Account.NAICS_Code__c, &quot;33&quot;) 
+    ),
     Owner.User_Role_Identifier__c = &quot;Integration User&quot;
 )</formula>
     <label>Enable Ring Lead Routing</label>

@@ -3,41 +3,52 @@
  * @description controller for alert banner
  * @see AlertBannerCtrlTest
  */
-public without sharing class AlertBannerCtrl {
-    
+public with sharing class AlertBannerCtrl {
     /**
-     * @author Pradeep Chary
-     * @description get active banner based on Application name
-     * @param application name to search for active banner messages
+     * @author Alex Xiong
+     * @description get active banner based on App name
+     * @param app name to search for active banner messages
      * @return message to display
      */
     @AuraEnabled
-    public static List<Page_Alert_Banner__c> getHighlightBanner() {
-        List<UserAppInfo> list_UserAppInfo = [SELECT
-                                              Id,
-                                              AppDefinitionId
-                                              FROM UserAppInfo
-                                              WHERE UserId = :UserInfo.getUserId()
-                                              LIMIT 1];
+    public static String getBanner() {
+        List<Alert_Banner__mdt> list_ActiveBanners = [SELECT Id, Apps__c, Message__c FROM Alert_Banner__mdt WHERE Active__c = true];
+        String strMessage;
+        List<UserAppInfo> list_UserAppInfo = [SELECT Id, AppDefinitionId FROM UserAppInfo WHERE UserId = :UserInfo.getUserId() LIMIT 1];
+        AppDefinition objAppDef;
+
         if (!list_UserAppInfo.isEmpty()) {
-            AppDefinition objAppDefinition = [SELECT
-                                              DurableId,
-                                              Label
-                                              FROM AppDefinition
-                                              WHERE DurableId = :list_UserAppInfo[0].AppDefinitionId
-                                              LIMIT 1];
-            List<Page_Alert_Banner__c> list_Banners = [SELECT 
-                                                       Id,
-                                                       Application__c,
-                                                       Subject__c,
-                                                       Message__c
-                                                       FROM Page_Alert_Banner__c
-                                                       WHERE Active__c = true];
-            if (!list_Banners.isEmpty()) {
-                return list_Banners;
+            objAppDef = [SELECT DurableId, Label FROM AppDefinition WHERE DurableId = :list_UserAppInfo[0].AppDefinitionId LIMIT 1];
+            
+            for (Alert_Banner__mdt objBanner : list_ActiveBanners) {
+                if (objBanner.Apps__c.toLowerCase().contains(objAppDef.Label.toLowerCase()) || objBanner.Apps__c.toLowerCase() == 'all') {
+                    strMessage = objBanner.Message__c;
+                }
             }
         }
+
+        return strMessage;
+    }
+
+    /**
+     * @author Alex Xiong
+     * @description this method is only run for test purposes. Custom Metadata cannot be inserted in unit tests
+     *              this method will mock data for getBanner()
+     * @param name of app to test with
+     */
+    public static String getBannerTestOnly(String strApp) {
+        String strResult = getBanner();
         
-        return new List<Page_Alert_Banner__c>();
+        if (Test.isRunningTest()) {
+            if (strApp == 'Engagement') {
+                strResult = 'This is a banner for Engagement';
+            } else if (strApp == 'Sales') {
+                strResult = 'This is a banner for Sales';
+            } else {
+                strResult = null;
+            }
+        }
+
+        return strResult;
     }
 }

@@ -18,16 +18,4 @@
 	<aura:attribute name="objChatParameter" type="String" />
 	<!-- Attribute to store the Reminder repeat count -->
 	<aura:attribute name="intCount" type="Integer" default="0" />
-	<!-- Attribute to store record details -->
-	<aura:attribute name="objRecord" type="Object"/>
-	<!-- Attribute to store record error -->
-	<aura:attribute name="recordError" type="String"/>
-	<!-- LDS Save record -->
-	<force:recordData 
-		aura:id="recordHandler" 
-		recordId="{!v.recordId}" 
-		fields="Reminder_Timestamp_1__c,Reminder_Timestamp_2__c" 
-		targetFields="{!v.objRecord}" 
-		targetError="{!v.recordError}"
-		mode="EDIT" />
 </aura:component>

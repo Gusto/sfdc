@@ -16,40 +16,40 @@ public class CaseEmailAutoSolveAIQueueable implements Queueable, Database.Allows
 
     // Execute method
     public void execute(QueueableContext context) {
-        try {
-                Case caseRecord = getCaseDetails(caseId);
-                InternalAISolveEmailConversation__c emailConversation = new InternalAISolveEmailConversation__c();
-                if (caseRecord == null) {
-                        ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'Queueable_ExecuteMethod', 'Case not found for ID: ' + caseId, '');
-                        return;
-                }
-
-                HttpRequest request = createHttpRequest(caseRecord);
-                HttpResponse response = sendHttpRequest(request);
-                //System.debug('===============' + response.getBody());
-
-                if (response != null && response.getStatusCode() == 200) {
-                    emailConversation = createInternalAISolveEmailConversation(response.getBody(), caseRecord.Id);
-                    if(emailConversation.Return_Response__c && emailConversation.Valid_Request__c == CaseUtils.INTERNAL_VALID_REQUEST){
-                            updateSolveStatusOnCase(caseRecord.Id, 'Yes', CaseUtils.AUTO_SOLVE_STATUS_ELIGIBLE);
-                    } else {
-                            updateSolveStatusOnCase(caseRecord.Id, 'Yes',CaseUtils.AUTO_SOLVE_STATUS_INELIGIBLE);
+            try {
+                    Case caseRecord = getCaseDetails(caseId);
+                    InternalAISolveEmailConversation__c emailConversation = new InternalAISolveEmailConversation__c();
+                    if (caseRecord == null) {
+                            ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'Queueable_ExecuteMethod', 'Case not found for ID: ' + caseId, '');
+                            return;
                     }
-                } else {
-                        ExceptionLogUtil.logException(
-                                'CaseEmailAutoSolveAIQueueable',
-                                'Queueable_ExecuteMethod',
-                                'Failed to get a valid response. Case ID: ' + caseId + ' Status Code: ' + response.getStatusCode(),
-                                'Response Body: ' + response.getBody()
-                        );
-                        updateSolveStatusOnCase(caseRecord.Id, 'No',caseUtils.AUTO_SOLVE_STATUS_INELIGIBLE);
-                        //System.debug('Failed to get a valid response. Status Code: ' +  response.getStatusCode());
-                }
-        } catch (Exception e) {
-                ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'Queueable_ExecuteMethod', caseId, e);
-                updateSolveStatusOnCase(caseId, 'No',caseUtils.AUTO_SOLVE_STATUS_INELIGIBLE);
-        }
-   }
+
+                    HttpRequest request = createHttpRequest(caseRecord);
+                    HttpResponse response = sendHttpRequest(request);
+                    //System.debug('===============' + response.getBody());
+
+                    if (response != null && response.getStatusCode() == 200) {
+                        emailConversation = createInternalAISolveEmailConversation(response.getBody(), caseRecord.Id);
+                        if(emailConversation!=null && emailConversation.Return_Response__c && emailConversation.Valid_Request__c == CaseUtils.INTERNAL_VALID_REQUEST){
+                                updateSolveStatusOnCase(caseRecord.Id, 'Yes', CaseUtils.AUTO_SOLVE_STATUS_ELIGIBLE);
+                        } else {
+                                updateSolveStatusOnCase(caseRecord.Id, 'Yes',CaseUtils.AUTO_SOLVE_STATUS_INELIGIBLE);
+                        }
+                    } else {
+                            ExceptionLogUtil.logException(
+                                    'CaseEmailAutoSolveAIQueueable',
+                                    'Queueable_ExecuteMethod',
+                                    'Failed to get a valid response. Case ID: ' + caseId + ' Status Code: ' + response.getStatusCode(),
+                                    'Response Body: ' + response.getBody()
+                            );
+                            updateSolveStatusOnCase(caseRecord.Id, 'No',caseUtils.AUTO_SOLVE_STATUS_INELIGIBLE);
+                            //System.debug('Failed to get a valid response. Status Code: ' +  response.getStatusCode());
+                    }
+            } catch (Exception e) {
+                    ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'Queueable_ExecuteMethod', caseId, e);
+                    updateSolveStatusOnCase(caseId, 'No',caseUtils.AUTO_SOLVE_STATUS_INELIGIBLE);
+            }
+    }
 
     // Fetch Case details
     private Case getCaseDetails(Id caseId) {
@@ -81,48 +81,48 @@ public class CaseEmailAutoSolveAIQueueable implements Queueable, Database.Allows
             }
     }
 
-   // Deserialize response and dynamically create record
-   private InternalAISolveEmailConversation__c createInternalAISolveEmailConversation(String responseBody, Id caseId) {
-        try {
-                Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(responseBody);
+    // Deserialize response and dynamically create record
+    private InternalAISolveEmailConversation__c createInternalAISolveEmailConversation(String responseBody, Id caseId) {
+            try {
+                    Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(responseBody);
 
-                InternalAISolveEmailConversation__c emailConversation = new InternalAISolveEmailConversation__c();
-                emailConversation.Case__c = caseId;
+                    InternalAISolveEmailConversation__c emailConversation = new InternalAISolveEmailConversation__c();
+                    emailConversation.Case__c = caseId;
 
-                // Define the mapping between API response keys and Salesforce field API names
-                Map<String, String> fieldMapping = getAPIResponseSFMapping();
+                    // Define the mapping between API response keys and Salesforce field API names
+                    Map<String, String> fieldMapping = getAPIResponseSFMapping();
 
-                Schema.SObjectType objectType = InternalAISolveEmailConversation__c.SObjectType;
-                Map<String, Schema.SObjectField> fieldsMap = objectType.getDescribe().fields.getMap();
+                    Schema.SObjectType objectType = InternalAISolveEmailConversation__c.SObjectType;
+                    Map<String, Schema.SObjectField> fieldsMap = objectType.getDescribe().fields.getMap();
 
-                for (String key : responseMap.keySet()) {
-                        if (fieldMapping.containsKey(key)) {
-                                String salesforceField = fieldMapping.get(key);
-                                if (fieldsMap.containsKey(salesforceField)) {
-                                        Object value = responseMap.get(key);
-                                        if (value != null) {
-                                                if (fieldsMap.get(salesforceField).getDescribe().getType() == Schema.DisplayType.MULTIPICKLIST && value instanceof List<Object>) {
-                                                        List<String> stringValues = (List<String>) value;
-                                                        emailConversation.put(salesforceField, String.join(stringValues, ';'));
-                                                } else if (
-                                                        fieldsMap.get(salesforceField).getDescribe().getType() == Schema.DisplayType.STRING ||
-                                                        fieldsMap.get(salesforceField).getDescribe().getType() == Schema.DisplayType.TEXTAREA
-                                                ) {
-                                                        emailConversation.put(salesforceField, String.valueOf(value));
-                                                } else {
-                                                        emailConversation.put(salesforceField, value);
-                                                }
-                                        }
-                                }
-                        }
-                }
-                insert emailConversation;
-                return emailConversation;
-        } catch (Exception e) {
-                ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'createInternalAISolveEmailConversation', caseId, e);
-                return null;
-        }
-   }
+                    for (String key : responseMap.keySet()) {
+                            if (fieldMapping.containsKey(key)) {
+                                    String salesforceField = fieldMapping.get(key);
+                                    if (fieldsMap.containsKey(salesforceField)) {
+                                            Object value = responseMap.get(key);
+                                            if (value != null) {
+                                                    if (fieldsMap.get(salesforceField).getDescribe().getType() == Schema.DisplayType.MULTIPICKLIST && value instanceof List<Object>) {
+                                                            List<String> stringValues = (List<String>) value;
+                                                            emailConversation.put(salesforceField, String.join(stringValues, ';'));
+                                                    } else if (
+                                                            fieldsMap.get(salesforceField).getDescribe().getType() == Schema.DisplayType.STRING ||
+                                                            fieldsMap.get(salesforceField).getDescribe().getType() == Schema.DisplayType.TEXTAREA
+                                                    ) {
+                                                            emailConversation.put(salesforceField, String.valueOf(value));
+                                                    } else {
+                                                            emailConversation.put(salesforceField, value);
+                                                    }
+                                            }
+                                    }
+                            }
+                    }
+                    insert emailConversation;
+                    return emailConversation;
+            } catch (Exception e) {
+                    ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'createInternalAISolveEmailConversation', caseId, e);
+                    return null;
+            }
+    }
 
     //For now, we will keep it static
     private Map<String, String> getAPIResponseSFMapping() {
@@ -150,23 +150,24 @@ public class CaseEmailAutoSolveAIQueueable implements Queueable, Database.Allows
                     'missing_context' => 'Missing_Context__c',
                     'auto_send' => 'Auto_Send___c',
                     'quality_score' => 'Quality_Score__c'
+
             };
 
             return fieldMapping;
     }
 
     private void updateSolveStatusOnCase(Id idCase, String strStatus, String strEligibility) {
-        try {
-                Case objCase = new Case(Id = idCase);
-                objCase.Internal_AI_Processed__c = strStatus;
-                if(strEligibility == CaseUtils.AUTO_SOLVE_STATUS_ELIGIBLE){
-                    objCase.Auto_Solve_Status__c = strEligibility;
-                }
-                update objCase;
-        } catch (Exception e) {
-                ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'updateSolveStatusOnCase', idCase, e);
-        }
-   } 
+            try {
+                    Case objCase = new Case(Id = idCase);
+                    objCase.Internal_AI_Processed__c = strStatus;
+                    if(strEligibility == CaseUtils.AUTO_SOLVE_STATUS_ELIGIBLE){
+                        objCase.Auto_Solve_Status__c = strEligibility;
+                    }
+                    update objCase;
+            } catch (Exception e) {
+                    ExceptionLogUtil.logException('CaseEmailAutoSolveAIQueueable', 'updateSolveStatusOnCase', idCase, e);
+            }
+    }
 
     // Request Wrapper Class
     public class RequestWrapper {

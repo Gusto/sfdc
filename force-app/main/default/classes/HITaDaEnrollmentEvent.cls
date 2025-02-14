@@ -238,7 +238,7 @@ public class HITaDaEnrollmentEvent {
 								null,
 								objParsedInfoEvent.tada.fsa,
 								null,
-								HIEnrollmentEventUtility.TAdA_FULFILLMENT_TYPE_FSA_DCA,
+								HIEnrollmentEventUtility.ALEGEUS_FULFILLMENT_TYPE_FSA_DCA,
 								objFulfillmentEvent.Id__c,
 								String.valueOf(objParsedInfoEvent.employee.id),
 								String.valueOf(objParsedInfoEvent.company.id),
@@ -249,7 +249,7 @@ public class HITaDaEnrollmentEvent {
 							String strKey =
 								objParsedInfoEvent.employee.id +
 								'~~' +
-								HIEnrollmentEventUtility.TAdA_FULFILLMENT_TYPE_FSA_DCA +
+								HIEnrollmentEventUtility.ALEGEUS_FULFILLMENT_TYPE_FSA_DCA +
 								'~~' +
 								strStartDate +
 								'~~' +
@@ -319,7 +319,7 @@ public class HITaDaEnrollmentEvent {
 								null,
 								null,
 								objParsedInfoEvent.tada.dca,
-								HIEnrollmentEventUtility.TAdA_FULFILLMENT_TYPE_FSA_DCA,
+								HIEnrollmentEventUtility.ALEGEUS_FULFILLMENT_TYPE_FSA_DCA,
 								objFulfillmentEvent.Id__c,
 								String.valueOf(objParsedInfoEvent.employee.id),
 								String.valueOf(objParsedInfoEvent.company.id),
@@ -330,7 +330,7 @@ public class HITaDaEnrollmentEvent {
 							String strKey =
 								objParsedInfoEvent.employee.id +
 								'~~' +
-								HIEnrollmentEventUtility.TAdA_FULFILLMENT_TYPE_FSA_DCA +
+								HIEnrollmentEventUtility.ALEGEUS_FULFILLMENT_TYPE_FSA_DCA +
 								'~~' +
 								strStartDate +
 								'~~' +
@@ -358,7 +358,7 @@ public class HITaDaEnrollmentEvent {
 						objParsedInfoEvent?.tada?.hsa,
 						null,
 						null,
-						HIEnrollmentEventUtility.TAdA_FULFILLMENT_TYPE_HSA,
+						HIEnrollmentEventUtility.ALEGEUS_FULFILLMENT_TYPE_HSA,
 						objFulfillmentEvent.Id__c,
 						String.valueOf(objParsedInfoEvent.employee.id),
 						String.valueOf(objParsedInfoEvent.company.id),
@@ -369,7 +369,7 @@ public class HITaDaEnrollmentEvent {
 					String strKey =
 						objParsedInfoEvent.employee.id +
 						'~~' +
-						HIEnrollmentEventUtility.TAdA_FULFILLMENT_TYPE_HSA +
+						HIEnrollmentEventUtility.ALEGEUS_FULFILLMENT_TYPE_HSA +
 						'~~' +
 						objParsedInfoEvent.tada.hsa.hsa_benefit.effective_date +
 						'~~' +
@@ -538,20 +538,20 @@ public class HITaDaEnrollmentEvent {
 					objFSACase.Selection_UUIDs__c += objFSACase.FSA_UUID__c + ';';
 				}
 
-				if (!objFSACase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objFSACase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA + ';';
+				if (!objFSACase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objFSACase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA + ';';
 				}
-				if (!objFSACase.Fulfillment_Sub_Type__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objFSACase.Fulfillment_Sub_Type__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA + ';';
+				if (!objFSACase.Fulfillment_Sub_Type__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objFSACase.Fulfillment_Sub_Type__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA + ';';
 				}
-				if (!objFSACase.Enrollment_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objFSACase.Enrollment_Key__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA + ';';
+				if (!objFSACase.Enrollment_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objFSACase.Enrollment_Key__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA + ';';
 				}
-				if (!objFSACase.Integration_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objFSACase.Integration_Key__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA + ';';
+				if (!objFSACase.Integration_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objFSACase.Integration_Key__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA + ';';
 				}
-				if (!objFSACase.Integration_Id__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA)) {
-					objFSACase.Integration_Id__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_FSA + ';';
+				if (!objFSACase.Integration_Id__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA)) {
+					objFSACase.Integration_Id__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_FSA + ';';
 				}
 				objFSACase.Carrier__c = (map_Carrier != null && map_Carrier.containsKey(objWrap.objFSA.provider_key)) ? map_Carrier.get(objWrap.objFSA.provider_key).Id : null;
 				map_CasesToUpsert.put(strTempKey, objFSACase);
@@ -575,20 +575,20 @@ public class HITaDaEnrollmentEvent {
 				}
 				objHSACase.HSA_UUID__c = objWrap.objHSA.hsa_selection.uuid;
 
-				if (!objHSACase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA)) {
-					objHSACase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA + ';';
+				if (!objHSACase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA)) {
+					objHSACase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA + ';';
 				}
-				if (!objHSACase.Fulfillment_Sub_Type__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA)) {
-					objHSACase.Fulfillment_Sub_Type__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA + ';';
+				if (!objHSACase.Fulfillment_Sub_Type__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA)) {
+					objHSACase.Fulfillment_Sub_Type__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA + ';';
 				}
-				if (!objHSACase.Enrollment_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA)) {
-					objHSACase.Enrollment_Key__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA + ';';
+				if (!objHSACase.Enrollment_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA)) {
+					objHSACase.Enrollment_Key__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA + ';';
 				}
-				if (!objHSACase.Integration_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA)) {
-					objHSACase.Integration_Key__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA + ';';
+				if (!objHSACase.Integration_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA)) {
+					objHSACase.Integration_Key__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA + ';';
 				}
-				if (!objHSACase.Integration_Id__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA)) {
-					objHSACase.Integration_Id__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_HSA + ';';
+				if (!objHSACase.Integration_Id__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA)) {
+					objHSACase.Integration_Id__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_HSA + ';';
 				}
 				objHSACase.Carrier__c = (map_Carrier != null && map_Carrier.containsKey(objWrap.objHSA.provider_key)) ? map_Carrier.get(objWrap.objHSA.provider_key).Id : null;
 				map_CasesToUpsert.put(strTempKey, objHSACase);
@@ -614,20 +614,20 @@ public class HITaDaEnrollmentEvent {
 				if (String.isNotBlank(objDCACase.Selection_UUIDs__c) && !objDCACase.Selection_UUIDs__c.containsIgnoreCase(objDCACase.DCA_UUID__c)) {
 					objDCACase.Selection_UUIDs__c += objDCACase.DCA_UUID__c + ';';
 				}
-				if (!objDCACase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objDCACase.Benefit_Types__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA + ';';
+				if (!objDCACase.Benefit_Types__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objDCACase.Benefit_Types__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA + ';';
 				}
-				if (!objDCACase.Fulfillment_Sub_Type__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objDCACase.Fulfillment_Sub_Type__c += HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA + ';';
+				if (!objDCACase.Fulfillment_Sub_Type__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objDCACase.Fulfillment_Sub_Type__c += HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA + ';';
 				}
-				if (!objDCACase.Enrollment_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objDCACase.Enrollment_Key__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA + ';';
+				if (!objDCACase.Enrollment_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objDCACase.Enrollment_Key__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA + ';';
 				}
-				if (!objDCACase.Integration_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objDCACase.Integration_Key__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA + ';';
+				if (!objDCACase.Integration_Key__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objDCACase.Integration_Key__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA + ';';
 				}
-				if (!objDCACase.Integration_Id__c.containsIgnoreCase(HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA)) {
-					objDCACase.Integration_Id__c += '-' + HIEnrollmentEventUtility.TAdA_BENEFIT_TYPE_DCA + ';';
+				if (!objDCACase.Integration_Id__c.containsIgnoreCase(HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA)) {
+					objDCACase.Integration_Id__c += '-' + HIEnrollmentEventUtility.ALEGEUS_BENEFIT_TYPE_DCA + ';';
 				}
 
 				objDCACase.Carrier__c = (map_Carrier != null && map_Carrier.containsKey(objWrap.objDCA.provider_key)) ? map_Carrier.get(objWrap.objDCA.provider_key).Id : null;
@@ -656,7 +656,7 @@ public class HITaDaEnrollmentEvent {
 			return false;
 		}
 		if (objParsedInfoEvent.tada == null) {
-			HIFulfillmentEventTriggerHelper.setProcessingState(IntegrationUtils.ERROR_STATE, HIEnrollmentEventUtility.TAdA_INFO_MISSING, objFulfillmentEvent);
+			HIFulfillmentEventTriggerHelper.setProcessingState(IntegrationUtils.ERROR_STATE, HIEnrollmentEventUtility.ALEGEUS_INFO_MISSING, objFulfillmentEvent);
 			return false;
 		}
 		if (objParsedInfoEvent.tada.fsa == null && objParsedInfoEvent.tada.dca == null && objParsedInfoEvent.tada.hsa == null) {

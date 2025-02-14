@@ -43,8 +43,6 @@
 				.then(function (response) {
 					// Display an alert with the timeout message and tab title
 					alert(tabInfo.title + ": " + objChatParameter.timeoutmessage);
-					// Set the Time stamp
-					self.handleSave(component);
 					// Repeat the snooze process
 					self.snoozeTab(component);
 				})
@@ -53,36 +51,5 @@
 					console.error("setTabHighlighted: " + error);
 				});
 		}
-	},
-
-	handleSave: function (component, event, helper) {
-		// Get the record object from the component's attribute
-		var objRecord = component.get("v.objRecord");
-
-		// Update the appropriate reminder stamp based on the count
-		if (component.get("v.intCount") === 1) {
-			objRecord.Reminder_Timestamp_1__c = new Date();
-		} else if (component.get("v.intCount") === 2) {
-			objRecord.Reminder_Timestamp_2__c = new Date();
-		}
-
-		// Set the updated record object back to the component's attribute
-		component.set("v.objRecord", objRecord);
-
-		// Save the record using force:recordData
-		const recordHandler = component.find("recordHandler");
-		recordHandler.saveRecord(
-			$A.getCallback(function (saveResult) {
-				// Handle the result of the save operation
-				if (saveResult.state === "SUCCESS" || saveResult.state === "DRAFT") {
-				} else if (saveResult.state === "ERROR") {
-					// Log the error and show an alert
-					console.error("Error saving record:", JSON.stringify(saveResult.error));
-				} else {
-					// Log any unknown state
-					console.log("Unknown problem, state:", saveResult.state);
-				}
-			})
-		);
 	}
 });

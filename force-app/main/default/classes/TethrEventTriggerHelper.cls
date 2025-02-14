@@ -40,6 +40,8 @@ public without sharing class TethrEventTriggerHelper {
 				// Create Benefits Opportunity only for Partner BoR events
 				createBenefitsBoROpportunity(objEvent);
 			}
+			// Update Tethr call with the event data
+			updateTethrCall(objEvent);
 		}
 
 		// Insert the Opportunities if there are any to insert
@@ -107,7 +109,7 @@ public without sharing class TethrEventTriggerHelper {
 
 		// Query accounts based on account IDs and populate accounts map
 		if (!set_AccountIds.isEmpty()) {
-			for (Account objAcc : [SELECT Id, BillingState, BillingStateCode, (SELECT Id, RecordTypeId, IsClosed FROM Opportunities) FROM Account WHERE Id IN :set_AccountIds]) {
+			for (Account objAcc : [SELECT Id, BillingState, BillingStateCode, (SELECT Id, RecordTypeId, IsClosed, IsWon, CloseDate FROM Opportunities) FROM Account WHERE Id IN :set_AccountIds]) {
 				map_Accounts.put(objAcc.Id, objAcc);
 			}
 		}
@@ -126,6 +128,7 @@ public without sharing class TethrEventTriggerHelper {
 			Account objAcc = map_Accounts.get(objTask.AccountId);
 			Boolean blnOpenBoRFound = false;
 			Boolean blnSupportedState = false;
+			Boolean blnClosedWonOppInLast90DaysFound = false;
 
 			// Check if the account's billing state is supported
 			if (String.isNotBlank(objAcc.BillingState)) {
@@ -144,6 +147,18 @@ public without sharing class TethrEventTriggerHelper {
 					blnOpenBoRFound = true;
 					break;
 				}
+				if (
+					(objOpp.RecordTypeId == BENEFITS_BOR_OPPTY_RT_ID ||
+					objOpp.RecordTypeId == BENEFITS_NEW_PLAN_OPPTY_RT_ID ||
+					objOpp.RecordTypeId == BENEFITS_BYOB_OPPTY_RT_ID) &&
+					objOpp.IsClosed &&
+					objOpp.IsWon &&
+					objOpp.CloseDate != null &&
+					objOpp.CloseDate > System.today().addDays(-90)
+				) {
+					blnClosedWonOppInLast90DaysFound = true;
+					break;
+				}
 			}
 
 			// Logic to set HI Lead Pass fields
@@ -159,7 +174,7 @@ public without sharing class TethrEventTriggerHelper {
 			}
 
 			// If no open Benefits BoR Opportunity is found and the state is supported, create a new one
-			if (blnOpenBoRFound == false && blnSupportedState == true) {
+			if (blnOpenBoRFound == false && blnSupportedState == true && !blnClosedWonOppInLast90DaysFound) {
 				map_OppsToInsert.put(
 					objEvent.Tethr__Call__c,
 					new Opportunity(
@@ -171,6 +186,43 @@ public without sharing class TethrEventTriggerHelper {
 					)
 				);
 				set_AccountsWithBoROpps.add(objAcc.Id);
+			}
+		}
+	}
+
+	/**
+	 * Updates the Tethr call with the event data.
+	 *
+	 * @param objEvent The Tethr event
+	 */
+	public void updateTethrCall(Tethr__Tethr_Event__c objEvent) {
+		Task objTask = map_TaskInteractions.get(objEvent.Contact_ID__c);
+		Tethr__Tethr_Call__c objCall = map_TethrCalls.get(objEvent.Tethr__Call__c);
+		Tethr__Tethr_Call__c objCallToUpdate = map_TethrCallsToUpdate.containsKey(objEvent.Tethr__Call__c) ? map_TethrCallsToUpdate.get(objEvent.Tethr__Call__c) : objCall;
+
+		if (objTask != null && objCall != null) {
+			Boolean blnCallUpdate = false;
+
+			// Link Tethr Call to Account
+			if (objTask.AccountId != null && objCallToUpdate.Tethr__Account__c != objTask.AccountId) {
+				objCallToUpdate.Tethr__Account__c = objTask.AccountId;
+				blnCallUpdate = true;
+			}
+
+			// Update the Tethr call with the task's WhatId if it is an Opportunity, or Case
+			if (objTask.WhatId != null) {
+				if (objTask.What.Type == 'Opportunity' && objCallToUpdate.Tethr__Opportunity__c != objTask.WhatId) {
+					objCallToUpdate.Tethr__Opportunity__c = objTask.WhatId;
+					blnCallUpdate = true;
+				} else if (objTask.What.Type == 'Case' && objCallToUpdate.Tethr__Case__c != objTask.WhatId) {
+					objCallToUpdate.Tethr__Case__c = objTask.WhatId;
+					blnCallUpdate = true;
+				}
+			}
+
+			// Add the updated Tethr call to the map if it needs to be updated
+			if (blnCallUpdate) {
+				map_TethrCallsToUpdate.put(objCall.Id, objCallToUpdate);
 			}
 		}
 	}

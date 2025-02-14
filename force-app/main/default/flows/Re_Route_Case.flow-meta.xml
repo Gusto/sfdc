@@ -3,7 +3,7 @@
     <actionCalls>
         <name>Check_if_Case_Skills_are_Changed</name>
         <label>Check if Case Skills are Changed</label>
-        <locationX>1106</locationX>
+        <locationX>842</locationX>
         <locationY>1382</locationY>
         <actionName>ReRouteCaseController</actionName>
         <actionType>apex</actionType>
@@ -35,8 +35,8 @@
         <description>Assign Routing Case Reason: Route to Spanish and Routing Case Reason Classification: Route to Spanish</description>
         <name>Assign_Case_Routing_Reason</name>
         <label>Assign Case Routing Reason</label>
-        <locationX>1370</locationX>
-        <locationY>2222</locationY>
+        <locationX>1106</locationX>
+        <locationY>1922</locationY>
         <assignmentItems>
             <assignToReference>objCase.Routing_Case_Reason__c</assignToReference>
             <operator>Assign</operator>
@@ -59,8 +59,8 @@
         <description>Assign Routing Case Reason and Routing Case Reason Classification to null</description>
         <name>Assign_Case_Routing_Reason_to_Blank</name>
         <label>Assign Case Routing Reason to Blank</label>
-        <locationX>1106</locationX>
-        <locationY>2114</locationY>
+        <locationX>842</locationX>
+        <locationY>1814</locationY>
         <assignmentItems>
             <assignToReference>objCase.Routing_Case_Reason__c</assignToReference>
             <operator>Assign</operator>
@@ -74,26 +74,10 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_new_care_count_value</name>
-        <label>Assign new care count value</label>
-        <locationX>1238</locationX>
-        <locationY>1706</locationY>
-        <assignmentItems>
-            <assignToReference>objCase.Care_Re_Route_Count__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>CareReRouteCount</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Assign_value_to_Toggle</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <description>Assign updates to objCase post screen selections</description>
         <name>Assign_objCase_Updates</name>
         <label>Assign objCase Updates</label>
-        <locationX>908</locationX>
+        <locationX>644</locationX>
         <locationY>998</locationY>
         <assignmentItems>
             <assignToReference>objCase.Type</assignToReference>
@@ -173,7 +157,7 @@
         <description>Assign updates to objCase post screen selections</description>
         <name>Assign_objCase_Updates_for_Specialized_gustie</name>
         <label>Assign objCase Updates for  Specialized gustie</label>
-        <locationX>1436</locationX>
+        <locationX>1172</locationX>
         <locationY>1106</locationY>
         <assignmentItems>
             <assignToReference>objCase.OwnerId</assignToReference>
@@ -247,8 +231,8 @@
     <assignments>
         <name>Assign_value_to_Toggle</name>
         <label>Assign value to Toggle</label>
-        <locationX>1370</locationX>
-        <locationY>1898</locationY>
+        <locationX>1106</locationX>
+        <locationY>1598</locationY>
         <assignmentItems>
             <assignToReference>objCase.Toggle__c</assignToReference>
             <operator>Assign</operator>
@@ -351,7 +335,7 @@
     <decisions>
         <name>Check_Specialization</name>
         <label>Check Specialization</label>
-        <locationX>1304</locationX>
+        <locationX>1040</locationX>
         <locationY>998</locationY>
         <defaultConnector>
             <targetReference>Assign_objCase_Updates_for_Specialized_gustie</targetReference>
@@ -382,41 +366,9 @@
         </rules>
     </decisions>
     <decisions>
-        <name>Is_Old_case_recordType_is_Engagment_Type</name>
-        <label>Is Old case recordType is Engagment Type?</label>
-        <locationX>1370</locationX>
-        <locationY>1598</locationY>
-        <defaultConnector>
-            <targetReference>Assign_value_to_Toggle</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Yes_update_Care_Re_Route_Count</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>objCase.Record_Type_Name__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Engagement</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <elementReference>No</elementReference>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_new_care_count_value</targetReference>
-            </connector>
-            <label>Yes, update Care Re-Route Count</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Route_to_a_specialization</name>
         <label>Route to a specialization ?</label>
-        <locationX>1106</locationX>
+        <locationX>842</locationX>
         <locationY>890</locationY>
         <defaultConnector>
             <targetReference>Check_Specialization</targetReference>
@@ -441,8 +393,8 @@
     <decisions>
         <name>Routing_Case_Reason_Route_to_Spanish</name>
         <label>Routing Case Reason &apos;Route to Spanish&apos;?</label>
-        <locationX>1370</locationX>
-        <locationY>2006</locationY>
+        <locationX>1106</locationX>
+        <locationY>1706</locationY>
         <defaultConnector>
             <targetReference>Update_Record</targetReference>
         </defaultConnector>
@@ -495,10 +447,10 @@
     <decisions>
         <name>Skills_Matched</name>
         <label>Skills Matched?</label>
-        <locationX>1106</locationX>
+        <locationX>842</locationX>
         <locationY>1490</locationY>
         <defaultConnector>
-            <targetReference>Is_Old_case_recordType_is_Engagment_Type</targetReference>
+            <targetReference>Assign_value_to_Toggle</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -528,39 +480,6 @@
             <targetReference>CaseRoutingLWC</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Route to Other team</defaultConnectorLabel>
-        <rules>
-            <name>Not_Eligible_for_Engagement_Routing</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Engagement_Yes_No</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <elementReference>Yes</elementReference>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <elementReference>No</elementReference>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Support_Level</leftValueReference>
-                <operator>IsBlank</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <label>Not Eligible for Engagement Routing</label>
-        </rules>
         <rules>
             <name>Route_to_Engagement</name>
             <conditionLogic>or</conditionLogic>
@@ -593,14 +512,13 @@
 - Added Specialization Spanish and related Routing Case reason
 - Trigger Validation error if Specialization TAM is selected
 - Changed Visibility condition for Team field from field Vendor to Custom Permission Re-Route Team Option
-- Apex Action to check if the Skills selected are different from the Case Routed Skills
-- BTE-4146: Prevent Internal Care Re-Route v2</description>
+- Apex Action to check if the Skills selected are different from the Case Routed Skills</description>
     <dynamicChoiceSets>
         <description>This will contain all Specializations from Case</description>
         <name>picklistCaseSpecialization</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Specialization__c</picklistField>
         <picklistObject>Case</picklistObject>
     </dynamicChoiceSets>
@@ -608,8 +526,8 @@
         <description>Case Reason Classification Case Type Pillar picklist values</description>
         <name>picklistCaseTypePillar</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Case_Type_Pillar__c</picklistField>
         <picklistObject>Case_Reason_Classification__c</picklistObject>
     </dynamicChoiceSets>
@@ -617,8 +535,8 @@
         <description>Case Reason Classification Support Level picklist values</description>
         <name>picklistSupportLevel</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Support_Level__c</picklistField>
         <picklistObject>Case_Reason_Classification__c</picklistObject>
     </dynamicChoiceSets>
@@ -626,8 +544,8 @@
         <description>Case Team Picklist values.</description>
         <name>picklistTeam</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Routing_Team__c</picklistField>
         <picklistObject>Case</picklistObject>
     </dynamicChoiceSets>
@@ -636,13 +554,6 @@
         <name>blnIsVendor</name>
         <dataType>Boolean</dataType>
         <expression>{!$Permission.Vendor_Permission}</expression>
-    </formulas>
-    <formulas>
-        <description>To track how many times a case has been re-routed within the care using Re-Route Case component</description>
-        <name>CareReRouteCount</name>
-        <dataType>Number</dataType>
-        <expression>IF(ISNULL({!objCase.Care_Re_Route_Count__c}), 1, {!objCase.Care_Re_Route_Count__c} + 1)</expression>
-        <scale>0</scale>
     </formulas>
     <formulas>
         <name>ChangeToggle</name>
@@ -657,16 +568,10 @@
 IF( ISPICKVAL({!objCase.Persona__c}, &apos;Member&apos;) || ISPICKVAL( {!objCase.Company_Size__c}, &apos;Micro 0-4&apos;), &apos;External&apos;,&apos;Internal&apos;))</expression>
     </formulas>
     <formulas>
-        <name>isCareReRoute_Eligible</name>
-        <dataType>Boolean</dataType>
-        <expression>OR( {!$Permission.Engagement_Lead}, ISBLANK({!objCase.Care_Re_Route_Count__c}), {!objCase.Care_Re_Route_Count__c} &lt; 2, {!objOldCase.Record_Type_Name__c} != &apos;Engagement&apos;)</expression>
-    </formulas>
-    <formulas>
         <description>To track how many times a case has been re-routed using Re-Route Case component</description>
         <name>ReRouteCount</name>
         <dataType>Number</dataType>
-        <expression>IF(ISNULL({!objCase.Re_Route_Count__c}), 1, 
-IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count__c} + 1 ))</expression>
+        <expression>IF(ISNULL({!objCase.Re_Route_Count__c}), 1, {!objCase.Re_Route_Count__c} + 1)</expression>
         <scale>0</scale>
     </formulas>
     <interviewLabel>Re-Route Case {!$Flow.CurrentDateTime}</interviewLabel>
@@ -715,8 +620,8 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         <description>Get Case Reason Classification Records with reason &apos;Route to Spanish&apos;</description>
         <name>Get_Case_Reason_Classification_Records</name>
         <label>Get Case Reason Classification Records</label>
-        <locationX>1370</locationX>
-        <locationY>2114</locationY>
+        <locationX>1106</locationX>
+        <locationY>1814</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_Case_Routing_Reason</targetReference>
@@ -763,6 +668,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         </filters>
         <object>Case</object>
         <outputReference>objCase</outputReference>
+        <queriedFields>Id</queriedFields>
         <queriedFields>Persona__c</queriedFields>
         <queriedFields>Company_Size__c</queriedFields>
         <queriedFields>Routing_Team__c</queriedFields>
@@ -772,19 +678,13 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         <queriedFields>Toggle__c</queriedFields>
         <queriedFields>Routing_Case_Reason__c</queriedFields>
         <queriedFields>Routing_Case_Reason_Classification__c</queriedFields>
-        <queriedFields>Type</queriedFields>
-        <queriedFields>Support_Level__c</queriedFields>
-        <queriedFields>Specialization__c</queriedFields>
-        <queriedFields>Sub_Pillar__c</queriedFields>
-        <queriedFields>Care_Re_Route_Count__c</queriedFields>
-        <queriedFields>Record_Type_Name__c</queriedFields>
     </recordLookups>
     <recordUpdates>
         <description>Update Case Record passed to flow</description>
         <name>Update_Record</name>
         <label>Update Record</label>
-        <locationX>1370</locationX>
-        <locationY>2414</locationY>
+        <locationX>1106</locationX>
+        <locationY>2114</locationY>
         <connector>
             <targetReference>Success</targetReference>
         </connector>
@@ -797,7 +697,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
     <screens>
         <name>CaseRoutingLWC</name>
         <label>CaseRoutingLWC</label>
-        <locationX>2074</locationX>
+        <locationX>1810</locationX>
         <locationY>890</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
@@ -850,7 +750,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         </connector>
         <fields>
             <name>SkillsMatchedError</name>
-            <fieldText>&lt;p style=&quot;text-align: center;&quot;&gt;&lt;strong style=&quot;color: rgb(244, 15, 8); font-size: 14px;&quot;&gt;Cases cannot be re-routed within a pillar. Please update the skills, or reach out to your PE if you cannot solve this case.&lt;/strong&gt;&lt;span style=&quot;color: rgb(244, 15, 8); font-size: 14px;&quot;&gt;&lt;span class=&quot;ql-cursor&quot;&gt;﻿&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;text-align: center;&quot;&gt;&lt;br&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p style=&quot;text-align: center;&quot;&gt;&lt;strong style=&quot;color: rgb(244, 15, 8); font-size: 14px;&quot;&gt;Cases cannot be re-routed within a pillar. Please update the skills, or reach out to your PE if you cannot solve this case.&lt;/strong&gt;&lt;span style=&quot;color: rgb(244, 15, 8); font-size: 14px;&quot;&gt;﻿&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;text-align: center;&quot;&gt;&lt;br&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
@@ -888,35 +788,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
-                    <name>Internal_ReRoute_Error</name>
-                    <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 15, 8); font-size: 14px;&quot;&gt;This case has already been re-routed within a Care. Please reach out to your PE for assistance.&amp;nbsp;&lt;/span&gt;&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                    <visibilityRule>
-                        <conditionLogic>and</conditionLogic>
-                        <conditions>
-                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <elementReference>No</elementReference>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>false</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>NotEqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
                     <name>Specialization</name>
                     <choiceReferences>picklistCaseSpecialization</choiceReferences>
                     <dataType>String</dataType>
@@ -936,7 +807,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                 </fields>
                 <fields>
                     <name>Specialization_Error</name>
-                    <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(244, 15, 8); font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;You do not have permission to re-route cases to the TAM team.&lt;/span&gt;&lt;span style=&quot;color: rgb(254, 40, 40); font-size: 14px; background-color: rgb(255, 255, 255);&quot;&gt;﻿&lt;/span&gt;&lt;/p&gt;</fieldText>
+                    <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(244, 15, 8);&quot;&gt;You do not have permission to re-route cases to the TAM team.&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, Oxygen, Ubuntu, &amp;quot;Fira Sans&amp;quot;, &amp;quot;Droid Sans&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; color: rgb(254, 40, 40);&quot;&gt;&lt;span class=&quot;ql-cursor&quot;&gt;﻿&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
                     <visibilityRule>
                         <conditionLogic>or</conditionLogic>
@@ -957,6 +828,42 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     </visibilityRule>
                 </fields>
                 <fields>
+                    <name>Case_Type</name>
+                    <choiceReferences>picklistCaseTypePillar</choiceReferences>
+                    <dataType>String</dataType>
+                    <fieldText>Case Type</fieldText>
+                    <fieldType>DropdownBox</fieldType>
+                    <isRequired>true</isRequired>
+                    <visibilityRule>
+                        <conditionLogic>and</conditionLogic>
+                        <conditions>
+                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
+                            <operator>EqualTo</operator>
+                            <rightValue>
+                                <elementReference>No</elementReference>
+                            </rightValue>
+                        </conditions>
+                    </visibilityRule>
+                </fields>
+                <fields>
+                    <name>Support_Level</name>
+                    <choiceReferences>picklistSupportLevel</choiceReferences>
+                    <dataType>String</dataType>
+                    <fieldText>Support Level</fieldText>
+                    <fieldType>DropdownBox</fieldType>
+                    <isRequired>true</isRequired>
+                    <visibilityRule>
+                        <conditionLogic>and</conditionLogic>
+                        <conditions>
+                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
+                            <operator>EqualTo</operator>
+                            <rightValue>
+                                <elementReference>No</elementReference>
+                            </rightValue>
+                        </conditions>
+                    </visibilityRule>
+                </fields>
+                <fields>
                     <name>RoutingTeam</name>
                     <choiceReferences>picklistTeam</choiceReferences>
                     <dataType>String</dataType>
@@ -964,7 +871,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <fieldType>DropdownBox</fieldType>
                     <isRequired>true</isRequired>
                     <visibilityRule>
-                        <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
+                        <conditionLogic>and</conditionLogic>
                         <conditions>
                             <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
                             <operator>EqualTo</operator>
@@ -979,25 +886,11 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                                 <booleanValue>true</booleanValue>
                             </rightValue>
                         </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
                     </visibilityRule>
                 </fields>
                 <fields>
-                    <name>Internal_ReRoute_Error2</name>
-                    <fieldText>&lt;p&gt;&lt;span style=&quot;font-size: 14px; color: rgb(244, 15, 8);&quot;&gt;This case has already been re-routed within a Care&lt;/span&gt;&lt;/p&gt;</fieldText>
+                    <name>CaseTypeHelpText</name>
+                    <fieldText>&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;﻿You can reference our &lt;/span&gt;&lt;a href=&quot;https://docs.google.com/spreadsheets/d/1FDIwP_s9Fg3bfwVaWdQmtDbdRPUZuR8thSYcfC8iBN0/edit#gid=1051148928&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Payroll and Benefits Case Reason&lt;/a&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt; resource for guidance on which &quot;Case Type&quot; and &quot;Support Level&quot; to select based on the customer&apos;s inquiry and case reason. To determine the case reason, refer to the &quot;Use for&quot; and &quot;Do not use for&quot; columns.&lt;/span&gt;&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
@@ -1006,141 +899,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                             <operator>EqualTo</operator>
                             <rightValue>
                                 <elementReference>No</elementReference>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>false</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>Case_Type</name>
-                    <choiceReferences>picklistCaseTypePillar</choiceReferences>
-                    <dataType>String</dataType>
-                    <fieldText>Case Type</fieldText>
-                    <fieldType>DropdownBox</fieldType>
-                    <isRequired>true</isRequired>
-                    <visibilityRule>
-                        <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
-                        <conditions>
-                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <elementReference>No</elementReference>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Internal</stringValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>Support_Level</name>
-                    <choiceReferences>picklistSupportLevel</choiceReferences>
-                    <dataType>String</dataType>
-                    <fieldText>Support Level</fieldText>
-                    <fieldType>DropdownBox</fieldType>
-                    <isRequired>true</isRequired>
-                    <visibilityRule>
-                        <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
-                        <conditions>
-                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <elementReference>No</elementReference>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Internal</stringValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>CaseTypeHelpText</name>
-                    <fieldText>&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;﻿You can reference our &lt;/span&gt;&lt;a href=&quot;https://docs.google.com/spreadsheets/d/1FDIwP_s9Fg3bfwVaWdQmtDbdRPUZuR8thSYcfC8iBN0/edit#gid=1051148928&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Payroll and Benefits Case Reason&lt;/a&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt; resource for guidance on which &quot;Case Type&quot; and &quot;Support Level&quot; to select based on the customer&apos;s inquiry and case reason. To determine the case reason, refer to the &quot;Use for&quot; and &quot;Do not use for&quot; columns.&lt;/span&gt;&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
-                    <visibilityRule>
-                        <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
-                        <conditions>
-                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <elementReference>No</elementReference>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Internal</stringValue>
                             </rightValue>
                         </conditions>
                     </visibilityRule>
@@ -1173,8 +931,8 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         <description>Case failed to update</description>
         <name>Oops</name>
         <label>Oops</label>
-        <locationX>1810</locationX>
-        <locationY>2522</locationY>
+        <locationX>1546</locationX>
+        <locationY>2222</locationY>
         <allowBack>true</allowBack>
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
@@ -1206,10 +964,10 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         <description>Case successfully routed</description>
         <name>Success</name>
         <label>Success</label>
-        <locationX>1370</locationX>
-        <locationY>2522</locationY>
-        <allowBack>false</allowBack>
-        <allowFinish>true</allowFinish>
+        <locationX>1106</locationX>
+        <locationY>2222</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
         <fields>
             <name>RoutedSuccessfully</name>
@@ -1226,7 +984,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
             <targetReference>Query_Case</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <variables>
         <description>Check if the Agent is Routing to the same Skills</description>
         <name>blnSkillsAreSame</name>

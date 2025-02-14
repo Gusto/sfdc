@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>SalesforceOrgNotificationFlowCtrl</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>totalRecord</assignToReference>
             <name>intTotalRecCount</name>
@@ -37,7 +36,6 @@
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>SalesforceOrgNotificationCtrl</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>objSalesforceOrgLimitDetails</assignToReference>
             <name>objSalesforceOrgLimitDetails</name>
@@ -64,7 +62,7 @@
         <inputParameters>
             <name>messageDestinationId</name>
             <value>
-                <elementReference>biztechbackendChannel</elementReference>
+                <elementReference>biztechUtilityUpdates</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -74,7 +72,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
         <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
@@ -107,7 +104,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
         <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
@@ -140,7 +136,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
         <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
@@ -173,7 +168,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
         <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
@@ -206,7 +200,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
         <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
@@ -239,10 +232,9 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
         <versionSegment>1</versionSegment>
     </actionCalls>
-    <apiVersion>58.0</apiVersion>
+    <apiVersion>60.0</apiVersion>
     <assignments>
         <name>Assign_Additional_Link</name>
         <label>Assign Additional Link</label>
@@ -281,13 +273,6 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>Salesforce_Org_Notification_Loop.Point_of_Contact_Name__c</elementReference>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
-            <assignToReference>notification</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Salesforce_Org_Notification_Loop.Notification__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -616,8 +601,6 @@
             <label>Utility Reminder Org Notification</label>
         </rules>
     </decisions>
-    <description>Fixed the Payops utility version. Also fixed the backend channel issue as well. 
-Fixed the message issue in this version.</description>
     <environments>Default</environments>
     <formulas>
         <name>currentURL</name>
@@ -802,8 +785,6 @@ SME: David Tsamalashvili</text>
         <isViewedAsPlainText>true</isViewedAsPlainText>
         <text>({!customMetadataRecordName}) - Error notification
 Report link:: {!reportLink}
-
-{!notification}
 Total Records: {!totalRecord}
 Attention:&lt;!subteam^{!pointOfContact}&gt;
 SME: {!pointOfContactName}
@@ -812,10 +793,9 @@ SME: {!pointOfContactName}
     <textTemplates>
         <name>UtilityReminderTemplate</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>({!customMetadataRecordName}) - Auto Solve Package Review Reminder
+        <text>({!customMetadataRecordName}) - Auto Solve Reminder
 Report link:: {!reportLink}
 Total Records: {!totalRecord}
-Attention:&lt;!subteam^{!pointOfContact}&gt;
 SME: {!pointOfContactName}
 {!additionalLink}</text>
     </textTemplates>
@@ -861,13 +841,6 @@ SME: {!pointOfContactName}
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <scale>2</scale>
-    </variables>
-    <variables>
-        <name>notification</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>objSalesforceOrgLimitDetails</name>

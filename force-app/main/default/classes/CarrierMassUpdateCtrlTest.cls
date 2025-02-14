@@ -12,7 +12,7 @@ public class CarrierMassUpdateCtrlTest {
 		Carrier__c objCarrierRec = new TestDataFactory.CarrierBuilder().setName('Test').setKey('test123').setId('test123').build();
 		list_Carriers.add(objCarrierRec);
 
-		Carrier__c objCarrierRec2 = new TestDataFactory.CarrierBuilder().setName('Alegeus').setKey('alegeus').setId('alegeus123').setPartnerType('TAdA').build();
+		Carrier__c objCarrierRec2 = new TestDataFactory.CarrierBuilder().setName('Alegeus').setKey('alegeus123').setId('alegeus123').build();
 		list_Carriers.add(objCarrierRec2);
 
 		Carrier__c objCarrierRec3 = new TestDataFactory.CarrierBuilder().setName('Test1236').setKey('test1236').setId('test1236').build();

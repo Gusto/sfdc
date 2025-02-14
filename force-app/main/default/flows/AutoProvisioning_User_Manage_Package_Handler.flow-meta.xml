@@ -107,7 +107,7 @@
         <collectionReference>Assigned_Managed_Packages</collectionReference>
         <conditionLogic>and</conditionLogic>
         <conditions>
-            <leftValueReference>currentItem_CXOne_Managed_Package_Assignment.PackageLicenseId__NotFound</leftValueReference>
+            <leftValueReference>currentItem_CXOne_Managed_Package_Assignment.PackageLicenseId</leftValueReference>
             <operator>EqualTo</operator>
             <rightValue>
                 <elementReference>CXOne_Managed_Package_License.Id</elementReference>
@@ -406,13 +406,13 @@
             <targetReference>Slack_Message_Fault_Flow_for_Assign_CXOne_Managed_Package</targetReference>
         </faultConnector>
         <inputAssignments>
-            <field>PackageLicenseId__NotFound</field>
+            <field>PackageLicenseId</field>
             <value>
                 <elementReference>CXOne_Managed_Package_License.Id</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>UserId__NotFound</field>
+            <field>UserId</field>
             <value>
                 <elementReference>User_ID</elementReference>
             </value>
@@ -514,7 +514,7 @@
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>UserId__NotFound</field>
+            <field>UserId</field>
             <operator>EqualTo</operator>
             <value>
                 <elementReference>User_ID</elementReference>
@@ -523,8 +523,8 @@
         <object>UserPackageLicense</object>
         <outputReference>Assigned_Managed_Packages</outputReference>
         <queriedFields>Id</queriedFields>
-        <queriedFields>PackageLicenseId__NotFound</queriedFields>
-        <queriedFields>UserId__NotFound</queriedFields>
+        <queriedFields>PackageLicenseId</queriedFields>
+        <queriedFields>UserId</queriedFields>
     </recordLookups>
     <recordUpdates>
         <description>Update only Managed Package (Trigger for Removal) field only because no Managed Package Licenses were found.</description>

@@ -10,24 +10,21 @@ public class TicketBenefitChangeOppPageCtrl {
 	public Boolean hasError { get; set; }
 	public String oppStage { get; set; }
 	public Transition_to_Fulfillment__c objTTFRecord { get; set; }
-	public List<OpportunityContactRole> lst_OpptyContactRole { get; set; }
+	public List<OpportunityContactRole> list_OpptyContactRole { get; set; }
 	string strBOId;
 	string strBOAccountName;
 	string strBOAccountHIOwner;
 	public string rowIndex { get; set; }
-	public list<carrierOrderWrapper> lst_TadaCarrierOrderDetails { get; set; }
+	public list<carrierOrderWrapper> lst_AlegeusCarrierOrderDetails { get; set; }
 	public list<carrierOrderWrapper> lst_CarrierOrderDetails { get; set; }
 	map<string, map<string, Carrier_Order_Line_Item__c>> map_OriginalCOIdBenefitTypeLineItemDetails = new Map<string, map<string, Carrier_Order_Line_Item__c>>();
 	list<SelectOption> lst_TadaBenefitTypeList = new List<SelectOption>();
 	list<SelectOption> lst_NONTadaBenefitTypeList = new List<SelectOption>();
 	public Boolean isTransferType { get; set; }
-	public Boolean isTada { get; set; }
+	public Boolean isAlegeus { get; set; }
 	string strTadaCarrierId;
 	public static final string CONTACT_ROLE = Label.Benefits_Admin;
-	public List<TadaBenefitOrder> lst_Tada { get; set; }
-	public list<carrierOrderWrapper> lst_AlegeusCarrierOrderDetails { get; set; }
-	public List<TadaBenefitOrder> lst_Alegeus { get; set; }
-	public Boolean isAlegeus { get; set; }
+	public List<AlegeusBenefitOrder> lst_Alegeus { get; set; }
 
 	public TicketBenefitChangeOppPageCtrl(apexPages.standardController sc) {
 		hasError = false;
@@ -51,8 +48,8 @@ public class TicketBenefitChangeOppPageCtrl {
 		oppObj.Description = tcktObj.Description__c;
 		oppObj.Amount = 0.0;
 
-		lst_Tada = new List<TadaBenefitOrder>();
-		createTadaList();
+		lst_Alegeus = new List<AlegeusBenefitOrder>();
+		createAlegeusList();
 		lst_NONTadaBenefitTypeList.add(new SelectOption('Dental', 'Dental'));
 		lst_NONTadaBenefitTypeList.add(new SelectOption('Vision', 'Vision'));
 		lst_NONTadaBenefitTypeList.add(new SelectOption('Life', 'Life'));
@@ -65,17 +62,12 @@ public class TicketBenefitChangeOppPageCtrl {
 		lst_TadaBenefitTypeList.add(new SelectOption('Commuter', 'Commuter'));
 
 		lst_CarrierOrderDetails = new List<carrierOrderWrapper>();
-		lst_TadaCarrierOrderDetails = new List<carrierOrderWrapper>();
+		lst_AlegeusCarrierOrderDetails = new List<carrierOrderWrapper>();
 		isTransferType = false;
-		isTada = false;
-		String strCOTadaKey = '';
-		Configuration_Settings__c configRec = Configuration_Settings__c.getOrgDefaults();
-		if (configRec != null && configRec.Active_TAdA_Provider__c != null) {
-			strCOTadaKey = configRec.Active_TAdA_Provider__c;
-			list<Carrier__c> lst_Carrier = [SELECT Id, Key__c, Name FROM Carrier__c WHERE Key__c = :strCOTadaKey];
-			if (lst_Carrier.size() > 0) {
-				strTadaCarrierId = lst_Carrier.get(0).id;
-			}
+		isAlegeus = false;
+		list<Carrier__c> lst_tempCarrier = [SELECT Id FROM Carrier__c WHERE Name = 'Alegeus' LIMIT 1];
+		if (lst_tempCarrier.size() > 0) {
+			strTadaCarrierId = lst_tempCarrier.get(0).id;
 		}
 		map_OriginalCOIdBenefitTypeLineItemDetails = new Map<string, map<string, Carrier_Order_Line_Item__c>>();
 	}
@@ -94,12 +86,12 @@ public class TicketBenefitChangeOppPageCtrl {
 		}
 	}
 
-	public boolean validateTadaCarrierOrderDetails() {
+	public boolean validateAlegeusCarrierOrderDetails() {
 		boolean isValidCarrier = true;
-		if (lst_TadaCarrierOrderDetails.size() > 0) {
+		if (lst_AlegeusCarrierOrderDetails.size() > 0) {
 			boolean isLineItemSelected = false;
 			String selectedBenefitType = '';
-			for (TadaBenefitOrder wrapperObj : lst_Tada) {
+			for (AlegeusBenefitOrder wrapperObj : lst_Alegeus) {
 				if (wrapperObj.isChecked == true && wrapperObj.lineItem.Renewal_Date__c == null && wrapperObj.orderName != 'Commuter') {
 					isLineItemSelected = true;
 					apexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Required: TADA Order(s) Renewal Date field.'));
@@ -121,7 +113,7 @@ public class TicketBenefitChangeOppPageCtrl {
 				if (String.isNotBlank(selectedBenefitType)) {
 					selectedBenefitType = selectedBenefitType.subString(1, selectedBenefitType.length());
 				}
-				lst_TadaCarrierOrderDetails[0].lst_SelectedBenefitType = selectedBenefitType.split(';');
+				lst_AlegeusCarrierOrderDetails[0].lst_SelectedBenefitType = selectedBenefitType.split(';');
 			}
 		}
 		return isValidCarrier;
@@ -143,7 +135,7 @@ public class TicketBenefitChangeOppPageCtrl {
 				return null;
 			}
 
-			Boolean isValidCarrier = validateTadaCarrierOrderDetails();
+			Boolean isValidCarrier = validateAlegeusCarrierOrderDetails();
 			if (isValidCarrier == false) {
 				return null;
 			}
@@ -246,7 +238,7 @@ public class TicketBenefitChangeOppPageCtrl {
 			update contactObj;
 			enabledDisabledContactTrigger(false);
 
-			lst_CarrierOrderDetails.addAll(lst_TadaCarrierOrderDetails);
+			lst_CarrierOrderDetails.addAll(lst_AlegeusCarrierOrderDetails);
 
 			if (String.isBlank(strBOId)) {
 				//If ticket have blank value of "Benefit Order"
@@ -272,18 +264,18 @@ public class TicketBenefitChangeOppPageCtrl {
 		AccountTriggerHelper.skipTrigger = flag;
 	}
 
-	public void createTadaList() {
-		lst_Tada.clear();
-		lst_Tada.add(new TadaBenefitOrder(false, 'HSA', new Carrier_Order_Line_Item__c()));
-		lst_Tada.add(new TadaBenefitOrder(false, 'Flexible Spending Account - Medical', new Carrier_Order_Line_Item__c()));
-		lst_Tada.add(new TadaBenefitOrder(false, 'Flexible Spending Account - Dependent Care', new Carrier_Order_Line_Item__c()));
-		lst_Tada.add(new TadaBenefitOrder(false, 'Commuter', new Carrier_Order_Line_Item__c()));
+	public void createAlegeusList() {
+		lst_Alegeus.clear();
+		lst_Alegeus.add(new AlegeusBenefitOrder(false, 'HSA', new Carrier_Order_Line_Item__c()));
+		lst_Alegeus.add(new AlegeusBenefitOrder(false, 'Flexible Spending Account - Medical', new Carrier_Order_Line_Item__c()));
+		lst_Alegeus.add(new AlegeusBenefitOrder(false, 'Flexible Spending Account - Dependent Care', new Carrier_Order_Line_Item__c()));
+		lst_Alegeus.add(new AlegeusBenefitOrder(false, 'Commuter', new Carrier_Order_Line_Item__c()));
 	}
 
 	public void checkBenefitType() {
-		createTadaList();
+		createAlegeusList();
 		lst_CarrierOrderDetails.clear();
-		lst_TadaCarrierOrderDetails.clear();
+		lst_AlegeusCarrierOrderDetails.clear();
 		objTTFRecord.Contact__c = null;
 		objTTFRecord.Point_of_Contact_Phone__c = '';
 		objTTFRecord.Point_of_Contact_Email__c = '';
@@ -291,35 +283,35 @@ public class TicketBenefitChangeOppPageCtrl {
 		if ('Transfer TAdA Plan' == oppObj.Type || 'Transfer Ancillary Coverage' == oppObj.Type || 'Transfer TAdA and Ancillary Coverage' == oppObj.Type) {
 			isTransferType = true;
 			getCarrierOrderDetails();
-			Boolean isTadaCarrierExist = false;
+			Boolean isAlegeusCarrierExist = false;
 			if ('Transfer TAdA Plan' == oppObj.Type) {
-				isTada = true;
+				isAlegeus = true;
 				addNewTadaRow();
-				lst_TadaCarrierOrderDetails[0].lst_UnSelectedBenefitType = lst_TadaBenefitTypeList;
-				lst_TadaCarrierOrderDetails[0].objCarrierOrder.Carrier__c = strTadaCarrierId;
-				lst_TadaCarrierOrderDetails[0].isTadaRecord = true;
-				lst_TadaCarrierOrderDetails[0].isFirstRecord = true;
+				lst_AlegeusCarrierOrderDetails[0].lst_UnSelectedBenefitType = lst_TadaBenefitTypeList;
+				lst_AlegeusCarrierOrderDetails[0].objCarrierOrder.Carrier__c = strTadaCarrierId;
+				lst_AlegeusCarrierOrderDetails[0].isAlegeusRecord = true;
+				lst_AlegeusCarrierOrderDetails[0].isFirstRecord = true;
 			} else {
 				Boolean isTadaAndAncillary = false;
 				if ('Transfer TAdA and Ancillary Coverage' == oppObj.Type) {
 					isTadaAndAncillary = true;
 					addNewTadaRow();
-					lst_TadaCarrierOrderDetails[0].objCarrierOrder.Carrier__c = strTadaCarrierId;
-					lst_TadaCarrierOrderDetails[0].lst_UnSelectedBenefitType = lst_TadaBenefitTypeList;
-					lst_TadaCarrierOrderDetails[0].isTadaRecord = true;
-					lst_TadaCarrierOrderDetails[0].isFirstRecord = true;
+					lst_AlegeusCarrierOrderDetails[0].objCarrierOrder.Carrier__c = strTadaCarrierId;
+					lst_AlegeusCarrierOrderDetails[0].lst_UnSelectedBenefitType = lst_TadaBenefitTypeList;
+					lst_AlegeusCarrierOrderDetails[0].isAlegeusRecord = true;
+					lst_AlegeusCarrierOrderDetails[0].isFirstRecord = true;
 				}
 				addNewRow();
 				if (isTadaAndAncillary == false) {
 					lst_CarrierOrderDetails[0].isFirstRecord = true;
 				}
-				isTada = false;
+				isAlegeus = false;
 			}
 		} else {
 			isTransferType = false;
-			isTada = false;
+			isAlegeus = false;
 			lst_CarrierOrderDetails.clear();
-			lst_TadaCarrierOrderDetails.clear();
+			lst_AlegeusCarrierOrderDetails.clear();
 		}
 	}
 
@@ -379,21 +371,21 @@ public class TicketBenefitChangeOppPageCtrl {
 		newInstance.objCarrierOrder.Benefit_Order__c = strBOId;
 		newInstance.objCarrierOrder.RecordTypeId = Cache.getRecordTypeId('Carrier_Order__c', 'Benefits BoR');
 		newInstance.objCarrierOrder.Implementation_Stage__c = 'Pending ER Signature';
-		lst_TadaCarrierOrderDetails.add(newInstance);
+		lst_AlegeusCarrierOrderDetails.add(newInstance);
 	}
 
 	public boolean validateCarrierOrderDetails() {
 		boolean isValidCarrier = true;
 		if (lst_CarrierOrderDetails.size() > 0) {
 			set<String> set_CarrierOrderIds = new Set<String>();
-			Boolean isTadaRecordExist = false;
+			Boolean isAlegeusRecordExist = false;
 
 			for (carrierOrderWrapper wrapperInstance : lst_CarrierOrderDetails) {
 				if (wrapperInstance.objCarrierOrder.Carrier__c == strTadaCarrierId) {
-					isTadaRecordExist = true;
+					isAlegeusRecordExist = true;
 				}
 
-				if ('Transfer TAdA and Ancillary Coverage' == oppObj.Type && isTadaRecordExist == true) {
+				if ('Transfer TAdA and Ancillary Coverage' == oppObj.Type && isAlegeusRecordExist == true) {
 					apexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'TADA carrier is now allowed in  ancillary coverage section.'));
 					isValidCarrier = false;
 					break;
@@ -425,12 +417,12 @@ public class TicketBenefitChangeOppPageCtrl {
 				set_CarrierOrderIds.add(wrapperInstance.objCarrierOrder.Carrier__c);
 			}
 
-			if ('Transfer Ancillary Coverage' == oppObj.Type && isTadaRecordExist == true) {
+			if ('Transfer Ancillary Coverage' == oppObj.Type && isAlegeusRecordExist == true) {
 				apexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Tada is not allowed for this type of opportunity.'));
 				isValidCarrier = false;
 			}
 		} else {
-			if (lst_TadaCarrierOrderDetails.size() == 0) {
+			if (lst_AlegeusCarrierOrderDetails.size() == 0) {
 				apexPages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, 'No record found.'));
 				isValidCarrier = false;
 			}
@@ -459,8 +451,8 @@ public class TicketBenefitChangeOppPageCtrl {
 					set<string> set_BenefitTypeProcessed = new Set<string>();
 
 					for (string strBenefitType : wrapperInstance.lst_SelectedBenefitType) {
-						if (map_OriginalCOIdBenefitTypeLineItemDetails.containsKey(objCarrierOrder.Id) && !map_OriginalCOIdBenefitTypeLineItemDetails.get(objCarrierOrder.Id).containsKey(strBenefitType)) {
-							if (wrapperInstance.isTadaRecord) {
+						if (!map_OriginalCOIdBenefitTypeLineItemDetails.get(objCarrierOrder.Id).containsKey(strBenefitType)) {
+							if (wrapperInstance.isAlegeusRecord) {
 								Carrier_Order_Line_Item__c lineItem = new Carrier_Order_Line_Item__c(Carrier_Order__c = objCarrierOrder.Id, Benefit_Types__c = strBenefitType);
 								lineItem.Renewal_Date__c = getRenewalDate(strBenefitType);
 								lst_NewLineItems.add(lineItem);
@@ -473,7 +465,7 @@ public class TicketBenefitChangeOppPageCtrl {
 							set_BenefitTypeProcessed.add(strBenefitType);
 						}
 					}
-					if (map_OriginalCOIdBenefitTypeLineItemDetails.containsKey(objCarrierOrder.Id) && set_BenefitTypeProcessed.size() != map_OriginalCOIdBenefitTypeLineItemDetails.get(objCarrierOrder.Id).size()) {
+					if (set_BenefitTypeProcessed.size() != map_OriginalCOIdBenefitTypeLineItemDetails.get(objCarrierOrder.Id).size()) {
 						for (string strBT : map_OriginalCOIdBenefitTypeLineItemDetails.get(objCarrierOrder.Id).keyset()) {
 							if (!set_BenefitTypeProcessed.contains(strBT)) {
 								lst_TODeleteLineItems.add(map_OriginalCOIdBenefitTypeLineItemDetails.get(objCarrierOrder.Id).get(strBT));
@@ -509,7 +501,7 @@ public class TicketBenefitChangeOppPageCtrl {
 						Carrier_Order__c objCarrierOrder = map_CarrierIdNewCarrierOrders.get(wrapperInstance.objCarrierOrder.Carrier__c);
 
 						for (string strBenefitType : wrapperInstance.lst_SelectedBenefitType) {
-							if (wrapperInstance.isTadaRecord) {
+							if (wrapperInstance.isAlegeusRecord) {
 								Carrier_Order_Line_Item__c lineItem = new Carrier_Order_Line_Item__c(Carrier_Order__c = objCarrierOrder.Id, Benefit_Types__c = strBenefitType);
 								lineItem.Renewal_Date__c = getRenewalDate(strBenefitType);
 								lst_NewLineItems.add(lineItem);
@@ -556,25 +548,25 @@ public class TicketBenefitChangeOppPageCtrl {
 	}
 
 	// @TestVisible
-	void CarrierOrderFacilitatorAssignment(list<Carrier_Order__c> lst_NewCarrierOrders) {
-		if (lst_NewCarrierOrders == null || lst_NewCarrierOrders.size() == 0) {
+	void CarrierOrderFacilitatorAssignment(list<Carrier_Order__c> list_NewCarrierOrders) {
+		if (list_NewCarrierOrders == null || list_NewCarrierOrders.size() == 0) {
 			return;
 		}
 
-		list<Carrier_Order__c> lst_NonTadaCOs = new List<Carrier_Order__c>();
-		list<Carrier_Order__c> lst_TadaCOs = new List<Carrier_Order__c>();
+		list<Carrier_Order__c> list_NonTadaCOs = new List<Carrier_Order__c>();
+		list<Carrier_Order__c> list_TadaCOs = new List<Carrier_Order__c>();
 
-		for (Carrier_Order__c objCO : lst_NewCarrierOrders) {
+		for (Carrier_Order__c objCO : list_NewCarrierOrders) {
 			if (objCO.Carrier__c == strTadaCarrierId) {
-				lst_TadaCOs.add(objCO);
+				list_TadaCOs.add(objCO);
 			} else {
-				lst_NonTadaCOs.add(objCO);
+				list_NonTadaCOs.add(objCO);
 			}
 		}
 
-		if (lst_NonTadaCOs.size() > 0 || lst_TadaCOs.size() > 0) {
+		if (list_NonTadaCOs.size() > 0 || list_TadaCOs.size() > 0) {
 			BTAssignmentUtil objBTFacilitatorAssignement = new BTAssignmentUtil();
-			List<Carrier_Order__c> lst_COWithFAC1Owner = objBTFacilitatorAssignement.processCOForFacilitator1Assignment(lst_NonTadaCOs, lst_TadaCOs);
+			List<Carrier_Order__c> lst_COWithFAC1Owner = objBTFacilitatorAssignement.processCOForFacilitator1Assignment(list_NonTadaCOs, list_TadaCOs);
 
 			update lst_COWithFAC1Owner;
 		}
@@ -593,7 +585,6 @@ public class TicketBenefitChangeOppPageCtrl {
 					Id,
 					Carrier__c,
 					Carrier__r.Name,
-					Carrier__r.Partner_Type__c,
 					Benefit_Types__c,
 					Renewal_Date__c,
 					Benefit_Order__c,
@@ -617,7 +608,7 @@ public class TicketBenefitChangeOppPageCtrl {
 				wrapperInstance.objCarrierOrder = objCO;
 
 				//populating master picklist option list
-				if (objCO.Carrier__r.Partner_Type__c == CarrierOrderUtil.PARTNER_TYPE_TADA)
+				if (objCO.Carrier__r.Name == 'Alegeus')
 					wrapperInstance.lst_UnSelectedBenefitType = lst_TadaBenefitTypeList;
 				else
 					wrapperInstance.lst_UnSelectedBenefitType = lst_NONTadaBenefitTypeList;
@@ -648,11 +639,11 @@ public class TicketBenefitChangeOppPageCtrl {
 	public Date getRenewalDate(String benefitType) {
 		Date dateObj = null;
 		if ('HSA' == benefitType) {
-			dateObj = lst_Tada[0].lineItem.Renewal_Date__c;
+			dateObj = lst_Alegeus[0].lineItem.Renewal_Date__c;
 		} else if ('Flexible Spending Account - Medical' == benefitType) {
-			dateObj = lst_Tada[1].lineItem.Renewal_Date__c;
+			dateObj = lst_Alegeus[1].lineItem.Renewal_Date__c;
 		} else if ('Flexible Spending Account - Dependent Care' == benefitType) {
-			dateObj = lst_Tada[2].lineItem.Renewal_Date__c;
+			dateObj = lst_Alegeus[2].lineItem.Renewal_Date__c;
 		}
 		return dateObj;
 	}
@@ -662,11 +653,10 @@ public class TicketBenefitChangeOppPageCtrl {
 		public Carrier_Order__c objCarrierOrder { get; set; }
 		public list<SelectOption> lst_UnSelectedBenefitType { get; set; }
 		public list<string> lst_SelectedBenefitType { get; set; }
-		public boolean isTadaRecord { get; set; }
 		public boolean isAlegeusRecord { get; set; }
 		public boolean isFirstRecord { get; set; }
 		public carrierOrderWrapper() {
-			isTadaRecord = false;
+			isAlegeusRecord = false;
 			isFirstRecord = false;
 			objCarrierOrder = new Carrier_Order__c();
 			lst_UnSelectedBenefitType = new List<SelectOption>();
@@ -674,11 +664,11 @@ public class TicketBenefitChangeOppPageCtrl {
 		}
 	}
 
-	public class TadaBenefitOrder {
+	public class AlegeusBenefitOrder {
 		public boolean isChecked { get; set; }
 		public String orderName { get; set; }
 		public Carrier_Order_Line_Item__c lineItem { get; set; }
-		public TadaBenefitOrder(boolean isChecked, String orderName, Carrier_Order_Line_Item__c lineItem) {
+		public AlegeusBenefitOrder(boolean isChecked, String orderName, Carrier_Order_Line_Item__c lineItem) {
 			this.isChecked = isChecked;
 			this.orderName = orderName;
 			this.lineItem = lineItem;

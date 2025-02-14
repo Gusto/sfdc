@@ -9,7 +9,7 @@
   NOT(ISPICKVAL(StageName, &apos;Order Lost&apos;)),
   ISBLANK(TEXT(Stage_Detail__c)),
   NOT($User.Exempt_from_Validation_Rules__c),
-  OR(RecordType.Name=&apos;Benefits Renewal&apos;, RecordType.Name=&apos;Benefits Change&apos;, RecordType.Name=&apos;Tier Upsell Opportunity&apos;)
+  OR(RecordType.Name=&apos;Benefits Renewal&apos;, RecordType.Name=&apos;Benefits Change&apos;)
 )</errorConditionFormula>
     <errorDisplayField>Stage_Detail__c</errorDisplayField>
     <errorMessage>Please select the Stage Detail as to why this Opportunity was lost.</errorMessage>

@@ -154,9 +154,7 @@ public class OmniBacklogControllerTest {
 			list_SubPillars, 
 			list_WFMQueues, 
 			objCase.CaseNumber, 
-			String.valueOf(objPSR.RoutingPriority),
-			'',
-			''
+			String.valueOf(objPSR.RoutingPriority)
 		);
 		Test.stopTest();
 		Assert.isTrue(!list_Results.isEmpty());

@@ -187,7 +187,7 @@ public with sharing class OEEmailAutomationHelper {
 					}
 				}
 				String strBody = '';
-				Messaging.EmailFileAttachment objTAdAAttachment;
+				Messaging.EmailFileAttachment objAlegeusAttachment;
 				Map<String, Object> map_Results = mergeDynamicContentInEmail(
 					objBO.Carrier_Orders__r,
 					map_CarrierEmailMacros,
@@ -290,7 +290,7 @@ public with sharing class OEEmailAutomationHelper {
 
 		String strCarrierSpecificEmailContents = '', strCarrierSwitchInfo = '';
 		String strCarrierSwitchCarrierNames = '', strTerminatedCarrierNames = '';
-		Boolean blnNonTAdAMacroIncluded = false;
+		Boolean blnNonAlegeusMacroIncluded = false;
 		Map<String, String> map_BenefitsTypeVariations = new Map<String, String>{
 			'HSA' => 'HSA',
 			'Health Savings Account' => 'HSA',
@@ -302,10 +302,10 @@ public with sharing class OEEmailAutomationHelper {
 			'DCFSA' => 'DCA',
 			'Dependent Care FSA' => 'DCA'
 		};
-		Messaging.EmailFileAttachment objTAdAAttachment;
+		Messaging.EmailFileAttachment objAlegeusAttachment;
 
 		Set<Id> set_IncludedEmailMacroIds = new Set<Id>();
-		String strTAdACarrierMacroContents = '';
+		String strAlegeusCarrierMacroContents = '';
 		for (Carrier_Order__c objCO : list_CO) {
 			List<String> list_GroupNumbers = String.isnotBlank(objCO.Group_Number__c) ? objCO.Group_Number__c.split(',') : null;
 			String strGrpNumber = list_GroupNumbers != null && list_GroupNumbers.size() > 0 ? list_GroupNumbers[list_GroupNumbers.size() - 1] : '';
@@ -340,12 +340,12 @@ public with sharing class OEEmailAutomationHelper {
 			) {
 				if (map_CarrierEmailMacros.containsKey(objCO.Carrier__c) || set_TAdACarrierIds.contains(objCO.Carrier__c)) {
 					if (
-						!blnNonTAdAMacroIncluded &&
+						!blnNonAlegeusMacroIncluded &&
 						!set_TAdACarrierIds.contains(objCO.Carrier__c) &&
 						map_MacroWithoutCarrier != null &&
 						map_MacroWithoutCarrier.containsKey('Premium Payments')
 					) {
-						blnNonTAdAMacroIncluded = true;
+						blnNonAlegeusMacroIncluded = true;
 						strCarrierSpecificEmailContents += map_MacroWithoutCarrier.get('Premium Payments').Body__c;
 					}
 
@@ -360,7 +360,7 @@ public with sharing class OEEmailAutomationHelper {
 						for (String strBenefitType : map_EmailMacro.keySet()) {
 							if (strBenefitType != NONE && set_BenefitTypes.contains(strBenefitType)) {
 								if (set_TAdACarrierIds.contains(objCO.Carrier__c)) {
-									strTAdACarrierMacroContents += map_EmailMacro.get(strBenefitType).Body__c.replace('[GroupNumber]', strGrpNumber);
+									strAlegeusCarrierMacroContents += map_EmailMacro.get(strBenefitType).Body__c.replace('[GroupNumber]', strGrpNumber);
 								} else {
 									strCarrierSpecificEmailContents += map_EmailMacro.get(strBenefitType).Body__c.replace('[GroupNumber]', strGrpNumber);
 								}
@@ -370,7 +370,7 @@ public with sharing class OEEmailAutomationHelper {
 					}
 					if (map_EmailMacro.containsKey(NONE)) {
 						if (set_TAdACarrierIds.contains(objCO.Carrier__c)) {
-							strTAdACarrierMacroContents += map_EmailMacro.get(NONE).Body__c.replace('[GroupNumber]', strGrpNumber);
+							strAlegeusCarrierMacroContents += map_EmailMacro.get(NONE).Body__c.replace('[GroupNumber]', strGrpNumber);
 						} else {
 							strCarrierSpecificEmailContents += map_EmailMacro.get(NONE).Body__c.replace('[GroupNumber]', strGrpNumber);
 						}
@@ -389,7 +389,7 @@ public with sharing class OEEmailAutomationHelper {
 			}
 			strCarrierSwitchInfo = strCarrierSwitchInfo.replace('[TERMINATED CARRIERS]', strTerminatedCarrierNames);
 		}
-		strMergedEmailBody = strMergedEmailBody.replace('[CarrierSpecificInfo]', strCarrierSpecificEmailContents + strTAdACarrierMacroContents);
+		strMergedEmailBody = strMergedEmailBody.replace('[CarrierSpecificInfo]', strCarrierSpecificEmailContents + strAlegeusCarrierMacroContents);
 		strMergedEmailBody = strMergedEmailBody.replace('[CarrierSwitchInfo]', strCarrierSwitchInfo);
 		List<Attachment> list_MailAttachments = getMacroAttachments(set_IncludedEmailMacroIds);
 		map_Results.put('EmailBody', strMergedEmailBody);
@@ -510,8 +510,8 @@ public with sharing class OEEmailAutomationHelper {
 
 		//fetch benefit orders
 		Set<Id> set_BOId = new Set<Id>(map_COIdWithBOId.values());
-		Map<Id, Integer> map_recentlyApprovedNonTAdACOPerBO = new Map<Id, Integer>();
-		Map<Id, Integer> map_nonTAdACOPerBO = new Map<Id, Integer>(), map_nonTAdAApprovedCOPerBO = new Map<Id, Integer>();
+		Map<Id, Integer> map_recentlyApprovedNonAlegeusCOPerBO = new Map<Id, Integer>();
+		Map<Id, Integer> map_nonAlegeusCOPerBO = new Map<Id, Integer>(), map_nonAlegeusApprovedCOPerBO = new Map<Id, Integer>();
 		Set<Id> set_BOForPartialApproval = new Set<Id>();
 		Set<String> set_OrderStatusToExclude = new Set<String>{ 'Canceled', 'Closed Admin' };
 		Map<Id, String> map_ApprovedCarrierNamesPerBO = new Map<Id, String>(), map_PendingApprovalCarrierNamesPerBO = new Map<Id, String>();
@@ -534,19 +534,19 @@ public with sharing class OEEmailAutomationHelper {
 				AND Benefit_Order__r.RecordType.DeveloperName IN :set_EligibleBOREcordTypes
 		]) {
 			if (map_COIdWithBOId.containsKey(objCO.Id)) {
-				Integer intApprovedCOCount = map_recentlyApprovedNonTAdACOPerBO.containsKey(objCO.Benefit_Order__c) ? map_recentlyApprovedNonTAdACOPerBO.get(objCO.Benefit_Order__c) : 0;
+				Integer intApprovedCOCount = map_recentlyApprovedNonAlegeusCOPerBO.containsKey(objCO.Benefit_Order__c) ? map_recentlyApprovedNonAlegeusCOPerBO.get(objCO.Benefit_Order__c) : 0;
 				intApprovedCOCount++;
 
 				String strApprovedCarrierNames = map_ApprovedCarrierNamesPerBO.containsKey(objCO.Benefit_Order__c) ? map_ApprovedCarrierNamesPerBO.get(objCO.Benefit_Order__c) + ' ,' : '';
 				strApprovedCarrierNames += objCO.Carrier__r.Name;
 				map_ApprovedCarrierNamesPerBO.put(objCO.Benefit_Order__c, strApprovedCarrierNames);
 
-				map_recentlyApprovedNonTAdACOPerBO.put(objCO.Benefit_Order__c, intApprovedCOCount);
+				map_recentlyApprovedNonAlegeusCOPerBO.put(objCO.Benefit_Order__c, intApprovedCOCount);
 			} else if (objCO.Implementation_Stage__c == 'Approved' || objCO.Implementation_Stage__c == 'Approved Pending EE Audit') {
-				Integer intExistingApprovedCOCount = map_nonTAdAApprovedCOPerBO.containsKey(objCO.Benefit_Order__c) ? map_nonTAdAApprovedCOPerBO.get(objCO.Benefit_Order__c) : 0;
+				Integer intExistingApprovedCOCount = map_nonAlegeusApprovedCOPerBO.containsKey(objCO.Benefit_Order__c) ? map_nonAlegeusApprovedCOPerBO.get(objCO.Benefit_Order__c) : 0;
 				intExistingApprovedCOCount++;
 
-				map_nonTAdAApprovedCOPerBO.put(objCO.Benefit_Order__c, intExistingApprovedCOCount);
+				map_nonAlegeusApprovedCOPerBO.put(objCO.Benefit_Order__c, intExistingApprovedCOCount);
 			} else {
 				String strPendingApprovalCarrierNames = map_PendingApprovalCarrierNamesPerBO.containsKey(objCO.Benefit_Order__c)
 					? map_PendingApprovalCarrierNamesPerBO.get(objCO.Benefit_Order__c) + ', '
@@ -554,15 +554,15 @@ public with sharing class OEEmailAutomationHelper {
 				strPendingApprovalCarrierNames += objCO.Carrier__r.Name;
 				map_PendingApprovalCarrierNamesPerBO.put(objCO.Benefit_Order__c, strPendingApprovalCarrierNames);
 			}
-			Integer intNonTAdACOCount = map_nonTAdACOPerBO.containsKey(objCO.Benefit_Order__c) ? map_nonTAdACOPerBO.get(objCO.Benefit_Order__c) : 0;
-			intNonTAdACOCount++;
+			Integer intNonAlegeusCOCount = map_nonAlegeusCOPerBO.containsKey(objCO.Benefit_Order__c) ? map_nonAlegeusCOPerBO.get(objCO.Benefit_Order__c) : 0;
+			intNonAlegeusCOCount++;
 
-			map_nonTAdACOPerBO.put(objCO.Benefit_Order__c, intNonTAdACOCount);
+			map_nonAlegeusCOPerBO.put(objCO.Benefit_Order__c, intNonAlegeusCOCount);
 		}
-		if (!map_recentlyApprovedNonTAdACOPerBO.isEmpty()) {
-			for (Id idBO : map_recentlyApprovedNonTAdACOPerBO.keySet()) {
-				if (map_nonTAdACOPerBO.containsKey(idBO)) {
-					if (map_recentlyApprovedNonTAdACOPerBO.get(idBO) < map_nonTAdACOPerBO.get(idBO) && !map_nonTAdAApprovedCOPerBO.containsKey(idBO)) {
+		if (!map_recentlyApprovedNonAlegeusCOPerBO.isEmpty()) {
+			for (Id idBO : map_recentlyApprovedNonAlegeusCOPerBO.keySet()) {
+				if (map_nonAlegeusCOPerBO.containsKey(idBO)) {
+					if (map_recentlyApprovedNonAlegeusCOPerBO.get(idBO) < map_nonAlegeusCOPerBO.get(idBO) && !map_nonAlegeusApprovedCOPerBO.containsKey(idBO)) {
 						//partialApproval
 						set_BOForPartialApproval.add(idBO);
 					}

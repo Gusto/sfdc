@@ -74,7 +74,6 @@ public without sharing class EmailMessageTriggerHelper {
 	private List<Ticket__c> list_TicketsToUpdate = new List<Ticket__c>();
 	private List<Task> list_TaskToInsert = new List<Task>();
 
-
 	public Set<Id> set_AwaitingCustomerResponseRecTypes = new Set<Id>{
 		EmailMessageUtil.RECTYPE_CHANGE,
 		EmailMessageUtil.RECTYPE_RENEWAL,
@@ -151,7 +150,7 @@ public without sharing class EmailMessageTriggerHelper {
 		processUniversalInbox(map_NewEmailMessages.values());
 		processDuplicatePTCases();
 		processDML();
-		if(!list_TaskToInsert.isEmpty()) {
+		if (!list_TaskToInsert.isEmpty()) {
 			insert list_TaskToInsert;
 		}
 	}
@@ -410,8 +409,8 @@ public without sharing class EmailMessageTriggerHelper {
 					objCase.Status != CaseUtils.STATUS_CLOSED &&
 					objCase.Status != CaseUtils.STATUS_SOLVED &&
 					!objCurrentUser?.Data_Migration_Validation__c &&
-					!objCurrentUser?.Name.contains(EmailMessageUtil.AGATHA_USER) &&
-					!objEmailMessage.TextBody.startsWithIgnoreCase(EmailMessageUtil.CHAT_STARTED)
+					!objCurrentUser?.Name.contains(EmailMessageUtil.AGATHA_USER) && 
+                    !objEmailMessage.TextBody.startsWithIgnoreCase(EmailMessageUtil.CHAT_STARTED)
 				) {
 					objCase.Status = CaseUtils.STATUS_AWAITING_RESPONSE;
 					if (objCase.RecordTypeId == EmailMessageUtil.RECTYPE_CLIENT_RELATIONS) {
@@ -419,10 +418,12 @@ public without sharing class EmailMessageTriggerHelper {
 					}
 				}
 
-				if ((objCase.Origin == CaseUtils.ORIGIN_CHAT || (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_CHAT)) 
-					&& objEmailMessage.Incoming == false
-					&& objEmailMessage.Status == '3'
-					&& !objEmailMessage.TextBody.startsWithIgnoreCase(EmailMessageUtil.CHAT_STARTED)) {
+				if (
+					(objCase.Origin == CaseUtils.ORIGIN_CHAT || (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_CHAT)) &&
+					objEmailMessage.Incoming == false &&
+					objEmailMessage.Status == '3' &&
+					!objEmailMessage.TextBody.startsWithIgnoreCase(EmailMessageUtil.CHAT_STARTED)
+				) {
 					objCase.Origin = CaseUtils.ORIGIN_EMAIL;
 					if (String.isBlank(objCase.Type)) {
 						objCase.Type = CaseUtils.PAYROLL_CASE_PILLAR;
@@ -433,7 +434,7 @@ public without sharing class EmailMessageTriggerHelper {
 				}
 
 				map_CasesToUpdate.put(objCase.Id, objCase);
-				if(objCase.RecordTypeId == EmailMessageUtil.RECTYPE_ENGAGEMENT){
+				if (objCase.RecordTypeId == EmailMessageUtil.RECTYPE_ENGAGEMENT) {
 					evaluatePartnerRedirects(objEmailMessage);
 				}
 
@@ -490,7 +491,7 @@ public without sharing class EmailMessageTriggerHelper {
 					objCase.Status == CaseUtils.STATUS_CLOSED &&
 					objCase.Type != EmailMessageUtil.CASE_TYPE_SPOT_CHK_CLOSE &&
 					((objCase.Authorized_User__c == CaseUtils.ANSWER_IQ_PROCESSED_YES &&
-					map_RecordTypeIdByName.get(EmailMessageUtil.CASE_RT_PAYROLL_TRANSFER_CASE) != objCase.RecordTypeId && 
+					map_RecordTypeIdByName.get(EmailMessageUtil.CASE_RT_PAYROLL_TRANSFER_CASE) != objCase.RecordTypeId &&
 					map_RecordTypeIdByName.get(EmailMessageUtil.CASE_RT_BENEFITS_BYB) != objCase.RecordTypeId) ||
 					set_FulFillmentRecordTypes.contains(objCase.RecordTypeId) ||
 					(map_RecordTypeIdByName.get(EmailMessageUtil.CASE_RT_PAYROLL_TRANSFER_CASE) == objCase.RecordTypeId &&
@@ -520,10 +521,22 @@ public without sharing class EmailMessageTriggerHelper {
 							Date dtCloseDate = objCase.ClosedDate.date();
 							Integer inNumberDaysDue = dtCloseDate.daysBetween(dtCurrentDate);
 
-							Boolean isParentCaseClosed = objCase.Type == CaseUtils.TYPE_CARRIER_SUBMISSION && objCase.Status == CaseUtils.STATUS_CLOSED && objCase.Carrier_Order__c != null && objCase.Carrier_Order__r.Implementation_Stage__c == CarrierOrderUtil.CO_STATUS_APPROVED;
-							if(isParentCaseClosed) {
+							Boolean isParentCaseClosed =
+								objCase.Type == CaseUtils.TYPE_CARRIER_SUBMISSION &&
+								objCase.Status == CaseUtils.STATUS_CLOSED &&
+								objCase.Carrier_Order__c != null &&
+								objCase.Carrier_Order__r.Implementation_Stage__c == CarrierOrderUtil.CO_STATUS_APPROVED;
+							if (isParentCaseClosed) {
 								Task taskRecord = new Task(
-									Subject = 'Carrier Response Received on Case Number ' + objCase.CaseNumber, Type__c = TaskUtil.TASK_TYPE_CARRIER_COMMUNICATION, Priority = TicketUtil.TICKET_PRIORITY_HIGH, Description = TaskUtil.PARENT_CARRIER_CASE_CLOSED_TASK_DESCRIPTION, Status = TaskUtil.TASK_STATUS_OPEN, ActivityDate = System.today(), RecordTypeId = TaskUtil.TASK_BENEFIT_FULFILLMENT_RT_ID, WhatId = objCase.Carrier_Order__c, OwnerId = objCase.Carrier_Order__r.OwnerId
+									Subject = 'Carrier Response Received on Case Number ' + objCase.CaseNumber,
+									Type__c = TaskUtil.TASK_TYPE_CARRIER_COMMUNICATION,
+									Priority = TicketUtil.TICKET_PRIORITY_HIGH,
+									Description = TaskUtil.PARENT_CARRIER_CASE_CLOSED_TASK_DESCRIPTION,
+									Status = TaskUtil.TASK_STATUS_OPEN,
+									ActivityDate = System.today(),
+									RecordTypeId = TaskUtil.TASK_BENEFIT_FULFILLMENT_RT_ID,
+									WhatId = objCase.Carrier_Order__c,
+									OwnerId = objCase.Carrier_Order__r.OwnerId
 								);
 								list_TaskToInsert.add(taskRecord);
 								continue;
@@ -565,16 +578,8 @@ public without sharing class EmailMessageTriggerHelper {
 								objNewCase.Internal_AI_Processed__c = CaseUtils.INTERNAL_SOLVE_PROCESSED_NO;
 								objNewCase.Solve_Processed__c = CaseUtils.SOLVE_PROCESSED_NO;
 								objNewCase.ClosedDate = null;
-								// BT-59632 - Reset the Solve Status to Ineligible for cloned case
-								objNewCase.Auto_Solve_Status__c = CaseUtils.AUTO_SOLVE_STATUS_INELIGIBLE;
 								if (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_EMAIL) {
 									objNewCase.Origin = CaseUtils.ORIGIN_EMAIL;
-								}
-								
-								// BTE-3856 - Set the Owner to Default Routing Queue for Auto Solve Queue
-								// So the new cases trigger omni routing
-								if(objCase.OwnerId == map_QueuesByName.get(EmailMessageUtil.AUTO_SOLVE_QUEUE).Id){
-									objNewCase.OwnerId = map_QueuesByName.get(EmailMessageUtil.DEFAULT_ROUTING_QUEUE).Id;
 								}
 
 								if (inNumberDaysDue > 14) {
@@ -610,8 +615,7 @@ public without sharing class EmailMessageTriggerHelper {
 								mapCaseRecordType(objNewCase);
 
 								if (
-									(CaseUtils.RECTYPE_RENEWAL == objCase.RecordTypeId &&
-									objCase.Type == CaseUtils.TYPE_BENEFITS_RENEWAL_ALLIGNMENT) ||
+									(CaseUtils.RECTYPE_RENEWAL == objCase.RecordTypeId && objCase.Type == CaseUtils.TYPE_BENEFITS_RENEWAL_ALLIGNMENT) ||
 									(set_RecordTypeIds.contains(objCase.RecordTypeId) &&
 									objCase.Benefit_Order__c == null &&
 									objCase.Opportunity__c == null)
@@ -767,7 +771,7 @@ public without sharing class EmailMessageTriggerHelper {
 								list_BYBBenefitOrderFulfilledCases.add(objCase);
 								map_oldCaseIdToEmailMessageMap.put(objCase.Id, objEmailMessage);
 								blnCreatedFromOtherCase = true;
-							} else if (!blnCreatedFromOtherCase && blnIsCaseClosed) {
+							} else if (!blnCreatedFromOtherCase) {
 								objCase.Status = CaseUtils.STATUS_RESPONSE_RECEIVED;
 							}
 						}
@@ -821,7 +825,7 @@ public without sharing class EmailMessageTriggerHelper {
 								) {
 									objCase.Status = CaseUtils.STATUS_IN_PROGRESS;
 									// BTE-3635, for custom replies update the case owner to 'Engagement cases' to trigger omni
-									if(objCase.OwnerId == map_QueuesByName.get(EmailMessageUtil.AUTO_SOLVE_QUEUE).Id){
+									if (objCase.OwnerId == map_QueuesByName.get(EmailMessageUtil.AUTO_SOLVE_QUEUE).Id) {
 										objCase.OwnerId = map_QueuesByName.get(EmailMessageUtil.ENGAGEMENT_CASES_QUEUE).Id;
 									}
 									// BTE-4290, for customer replies, update the status to 'Customer Responded'
@@ -832,7 +836,11 @@ public without sharing class EmailMessageTriggerHelper {
 							}
 
 							if (objCase.RecordTypeId == EmailMessageUtil.RECTYPE_ENGAGEMENT) {
-								if (map_PatternMatchingByName.containsKey(EmailMessageUtil.THANK_YOU) && strPriorCaseStatus != CaseUtils.STATUS_AWAITING_RESPONSE && strPriorCaseStatus != CaseUtils.STATUS_AWAITING_INTERNAL_SUPPORT) {
+								if (
+									map_PatternMatchingByName.containsKey(EmailMessageUtil.THANK_YOU) &&
+									strPriorCaseStatus != CaseUtils.STATUS_AWAITING_RESPONSE &&
+									strPriorCaseStatus != CaseUtils.STATUS_AWAITING_INTERNAL_SUPPORT
+								) {
 									Pattern_Matching__mdt objPatternMatching = map_PatternMatchingByName.get(EmailMessageUtil.THANK_YOU);
 									Boolean blnMatchFound = false;
 									String strDomain = String.isNotBlank(objEmailMessage.FromAddress) ? objEmailMessage.FromAddress.split('@')[1] : '';
@@ -870,9 +878,12 @@ public without sharing class EmailMessageTriggerHelper {
 									String.isNotBlank(objEmailMessage.FromAddress) &&
 									objEmailMessage.FromAddress.length() > 80 &&
 									objCase.Origin == CaseUtils.ORIGIN_EMAIL &&
-									String.isBlank(objCase.SuppliedEmail) &&
+									(String.isBlank(objCase.SuppliedEmail) || !Pattern.compile(EmailUtils.EMAIL_REGEX).matcher(objCase.SuppliedEmail).matches()) &&
 									objCase.Status == CaseUtils.STATUS_OPEN
 								) {
+									objCase.SuppliedEmail = '';
+                                    objCase.Audience__c = CaseUtils.AUDIENCE_OTHER;
+                                    objCase.Confirm_Case_Reason_Classification__c = map_CaseReasonByName.get(CaseUtils.SPAM_CASE_REASON).Id;
 									objCase.Authorized_User__c = CaseUtils.AUTHORIZED_USER_NO;
 									objCase.Status = CaseUtils.STATUS_CLOSED;
 									objCase.Routing_Case_Reason__c = CaseUtils.UNAUTHORIZED_USER_CASE_REASON;
@@ -886,13 +897,11 @@ public without sharing class EmailMessageTriggerHelper {
 									objCase.Status = CaseUtils.STATUS_IN_PROGRESS;
 								}
 
-								List<String> list_EmailSplit = String.isNotBlank(objCase.SuppliedEmail) 
-									? objCase.SuppliedEmail.split('@') 
-									: new List<String>();
+								List<String> list_EmailSplit = String.isNotBlank(objCase.SuppliedEmail) ? objCase.SuppliedEmail.split('@') : new List<String>();
 								if (
-									!list_EmailSplit.isEmpty() && 
-									list_EmailSplit[1] == CaseUtils.MIDDESK_EMAIL_DOMAIN && 
-									!objCase.EmailMessages.isEmpty() && 
+									!list_EmailSplit.isEmpty() &&
+									list_EmailSplit[1] == CaseUtils.MIDDESK_EMAIL_DOMAIN &&
+									!objCase.EmailMessages.isEmpty() &&
 									objCase.EmailMessages[0].Id == objEmailMessage.Id &&
 									map_CaseReasonByName.containsKey(CaseUtils.MIDDESK_REGISTRATION)
 								) {
@@ -1004,10 +1013,10 @@ public without sharing class EmailMessageTriggerHelper {
 					if (objCase.Status == CaseUtils.STATUS_CLOSED && objCase.RecordType.Name == EmailMessageUtil.CASE_RT_SALES_CASES) {
 						objCase.Status = CaseUtils.STATUS_NEW;
 						map_CasesToUpdate.put(objCase.Id, objCase);
-					// updating the status for developer assigned cases
+						// updating the status for developer assigned cases
 					} else if (
 						objCase.RecordType.Name == EmailMessageUtil.CASE_RT_SALES_CASES &&
-						(( String.isNotBlank(objEmailMessage.ToAddress) && objEmailMessage.ToAddress?.contains(EmailMessageUtil.DEVELOPER_EMAIL)) || 
+						((String.isNotBlank(objEmailMessage.ToAddress) && objEmailMessage.ToAddress?.contains(EmailMessageUtil.DEVELOPER_EMAIL)) ||
 						(String.isNotBlank(objEmailMessage.CcAddress) && objEmailMessage.CcAddress?.contains(EmailMessageUtil.DEVELOPER_EMAIL))) &&
 						objEmailMessage.Incoming &&
 						objCase.Status != CaseUtils.STATUS_NEW &&
@@ -1741,7 +1750,7 @@ public without sharing class EmailMessageTriggerHelper {
 					Company_Size__c,
 					Persona__c,
 					Answer_IQ_Processed__c,
-					Partner_Case_Type__c, 
+					Partner_Case_Type__c,
 					Carrier_Order__c,
 					Carrier_Order__r.OwnerId,
 					Carrier_Order__r.Implementation_Stage__c,
@@ -1942,10 +1951,12 @@ public without sharing class EmailMessageTriggerHelper {
 					}
 				}
 
-				if ((objCase.Origin == CaseUtils.ORIGIN_CHAT || (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_CHAT)) 
-					&& objEmailMessage.Incoming == false
-					&& objEmailMessage.Status == '3'
-					&& !objEmailMessage.TextBody.startsWithIgnoreCase(EmailMessageUtil.CHAT_STARTED)) {
+				if (
+					(objCase.Origin == CaseUtils.ORIGIN_CHAT || (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_CHAT)) &&
+					objEmailMessage.Incoming == false &&
+					objEmailMessage.Status == '3' &&
+					!objEmailMessage.TextBody.startsWithIgnoreCase(EmailMessageUtil.CHAT_STARTED)
+				) {
 					objCase.Origin = CaseUtils.ORIGIN_EMAIL;
 					if (String.isBlank(objCase.Type)) {
 						objCase.Type = CaseUtils.PAYROLL_CASE_PILLAR;
@@ -2003,7 +2014,26 @@ public without sharing class EmailMessageTriggerHelper {
 						List<String> list_Fields = objError.getFields();
 
 						for (String strFieldApi : list_Fields) {
-							objFailedCase.put(strFieldApi, '');
+							// Get the field type using describe information
+							Schema.DescribeFieldResult fieldDescribe = Case.SObjectType.getDescribe().fields.getMap().get(strFieldApi).getDescribe();
+							Schema.DisplayType fieldType = fieldDescribe.getType();
+ 
+							// Assign default values based on the field type
+							if (fieldType == Schema.DisplayType.DATETIME) {
+								objFailedCase.put(strFieldApi, null); // Set null for Datetime fields
+							} else if (fieldType == Schema.DisplayType.DATE) {
+								objFailedCase.put(strFieldApi, null); // Set null for Date fields
+							} else if (fieldType == Schema.DisplayType.INTEGER) {
+								objFailedCase.put(strFieldApi, 0); // Set 0 for Integer fields
+							} else if (fieldType == Schema.DisplayType.DOUBLE || fieldType == Schema.DisplayType.CURRENCY) {
+								objFailedCase.put(strFieldApi, 0.0); // Set 0.0 for Decimal/Currency fields
+							} else if (fieldType == Schema.DisplayType.STRING) {
+								objFailedCase.put(strFieldApi, ''); // Set empty string for String fields
+							} else if (fieldType == Schema.DisplayType.BOOLEAN) {
+								objFailedCase.put(strFieldApi, false); // Set false for Boolean fields
+							} else {
+								objFailedCase.put(strFieldApi, null); // Set null for other types
+							}
 						}
 					}
 
@@ -2192,7 +2222,6 @@ public without sharing class EmailMessageTriggerHelper {
 	 */
 	private void processOutgoingDraft(Map<Id, EmailMessage> map_OldEmailMessages) {
 		List<Case> list_CasesToUpdate = new List<Case>();
-		Boolean blnSkipCaseTrigger = true;
 		for (Case objCase : map_CasesById.values()) {
 			if (map_NewEmailMessageByCaseId.containsKey(objCase.Id)) {
 				EmailMessage objEmailMessage = map_NewEmailMessageByCaseId.get(objCase.Id);
@@ -2223,7 +2252,6 @@ public without sharing class EmailMessageTriggerHelper {
 						objOldEmailMessage.Status != objEmailMessage.Status &&
 						objEmailMessage.Status == '3'
 					) {
-						blnSkipCaseTrigger = false;
 						objCase.Origin = CaseUtils.ORIGIN_EMAIL;
 						if (String.isBlank(objCase.Type)) {
 							objCase.Type = CaseUtils.PAYROLL_CASE_PILLAR;
@@ -2249,7 +2277,7 @@ public without sharing class EmailMessageTriggerHelper {
 		}
 
 		if (!list_CasesToUpdate.isEmpty()) {
-			CaseTriggerHelper.skipTrigger = blnSkipCaseTrigger;
+			CaseTriggerHelper.skipTrigger = true;
 			List<Database.SaveResult> list_UpdateResults = Database.update(list_CasesToUpdate, false);
 			List<String> list_DMLErrors = new List<String>();
 			list_DMLErrors.addAll(EmailMessageUtil.processDMLErrors(list_UpdateResults, 'Update'));
@@ -2317,24 +2345,22 @@ public without sharing class EmailMessageTriggerHelper {
 	 * @desc	If an Incoming emailmessagebody matches Partner Regex, update Partner_Case_Type__c field to Default value on Case.
 	 * @param	objEmailMsg - EmailMessage Record
 	 **/
-	public void evaluatePartnerRedirects(EmailMessage objEmailMsg){
-		try{
-			// Perform this check only on incoming emails 
-			if(objEmailMsg.Incoming){
-				for(Partner_Case_Setting__mdt partnerCaseConfig : [Select Id,RegEx_Pattern__c, 
-																	MasterLabel, Email_Template_ID__c
-																	 from Partner_Case_Setting__mdt ]){
-					Case objCase = map_CasesToUpdate.containsKey(objEmailMsg.ParentId)
-										 ? map_CasesToUpdate.get(objEmailMsg.ParentId) 
-										 : map_CasesById.get(objEmailMsg.ParentId);
-					// Once a case has an email that matches the pattern, skip the logic for the rest of the emails on that case 
-					if(objEmailMsg.TextBody	!= null && String.IsBlank(objCase?.Partner_Case_Type__c)){
-						String strRegexPattern = String.isNotBlank(partnerCaseConfig.RegEx_Pattern__c)? partnerCaseConfig.RegEx_Pattern__c.toLowerCase(): '';
+	public void evaluatePartnerRedirects(EmailMessage objEmailMsg) {
+		try {
+			// Perform this check only on incoming emails
+			if (objEmailMsg.Incoming) {
+				for (Partner_Case_Setting__mdt partnerCaseConfig : [SELECT Id, RegEx_Pattern__c, MasterLabel, Email_Template_ID__c FROM Partner_Case_Setting__mdt]) {
+					Case objCase = map_CasesToUpdate.containsKey(objEmailMsg.ParentId) ? map_CasesToUpdate.get(objEmailMsg.ParentId) : map_CasesById.get(objEmailMsg.ParentId);
+					// Once a case has an email that matches the pattern, skip the logic for the rest of the emails on that case
+					if (objEmailMsg.TextBody != null && String.IsBlank(objCase?.Partner_Case_Type__c)) {
+						String strRegexPattern = String.isNotBlank(partnerCaseConfig.RegEx_Pattern__c) ? partnerCaseConfig.RegEx_Pattern__c.toLowerCase() : '';
 						Pattern objPattern = Pattern.compile(strRegexPattern);
-						String strLowerCaseEmailBody  = objEmailMsg.TextBody.toLowerCase();
+						String strLowerCaseEmailBody = objEmailMsg.TextBody.toLowerCase();
 						// Find the index of the first occurrence of the delimiter
-						Integer intDelimiterIndex  = strLowerCaseEmailBody.indexOf(EmailMessageUtil.EMAIL_DELIMITER);
-						String strEmailBody = (intDelimiterIndex != -1) ? strLowerCaseEmailBody.substring(0, intDelimiterIndex + EmailMessageUtil.EMAIL_DELIMITER.length()).trim() : strLowerCaseEmailBody;
+						Integer intDelimiterIndex = strLowerCaseEmailBody.indexOf(EmailMessageUtil.EMAIL_DELIMITER);
+						String strEmailBody = (intDelimiterIndex != -1)
+							? strLowerCaseEmailBody.substring(0, intDelimiterIndex + EmailMessageUtil.EMAIL_DELIMITER.length()).trim()
+							: strLowerCaseEmailBody;
 						Matcher objMatcher = objPattern.matcher(strEmailBody);
 						if (objMatcher.find()) {
 							objCase.Partner_Case_Type__c = partnerCaseConfig.MasterLabel;

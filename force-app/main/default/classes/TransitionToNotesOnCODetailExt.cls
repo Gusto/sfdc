@@ -5,8 +5,8 @@ public class TransitionToNotesOnCODetailExt {
 	public list<QA_Sheet__c> lstQARec { get; set; }
 	public QA_Sheet__c QAObj { get; set; }
 	public Carrier_Order__c CarrierOrderObj { get; private set; }
-	//boolean for checking if the carrier is Tadas
-	public Boolean blnIsCarrierTadas { get; set; }
+	//boolean for checking if the carrier is Alegeus
+	public Boolean blnIsCarrierAlegeus { get; set; }
 	Id ttfBorRecType = cache.getRecordTypeId('Transition_to_Fulfillment__c', 'Benefits BoR');
 	Id ttfRenewalRecType = cache.getRecordTypeId('Transition_to_Fulfillment__c', 'Benefits Renewal');
 	Id ttfNewRecType = cache.getRecordTypeId('Transition_to_Fulfillment__c', 'Benefits New Plan');
@@ -23,7 +23,7 @@ public class TransitionToNotesOnCODetailExt {
 		QAObj = new QA_Sheet__c();
 		TtqObj = new Transition_to_Fulfillment__c();
 		currentRecordId = ApexPages.CurrentPage().getparameters().get('id');
-		blnIsCarrierTadas = false;
+		blnIsCarrierAlegeus = false;
 		/*List<QA_Lines_Of_Coverage__c> lstQAL = [select id,name,QA_Sheet__r.id,QA_Sheet__r.name,QA_Sheet__r.Benefit_Order__r.id,Carrier_Order__c 
                                                 from QA_Lines_Of_Coverage__c 
                                                 where Carrier_Order__c=:currentRecordId];
@@ -72,7 +72,7 @@ public class TransitionToNotesOnCODetailExt {
 		}
 
 		if ([SELECT COUNT() FROM QA_Lines_Of_Coverage__c WHERE Carrier_Order__c = :currentRecordId AND Benefits_selected_Carrier__r.Partner_Type__c ='TAdA'] > 0) {
-			blnIsCarrierTadas = true;
+			blnIsCarrierAlegeus = true;
 		}
 
 		/*

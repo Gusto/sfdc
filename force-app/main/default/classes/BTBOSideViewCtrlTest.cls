@@ -61,8 +61,7 @@ public class BTBOSideViewCtrlTest {
         cse.Origin='Email';
         insert cse;
               
-        Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setState('NY').setKey('alegeus').setPartnerType('TAdA').build();
-        insert objCarrier;
+       Carrier__c objCarrier = TestUtility.createTestCarrier('Alegeus','NY' ,true);
        
        Carrier_Order__c obj_CarrierOrder = TestUtility.createTestCarrierOrder(objCarrier.id, 'CarrierORderHandlerTest', boRec.id, true); 
        obj_CarrierOrder.Implementation_Stage__c= 'Ready for Document Collection';	

@@ -1991,6 +1991,35 @@
             <label>TaDa EOY + General Alert</label>
         </rules>
         <rules>
+            <name>Admin_Grower</name>
+            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
+            <conditions>
+                <leftValueReference>CaseRecord.Persona__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Admin</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>CaseRecord.Company_Size__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Grower 25-49</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>CaseRecord.Company_Size__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Grower 50</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Engagement_Grower_Id</targetReference>
+            </connector>
+            <label>Admin &amp; Grower</label>
+        </rules>
+        <rules>
             <name>Accountant_Gold_Silver</name>
             <conditionLogic>1 AND (2 OR 3)</conditionLogic>
             <conditions>
@@ -2091,35 +2120,6 @@
                 <targetReference>Assign_Gusto_Global_Id</targetReference>
             </connector>
             <label>Gusto Global</label>
-        </rules>
-        <rules>
-            <name>Admin_Grower</name>
-            <conditionLogic>1 AND (2 OR 3)</conditionLogic>
-            <conditions>
-                <leftValueReference>CaseRecord.Persona__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Admin</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>CaseRecord.Company_Size__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Grower 25-49</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>CaseRecord.Company_Size__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Grower 50</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_Engagement_Grower_Id</targetReference>
-            </connector>
-            <label>Admin &amp; Grower</label>
         </rules>
         <rules>
             <name>Benefits_Admin</name>

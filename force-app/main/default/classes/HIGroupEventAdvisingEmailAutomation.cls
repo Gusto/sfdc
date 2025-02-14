@@ -23,6 +23,8 @@ public class HIGroupEventAdvisingEmailAutomation {
 	static final String INTRO_EMAIL_TYPE_TADAS = 'Advising Intro Email Tadas';
 	static final String INTRO_EMAIL_TYPE_SCORP = 'Advising Intro Email SCorp';
 	static final String INTRO_EMAIL_TYPE_SCORP_TADAS = 'Advising Intro Email Scorp And Tadas';
+	public static final String LFT_INTRO = 'Level Funded Transition Intro';
+	public static final String LFT_AUTO_RENEW = 'Level Funded Auto Renewal';
 	static final String ADVISING_FOLLOWUP_EMAIL = 'Advising Followup Email';
 	static final String ADVISING_FINAL_REMINDER_EMAIL = 'Advising Final Reminder Email';
 	static final String ADVISING_AUTO_RENEWAL_EMAIL = 'Advising Auto Renewal Email';
@@ -48,6 +50,11 @@ public class HIGroupEventAdvisingEmailAutomation {
 	static final String ERROR_MSG_EMAILMESSAGE = '~emailcreation';
 
 	static final String MACRO_ID_ADVISING_TEAM_SIGNATURE = 'advising_team_signature';
+	public static final String MACRO_ID_LEVEL_FUNDED_MACRO = 'Advising Level Funded Intro Email';
+	public static final String MACRO_ID_LEVEL_FUNDED_SAME_TX = 'level_funded_intro_email_same/same_TX';
+	public static final String MACRO_ID_LEVEL_FUNDED_SAME_NONTTX = 'level_funded_intro_email_same/same_non-TX';
+	public static final String MACRO_ID_LEVEL_FUNDED_SWITCH_TX = 'level_funded_intro_email_carrier_switch_TX';
+	public static final String MACRO_ID_LEVEL_FUNDED_SWITCH_NONTX = 'level_funded_intro_email_carrier_switch_non-TX';
 
 	static Map<String, String> map_CompanyIdErrorMessages = new Map<String, String>();
 	static Map<String, String> map_CompanyIdExistingErrorMessages = new Map<String, String>();
@@ -57,11 +64,12 @@ public class HIGroupEventAdvisingEmailAutomation {
 	static Boolean blnEmailSent = false;
 
 	//For Email Macros
-	static Set<String> set_MacroIdentifier = new Set<String>{ MACRO_ID_ADVISING_TEAM_SIGNATURE };
+	public static Set<String> set_MacroIdentifier = new Set<String>{ MACRO_ID_ADVISING_TEAM_SIGNATURE, MACRO_ID_LEVEL_FUNDED_MACRO, MACRO_ID_LEVEL_FUNDED_SAME_TX, MACRO_ID_LEVEL_FUNDED_SAME_NONTTX, MACRO_ID_LEVEL_FUNDED_SWITCH_TX, MACRO_ID_LEVEL_FUNDED_SWITCH_NONTX };
 
 	private static Map<String, String> map_RetriveEmailMacro = HIGroupEventAdvisingEmailAutomation.getEmailMacro();
 
 	//we are using this mapping in this class only. That is why we have not moved the following map to any util
+	//Updated Map for BBO-2141
 	static Map<String, String> map_TemplateIdentifierEmailCodes = new Map<String, String>{
 		'Advising Intro Email' => 'Intro Email',
 		'Advising Intro Email Tadas' => 'Intro Email',
@@ -69,10 +77,21 @@ public class HIGroupEventAdvisingEmailAutomation {
 		'Advising Intro Email Scorp And Tadas' => 'Intro Email',
 		'Advising Followup Email' => 'Followup Email',
 		'Advising Final Reminder Email' => 'Final Reminder Email',
-		'Advising Auto Renewal Email' => 'Auto Renewal Email'
+		'Advising Auto Renewal Email' => 'Auto Renewal Email',
+        LFT_INTRO => LFT_INTRO,
+		LFT_AUTO_RENEW => LFT_AUTO_RENEW,
+		'Level Funded Transition Intro' => 'Level Funded Transition Intro',
+        'Level Funded Transition Check In' => 'Level Funded Transition Check In',
+        'Level Funded Auto Renewal' => 'Level Funded Auto Renewal'
 	};
-
-	static Set<String> set_OnOffAutomatedAdvisingEmails = new Set<String>{ 'Advising Followup Email', 'Advising Final Reminder Email','Advising Intro Email', 'Advising Intro Email Tadas', 'Advising Intro Email SCorp', 'Advising Intro Email Scorp And Tadas'};
+	
+	static Set<String> set_OnOffAutomatedAdvisingEmails = new Set<String>{ 'Advising Followup Email', 'Advising Final Reminder Email','Advising Intro Email', 'Advising Intro Email Tadas', 'Advising Intro Email SCorp', 'Advising Intro Email Scorp And Tadas', LFT_INTRO, LFT_AUTO_RENEW};
+	//Added for 2141 
+	static Map<String,String> map_EmailTypeToTemplateNameIdentifier = New Map<String,String>{
+		'Level Funded Transition Intro' => 'Level Funded Transition Intro',
+		'Level Funded Transition Check In' => 'Level Funded Transition Advising Check In Email',
+		'Level Funded Auto Renewal' => 'Level Funded Auto Renewal'    
+	};
 	public static Configuration_Settings__c objConfigSettings = Configuration_Settings__c.getOrgDefaults();
 
 	public static void processIntroInformation(List<HIEventWrapper> list_HiGroupEventIntroEmail) {
@@ -113,6 +132,24 @@ public class HIGroupEventAdvisingEmailAutomation {
 						strEmailType = INTRO_EMAIL_TYPE_SCORP_TADAS;
 					}
 
+					if (objHIGroupEvent.Event_Type__c != null && HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO.equalsIgnoreCase(objHIGroupEvent.Event_Type__c)) {
+						strEmailType = LFT_INTRO;
+					}
+
+					if (objHIGroupEvent.Event_Type__c != null && HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEW.equalsIgnoreCase(objHIGroupEvent.Event_Type__c)) {
+						strEmailType = LFT_AUTO_RENEW;
+					}
+                   //BBO-2141 Start
+				   if (objHIGroupEvent.Event_Type__c != null && HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_INTRO_EMAIL.equalsIgnoreCase(objHIGroupEvent.Event_Type__c)) {
+					strEmailType = HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_INTRO_EMAIL_LABEL;
+				}
+				if (objHIGroupEvent.Event_Type__c != null && HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_CHECKIN_EMAIL.equalsIgnoreCase(objHIGroupEvent.Event_Type__c)) {
+					strEmailType = HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_CHECKIN_EMAIL_LABEL;
+				}
+				if (objHIGroupEvent.Event_Type__c != null && HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEWAL_EMAIL.equalsIgnoreCase(objHIGroupEvent.Event_Type__c)) {
+					strEmailType = HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEWAL_EMAIL_LABEL;
+				}
+				//BBO-2141 Ends
 					objHIGroupEvent.Email_Type__c = strEmailType;
 					AdvisingEmailJSONWrapper.Benefit_Address objAddress = objHIIntroEmailtWrapper.benefit_address;
 
@@ -137,7 +174,17 @@ public class HIGroupEventAdvisingEmailAutomation {
 					}
 
 					objHIGroupEvent.Benefit_Address__c = strBenefitAddress;
-					set_EmailTemplateNames.add(objHIGroupEvent.Email_Type__c);
+                    //BBO-2141 Started
+                    system.debug('objHIGroupEvent.Email_Type__c==> '+objHIGroupEvent.Email_Type__c);
+                    system.debug('map_EmailTypeToTemplateNameIdentifier==> '+map_EmailTypeToTemplateNameIdentifier);
+                    system.debug('Condition Check=> '+map_EmailTypeToTemplateNameIdentifier.containsKey(objHIGroupEvent.Email_Type__c));
+                    if(map_EmailTypeToTemplateNameIdentifier.containsKey(objHIGroupEvent.Email_Type__c)){
+                        set_EmailTemplateNames.add(map_EmailTypeToTemplateNameIdentifier.get(objHIGroupEvent.Email_Type__c));
+                    }
+                    else{
+						set_EmailTemplateNames.add(objHIGroupEvent.Email_Type__c);
+                    }
+                    //BBO-2141 Ends
 					HIGroupEventTriggerHelper.setProcessingState(IntegrationUtils.PROCESSED_STATE, PROCESSED_SUCESSFULLY, objHIGroupEvent);
 				} catch (Exception objEx) {
 					HIGroupEventTriggerHelper.setProcessingState(IntegrationUtils.ERROR_STATE, ERROR_MSG_JSON, objHIGroupEvent);
@@ -303,8 +350,8 @@ public class HIGroupEventAdvisingEmailAutomation {
 			}
 		}
 	}
-
-	public static void sendAdvisingEmail(List<HIEventWrapper> list_HiGroupEventWrapperRecords) {
+    
+    public static void sendAdvisingEmail(List<HIEventWrapper> list_HiGroupEventWrapperRecords) {
 		if (list_HiGroupEventWrapperRecords != null && list_HiGroupEventWrapperRecords.size() > 0) {
 			Set<String> set_OppApplicationIds = new Set<String>();
 			Set<String> set_OppCompanyIds = new Set<String>();
@@ -380,7 +427,9 @@ public class HIGroupEventAdvisingEmailAutomation {
 								CaseNumber,
 								Opportunity__r.Owner_Role_Name__c,
 								OwnerId,
-								Automated_Advising_Emails_Off__c
+								Automated_Advising_Emails_Off__c,
+								Renewal_Date__c,
+								Offering_Selection_Deadline__c
 							FROM Cases__r
 							WHERE RecordTypeId = :OpportunityUtil.BENEFITS_RENEWAL_CASE_RT_ID AND Integration_Id__c != NULL AND Integration_Id__c LIKE 'hippo-%' AND AccountId != NULL
 							ORDER BY CreatedDate DESC
@@ -531,8 +580,8 @@ public class HIGroupEventAdvisingEmailAutomation {
 					}
 
 					Case objCase = map_OppCompanyIdWithLatestCases.get(objHIGroupEvent.Company_Id__c);
-
-					if (objCase != null && objCase.Id != null && map_TemplateNameRecords.containsKey(objHIGroupEvent.Email_Type__c)) {
+                    //Chage Contion For BBO-2141
+					if (objCase != null && objCase.Id != null && (map_TemplateNameRecords.containsKey(objHIGroupEvent.Email_Type__c) || map_TemplateNameRecords.containsKey(map_EmailTypeToTemplateNameIdentifier.get(objHIGroupEvent.Email_Type__c)))) {
 						String strValidationError = validationCheck(objCase, objHIGroupEvent, objHIFollowUpWrapper);
 
 						if (String.isNotBlank(strValidationError)) {
@@ -550,6 +599,11 @@ public class HIGroupEventAdvisingEmailAutomation {
 						try {
 							//code for OutboundEmail instance creation---------starts-----------
 							EmailTemplate objEmailTemplate = map_TemplateNameRecords.get(objHIGroupEvent.Email_Type__c);
+							String strEmailSubject = populateEmailSubjectDynamicFieldValues(objEmailTemplate.Subject, objCase, objHIFollowUpWrapper);
+							//Condition Added for BBO-2141
+                            if(map_TemplateNameRecords.containsKey(map_EmailTypeToTemplateNameIdentifier.get(objHIGroupEvent.Email_Type__c))){
+                                objEmailTemplate = map_TemplateNameRecords.get(map_EmailTypeToTemplateNameIdentifier.get(objHIGroupEvent.Email_Type__c));
+                            }
 							Contact objContact = null;
 							//If Contact get changed on case then retrive new contact based on Zp user id from HIGroup Event
 							if (list_CasesToUpdate != null && list_CasesToUpdate.size() > 0 && map_ZPUserIdContacts.containsKey(objHIGroupEvent.Survey_Completed_By__c)) {
@@ -558,7 +612,7 @@ public class HIGroupEventAdvisingEmailAutomation {
 
 							String strEmailBody = populateEmailBodyWithDynamicFieldValues(objEmailTemplate.HtmlValue, objCase, objContact, objHIGroupEvent, map_UserSignature);
 
-							Messaging.SingleEmailMessage objMessage = createEmailRecord(objEmailTemplate.Subject, objCase, strEmailBody);
+							Messaging.SingleEmailMessage objMessage = createEmailRecord(strEmailSubject, objCase, strEmailBody);
 
 							//code to set cc addresses
 							if (map_OppCompanyIdWithCCEmailIds.containsKey(objHIGroupEvent.Company_Id__c)) {
@@ -576,7 +630,7 @@ public class HIGroupEventAdvisingEmailAutomation {
 
 							//code for OutboundEmail instance creation---------Ends-----------
 							//code for EmailMessage record creation-------- start-----------
-							EmailMessage objEmailMessage = createEmailMessageRecord(strEmailBody, objCase, objEmailTemplate.Subject, objEmailTemplate.DeveloperName, objMessage, objHIGroupEvent);
+							EmailMessage objEmailMessage = createEmailMessageRecord(strEmailBody, objCase, strEmailSubject, objEmailTemplate.DeveloperName, objMessage, objHIGroupEvent);
 							map_ContactIdsEmailMessageToInsert.put(objCase.ContactId, objEmailMessage);
 							//code for EmailMessage record creation-------- Ends-----------
 						} catch (Exception objEx) {
@@ -933,9 +987,51 @@ public class HIGroupEventAdvisingEmailAutomation {
 
 		return strFinalEmailBody;
 	}
+	
+	public static String populateEmailSubjectDynamicFieldValues (String strSubject, Case objCase, AdvisingEmailJSONWrapper objHIIntroEmailtWrapper) {
+		if (objCase.Offering_Selection_Deadline__c != null) {
+			strSubject = strSubject.replace('[OFFERING SELECTION DEADLINE]', objCase.Offering_Selection_Deadline__c.format());
+		}
+		if (objHIIntroEmailtWrapper.alternate_package_savings != null) {
+			strSubject = strSubject.replace('[alt percentage savings]', objHIIntroEmailtWrapper.alternate_package_savings);
+		}
+
+		strSubject = strSubject.replace('[ACCOUNT NAME]', objCase.Account.Name);
+
+		return strSubject;
+	}
 
 	public static String setCommonFieldValues(String strTemplateBody, Case objCase, Contact objContactTemp, HIGroupEvent__c objHIGroupEvent, Map<Id, String> map_UserSignature) {
 		if (String.isNotBlank(strTemplateBody) && objCase != null && objHIGroupEvent != null) {
+			AdvisingEmailJSONWrapper objHIIntroEmailtWrapper = (AdvisingEmailJSONWrapper) JSON.deserialize(objHIGroupEvent.Event_Info__c, AdvisingEmailJSONWrapper.class);
+			String strSeacrhKey = objHIGroupEvent.Event_Type__c;
+			if (objHIIntroEmailtWrapper.alternate_recommendation_type != null) {
+				strSeacrhKey = strSeacrhKey + '_' + objHIIntroEmailtWrapper.alternate_recommendation_type;
+			}
+			if (objHIIntroEmailtWrapper.benefit_address != null && String.isNotBlank(objHIIntroEmailtWrapper.benefit_address.state)) {
+				if (objHIIntroEmailtWrapper.benefit_address.state.equalsIgnoreCase('TX')) {
+					strSeacrhKey = strSeacrhKey + '_TX';
+				} else {
+					strSeacrhKey = strSeacrhKey + '_non-TX';
+				}
+			}
+
+			if (map_RetriveEmailMacro.containsKey(strSeacrhKey)) {
+				strTemplateBody = strTemplateBody.replace('[MACRO]', map_RetriveEmailMacro.get(strSeacrhKey));
+			}
+
+			String strValue = '';
+			String strKey = '[' + MACRO_ID_LEVEL_FUNDED_MACRO + ']';
+			if (
+				map_RetriveEmailMacro.containsKey(strKey) && 
+				HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO.equalsIgnoreCase(objHIGroupEvent.Event_Type__c) &&
+				objHIIntroEmailtWrapper.alternate_recommendation_type != null && 
+				objHIIntroEmailtWrapper.alternate_recommendation_type.equalsIgnoreCase('carrier_switch')
+			) {
+				strValue = map_RetriveEmailMacro.get(strKey);
+			}
+			strTemplateBody = strTemplateBody.replace(strKey, strValue);
+
 			if (objContactTemp == null && objCase.ContactId != null) {
 				strTemplateBody = strTemplateBody.replace('[CONTACT FIRSTNAME]', objCase.Contact.FirstName);
 			} else if (objContactTemp != null) {
@@ -944,9 +1040,42 @@ public class HIGroupEventAdvisingEmailAutomation {
 
 			strTemplateBody = strTemplateBody.replace('[ACCOUNT NAME]', objCase.Account.Name);
 
+			if (objCase.Renewal_Date__c != null) {
+				strTemplateBody = strTemplateBody.replace('[RENEWAL DATE]', objCase.Renewal_Date__c.format());
+			}
+
+			if (objCase.Offering_Selection_Deadline__c != null) {
+				strTemplateBody = strTemplateBody.replace('[OFFERING SELECTION DEADLINE]', objCase.Offering_Selection_Deadline__c.format());
+			}
+
 			if (objCase.Coverage_Effective_Date__c != null) {
 				strTemplateBody = strTemplateBody.replace('[COVERAGE EFFECTIVE DATE]', objCase.Coverage_Effective_Date__c);
 			}
+			
+			if (objHIIntroEmailtWrapper.default_renewal_rate_change != null) {
+				strTemplateBody = strTemplateBody.replace('[default increase]', objHIIntroEmailtWrapper.default_renewal_rate_change);
+			}
+			if (objHIIntroEmailtWrapper.alternate_package_savings != null) {
+				strTemplateBody = strTemplateBody.replace('[alt percentage savings]', objHIIntroEmailtWrapper.alternate_package_savings);
+			}
+
+			String strCarrier = '';
+			if (objHIIntroEmailtWrapper.alternate_package_carrier != null) {
+				strCarrier = objHIIntroEmailtWrapper.alternate_package_carrier;
+			}
+			strTemplateBody = strTemplateBody.replace('[CARRIER]', strCarrier);
+
+			String strDefaultQuote = '';
+			if (objHIIntroEmailtWrapper.default_cost_breakdown_pdf != null) {
+				strDefaultQuote ='<a href="' + objHIIntroEmailtWrapper.default_cost_breakdown_pdf + '">HERE</a>';
+			}
+			
+			String strFundedtQuote = '';
+			if (objHIIntroEmailtWrapper.alternate_cost_breakdown_pdf != null) {
+				strFundedtQuote = '<a href="' + objHIIntroEmailtWrapper.alternate_cost_breakdown_pdf + '">HERE</a>';
+			}
+			strTemplateBody = strTemplateBody.replace('[default renewal quote]', strDefaultQuote);
+			strTemplateBody = strTemplateBody.replace('[alt level funded quote]', strFundedtQuote);
 
 			if (objHIGroupEvent.Selection_Deadline_Date__c != null) {
 				DateTime dtmTempDeadLine = objHIGroupEvent.Selection_Deadline_Date__c;
@@ -1025,6 +1154,10 @@ public class HIGroupEventAdvisingEmailAutomation {
 				((objHIGroupEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_INTRO &&
 				objCase.Opportunity__r.Advising_Email__c.indexOf(map_TemplateIdentifierEmailCodes.get(objHIGroupEvent.Email_Type__c)) > -1) ||
 				(objHIGroupEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_RENEWAL_FINAL &&
+				objCase.Opportunity__r.Advising_Email__c.indexOf(map_TemplateIdentifierEmailCodes.get(objHIGroupEvent.Email_Type__c)) > -1) ||
+				(objHIGroupEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_INTRO &&
+				objCase.Opportunity__r.Advising_Email__c.indexOf(map_TemplateIdentifierEmailCodes.get(objHIGroupEvent.Email_Type__c)) > -1) ||
+				(objHIGroupEvent.Event_Type__c == HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEW &&
 				objCase.Opportunity__r.Advising_Email__c.indexOf(map_TemplateIdentifierEmailCodes.get(objHIGroupEvent.Email_Type__c)) > -1))
 			) {
 				strError += map_TemplateIdentifierEmailCodes.get(objHIGroupEvent.Email_Type__c) + ERROR_MSG_ALREADYSENT;

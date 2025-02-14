@@ -9,7 +9,7 @@ public class CarrierOrderUtil {
 	public static final String AFTER_MONTH = 'After Month';
 	public static final String BEFORE_DAYS = 'Before Days';
 	public static final String AFTER_DAYS = 'After Days';
-
+	public static final String Name_BASIC = 'BASIC';
 	public static final String BEFORE_EVENT = 'Before';
 	public static final String AFTER_EVENT = 'After';
 	public static final String SAME_EVENT = 'Same';
@@ -19,8 +19,9 @@ public class CarrierOrderUtil {
 	public static final String CO_STATUS_READY_FOR_CONFIRMATION = 'Ready for Confirmation';
 	public static final String IMPLEMENTATION_STAGE_READY_FOR_QUALIFICATION = 'Ready For Qualification';
 	public static final String IMPLEMENTATION_STAGE_READY_FOR_EARLY_SUBMISSION = 'Ready for Early Submission';
-  public static final String IMPLEMENTATION_STAGE_EARLY_SUBMISSION = 'Early Submission';
+	public static final String IMPLEMENTATION_STAGE_EARLY_SUBMISSION = 'Early Submission';
 	public static final String IMPLEMENTATION_STAGE_PENDING_ER = 'Pending ER Signature';
+	public static final String CO_APPROVED_PENDING_TERMINATION = 'Approved Pending Carrier Termination';
 
 	public static final String CO_ORDER_TYPE_TADA_PRE_OE_SETUP = 'TAdA: Pre OE Setup';
 	public static final String CO_STATUS_APPROVED = 'Approved';
@@ -79,8 +80,10 @@ public class CarrierOrderUtil {
 	};
 
 	public static set<string> set_COExcludeStagesForClosed = new Set<string>{
+		CO_APPROVED_PENDING_TERMINATION,
 		CO_STATUS_APPROVED_PENDING_EE_AUDIT,
 		CO_STATUS_APPROVED,
+		STAGE_CANCELLED,
 		STAGE_CLOSED_ADMIN
 	};
 

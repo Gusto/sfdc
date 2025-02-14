@@ -13,9 +13,9 @@ private class BatchDMLTest {
 		List<Carrier__c> list_CarriersToUpdate = new List<Carrier__c>();
 		List<Carrier__c> list_CarriersToDelete = new List<Carrier__c>();
 
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Test Care California').setUniqueName('Test Care').setState('CA').build());
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Test Care New York').setUniqueName('Test Care').setState('NY').build());
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setState('NY;TX;CA,MO').setPartnerType('TAdA').build());
+		list_Carriers.add(new Carrier__c(Name = 'Test Care California', Carrier_Unique_Name__c = 'Test Care', State__c = 'CA'));
+		list_Carriers.add(new Carrier__c(Name = 'Test Care New York', Carrier_Unique_Name__c = 'Test Care', State__c = 'NY'));
+		list_Carriers.add(new Carrier__c(Name = 'Alegeus', Carrier_Unique_Name__c = 'Alegeus', State__c = 'NY;TX;CA,MO'));
 
 		Test.startTest();
 		if (!list_Carriers.isEmpty()) {
@@ -30,9 +30,9 @@ private class BatchDMLTest {
 	static void test_BatchDMLUpdate() {
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
 		List<Carrier__c> list_CarriersToUpdate = new List<Carrier__c>();
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Test Care California').setUniqueName('Test Care').setState('CA').build());
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Test Care New York').setUniqueName('Test Care').setState('NY').build());
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setState('NY;TX;CA,MO').setPartnerType('TAdA').build());
+		list_Carriers.add(new Carrier__c(Name = 'Test Care California', Carrier_Unique_Name__c = 'Test Care', State__c = 'CA'));
+		list_Carriers.add(new Carrier__c(Name = 'Test Care New York', Carrier_Unique_Name__c = 'Test Care', State__c = 'NY'));
+		list_Carriers.add(new Carrier__c(Name = 'Alegeus', Carrier_Unique_Name__c = 'Alegeus', State__c = 'NY;TX;CA,MO'));
 		insert list_Carriers;
 
 		for (Carrier__c c : [SELECT Id, Name, Carrier_Unique_Name__c, State__c FROM Carrier__c LIMIT 2]) {
@@ -55,9 +55,9 @@ private class BatchDMLTest {
 	static void test_BatchDMLDelete() {
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
 		List<Carrier__c> list_CarriersToDelete = new List<Carrier__c>();
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Test Care California').setUniqueName('Test Care').setState('CA').build());
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Test Care New York').setUniqueName('Test Care').setState('NY').build());
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setState('NY;TX;CA,MO').setPartnerType('TAdA').build());
+		list_Carriers.add(new Carrier__c(Name = 'Test Care California', Carrier_Unique_Name__c = 'Test Care', State__c = 'CA'));
+		list_Carriers.add(new Carrier__c(Name = 'Test Care New York', Carrier_Unique_Name__c = 'Test Care', State__c = 'NY'));
+		list_Carriers.add(new Carrier__c(Name = 'Alegeus', Carrier_Unique_Name__c = 'Alegeus', State__c = 'NY;TX;CA,MO'));
 		insert list_Carriers;
 
 		for (Carrier__c c : [SELECT Id, Name, Carrier_Unique_Name__c, State__c FROM Carrier__c]) {

@@ -148,12 +148,6 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 						if (result.Tax_Notice_Indexs__r[0].Manual_Review_Required__c) {
 							this.blnIsMRR = true;
 						}
-
-						if (this.dtEffectiveDate != null && this.dtEffectiveDate != undefined && this.dtEffectiveDate != '') {
-							let quarter = Math.ceil(this.dtEffectiveDate.split("-")[1].trim() / 3);
-							let yrQtr = "Q" + quarter + " " + this.dtEffectiveDate.split("-")[0].trim();
-							this.suiYrQtr = yrQtr;
-						}
 					} else {
 						this.idNoticeIndexRecord = null;
 						this.blnGustoAddressee = result.Physical_Mail__c;

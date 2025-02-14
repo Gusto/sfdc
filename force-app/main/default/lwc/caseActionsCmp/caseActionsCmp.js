@@ -92,6 +92,8 @@ export default class CaseActionsCmp extends NavigationMixin(LightningElement) {
 	objTrackedFieldChange = {};
 	/* To store the Case object metadata info */
 	@track objCaseInfo = {};
+	/* flag to show the fields only when origin is phone */
+	@track blnIsPhoneOriginFieldsAvailable = false;
 	/* map of case reasons to record type map */
 	map_caseReasonToRecordTypeMap = {};
 	/* Decides whether to include slds-box wrapper surrounding the component */
@@ -305,6 +307,10 @@ export default class CaseActionsCmp extends NavigationMixin(LightningElement) {
 			}
 
 			this.idCase = this.objCase.Id;
+
+			if (this.objCase && (this.objCase.RecordType.Name == 'Benefits Care' || this.objCase.RecordType.Name == 'Payroll Care') && (this.objCase.Origin == 'Phone' || (this.objCase.Origin == 'Gusto' && this.objCase.Channel__c == 'Phone'))) {
+				this.blnIsPhoneOriginFieldsAvailable = true;
+			}
 
 			if (!this.selectedProductAreaId && this.initLoad) {
 				this.strSelectedProductArea = this.objCase.Product_Area__c ? this.objCase.Product_Area__r.Name : "";

@@ -507,7 +507,7 @@ public class HIFulfillmentEventTermination {
 								objCompanyBenefitAddress.country
 							) +
 							'\n\nPlease review and submit the required documents to the carrier.';
-						if (set_ExistingTermCase.contains(strSearchKey) && (objCase != null && objCase.Description == strCaseDescription && objCase.Status != 'Closed')) {
+						if (set_ExistingTermCase.contains(strSearchKey) && (objCase != null && objCase.Description == strCaseDescription)) {
 							continue;
 						}
 
@@ -1012,7 +1012,7 @@ public class HIFulfillmentEventTermination {
 			Map<String, String> dmlCaseUpsertErrorsMap = new Map<String, String>();
 			if (list_CasesForUpsert.size() > 0) {
 				List<Database.UpsertResult> saveResult = database.upsert(list_CasesForUpsert, Case.Fields.Enrollment_Key__c, false);
-				dmlCaseUpsertErrorsMap = Utils.processUpsertResult(saveResult, list_CasesForUpsert, 'Enrollment_Key__c', true, 'HIFulfillmentEventTermination-processInformation');
+				dmlCaseUpsertErrorsMap = Utils.processUpsertResult(saveResult, list_CasesForUpsert, 'Integration_Id__c', true, 'HIFulfillmentEventTermination-processInformation');
 				createAttachment(list_CasesForUpsert, map_CaseWrapper);
 			}
 
@@ -1327,7 +1327,6 @@ public class HIFulfillmentEventTermination {
 							}
 						}
 					}
-					objCase = populateCaseKeyFields(objCase, objHiEventInfo, stateCarrier, objHiFulfill, map_CaseWrapper);
 					caseInsertList.add(objCase);
 				}
 			}
@@ -1866,31 +1865,6 @@ public class HIFulfillmentEventTermination {
 			Blob blbBOTEncrypted = EncryptionUtils.getEncryptedBlob(ENCRYPTION_KEY, JSON.serialize(objBOTJson));
 			String strBOTJsonString = EncodingUtil.base64Encode(blbBOTEncrypted);
 			objCase.Fulfillment_Event_Encrypted_JSON__c = strBOTJsonString;
-		}
-		return objCase;
-	}
-
-	/**
-	 * Description populates Case - Key Field based on Existing case 
-	 * if it exists in system to make sure system updated existing case
-	 * @param objCase Holds the case record
-	 * @param objHiEventInfo Holds the HIFulfillmentEventWrapper
-	 * @param stateCarrier Holds the HIFulfillmentEventWrapper
-	 * @param objHiFulfill Holds the HIFulfillmentEventWrapper
-	 * @param map_CaseWrapper Holds the HIFulfillmentEventWrapper
-	 * @return Case - with updated Key fields
-	 */
-	private Case populateCaseKeyFields(Case objCase, HIFulfillmentTerminationEvenJSON objHiEventInfo, HIFulfillmentTerminationEvenJSON.cls_state_carriers stateCarrier, HI_Fulfillment_Event__c objHiFulfill, Map<String, caseDataWrapper> map_CaseWrapper) {
-		String strSearchKey = objHiEventInfo.employee.company_id + '-' + objHiEventInfo.employee.id + '-' + stateCarrier.key;
-		List<String> list_SelectionItemIds = map_AllCarrierWithEmployeeIds.get(strSearchKey);
-		for (String strId : list_SelectionItemIds) {
-			String strExistingCaseKey = strSearchKey + '-' + strId;
-			Case existingObjCase = map_ExistingCases.get(strExistingCaseKey);
-			Boolean updateSenario = existingObjCase!= null && existingObjCase.Status != 'Closed';
-			objCase.Integration_Id__c = updateSenario ? existingObjCase.Integration_Id__c : objHiFulfill.Id__c;
-			objCase.Integration_Key__c = updateSenario ? existingObjCase.Integration_Key__c : objHiFulfill.Id__c + '-' + stateCarrier.Key;
-			objCase.Enrollment_Id__c = updateSenario ? existingObjCase.Enrollment_Key__c : map_CaseWrapper.get(objHiFulfill.Id__c + '-' + stateCarrier.Key).strEnrollmentId;
-			objCase.Enrollment_Key__c = updateSenario ? existingObjCase.Enrollment_Key__c : map_CaseWrapper.get(objHiFulfill.Id__c + '-' + stateCarrier.Key).strEnrollmentKey + '-' + objHiFulfill.Name;
 		}
 		return objCase;
 	}

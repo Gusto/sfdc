@@ -262,6 +262,7 @@ public with sharing class HITaDaSelectionCancelledEvent {
 			strUUID,
 			strBenefitType,
 			strBenefitType,
+			true,
 			objEventWrap.strEventId,
 			objDMLOption
 		);

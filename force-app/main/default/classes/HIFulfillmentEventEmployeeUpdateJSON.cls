@@ -5,14 +5,27 @@ public class HIFulfillmentEventEmployeeUpdateJSON {
 	public company company;
 	public state_carrier[] state_carriers;
 	public member_level_event[] member_level_events;
+
 	public benefit_item[] benefit_items;
 	public policy[] policies;
 	public String sent_at;
 	public String benefits_url; //http://localhost:4001/companies/7757616923569265/employees/7757869431500092/subscriptions
+	public alegeus_benefit_type alegeus;
 	public cls_forms[] forms;
 	public String error_message;
 
 	public HIFulfillmentEventEmployeeUpdateJSON() {
+	}
+
+	public class alegeus_benefit_type {
+		public alegeus_info fsa;
+		public alegeus_info dca;
+		public alegeus_info hsa;
+	}
+
+	public class alegeus_info {
+		public benefit_item[] benefit_items;
+		public policy[] policies;
 	}
 
 	public class updates {

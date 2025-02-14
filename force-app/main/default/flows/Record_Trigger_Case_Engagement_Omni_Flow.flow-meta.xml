@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Apex method call to update the Pilllar__c, Sub_Pillar__c &amp; WFM_Queue_Tag__c fields</description>
+        <name>Update_Case_Pillars</name>
+        <label>Update Case Pillars</label>
+        <locationX>138</locationX>
+        <locationY>2471</locationY>
+        <actionName>CaseUtils</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>TAM_Routing</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>list_Cases</name>
+            <value>
+                <elementReference>objUpdateableCase</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>CaseUtils</nameSegment>
+        <outputParameters>
+            <assignToReference>objUpdateableCase</assignToReference>
+            <name>output</name>
+        </outputParameters>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>58.0</apiVersion>
+    <assignments>
+        <name>Assign_Auto_Solve_Status</name>
+        <label>Assign Auto-Solve Status</label>
+        <locationX>116</locationX>
+        <locationY>1979</locationY>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Auto_Solve_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Eligible</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Validate_Skill_Routing_Fields</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>To assign the value of Case In Route field before its get updated to false in this flow.</description>
+        <name>Assign_Case_In_Route_value</name>
+        <label>Assign Case In Route value</label>
+        <locationX>402</locationX>
+        <locationY>1439</locationY>
+        <assignmentItems>
+            <assignToReference>IsCaseInRoute</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Case_In_Route__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Case_Re_routed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Case_Owner</name>
+        <label>Assign Case Owner</label>
+        <locationX>402</locationX>
+        <locationY>3011</locationY>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Cases_Queue_ID__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Case_fields</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_CaseInRoute_and_Status_Fields</name>
+        <label>Assign CaseInRoute and Status Fields</label>
+        <locationX>138</locationX>
+        <locationY>2363</locationY>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Case_In_Route__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Case_Pillars</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Initial_Case_Fields</name>
+        <label>Assign Initial Case Fields</label>
+        <locationX>402</locationX>
+        <locationY>1223</locationY>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Persona__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Persona__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Company_Size__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Routing_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Routing_Team__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Support_Level__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Support_Level__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Type</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Specialization__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Specialization__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Origin</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Origin</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objUpdateableCase.Channel__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Channel__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Sub_Flow_to_Set_Default_Field_values</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Case_Re_routed</name>
+        <label>Case Re-routed?</label>
+        <locationX>402</locationX>
+        <locationY>1547</locationY>
+        <defaultConnector>
+            <targetReference>Validate_Skill_Routing_Fields</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Re_route</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Case_In_Route__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Forethought_Solve_Response</targetReference>
+            </connector>
+            <label>Re-route</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check if the flow is trigger in an INSERT or UPDATE context</description>
+        <name>Check_Context</name>
+        <label>Check Context</label>
+        <locationX>402</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Eligible_on_Update</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>UPDATE</defaultConnectorLabel>
+        <rules>
+            <name>INSERT</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnIsNew</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Eligible_on_Create</targetReference>
+            </connector>
+            <label>INSERT</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Cloned_Case</name>
+        <label>Cloned Case?</label>
+        <locationX>314</locationX>
+        <locationY>2903</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Case_Owner</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Cloned_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>blnNewClonedCase</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Case_fields</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Eligible_on_Create</name>
+        <label>Eligible on Create?</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Eligible_On_Insert</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Gusto Global</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Specialization__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>COBRA</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Routed_through_Onboarding__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Engagement_Alert__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnAIFlagsTrue</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Initial_Case_Fields</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Eligible_on_Update</name>
+        <label>Eligible on Update?</label>
+        <locationX>754</locationX>
+        <locationY>431</locationY>
+        <defaultConnectorLabel>Default</defaultConnectorLabel>
+        <rules>
+            <name>Non_Replies</name>
+            <conditionLogic>1 OR 2 OR ((3 OR 4 OR 5 OR 6) AND 7)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Case_In_Route__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnOwnerEngagementQueue</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Support_Level__c</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnAIFlagsChanged</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnAgathaFlagChanged</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnAIFlagsTrue</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Initial_Case_Fields</targetReference>
+            </connector>
+            <label>Non-Replies</label>
+        </rules>
+        <rules>
+            <name>Replies</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Case_In_Route__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnCaseHasAReply</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Prior_Owner_Record</targetReference>
+            </connector>
+            <label>Replies</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Checks if the case record type is still Engagement and the user is not OOO/Inactive is it is user owned</description>
+        <name>RecordType_and_Previous_Owner_Check</name>
+        <label>RecordType and Previous Owner Check</label>
+        <locationX>710</locationX>
+        <locationY>647</locationY>
+        <defaultConnectorLabel>Not Eligible</defaultConnectorLabel>
+        <rules>
+            <name>Eligible_Ownership_and_RecordType</name>
+            <conditionLogic>1 AND (2 OR (3 AND 4 AND 5))</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Engagement</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnPreviouslyOwnerbyaQueue</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>blnPreviouslyOwnerbyaUser</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Prior_Owner_Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Prior_Owner_Record.Out_Of_Office__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Route_to_Agent</targetReference>
+            </connector>
+            <label>Eligible Ownership and RecordType</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Valid_Auto_Solve_Response</name>
+        <label>Valid Auto-Solve Response</label>
+        <locationX>248</locationX>
+        <locationY>1871</locationY>
+        <defaultConnector>
+            <targetReference>Validate_Skill_Routing_Fields</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Response_Exists</name>
+            <conditionLogic>(1 AND 2) OR 3</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Forethought_Solve_Response</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Forethought_Solve_Response.forethought__EmailContentHTML__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Internal_Solve_Response</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Auto_Solve_Status</targetReference>
+            </connector>
+            <label>Response Exists</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Validate_Skill_Routing_Fields</name>
+        <label>Validate Skill Routing Fields</label>
+        <locationX>402</locationX>
+        <locationY>2255</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Routing_Fields_Populated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objUpdateableCase.Type</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objUpdateableCase.Persona__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objUpdateableCase.Support_Level__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objUpdateableCase.Routing_Team__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_CaseInRoute_and_Status_Fields</targetReference>
+            </connector>
+            <label>Routing Fields Populated?</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Check if the case was routed to TAM in the Case TAM Routing subflow</description>
+        <name>Was_Case_Routed_to_TAM</name>
+        <label>Was Case Routed to TAM</label>
+        <locationX>138</locationX>
+        <locationY>2687</locationY>
+        <defaultConnector>
+            <targetReference>Get_Owner_Record</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Routed to TAM</defaultConnectorLabel>
+        <rules>
+            <name>Routed_to_TAM</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>TAM_Routing.blnRoutedToTAM</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Routed to TAM</label>
+        </rules>
+    </decisions>
+    <description>Omni Channel Flow that contains routing logic for Engagement Cases</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>This field holds the formula to check if Agatha is predicted on case, which is determined by status change from Open to In- Progress.</description>
+        <name>blnAgathaFlagChanged</name>
+        <dataType>Boolean</dataType>
+        <expression>ISPICKVAL({!$Record__Prior.Status},&apos;Open&apos;) &amp;&amp; ISPICKVAL({!$Record.Status},&apos;In Progress&apos;)</expression>
+    </formulas>
+    <formulas>
+        <description>Check if any of the solve flags have changed (Answer_IQ_Processed__c/ Solve_Processed__c/ Internal_AI_Processed__c)</description>
+        <name>blnAIFlagsChanged</name>
+        <dataType>Boolean</dataType>
+        <expression>OR (
+ISCHANGED({!$Record.Answer_IQ_Processed__c}), 
+(ISPICKVAL({!$Record__Prior.Solve_Processed__c}, &apos;&apos;) &amp;&amp; ISCHANGED({!$Record.Solve_Processed__c})), 
+(ISPICKVAL({!$Record__Prior.Internal_AI_Processed__c}, &apos;&apos;) &amp;&amp; ISCHANGED({!$Record.Internal_AI_Processed__c}))
+)</expression>
+    </formulas>
+    <formulas>
+        <description>Set to true if all AI flags( Answer_IQ_Processed, Internal_AI_Processed, Solve_Processed ) have non-empty values.</description>
+        <name>blnAIFlagsTrue</name>
+        <dataType>Boolean</dataType>
+        <expression>ISPICKVAL({!$Record.Answer_IQ_Processed__c}, &apos;Yes&apos;) &amp;&amp; 
+NOT(ISPICKVAL({!$Record.Solve_Processed__c}, &apos;&apos;)) &amp;&amp; 
+NOT(ISPICKVAL({!$Record.Internal_AI_Processed__c}, &apos;&apos;))</expression>
+    </formulas>
+    <formulas>
+        <description>This formula is set to true when the case status is updated and has reply</description>
+        <name>blnCaseHasAReply</name>
+        <dataType>Boolean</dataType>
+        <expression>( 
+    ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Response&apos;) &amp;&amp; 
+    ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; 
+    NOT(ISCHANGED({!$Record.Re_Route_Count__c})) 
+) ||
+( 
+    ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp;
+    ISPICKVAL({!$Record.Status}, &apos;Open&apos;)
+) ||
+( 
+    ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Internal Support&apos;) &amp;&amp; 
+    ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;)
+) ||
+( 
+    ISPICKVAL({!$Record__Prior.Status}, &apos;Closed&apos;) &amp;&amp; 
+    ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) 
+) ||
+( 
+    {!$Record__Prior.OwnerId} != {!$Record.OwnerId} &amp;&amp; 
+    {!$Record.OwnerId} != NULL &amp;&amp; 
+    BEGINS({!$Record.OwnerId}, &quot;005&quot;)
+)</expression>
+    </formulas>
+    <formulas>
+        <name>blnIsNew</name>
+        <dataType>Boolean</dataType>
+        <expression>ISNEW()</expression>
+    </formulas>
+    <formulas>
+        <name>blnManualOwnerChange</name>
+        <dataType>Boolean</dataType>
+        <expression>{!$Record__Prior.OwnerId} != {!$Record.OwnerId} &amp;&amp;
+{!$Record.OwnerId} != NULL &amp;&amp;
+BEGINS({!$Record.OwnerId}, &quot;005&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Flow triggered for a New Cloned Case</description>
+        <name>blnNewClonedCase</name>
+        <dataType>Boolean</dataType>
+        <expression>{!blnIsNew} &amp;&amp; 
+ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; 
+{!$Record.Related_Case__c} &lt;&gt; null &amp;&amp; {!$Record.Related_Case__c} &lt;&gt; &apos;&apos; &amp;&amp;
+NOT(ISPICKVAL({!$Record.Type}, &apos;Gusto Global&apos;)) &amp;&amp; 
+NOT(ISPICKVAL({!$Record.Specialization__c}, &apos;Cobra&apos;))</expression>
+    </formulas>
+    <formulas>
+        <description>Check if the case owner is updated to Engagement Cases queue.</description>
+        <name>blnOwnerEngagementQueue</name>
+        <dataType>Boolean</dataType>
+        <expression>ISCHANGED({!$Record.OwnerId}) &amp;&amp; 
+CASESAFEID({!$Record.OwnerId}) == {!$Setup.Engagement_Flow_Configuration__c.Engagement_Cases_Queue_ID__c}</expression>
+    </formulas>
+    <formulas>
+        <description>Boolean set to true if the case was owned by a Queue</description>
+        <name>blnPreviouslyOwnerbyaQueue</name>
+        <dataType>Boolean</dataType>
+        <expression>BEGINS({!$Record__Prior.OwnerId},&quot;00G&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Boolean set to true if the case was owned by a user</description>
+        <name>blnPreviouslyOwnerbyaUser</name>
+        <dataType>Boolean</dataType>
+        <expression>BEGINS({!$Record__Prior.OwnerId}, &quot;005&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>Agent went offline and back online and this case needs to only be routed back to them</description>
+        <name>blnPriority0</name>
+        <dataType>Boolean</dataType>
+        <expression>( ( ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;Open&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) &amp;&amp; {!$Record.Owner:User.Id} != null) )</expression>
+    </formulas>
+    <formulas>
+        <description>Prior Owner is Active or Out Of Office check</description>
+        <name>blnPriorOwnerActiveStatus</name>
+        <dataType>Boolean</dataType>
+        <expression>OR(NOT({!Get_Owner_Record.IsActive}), {!Get_Owner_Record.Out_Of_Office__c},{!$Record.Trigger_Omni_Flow__c})</expression>
+    </formulas>
+    <interviewLabel>Record Trigger: Case Engagement Omni Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Record Trigger: Case Engagement Omni Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Forethought_Solve_Response</name>
+        <label>Get Forethought Solve Response</label>
+        <locationX>248</locationX>
+        <locationY>1655</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Internal_Solve_Response</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>forethought__Case__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>forethought__EmailResponseName__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>forethought__ForethoughtSolveEmailConversation__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>forethought__EmailContentHTML__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Internal_Solve_Response</name>
+        <label>Get Internal Solve Response</label>
+        <locationX>248</locationX>
+        <locationY>1763</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Valid_Auto_Solve_Response</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Case__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Valid_Request__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>valid_request</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Return_Response__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>InternalAISolveEmailConversation__c</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get Prior Owner Active and Out Of Office details</description>
+        <name>Get_Owner_Record</name>
+        <label>Get Owner Record</label>
+        <locationX>314</locationX>
+        <locationY>2795</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Cloned_Case</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record__Prior.OwnerId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>IsActive</queriedFields>
+        <queriedFields>Out_Of_Office__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Get Prior Owner Active and Out Of Office Status</description>
+        <name>Get_Prior_Owner_Record</name>
+        <label>Get Prior Owner Record</label>
+        <locationX>710</locationX>
+        <locationY>539</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>RecordType_and_Previous_Owner_Check</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record__Prior.OwnerId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>IsActive</queriedFields>
+        <queriedFields>Out_Of_Office__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Updated_Case_fields</name>
+        <label>Get Updated Case fields</label>
+        <locationX>314</locationX>
+        <locationY>3311</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Call_Omni_Subflow</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Type</queriedFields>
+        <queriedFields>Support_Level__c</queriedFields>
+        <queriedFields>Company_Size__c</queriedFields>
+        <queriedFields>Specialization__c</queriedFields>
+        <queriedFields>Routing_Team__c</queriedFields>
+        <queriedFields>Engagement_Alert__c</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <queriedFields>ContactId</queriedFields>
+        <queriedFields>OwnerId</queriedFields>
+        <queriedFields>Routing_Case_Reason_Classification__c</queriedFields>
+        <queriedFields>Persona__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Case_fields</name>
+        <label>Update Case fields</label>
+        <locationX>314</locationX>
+        <locationY>3203</locationY>
+        <connector>
+            <targetReference>Get_Updated_Case_fields</targetReference>
+        </connector>
+        <inputReference>objUpdateableCase</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>276</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Context</targetReference>
+        </connector>
+        <filterFormula>NOT(ISPICKVAL({!$Record.Status},&apos;Closed&apos;)) &amp;&amp; 
+NOT({!$Permission.Bypass_Flow_Case}) &amp;&amp; 
+NOT({!$Permission.Bypass_Flows}) &amp;&amp;
+CONTAINS({!$Setup.Engagement_Flow_Configuration__c.Omni_Case_Record_Types__c}, {!$Record.RecordType.DeveloperName}) &amp;&amp;
+NOT(CONTAINS({!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channels__c}, TEXT({!$Record.Origin}))) &amp;&amp;
+{!$Record.Channel__c} != &apos;Phone&apos; &amp;&amp;
+{!$Record.Channel__c} != &apos;Chat&apos;</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Call_Omni_Subflow</name>
+        <label>Call Omni Subflow</label>
+        <locationX>314</locationX>
+        <locationY>3419</locationY>
+        <flowName>Subflow_Case_Omni_Routing</flowName>
+        <inputAssignments>
+            <name>blnDefaultPriorityOneRouting</name>
+            <value>
+                <elementReference>blnPriorOwnerActiveStatus</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>blnPriorityOneWOSkills</name>
+            <value>
+                <elementReference>blnNewClonedCase</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>BoolCaseInRoute</name>
+            <value>
+                <elementReference>IsCaseInRoute</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>CaseRecord</name>
+            <value>
+                <elementReference>Get_Updated_Case_fields</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <name>Route_to_Agent</name>
+        <label>Route to Agent</label>
+        <locationX>578</locationX>
+        <locationY>755</locationY>
+        <flowName>Subflow_Case_Replies_Omni_Routing</flowName>
+        <inputAssignments>
+            <name>blnManualOwnerChange</name>
+            <value>
+                <elementReference>blnManualOwnerChange</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>blnPriority0</name>
+            <value>
+                <elementReference>blnPriority0</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>CaseUpdatedRecord</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>EngagementAlert</name>
+            <value>
+                <elementReference>$Record.Engagement_Alert__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>recordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>strOwnerId</name>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <subflows>
+        <name>Sub_Flow_to_Set_Default_Field_values</name>
+        <label>Sub Flow to Set Default Field values</label>
+        <locationX>402</locationX>
+        <locationY>1331</locationY>
+        <connector>
+            <targetReference>Assign_Case_In_Route_value</targetReference>
+        </connector>
+        <flowName>Sub_Flow_Case_Engagement_Set_Highlight_Panel_Fields</flowName>
+        <inputAssignments>
+            <name>objCase</name>
+            <value>
+                <elementReference>objUpdateableCase</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>triggeringCase</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>objUpdateableCase</assignToReference>
+            <name>objCase</name>
+        </outputAssignments>
+    </subflows>
+    <subflows>
+        <name>TAM_Routing</name>
+        <label>TAM Routing</label>
+        <locationX>138</locationX>
+        <locationY>2579</locationY>
+        <connector>
+            <targetReference>Was_Case_Routed_to_TAM</targetReference>
+        </connector>
+        <flowName>Subflow_Case_TAM_Omni_Routing</flowName>
+        <inputAssignments>
+            <name>objCase</name>
+            <value>
+                <elementReference>objUpdateableCase</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>triggeringCase</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
+    <triggerOrder>700</triggerOrder>
+    <variables>
+        <description>Boolean to check whether case was re- routed</description>
+        <name>IsCaseInRoute</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>objUpdateableCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

@@ -36,6 +36,7 @@ public class BTCOFacilitatorListViewCtrl {
 	public list<CarrierOrderWrapper> list_CarrierOrderOOOWrapper { get; set; }
 	public set<string> setExclude = Utils.setCOExclude;
 	private Map<string, Set<string>> map_carrierState;
+	static string strTADACarrierName = Utils.strTADACarrierName;
 	static string strBORRecordTypeId = Cache.getRecordTypeId('Carrier_Order__c', 'Benefits BoR');
 
 	public BTCOFacilitatorListViewCtrl() {
@@ -89,13 +90,13 @@ public class BTCOFacilitatorListViewCtrl {
 		list_SelectedStage = new List<String>();
 		
 		List<Carrier_Order__c> lstCarrierOrder = [
-			SELECT id, Carrier__c, Carrier__r.Name, Carrier__r.State__c, Ownerid, Implementation_Stage__c,TAdA__c
+			SELECT id, Carrier__c, Carrier__r.Name, Carrier__r.State__c, Ownerid, Implementation_Stage__c
 			FROM Carrier_Order__c
 			WHERE
 				Benefit_Order__c != NULL
 				AND RecordTypeId = :strBORRecordTypeId
 				AND Implementation_Stage__c NOT IN :setExclude
-				AND TAdA__c = false
+				AND Carrier__r.Name != :strTADACarrierName
 				AND (Implementation_Stage__c IN :set_Include
 				OR Percent_Of_Documents_Completed__c < 100)
 				AND ownerid = :idOwnerId
@@ -168,7 +169,7 @@ public class BTCOFacilitatorListViewCtrl {
 		strQuery += ' Start_Date__c,Implementation_Stage__c,Initial_Owner__r.Name,OOO_Comments__c,OOO_Timestamp__c,Facilitator_2_Enrollment_Review__c,Facilitator_2_Plan_Review__c';
 		strQuery += ' from Carrier_Order__c';
 		strQuery += ' where Benefit_Order__c!=null and Renewal_Date__c!=null and RecordTypeId=:strBORRecordTypeId';
-		strQuery += ' and TAdA__c = false';
+		strQuery += ' and Carrier__r.Name!= :strTADACarrierName';
 
 		if (blnIsFAC1 && blnIsFAC2) {
 			strQuery += ' and ((Implementation_Stage__c not in:setExclude';
@@ -227,7 +228,7 @@ public class BTCOFacilitatorListViewCtrl {
 			strQuery = strQuery + ' (SELECT Id, CaseNumber FROM Cases__r WHERE Status <> \'Closed\' and Requires_Action__c=true LIMIT 1) from ';
 			strQuery = strQuery + ' Carrier_Order__c where Benefit_Order__c!=null and Renewal_Date__c!=null and';
 			strQuery = strQuery + '  RecordTypeId=:strBORRecordTypeId and Implementation_Stage__c not in:setExclude';
-			strQuery = strQuery + '  and TAdA__c = false and (Implementation_Stage__c in:set_Include';
+			strQuery = strQuery + '  and Carrier__r.Name!= :strTADACarrierName and (Implementation_Stage__c in:set_Include';
 			strQuery = strQuery + ' or Percent_Of_Documents_Completed__c<100)';
 			strQuery = strQuery + ' and ownerid=:idOwnerId ';
 

@@ -58,6 +58,13 @@ public without sharing class NBAUserInterfaceController {
 		@AuraEnabled
 		public List<NBA_View_Records_Template__mdt> list_ViewRecordsTemplate = NBA_View_Records_Template__mdt.getAll().values();
 
+		// All active users in the org
+		@AuraEnabled
+		public List<User> list_ActiveUsers = new List<User>();
+
+		@AuraEnabled
+		public Map<String, Map<Id, String>> map_Queues = new Map<String, Map<Id, String>>();
+
 		// adding a constructor to initialize the wrapper
 		public NBAUserInterfaceWrapper(String strMessage, Boolean blnError, NBA_Rule_Set__c objRuleSet, Map<String, String> map_AvailableObjects, Boolean blnViewOnlyAccess) {
 			this.strMessage = strMessage;
@@ -116,6 +123,14 @@ public without sharing class NBAUserInterfaceController {
 		@AuraEnabled
 		public List<String> list_PicklistValues = new List<String>();
 
+		// Indicates if a field is updateable
+		@AuraEnabled
+		public Boolean blnUpdateable = false;
+
+		// Indicates if a field is nillable
+		@AuraEnabled
+		public Boolean blnNillable = false;
+
 		// contstructor to initialize the wrapper
 		public FieldWrapper(
 			String strObjectName,
@@ -125,7 +140,9 @@ public without sharing class NBAUserInterfaceController {
 			String strReferenceObject,
 			String strRelationshipName,
 			List<String> list_Relationships,
-			List<String> list_PicklistValues
+			List<String> list_PicklistValues,
+			Boolean blnUpdateable,
+			Boolean blnNillable
 		) {
 			this.strObjectName = strObjectName;
 			this.strFieldLabel = strFieldLabel;
@@ -135,6 +152,8 @@ public without sharing class NBAUserInterfaceController {
 			this.strRelationshipName = strRelationshipName;
 			this.list_Relationships = list_Relationships;
 			this.list_PicklistValues = list_PicklistValues;
+			this.blnUpdateable = blnUpdateable;
+			this.blnNillable = blnNillable;
 		}
 	}
 
@@ -211,13 +230,16 @@ public without sharing class NBAUserInterfaceController {
 						strReferenceObject,
 						objField.getDescribe().getRelationshipName(),
 						list_Relationships,
-						list_PicklistValues
+						list_PicklistValues,
+						objField.getDescribe().isUpdateable(),
+						objField.getDescribe().isNillable()
 					)
 				);
 			}
 			// return wrapper with success response
 			NBAUserInterfaceWrapper objWrapper = new NBAUserInterfaceWrapper('Reference Fields Loaded', false, map_ReferenceFields, map_AllFields);
 			objWrapper.objRuleSet = objRuleSet;
+			objWrapper.map_Queues = getQueues(new Set<String>{ strObjectName });
 			return objWrapper;
 		} catch (Exception objEx) {
 			return new NBAUserInterfaceWrapper(objEx.getMessage(), true, map_ReferenceFields, map_AllFields);
@@ -260,6 +282,7 @@ public without sharing class NBAUserInterfaceController {
 			List<NBARequestWrapper> list_Requests = new List<NBARequestWrapper>();
 			// list of request objects with previous criteria
 			List<NBARequestWrapper> list_OldRequests = new List<NBARequestWrapper>();
+			Set<String> set_ServingObjects = new Set<String>();
 			// check if rule set has any criteria
 			if (!objRuleSet.NBA_Rule_Criteria__r.isEmpty()) {
 				for (NBA_Rule_Criteria__c objCriteria : objRuleSet.NBA_Rule_Criteria__r) {
@@ -268,6 +291,9 @@ public without sharing class NBAUserInterfaceController {
 						// get current and previous criteria and check if the json field is populated
 						if (String.isNotBlank(strJson)) {
 							NBARequestWrapper objRequest = (NBARequestWrapper) System.JSON.deserialize(strJson, NBARequestWrapper.class);
+							// Build a map of Serving object which points to a map of queue ID and queue name for the serving object
+							set_ServingObjects.add(objRequest.servingObject);
+
 							// add base object fields
 							if (!map_ObjectFields.containsKey(objRequest.baseObject)) {
 								NBAUserInterfaceWrapper objFieldsWrapper = getAllFields(objRequest.baseObject);
@@ -312,6 +338,8 @@ public without sharing class NBAUserInterfaceController {
 			objWrapper.list_Requests = list_Requests;
 			objWrapper.list_OldRequests = list_OldRequests;
 			objWrapper.map_ObjectFields = map_ObjectFields;
+			objWrapper.list_ActiveUsers = [SELECT Id, Name FROM User WHERE IsActive = TRUE ORDER BY NAME ASC];
+			objWrapper.map_Queues = getQueues(new Set<String>(set_ServingObjects));
 			return objWrapper;
 		} catch (Exception objEx) {
 			return new NBAUserInterfaceWrapper(objEx.getMessage(), true, null, null, false);
@@ -369,13 +397,16 @@ public without sharing class NBAUserInterfaceController {
 					strReferenceObject,
 					objField.getDescribe().getRelationshipName(),
 					list_Relationships,
-					list_PicklistValues
+					list_PicklistValues,
+					objField.getDescribe().isUpdateable(),
+					objField.getDescribe().isNillable()
 				)
 			);
 		}
 
 		NBAUserInterfaceWrapper objWrapper = new NBAUserInterfaceWrapper('All Fields Loaded', false, null, map_AllFields);
 		objWrapper.strObjectLabel = objDescribe.getLabel();
+		objWrapper.map_Queues = getQueues(new Set<String>{ strObjectName });
 		return objWrapper;
 	}
 
@@ -579,5 +610,23 @@ public without sharing class NBAUserInterfaceController {
 	@AuraEnabled
 	public static NBA_Rule_Set__c getRuleData(Id idRuleSet) {
 		return [SELECT Id, Is_Active__c FROM NBA_Rule_Set__c WHERE Id = :idRuleSet];
+	}
+
+	/**
+	 * @description Method to return all queue names and Ids for a given object or set objects
+	 * @param     Set of object API names
+	 * @return     Returns a map of object name pointing to a map of queue Id and queue name
+	 **/
+	public static Map<String, Map<Id, String>> getQueues(Set<String> set_ServingObjects) {
+		Map<String, Map<Id, String>> map_Queues = new Map<String, Map<Id, String>>();
+
+		for (String strObjectName : set_ServingObjects) {
+			Map<Id, String> map_QueuesDB = new Map<Id, String>();
+			for (QueueSobject objQueueObject : [SELECT Id, SobjectType, QueueId, Queue.Name FROM QueueSobject WHERE SobjectType = :strObjectName ORDER BY Queue.Name ASC]) {
+				map_QueuesDB.put(objQueueObject.QueueId, objQueueObject.Queue.Name);
+			}
+			map_Queues.put(strObjectName, map_QueuesDB);
+		}
+		return map_Queues;
 	}
 }

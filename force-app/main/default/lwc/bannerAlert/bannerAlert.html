@@ -1,14 +1,12 @@
 <template>
-	<template if:true={list_Messages}>
-		<template for:each={list_Messages} for:item="objMessage">
-			<div key={objMessage.Id} class="slds-card">
-				<div class="slds-grid">
-					<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
-						<span class="slds-assistive-text">warning</span>
-						<lightning-formatted-rich-text value={objMessage.Message__c}></lightning-formatted-rich-text>
-					</div>
+	<template if:true={strMessage}>
+		<div class="slds-card slds-theme_shade">
+			<div class="slds-card__header slds-grid">
+				<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+					<span class="slds-assistive-text">warning</span>
+					<lightning-formatted-rich-text value={strMessage}></lightning-formatted-rich-text>
 				</div>
 			</div>
-		</template>
+		</div>
 	</template>
 </template>

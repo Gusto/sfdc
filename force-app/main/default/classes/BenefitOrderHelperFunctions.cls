@@ -206,13 +206,12 @@ public class BenefitOrderHelperFunctions {
 					objOpp.RecordTypeId == OpportunityUtil.BENEFITS_BYOB_OPPTY_RT_ID &&
 					objOpp.StageName == OpportunityUtil.ER_CONFIRM_STAGE &&
 					(objOpp.Touch_Type__c != null && set_BYBRenewalTouchTypes.contains(objOpp.Touch_Type__c)) &&
-					!objOpp.Order_Generated__c && !OpportunityTriggerHelper.list_OpportunitiesToCreateBOBYB.contains(objOpp.Id)
+					!objOpp.Order_Generated__c
 				) {
 					// Get the Account id of BYOB Renewal Opportunity record
 					set_AccountIds.add(objOpp.AccountId);
 					set_OpportunityIds.add(objOpp.Id);
 					blnIsBYBRenewalOpp = true;
-					OpportunityTriggerHelper.list_OpportunitiesToCreateBOBYB.add(objOpp.Id);
 				}
 			}
 

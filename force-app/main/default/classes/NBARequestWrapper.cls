@@ -106,6 +106,10 @@ public class NBARequestWrapper {
 
 	public class FieldMapping {
 		@AuraEnabled
+		public String fieldMappingType;
+		@AuraEnabled
+		public String fieldType;
+		@AuraEnabled
 		public String selectedField;
 		@AuraEnabled
 		public List<Mapping> mapping;
@@ -116,5 +120,9 @@ public class NBARequestWrapper {
 		public String fromValue;
 		@AuraEnabled
 		public String toValue;
+		@AuraEnabled
+		public Boolean fromQueueEnabled;
+		@AuraEnabled
+		public Boolean toQueueEnabled;
 	}
 }

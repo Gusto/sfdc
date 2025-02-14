@@ -42,19 +42,9 @@ public class ReRouteCaseController {
                 return new List<Boolean> { blnIsSkillMatched };
             }
 
-            List<PermissionSetAssignment> list_PermissionSetAssignments = [SELECT Id, PermissionSet.Name 
-                                                                           FROM PermissionSetAssignment 
-                                                                           WHERE AssigneeId = :UserInfo.getUserId()
-                                                                           AND PermissionSet.Name = 'Engagement_Lead'];
-            // Check if the user is Engagement Lead
-            if (!list_PermissionSetAssignments.isEmpty()) {
-                return new List<Boolean> { blnIsSkillMatched };
-            }                                                               
-
             if (objCase.Persona__c == CaseUtils.MEMBER_PERSONA && 
                 (objCase.Type == CaseUtils.PAYROLL_CASE_PILLAR && objOldCase.Type == CaseUtils.TAXES_CASE_PILLAR) ||
-                (objCase.Type == CaseUtils.TAXES_CASE_PILLAR && objOldCase.Type == CaseUtils.PAYROLL_CASE_PILLAR) ||
-                (objCase.Specialization__c != objOldCase.Specialization__c && String.isNotBlank(objCase.Specialization__c))) {
+                (objCase.Type == CaseUtils.TAXES_CASE_PILLAR && objOldCase.Type == CaseUtils.PAYROLL_CASE_PILLAR)) {
                     return new List<Boolean> { blnIsSkillMatched };
             }
 

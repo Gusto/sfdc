@@ -1371,7 +1371,7 @@ TEXT(Type)</formula>
     <outboundMessages>
         <fullName>IVR_call_time_ob</fullName>
         <apiVersion>49.0</apiVersion>
-        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DcZ000000vN1V</endpointUrl>
         <fields>Genesys_Call_Id__c</fields>
         <fields>Id</fields>
         <includeSessionId>false</includeSessionId>
@@ -1394,7 +1394,7 @@ TEXT(Type)</formula>
     <outboundMessages>
         <fullName>Publish_Case_Info_To_Kafka</fullName>
         <apiVersion>42.0</apiVersion>
-        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DcZ000000vN1V</endpointUrl>
         <fields>Id</fields>
         <includeSessionId>false</includeSessionId>
         <integrationUser>heroku@gusto.com</integrationUser>
@@ -1406,7 +1406,7 @@ TEXT(Type)</formula>
         <fullName>Publish_Case_info_to_APIntego</fullName>
         <apiVersion>42.0</apiVersion>
         <description>Publish Case info to APIntego</description>
-        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DcZ000000vN1V</endpointUrl>
         <fields>Id</fields>
         <fields>Partner_Record_Id__c</fields>
         <fields>Shared_With__c</fields>
@@ -1442,7 +1442,7 @@ TEXT(Type)</formula>
     <outboundMessages>
         <fullName>Send_Case_to_Calendar</fullName>
         <apiVersion>43.0</apiVersion>
-        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DcZ000000vN1V</endpointUrl>
         <fields>AccountId</fields>
         <fields>CaseNumber</fields>
         <fields>Company_Name__c</fields>
@@ -1460,7 +1460,7 @@ TEXT(Type)</formula>
     <outboundMessages>
         <fullName>Update_IVR_log_Case</fullName>
         <apiVersion>47.0</apiVersion>
-        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DG0000000hKQi</endpointUrl>
+        <endpointUrl>https://www.workato.com/webhooks/notify/salesforce?sobject=Case&amp;org_id=00DcZ000000vN1V</endpointUrl>
         <fields>Id</fields>
         <includeSessionId>false</includeSessionId>
         <integrationUser>heroku@gusto.com</integrationUser>
@@ -1539,6 +1539,33 @@ TEXT(Type)</formula>
         <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>
+        <fullName>MF - Update BASIC Case From Draft to New Day After</fullName>
+        <active>true</active>
+        <description>Update MF Basic Case Update to New</description>
+        <formula>ISPICKVAL(Status ,&quot;Draft&quot;) &amp;&amp;   OR( RecordType.Name=&quot;MF QLE&quot;,   RecordType.Name=&quot;MF Termination&quot;,   RecordType.Name=&quot;MF Member/Group Updates&quot;, RecordType.Name=&quot;MF NHE&quot; ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;) &amp;&amp; IF((CONTAINS(Integration_Key__c,&quot;BASIC&quot;)),TRUE,FALSE) &amp;&amp; Termination_Date__c &gt;= TODAY()</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <actions>
+                <name>Status_to_New</name>
+                <type>FieldUpdate</type>
+            </actions>
+            <offsetFromField>Case.Termination_Date__c</offsetFromField>
+            <timeLength>1</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>MF - Update BASIC Case From Draft to New%3A Term %3D Today Past</fullName>
+        <actions>
+            <name>Update_Case_Status_to_New</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Update MF Basic Case Update to New</description>
+        <formula>ISPICKVAL(Status ,&quot;Draft&quot;) &amp;&amp;   OR( RecordType.Name=&quot;MF QLE&quot;,   RecordType.Name=&quot;MF Termination&quot;,   RecordType.Name=&quot;MF Member/Group Updates&quot;, RecordType.Name=&quot;MF NHE&quot; ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;) &amp;&amp; IF((CONTAINS(Integration_Key__c,&quot;BASIC&quot;)),TRUE,FALSE) &amp;&amp;  Termination_Date__c &lt; TODAY()</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
         <fullName>MF - Update automation date when status updated</fullName>
         <actions>
             <name>MF_Update_automation_date_when_status</name>
@@ -1558,6 +1585,33 @@ TEXT(Type)</formula>
         </criteriaItems>
         <description>MF - Update automation date when status is updated</description>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
+        <fullName>MF-Update Submission Action Date Time</fullName>
+        <actions>
+            <name>MF_Update_Submission_DateTm_Termination</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>MF_Update_Submission_DateTm_Update_Audit</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <actions>
+            <name>MF_Update_Submission_Date_Time_NHE_QLE</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MF QLE,MF NHE,MF Termination,MF Member/Group Updates,MF Audit</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Historical_Data__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <description>Member Fulfillment - Update Submission Action Date Time</description>
+        <triggerType>onCreateOnly</triggerType>
     </rules>
     <rules>
         <fullName>NHE Update First Response Start Time %3C30</fullName>
@@ -1676,6 +1730,17 @@ ISChanged(OwnerId)&amp;&amp;
         <triggerType>onCreateOnly</triggerType>
     </rules>
     <rules>
+        <fullName>Set Case Subject - NHE%2C QLE%2C Termination%2C Updates</fullName>
+        <actions>
+            <name>Set_Case_Subject_For_NHE_QLE_Termination</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <description>Set Case Subject - NHE, QLE, Termination, Member/Group Updates</description>
+        <formula>OR( RecordType.Name =&apos;Benefits BOR - QLE&apos;, RecordType.Name =&apos;Benefits BoR - NHE&apos;, RecordType.Name =&apos;Benefits BoR - Termination&apos;,  RecordType.Name =&apos;MF QLE&apos;,   RecordType.Name =&apos;MF NHE&apos;,  RecordType.Name =&apos;MF Termination&apos;,   RecordType.Name =&apos;MF Member/Group Updates&apos;,  RecordType.Name =&apos;MF Audit&apos;, AND(RecordType.Name =&apos;Benefits BoR&apos;,OR(ISPICKVAL(Type,&apos;Termination&apos;),ISPICKVAL(Type,&apos;NHE&apos;),ISPICKVAL(Type,&apos;QLE&apos;))), AND(RecordType.Name =&apos;Benefits New Plan Case&apos;,OR(ISPICKVAL(Type,&apos;Termination&apos;),ISPICKVAL(Type,&apos;NHE&apos;),ISPICKVAL(Type,&apos;QLE&apos;))), AND(RecordType.Name =&apos;Benefits Renewal Case&apos;,OR(ISPICKVAL(Type,&apos;Termination&apos;),ISPICKVAL(Type,&apos;NHE&apos;),ISPICKVAL(Type,&apos;QLE&apos;))) )  &amp;&amp;  ( OR( ISNEW(), ISCHANGED( Carrier__c ), ISCHANGED( AccountId ), ISCHANGED( ContactId ), ISCHANGED( Type ), ISCHANGED( RecordTypeId ) ) ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+    <rules>
         <fullName>TaxOps PTS Errors priority is Low</fullName>
         <actions>
             <name>Priority_is_Low</name>
@@ -1764,6 +1829,18 @@ ISChanged(OwnerId)&amp;&amp;
             </actions>
             <offsetFromField>Case.Termination_Date__c</offsetFromField>
             <timeLength>-30</timeLength>
+            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
+        </workflowTimeTriggers>
+    </rules>
+    <rules>
+        <fullName>V2 Change case owner on Followup date elapse</fullName>
+        <active>true</active>
+        <description>Once followup date is more than 14 days past, move case to MF Followup queue</description>
+        <formula>AND((Carrier_Id__c=&apos;53&apos;||Carrier_Id__c=&apos;9&apos;||Carrier_Id__c=&apos;4&apos;),(RecordType.Name=&apos;MF NHE&apos; || RecordType.Name=&apos;MF Termination&apos;), OwnerId = &apos;00G1M000005omjr&apos; )</formula>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+        <workflowTimeTriggers>
+            <offsetFromField>Case.Follow_Up_Date__c</offsetFromField>
+            <timeLength>14</timeLength>
             <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
         </workflowTimeTriggers>
     </rules>

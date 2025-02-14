@@ -236,7 +236,7 @@ public class UserTriggerHelperTest {
 		insert new List<State_Name_to_Abbreviations_Mapping__c>{ objCal, objCol };
 		CarrierOrderTriggerHelper.skipTrigger = true;
 		CarrierTriggerHelper.skipTrigger = true;
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('AK').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('AK').build();
 		insert objCarrier;
 		Benefit_Order__c objBORBO = new TestDataFactory.BenefitOrderBuilder()
 			.setRecordType(Cache.getRecordTypeId('Benefit_Order__c', 'Benefits BoR'))

@@ -277,6 +277,8 @@ public class TestDataFactory {
 		private String strSource = '';
 		private Boolean blnEscalated = false;
 		private String strReason = '';
+		private String strSolveProcessed = '';
+		private String strInternalAIProcessed = '';
 
 		// Set Methods
 		public CaseBuilder setRecordTypeId(String strValue) {
@@ -737,8 +739,19 @@ public class TestDataFactory {
 			this.blnEscalated = blnValue;
 			return this;
 		}
+
 		public CaseBuilder setReason(String strValue) {
 			this.strReason = strValue;
+			return this;
+		}
+
+		public CaseBuilder setSolveProcessedFlag( String strValue) {
+			this.strSolveProcessed = strValue;
+			return this;
+		}
+
+		public CaseBuilder setInternalAIProcessedFlag(String strValue) {
+			this.strInternalAIProcessed = strValue;
 			return this;
 		}
 
@@ -838,6 +851,8 @@ public class TestDataFactory {
 			objCase.IsEscalated = this.blnEscalated;
 			objCase.Source__c = this.strSource;
 			objCase.Reason = this.strReason;
+			objCase.Solve_Processed__c = this.strSolveProcessed;
+			objCase.Internal_AI_Processed__c = this.strInternalAIProcessed;
 
 			if (String.isNotBlank(this.strSourceId)) {
 				objCase.SourceId = this.strSourceId;
@@ -920,7 +935,7 @@ public class TestDataFactory {
 		private Boolean blnHasMedicalDeductions = false;
 		private Boolean blnHIActiveBenefits = false;
 		private String strHelpJourneyRouting = '';
-		private Id strTAM = null;
+		private String strTAM = null;
 		private String strNAICSCode = '';
 		private String strBrokerageId = '';
 
@@ -1256,8 +1271,8 @@ public class TestDataFactory {
 			return this;
 		}
 
-		public AccountBuilder setTAM(Id IdValue) {
-			this.strTAM = IdValue;
+		public AccountBuilder setTAM(String strValue) {
+			this.strTAM = strValue;
 			return this;
 		}
 
@@ -2409,15 +2424,11 @@ public class TestDataFactory {
 		private String strTaxYear = '';
 		private String strROEException = '';
 		private String strClosedOwnerDivision = '';
+		private String strLeadSource = '';
 
 		// Set Methods
 		public OpportunityBuilder setRecordTypeId(Id idValue) {
 			this.idRecordTypeId = idValue;
-			return this;
-		}
-
-		public OpportunityBuilder setNeedsRecertification(Boolean blnValue) {
-			this.blnNeedsRecertification = blnValue;
 			return this;
 		}
 
@@ -2572,6 +2583,11 @@ public class TestDataFactory {
 			return this;
 		}
 
+		public OpportunityBuilder setNeedsRecertification(Boolean blnValue) {
+			this.blnNeedsRecertification = blnValue;
+			return this;
+		}
+
 		public OpportunityBuilder setMaestro(Boolean blnValue) {
 			this.blnMaestro = blnValue;
 			return this;
@@ -2602,6 +2618,11 @@ public class TestDataFactory {
 
 		public OpportunityBuilder setClosedOwnerDivision(String strValue) {
 			this.strClosedOwnerDivision = strValue;
+			return this;
+		}
+
+		public OpportunityBuilder setLeadSource(String strValue) {
+			this.strLeadSource = strValue;
 			return this;
 		}
 
@@ -2641,6 +2662,7 @@ public class TestDataFactory {
 			objOppty.Benefits_Current_Setup_Step__c = this.strBenefitsCurrentSetupSteps;
 			objOppty.Region__c = this.strRegion;
 			objOppty.Owner_Role_Name__c = this.strOWnerRoleName;
+			objOppty.Needs_Recertification__c = this.blnNeedsRecertification;
 			objOppty.Maestro__c = this.blnMaestro;
 			objOppty.Needs_Recertification__c = this.blnNeedsRecertification;
 			objOppty.Reason_for_Advising__c = this.strReasonForAdvising;
@@ -2649,6 +2671,7 @@ public class TestDataFactory {
 			objOppty.Tax_Year__c = this.strTaxYear;
 			objOppty.ROE_Exception__c = this.strROEException;
 			objOppty.Owner_Division__c = this.strClosedOwnerDivision;
+			objOppty.LeadSource = this.strLeadSource;
 
 			return objOppty;
 		}
@@ -2995,7 +3018,7 @@ public class TestDataFactory {
 				TaxOpsEntitlementId__c = this.strTaxOpsEntitlmentId,
 				AccountEntitlementId__c = this.strAcctEntitlmentId,
 				//Confirmation_Order_Batch_Size__c = this.intConfirmationOrderBatchSize, BBO-1937
-				//MF_Cases_Batch_Size__c = this.intMFCasesBatchSize,BBO-1937
+				//MF_Cases_Batch_Size__c = this.intMFCasesBatchSize, BBO-1937
 				//Submission_Deadline_Days__c = this.intSubmissionDeadlineDays, BBO-1937
 				NHE_Deadline_Days__c = this.intNHEDeadlineDays,
 				GF_Ticket_Processing_Batch_Size__c = this.intGFTicketProcessingBatchSize,
@@ -3918,11 +3941,6 @@ public class TestDataFactory {
 
 		public UserBuilder setOOO(Boolean blnValue) {
 			this.blnOOO = blnValue;
-			return this;
-		}
-
-		public UserBuilder setMassUpdateListView(Boolean blnValue) {
-			this.blnMassUpdateListView = blnValue;
 			return this;
 		}
 
@@ -5078,6 +5096,10 @@ public class TestDataFactory {
 		private String strHelpCenterArticlesReviewed = null;
 		private Id idIntegration = null;
 		private Id idReviewedBy = null;
+		private String strLostDetail = null;
+		private String strLostDetail2 = null;
+		private String strDisqualifiedReason = null;
+
 
 		public TicketBuilder() {
 		}
@@ -5248,6 +5270,18 @@ public class TestDataFactory {
 			this.strReason = strValue;
 			return this;
 		}
+		public TicketBuilder setLostDetail(String strValue) {
+			this.strLostDetail = strValue;
+			return this;
+		}
+		public TicketBuilder setLostDetail2(String strValue) {
+			this.strLostDetail2 = strValue;
+			return this;
+		}
+		public TicketBuilder setDisqualifiedReason(String strValue) {
+			this.strDisqualifiedReason = strValue;
+			return this;
+		}
 
 		public Ticket__c build() {
 			Ticket__c objTicket = new Ticket__c();
@@ -5286,6 +5320,9 @@ public class TestDataFactory {
 			objTicket.Help_Center_articles_reviewed__c = this.strHelpCenterArticlesReviewed;
 			objTicket.Ticket_Reviewed_By__c = this.idReviewedBy;
 			objTicket.Integration__c = this.idIntegration;
+			objTicket.Lost_Detail__c = this.strLostDetail;
+			objTicket.Lost_Detail2__c = this.strLostDetail2;
+			objTicket.Disqualified_Reason__c = this.strDisqualifiedReason;
 
 			return objTicket;
 		}
@@ -5312,30 +5349,37 @@ public class TestDataFactory {
 			this.strName = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setRecordType(String strValue) {
 			this.strTicketRecordType = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setOwnerType(String strValue) {
 			this.strOwnerType = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setQueueId(String strValue) {
 			this.strQueueId = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setTeam(String strValue) {
 			this.strTeam = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setTicketReason(String strValue) {
 			this.strTicketReason = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setTicketSubReason(String strValue) {
 			this.strTicketSubReason = strValue;
 			return this;
 		}
+
 		public TicketConfigBuilder setIsActive(Boolean blnValue) {
 			this.blnIsActive = blnValue;
 			return this;
@@ -5509,6 +5553,7 @@ public class TestDataFactory {
 			AutoSolve_Enabled__c = (strAgencyName == 'Internal Revenue Service') ? true : false,
 			OCR_Enabled__c = set_OCRQueueAgencies.contains(strAgencyName) ? true : false
 		);
+
 		insert objAgency;
 		return objAgency;
 	}
@@ -5883,6 +5928,7 @@ public class TestDataFactory {
 			State__c objState = new State__c();
 			objState.Name = this.strName;
 			objState.Abbreviation__c = this.strAbbreviation;
+			objState.Key__c = this.strAbbreviation;
 			objState.Id__c = this.strId;
 
 			return objState;
@@ -5934,6 +5980,33 @@ public class TestDataFactory {
 			return objOpportunityContactRole;
 		}
 	}
+
+    /**
+     * @author      Abhishek Singh
+     * @date        12-12-2024
+     * @description Creates test data for HI_Fsa_Policy_Detail__c
+     **/
+    public class HIFsaPolicyDetailBuilder {
+        private String strIdFsa;
+        private String strProvideKey;
+		private String strPackageId;
+        public HIFsaPolicyDetailBuilder() {
+        }
+
+        public HIFsaPolicyDetailBuilder setIdAndProviderKey(String strValue,String providerKey,String packageId) {
+            this.strIdFsa = strValue;
+            this.strProvideKey = providerKey;
+            this.strPackageId = packageId;
+            return this;
+        }
+        
+        public HI_Fsa_Policy_Detail__c build() {
+            HI_Fsa_Policy_Detail__c objFsaPolicy = new HI_Fsa_Policy_Detail__c();
+            objFsaPolicy.Id__c = this.strIdFsa;
+            objFsaPolicy.Provider_Key__c = this.strProvideKey;
+            return objFsaPolicy;
+        }
+    }
 
 	/**
 	 * @author      Bhagat Singh
@@ -5996,34 +6069,6 @@ public class TestDataFactory {
 			return objHIBCA;
 		}
 	}
-	
-	/**
-     * @author      Abhishek Singh
-     * @date        12-12-2024
-     * @description Creates test data for HI_Fsa_Policy_Detail__c 
-	 * BBO-1968
-     **/
-    public class HIFsaPolicyDetailBuilder {
-        private String id_Fsa;
-        private String str_ProvideKey;
-		private String str_PackageId;
-        public HIFsaPolicyDetailBuilder() {
-        }
-
-        public HIFsaPolicyDetailBuilder setIdAndProviderKey(String strValue,String providerKey,String packageId) {
-            this.id_Fsa = strValue;
-            this.str_ProvideKey = providerKey;
-            this.str_PackageId = packageId;
-            return this;
-        }
-        
-        public HI_Fsa_Policy_Detail__c build() {
-            HI_Fsa_Policy_Detail__c objFsaPolicy = new HI_Fsa_Policy_Detail__c();
-            objFsaPolicy.Id__c = this.id_Fsa;
-            objFsaPolicy.Provider_Key__c = this.str_ProvideKey;
-            return objFsaPolicy;
-        }
-    }
 
 	/**
 	 * @author      Bhagat Singh
@@ -6931,6 +6976,11 @@ public class TestDataFactory {
 		public UserSkillBuilder() {
 		}
 
+		public UserSkillBuilder setTier(String strValue) {
+			this.strTier = strValue;
+			return this;
+		}
+
 		public UserSkillBuilder setAgencyId(Id idValue) {
 			this.idAgency = idValue;
 			return this;
@@ -6968,11 +7018,6 @@ public class TestDataFactory {
 
 		public UserSkillBuilder setMultiYr(String strValue) {
 			this.strMutliYr = strValue;
-			return this;
-		}
-
-		public UserSkillBuilder setTier(String strValue) {
-			this.strTier = strValue;
 			return this;
 		}
 
@@ -7324,7 +7369,10 @@ public class TestDataFactory {
 		private String strShippingStateCode = '';
 		private String strShippingStreet = '';
 		private String strShippingPostalCode = '';
+		private String strDemoComplete = '';
+		private String strExceptionRequestReason = '';
 		private String strTwoFactorRequired = '';
+		private String strPointOfContactName = '';
 		private String strMigrationState = '';
 		private String strExternalKey = '';
 		private Id idDataEntryAssist = null;
@@ -7524,8 +7572,23 @@ public class TestDataFactory {
 			return this;
 		}
 
+		public OrderBuilder setDemoComplete(String strValue) {
+			this.strDemoComplete = strValue;
+			return this;
+		}
+
+		public OrderBuilder setExceptionRequestReason(String strValue) {
+			this.strExceptionRequestReason = strValue;
+			return this;
+		}
+
 		public OrderBuilder setTwoFactorRequired(String strValue) {
 			this.strTwoFactorRequired = strValue;
+			return this;
+		}
+
+		public OrderBuilder setPointOfContactName(String strValue) {
+			this.strPointOfContactName = strValue;
 			return this;
 		}
 
@@ -7623,7 +7686,10 @@ public class TestDataFactory {
 			objOrder.ShippingStateCode = this.strShippingStateCode;
 			objOrder.ShippingStreet = this.strShippingStreet;
 			objOrder.ShippingPostalCode = this.strShippingPostalCode;
+			objOrder.Demo_Complete__c = this.strDemoComplete;
+			objOrder.Exception_Request_Reason__c = this.strExceptionRequestReason;
 			objOrder.Two_Factor_Required__c = this.strTwoFactorRequired;
+			objOrder.Point_of_Contact_Name__c = this.strPointOfContactName;
 			objOrder.Migration_State__c = this.strMigrationState;
 			objOrder.External_Key__c = this.strExternalKey;
 			objOrder.Data_Entry_Assist__c = this.idDataEntryAssist;
@@ -7661,6 +7727,7 @@ public class TestDataFactory {
 		private String strRatePlanId;
 		private String strAdditionalServices;
 		private Integer intInternationalContractors;
+		private Integer intInternationalEmployees;
 		private Boolean blnPrioritySupport = false;
 
 		public PaymentInvoiceBuilder() {
@@ -7746,6 +7813,11 @@ public class TestDataFactory {
 			return this;
 		}
 
+		public PaymentInvoiceBuilder setInternationalEmployees(Integer intValue) {
+			this.intInternationalEmployees = intValue;
+			return this;
+		}
+
 		// Build Method
 		public Payment_Invoice__c build() {
 			Payment_Invoice__c objPaymentInvoice = new Payment_Invoice__c();
@@ -7764,6 +7836,7 @@ public class TestDataFactory {
 			objPaymentInvoice.Rate_Plan_Id__c = this.strRatePlanId;
 			objPaymentInvoice.Additional_Invoiced_Services__c = this.strAdditionalServices;
 			objPaymentInvoice.International_Contractors__c = this.intInternationalContractors;
+			objPaymentInvoice.International_Employees__c = this.intInternationalEmployees;
 			objPaymentInvoice.Priority_Support__c = this.blnPrioritySupport;
 			return objPaymentInvoice;
 		}
@@ -7956,6 +8029,7 @@ public class TestDataFactory {
 		private Integer intThirdWeekCap = 0;
 		private Integer intFourthWeekCap = 0;
 		private Integer intFifthWeekCap = 0;
+		private Integer intForecastMultiplier = 0;
 		private Id idRecordTypeId = null;
 
 		public PayrollTransferFBOSForecastBuilder() {
@@ -8007,6 +8081,11 @@ public class TestDataFactory {
 			return this;
 		}
 
+		public PayrollTransferFBOSForecastBuilder setForecastMultiplier(Integer intValue) {
+			this.intForecastMultiplier = intValue;
+			return this;
+		}
+
 		// Build Method
 		public Payroll_Transfer_FBOS_Forecast__c build() {
 			Payroll_Transfer_FBOS_Forecast__c objPayrollTransferFBOSForecast = new Payroll_Transfer_FBOS_Forecast__c();
@@ -8020,6 +8099,7 @@ public class TestDataFactory {
 			objPayrollTransferFBOSForecast.Fourth_Week_Cap__c = this.intFourthWeekCap;
 			objPayrollTransferFBOSForecast.Fifth_Week_Cap__c = this.intFifthWeekCap;
 			objPayrollTransferFBOSForecast.RecordTypeId = this.idRecordTypeId;
+			objPayrollTransferFBOSForecast.Forecast_Multiplier__c = this.intForecastMultiplier;
 
 			return objPayrollTransferFBOSForecast;
 		}
@@ -8302,11 +8382,11 @@ public class TestDataFactory {
 		private String strAutomationMessage = '';
 		private String strAutomationStatus = '';
 		private Boolean blnActive;
-		private String strAutoSolvePackageStatus = '';
 		private String strAgencyInformationId = '';
 		private Boolean blnGustoIsAddresseeOfRecord = false;
 		private String strTaxNoticeFormNumber = '';
 		private String strStatus = '';
+        	private String strAutoSolvePackageStatus = '';
 		private String strTaxNoticeType = '';
 		private String strTaxNoticeNumeration = '';
 		private Integer intTaxNoticeAmountTotal = 0;
@@ -8369,8 +8449,8 @@ public class TestDataFactory {
 			this.blnActive = blnValue;
 			return this;
 		}
-
-		public AutoSolvePackageBuilder setAutoSolvePackageStatus(String strValue) {
+            
+        	public AutoSolvePackageBuilder setAutoSolvePackageStatus(String strValue) {
 			this.strAutoSolvePackageStatus = strValue;
 			return this;
 		}
@@ -8461,7 +8541,7 @@ public class TestDataFactory {
 			objAutoSolve.Sub_Root_Cause__c = this.strSubRootCause;
 			objAutoSolve.Field_Set_Used__c = this.strFieldSetUsed;
 			objAutoSolve.Mass_Email_Step__c = this.strMassEmailStep;
-			objAutoSolve.AutoSolvePackageStatus__c = strAutoSolvePackageStatus;
+            		objAutoSolve.AutoSolvePackageStatus__c = strAutoSolvePackageStatus;
 			objAutoSolve.SUI_Rate_Form_Numbers__c = this.strSUIRateFormNumbers;
 			objAutoSolve.Automation_Message__c = this.strAutomationMessage;
 			objAutoSolve.Automation_Status__c = this.strAutomationStatus;
@@ -8598,6 +8678,7 @@ public class TestDataFactory {
 		private String strRecordTypeId = '';
 		private String strMDVLiDiCoverage = '';
 		private Boolean blnHasAffiliates = false;
+		private String strWaivingInitialWP = '';
 		private String strBulkDeal = '';
 		private String strDemoCompleted = '';
 		private String strExceptionRequest = '';
@@ -8619,13 +8700,13 @@ public class TestDataFactory {
 		private Date dtFSARenewalDate = null;
 		private Date dtDCARenewalDate = null;
 		private String strTypeofTransferTADA = '';
-		private String strTypeofTADA = '';
 		private String strMultiEIN = '';
-		private String strPEO = '';
 		private String strPEONote = '';
 		private Date dtHSARenewalDate = null;
+		private String strTypeofTADA = '';
 		private String strBenefitsPointOfContact = '';
 		private Boolean blnSendOrder = false;
+		private String strPEO = '';
 		private String strAddressNotes = '';
 		private String strRenewalException = '';
 		private Date dtRenewalDate = null;
@@ -8770,7 +8851,7 @@ public class TestDataFactory {
 			return this;
 		}
 
-		public TransitionToFulfillmentBuilder setTypeofTADA(String strValue) {
+		public TransitionToFulfillmentBuilder setTypeOfTADA(String strValue) {
 			this.strTypeofTADA = strValue;
 			return this;
 		}
@@ -8872,6 +8953,7 @@ public class TestDataFactory {
 			objTTF.DCA_Renewal_Date__c = this.dtDCARenewalDate;
 			objTTF.Type_of_Transfer_TADA_s__c = this.strTypeofTransferTADA;
 			objTTF.Type_of_TADA_s__c = this.strTypeofTADA;
+			objTTF.Multi_EIN__c = this.strMultiEIN;
 			objTTF.Benefits_Point_of_Contact__c = this.strBenefitsPointOfContact;
 			objTTF.Send_Order__c = this.blnSendOrder;
 			objTTF.Multi_EIN__c = this.strMultiEIN;
@@ -9943,17 +10025,16 @@ public class TestDataFactory {
 		private String strImplemenatationStage = '';
 		private String strOrderType = '';
 		private String strName = '';
-		private Id idOwnerId;
-		private Id idConfirmationId;
-		private String strOrderAssignment;
-		private Date dtStartDate;
-		private Date dtSubmissionDeadline;
-		private Date dtMemberSubmissionDate;
-		private Date dtGroupSubmissionDate;
-		private String strBenefitTypes;
+		private Id idOwnerId = null;
+		private Id idConfirmationId = null;
+		private String strOrderAssignment = '';
+		private Date dtStartDate = null;
+		private Date dtSubmissionDeadline = null;
+		private Date dtMemberSubmissionDate = null;
+		private Date dtGroupSubmissionDate = null;
+		private String strBenefitTypes = '';
 		private Id idParent;
 		private Id idNewCarrier;
-		private Date dtRenewalDate = null;
 		private String strOOOComments;
 		private Id idInitialOwner;
 		private Id idFacilitator2EnrollmentReview;
@@ -9968,6 +10049,7 @@ public class TestDataFactory {
 		private Boolean blnIsMultiEIN = false;
 		private Boolean blnEligibleForConfirmationAutomation = false;
 		private String strGroupNumber = '';
+		private Date dtRenewalDate = null;
 		private Boolean blnIsORderEligibleForSubAutomation = false;
 		private Boolean blnIsRequiresRouting = false;
 		private String strCarrierGroupNumber = '';
@@ -10864,22 +10946,27 @@ public class TestDataFactory {
 			this.strPartnerTier = strValue;
 			return this;
 		}
+
 		public TaxNoticeIndexBuilder setNotesField(String strValue) {
 			this.strNotesField = strValue;
 			return this;
 		}
+
 		public TaxNoticeIndexBuilder setSegment(String strValue) {
 			this.strSegment = strValue;
 			return this;
 		}
+
 		public TaxNoticeIndexBuilder setAttachment(String strValue) {
 			this.strAttachemntName = strValue;
 			return this;
 		}
+
 		public TaxNoticeIndexBuilder setMultiYr(String strValue) {
 			this.strMultiYr = strValue;
 			return this;
 		}
+
 		public TaxNoticeIndexBuilder setTaxRateJson(String strValue) {
 			this.strRateJson = strValue;
 			return this;
@@ -11292,6 +11379,99 @@ public class TestDataFactory {
 	}
 
 	/**
+	 * @author      Debasmita Rawooth
+	 * @date        02-06-2023
+	 * @description Creates test data for Benefit Order Allocation
+	 **/
+	public class BenefitOrderAllocationBuilder {
+		private String strRoleType = '';
+		private Integer intMaxBO = 0;
+		private Integer intMonth = 0;
+		private Integer intWeekOrderCapacity = 0;
+		private Integer intWorkingDays = 0;
+		private Date dtWeekStartDate;
+		private Date dtWeekEndDate;
+		private String idUserRole;
+		private String idUser;
+		private String idPTFBOS;
+		private Integer intYear = 0;
+
+		public BenefitOrderAllocationBuilder() {
+		}
+
+		public BenefitOrderAllocationBuilder setRoleType(String strValue) {
+			this.strRoleType = strValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setMaxBO(Integer intValue) {
+			this.intMaxBO = intValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setMonth(Integer intValue) {
+			this.intMonth = intValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setWeekOrderCapacity(Integer intValue) {
+			this.intWeekOrderCapacity = intValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setWorkingDays(Integer intValue) {
+			this.intWorkingDays = intValue;
+			return this;
+		}
+		public BenefitOrderAllocationBuilder setWeekStartDate(Date dtValue) {
+			this.dtWeekStartDate = dtValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setWeekEndDate(Date dtValue) {
+			this.dtWeekEndDate = dtValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setUserRole(Id idValue) {
+			this.idUserRole = idValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setUser(Id idValue) {
+			this.idUser = idValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setPTFBOS(Id idValue) {
+			this.idPTFBOS = idValue;
+			return this;
+		}
+
+		public BenefitOrderAllocationBuilder setYear(Integer intValue) {
+			this.intYear = intValue;
+			return this;
+		}
+
+		// Build Method
+		public Benefit_Order_Allocation__c build() {
+			return new Benefit_Order_Allocation__c(
+				Role_Type__c = this.strRoleType,
+				Max_BO__c = this.intMaxBO,
+				Month__c = this.intMonth,
+				Week_Order_Capacity__c = this.intWeekOrderCapacity,
+				Working_days__c = this.intWorkingDays,
+				Week_Start_Date__c = this.dtWeekStartDate,
+				Week_End_Date__c = this.dtWeekEndDate,
+				User_Role__c = this.idUserRole,
+				User__c = this.idUser,
+				Payroll_Transfer_FBOS_Forecast__c = this.idPTFBOS,
+				Year__c = this.intYear
+			);
+		}
+	}
+
+	/**
 	 * @author     Bhagat singh
 	 * @date       03-17-2023
 	 * @description Creates test data for HI_State__c
@@ -11691,6 +11871,55 @@ public class TestDataFactory {
 	}
 
 	/*
+	 * @author      Sanjay Paryani
+	 * @date        03-27-2023
+	 * @description Creates test data for Sandbox_User_Unmask__c
+	 **/
+	public class SandboxUserUnmaskBuilder {
+		private Id idUserId = null;
+		private Id idProfileId = null;
+		private Boolean blnUnmask = false;
+		private Boolean blnApplytoDevTestOrgs = false;
+		private Boolean blnApplytoIntgnOrg = false;
+
+		public SandboxUserUnmaskBuilder setUserId(Id idValue) {
+			this.idUserId = idValue;
+			return this;
+		}
+
+		public SandboxUserUnmaskBuilder setProfileId(Id idValue) {
+			this.idProfileId = idValue;
+			return this;
+		}
+
+		public SandboxUserUnmaskBuilder setUnmaskCheckbox(Boolean blnValue) {
+			this.blnUnmask = blnValue;
+			return this;
+		}
+
+		public SandboxUserUnmaskBuilder setApplytoDevTestOrgsCheckbox(Boolean blnValue) {
+			this.blnApplytoDevTestOrgs = blnValue;
+			return this;
+		}
+
+		public SandboxUserUnmaskBuilder setApplytoIntgnOrgCheckbox(Boolean blnValue) {
+			this.blnApplytoIntgnOrg = blnValue;
+			return this;
+		}
+
+		public Sandbox_User_Unmask__c build() {
+			Sandbox_User_Unmask__c objSUU = new Sandbox_User_Unmask__c();
+			objSUU.SetupOwnerId = this.idUserId;
+			objSUU.SetupOwnerId = this.idProfileId;
+			objSUU.Unmask_Email__c = this.blnUnmask;
+			objSUU.Apply_only_to_dev_test__c = this.blnApplytoDevTestOrgs;
+			objSUU.Apply_to_Integration__c = this.blnApplytoIntgnOrg;
+
+			return objSUU;
+		}
+	}
+
+	/*
 	 * @author      Deepika Saini
 	 * @date        03-24-2023
 	 * @description Creates test data for Carrier_Order_Line_Item__c
@@ -11918,148 +12147,6 @@ public class TestDataFactory {
 		}
 	}
 
-	/*
-	 * @author      Sanjay Paryani
-	 * @date        03-27-2023
-	 * @description Creates test data for Sandbox_User_Unmask__c
-	 **/
-	public class SandboxUserUnmaskBuilder {
-		private Id idUserId = null;
-		private Id idProfileId = null;
-		private Boolean blnUnmask = false;
-		private Boolean blnApplytoDevTestOrgs = false;
-		private Boolean blnApplytoIntgnOrg = false;
-
-		public SandboxUserUnmaskBuilder setUserId(Id idValue) {
-			this.idUserId = idValue;
-			return this;
-		}
-
-		public SandboxUserUnmaskBuilder setProfileId(Id idValue) {
-			this.idProfileId = idValue;
-			return this;
-		}
-
-		public SandboxUserUnmaskBuilder setUnmaskCheckbox(Boolean blnValue) {
-			this.blnUnmask = blnValue;
-			return this;
-		}
-
-		public SandboxUserUnmaskBuilder setApplytoDevTestOrgsCheckbox(Boolean blnValue) {
-			this.blnApplytoDevTestOrgs = blnValue;
-			return this;
-		}
-
-		public SandboxUserUnmaskBuilder setApplytoIntgnOrgCheckbox(Boolean blnValue) {
-			this.blnApplytoIntgnOrg = blnValue;
-			return this;
-		}
-
-		public Sandbox_User_Unmask__c build() {
-			Sandbox_User_Unmask__c objSUU = new Sandbox_User_Unmask__c();
-			objSUU.SetupOwnerId = this.idUserId;
-			objSUU.SetupOwnerId = this.idProfileId;
-			objSUU.Unmask_Email__c = this.blnUnmask;
-			objSUU.Apply_only_to_dev_test__c = this.blnApplytoDevTestOrgs;
-			objSUU.Apply_to_Integration__c = this.blnApplytoIntgnOrg;
-
-			return objSUU;
-		}
-	}
-
-	/**
-	 * @author      Debasmita Rawooth
-	 * @date        02-06-2023
-	 * @description Creates test data for Benefit Order Allocation
-	 **/
-	public class BenefitOrderAllocationBuilder {
-		private String strRoleType = '';
-		private Integer intMaxBO = 0;
-		private Integer intMonth = 0;
-		private Integer intWeekOrderCapacity = 0;
-		private Integer intWorkingDays = 0;
-		private Date dtWeekStartDate;
-		private Date dtWeekEndDate;
-		private String idUserRole;
-		private String idUser;
-		private String idPTFBOS;
-		private Integer intYear = 0;
-
-		public BenefitOrderAllocationBuilder() {
-		}
-
-		public BenefitOrderAllocationBuilder setRoleType(String strValue) {
-			this.strRoleType = strValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setMaxBO(Integer intValue) {
-			this.intMaxBO = intValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setMonth(Integer intValue) {
-			this.intMonth = intValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setWeekOrderCapacity(Integer intValue) {
-			this.intWeekOrderCapacity = intValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setWorkingDays(Integer intValue) {
-			this.intWorkingDays = intValue;
-			return this;
-		}
-		public BenefitOrderAllocationBuilder setWeekStartDate(Date dtValue) {
-			this.dtWeekStartDate = dtValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setWeekEndDate(Date dtValue) {
-			this.dtWeekEndDate = dtValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setUserRole(Id idValue) {
-			this.idUserRole = idValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setUser(Id idValue) {
-			this.idUser = idValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setPTFBOS(Id idValue) {
-			this.idPTFBOS = idValue;
-			return this;
-		}
-
-		public BenefitOrderAllocationBuilder setYear(Integer intValue) {
-			this.intYear = intValue;
-			return this;
-		}
-
-		// Build Method
-		public Benefit_Order_Allocation__c build() {
-			return new Benefit_Order_Allocation__c(
-				Role_Type__c = this.strRoleType,
-				Max_BO__c = this.intMaxBO,
-				Month__c = this.intMonth,
-				Week_Order_Capacity__c = this.intWeekOrderCapacity,
-				Working_days__c = this.intWorkingDays,
-				Week_Start_Date__c = this.dtWeekStartDate,
-				Week_End_Date__c = this.dtWeekEndDate,
-				User_Role__c = this.idUserRole,
-				User__c = this.idUser,
-				Payroll_Transfer_FBOS_Forecast__c = this.idPTFBOS,
-				Year__c = this.intYear
-			);
-		}
-	}
-
 	/**
 	 * @author     Bhagat singh
 	 * @date       04-05-2023
@@ -12125,6 +12212,30 @@ public class TestDataFactory {
 			objPartnerProgram.Managing_Accounting_Firm__c = this.idManagingAccountFirm;
 			objPartnerProgram.Account__c = this.idAccount;
 			return objPartnerProgram;
+		}
+	}
+
+	/**
+	 * @author     Bhagat singh
+	 * @date       04-11-2023
+	 * @description Creates test data for Order_BOA_Relationship__c
+	 **/
+	public class OrderBOARelationshipBuilder {
+		private Id idCarrier;
+		private Id idBOAllocation;
+
+		public OrderBOARelationshipBuilder setCarrierId(Id idValue) {
+			this.idCarrier = idValue;
+			return this;
+		}
+
+		public OrderBOARelationshipBuilder setBOAllocationId(Id idValue) {
+			this.idBOAllocation = idValue;
+			return this;
+		}
+
+		public Order_BOA_Relationship__c build() {
+			return new Order_BOA_Relationship__c(Orders__c = this.idCarrier, Benefit_Order_Allocation__c = this.idBOAllocation);
 		}
 	}
 
@@ -13065,144 +13176,6 @@ public class TestDataFactory {
 	}
 
 	/*
-	 * @name         FlowConfigurationBuilder
-	 * @description  Creates test data for the Engagement_Flow_Configuration__c custom setting.
-	 */
-	public class FlowConfigurationBuilder {
-		public String strSetupOwnerId = '';
-		public String strAcceptedValues = '';
-		public String strFirstResponseQueueId = '';
-		public String strEngagementQueueId = '';
-		public String strOmniRecordTypes = '';
-		public String strIneligibleOrigins = '';
-		public String strEngagementRecordTypeId = '';
-		public String strEngagementRoutingConfigId = '';
-		public String strOfflineRerouteRoutingConfigId = '';
-		public String strPriorAgentRoutingConfigId = '';
-		public String strGustoGlobalId = '';
-		public String strEngagementAlertId = '';
-		public Id strEngagementAccountantId = null;
-		public String strEngagementBenefitsId = '';
-		public String strEngagementPremiumId = '';
-		public String strEngagementGoldId = '';
-		public String strEngagementGrowerId = '';
-		public String strOfflineId = '';
-
-		public FlowConfigurationBuilder setOwnerId(String strValue) {
-			this.strSetupOwnerId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setAcceptedValues(String strValue) {
-			this.strAcceptedValues = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setFirstResponseQueueId(String strValue) {
-			this.strFirstResponseQueueId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setEngagementQueueId(String strValue) {
-			this.strEngagementQueueId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setOmniRecordTypes(String strValue) {
-			this.strOmniRecordTypes = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setIneligibleOrigins(String strValue) {
-			this.strIneligibleOrigins = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setEngagementRecordTypeId(String strValue) {
-			this.strEngagementRecordTypeId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setEngagementRoutingConfigId(String strValue) {
-			this.strEngagementRoutingConfigId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setOfflineRoutingConfigId(String strValue) {
-			this.strOfflineRerouteRoutingConfigId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setPriorAgentRoutingConfigId(String strValue) {
-			this.strPriorAgentRoutingConfigId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setGustoGlobalId(String strValue) {
-			this.strGustoGlobalId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setEngagementAlertId(String strValue) {
-			this.strEngagementAlertId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setAccountantId(Id IdValue) {
-			this.strEngagementAccountantId = IdValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setBenefitsId(String strValue) {
-			this.strEngagementBenefitsId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setPremiumId(String strValue) {
-			this.strEngagementPremiumId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setGoldId(String strValue) {
-			this.strEngagementGoldId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setGrowerId(String strValue) {
-			this.strEngagementGrowerId = strValue;
-			return this;
-		}
-
-		public FlowConfigurationBuilder setOfflineId(String strValue) {
-			this.strOfflineId = strValue;
-			return this;
-		}
-
-		public Engagement_Flow_Configuration__c build() {
-			Engagement_Flow_Configuration__c objFlowConfig = new Engagement_Flow_Configuration__c();
-			objFlowConfig.SetupOwnerId = this.strSetupOwnerId;
-			objFlowConfig.Accepted_Type_Values__c = this.strAcceptedValues;
-			objFlowConfig.Engagement_Auto_First_Response_Queue_Id__c = this.strFirstResponseQueueId;
-			objFlowConfig.Engagement_Cases_Queue_ID__c = this.strEngagementQueueId;
-			objFlowConfig.Omni_Case_Record_Types__c = this.strOmniRecordTypes;
-			objFlowConfig.Ineligible_Origin_Channels__c = this.strIneligibleOrigins;
-			objFlowConfig.Engagement_RecordType_ID__c = this.strEngagementRecordTypeId;
-			objFlowConfig.Engagement_Case_ID__c = this.strEngagementRoutingConfigId;
-			objFlowConfig.Engagement_Case_Offline_ReRoute_ID__c = this.strOfflineRerouteRoutingConfigId;
-			objFlowConfig.Engagement_Case_Route_Prior_Agent_ID__c = this.strPriorAgentRoutingConfigId;
-			objFlowConfig.Engagement_Gusto_Global_Id__c = this.strGustoGlobalId;
-			objFlowConfig.Engagement_Alert_Id__c = this.strEngagementAlertId;
-			objFlowConfig.Engagement_Accountant_Id__c = this.strEngagementAccountantId;
-			objFlowConfig.Engagement_Benefits_Id__c = this.strEngagementBenefitsId;
-			objFlowConfig.Engagement_Premium_Priority_Support_Id__c = this.strEngagementPremiumId;
-			objFlowConfig.Engagement_Gold_Silver_Id__c = this.strEngagementGoldId;
-			objFlowConfig.Engagement_Grower_Id__c = this.strEngagementGrowerId;
-			objFlowConfig.Engagement_Cases_Offline_Id__c = this.strOfflineId;
-			return objFlowConfig;
-		}
-	}
-
-	/*
 	 * @name         HICarrierVersionDetailBuilder
 	 * @description  Creates test data for NBA_Rule_Set_Configuration__c
 	 */
@@ -13370,6 +13343,151 @@ public class TestDataFactory {
 	}
 
 	/*
+	 * @name         FlowConfigurationBuilder
+	 * @description  Creates test data for the Engagement_Flow_Configuration__c custom setting.
+	 */
+	public class FlowConfigurationBuilder {
+		public String strSetupOwnerId = '';
+		public String strAcceptedValues = '';
+		public String strFirstResponseQueueId = '';
+		public String strEngagementQueueId = '';
+		public String strOmniRecordTypes = '';
+		public String strIneligibleOrigins = '';
+		public String strEngagementRecordTypeId = '';
+		public String strEngagementRoutingConfigId = '';
+		public String strOfflineRerouteRoutingConfigId = '';
+		public String strPriorAgentRoutingConfigId = '';
+		public String strGustoGlobalId = '';
+		public String strEngagementAlertId = '';
+		public String strEngagementAccountantId = '';
+		public String strEngagementBenefitsId = '';
+		public String strEngagementPremiumId = '';
+		public String strEngagementGoldId = '';
+		public String strEngagementGrowerId = '';
+		public String strOfflineId = '';
+		public String strManualOwnerChangeId = '';
+
+		public FlowConfigurationBuilder setOwnerId(String strValue) {
+			this.strSetupOwnerId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setAcceptedValues(String strValue) {
+			this.strAcceptedValues = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setFirstResponseQueueId(String strValue) {
+			this.strFirstResponseQueueId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setEngagementQueueId(String strValue) {
+			this.strEngagementQueueId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setOmniRecordTypes(String strValue) {
+			this.strOmniRecordTypes = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setIneligibleOrigins(String strValue) {
+			this.strIneligibleOrigins = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setEngagementRecordTypeId(String strValue) {
+			this.strEngagementRecordTypeId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setEngagementRoutingConfigId(String strValue) {
+			this.strEngagementRoutingConfigId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setOfflineRoutingConfigId(String strValue) {
+			this.strOfflineRerouteRoutingConfigId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setPriorAgentRoutingConfigId(String strValue) {
+			this.strPriorAgentRoutingConfigId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setGustoGlobalId(String strValue) {
+			this.strGustoGlobalId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setEngagementAlertId(String strValue) {
+			this.strEngagementAlertId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setAccountantId(String strValue) {
+			this.strEngagementAccountantId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setBenefitsId(String strValue) {
+			this.strEngagementBenefitsId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setPremiumId(String strValue) {
+			this.strEngagementPremiumId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setGoldId(String strValue) {
+			this.strEngagementGoldId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setGrowerId(String strValue) {
+			this.strEngagementGrowerId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setOfflineId(String strValue) {
+			this.strOfflineId = strValue;
+			return this;
+		}
+
+		public FlowConfigurationBuilder setManualOwnerChangeId(String strValue) {
+			this.strManualOwnerChangeId = strValue;
+			return this;
+		}
+
+		public Engagement_Flow_Configuration__c build() {
+			Engagement_Flow_Configuration__c objFlowConfig = new Engagement_Flow_Configuration__c();
+			objFlowConfig.SetupOwnerId = this.strSetupOwnerId;
+			objFlowConfig.Accepted_Type_Values__c = this.strAcceptedValues;
+			objFlowConfig.Engagement_Auto_First_Response_Queue_Id__c = this.strFirstResponseQueueId;
+			objFlowConfig.Engagement_Cases_Queue_ID__c = this.strEngagementQueueId;
+			objFlowConfig.Omni_Case_Record_Types__c = this.strOmniRecordTypes;
+			objFlowConfig.Ineligible_Origin_Channels__c = this.strIneligibleOrigins;
+			objFlowConfig.Engagement_RecordType_ID__c = this.strEngagementRecordTypeId;
+			objFlowConfig.Engagement_Case_ID__c = this.strEngagementRoutingConfigId;
+			objFlowConfig.Engagement_Case_Offline_ReRoute_ID__c = this.strOfflineRerouteRoutingConfigId;
+			objFlowConfig.Engagement_Case_Route_Prior_Agent_ID__c = this.strPriorAgentRoutingConfigId;
+			objFlowConfig.Engagement_Gusto_Global_Id__c = this.strGustoGlobalId;
+			objFlowConfig.Engagement_Alert_Id__c = this.strEngagementAlertId;
+			objFlowConfig.Engagement_Accountant_Id__c = this.strEngagementAccountantId;
+			objFlowConfig.Engagement_Benefits_Id__c = this.strEngagementBenefitsId;
+			objFlowConfig.Engagement_Premium_Priority_Support_Id__c = this.strEngagementPremiumId;
+			objFlowConfig.Engagement_Gold_Silver_Id__c = this.strEngagementGoldId;
+			objFlowConfig.Engagement_Grower_Id__c = this.strEngagementGrowerId;
+			objFlowConfig.Engagement_Cases_Offline_Id__c = this.strOfflineId;
+			objFlowConfig.Engagement_Manual_Owner_Change__c = this.strManualOwnerChangeId;
+			return objFlowConfig;
+		}
+	}
+
+	/*
 	 * @name         NoticeIndexThresholdBuilder
 	 * @description  Creates test data for the TaxResIndexNoticeThresholds__c custom setting.
 	 */
@@ -13451,64 +13569,6 @@ public class TestDataFactory {
 			objRuleSetSkill.NBA_Rule_Set__c = this.idRuleSetId;
 
 			return objRuleSetSkill;
-		}
-	}
-
-	/*
-	 * @name         ProductUpsellBuilder
-	 * @description  Creates test data for Partnership_Interest__c
-	 */
-	public class ProductUpsellBuilder {
-		public Id idContact = null;
-		public Id idAccount = null;
-		public String str401KNotes = '';
-		public String strTier = '';
-		public String strProductInterestCountries = '';
-        	private Id idOwnerId = UserInfo.getUserId();
-
-		public ProductUpsellBuilder() {
-		}
-
-		public ProductUpsellBuilder setOwnerId(Id idValue) {
-			this.idOwnerId = idValue;
-			return this;
-		}
-
-		public ProductUpsellBuilder setContactId(Id idValue) {
-			this.idContact = idValue;
-			return this;
-		}
-
-		public ProductUpsellBuilder setAccountId(Id idValue) {
-			this.idAccount = idValue;
-			return this;
-		}
-
-		public ProductUpsellBuilder setNotes(String strValue) {
-			this.str401KNotes = strValue;
-			return this;
-		}
-
-		public ProductUpsellBuilder setTier(String strValue) {
-			this.strTier = strValue;
-			return this;
-		}
-
-		public ProductUpsellBuilder setProductInterestCountries(String strValue) {
-			this.strProductInterestCountries = strValue;
-			return this;
-		}
-
-		public Partnership_Interest__c build() {
-			Partnership_Interest__c objProductUpsell = new Partnership_Interest__c();
-			objProductUpsell.Contact__c = this.idContact;
-			objProductUpsell.Account__c = this.idAccount;
-			objProductUpsell.X401k_Notes__c = this.str401KNotes;
-			objProductUpsell.Tier_Upgrade__c = this.strTier;
-			objProductUpsell.Product_Interest_Countries__c = this.strProductInterestCountries;
-			objProductUpsell.OwnerId = this.idOwnerId;
-
-			return objProductUpsell;
 		}
 	}
 
@@ -13643,6 +13703,64 @@ public class TestDataFactory {
 			objAIInteractionDetails.AI_Response__c = this.strAIResponse;
 			objAIInteractionDetails.Chat_Transcript__c = this.idLiveChatTranscript;
 			return objAIInteractionDetails;
+		}
+	}
+
+	/*
+	 * @name         ProductUpsellBuilder
+	 * @description  Creates test data for Partnership_Interest__c
+	 */
+	public class ProductUpsellBuilder {
+		public Id idContact = null;
+		public Id idAccount = null;
+		public String str401KNotes = '';
+		public String strTier = '';
+		public String strProductInterestCountries = '';
+		private Id idOwnerId = UserInfo.getUserId();
+
+		public ProductUpsellBuilder() {
+		}
+
+		public ProductUpsellBuilder setOwnerId(Id idValue) {
+			this.idOwnerId = idValue;
+			return this;
+		}
+
+		public ProductUpsellBuilder setContactId(Id idValue) {
+			this.idContact = idValue;
+			return this;
+		}
+
+		public ProductUpsellBuilder setAccountId(Id idValue) {
+			this.idAccount = idValue;
+			return this;
+		}
+
+		public ProductUpsellBuilder setNotes(String strValue) {
+			this.str401KNotes = strValue;
+			return this;
+		}
+
+		public ProductUpsellBuilder setTier(String strValue) {
+			this.strTier = strValue;
+			return this;
+		}
+
+		public ProductUpsellBuilder setProductInterestCountries(String strValue) {
+			this.strProductInterestCountries = strValue;
+			return this;
+		}
+
+		public Partnership_Interest__c build() {
+			Partnership_Interest__c objProductUpsell = new Partnership_Interest__c();
+			objProductUpsell.Contact__c = this.idContact;
+			objProductUpsell.Account__c = this.idAccount;
+			objProductUpsell.X401k_Notes__c = this.str401KNotes;
+			objProductUpsell.Tier_Upgrade__c = this.strTier;
+			objProductUpsell.Product_Interest_Countries__c = this.strProductInterestCountries;
+			objProductUpsell.OwnerId = this.idOwnerId;
+
+			return objProductUpsell;
 		}
 	}
 

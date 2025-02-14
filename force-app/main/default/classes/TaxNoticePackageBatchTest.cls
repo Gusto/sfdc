@@ -88,6 +88,7 @@ public with sharing class TaxNoticePackageBatchTest {
 				.setClientIds('1231412134')
 				.build()
 		);
+		
 		insert list_AutoSolvePkg;
 
 		AccountTriggerHelper.skipTrigger = true;
@@ -204,6 +205,7 @@ public with sharing class TaxNoticePackageBatchTest {
 	 * @author      Todd Dowdy
 	 * @description Confirm Auto Solve Package and Case values are updated
 	 **/
+	//  (Here we try to process a case with Physical Mail == false for the packages with Gusto Addressee == false)
 	@isTest
 	static void testTaxNoticePackageBatchBatch() {
 		Test.startTest();

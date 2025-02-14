@@ -20,9 +20,8 @@ public class ClientRelationsCaseHandler {
             Status = 'New',
             AccountId = objCase.AccountId,
             ContactId = objCase.ContactId,
-           // Escalation_Channel__c = 'NPS Detractor',
+            Escalation_Channel__c = 'NPS Detractor',
             OwnerId = ownerId,
-            Related_Case__c  = objCase.Id,
             RecordTypeId = EmailMessageUtil.RECTYPE_CLIENT_RELATIONS
         );
     }

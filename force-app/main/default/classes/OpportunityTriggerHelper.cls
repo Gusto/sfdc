@@ -528,7 +528,6 @@ public without sharing class OpportunityTriggerHelper {
 			validateArdiusDuplicateOpportunity(objOppty);
 			routeICPOpportunity(objOppty);
 			populateCompanyInfoCompleteDT(objOppty, null);
-			routeTaxCreditsOpportunity(objOppty, null);
 		}
 	}
 
@@ -719,7 +718,6 @@ public without sharing class OpportunityTriggerHelper {
 			updateLeadPassOnHIOpportunity(objOppty, objOldOppty);
 			resetBenefitsFundingType(objOppty, objOldOppty);
 			populateCompanyInfoCompleteDT(objOppty, objOldOppty);
-			routeTaxCreditsOpportunity(objOppty, objOldOppty);
 		}
 
 		updateBenefitsFundingType(map_Oppty);
@@ -2785,7 +2783,7 @@ public without sharing class OpportunityTriggerHelper {
 
 	/**** Reset Benefits opportunity Fundinng Type field to blank if no product on opportunity ****/
 	public void resetBenefitsFundingType(Opportunity objOppty, Opportunity objOldOppty) {
-		if (OpportunityUtil.isBenefits(objOppty) && objOldOppty != null && objOppty.Amount == 0 && objOppty.Amount != objOldOppty.Amount && objOppty.RecordTypeId != OpportunityUtil.BENEFITS_RENEWAL_OPPTY_RT_ID) {
+		if (OpportunityUtil.isBenefits(objOppty) && objOldOppty != null && objOppty.Amount == 0 && objOppty.Amount != objOldOppty.Amount) {
 			objOppty.Funding_Type__c = '';
 		}
 	}
@@ -3276,13 +3274,11 @@ public without sharing class OpportunityTriggerHelper {
 
 			/* Set only when Running User is an Admin/Integration user <<!!This might only be for Integration users!!>>
 			 Last day of current month */
-			if (objOppty.RecordTypeId == OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID ||
-				objOppty.RecordTypeId == OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID
+			if (
+				UserUtils.isAdminIntgUser(UserInfo.getUserId()) &&
+				(objOppty.RecordTypeId == OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID ||
+				objOppty.RecordTypeId == OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID)
 			) {
-				objOppty.CloseDate = Date.today().addMonths(1).toStartofMonth().addDays(-1);
-			}
-
-			if (objOppty.RecordTypeId == OpportunityUtil.BENEFITS_BYOB_OPPTY_RT_ID && objOppty.Type != OpportunityUtil.OPPTY_TYPE_RENEWAL_BYB) {
 				objOppty.CloseDate = Date.today().addMonths(1).toStartofMonth().addDays(-1);
 			}
 
@@ -4108,15 +4104,9 @@ public without sharing class OpportunityTriggerHelper {
 	 **/
 	public void createBenefitsOpportunity(Id idAccount, Id idRecordType, Opportunity objOppty, String strLeadSource) {
 		Boolean blnOpptyPresent = false;
-		Decimal decEmployees = 0;
+
 		if (idAccount != null && map_Accounts.containsKey(idAccount)) {
 			Account objAcc = map_Accounts.get(idAccount);
-			// Set Number of Employees to either Active Employees or Lead employees whichever is greater than 2
-			if (objAcc.Number_of_Active_Employees__c != null && objAcc.Number_of_Active_Employees__c > 2) {
-				decEmployees = objAcc.Number_of_Active_Employees__c;
-			} else if (objAcc.NumberOfEmployees != null && objAcc.NumberOfEmployees > 2) {
-				decEmployees = objAcc.NumberOfEmployees;
-			}
 			for (Opportunity objOpp : objAcc.Opportunities) {
 				if (objOpp.RecordTypeId == idRecordType && !objOpp.IsClosed) {
 					blnOpptyPresent = true;
@@ -4125,8 +4115,8 @@ public without sharing class OpportunityTriggerHelper {
 			}
 		}
 
-		// Create Benefits  Opportunity ONLY if existing opportunity is not present & if employees is greater than 2
-		if (!blnOpptyPresent && decEmployees > 2) {
+		// Create Benefits  Opportunity ONLY if existing opportunity is not present
+		if (!blnOpptyPresent) {
 			list_OpptysToInsert.add(
 				new Opportunity(
 					RecordTypeId = idRecordType,
@@ -4140,10 +4130,7 @@ public without sharing class OpportunityTriggerHelper {
 					Currently_Offer_Health_Benefits__c = objOppty.Currently_Offer_Health_Benefits__c,
 					Want_to_switch_brokers__c = objOppty.Want_to_switch_brokers__c,
 					Existing_Health_Benefits_Renewal_Date__c = objOppty.Existing_Health_Benefits_Renewal_Date__c,
-					Open_to_Switching_Broker__c = objOppty.Open_to_Switching_Broker__c,
-					NumberofEmployees__c = decEmployees,
-					Contribution_to_EE_Health_Coverage_cost__c = objOppty.Contribution_to_EE_Health_Coverage_cost__c,
-					Interest_in_adding_benefits_to_Gusto__c = objOppty.Interest_in_adding_benefits_to_Gusto__c
+					Open_to_Switching_Broker__c = objOppty.Open_to_Switching_Broker__c
 				)
 			);
 		}
@@ -4234,7 +4221,7 @@ public without sharing class OpportunityTriggerHelper {
 				),
 				(SELECT Id, ZP_User_Role__c FROM Contacts),
 				(
-					SELECT Id, RecordTypeId, IsClosed, IsWon, CreatedDate, CloseDate, StageName, Upsell_Tier__c, Referral_Code__c, Tax_Year__c, ROE_Exception__c, Source_Id__c, OwnerId, Owner.IsActive
+					SELECT Id, RecordTypeId, IsClosed, IsWon, CreatedDate, CloseDate, StageName, Upsell_Tier__c, Referral_Code__c, Tax_Year__c, ROE_Exception__c, Source_Id__c, OwnerId
 					FROM Opportunities
 					ORDER BY CreatedDate DESC
 				)
@@ -5748,49 +5735,6 @@ public without sharing class OpportunityTriggerHelper {
 		if (objOppty.RecordTypeId == OpportunityUtil.R_D_TAX_CREDITS_OPPTY_RT_ID && (objOldOppty == null || objOppty.Company_Information_Complete__c != objOldOppty.Company_Information_Complete__c)) {
 			objOppty.Collecting_Company_Information_Start__c = objOppty.Company_Information_Complete__c ? DateTime.now() : null;
 			objOppty.Collecting_Company_Information_End__c = objOppty.Company_Information_Complete__c ? Utils.addBusinessDays(DateTime.now().date(), 4) : null;
-			//Reopen opportunity if Company info complete is true
-			if (objOppty.Company_Information_Complete__c && objOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE) {
-				objOppty.StageName = OpportunityUtil.DISCOVERY_CALL_SCHEDULED_STAGE;
-			}
-		}
-	}
-
-	/**
-	 * @description       Route current tax credits opportunity to previous tax year opportunity owner
-	 * @param objOppty    New version of Opportunity
-	 * @param objOldOppty Old version fo the Opportunity
-	 */
-	private void routeTaxCreditsOpportunity(Opportunity objOppty, Opportunity objOldOppty) {
-		if (
-			objOppty.RecordTypeId == OpportunityUtil.R_D_TAX_CREDITS_OPPTY_RT_ID &&
-			objOppty.Enable_Ring_Lead_Routing__c &&
-			(objOldOppty == null ||
-			objOppty.Enable_Ring_Lead_Routing__c != objOldOppty.Enable_Ring_Lead_Routing__c) &&
-			objOppty.AccountId != null &&
-			objOppty.Tax_Year__c != null
-		) {
-			Account objAccount = map_Accounts?.get(objOppty.AccountId);
-
-			String strPreviousTaxYear;
-			try {
-				Integer intTaxYear = Integer.valueOf(objOppty.Tax_Year__c);
-				intTaxYear--;
-				strPreviousTaxYear = String.valueOf(intTaxYear);
-			} catch (Exception objEx) {
-				return;
-			}
-
-			Id idPreviousTaxYearOpptyOwner;
-			for (Opportunity objRelOppty : objAccount?.Opportunities) {
-				if (objOppty.Id != objRelOppty.Id && objRelOppty.RecordTypeId == OpportunityUtil.R_D_TAX_CREDITS_OPPTY_RT_ID && objRelOppty.Tax_Year__c == strPreviousTaxYear) {
-					idPreviousTaxYearOpptyOwner = objRelOppty.Owner.IsActive ? objRelOppty.OwnerId : null;
-					break;
-				}
-			}
-
-			if (idPreviousTaxYearOpptyOwner != null) {
-				objOppty.OwnerId = idPreviousTaxYearOpptyOwner;
-			}
 		}
 	}
 }

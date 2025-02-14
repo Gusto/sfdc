@@ -552,16 +552,16 @@ public class CaseTriggerHelperTest {
 		list_Cases.add(objCase18);
 
 		Case objCase19 = new TestDataFactory.CaseBuilder()
-			.setAccountId(objAccount.Id)
-			.setContactId(objContact.Id)
-			.setRecordTypeId('Modern Bank')
-			.setOrigin(CaseUtils.ORIGIN_EMAIL)
-			.setType(CaseUtils.TYPE_MODERN_BANK)
-			.setSubject('Test Modern bank')
-			.setStatus(CaseUtils.STATUS_OPEN)
-			.setSuppliedEmail('test.test@test.com')
-			.setDescription('Test Modern bank')
-			.build();
+		.setAccountId(objAccount.Id)
+		.setContactId(objContact.Id)
+		.setRecordTypeId('Modern Bank')
+		.setOrigin(CaseUtils.ORIGIN_EMAIL)
+		.setType(CaseUtils.TYPE_MODERN_BANK)
+		.setSubject('Test Modern bank')
+		.setStatus(CaseUtils.STATUS_OPEN)
+		.setSuppliedEmail('test.test@test.com')
+		.setDescription('Test Modern bank')
+		.build();
 		list_Cases.add(objCase19);
 
 		Case objCase20 = new TestDataFactory.CaseBuilder()
@@ -738,7 +738,7 @@ public class CaseTriggerHelperTest {
 		Test.stopTest();
 
 		List<Zendesk_Integration_Queue__c> list_ZendeskQueues = new List<Zendesk_Integration_Queue__c>([SELECT Id FROM Zendesk_Integration_Queue__c WHERE Case_Id__c = :objCase.id]);
-		//System.assertEquals(0, list_ZendeskQueues.size(), 'List cannot be empty');
+	//	System.assertEquals(1, list_ZendeskQueues.size(), 'List cannot be empty');
 
 		List<Case> list_Cases = [SELECT Customer_Journey__c FROM Case WHERE Id = :objCase.id];
 		System.assertEquals(null, list_Cases[0].Customer_Journey__c, 'List cannot be empty');
@@ -2390,6 +2390,7 @@ public class CaseTriggerHelperTest {
 		Test.stopTest();
 	}
 
+
 	/**
 	 * @Author      : Pradeep Chary
 	 * @Description : Test method to ByPass Auto close of Risk Assurance Case
@@ -3331,7 +3332,7 @@ public class CaseTriggerHelperTest {
 		insert objCase;
 		Case updatedCase = [SELECT Id, Partner_Account__c FROM Case WHERE id = :objCase.Id];
 		System.assertEquals(updatedCase.Partner_Account__c, objAccount.Id, 'Incorrect Result');
-		updatedCase.Partner_Account__c = null;
+		updatedCase.Partner_Account__c=null;
 		update updatedCase;
 		updatedCase = [SELECT Id, Partner_Account__c FROM Case WHERE id = :objCase.Id];
 		System.assertEquals(updatedCase.Partner_Account__c, objAccount.Id, 'Incorrect Result');
@@ -3373,7 +3374,7 @@ public class CaseTriggerHelperTest {
 
 		insert objCase;
 		Case updatedCase = [SELECT Id, Partner_Account__c, Status FROM Case WHERE id = :objCase.Id];
-		//System.assertEquals(updatedCase.Status, 'Closed', 'Incorrect Result');
+		System.assertEquals(updatedCase.Status, 'Closed', 'Incorrect Result');
 		Test.stopTest();
 	}
 
@@ -5139,7 +5140,7 @@ public class CaseTriggerHelperTest {
 	static void testCasePillarMapping() {
 		Case objCase = [SELECT Id, Specialization__c, Company_Size__c, Support_Level__c FROM Case WHERE SuppliedEmail = 'testcasepillar1@gusto.com'];
 		Case objCase2 = [SELECT Id, Specialization__c, Company_Size__c, Support_Level__c FROM Case WHERE SuppliedEmail = 'testcasepillar2@gusto.com'];
-
+		
 		Test.startTest();
 		objCase.Specialization__c = 'Cancel';
 		update objCase;
@@ -5191,7 +5192,12 @@ public class CaseTriggerHelperTest {
 		Account objAccount = [SELECT Id, Name FROM Account LIMIT 1];
 		Contact objContact = [SELECT Id FROM Contact WHERE FirstName = 'Test Contact' LIMIT 1];
 
-		User objUser = [SELECT Id, UserRole.Name FROM User WHERE Email = 'testSalesMDR_XX_User@task.com' AND UserRoleId = :Label.MDR_Role_ID LIMIT 1];
+		User objUser = [
+			SELECT Id, UserRole.Name
+			FROM User
+			WHERE Email = 'testSalesMDR_XX_User@task.com' AND UserRoleId = :Label.MDR_Role_ID
+			LIMIT 1
+		];
 
 		System.runAs(objUser) {
 			Test.startTest();
@@ -5228,7 +5234,12 @@ public class CaseTriggerHelperTest {
 		Account objAccount = [SELECT Id, Name FROM Account LIMIT 1];
 		Contact objContact = [SELECT Id FROM Contact WHERE FirstName = 'Test Contact' LIMIT 1];
 
-		User objUser = [SELECT Id, UserRole.Name FROM User WHERE Email = 'testSalesMDR_XX_User@task.com' AND UserRoleId = :Label.MDR_Role_ID LIMIT 1];
+		User objUser = [
+			SELECT Id, UserRole.Name
+			FROM User
+			WHERE Email = 'testSalesMDR_XX_User@task.com' AND UserRoleId = :Label.MDR_Role_ID
+			LIMIT 1
+		];
 
 		System.runAs(objUser) {
 			Test.startTest();
@@ -5258,50 +5269,10 @@ public class CaseTriggerHelperTest {
 	}
 
 	/**
-	 * @Author      : Shyam Nasare
-	 * @Description : to check the update on OCR processed TNDC records
-	 **/
-	@isTest
-	static void testProcessOCRTNDCRecords() {
-		Account objAccount = [SELECT Id, Name FROM Account LIMIT 1];
-		Contact objContact = [SELECT Id FROM Contact WHERE FirstName = 'Test Contact' LIMIT 1];
-		Agency_Information__c objAgency = TestDataFactory.createOneAgencyInforation('Internal Revenue Service');
-		Id OCR_RECORD_TYPE_ID = Schema.SObjectType.Tax_Notice_Index__c.getRecordTypeInfosByDeveloperName().get('OCR').getRecordTypeId();
-
-		Case objCase = new TestDataFactory.CaseBuilder()
-			.setAccountId(objAccount.Id)
-			.setContactId(objContact.Id)
-			.setRecordTypeId('Tax Res')
-			.setType('Tax Res')
-			.setSubject('Test Subject')
-			.setOrigin('Email')
-			.setDirection('Inbound')
-			.setStatus(CaseUtils.CASE_STATUS_READY_FOR_OCR_CAPTURE)
-			.setSuppliedEmail('test@gusto.com')
-			.setAgencyInformation(objAgency.Id)
-			.build();
-		insert objCase;
-
-		Tax_Notice_Index__c objTaxNotice = new TestDataFactory.TaxNoticeIndexBuilder()
-			.setCaseId(objCase.Id)
-			.setRecordTypeId(OCR_RECORD_TYPE_ID)
-			.setAgencyInformation(objAgency.Id)
-			.setCompanyName('Test Company')
-			.build();
-		insert objTaxNotice;
-
-		CaseTriggerHelper.processOCRTNDCRecords(new Map<Id, Case>{objCase.Id=>objCase});
-
-		objCase = [SELECT Id, Status FROM Case WHERE Id = :objCase.Id];
-
-		System.assert(objCase != null);
-	}
-
-	/**
 	 * @author       Jayesh Gawande
 	 * @description  This method is used to test setCaseOwnerWhenEmailSenderIsNBKC method when case from NBKC route it to Risk Assurance.
-	 * @param        NA
-	 * @return       NA
+	 * @param 		 NA
+	 * @return 		 NA
 	 **/
 	@isTest
 	static void setCaseOwnerWhenEmailSenderIsNBKCTest() {
@@ -5319,5 +5290,5 @@ public class CaseTriggerHelperTest {
 		objCase = [SELECT Id, RecordTypeId, Type FROM Case WHERE Id = :objCase.Id];
 		System.assertEquals(objCase.RecordTypeId, CaseUtils.RECTYPE_RISK_ASSURANCE, 'Case RecordType should be set to Risk Assurance');
 		System.assertEquals(objCase.Type, CaseUtils.TYPE_INVESTIGATIONS, 'Case Type should be set to Investigations');
-	}
+	}	
 }

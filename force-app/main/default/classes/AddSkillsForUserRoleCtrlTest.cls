@@ -116,7 +116,7 @@ public class AddSkillsForUserRoleCtrlTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Alegeus').setState(objState.Id).setPartnerType('TAdA').build());
+		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('Alegeus').setState(objState.Id).build());
 		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('TEST CARRIER 1').setState(objState.Id).build());
 		list_Carriers.add(new TestDataFactory.CarrierBuilder().setName('TEST CARRIER 2').setState(objState.Id).build());
 		insert list_Carriers;

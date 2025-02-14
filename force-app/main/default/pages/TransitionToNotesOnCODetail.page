@@ -60,6 +60,22 @@
             window.open('/'+redirectUrl4, '_blank');
         }
     }    
+    //for opening TTC
+    function openTTCTab(recCOId){
+        var redirectUrl5 = '/apex/DisplayEditTTConfirmation?cid='+recCOId;
+        //var redirectUrl1 = recId;
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult){
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult){
+                    sforce.console.openSubtab(primaryResult.id, redirectUrl5, true,'TTC', null);
+                });
+            });
+        } else {
+            // for inline Vf
+            window.open('/'+redirectUrl5, '_blank');
+        }
+    }  
+    
     </script>
     <apex:form >
         <apex:pageMessages ></apex:pageMessages>
@@ -78,6 +94,9 @@
                     </tr>
                     <tr>
                         <td><b>Transition To Submission:</b>  <a href="javascript:void(0);" onclick="openTTSTab('{!CarrierOrderObj.Benefit_Order__c}');return false;">Open TTS</a></td>
+                    </tr>
+                    <tr style="{!if(blnIsCarrierAlegeus=true,'display:none','')}">
+                        <td><b>Transition To Confirmation:</b>  <a href="javascript:void(0);" onclick="openTTCTab('{!CarrierOrderObj.Id}');return false;">Open TTC</a></td>
                     </tr>
                 </table> 
                 

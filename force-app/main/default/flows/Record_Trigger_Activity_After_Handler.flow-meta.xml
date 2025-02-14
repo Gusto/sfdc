@@ -258,15 +258,13 @@
         </rules>
     </decisions>
     <description>03/13/2023 - Rushi R - Initial version migrated from Process Builder
-10/04/2024 - Update to include qualtrics survey triggers
-1/20/2025 - BSS-2980 - Update chat source contains/does not contain check from &quot;company_onboarding&quot; to &quot;app.gusto.com&quot;</description>
+10/04/2024 - Update to include qualtrics survey triggers</description>
     <environments>Default</environments>
     <formulas>
-        <description>Returns true if ChatSource__c contains the text &quot;company_onboarding&quot;
-Update BSS-2980 - Changed to contains &quot;app.gusto.com&quot;</description>
+        <description>Returns true if ChatSource__c contains the text &quot;company_onboarding&quot;</description>
         <name>ChatSource_Contains_CO</name>
         <dataType>Boolean</dataType>
-        <expression>CONTAINS({!$Record.ChatSource__c}, &quot;app.gusto.com&quot;)</expression>
+        <expression>CONTAINS({!$Record.ChatSource__c}, &quot;company_onboarding&quot;)</expression>
     </formulas>
     <formulas>
         <description>Returns true if the record is new.</description>

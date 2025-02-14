@@ -390,7 +390,7 @@ public class NPRU_TicketButtonOnBODetailExt {
 	public void ticketDetail() {
 		Set<String> set_ReasonDetails = new Set<String>();
 		list_ReasonsDetail = new List<SelectOption>();
-		setTadasCOForSubmission();
+		setAlegeusCOForSubmission();
 
 		// Query all Ticket Mapping records
 		for (Ticket_Mapping__c objTM : [
@@ -443,8 +443,8 @@ public class NPRU_TicketButtonOnBODetailExt {
 			list_ReasonsDetail.add(new SelectOption(NONE, NONE));
 		}
 	}
-	//set the only Tadas carrier Order in the Selection list
-	public PageReference setTadasCOForSubmission() {
+	//set the only Alegeus carrier Order in the Selection list
+	public PageReference setAlegeusCOForSubmission() {
 		if (TicketUtil.TICKET_ROLE_FULFILLMENT.equalsIgnoreCase(strSelectedSubTeam) && TicketUtil.TICKET_REASON_TADA_TERMINATION.equalsIgnoreCase(strSelectedReason)) {
 			objQCError.Error_Owner__c = null;
 			objBOTemp.Escalated_User__c = null;
@@ -453,16 +453,16 @@ public class NPRU_TicketButtonOnBODetailExt {
 			map_COToOwners = new Map<Id, Id>();
 			map_COToCarrierIds = new Map<Id, Id>();
 			set_COIdsSubmissionAuto = new Set<String>();
-			List<Carrier_Order__c> list_TadasCarrierOrder = new List<Carrier_Order__c>();
+			List<Carrier_Order__c> list_AlegeusCarrierOrder = new List<Carrier_Order__c>();
 
-			list_TadasCarrierOrder = [
+			list_AlegeusCarrierOrder = [
 				SELECT Id, Implementation_Stage__c, Name, OwnerId, Confirmation_Owner__c, Audit_Owner__c, Carrier__c, Sent_to_HI_for_Submission__c
 				FROM Carrier_Order__c
 				WHERE Benefit_Order__c = :strCurrentRecord AND (Order_Type__c = :CarrierOrderUtil.CO_ORDER_TYPE_TADA_PRE_OE_SETUP OR Order_Type__c = :CarrierOrderUtil.ORDER_TYPE_TADA_NO_PRE_OE)
 			];
 
 			list_COsOwner = new List<SelectOption>();
-			updateTicketOwnerForSubmission(list_TadasCarrierOrder, map_COToOwners, map_COToCarrierIds);
+			updateTicketOwnerForSubmission(list_AlegeusCarrierOrder, map_COToOwners, map_COToCarrierIds);
 		} else if (TicketUtil.TICKET_ROLE_FULFILLMENT.equalsIgnoreCase(strSelectedSubTeam) && !TicketUtil.TICKET_REASON_TADA_TERMINATION.equalsIgnoreCase(strSelectedReason)) {
 			objQCError.Error_Owner__c = null;
 			objBOTemp.Escalated_User__c = null;

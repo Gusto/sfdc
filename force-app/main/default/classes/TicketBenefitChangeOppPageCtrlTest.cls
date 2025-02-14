@@ -73,17 +73,17 @@ private class TicketBenefitChangeOppPageCtrlTest {
 
 		extension.savemethod();
 
-		extension.lst_Tada[0].isChecked = true;
+		extension.lst_Alegeus[0].isChecked = true;
 
 		extension.savemethod();
 
-		extension.lst_Tada[0].lineItem.Renewal_Date__c = System.today().addDays(5);
+		extension.lst_Alegeus[0].lineItem.Renewal_Date__c = System.today().addDays(5);
 
 		extension.addNewRow();
 
 		System.assert(extension.savemethod() == null);
 
-		extension.lst_Tada[0].orderName = 'Flexible Spending Account - Medical';
+		extension.lst_Alegeus[0].orderName = 'Flexible Spending Account - Medical';
 		extension.checkBenefitType();
 		System.assert(extension.savemethod() == null);
 
@@ -126,8 +126,8 @@ private class TicketBenefitChangeOppPageCtrlTest {
 		extension.checkBenefitType();
 		extension.objTTFRecord.Contact__c = objContact.Id;
 		extension.fetchPrimaryContact();
-		extension.lst_Tada[0].isChecked = true;
-		extension.lst_Tada[0].lineItem.Renewal_Date__c = system.today().addDays(5);
+		extension.lst_Alegeus[0].isChecked = true;
+		extension.lst_Alegeus[0].lineItem.Renewal_Date__c = system.today().addDays(5);
 
 		System.assert(extension.savemethod() != null);
 
@@ -170,8 +170,8 @@ private class TicketBenefitChangeOppPageCtrlTest {
 		extension.checkBenefitType();
 		extension.objTTFRecord.Contact__c = objContact.Id;
 		extension.fetchPrimaryContact();
-		extension.lst_Tada[0].isChecked = true;
-		extension.lst_Tada[0].lineItem.Renewal_Date__c = system.today().addDays(5);
+		extension.lst_Alegeus[0].isChecked = true;
+		extension.lst_Alegeus[0].lineItem.Renewal_Date__c = system.today().addDays(5);
 
 		System.assert(extension.savemethod() == null);
 
@@ -288,7 +288,6 @@ private class TicketBenefitChangeOppPageCtrlTest {
 
 		Carrier__c obj_Carrier = new Carrier__c();
 		obj_Carrier.Name = 'alegeus';
-		obj_Carrier.Partner_Type__c = 'TAdA';
 		obj_Carrier.Termination_Effective_Date__c = 'On the Date';
 		obj_Carrier.State__c = 'al;ak';
 		insert obj_Carrier;

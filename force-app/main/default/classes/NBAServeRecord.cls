@@ -16,8 +16,9 @@ public without sharing class NBAServeRecord {
 	public static final String LOGIC_AND = 'AND';
 	public static final String LOGIC_OR = 'OR';
 	public static final String LOGIC = 'logic';
-	public static final String EMPTY_VALUE = 'Empty Value';
-	public static final String ANY_VALUE = 'Any Value';
+	public static final String EMPTY_VALUE = '[Blank/Empty Value]';
+	public static final String ANY_VALUE = '[Any Value]';
+	public static final String LOGGED_IN_USER = '[Logged In User]';
 
 	public class MyException extends Exception {
 	}
@@ -439,13 +440,6 @@ public without sharing class NBAServeRecord {
 						: getCategoryAlignment(objRecordToReturn, list_RulesToSkip, objWrapper.objRuleConfig.name);
 					objRecordToReturn.put('Served_Other_Rules__c', String.join(list_OtherCategories, ';'));
 
-					//Adding user lookup fields for serving record
-					if (objPrimaryWrapper.userFieldsAssignment != null) {
-						for (String strField : objPrimaryWrapper.userFieldsAssignment) {
-							objRecordToReturn.put(strField, UserInfo.getUserId());
-						}
-					}
-
 					//Validate and update Field Mappings
 					if (objPrimaryWrapper.fieldMapping != null) {
 						for (NBARequestWrapper.FieldMapping field : objPrimaryWrapper.fieldMapping) {
@@ -458,10 +452,17 @@ public without sharing class NBAServeRecord {
 								if (mapping.fromValue == ANY_VALUE) {
 									blnHasAnyValueMapping = true;
 									strAnyValueTo = strToValue;
+									if (strToValue == LOGGED_IN_USER) {
+										strAnyValueTo = UserInfo.getUserId();
+									}
 									continue;
 								}
 								if (objRecordToReturn.get(field.selectedField) == strFromValue) {
-									objRecordToReturn.put(field.selectedField, strToValue);
+									if (strToValue == LOGGED_IN_USER) {
+										objRecordToReturn.put(field.selectedField, UserInfo.getUserId());
+									} else {
+										objRecordToReturn.put(field.selectedField, strToValue);
+									}
 									blnHasChanged = true;
 									break;
 								}
@@ -472,10 +473,6 @@ public without sharing class NBAServeRecord {
 						}
 					}
 
-					// Set record owner if the rule has assign record owner set to true
-					if (objPrimaryWrapper != null && objPrimaryWrapper.assignRecordOwner != null && objPrimaryWrapper.assignRecordOwner) {
-						objRecordToReturn.put('OwnerId', UserInfo.getUserId());
-					}
 					// if record is unavailable, send an error message
 					if (!checkRecordAccess(objRecordToReturn)) {
 						throw new MyException('unable to obtain exclusive access');

@@ -13,8 +13,6 @@ public class HICarrierInformationBatchTest {
 	 **/
 	@testSetup
 	static void setup() {
-		Configuration_Settings__c objConfigSettings = new TestDataFactory.ConfigurationSettingsBuilder().setActiveTadaProvider('alegeus').build();
-        insert objConfigSettings;
 		insert new List<Carrier_Play_Information_Defaults__c>{
 			new TestDataFactory.CarrierPlayInfoDefaultBuilder().setName('AuditFirstPlayBef').setEventType('Audit').setPlayModeType('First Play').setBeforeAfter('Before').setNumberOfDays(3).build(),
 			new TestDataFactory.CarrierPlayInfoDefaultBuilder().setName('AuditFirstPlayAft').setEventType('Audit').setPlayModeType('First Play').setBeforeAfter('After').setNumberOfDays(2).build(),
@@ -114,7 +112,7 @@ public class HICarrierInformationBatchTest {
 		Carrier__c objCarrierRec = new TestDataFactory.CarrierBuilder().setName('Test123').setKey('test123').setId('test123').build();
 		list_Carriers.add(objCarrierRec);
 
-		Carrier__c objCarrierRec2 = new TestDataFactory.CarrierBuilder().setName('Alegeus').setKey('alegeus').setId('alegeus123').setPartnerType('TAdA').build();
+		Carrier__c objCarrierRec2 = new TestDataFactory.CarrierBuilder().setName('Alegeus').setKey('alegeus123').setId('alegeus123').build();
 		list_Carriers.add(objCarrierRec2);
 
 		Carrier__c objCarrierRec3 = new TestDataFactory.CarrierBuilder().setName('Test1236').setKey('test1236').setId('test1236').build();

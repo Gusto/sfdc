@@ -17,7 +17,7 @@
 				</lightning-input>
 			</lightning-layout-item>
 			<lightning-layout-item padding="around-small" size="2">
-				<lightning-combobox name="priority" label="Priority" value={strPriority} placeholder="Select a Priority" options={priorityOptions} onchange={handlePriorityChange}></lightning-combobox>
+				<lightning-input type="number" name="priority" label="Priority" placeholder="Enter the routing priority..." value={strPriority} onchange={handlePriorityChange}> </lightning-input>
 			</lightning-layout-item>
 			<lightning-layout-item padding="around-small" size="2">
 				<div class="slds-form-element__label slds-no-flex">Skills</div>
@@ -71,13 +71,7 @@
 					tabindex="0"
 				></lightning-checkbox-group>
 			</lightning-layout-item>
-			<lightning-layout-item padding="around-small" size="2">
-				<lightning-record-picker label="Agent" placeholder="Search Agents..." object-api-name="User" onchange={handleAgentChange} value={strAgentId}> </lightning-record-picker>
-			</lightning-layout-item>
-			<lightning-layout-item padding="around-small" size="2">
-				<lightning-combobox name="chatbutton" label="Chat Button" value={strChatButtonId} placeholder="Select a Chat Button" options={list_ChatButtons} onchange={handleButtonChange}></lightning-combobox>
-			</lightning-layout-item>
-			<lightning-layout-item class="slds-p-top_x-large" size="4">
+			<lightning-layout-item padding="around-small" size="4">
 				<lightning-button
 					class="slds-var-p-around_small"
 					disabled={blnDisableFilter}

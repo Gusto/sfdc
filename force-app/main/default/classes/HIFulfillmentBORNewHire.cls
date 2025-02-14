@@ -88,7 +88,7 @@ public class HIFulfillmentBORNewHire {
 				caseDescription += '\nHire Date: ' + HIFulfillmentEventHelperFunctions.getChangeDateFormat(hiEventInfoParsed.employee.hired_at);
 
 				String employeeName = HIFulfillmentEventHelperFunctions.getName(hiEventInfoParsed.employee.first_Name, hiEventInfoParsed.employee.last_Name, hiEventInfoParsed.employee.middle_initial);
-				caseDescription += '\n\n' + employeeName + ' of ' + hiEventInfoParsed.company.name + ' would like to enroll in the following plans:';
+				caseDescription += '\n\n' + employeeName + ' of ' + hiEventInfoParsed.company.name + ' would like to enroll in the following Alegeus plans:';
 				caseDescription += '\nLink to employee: ' + hiEventInfoParsed.employee.hippo_url;
 				caseDescription += '\nEE Panda Link: ' + hiEventInfoParsed.employee.panda_url;
 

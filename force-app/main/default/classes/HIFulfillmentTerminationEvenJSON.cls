@@ -9,6 +9,7 @@ public class HIFulfillmentTerminationEvenJSON {
 	public cls_policies[] policies;
 	public cls_dependents[] dependents;
 	public cls_forms[] forms;
+	public cls_alegeus alegeus;
 	public cls_tada tada;
 	public cls_commuter_benefit commuter_benefit;
 	public cls_commuter_employee_benefit commuter_employee_benefit;
@@ -200,14 +201,19 @@ public class HIFulfillmentTerminationEvenJSON {
 		public String url;
 	}
 
-	public class tada_subscription_info {
+	public class alegeus_subscription_info {
 		public cls_benefit_items[] benefit_items;
 		public cls_policies[] policies;
 	}
 
+	public class cls_alegeus {
+		public alegeus_subscription_info dca;
+		public alegeus_subscription_info fsa;
+		public alegeus_subscription_info hsa;
+	}
 	public class cls_tada {
-		public tada_subscription_info dca;
-		public tada_subscription_info fsa;
-		public tada_subscription_info hsa;
+		public alegeus_subscription_info dca;
+		public alegeus_subscription_info fsa;
+		public alegeus_subscription_info hsa;
 	}
 }

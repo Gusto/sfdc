@@ -80,37 +80,37 @@
                 </apex:pageBlockSection>
             </apex:outputPanel>
 		    
-			<apex:outputPanel id="lineCoverage1" style="display:{!if(lst_TadaCarrierOrderDetails.size>0,'block;','none;')}" > 
+			<apex:outputPanel id="lineCoverage1" style="display:{!if(lst_AlegeusCarrierOrderDetails.size>0,'block;','none;')}" > 
                 <div style="display:{!if(isTransferType==true,'block;','none;')}" class="custom-header-text">Manage TADA Order(s)</div>
                  	<br/>
-					<apex:repeat value="{!lst_TadaCarrierOrderDetails}" var="carrierDetail">
+					<apex:repeat value="{!lst_AlegeusCarrierOrderDetails}" var="carrierDetail">
 					<table cellpadding="5" cellspacing="0" width="100%" class="custom-table" id="table-01">
 						<tbody>
                             <tr>
                                 <td style="font-weight: bold;">Benefit Type</td>
 								<td>
-									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName1}');" id="orderName1" value="{!lst_Tada[0].isChecked}"/>{!lst_Tada[0].orderName}
+									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName1}');" id="orderName1" value="{!lst_Alegeus[0].isChecked}"/>{!lst_Alegeus[0].orderName}
 								</td>
 								<td>
-									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName2}');" id="orderName2" value="{!lst_Tada[1].isChecked}"/>{!lst_Tada[1].orderName}
+									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName2}');" id="orderName2" value="{!lst_Alegeus[1].isChecked}"/>{!lst_Alegeus[1].orderName}
 								</td>
 								<td>
-									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName3}');" id="orderName3" value="{!lst_Tada[2].isChecked}"/>{!lst_Tada[2].orderName}
+									<apex:inputCheckbox onclick="checkValue('{!$Component.orderName3}');" id="orderName3" value="{!lst_Alegeus[2].isChecked}"/>{!lst_Alegeus[2].orderName}
 								</td>
 								<td>
-									<apex:inputCheckbox id="orderName4" value="{!lst_Tada[3].isChecked}"/>{!lst_Tada[3].orderName}
+									<apex:inputCheckbox id="orderName4" value="{!lst_Alegeus[3].isChecked}"/>{!lst_Alegeus[3].orderName}
 								</td>
                             </tr>
                             <tr>
                                <td style="font-weight: bold;">Renewal Date</td>
 							   <td>
-									<apex:outputPanel style="display:{!if(lst_Tada[0].isChecked,'block;','none;')}"  id="orderDate1"><apex:inputField styleclass="edit-mode" value="{!lst_Tada[0].lineItem.Renewal_Date__c}" /></apex:outputPanel>
+									<apex:outputPanel style="display:{!if(lst_Alegeus[0].isChecked,'block;','none;')}"  id="orderDate1"><apex:inputField styleclass="edit-mode" value="{!lst_Alegeus[0].lineItem.Renewal_Date__c}" /></apex:outputPanel>
 							   </td> 
 							   <td>
-									<apex:outputPanel style="display:{!if(lst_Tada[1].isChecked,'block;','none;')}"  id="orderDate2"><apex:inputField styleclass="edit-mode" value="{!lst_Tada[1].lineItem.Renewal_Date__c}" /></apex:outputPanel>
+									<apex:outputPanel style="display:{!if(lst_Alegeus[1].isChecked,'block;','none;')}"  id="orderDate2"><apex:inputField styleclass="edit-mode" value="{!lst_Alegeus[1].lineItem.Renewal_Date__c}" /></apex:outputPanel>
 							   </td> 
 							   <td>
-									<apex:outputPanel style="display:{!if(lst_Tada[2].isChecked,'block;','none;')}"  id="orderDate3"><apex:inputField styleclass="edit-mode" value="{!lst_Tada[2].lineItem.Renewal_Date__c}" /></apex:outputPanel>
+									<apex:outputPanel style="display:{!if(lst_Alegeus[2].isChecked,'block;','none;')}"  id="orderDate3"><apex:inputField styleclass="edit-mode" value="{!lst_Alegeus[2].lineItem.Renewal_Date__c}" /></apex:outputPanel>
 							   </td> 
 							   <td>
 							   </td> 
@@ -136,10 +136,10 @@
 							<apex:repeat value="{!lst_CarrierOrderDetails}" var="carrierDetail">
 								<tr>
                                     <td>
-                                        <apex:outputField styleClass="normal-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id != null || carrierDetail.isTadaRecord==true,true,false)}"/>
+                                        <apex:outputField styleClass="normal-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id != null || carrierDetail.isAlegeusRecord==true,true,false)}"/>
                                         <div class="requiredInput">
                                             <div class="requiredBlock"></div>
-                                        	<apex:inputField required="false" styleClass="edit-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id == null && carrierDetail.isTadaRecord==false,true,false)}" onchange="fetchBenefitType('{!lst_count}');"/>
+                                        	<apex:inputField required="false" styleClass="edit-mode" value="{!carrierDetail.objCarrierOrder.Carrier__c}" rendered="{! if(carrierDetail.objCarrierOrder.Id == null && carrierDetail.isAlegeusRecord==false,true,false)}" onchange="fetchBenefitType('{!lst_count}');"/>
                                         </div>
                                     </td>
                                     <td>
@@ -165,7 +165,7 @@
 			 
 			
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton styleclass="btn-blue white add-row" value="Add" action="{!addNewRow}" status="actStatusId" rerender="frmId" rendered="{!if(isTransferType==true && isTada==false,true,false)}"/>
+                <apex:commandButton styleclass="btn-blue white add-row" value="Add" action="{!addNewRow}" status="actStatusId" rerender="frmId" rendered="{!if(isTransferType==true && isAlegeus==false,true,false)}"/>
                 <apex:commandButton styleClass="btn-blue" action="{!savemethod}" value="Submit" status="actStatusId" rendered="{!IF(hasError == false,true,false)}" reRender="frmId"/>
                 <apex:commandButton styleClass="btn-blue" action="{!Cancel}" value="Back" status="actStatusId" />
             </apex:pageBlockButtons>

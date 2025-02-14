@@ -34,6 +34,22 @@
         </connector>
     </assignments>
     <assignments>
+        <name>Assign_Care_Auto_Solve_PermSet_Id</name>
+        <label>Assign Care Auto Solve PermSet Id</label>
+        <locationX>446</locationX>
+        <locationY>4151</locationY>
+        <assignmentItems>
+            <assignToReference>CareAutoSolveId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Over_Solve_Permission_Sets.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Over_Solve_Permission_Sets</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>Assign_Case_Type_Gusto_Global</name>
         <label>Assign Case Type Gusto Global</label>
         <locationX>424</locationX>
@@ -47,6 +63,22 @@
         </assignmentItems>
         <connector>
             <targetReference>Set_Solve_Processed_Flag</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_CX_Labs_Id</name>
+        <label>Assign CX Labs Id</label>
+        <locationX>710</locationX>
+        <locationY>4151</locationY>
+        <assignmentItems>
+            <assignToReference>CXLabsId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Over_Solve_Permission_Sets.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Over_Solve_Permission_Sets</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -125,7 +157,7 @@
         <name>Assign_Owner_Id_2</name>
         <label>Assign Owner Id</label>
         <locationX>578</locationX>
-        <locationY>3719</locationY>
+        <locationY>5135</locationY>
         <assignmentItems>
             <assignToReference>$Record.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -138,7 +170,7 @@
         <name>Assign_Owner_Id_3</name>
         <label>Assign Owner Id</label>
         <locationX>842</locationX>
-        <locationY>3719</locationY>
+        <locationY>5135</locationY>
         <assignmentItems>
             <assignToReference>$Record.OwnerId</assignToReference>
             <operator>Assign</operator>
@@ -146,6 +178,38 @@
                 <elementReference>Get_Engagement_Non_Actionable.Id</elementReference>
             </value>
         </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Status_Eligible</name>
+        <label>Assign Status Eligible</label>
+        <locationX>94</locationX>
+        <locationY>4643</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Auto_Solve_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Eligible</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Engagement_Path</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Status_Perm_not_Assigned</name>
+        <label>Assign Status Perm not Assigned</label>
+        <locationX>358</locationX>
+        <locationY>4643</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Auto_Solve_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Permission Not Granted</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Engagement_Path</targetReference>
+        </connector>
     </assignments>
     <assignments>
         <name>Assign_Subject_to_Case</name>
@@ -284,7 +348,7 @@
         <name>Assignment_Engagement</name>
         <label>Assignment Engagement</label>
         <locationX>314</locationX>
-        <locationY>3719</locationY>
+        <locationY>5135</locationY>
         <assignmentItems>
             <assignToReference>$Record.Skip_Survey__c</assignToReference>
             <operator>Assign</operator>
@@ -487,7 +551,7 @@
         <name>Set_Deflection_Status</name>
         <label>Set Deflection Status</label>
         <locationX>50</locationX>
-        <locationY>3611</locationY>
+        <locationY>5027</locationY>
         <assignmentItems>
             <assignToReference>$Record.Auto_Response_Email_Content__c</assignToReference>
             <operator>Assign</operator>
@@ -516,7 +580,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Engagement_Path</targetReference>
+            <targetReference>Owner_Changed</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -539,7 +603,7 @@
         <name>Set_Is_Escalated_To_True</name>
         <label>Set Is Escalated To True</label>
         <locationX>1106</locationX>
-        <locationY>3611</locationY>
+        <locationY>5027</locationY>
         <assignmentItems>
             <assignToReference>$Record.IsEscalated</assignToReference>
             <operator>Assign</operator>
@@ -786,6 +850,88 @@
         </rules>
     </decisions>
     <decisions>
+        <name>Check_Auto_Solve_Permission</name>
+        <label>Check Auto-Solve Permission</label>
+        <locationX>358</locationX>
+        <locationY>4535</locationY>
+        <defaultConnector>
+            <targetReference>Engagement_Path</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Permission_Assigned</name>
+            <conditionLogic>((1 AND 4) OR 2) AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Forethought_Solve_Response</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Internal_Solve_Response</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_PermissionSetAssignments</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Forethought_Solve_Response.forethought__EmailContentHTML__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Status_Eligible</targetReference>
+            </connector>
+            <label>Permission Assigned</label>
+        </rules>
+        <rules>
+            <name>Permission_not_Assigned</name>
+            <conditionLogic>((1 AND 4) OR 2) AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Forethought_Solve_Response</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Internal_Solve_Response</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_PermissionSetAssignments</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Forethought_Solve_Response.forethought__EmailContentHTML__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Status_Perm_not_Assigned</targetReference>
+            </connector>
+            <label>Permission not Assigned</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Check_LSI_Field</name>
         <label>Check LSI Field</label>
         <locationX>4538</locationX>
@@ -822,6 +968,46 @@
                 <targetReference>Update_Case_fields</targetReference>
             </connector>
             <label>Present</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Name</name>
+        <label>Check Name</label>
+        <locationX>710</locationX>
+        <locationY>4043</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Over_Solve_Permission_Sets</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Care_Auto_Solve</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Over_Solve_Permission_Sets.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Care_Auto_Solve</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Care_Auto_Solve_PermSet_Id</targetReference>
+            </connector>
+            <label>Care Auto Solve</label>
+        </rules>
+        <rules>
+            <name>CX_Labs</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Over_Solve_Permission_Sets.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>CX_Labs_Permission_Set</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_CX_Labs_Id</targetReference>
+            </connector>
+            <label>CX Labs</label>
         </rules>
     </decisions>
     <decisions>
@@ -956,7 +1142,6 @@
             <connector>
                 <targetReference>MF_Update_automation_date_when_status</targetReference>
             </connector>
-            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
             <label>Yes</label>
         </rules>
     </decisions>
@@ -1117,7 +1302,7 @@
         <name>Engagement_Path</name>
         <label>Engagement Path</label>
         <locationX>578</locationX>
-        <locationY>3503</locationY>
+        <locationY>4919</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Case_Owned_by_Auto_Solve_Queue</name>
@@ -1278,13 +1463,6 @@
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>$Record.Status</leftValueReference>
-                <operator>NotEqualTo</operator>
-                <rightValue>
-                    <stringValue>Closed</stringValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>Set_Is_Escalated_To_True</targetReference>
             </connector>
@@ -1297,7 +1475,7 @@
         <locationX>578</locationX>
         <locationY>2603</locationY>
         <defaultConnector>
-            <targetReference>Engagement_Path</targetReference>
+            <targetReference>Owner_Changed</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -1378,6 +1556,38 @@
                 <targetReference>Update_the_Case_Owner_as_Current_User</targetReference>
             </connector>
             <label>Case Reopened</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Owner_Changed</name>
+        <label>Owner Changed?</label>
+        <locationX>578</locationX>
+        <locationY>3503</locationY>
+        <defaultConnector>
+            <targetReference>Engagement_Path</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>OwnerChanged</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record__Prior.OwnerId</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.OwnerId</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>005</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Forethought_Solve_Response</targetReference>
+            </connector>
+            <label>Owner Changed</label>
         </rules>
     </decisions>
     <decisions>
@@ -2055,7 +2265,7 @@
         <locationX>424</locationX>
         <locationY>3119</locationY>
         <defaultConnector>
-            <targetReference>Engagement_Path</targetReference>
+            <targetReference>Owner_Changed</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -2222,7 +2432,6 @@
     </decisions>
     <description>PLEASE make changes on top of this version going forward
 
-Ela - Update the when to execute option for Check Status Updated block
 - Shyam: Updated TaxRes Research in progress email
 - Shyam: Added P&amp;I Autosolve conditions for Research in progress email
 - Corrected Deflection Status for Engagement path
@@ -2346,6 +2555,20 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
     </formulas>
     <interviewLabel>Case Before Save {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Case Before Save Trigger</label>
+    <loops>
+        <name>Loop_Over_Solve_Permission_Sets</name>
+        <label>Loop Over Solve Permission Sets</label>
+        <locationX>358</locationX>
+        <locationY>3935</locationY>
+        <collectionReference>Get_Solve_PermissionSets</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_Name</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_PermissionSetAssignments</targetReference>
+        </noMoreValuesConnector>
+    </loops>
     <loops>
         <description>Loop through the subject lines to find the subject match</description>
         <name>Loop_through_the_subject_lines</name>
@@ -2508,7 +2731,7 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
         <name>Get_Engagement_Auto_Close</name>
         <label>Get Engagement Auto Close</label>
         <locationX>578</locationX>
-        <locationY>3611</locationY>
+        <locationY>5027</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_Owner_Id_2</targetReference>
@@ -2568,7 +2791,7 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
         <name>Get_Engagement_Non_Actionable</name>
         <label>Get Engagement-Non Actionable</label>
         <locationX>842</locationX>
-        <locationY>3611</locationY>
+        <locationY>5027</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_Owner_Id_3</targetReference>
@@ -2622,6 +2845,72 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
         <queriedFields>Id</queriedFields>
         <sortField>Id</sortField>
         <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Forethought_Solve_Response</name>
+        <label>Get Forethought Solve Response</label>
+        <locationX>358</locationX>
+        <locationY>3611</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Internal_Solve_Response</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>forethought__Case__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>forethought__EmailResponseName__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>forethought__ForethoughtSolveEmailConversation__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>forethought__EmailContentHTML__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Internal_Solve_Response</name>
+        <label>Get Internal Solve Response</label>
+        <locationX>358</locationX>
+        <locationY>3719</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Solve_PermissionSets</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Case__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Valid_Request__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>valid_request</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Return_Response__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>InternalAISolveEmailConversation__c</object>
+        <queriedFields>Id</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
@@ -2742,6 +3031,71 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>Get_PermissionSetAssignments</name>
+        <label>Get PermissionSetAssignments</label>
+        <locationX>358</locationX>
+        <locationY>4427</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Auto_Solve_Permission</targetReference>
+        </connector>
+        <filterLogic>1 AND (2 OR 3)</filterLogic>
+        <filters>
+            <field>AssigneeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>PermissionSetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>CareAutoSolveId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>PermissionSetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>CXLabsId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>PermissionSetAssignment</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Solve_PermissionSets</name>
+        <label>Get Solve PermissionSets</label>
+        <locationX>358</locationX>
+        <locationY>3827</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Over_Solve_Permission_Sets</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Care_Auto_Solve</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>CX_Labs_Permission_Set</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>PermissionSet</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <description>Collection of Subject lines from Custom Metadata(General Alert Subject Lines(Engagement)</description>
         <name>Get_Subject_Lines_for_Engagement_Alert</name>
         <label>Get Subject Lines for Engagement Alert</label>
@@ -2759,7 +3113,7 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
         <name>Unauthorized_Case_Reason</name>
         <label>Unauthorized Case Reason</label>
         <locationX>314</locationX>
-        <locationY>3611</locationY>
+        <locationY>5027</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assignment_Engagement</targetReference>
@@ -2856,7 +3210,7 @@ NOT( INCLUDES({!$Record.Action_Taken__c} , &apos;Skip Email Alert&apos; ) )</exp
         <name>Update_Automation_Message_2</name>
         <label>Update Automation Message</label>
         <locationX>4538</locationX>
-        <locationY>4103</locationY>
+        <locationY>5519</locationY>
         <inputAssignments>
             <field>Automation_Status__c</field>
             <value>

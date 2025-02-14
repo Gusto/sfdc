@@ -17,6 +17,7 @@ public without sharing class Utils {
 	public static Set<String> setBOExclude = new Set<String>{ 'Canceled', 'Closed Lost', 'Closed Admin', 'Fulfilled', 'Approved' };
 	public static List<GroupMember> list_GroupMembers;
 	public static List<CaseTeamRole> list_CaseTeamRoles;
+	public static String strTADACarrierName = 'Alegeus';
 	public static Set<String> setOrderExclude = new Set<String>{ 'Closed: Payroll Run', 'Closed: Canceled' };
 	public static final String BENEFIT_TYPE_STD = 'Short Term Disability';
 	public static final String BENEFIT_TYPE_LTD = 'Long Term Disability';

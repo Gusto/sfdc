@@ -56,6 +56,8 @@ public without sharing class TaskTriggerHelper {
 	public Set<Id> set_TicketIds;
 	public Set<Id> set_CustomerRevisionTicketIds;
 	public Set<String> set_StatusHaveArdiusTemplates;
+	public Set<Id> set_AccIdsWithOppToQuery;
+	public Set<Id> set_TaskIdToReassign;
 
 	/*** All Map variables ***/
 	public Map<String, Case_Audit_Log__c> map_ExternalIdToCaseAuditLogs;
@@ -71,6 +73,7 @@ public without sharing class TaskTriggerHelper {
 	public Map<Id, Ticket__c> map_TicketWithTasks;
 	public Map<Id, Ticket__c> map_Tickets;
 	public Map<Id, Ticket__c> map_ArdiusTickets;
+	public Map<Id, Account> map_AccountWithOpportunities;
 
 	/*** All List Variables ***/
 	List<Ticket__c> list_TicketsToBeUpdated;
@@ -94,6 +97,8 @@ public without sharing class TaskTriggerHelper {
 		set_TicketIds = new Set<Id>();
 		set_CustomerRevisionTicketIds = new Set<Id>();
 		set_StatusHaveArdiusTemplates = new Set<String>();
+		set_AccIdsWithOppToQuery = new Set<Id>();
+		set_TaskIdToReassign = new Set<Id>();
 
 		/*** All Map variables ***/
 		map_ExternalIdToCaseAuditLogs = new Map<String, Case_Audit_Log__c>();
@@ -109,6 +114,7 @@ public without sharing class TaskTriggerHelper {
 		map_CaseGenesysCallIdToCase = new Map<String, Case>();
 		map_Tickets = new Map<Id, Ticket__c>();
 		map_ArdiusTickets = new Map<Id, Ticket__c>();
+		map_AccountWithOpportunities = new Map<Id, Account>();
 
 		/*** All List Variables ***/
 		list_TicketsToBeUpdated = new List<Ticket__c>();
@@ -138,7 +144,7 @@ public without sharing class TaskTriggerHelper {
 			populateNICERecordType(objTask);
 			setNBAFieldsOnTask(objTask);
 			setOwnerAssignedToTaskTime(objTask, null);
-			setRecordType(objTask);// Added by sujan for BPO-1990
+			assignPrevTaxYearOpptyAsTaskOwner(objTask, null);
 		}
 	}
 
@@ -192,6 +198,7 @@ public without sharing class TaskTriggerHelper {
 			processNICETasks(objNewTask, objOldTask);
 			setCaseAndOpportunityIds(objNewTask);
 			setOwnerAssignedToTaskTime(objNewTask, objOldTask);
+			assignPrevTaxYearOpptyAsTaskOwner(objNewTask, objOldTask);
 		}
 	}
 
@@ -241,6 +248,7 @@ public without sharing class TaskTriggerHelper {
 	 **/
 	public void setCollectionsBefore(List<Task> list_Tasks) {
 		Set<Id> set_CaseIdsToAdvisingCall = new Set<Id>();
+		Set<Id> set_ArdiusIntegrationUserIds = TicketUtil.getArdiusTicketIntegrationUsers();
 		for (Task objTask : list_Tasks) {
 			if (String.isNotBlank(objTask.Type) && String.isNotBlank(objTask.Genesys_Ani__c) && objTask.Type.equalsIgnoreCase(TaskUtil.TASK_TYPE_CALL) && objTask.Genesys_Ani__c.length() >= 10) {
 				set_GeneysisAniPhoneNos.add(objTask.Genesys_Ani__c);
@@ -270,6 +278,16 @@ public without sharing class TaskTriggerHelper {
 
 			if (checkIfWhatIsTicket(objTask)) {
 				set_TicketIds.add(objTask.WhatId);
+			}
+
+			if (
+				objTask.Feature_Request__c == TaskUtil.TASK_RD_EVALUATION_CALL &&
+				objTask.Status == TaskUtil.TASK_STATUS_OPEN &&
+				checkIfWhatIsAccount(objTask) &&
+				set_ArdiusIntegrationUserIds.contains(objTask.OwnerId)
+			) {
+				set_AccIdsWithOppToQuery.add(objTask.WhatId);
+				set_TaskIdToReassign.add(objTask.Id);
 			}
 		}
 
@@ -317,6 +335,10 @@ public without sharing class TaskTriggerHelper {
 
 		if (!set_TicketIds.isEmpty()) {
 			map_Tickets = new Map<Id, Ticket__c>(queryTickets(set_TicketIds, new List<Id>{ TaskUtil.ARDIUS_TICKET_RT_ID }));
+		}
+
+		if (!set_AccIdsWithOppToQuery.isEmpty()) {
+			map_AccountWithOpportunities = queryAccountsWithRelatedOpptys(set_AccIdsWithOppToQuery);
 		}
 	}
 
@@ -493,18 +515,6 @@ public without sharing class TaskTriggerHelper {
 			objTask.Lead__c = objTask.WhoId;
 		}
 	}
-	/**
-	 * @Author      :Sujan
-	 * @Description : Checks if Profile is Tax Ops, then sets RecordType
-   	 * @Parm        : objTask - New Task
-  	 * @Return      : N/A
-	 * TODO - deprecate and replace with Cxone Incontact setting after managed package upgrade to version > 24.x . x
- 	 **/
-       public void setRecordType(Task objTask) {
-        if (queryPermissionSet() && objTask.Type == TaskUtil.TASK_TYPE_CALL && runningUserCallCenter() == TaskUtil.NICE_CXONE_CLASSIC) {
-            objTask.RecordTypeId = TaskUtil.TASK_CALL_RT_ID;
-        }
-    }
 
 	/**
 	 * @Author      : Praveen Sethu & Veeresh
@@ -2035,6 +2045,35 @@ public without sharing class TaskTriggerHelper {
 		}
 	}
 
+	/**
+	 * @description Reassign the Task to Previous Oportunity Owner
+	 * @param objNewTask New Task
+	 * @param objOldTask Old task
+	 */
+	private void assignPrevTaxYearOpptyAsTaskOwner(Task objNewTask, Task objOldTask) {
+		Boolean blnIsInsert = objOldTask == null;
+		Set<Id> set_CoreCsRnDGustieUserIds = TaskUtil.getCoreCSRnDGusties();
+
+		if (set_TaskIdToReassign.contains(objNewTask.Id) && (blnIsInsert || objOldTask.Status != objNewTask.Status || objOldTask.OwnerId != objNewTask.OwnerId)) {
+			Account objAccount = map_AccountWithOpportunities?.get(objNewTask.WhatId);
+			if (objAccount == null) {
+				return;
+			}
+
+			Id idPreviousTaxYearOpptyOwner;
+			for (Opportunity objOppty : objAccount.Opportunities) {
+				if (objOppty.RecordTypeId == OpportunityUtil.R_D_TAX_CREDITS_OPPTY_RT_ID && objOppty.Tax_Year__c != null && set_CoreCsRnDGustieUserIds.contains(objOppty.OwnerId)) {
+					idPreviousTaxYearOpptyOwner = objOppty.Owner.IsActive ? objOppty.OwnerId : null;
+					break;
+				}
+			}
+
+			if (idPreviousTaxYearOpptyOwner != null) {
+				objNewTask.OwnerId = idPreviousTaxYearOpptyOwner;
+			}
+		}
+	}
+
 	/**** All SOQL Queries Start Here  ****/
 	/**
 	 * @Author      : Praveen Sethu & Veeresh
@@ -2102,36 +2141,6 @@ public without sharing class TaskTriggerHelper {
 	public List<TaskStatus> queryTaskStatus() {
 		return [SELECT MasterLabel FROM TaskStatus WHERE IsClosed = TRUE];
 	}
-	 /**
-	 * @Author      : Sujan
-	 * @Description : Query CallCenter
-	 * @Parm        : N/A
-	 * @Return      : N/A
-	 * TODO - deprecate and replace with Cxone Incontact setting after managed package upgrade to version > 24.x . x
-	 **/
-	public String runningUserCallCenter() {
-       List<CallCenter> callCenter=[ SELECT Name 
-                                    FROM CallCenter 
-                                    WHERE id in (SELECT CallCenterId FROM User WHERE Id = :UserInfo.getUserID())];
-		return callCenter.isEmpty()?null:callCenter[0].Name;
-    }
-
-    /**
-	 * @Author      : Sujan
-	 * @Description : Query PermissionSet
-	 * @Parm        : N/A
-	 * @Return      : N/A
-	 * TODO - deprecate and replace with Cxone Incontact setting after managed package upgrade to version > 24.x . x
-	 **/
-    public Boolean queryPermissionSet() {
-        List<String> list_TaskRecordTypePSA = new List<String>{ TaskUtil.USER_PERMISSION_SET_TASK_RECORD_TYPE_UPDATE };
-       	List<PermissionSetAssignment> list_Assignment = GlobalQueryHelper.getPermSetAssignments(list_TaskRecordTypePSA);
-        if (!list_Assignment.isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
 	/**
 	 * @Author      : Praveen Sethu & Veeresh
@@ -2308,5 +2317,27 @@ public without sharing class TaskTriggerHelper {
 	 **/
 	public List<Ticket__c> queryTickets(Set<Id> set_TicketIds, List<Id> list_RecordTypeIds) {
 		return [SELECT Id, RecordTypeId, Last_Activity_Date__c, Status__c, Revisions_Required__c FROM Ticket__c WHERE Id IN :set_TicketIds AND RecordTypeId IN :list_RecordTypeIds];
+	}
+
+	/**
+	 * @description Query Account s with Opportunities
+	 * @param set_AccountIds Set of Account Ids
+	 * @return ` Map<Id, Account>`
+	 */
+	public Map<Id, Account> queryAccountsWithRelatedOpptys(Set<Id> set_AccountIds) {
+		return new Map<Id, Account>(
+			[
+				SELECT
+					Id,
+					OwnerId,
+					(
+						SELECT Id, RecordTypeId, CreatedDate, CloseDate, StageName, Tax_Year__c, OwnerId, Owner.IsActive
+						FROM Opportunities
+						ORDER BY CreatedDate DESC
+					)
+				FROM Account
+				WHERE Id IN :set_AccountIds
+			]
+		);
 	}
 }

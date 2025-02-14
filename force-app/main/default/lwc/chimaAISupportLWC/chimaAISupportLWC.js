@@ -71,7 +71,7 @@ export default class ChimaAISupportLWC extends LightningElement {
 	}
 
 	get containerStyle(){
-		return (this.isShowIframe || this.isDisplayEndChatFeedback) ? 'height: 416px;' : 'height: 416px;overflow-y: auto;';
+		return (this.isShowIframe || this.isDisplayEndChatFeedback) ? 'height: 72vh;' : 'height: 72vh;overflow-y: auto;';
 	}
 
 	handleIframeLoaded() {
@@ -599,7 +599,7 @@ export default class ChimaAISupportLWC extends LightningElement {
 		let offset = chatLength < 10 ? 0 : chatLength - 10;
 
 		while(offset < chatLength){
-			addTranscripts.push(this.previousChatTranscipts[chatLength - 1]);
+			addTranscripts.unshift(this.previousChatTranscipts[ chatLength - 1]);
 			this.previousChatTranscipts.pop();
 			chatLength--;
 		}

@@ -148,8 +148,17 @@ public without sharing class AccountTriggerHelper {
 		setDataCollections(map_Accounts.values(), null);
 
 		for (Account objAccount : map_Accounts.values()) {
+			//create entitlement records for all company accounts
+			Entitlement objEntitlement = getEntitlementInfo(objAccount);
+			if (objEntitlement != null) {
+				list_Entitlements.add(objEntitlement);
+			}
 			//update First Client Add date for reseller accounts
 			setFirstClientAddDateOnReseller(objAccount, null);
+		}
+
+		if (!list_Entitlements.isEmpty()) {
+			insert list_Entitlements;
 		}
 
 		if (!map_AccountsToUpdate.isEmpty()) {
@@ -2140,6 +2149,24 @@ public without sharing class AccountTriggerHelper {
 		if (objAccount.RecordTypeId == AccountUtil.RESELLER_ACCOUNT_RT_ID && (objOldAccount == null || objAccount.OwnerId != objOldAccount.OwnerId) && objAccount.OwnerId != null) {
 			objAccount.Run_Batch__c = true;
 		}
+	}
+
+	/**** Set EntitlementInformation for Company account ****/
+	private Entitlement getEntitlementInfo(Account objAccount) {
+		Entitlement objEntitlement = new Entitlement();
+		if (objAccount.RecordTypeId != AccountUtil.COMPANY_ACCOUNT_RT_ID) {
+			return null;
+		}
+
+		if (String.isNotBlank(objConfigSettings?.AccountEntitlementId__c)) {
+			objEntitlement.AccountId = objAccount.Id;
+			objEntitlement.Name = 'MF Submission-' + objAccount.Name.left(49);
+			objEntitlement.SlaProcessId = objConfigSettings.AccountEntitlementId__c;
+			objEntitlement.StartDate = System.today();
+			objEntitlement.EndDate = Date.newInstance(2099, 1, 1);
+			objEntitlement.Type = 'MF Submission';
+		}
+		return objEntitlement;
 	}
 
 	/**** get Tax Audit Case information ****/

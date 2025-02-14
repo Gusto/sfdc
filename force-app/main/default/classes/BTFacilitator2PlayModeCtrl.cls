@@ -71,9 +71,11 @@ public class BTFacilitator2PlayModeCtrl {
 	public String strErrorInEnrollmentReview { get; set; }
 	public String strErrorInPlanReview { get; set; }
 	public String strErrorInTickets { get; set; }
+	public String strAlegeusCarrierName { get; set; }
 
 	//Contructor
 	public BTFacilitator2PlayModeCtrl() {
+		strAlegeusCarrierName = System.Label.alegeus;
 		blnShowPlayModePanel = true;
 		blnIsUserOOO = false;
 		blnShowMyCOPanel = false;
@@ -342,6 +344,7 @@ public class BTFacilitator2PlayModeCtrl {
 	// c. Order by highest Bor Age and assign the top most order to FC2
 	// Note: PLANS_CONFIRMED = Enrollment Review. READY_IMPLEMENTATION_PLANS = Plan Review
 	public void fetchEligibleCO() {
+		//strAlegeusCarrierName = System.Label.alegeus;
 		list_COs = new List<Carrier_Order__c>();
 		set_BenefitOrders = new Set<ID>();
 		Set<Id> set_MultiEINCarrierOrders = new Set<Id>();
@@ -365,7 +368,6 @@ public class BTFacilitator2PlayModeCtrl {
 					Facilitator_2_Enrollment_Review__c,
 					Is_Multi_EIN__c,
 					Follow_Up_Date__c,
-					TAdA__c,
 					Is_Carrier_Order_In_Play__c,
 					(
 						SELECT Id, Status__c
@@ -375,7 +377,7 @@ public class BTFacilitator2PlayModeCtrl {
 				FROM Carrier_Order__c
 				WHERE
 					RecordTypeId = :strCOBTRecordTypeId
-					AND TAdA__c = False
+					AND Carrier__c != :strAlegeusCarrierName
 					AND ((Facilitator_2_Plan_Review__c IN :set_OOOBTFAC2s
 					AND Implementation_Stage__c = :CO_STAGE_IMPLEMENTATION_PLANS)
 					OR (Facilitator_2_Enrollment_Review__c IN :set_OOOBTFAC2s
@@ -415,7 +417,6 @@ public class BTFacilitator2PlayModeCtrl {
 				OOO_Timestamp__c,
 				Parent_Carrier_Order__c,
 				Is_Multi_EIN__c,
-				TAdA__c,
 				Follow_Up_Date__c,
 				Is_Carrier_Order_In_Play__c,
 				(
@@ -427,7 +428,7 @@ public class BTFacilitator2PlayModeCtrl {
 			WHERE
 				Implementation_Stage__c IN :set_ValidCOStages
 				AND RecordTypeId = :strCOBTRecordTypeId
-				AND TAdA__c = False
+				AND Carrier__c != :strAlegeusCarrierName
 				AND (Facilitator_2_Plan_Review__c = NULL
 				OR Facilitator_2_Enrollment_Review__c = NULL)
 			//AND	    Renewal_Date__c > TODAY // removed for testing purposes
@@ -457,9 +458,9 @@ public class BTFacilitator2PlayModeCtrl {
 			//map_BOToFAC2 = new map<Id, Set<Id>>();
 
 			for (Carrier_Order__c co : [
-				SELECT ID, Facilitator_2_Plan_Review__c, Implementation_Stage__c, Facilitator_2_Enrollment_Review__c, OOO_Timestamp__c, Benefit_Order__c, TAdA__c, Is_Carrier_Order_In_Play__c
+				SELECT ID, Facilitator_2_Plan_Review__c, Implementation_Stage__c, Facilitator_2_Enrollment_Review__c, OOO_Timestamp__c, Benefit_Order__c, Is_Carrier_Order_In_Play__c
 				FROM Carrier_Order__c
-				WHERE Benefit_Order__c IN :set_BenefitOrders AND RecordTypeId = :strCOBTRecordTypeId AND TAdA__c = False
+				WHERE Benefit_Order__c IN :set_BenefitOrders AND RecordTypeId = :strCOBTRecordTypeId AND Carrier__c != :strAlegeusCarrierName
 			]) {
 				if (!map_AllRelatedCOToBO.containsKey(co.Benefit_Order__c)) {
 					map_AllRelatedCOToBO.put(co.Benefit_Order__c, new List<Carrier_Order__c>{ co });
@@ -484,10 +485,9 @@ public class BTFacilitator2PlayModeCtrl {
 					Parent_Carrier_Order__c,
 					Carrier__c,
 					Carrier__r.Name,
-					TAdA__c,
 					Is_Carrier_Order_In_Play__c
 				FROM Carrier_Order__c
-				WHERE Id IN :set_MultiEINCarrierOrders AND RecordTypeId = :strCOBTRecordTypeId AND TAdA__c = False
+				WHERE Id IN :set_MultiEINCarrierOrders AND RecordTypeId = :strCOBTRecordTypeId AND Carrier__c != :strAlegeusCarrierName
 			]) {
 				// Get all Child Multi-EIN Carrier Order and map them to their parents.
 				// Also, add the parent Carrier Order to the map as a value list as well.
@@ -635,8 +635,7 @@ public class BTFacilitator2PlayModeCtrl {
 							tempCo.Assignment_Message__c = 'SUCCESS: Plan Review order';
 							tempCo.Implementation_Stage__c = CO_STAGE_IMPLEMENTATION_PLANS;
 							Datetime start = System.Now();
-							//Reduced delay time from 3 seconds to 1 second  BT-60475
-							while (System.Now().getTime() < start.getTime() + 1000) {
+							while (System.Now().getTime() < start.getTime() + 3000) {
 							} //Delay
 							database.update(tempCo, true);
 							strCOId = tempCo.Id;
@@ -679,7 +678,6 @@ public class BTFacilitator2PlayModeCtrl {
 				Facilitator_2_Plan_Review__c,
 				Facilitator_2_Enrollment_Review__c,
 				Is_Multi_EIN__c,
-				TAdA__c,
 				Follow_Up_Date__c,
 				(
 					SELECT Id, Status__c
@@ -689,7 +687,7 @@ public class BTFacilitator2PlayModeCtrl {
 			FROM Carrier_Order__c
 			WHERE
 				RecordTypeId = :strCOBTRecordTypeId
-				AND TAdA__c = False
+				AND Carrier__c != :strAlegeusCarrierName
 				AND Implementation_Stage__c IN (:CO_STAGE_IMPLEMENTATION_PLANS, :CO_STAGE_ENROLLMENT_REVIEW_IN_PROGRESS)
 				AND RecordTypeId = :strCOBTRecordTypeId
 				AND (Facilitator_2_Plan_Review__c = :IdLoggedInUser

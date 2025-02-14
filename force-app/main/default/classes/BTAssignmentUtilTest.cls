@@ -10,8 +10,7 @@ private class BTAssignmentUtilTest {
 	@testsetup
 	public static void setupTestData() {
 		skipTrigger(true);
-		Configuration_Settings__c objConfigSettings = new TestDataFactory.ConfigurationSettingsBuilder().setActiveTadaProvider('alegeus').build();
-		insert objConfigSettings;
+
 		List<Profile> list_Profiles = [SELECT Id FROM Profile WHERE Name = 'System Administrator'];
 		User objUser1 = new User(
 			ProfileId = list_Profiles[0].Id,
@@ -310,7 +309,6 @@ private class BTAssignmentUtilTest {
 		HICarrierInformationTriggerHelper.isBOInsert = true;
 		insert list_HICarrier;
 		skipTrigger(false);
-		
 	}
 
 	/*
@@ -560,11 +558,9 @@ private class BTAssignmentUtilTest {
 			FROM Benefit_Order__c
 			WHERE ID = :objCarrierOrder.Benefit_Order__c
 		];
-		System.debug('objCarrierOrder'+objCarrierOrder);
-		System.debug('list_BOs'+list_BOs);
+
 		BTAssignmentUtil objAssignment = new BTAssignmentUtil();
 		objAssignment.processBOForAdvocateAssignment(list_BOs, false);
-		System.debug('list_BOs'+list_BOs);
 		System.assert(!list_BOs[0].Type__c.containsIgnoreCase('Tada'));
 		Test.stopTest();
 	}

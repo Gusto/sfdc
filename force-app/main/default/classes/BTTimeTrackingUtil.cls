@@ -272,7 +272,7 @@ public with sharing class BTTimeTrackingUtil {
         	map<string,Map<String,Map<String,Analytics_Configurations__mdt>>> map_categoryConfigRecord;
 
 			//Check if Carrier Order is TaDa or not
-			if(objCO.TAdA__c){
+			if(objCO.Carrier_Information_Name__c != NULL && objCO.Carrier_Information_Name__c.equalsIgnoreCase('Alegeus')){
 				map_categoryConfigRecord = map_categoryConfigTaDa;
 			}
 			else{

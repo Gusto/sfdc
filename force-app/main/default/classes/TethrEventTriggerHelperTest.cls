@@ -64,5 +64,26 @@ public without sharing class TethrEventTriggerHelperTest {
 		Tethr__Tethr_Call__c objCallAssert = [SELECT Id, Tethr__Account__c, Tethr__Opportunity__c FROM Tethr__Tethr_Call__c WHERE Id = :objCall.Id];
 		System.assertEquals(objAcc.Id, objCallAssert.Tethr__Account__c, 'Account not linked to tehr call');
 		System.assertEquals(list_Opps[0].Id, objCallAssert.Tethr__Opportunity__c, 'Opportunity not linked to tehr call');
+
+		Test.startTest();
+		// Insert new Tethr Event that should not kick off Benefits Opportunity creation since one already exists
+		insert new Tethr__Tethr_Event__c(Name = TethrEventTriggerHelper.PARTNER_BOR_OPP_EVT, Tethr__Call__c = objCall.Id);
+		list_Opps = [SELECT Id, AccountId, LeadSource, RecordTypeId FROM Opportunity WHERE AccountId = :objAcc.Id];
+		System.assertEquals(1, list_Opps.size(), 'There should be 1 Opportunity created');
+		System.assertEquals(TethrEventTriggerHelper.BENEFITS_BOR_OPPTY_RT_ID, list_Opps[0].RecordTypeId, 'Record Type should be Benefits BoR');
+
+		// Close out the opportunity
+		Opportunity objBoROpp = list_Opps[0];
+		objBoROpp.StageName = 'Closed Won';
+		objBoROpp.CloseDate = Date.today();
+		update objBoROpp;
+
+		// Insert new Tethr Event that should not kick off Benefits Opportunity creation since one already exists that is Closed Won in the last 90 days
+		insert new Tethr__Tethr_Event__c(Name = TethrEventTriggerHelper.PARTNER_BOR_OPP_EVT, Tethr__Call__c = objCall.Id);
+		Test.stopTest();
+
+		list_Opps = [SELECT Id, AccountId, LeadSource, RecordTypeId FROM Opportunity WHERE AccountId = :objAcc.Id];
+		System.assertEquals(1, list_Opps.size(), 'There should be 1 Opportunity created');
+		System.assertEquals(TethrEventTriggerHelper.BENEFITS_BOR_OPPTY_RT_ID, list_Opps[0].RecordTypeId, 'Record Type should be Benefits BoR');
 	}
 }

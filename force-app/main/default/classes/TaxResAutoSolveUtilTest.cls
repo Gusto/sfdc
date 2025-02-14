@@ -370,7 +370,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 	static void testsendAutoSolveEmailWithCheckFalse() {
 		Test.startTest();
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp2@test.com' AND Subject = 'Only Package'
 		];
@@ -401,7 +401,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 		List<ContentDocumentLink> list_ContentDocumentLinks = [SELECT Id, ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = :objAutoSolvePack.Id];
 		delete list_ContentDocumentLinks;
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, CreatedDate
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, CreatedDate, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp@test.com' AND Subject = 'Both Attachment'
 		];
@@ -445,7 +445,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 		delete list_ContentDocumentLinks;
 
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp2@test.com' AND Subject = 'Non Physical email'
 		];
@@ -475,7 +475,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 	static void testSendAutoSolvePhysicalEmailOnlyPackgAtt() {
 		Test.startTest();
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp3@test.com' AND Subject = 'Physical email - only package'
 		];
@@ -501,7 +501,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 	static void testSendAutoSolvePhysicalEmailOnlyCaseAtt() {
 		Test.startTest();
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp4@test.com' AND Subject = 'Physical email - only case'
 		];
@@ -531,7 +531,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 		List<ContentDocumentLink> list_ContentDocumentLinks = [SELECT Id, ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = :objAutoSolvePack.Id LIMIT 1];
 		delete list_ContentDocumentLinks;
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp2@test.com' AND Subject = 'Only Package'
 		];
@@ -563,7 +563,7 @@ public with sharing class TaxResAutoSolveUtilTest {
 		delete list_ContentDocumentLinks;
 
 		List<Case> list_Cases = [
-			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin
+			SELECT Id, Mass_Email_Step__c, ContactId, ContactEmail, subject, SuppliedEmail, Physical_Mail__c, Origin, Status
 			FROM Case
 			WHERE SuppliedEmail = 'temp2@test.com' AND Subject = 'Non Physical email'
 		];

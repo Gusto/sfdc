@@ -303,6 +303,8 @@ public with sharing class QualifyingLifeCasePlayModeController {
 				Boolean assignmentSuccessFull = false;
 
 				if (playMode == 'Select Number of Cases Play Mode' && bulkSize != null) {
+					finalCaseIds = new List<string>();
+
 					if (processedRecords.size() > 0) {
 						Set<Case> tempCaseSet = new Set<Case>();
 						tempCaseSet.addAll(queriedCases);
@@ -332,18 +334,20 @@ public with sharing class QualifyingLifeCasePlayModeController {
 					}
 				} else {
 					if (queriedCases.size() > tCount) {
+						finalCaseIds = new List<string>();
 						finalCaseIds.add(queriedCases.get(tCount).id);
 						processedRecords.add(queriedCases.get(tCount));
 					} else {
 						noMoreRec = true;
 					}
 				}
-
+	
 				if (assignmentSuccessFull == true || noMoreRec == true) {
 					break;
 				}
 			}
 			if (playMode == CONTACT_PLAY_MODE) {
+				finalCaseIds = new List<String>();
 				finalCaseIds.addAll(findRelatedCases(set_ContactId, set_OwnerId, set_RecordTypeId, set_type));
 			}
 			if (finalCaseIds.size() > 0) {

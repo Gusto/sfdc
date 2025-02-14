@@ -3,7 +3,7 @@
  * @date 7/9/16
  * @see CacheTest
  */
-public without sharing class Cache {
+public without sharing class Cache { 
 	public static boolean skipfunc = false; // skip functionality, required in some cases
 
 	/**
@@ -16,6 +16,18 @@ public without sharing class Cache {
 	 */
 	public static Id getRecordTypeId(String objectType, String recordTypeName) {
 		return RecordTypes.getRecordTypeIdFromName(objectType, recordTypeName);
+	}
+
+	/**
+	 * @description          Safe method to get Record Type Id, as it relies on RecordTypeName
+	 *
+	 * @param objectType     SObject name
+	 * @param recordTypeName Record Type DeveloperName
+	 * @return               `Id`
+	 * @deprecated Use RecordTypes.getRecordTypeIdFromName(objectType, recordTypeDeveloperName)
+	 */
+	public static Id getRecordTypeIdFromDeveloperName(String objectType, String recordTypeDeveloperName) {
+		return RecordTypes.getRecordTypeIdFromDeveloperName(objectType, recordTypeDeveloperName);
 	}
 
 	/**

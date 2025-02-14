@@ -1,0 +1,306 @@
+<apex:page standardController="Carrier_Order__c" extensions="DisplayEditTTConfirmationExt" tabStyle="Carrier_Order__c">
+    <apex:sectionHeader Title="TTC Detail"/>
+    <head>
+        <apex:includeScript value="/support/console/45.0/integration.js"/>
+        <script type="text/javascript">
+        function RefreshPrimaryTab(){
+            sforce.console.getFocusedPrimaryTabId(showTabId);
+        }
+        
+        var showTabId = function showTabId(result) 
+        {
+            var tabId = result.id;
+            //alert('Primary Tab IDs: primaryTabId ' + tabId );
+            sforce.console.refreshPrimaryTabById(tabId , false, refreshSuccess,true);
+        };
+    
+    var refreshSuccess = function refreshSuccess(result) 
+       {
+           //Report whether refreshing the primary tab was successful
+           if (result.success == true) 
+           {
+               console.log('Test1');
+               sforce.console.getFocusedSubtabId(function(subTabId){
+                   sforce.console.closeTab(subTabId.id);
+               });
+           } 
+           else 
+           {
+                console.log('Test2');
+               //alert('Cannot refresh the page');
+           }
+       };
+
+
+       function openHippoTab(recId){
+            var redirectUrl5 = 'https://hippo.gusto.com/companies/'+recId;
+            window.open(redirectUrl5, '_blank');
+        }
+        
+        </script>
+     <style>
+            
+            .readOnly {
+            background:#ffff;
+            pointer-events: none; 
+            }
+            .requiredField{
+                border-left:#c00 solid 3px !important;
+            }
+
+         
+                /* Style the tab */
+                .tab {
+                    overflow: hidden;
+                    border: 1px solid #ccc;
+                    background-color: #f1f1f1;
+                }
+            
+            /* Style the buttons inside the tab */
+            .tab a {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 10px 46px;
+                transition: 0.3s;
+                font-size: 14px;
+            }
+            
+            /* Change background color of buttons on hover */
+            .tab a:hover {
+                background-color: #ddd;
+            }
+            
+            /* Create an active/current tablink class */
+            .tab a.active {
+                background-color: #ccc;
+            }
+            
+            /* Style the tab content */
+            .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+            </style>
+      <style type="text/css">
+                .myClass{
+                    color:black !important;
+                    background:#72abcbc7 !important;
+                }
+            .myClass1{
+                color:black !important;
+                background:#f1f1f1 !important;
+            } 
+            .myClass2{
+            align:right;
+            } 
+            </style>
+    </head>
+    <apex:actionstatus id="status">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;position: fixed;z-index: 9999;height: 100%;opacity:0.90;width:100%;"> 
+                <div class="waitingHolder" style="position: fixed;left: 35%; right: 50%;" >
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <apex:form id="frmId">
+        <apex:pageMessages />
+        <apex:pageBlock >
+            <apex:pageBlockSection title="System Information">
+                <apex:outputField value="{!objTTF.Opportunity__c}"/>   
+                <apex:outputField value="{!objTTF.Account__c}"/>
+                <apex:outputField value="{!objTTF.Benefit_Order__c}"/>
+                <apex:outputField value="{!objTTF.Benefits_Point_of_Contact__c}"/>
+                <apex:outputField value="{!objTTF.Implementation_Advocate__c}"/>
+                <apex:outputField value="{!objTTF.Benefit_Advisor__c}"/>
+                <apex:outputField value="{!objTTF.LastModifiedById}"/>
+                <apex:outputField value="{!objTTF.CreatedById}"/>
+                <apex:outputField value="{!objTTF.LastModifiedDate }"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Employee" rendered="{!NOT(blnIsRecBO)}"> 
+                <apex:inputTextarea title="Character limit :255" html-maxLength="255" styleclass="requiredField" value="{!objTTF.NHEs_that_were_submitted_with_group__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['NHEs_that_were_submitted_with_group__c']}" disabled="true"/>
+                <apex:inputTextarea title="Character limit :255" html-maxLength="255" styleclass="requiredField" value="{!objTTF.State_continuation_enrollees_submitted__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['State_continuation_enrollees_submitted__c']}" disabled="true"/>
+                <apex:inputTextarea title="Character limit :300" html-maxLength="300" value="{!objTTF.Anticipated_pending_items_anything_inte__c}" cols="35" rows="{!map_RowCountTextArea['Transition_to_Fulfillment__c']['Anticipated_pending_items_anything_inte__c']}" disabled="true"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Employee" rendered="{!blnIsRecBO}"> 
+                <apex:outputField styleclass="requiredField" value="{!objTTF.NHEs_that_were_submitted_with_group__c}"/>
+                <apex:outputField styleclass="requiredField" value="{!objTTF.State_continuation_enrollees_submitted__c}"/>
+                <apex:outputField styleclass="requiredField" value="{!objTTF.Anticipated_pending_items_anything_inte__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Group Information"> 
+                <apex:outputField value="{!objTTF.Do_they_have_affiliates__c}"/>
+                <apex:outputField value="{!objTTF.DBA__c}"/>
+                <apex:outputField value="{!objTTF.Composite_Rated__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageblock title="Policy and Plan Information" id="trp">
+                <div class="tab" id="trp">
+                    <div style="float:right">
+                            <apex:commandLink onclick="openHippoTab('{!accCompanyId}');return false;" styleClass="{!if(accCompanyId!=Null,'myClass2','')}">Hippo</apex:commandLink>
+                            
+                    </div>
+                    
+                    <apex:commandLink styleClass="{!if(StrParam=='Medical','myClass','myClass1')}" value="Medical" action="{!DisplayRec}" rerender="trp" rendered="{!if(Medicaltab,true,false)}" status="status">
+                        <apex:param value="Medical" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='Dental','myClass','myClass1')}" value="Dental" action="{!DisplayRec}" rerender="trp" rendered="{!if(Dentaltab,true,false)}" status="status">
+                        <apex:param value="Dental" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='Vision','myClass','myClass1')}" value="Vision" action="{!DisplayRec}" rerender="trp" rendered="{!if(Visiontab,true,false)}" status="status">
+                        <apex:param value="Vision" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='Life','myClass','myClass1')}" value="Life" action="{!DisplayRec}" rerender="trp" rendered="{!if(Lifetab,true,false)}" status="status">
+                        <apex:param value="Life" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='LTD','myClass','myClass1')}" value="LTD" action="{!DisplayRec}" rerender="trp" rendered="{!if(LTDtab,true,false)}" status="status">
+                        <apex:param value="LTD" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='STD','myClass','myClass1')}" value="STD" action="{!DisplayRec}" rerender="trp" rendered="{!if(STDtab,true,false)}" status="status">
+                        <apex:param value="STD" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='FSA','myClass','myClass1')}" value="FSA" action="{!DisplayRec}" rerender="trp" rendered="{!if(FSAtab,true,false)}" status="status">
+                        <apex:param value="FSA" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='DCA','myClass','myClass1')}" value="DCA" action="{!DisplayRec}" rerender="trp" rendered="{!if(DCAtab,true,false)}" status="status">
+                        <apex:param value="DCA" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='HSA','myClass','myClass1')}" value="HSA" action="{!DisplayRec}" rerender="trp" rendered="{!if(HSAtab,true,false)}" status="status">
+                        <apex:param value="HSA" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                    <apex:commandLink styleClass="{!if(StrParam=='Commuter','myClass','myClass1')}" value="Commuter" action="{!DisplayRec}" rerender="trp" rendered="{!if(Commutertab,true,false)}" status="status">
+                        <apex:param value="Commuter" assignTo="{!StrParam}"/>
+                    </apex:commandLink>
+                </div>
+                <apex:pageBlock id="trp" rendered="{!!blnIsRecBO}">
+                    <apex:panelGroup >
+                        <apex:pageMessage rendered="{!isPoliciesExist}" summary="This carrier order is not having any policies. Kindly check if the policies exist before you submit for confirmation" severity="warning" strength="3"/>
+                    </apex:panelGroup>
+                    <apex:repeat value="{!lstQALinesOfCoverage}" var="qline" id="therepeat">
+                        <table frame="box" class="bPageBlock" style="display: inline-block;padding:5px" id="tb">
+                       
+                            <apex:outputText rendered="{!IF(StrParam=='Life'||StrParam=='LTD' ||StrParam=='STD',true,false)}">
+                                <tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" html-disabled="true" /></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td><apex:inputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:inputTextarea title="Character limit :32768" html-maxLength="32768" styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Other_items_to_note_for_this_group__c']}" disabled="true"/></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:inputField styleclass="requiredField"  value="{!qline.Allows_plans_with_no_enrollees__c}" html-disabled="true" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:inputField value="{!qline.Submission_Method__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Automated Submission</td><td><apex:outputField value="{!qline.Carrier_Order__r.Automated_Submission__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <apex:outputText rendered="{!IF(StrParam=='Dental'||StrParam=='Vision',true,false)}">
+                                <tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td><apex:inputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" html-disabled="true" /></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:inputTextarea title="Character limit :32768" html-maxLength="32768" styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Other_items_to_note_for_this_group__c']}" disabled="true"/></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:inputField styleclass="requiredField"  value="{!qline.Allows_plans_with_no_enrollees__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Submission Method</td><td><apex:inputField value="{!qline.Submission_Method__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Automated Submission</td><td><apex:outputField value="{!qline.Carrier_Order__r.Automated_Submission__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <!-- Medical fields -->
+                            <apex:outputText rendered="{!IF(StrParam=='Medical',true,false)}">
+                                <tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td><apex:inputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:inputTextarea title="Character limit :32768" html-maxLength="32768" styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Other_items_to_note_for_this_group__c']}" disabled="true"/></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:inputField styleclass="requiredField"  value="{!qline.Allows_plans_with_no_enrollees__c}" html-disabled="true" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:inputField value="{!qline.Submission_Method__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Automated Submission</td><td><apex:outputField value="{!qline.Carrier_Order__r.Automated_Submission__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <!-- TADA fields -->
+                            <apex:outputText rendered="{!IF(StrParam=='FSA'||StrParam=='DCA'||StrParam=='HSA'||StrParam=='Commuter',true,false)}">
+                                <tr><td>Carriers</td><td><apex:inputfield value="{!qline.Benefits_selected_Carrier__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td> <apex:inputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:inputTextarea title="Character limit :32768" html-maxLength="32768" styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" cols="35" rows="{!map_RowCountTextArea[qLine.Id]['Other_items_to_note_for_this_group__c']}" disabled="true"/></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:inputField styleclass="requiredField"  value="{!qline.Allows_plans_with_no_enrollees__c}" html-disabled="true" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:inputField value="{!qline.Submission_Method__c}" html-disabled="true"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <apex:outputText rendered="{!map_ShowTTQForQALine[qline.Id]}">
+                                    <tr><td colspan="2" style="color: white;font-weight: bold;background-color: #539fc6;"><apex:outputLabel value="Policy and Plan Information"></apex:outputLabel></td></tr>
+                                    <apex:repeat value="{!map_TTQAsPerCOOrderAssignement[qline.Id]}" var="fieldName">
+                                        <tr>
+                                            <td style="padding-bottom: 5px;"><apex:outputLabel value="{!map_FieldAPILabel[fieldName]}"/></td>
+                                            <td style="word-break: break-word;overflow-wrap: break-word;" >
+                                                <apex:outputField value="{!qline[fieldName]}"></apex:outputField>
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                            </apex:outputText>
+                            
+                        </table>  
+                    </apex:repeat>
+                </apex:pageBlock>
+                <apex:pageBlock id="trpReadOnly" rendered="{!blnIsRecBO}">
+                    <apex:repeat value="{!lstQALinesOfCoverage}" var="qline" id="therepeat">
+                        <table frame="box" class="bPageBlock" style="display: inline-block;padding:5px" id="tb">
+                            <apex:outputText rendered="{!IF(StrParam=='Life'||StrParam=='LTD' ||StrParam=='STD',true,false)}">
+                                <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td><apex:outputField styleclass="requiredField " value="{!qline.Should_policy_year_be_anything__c}" /></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:outputField styleclass="requiredField " value="{!qline.Other_items_to_note_for_this_group__c}" /></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:outputField value="{!qline.Allows_plans_with_no_enrollees__c}" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:outputField value="{!qline.Submission_Method__c}"/></td></tr>
+                                <tr><td>Automated Submission</td><td><apex:outputField value="{!qline.Carrier_Order__r.Automated_Submission__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <apex:outputText rendered="{!IF(StrParam=='Dental'||StrParam=='Vision',true,false)}">
+                                <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td><apex:outputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" /></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:outputField styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" /></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:outputField value="{!qline.Allows_plans_with_no_enrollees__c}" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:outputField value="{!qline.Submission_Method__c}"/></td></tr>
+                                <tr><td>Automated Submission</td><td><apex:outputField value="{!qline.Carrier_Order__r.Automated_Submission__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <!-- Medical fields -->
+                            <apex:outputText rendered="{!IF(StrParam=='Medical',true,false)}">
+                                <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td><apex:outputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" /></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:outputField styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" /></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:outputField value="{!qline.Allows_plans_with_no_enrollees__c}" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:outputField value="{!qline.Submission_Method__c}"/></td></tr>
+                                <tr><td>Automated Submission</td><td><apex:outputField value="{!qline.Carrier_Order__r.Automated_Submission__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            <!-- TADA fields -->
+                            <apex:outputText rendered="{!IF(StrParam=='FSA'||StrParam=='DCA'||StrParam=='HSA'||StrParam=='Commuter',true,false)}">
+                                <tr><td>Carriers</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Benefits selected (Carrier)</td><td><apex:outputField value="{!qline.Benefits_selected_Carrier__c}" /></td></tr>
+                                <tr><td>Should policy year be anything other than 12 months?</td><td> <apex:outputField styleclass="requiredField" value="{!qline.Should_policy_year_be_anything__c}" /></td></tr>
+                                <tr><td>Other items to note for this group</td><td><apex:outputField styleclass="requiredField" value="{!qline.Other_items_to_note_for_this_group__c}" /></td></tr>
+                                <tr><td>Allows plans with no enrollees?</td><td><apex:outputField value="{!qline.Allows_plans_with_no_enrollees__c}" /></td></tr>
+                                <tr><td>Submission Method</td><td><apex:outputField value="{!qline.Submission_Method__c}"/></td></tr>
+                                <tr><td>Carrier Wiki</td><td><apex:outputField value="{!qline.Carrier_Wiki__c}"/></td></tr>
+                            </apex:outputText>
+                            
+                            <apex:outputText rendered="{!map_ShowTTQForQALine[qline.Id]}">
+                                    <tr><td colspan="2" style="color: white;font-weight: bold;background-color: #539fc6;"><apex:outputLabel value="Policy and Plan Information"></apex:outputLabel></td></tr>
+                                    <apex:repeat value="{!map_TTQAsPerCOOrderAssignement[qline.Id]}" var="fieldName">
+                                        <tr>
+                                            <td style="padding-bottom: 5px;"><apex:outputLabel value="{!map_FieldAPILabel[fieldName]}"/></td>
+                                            <td style="word-break: break-word;overflow-wrap: break-word;" >
+                                                <apex:outputField value="{!qline[fieldName]}"></apex:outputField>
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                            </apex:outputText>
+                        </table>  
+                    </apex:repeat>
+                </apex:pageBlock>
+            </apex:pageblock>
+            <apex:outputText value="{!scriptvar}" escape="false"></apex:outputText>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

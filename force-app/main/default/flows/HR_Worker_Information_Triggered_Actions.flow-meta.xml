@@ -270,7 +270,7 @@
         <locationY>708</locationY>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>UserId__NotFound</field>
+            <field>UserId</field>
             <operator>EqualTo</operator>
             <value>
                 <elementReference>Get_User_async.Id</elementReference>
@@ -395,7 +395,7 @@
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>UserId__NotFound</field>
+            <field>UserId</field>
             <operator>EqualTo</operator>
             <value>
                 <elementReference>Get_User_async.Id</elementReference>
@@ -404,7 +404,7 @@
         <object>UserPackageLicense</object>
         <outputReference>LicensestoDelete</outputReference>
         <queriedFields>Id</queriedFields>
-        <queriedFields>UserId__NotFound</queriedFields>
+        <queriedFields>UserId</queriedFields>
     </recordLookups>
     <recordUpdates>
         <name>Update_User</name>

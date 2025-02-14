@@ -998,7 +998,7 @@ public with sharing class NewTransitionToFulfillmentController {
 	public PageReference CalculationOrderTypeforBenfitCarrierOrders(Transition_to_Fulfillment__c ttfRecord) {
 		// created some dummy object
 		orders = new orderTypeEditWrapper();
-		Boolean blnOnlyTadasPolicy = true;
+		Boolean blnOnlyAlegeusPolicy = true;
 		orders.newCarrierOrders = new List<Carrier_Order__c>();
 		if (ttfRecord.Opportunity__c != null) {
 			BO_order_type = new List<String>();
@@ -1066,7 +1066,7 @@ public with sharing class NewTransitionToFulfillmentController {
 						continue;
 					}
 					if (objPl.Benefit_Type__c == TransitiontoFulfilmentUtil.BENEFIT_TYPE_MEDICAL) {
-						blnOnlyTadasPolicy = false;
+						blnOnlyAlegeusPolicy = false;
 						// getes the order types for medical
 						BO_order_type = TransitiontoFulfilmentUtil.getOrderTypeforMedical(TransitiontoFulfilmentUtil.BENEFIT_TYPE_MEDICAL, map_QALinesOfCoverage);
 						if (CO_order_type_Map.containsKey(objPl.Carrier__c)) {
@@ -1076,7 +1076,7 @@ public with sharing class NewTransitionToFulfillmentController {
 						//by carrier maintain all the carrier order types
 						CO_order_type_Map.put(objPl.Carrier__c, coOrderTypes);
 					} else if (objPl.Benefit_Type__c == TransitiontoFulfilmentUtil.BENEFIT_TYPE_DENTAL) {
-						blnOnlyTadasPolicy = false;
+						blnOnlyAlegeusPolicy = false;
 						ordertypeVal = TransitiontoFulfilmentUtil.getOrderTypeforDental(TransitiontoFulfilmentUtil.BENEFIT_TYPE_DENTAL, map_QALinesOfCoverage);
 						if (CO_order_type_Map.containsKey(objPl.Carrier__c)) {
 							coOrderTypes = CO_order_type_Map.get(objPl.Carrier__c);
@@ -1084,7 +1084,7 @@ public with sharing class NewTransitionToFulfillmentController {
 						coOrderTypes.AddAll(ordertypeVal);
 						CO_order_type_Map.put(objPl.Carrier__c, coOrderTypes);
 					} else if (objPl.Benefit_Type__c == TransitiontoFulfilmentUtil.BENEFIT_TYPE_VISION) {
-						blnOnlyTadasPolicy = false;
+						blnOnlyAlegeusPolicy = false;
 						ordertypeVal = TransitiontoFulfilmentUtil.getOrderTypeforVision(TransitiontoFulfilmentUtil.BENEFIT_TYPE_VISION, map_QALinesOfCoverage);
 						if (CO_order_type_Map.containsKey(objPl.Carrier__c)) {
 							coOrderTypes = CO_order_type_Map.get(objPl.Carrier__c);
@@ -1092,7 +1092,7 @@ public with sharing class NewTransitionToFulfillmentController {
 						coOrderTypes.AddAll(ordertypeVal);
 						CO_order_type_Map.put(objPl.Carrier__c, coOrderTypes);
 					} else if (objPl.Benefit_Type__c == TransitiontoFulfilmentUtil.BENEFIT_TYPE_LIFE) {
-						blnOnlyTadasPolicy = false;
+						blnOnlyAlegeusPolicy = false;
 						ordertypeVal = TransitiontoFulfilmentUtil.getOrderTypeforLifeInsurance(TransitiontoFulfilmentUtil.BENEFIT_TYPE_LIFE, map_QALinesOfCoverage);
 						if (CO_order_type_Map.containsKey(objPl.Carrier__c)) {
 							coOrderTypes = CO_order_type_Map.get(objPl.Carrier__c);
@@ -1100,7 +1100,7 @@ public with sharing class NewTransitionToFulfillmentController {
 						coOrderTypes.AddAll(ordertypeVal);
 						CO_order_type_Map.put(objPl.Carrier__c, coOrderTypes);
 					} else if (objPl.Benefit_Type__c == TransitiontoFulfilmentUtil.BENEFIT_TYPE_STD) {
-						blnOnlyTadasPolicy = false;
+						blnOnlyAlegeusPolicy = false;
 						ordertypeVal = TransitiontoFulfilmentUtil.getOrderTypeforSTD(TransitiontoFulfilmentUtil.BENEFIT_TYPE_STD, map_QALinesOfCoverage);
 						if (CO_order_type_Map.containsKey(objPl.Carrier__c)) {
 							coOrderTypes = CO_order_type_Map.get(objPl.Carrier__c);
@@ -1108,7 +1108,7 @@ public with sharing class NewTransitionToFulfillmentController {
 						coOrderTypes.AddAll(ordertypeVal);
 						CO_order_type_Map.put(objPl.Carrier__c, coOrderTypes);
 					} else if (objPl.Benefit_Type__c == TransitiontoFulfilmentUtil.BENEFIT_TYPE_LTD) {
-						blnOnlyTadasPolicy = false;
+						blnOnlyAlegeusPolicy = false;
 						ordertypeVal = TransitiontoFulfilmentUtil.getOrderTypeforLTD(TransitiontoFulfilmentUtil.BENEFIT_TYPE_LTD, map_QALinesOfCoverage);
 						if (CO_order_type_Map.containsKey(objPl.Carrier__c)) {
 							coOrderTypes = CO_order_type_Map.get(objPl.Carrier__c);
@@ -1118,7 +1118,7 @@ public with sharing class NewTransitionToFulfillmentController {
 					}
 				}
 
-				if (ttfRecord.RecordTypeId == TTF_RT_RENEWAL && blnOnlyTadasPolicy && (BO_order_type?.size() == 0 || String.isBlank(BO_order_type[0]))) {
+				if (ttfRecord.RecordTypeId == TTF_RT_RENEWAL && blnOnlyAlegeusPolicy && (BO_order_type?.size() == 0 || String.isBlank(BO_order_type[0]))) {
 					BO_order_type = new List<String>{ strNoPlanGroupLevelChanges };
 				}
 				// create a wrrper class to user interface

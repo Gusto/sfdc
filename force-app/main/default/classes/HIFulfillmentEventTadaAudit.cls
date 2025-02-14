@@ -162,7 +162,7 @@ public with sharing class HIFulfillmentEventTadaAudit {
 			String strDependentDetails = '';
 			String strType = getType(objHIEventInfoParsed);
 
-			if (map_HSAMFAuditDescriptions.containskey(objHIEventInfoParsed.audit_type) && map_HSAMFAuditDescriptions.get(objHIEventInfoParsed.audit_type).TAdA_Type__c == SUB_TYPE_HSA) {
+			if (map_HSAMFAuditDescriptions.containskey(objHIEventInfoParsed.audit_type) && map_HSAMFAuditDescriptions.get(objHIEventInfoParsed.audit_type).Alegeus_Type__c == SUB_TYPE_HSA) {
 				strCaseDescription += setHSACaseDescription(objHIEventInfoParsed);
 				map_KeysToDescription = getPreviousDescription(
 					objHIFulfillEvent,
@@ -193,7 +193,7 @@ public with sharing class HIFulfillmentEventTadaAudit {
 					objHIEventInfoParsed.employee.last_Name,
 					objHIEventInfoParsed.employee.middle_initial
 				);
-				String strNewCaseDescription = '\n\n' + strEmployeeName + ' of ' + objHIEventInfoParsed.company.name + ' would like to enroll in the following plans:';
+				String strNewCaseDescription = '\n\n' + strEmployeeName + ' of ' + objHIEventInfoParsed.company.name + ' would like to enroll in the following Alegeus plans:';
 				strNewCaseDescription += '\n\nLink to Employee\'s Benefits: ' + objHIEventInfoParsed.employee.hippo_url + '/subscriptions';
 				strNewCaseDescription += '\n- Hippo URL: ' + objHIEventInfoParsed.employee.hippo_url;
 
@@ -429,7 +429,7 @@ public with sharing class HIFulfillmentEventTadaAudit {
 				objCase.Tada_Audit_Event_Ids__c = objHIFulfillEvent.Id__c;
 			}
 
-			if (map_HSAMFAuditDescriptions.containskey(objHIEventInfo.audit_type) && map_HSAMFAuditDescriptions.get(objHIEventInfo.audit_type).TAdA_Type__c == SUB_TYPE_HSA) {
+			if (map_HSAMFAuditDescriptions.containskey(objHIEventInfo.audit_type) && map_HSAMFAuditDescriptions.get(objHIEventInfo.audit_type).Alegeus_Type__c == SUB_TYPE_HSA) {
 				objCase.RecordTypeId = HIEnrollmentEventUtility.CASE_RT_ID_MF_AUDIT;
 				objCase.Type = strType;
 			} else {
@@ -726,7 +726,7 @@ public with sharing class HIFulfillmentEventTadaAudit {
 	 **/
 	private String getType(HIFulfillmentEnrollmentTadaAuditJSON objHIEventInfoParsed) {
 		String strType = '';
-		if (map_HSAMFAuditDescriptions.containsKey(objHIEventInfoParsed.audit_type) && map_HSAMFAuditDescriptions.get(objHIEventInfoParsed.audit_type).TAdA_Type__c == SUB_TYPE_HSA) {
+		if (map_HSAMFAuditDescriptions.containsKey(objHIEventInfoParsed.audit_type) && map_HSAMFAuditDescriptions.get(objHIEventInfoParsed.audit_type).Alegeus_Type__c == SUB_TYPE_HSA) {
 			strType = objHIEventInfoParsed.audit_type;
 		} else {
 			if (objHIEventInfoParsed.audit_type == UNPROCESSED_OE_SELECTION) {

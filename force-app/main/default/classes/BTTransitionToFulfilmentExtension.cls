@@ -385,7 +385,7 @@ public without sharing class BTTransitionToFulfilmentExtension {
 				if (objOpp.RecordType.Name == OPP_RT_BENEFIT_BYB) {
 					blnIsBYOBOpportunity = true;
 					objTTFRecord.RecordTypeId = TTF_RT_BENEFIT_BYB;
-					blnIsOppERConfirmed = blnIsOppERConfirmed && !objOpp.Order_Generated__c;
+					blnIsOppERConfirmed = blnIsOppERConfirmed && showSaveOrder(objOpp);
 				}
 			}
 		} else if (string.isNotBlank(strTTFObjId)) {
@@ -427,7 +427,7 @@ public without sharing class BTTransitionToFulfilmentExtension {
 				if (objTTFRecord.Opportunity__r.RecordType.Name == OPP_RT_BENEFIT_BYB) {
 					blnIsBYOBOpportunity = true;
 
-					blnIsOppERConfirmed = blnIsOppERConfirmed && !objTTFRecord.Opportunity__r.Order_Generated__c;
+					blnIsOppERConfirmed = blnIsOppERConfirmed && showSaveOrder(objTTFRecord.Opportunity__r);
 				}
 			}
 		}
@@ -559,6 +559,21 @@ public without sharing class BTTransitionToFulfilmentExtension {
 				lst_priorityReasonDetails.add(new priorityReasonsWrapper(pickListVal.getLabel(), pickListVal.getValue(), false));
 			}
 		}
+	}
+
+	/**
+	 * @Description : Show the Send Order
+	 * @Parm        : objOpp : Opportunity
+	 * @Return      : Boolean
+	 **/
+	Boolean showSaveOrder(Opportunity objOpp) {
+		return (!objOpp.Order_Generated__c &&
+		objOpp.Handoff_Email_Sent__c &&
+		objOpp.Funding_Type__c != null &&
+		objOpp.BYOB_Source__c != null &&
+		objOpp.SGHI_LGHI__c != null &&
+		objOpp.BYOB_Broker__c != null &&
+		objOpp.Renewal_Date__c != null);
 	}
 
 	private map<string, Date> getCarrierKeySelectedDateMap(string strSavedData) {

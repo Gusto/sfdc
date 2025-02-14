@@ -1046,7 +1046,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1106,6 +1106,17 @@ public class NBAServeRecordTest {
 		objRequestWrapper.userFieldsAssignment = new List<String>{ 'audit_owner__c', 'confirmation_owner__c' };
 		objRequestWrapper.baseObject = 'Carrier_Order__c';
 
+
+		objRequestWrapper.fieldMapping = new List<NBARequestWrapper.FieldMapping>();
+		NBARequestWrapper.FieldMapping fieldMapping = new NBARequestWrapper.FieldMapping();
+		fieldMapping.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping mapping = new NBARequestWrapper.Mapping();
+		mapping.fromValue = NBAServeRecord.ANY_VALUE;
+		mapping.toValue = NBAServeRecord.LOGGED_IN_USER;
+		fieldMapping.mapping.add(mapping);
+		fieldMapping.selectedField = 'audit_owner__c';
+		objRequestWrapper.fieldMapping.add(fieldMapping);
+
 		NBARequestWrapper.OrderByField objOrderByField = new NBARequestWrapper.OrderByField();
 		objOrderByField.selectedRelationField = null;
 		objOrderByField.selectedOrder = 'DESC';
@@ -1150,7 +1161,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1266,7 +1277,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1374,7 +1385,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1483,7 +1494,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1616,7 +1627,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1761,7 +1772,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -1905,7 +1916,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
@@ -2050,7 +2061,7 @@ public class NBAServeRecordTest {
 		insert objState;
 
 		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').setPartnerType('TAdA').build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('Alegeus').setUniqueName('Alegeus').setId('Alegeus001').setState('TS').build();
 		list_Carriers.add(objCarrier);
 		insert list_Carriers;
 
