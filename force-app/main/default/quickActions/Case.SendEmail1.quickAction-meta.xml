@@ -2,14 +2,14 @@
 <QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>for Payroll Care LEX layout
 
-IF( Case.RecordType.Name = &quot;Payroll_Care&quot;,&quot;support@gusto.com&quot;,NULL)</description>
+IF( Case.RecordType.Name = &quot;Payroll_Care&quot;,&quot;support_uat@gusto.com&quot;,NULL)</description>
     <fieldOverrides>
         <field>ToAddress</field>
         <formula>Case.ContactEmail</formula>
     </fieldOverrides>
     <fieldOverrides>
         <field>ValidatedFromAddress</field>
-        <literalValue>support@gusto.com</literalValue>
+        <literalValue>support_uat@gusto.com</literalValue>
     </fieldOverrides>
     <optionsCreateFeedItem>true</optionsCreateFeedItem>
     <quickActionLayout>
@@ -46,7 +46,7 @@ IF( Case.RecordType.Name = &quot;Payroll_Care&quot;,&quot;support@gusto.com&quot
                 <uiBehavior>Edit</uiBehavior>
             </quickActionLayoutItems>
         </quickActionLayoutColumns>
-        <quickActionLayoutColumns/>
+        <quickActionLayoutColumns />
     </quickActionLayout>
     <quickActionSendEmailOptions>
         <ignoreDefaultEmailTemplateSubject>false</ignoreDefaultEmailTemplateSubject>

@@ -947,7 +947,7 @@ export default class TaxResSFDCSkillAssignmentCmp extends LightningElement {
 					element.classList.remove('show-error');
 				}
 			} else if (element.dataset.label === 'Tax Notice Type') {
-				if (!objData.selectedNoticeTypes) {
+				if (!objData.selectedNoticeTypes || objData.selectedNoticeTypes == '' || objData.selectedNoticeTypes == null || objData.selectedNoticeTypes == undefined) {
 					element.classList.add('show-error');
 					blnError = true;
 				} else {

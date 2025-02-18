@@ -30,7 +30,7 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <versionSegment>1</versionSegment>
+        <offset>0</offset>
     </actionCalls>
     <apiVersion>59.0</apiVersion>
     <environments>Default</environments>
@@ -108,16 +108,20 @@
             </value>
         </filters>
         <object>Contact</object>
-        <recordTriggerType>Update</recordTriggerType>
+        <recordTriggerType>Create</recordTriggerType>
         <scheduledPaths>
+            <name>Short_delay_due_to_Future_context</name>
             <connector>
                 <targetReference>Get_Message_Destination</targetReference>
             </connector>
-            <pathType>AsyncAfterCommit</pathType>
+            <label>Short delay due to Future context</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <timeSource>RecordTriggerEvent</timeSource>
         </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>sendSlackMsgContactTemplate</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

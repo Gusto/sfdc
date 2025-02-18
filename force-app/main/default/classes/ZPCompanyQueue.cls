@@ -4,7 +4,7 @@
  * @description  Re-process ZP comapany records asynchronously
  * @test classes ZPCompanyTriggerHelperTest
  */
-public class ZPCompanyQueue implements Queueable {
+public class ZPCompanyQueue implements Queueable, Database.AllowsCallouts {
 	private List<ZP_Company__c> list_Companies;
 	private String strOperation;
 	private ZP_Company_Configuration_Settings__mdt objConfig;

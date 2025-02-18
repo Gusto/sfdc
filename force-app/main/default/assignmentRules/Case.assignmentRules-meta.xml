@@ -9,6 +9,36 @@
             <formula>OR(  CONTAINS(LOWER(Subject), &apos;2022 checklist for smooth end of year&apos;),  CONTAINS(LOWER(Subject), &apos;let us know if you still want us to file 2022 taxes for&apos;),  CONTAINS(LOWER(Subject), &apos;complete the 2022 checklist for your clients&apos;),  CONTAINS(LOWER(Subject), &apos;your clients have new to-do items in gusto&apos;),  CONTAINS(LOWER(Subject), &apos;has end-of-year tasks to complete&apos;),  CONTAINS(LOWER(Subject), &apos;your clients have end-of-year tasks to complete&apos;),  CONTAINS(LOWER(Subject), &apos;your clients have outstanding tasks to complete&apos;),  CONTAINS(LOWER(Subject), &apos;last call to make changes before we file 2022 taxes&apos;),  CONTAINS(LOWER(Subject), &apos;last call to complete end-of-year tasks for&apos;),  CONTAINS(LOWER(Subject), &apos;urgent: complete your 2022 checklist now&apos;),  CONTAINS(LOWER(Subject), &apos;urgent: your 2022 checklist is due today&apos;) )</formula>
         </ruleEntry>
         <ruleEntry>
+            <assignedTo>GEP_CX_Queue</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <booleanFilter>1 AND 2 AND (3 OR (4 AND 5))</booleanFilter>
+            <criteriaItems>
+                <field>Account.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Embedded Company</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Payroll Care,Tax Res</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Email</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Gusto</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Channel__c</field>
+                <operation>equals</operation>
+                <value>Email</value>
+            </criteriaItems>
+        </ruleEntry>
+        <ruleEntry>
             <booleanFilter>(1 OR 2 OR 3 OR (4 AND 5)) AND 6 AND 7</booleanFilter>
             <criteriaItems>
                 <field>Case.Origin</field>
@@ -709,20 +739,6 @@
             <criteriaItems>
                 <field>Case.Answer_IQ_Processed__c</field>
                 <operation>equals</operation>
-            </criteriaItems>
-        </ruleEntry>
-        <ruleEntry>
-            <assignedTo>Payroll_Compliance_Queue</assignedTo>
-            <assignedToType>Queue</assignedToType>
-            <criteriaItems>
-                <field>Case.RecordTypeId</field>
-                <operation>equals</operation>
-                <value>Payroll Compliance</value>
-            </criteriaItems>
-            <criteriaItems>
-                <field>Case.Status</field>
-                <operation>equals</operation>
-                <value>New</value>
             </criteriaItems>
         </ruleEntry>
         <ruleEntry>

@@ -101,6 +101,20 @@ private class SalesCallTrackingTriggerHelperTest {
 		insert list_SalesCallTrackingToInsert;
 	}
 
+	static testMethod void testSkipTrigger() {
+		Sales_Call_Tracking__c objSalClTrack = new Sales_Call_Tracking__c(
+			Processed_By_Workato__c = false,
+			Call_Start_Time__c = System.now(),
+			Call_End_Time__c = System.now(),
+			Genesys_Integration_Id__c = '415897931551234-5516'
+		);
+		
+		Test.startTest();
+		SalesCallTrackingTriggerHelper.skipTrigger = true;
+		insert objSalClTrack;
+		Test.stopTest();
+	}
+
 	static testMethod void testCreateCaseAuditRecord() {
 		Test.startTest();
 

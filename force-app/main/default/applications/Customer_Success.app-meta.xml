@@ -18,24 +18,6 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
     </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Order_Record_Page2</content>
-        <formFactor>Large</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
-        <pageOrSobjectType>Order</pageOrSobjectType>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Order_Record_Page2</content>
-        <formFactor>Small</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
-        <pageOrSobjectType>Order</pageOrSobjectType>
-    </actionOverrides>
     <brand>
         <headerColor>#0070D2</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
@@ -125,6 +107,24 @@
         <content>CS_Reseller_Account</content>
         <formFactor>Small</formFactor>
         <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Brokerage</recordType>
+        <type>Flexipage</type>
+        <profile>CX User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>CS_Reseller_Account</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Brokerage</recordType>
+        <type>Flexipage</type>
+        <profile>CX User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>CS_Reseller_Account</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
         <recordType>Account.Company</recordType>
         <type>Flexipage</type>
         <profile>CX User</profile>
@@ -199,18 +199,18 @@
     <tabs>NICE_Interaction__c</tabs>
     <tabs>Opportunity_Related_Tracking__c</tabs>
     <tabs>standard-OtherUserProfile</tabs>
-    <tabs>HI_Fsa_Policy_Detail__c</tabs>
+    <tabs>PT_Order_Team_Capacity__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Customer_Success_UtilityBar</utilityBar>
     <workspaceConfig>
-        <mappings>
-            <tab>HI_Fsa_Policy_Detail__c</tab>
-        </mappings>
         <mappings>
             <tab>NICE_Interaction__c</tab>
         </mappings>
         <mappings>
             <tab>Opportunity_Related_Tracking__c</tab>
+        </mappings>
+        <mappings>
+            <tab>PT_Order_Team_Capacity__c</tab>
         </mappings>
         <mappings>
             <tab>standard-Account</tab>

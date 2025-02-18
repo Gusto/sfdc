@@ -191,4 +191,13 @@ export default class AutoCompleteCmp extends LightningElement {
 		});
 		this.customTop = (strMessage === '') ? 'top: 50% !important;' : 'top: 32% !important;'
 	}
+
+	/* api method to reset the text box */
+	@api
+	setTextBox(value) {
+		let lst_input = [...this.template.querySelectorAll("lightning-input")];
+		lst_input.forEach((input) => {
+			input.value = value;
+		});
+	}
 }

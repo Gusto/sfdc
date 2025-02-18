@@ -34,10 +34,10 @@ export default class TaxResCaseSolveCmp extends LightningElement {
 	list_SelectedAttachments;
 
 	@wire(getRecord, { recordId: "$recordId", fields })
-	caseObj({ data, error }) {
+	caseObj({data,error}) {
 		if (data) {
 			this.recordTypeName = data.recordTypeInfo.name;
-		}
+   		}
 	}
 
 	@wire(getSolveCaseFields)
@@ -128,7 +128,6 @@ export default class TaxResCaseSolveCmp extends LightningElement {
 		if (this.blnIsSaveClick == false) {
 			displayToast(this, "Success!", "The Case's record has been successfully solved.", "success", "");
 			this.blnIsLoading = false;
-			//this.openEmailPublisher();
 			if (this.recordTypeName == "Tax Res") {
 				this.blnShowModal = true;
 			} else {
@@ -155,6 +154,7 @@ export default class TaxResCaseSolveCmp extends LightningElement {
 							list_SelectedAttachmentIds: this.list_SelectedAttachments
 						}
 					});
+
 					// Fire the custom event
 					this.dispatchEvent(evtOpenTab);
 				}
@@ -172,7 +172,7 @@ export default class TaxResCaseSolveCmp extends LightningElement {
 		this.list_SelectedAttachments = [];
 		this.openEmailPublisher();
 		this.blnShowModal = false;
-	}
+    }
 
 	handleOk(event) {
 		event.preventDefault();
@@ -187,5 +187,5 @@ export default class TaxResCaseSolveCmp extends LightningElement {
 		});
 		this.openEmailPublisher();
 		this.blnShowModal = false;
-	}
+	}	
 }

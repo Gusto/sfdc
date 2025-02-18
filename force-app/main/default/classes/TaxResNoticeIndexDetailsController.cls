@@ -50,18 +50,42 @@ public with sharing class TaxResNoticeIndexDetailsController {
 	public static final String PI_LATE_DEPOSIT_AUTOSOLVE_FIRED = 'P&I Late Deposit/Amendment Auto-Solve Fired';
 
 	public static final Map<String, Tax_Res_Play_Mode_Configuration__mdt> map_TaxResPlayModeConfigQuery = new Map<String, Tax_Res_Play_Mode_Configuration__mdt>{
-		DUPLICATE_NOTICE_FALSE_POSITIVE_FILTERS +'-' +STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_MAIN_QUERY),
-		DUPLCIATE_NOTICE_CLOSED_CASE_FILTERS +'-' +STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_MAIN_QUERY),
-		DUPLICATE_NOTICE_INPROGRESS_CASE_FILTERS +'-' +STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_MAIN_QUERY),
-		PREVIOUSLY_ANSWERED_CASE_FILTER +'-' +STR_MAIN => map_TaxResNoticeConfigDetail?.get(PREVIOUSLY_ANSWERED_MAIN_QUERY),
-		DUPLICATE_NOTICE_FALSE_POSITIVE_FILTERS +'-' +STR_FILTER => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_FALSE_POSITIVE_FILTERS),
-		DUPLCIATE_NOTICE_CLOSED_CASE_FILTERS +'-' +STR_FILTER => map_TaxResNoticeConfigDetail?.get(DUPLCIATE_NOTICE_CLOSED_CASE_FILTERS),
-		DUPLICATE_NOTICE_INPROGRESS_CASE_FILTERS +'-' +STR_FILTER => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_INPROGRESS_CASE_FILTERS),
-		PREVIOUSLY_ANSWERED_CASE_FILTER +'-' +STR_FILTER => map_TaxResNoticeConfigDetail?.get(PREVIOUSLY_ANSWERED_CASE_FILTER),
-		STR_DUPLICATE_CASE_FILTER +'-' +STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_CASE_QUERY),
-		STR_DUPLICATE_CASE_FILTER +'-' +STR_FILTER => new Tax_Res_Play_Mode_Configuration__mdt(),
-		PREVIOUSLY_ANSWERED_CASE_QUERY +'-' +STR_MAIN => map_TaxResNoticeConfigDetail?.get(PREVIOUSLY_ANSWERED_CASE_QUERY),
-		PREVIOUSLY_ANSWERED_CASE_QUERY +'-' +STR_FILTER => new Tax_Res_Play_Mode_Configuration__mdt()
+		DUPLICATE_NOTICE_FALSE_POSITIVE_FILTERS +
+		'-' +
+		STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_MAIN_QUERY),
+		DUPLCIATE_NOTICE_CLOSED_CASE_FILTERS +
+		'-' +
+		STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_MAIN_QUERY),
+		DUPLICATE_NOTICE_INPROGRESS_CASE_FILTERS +
+		'-' +
+		STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_MAIN_QUERY),
+		PREVIOUSLY_ANSWERED_CASE_FILTER +
+		'-' +
+		STR_MAIN => map_TaxResNoticeConfigDetail?.get(PREVIOUSLY_ANSWERED_MAIN_QUERY),
+		DUPLICATE_NOTICE_FALSE_POSITIVE_FILTERS +
+		'-' +
+		STR_FILTER => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_FALSE_POSITIVE_FILTERS),
+		DUPLCIATE_NOTICE_CLOSED_CASE_FILTERS +
+		'-' +
+		STR_FILTER => map_TaxResNoticeConfigDetail?.get(DUPLCIATE_NOTICE_CLOSED_CASE_FILTERS),
+		DUPLICATE_NOTICE_INPROGRESS_CASE_FILTERS +
+		'-' +
+		STR_FILTER => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_INPROGRESS_CASE_FILTERS),
+		PREVIOUSLY_ANSWERED_CASE_FILTER +
+		'-' +
+		STR_FILTER => map_TaxResNoticeConfigDetail?.get(PREVIOUSLY_ANSWERED_CASE_FILTER),
+		STR_DUPLICATE_CASE_FILTER +
+		'-' +
+		STR_MAIN => map_TaxResNoticeConfigDetail?.get(DUPLICATE_NOTICE_CASE_QUERY),
+		STR_DUPLICATE_CASE_FILTER +
+		'-' +
+		STR_FILTER => new Tax_Res_Play_Mode_Configuration__mdt(),
+		PREVIOUSLY_ANSWERED_CASE_QUERY +
+		'-' +
+		STR_MAIN => map_TaxResNoticeConfigDetail?.get(PREVIOUSLY_ANSWERED_CASE_QUERY),
+		PREVIOUSLY_ANSWERED_CASE_QUERY +
+		'-' +
+		STR_FILTER => new Tax_Res_Play_Mode_Configuration__mdt()
 	};
 
 	/*
@@ -100,7 +124,7 @@ public with sharing class TaxResNoticeIndexDetailsController {
 							Id,
 							Agency_Information__c,
 							Agency_Information__r.SUI_Rate_Form_Numbers__c,
-							Agency_Information__r.OCR_Enabled__c,
+                        	Agency_Information__r.OCR_Enabled__c,
 							Client_Name__c,
 							Tier__c,
 							Segment__c,
@@ -117,17 +141,29 @@ public with sharing class TaxResNoticeIndexDetailsController {
 							Late_Deposit_Amount__c,
 							Tax_Notice_Type__c,
 							Client_Tax_ID_Conf_Score__c,
+							Client_Tax_ID_Conf_Score_Reason__c,
 							Interest_Amount_Due_Conf_Score__c,
+							Interest_Amount_Due_Conf_Score_Reason__c,
 							Multi_Yr_Qtr_Indicator_Conf_Score__c,
+							Multi_Yr_Qtr_Indicator_Conf_Score_Reason__c,
 							Notice_Form_Number_Conf_Score__c,
+							Notice_Form_Number_Conf_Score_Reason__c,
 							Penalty_Amount_Due_Conf_Score__c,
+							Penalty_Amount_Due_Conf_Score_Reason__c,
 							Tax_Amount_Due_Conf_Score__c,
+							Tax_Amount_Due_Conf_Score_Reason__c,
 							Tax_Notice_Date_Conf_Score__c,
+							Tax_Notice_Date_Conf_Score_Reason__c,
 							Tax_Notice_Numeration_Conf_Score__c,
+							Tax_Notice_Numeration_Conf_Score_Reason__c,
 							Tax_Notice_Type_Conf_Score__c,
+							Tax_Notice_Type_Conf_Score_Reason__c,
 							Total_Amount_Due_Conf_Score__c,
+							Total_Amount_Due_Conf_Score_Reason__c,
 							Year_Quarter_Conf_Score__c,
+							Year_Quarter_Conf_Score_Reason__c,
 							Tax_Notice_Due_Date_Conf_Score__c,
+							Tax_Notice_Due_Date_Conf_Score_Reason__c,
 							MRR_Reason__c,
 							Manual_Review_Required__c,
 							Bypass_Manual_Validation__c
@@ -224,7 +260,6 @@ public with sharing class TaxResNoticeIndexDetailsController {
 			if (objCase.Tax_Notice_Indexs__r.isEmpty()) {
 				continue;
 			}
-
 			map_CaseRecords.put(objCase.Id, objCase);
 			Tax_Notice_Index__c objTaxNoticIndex = objCase.Tax_Notice_Indexs__r[0];
 			String strZPCompanyId = objTaxNoticIndex?.Client_Name__r.ZP_Company_ID__c;
@@ -301,7 +336,7 @@ public with sharing class TaxResNoticeIndexDetailsController {
 
 					if (objCaseRecord.Origin == CaseUtils.ORIGIN_ELECTRONIC_NOTICE && objCaseRecord.AccountId != objTaxNotice.Client_Name__c) {
 						objCase.AccountId = objTaxNotice.Client_Name__c;
-		
+
 						if (map_AccountContactDetails?.size() > 0 && map_AccountContactDetails.containsKey(strZPCompanyId) && 
 							map_AccountContactDetails.get(strZPCompanyId).Contacts?.size() > 0) {
 							objCase.ContactId = map_AccountContactDetails.get(strZPCompanyId).Contacts[0].Id;
@@ -376,9 +411,17 @@ public with sharing class TaxResNoticeIndexDetailsController {
 						Case objDuplicateNoticeCase = retrieveDuplicateNoticeCase(objCaseRecord);
 						if (objDuplicateNoticeCase?.Id != null && !objCaseRecord?.Tax_Notice_Indexs__r[0]?.No_Notice_Attached__c) {
 							if (strDuplicateNoticeType == DUPLICATE_NOTICE_FALSE_POSITIVE_CHECK) {
-								if (objDuplicateNoticeCase.Tax_Notice_Indexs__r != null && objDuplicateNoticeCase.Tax_Notice_Indexs__r.size() > 0 && objDuplicateNoticeCase.Tax_Notice_Indexs__r[0].RAF_Indicator__c == 'Y') {
+								if (
+									objDuplicateNoticeCase.Tax_Notice_Indexs__r != null &&
+									objDuplicateNoticeCase.Tax_Notice_Indexs__r.size() > 0 &&
+									objDuplicateNoticeCase.Tax_Notice_Indexs__r[0].RAF_Indicator__c == 'Y'
+								) {
 									blnIsAutoSolved = true;
-									TaxResAutoSolveUtil.handleFieldSync(objDuplicateNoticeCase, objCase, populateAutoSolvePackageDetails(objCaseRecord, TaxResAutoSolveUtil.DUPLICATE_NOTICE_CLOSED_CASE_AUTO_SOLVE_PACKAGE));
+									TaxResAutoSolveUtil.handleFieldSync(
+										objDuplicateNoticeCase,
+										objCase,
+										populateAutoSolvePackageDetails(objCaseRecord, TaxResAutoSolveUtil.DUPLICATE_NOTICE_CLOSED_CASE_AUTO_SOLVE_PACKAGE)
+									);
 								} else {
 									blnIsAutoSolved = false;
 									objCase.Mass_Email_Step__c = DUPLICATE_NOTICE_FALSE_POSITIVE_CHECK;
@@ -387,10 +430,18 @@ public with sharing class TaxResNoticeIndexDetailsController {
 								}
 							} else if (strDuplicateNoticeType == TaxResAutoSolveUtil.DUPLICATE_NOTICE_CLOSED_CASE_AUTO_SOLVE_PACKAGE && !blnIsFinalTaxNoticeNumeration) {
 								blnIsAutoSolved = true;
-								TaxResAutoSolveUtil.handleFieldSync(objDuplicateNoticeCase, objCase, populateAutoSolvePackageDetails(objCaseRecord, TaxResAutoSolveUtil.DUPLICATE_NOTICE_CLOSED_CASE_AUTO_SOLVE_PACKAGE));
+								TaxResAutoSolveUtil.handleFieldSync(
+									objDuplicateNoticeCase,
+									objCase,
+									populateAutoSolvePackageDetails(objCaseRecord, TaxResAutoSolveUtil.DUPLICATE_NOTICE_CLOSED_CASE_AUTO_SOLVE_PACKAGE)
+								);
 							} else if (strDuplicateNoticeType == TaxResAutoSolveUtil.DUPLICATE_NOTICE_INPROGRESS_CASE_AUTO_SOLVE_PACKAGE) {
 								blnIsAutoSolved = true;
-								TaxResAutoSolveUtil.handleFieldSync(objDuplicateNoticeCase, objCase, populateAutoSolvePackageDetails(objCaseRecord, TaxResAutoSolveUtil.DUPLICATE_NOTICE_INPROGRESS_CASE_AUTO_SOLVE_PACKAGE));
+								TaxResAutoSolveUtil.handleFieldSync(
+									objDuplicateNoticeCase,
+									objCase,
+									populateAutoSolvePackageDetails(objCaseRecord, TaxResAutoSolveUtil.DUPLICATE_NOTICE_INPROGRESS_CASE_AUTO_SOLVE_PACKAGE)
+								);
 							}
 							blnContinue = false;
 						}
@@ -408,14 +459,18 @@ public with sharing class TaxResNoticeIndexDetailsController {
 								dtNPFirstDate_After = getQuarterMonthLastDate(objCaseRecord.Tax_Notice_Indexs__r[0].Yr_Qtr__c, false)[0];
 								dtNPLastDate_After = getQuarterMonthLastDate(objCaseRecord.Tax_Notice_Indexs__r[0].Yr_Qtr__c, false)[1];
 							}
+
 							// No Notice Attached Auto-Solve
 							if (objCaseRecord.Tax_Notice_Indexs__r[0].No_Notice_Attached__c) {
 								if (!objCaseRecord.Tax_Notice_Indexs__r[0].Manually_Indexed__c) {
 									blnSendToIndexer = true;
-								} else if(
-									!blnIsOCREnabledAgency || 
-									(blnIsOCREnabledAgency && !blnIsAutosolveEnabledAgency) || 
-									(blnIsOCREnabledAgency && blnIsAutosolveEnabledAgency && !blnCaseReasonIsSuiRate && objCaseRecord.Origin != CaseUtils.ORIGIN_ELECTRONIC_NOTICE) || 
+								} else if (
+									!blnIsOCREnabledAgency ||
+									(blnIsOCREnabledAgency && !blnIsAutosolveEnabledAgency) ||
+									(blnIsOCREnabledAgency &&
+									blnIsAutosolveEnabledAgency &&
+									!blnCaseReasonIsSuiRate &&
+									objCaseRecord.Origin != CaseUtils.ORIGIN_ELECTRONIC_NOTICE) ||
 									(objCaseRecord.Origin == CaseUtils.ORIGIN_ELECTRONIC_NOTICE && !blnBothSystemSuccess)
 								) {
 									blnIsAutoSolved = true;
@@ -1073,16 +1128,27 @@ public with sharing class TaxResNoticeIndexDetailsController {
 						Interest_Amount_Due__c,
 						Manually_Indexed__c,
 						Client_Tax_ID_Conf_Score__c,
+						Client_Tax_ID_Conf_Score_Reason__c,
 						Interest_Amount_Due_Conf_Score__c,
+						Interest_Amount_Due_Conf_Score_Reason__c,
 						Multi_Yr_Qtr_Indicator_Conf_Score__c,
+						Multi_Yr_Qtr_Indicator_Conf_Score_Reason__c,
 						Notice_Form_Number_Conf_Score__c,
+						Notice_Form_Number_Conf_Score_Reason__c,
 						Penalty_Amount_Due_Conf_Score__c,
+						Penalty_Amount_Due_Conf_Score_Reason__c,
 						Tax_Amount_Due_Conf_Score__c,
+						Tax_Amount_Due_Conf_Score_Reason__c,
 						Tax_Notice_Date_Conf_Score__c,
+						Tax_Notice_Date_Conf_Score_Reason__c,
 						Tax_Notice_Numeration_Conf_Score__c,
+						Tax_Notice_Numeration_Conf_Score_Reason__c,
 						Tax_Notice_Type_Conf_Score__c,
+						Tax_Notice_Type_Conf_Score_Reason__c,
 						Total_Amount_Due_Conf_Score__c,
-						Year_Quarter_Conf_Score__c
+						Total_Amount_Due_Conf_Score_Reason__c,
+						Year_Quarter_Conf_Score__c,
+						Year_Quarter_Conf_Score_Reason__c
 					FROM Tax_Notice_Indexs__r
 					WHERE RecordType.Name = 'Manual Indexing'
 					LIMIT 1
@@ -1095,44 +1161,45 @@ public with sharing class TaxResNoticeIndexDetailsController {
 	}
 
 	/*
-		* @author:         Elavarasan N
-		* @description:    Populate the auto solve package details based on FBED/Physical Email/Regular
-		* @param:          Case object record, package name
-		* @return:         String (Package Name)
-	*/
+	 * @author:         Elavarasan N
+	 * @description:    Populate the auto solve package details based on FBED/Physical Email/Regular
+	 * @param:          Case object record, package name
+	 * @return:         String (Package Name)
+	 */
 	public static String populateAutoSolvePackageDetails(Case objCaseRecord, String strBasicPackageName) {
 		String strPackageName;
 		Boolean blnGustoIsAddresseeOfRecord = (objCaseRecord.Physical_Mail__c || objCaseRecord.Tax_Notice_Indexs__r[0].Gusto_is_addressee_of_record__c);
 		String strPackageNameBED = strBasicPackageName + ' - ' + CaseUtils.ORIGIN_BED;
-		String strPackageNamePhysicalEmail = strBasicPackageName + ' - ' +CaseUtils.STRING_PHYSICAL_MAIL;
-		
+		String strPackageNamePhysicalEmail = strBasicPackageName + ' - ' + CaseUtils.STRING_PHYSICAL_MAIL;
+
 		if (objCaseRecord.Origin == CaseUtils.ORIGIN_ELECTRONIC_NOTICE) {
 			strPackageName = strPackageNameBED;
-		} else if(blnGustoIsAddresseeOfRecord) {
+		} else if (blnGustoIsAddresseeOfRecord) {
 			strPackageName = strPackageNamePhysicalEmail;
 		} else {
-			strPackageName = strBasicPackageName; 
+			strPackageName = strBasicPackageName;
 		}
 		return strPackageName;
 	}
 
 	/*
-		* @author:         Pravesh R
-		* @description:    populate ZP_Company_Id and Account map map_AccountContactDetails
-		* @param:          set of ZP_COmpany_Ids
-		* @return:         N/A
-	*/
-	public static void getAccountDetails(Set<String> set_ZPCompanyIds){		
+	 * @author:         Pravesh R
+	 * @description:    populate ZP_Company_Id and Account map map_AccountContactDetails
+	 * @param:          set of ZP_COmpany_Ids
+	 * @return:         N/A
+	 */
+	public static void getAccountDetails(Set<String> set_ZPCompanyIds) {
 		map_AccountContactDetails = new Map<String, Account>();
 
 		if (set_ZPCompanyIds?.size() > 0) {
-			for (Account objAccount : [SELECT Id, ZP_Company_Id__c, Name, 
-										(SELECT ID FROM Contacts WHERE ZP_User_Role__c INCLUDES ('Primary Payroll Admin')) 
-										FROM Account WHERE ZP_Company_Id__c IN :set_ZPCompanyIds
-										AND ZP_Company_Id__c != null]) {
+			for (Account objAccount : [
+				SELECT Id, ZP_Company_Id__c, Name, (SELECT ID FROM Contacts WHERE ZP_User_Role__c INCLUDES ('Primary Payroll Admin'))
+				FROM Account
+				WHERE ZP_Company_Id__c IN :set_ZPCompanyIds AND ZP_Company_Id__c != NULL
+			]) {
 				map_AccountContactDetails.put(objAccount.ZP_Company_Id__c, objAccount);
 			}
-		}		
+		}
 	}
 
 	/*

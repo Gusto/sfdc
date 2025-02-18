@@ -152,7 +152,7 @@ private class EmailPublisherLoaderTest {
 			HI_Effective_Date__c = System.today().addDays(30)
 		);
 
-		opp1.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp1.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		opp1.Source_Id__c = 'TestAcc001';
 
 		OpportunityTriggerHelper.skiptrigger = true;

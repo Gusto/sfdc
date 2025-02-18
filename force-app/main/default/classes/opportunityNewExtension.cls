@@ -134,7 +134,7 @@ public class opportunityNewExtension {
 
 		string upsellRecTypeId = OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID;
 		if (oppRec.RecordTypeId == upsellRecTypeId) {
-			apexPages.addMessage(new apexPages.Message(apexPages.Severity.Error, 'Upsell Tier is required when creating a Tier Upsell Opportunity.'));
+			apexPages.addMessage(new apexPages.Message(apexPages.Severity.Error, 'Upsell Tier is required when creating a Cross-Sell and Upsell Opportunity.'));
 			return null;
 			
 		}

@@ -16,7 +16,6 @@
         </inputParameters>
         <nameSegment>Partnership_Interest__c.Betterment_Interest_Email_Alert</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Email_Alert_for_Bench</name>
@@ -34,7 +33,6 @@
         </inputParameters>
         <nameSegment>Partnership_Interest__c.Accountant_Interest</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Call invocable apex class to call Guideline API.</description>
@@ -59,7 +57,6 @@
         </inputParameters>
         <nameSegment>SendProductUpsellToExternalPartner</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Call invocable apex class to call HumanInterest API.</description>
@@ -84,7 +81,6 @@
         </inputParameters>
         <nameSegment>SendProductUpsellToExternalPartner</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Call invocable apex class to call NEXTInsurance API.</description>
@@ -109,7 +105,6 @@
         </inputParameters>
         <nameSegment>SendProductUpsellToExternalPartner</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Call invocable apex class to call Remote API.</description>
@@ -134,7 +129,6 @@
         </inputParameters>
         <nameSegment>SendProductUpsellToExternalPartner</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Vestwell_Email_Alert</name>
@@ -152,7 +146,6 @@
         </inputParameters>
         <nameSegment>Partnership_Interest__c.Vestwell_Email_Alert</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>55.0</apiVersion>
     <decisions>
@@ -324,17 +317,10 @@
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>Get_Product_Upsell_Record.Workers_Comp_InterestPicklist__c</leftValueReference>
+                <leftValueReference>Get_Product_Upsell_Record.Workers_Comp_Interest__c</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
-                    <elementReference>objRecordOld.Workers_Comp_InterestPicklist__c</elementReference>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Get_Product_Upsell_Record.Workers_Comp_InterestPicklist__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>NEXT Insurance</stringValue>
+                    <elementReference>objRecordOld.Workers_Comp_Interest__c</elementReference>
                 </rightValue>
             </conditions>
             <connector>

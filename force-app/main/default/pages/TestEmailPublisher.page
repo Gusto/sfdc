@@ -1,0 +1,19 @@
+<apex:page standardController="Case" showHeader="true">
+    <apex:emailPublisher id="myEmailPublisher" 
+                         entityId="500020000091VpCAAU" 
+                         width="600px"
+                         title="Send an Email"
+                         expandableHeader="false"
+                         autoCollapseBody="false"
+                         showAdditionalFields="false"
+                         fromVisibility="selectable"
+                         toVisibility="editable"
+                         bccVisibility="hidden" 
+                         ccVisibility="hidden"
+                         emailBody=""
+                         subject=""
+                         toAddresses=""
+                         onSubmitFailure="alert('failed');"
+                         fromAddresses="person1@mycompany.com,person2@mycompany.com"
+                         />  
+</apex:page>

@@ -16,6 +16,11 @@
         <label>Cobra</label>
     </customValue>
     <customValue>
+        <fullName>Enrollment Information</fullName>
+        <default>false</default>
+        <label>Enrollment Information</label>
+    </customValue>
+    <customValue>
         <fullName>FEIN - Benefits</fullName>
         <default>false</default>
         <label>FEIN - Benefits</label>
@@ -41,6 +46,11 @@
         <label>Spanish</label>
     </customValue>
     <customValue>
+        <fullName>TaDa - EOY</fullName>
+        <default>false</default>
+        <label>TaDa - EOY</label>
+    </customValue>
+    <customValue>
         <fullName>TAM Accountant</fullName>
         <default>false</default>
         <label>TAM Accountant</label>
@@ -51,73 +61,15 @@
         <label>TAM Premier</label>
     </customValue>
     <customValue>
-        <fullName>TaDa - EOY</fullName>
-        <default>false</default>
-        <label>TaDa - EOY</label>
-    </customValue>
-    <customValue>
-        <fullName>Enrollment Information</fullName>
-        <default>false</default>
-        <label>Enrollment Information</label>
-    </customValue>
-    <customValue>
         <fullName>Payroll Corrections</fullName>
         <default>false</default>
         <label>Payroll Corrections</label>
     </customValue>
     <customValue>
-        <fullName>Regular Payroll: Issue or Question</fullName>
+        <fullName>Retirement</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>Regular Payroll: Issue or Question</label>
-    </customValue>
-    <customValue>
-        <fullName>Skip Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Skip Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>New Hire Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>New Hire Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>Off-Cycle Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Off-Cycle Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>Faster Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Faster Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>Commission Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Commission Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>Bonus Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Bonus Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>Cancel Payroll</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Cancel Payroll</label>
-    </customValue>
-    <customValue>
-        <fullName>Integrated Workers’ Comp</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Integrated Workers’ Comp</label>
+        <label>Retirement</label>
     </customValue>
     <customValue>
         <fullName>CorpNet State Tax Registration</fullName>
@@ -186,16 +138,142 @@
         <label>Risk Assurance</label>
     </customValue>
     <customValue>
-        <fullName>Workers Comp</fullName>
+        <fullName>Unclaimed Property</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>Workers Comp</label>
+        <label>Unclaimed Property</label>
     </customValue>
     <customValue>
         <fullName>Gusto Invoice</fullName>
         <default>false</default>
         <isActive>false</isActive>
         <label>Gusto Invoice</label>
+    </customValue>
+    <customValue>
+        <fullName>Kiosk</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Kiosk</label>
+    </customValue>
+    <customValue>
+        <fullName>Project Tracking</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Project Tracking</label>
+    </customValue>
+    <customValue>
+        <fullName>Time Off</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Time Off</label>
+    </customValue>
+    <customValue>
+        <fullName>Time Tracking</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Time Tracking</label>
+    </customValue>
+    <customValue>
+        <fullName>Regular Payroll: Issue or Question</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Regular Payroll: Issue or Question</label>
+    </customValue>
+    <customValue>
+        <fullName>Skip Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Skip Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Benefits Adjustments</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Benefits Adjustments</label>
+    </customValue>
+    <customValue>
+        <fullName>Off-Cycle Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Off-Cycle Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Faster Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Faster Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Commission Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Commission Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Bonus Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Bonus Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Cancel Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Cancel Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Integrated Workers’ Comp</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Integrated Workers’ Comp</label>
+    </customValue>
+    <customValue>
+        <fullName>TAM</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>TAM</label>
+    </customValue>
+    <customValue>
+        <fullName>New Hire Payroll</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>New Hire Payroll</label>
+    </customValue>
+    <customValue>
+        <fullName>Benefits Inquiry</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Benefits Inquiry</label>
+    </customValue>
+    <customValue>
+        <fullName>Retirement Savings</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Retirement Savings</label>
+    </customValue>
+    <customValue>
+        <fullName>Terminations</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Terminations</label>
+    </customValue>
+    <customValue>
+        <fullName>FEIN Changes</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>FEIN Changes</label>
+    </customValue>
+    <customValue>
+        <fullName>Tax Adjustments</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Tax Adjustments</label>
+    </customValue>
+    <customValue>
+        <fullName>Wage Adjustments</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Wage Adjustments</label>
     </customValue>
     <customValue>
         <fullName>Time</fullName>
@@ -228,88 +306,10 @@
         <label>TaDa - New</label>
     </customValue>
     <customValue>
-        <fullName>TAM</fullName>
+        <fullName>Workers Comp</fullName>
         <default>false</default>
         <isActive>false</isActive>
-        <label>TAM</label>
-    </customValue>
-    <customValue>
-        <fullName>Unclaimed Property</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Unclaimed Property</label>
-    </customValue>
-    <customValue>
-        <fullName>Retirement</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Retirement</label>
-    </customValue>
-    <customValue>
-        <fullName>FEIN Changes</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>FEIN Changes</label>
-    </customValue>
-    <customValue>
-        <fullName>Tax Adjustments</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Tax Adjustments</label>
-    </customValue>
-    <customValue>
-        <fullName>Wage Adjustments</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Wage Adjustments</label>
-    </customValue>
-    <customValue>
-        <fullName>Benefits Adjustments</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Benefits Adjustments</label>
-    </customValue>
-    <customValue>
-        <fullName>Benefits Inquiry</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Benefits Inquiry</label>
-    </customValue>
-    <customValue>
-        <fullName>Retirement Savings</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Retirement Savings</label>
-    </customValue>
-    <customValue>
-        <fullName>Terminations</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Terminations</label>
-    </customValue>
-    <customValue>
-        <fullName>Kiosk</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Kiosk</label>
-    </customValue>
-    <customValue>
-        <fullName>Project Tracking</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Project Tracking</label>
-    </customValue>
-    <customValue>
-        <fullName>Time Off</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Time Off</label>
-    </customValue>
-    <customValue>
-        <fullName>Time Tracking</fullName>
-        <default>false</default>
-        <isActive>false</isActive>
-        <label>Time Tracking</label>
+        <label>Workers Comp</label>
     </customValue>
     <description>This will include all specializations for a case that can be routed via omni</description>
     <masterLabel>Case Specialization</masterLabel>

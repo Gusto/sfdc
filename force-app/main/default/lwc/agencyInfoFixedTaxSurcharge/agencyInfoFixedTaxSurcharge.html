@@ -1,0 +1,75 @@
+<template>
+    <div class="container">
+    <lightning-card  title="Fixed Tax Surchange" >
+
+        <!-- modal start -->      
+        <template if:true={isShowModal}>
+            <section  role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- modal header start -->
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please Note</h2>
+                </header>
+
+                <!-- modal body start -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>You have deselected {checkBox_labelsList_Str}. Please acknowledge: if you click Submit you will delete this section & all field details</p>
+                </div>
+
+                <!-- modal footer start-->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="success" label="Submit" title="Successful action" onclick={handleSubmitButton} class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button variant="brand-outline" label="Cancel" title="Unsuccessful action" onclick={hideModalBox} class="slds-m-right_x-small"></lightning-button>
+                </footer>
+
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        <!-- modal end -->
+
+    <!-- form start -->
+    <template lwc:if={reloadForm}>
+        <template for:each={getFormNameObjList} for:item="childObj">
+            <lightning-input class={checkBoxLabel} key={childObj.form.Id} type="checkbox" label={childObj.formLabel} data-id={childObj.form.Id} data-api={childObj.formLabel} onchange={handleInputCheckBoxChange} checked={childObj.areDetailsVisible}> </lightning-input>
+                <form key={childObj.form.Id}  lwc:if={childObj.areDetailsVisible} class="slds-border_top" >
+                    <lightning-card  >
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                            
+                                <lightning-input label="Fixed Tax/Surcharge Name" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Fixed_Tax_Surcharge_Name__c" value={childObj.form.Fixed_Tax_Surcharge_Name__c} onchange={handleOnChange}> </lightning-input>
+                                
+                                <div class="slds-form-element ">
+                                    <lightning-input label="Fixed Tax/Surcharge Rate" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Fixed_Tax_Surcharge_Rate__c" value={childObj.form.Fixed_Tax_Surcharge_Rate__c} onchange={handleOnChange}></lightning-input>
+                                </div>
+
+                                <div class="slds-form-element ">
+                                    <lightning-input label="Applies to all employers?" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Applies_To_All_Employers__c" value={childObj.form.Applies_To_All_Employers__c} onchange={handleOnChange}> </lightning-input>
+                                </div>
+                                <lightning-input label="Effective Date" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Effective_Date__c" value={childObj.form.Effective_Date__c} onchange={handleOnChange}> </lightning-input>
+                                
+                                <div class="slds-form-element ">
+                                    <lightning-combobox label="Is Surcharge FUTA Recertifiable?" options={picklistVals_isSurchargeFUTARecert} data-id={childObj.form.Id} variant="label-inline" data-api="Is_Surcharge_FUTA_Recertifiable__c" value={childObj.form.Is_Surcharge_FUTA_Recertifiable__c} onchange={handleOnChange}></lightning-combobox>
+                                </div>
+                                
+                                <lightning-input label="Fixed Tax/Surcharge Notes" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Fixed_Tax_Surcharge_Notes__c" value={childObj.form.Fixed_Tax_Surcharge_Notes__c} onchange={handleOnChange}> </lightning-input>
+                                
+                                <!-- lightning-input end -->    
+                            </div>
+                        </div>
+                    </lightning-card>
+                    </form>
+        </template>
+    </template>
+    <!-- form end -->
+
+
+    <lightning-layout horizontal-align="spread" style="padding:5px">
+        <lightning-layout-item size="6" flexibility="auto"  class="slds-text-align_right">
+            <lightning-button class=" slds-m-top_medium" variant="brand" type="submit" label="Submit" onclick={handleFormSubmit}> </lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+
+</lightning-card>
+</div>
+</template>

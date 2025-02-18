@@ -180,7 +180,7 @@ public class EngagementCaseViewExtension_LEXTest {
 		objCase.Confirm_Case_Reason_Classification__c = objCaseReasonClassification.id;
 		update objCase;
 		EngagementCaseViewExtension_LEX.CaseAuraResponse objResponse = EngagementCaseViewExtension_LEX.saveCaseRecord(objCase, 'Payroll Care');
-		objCase = [SELECT Id, Confirm_Sub_Case_Reason_Classification__c FROM Case WHERE Id =:objCase.Id];
+		objCase = [SELECT Id, Confirm_Sub_Case_Reason_Classification__c FROM Case WHERE Id = :objCase.Id];
 		System.assert(objResponse.blnIsSuccess, 'Case was not updated.');
 		System.assertEquals(objSubCaseReasonClassification.Id, objCase.Confirm_Sub_Case_Reason_Classification__c, 'No Sub Case Reasons Found');
 	}

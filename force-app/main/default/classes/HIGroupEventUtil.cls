@@ -26,6 +26,9 @@ public class HIGroupEventUtil {
 	public static final String EVENT_TYPE_CONFIRMATION_AUTO = 'group_confirmations_automation';
 	public static final String EVENT_TYPE_RENEWAL_INTRO = 'renewal_intro_email';
 	public static final String EVENT_TYPE_RENEWAL_FOLLOWUP = 'renewal_followup_email';
+    public static final String EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_INTRO_EMAIL = 'level_funded_transition_renewal_intro_email';
+    public static final String EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_CHECKIN_EMAIL = 'level_funded_transition_renewal_check_in_email';
+    public static final String EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEWAL_EMAIL = 'level_funded_autorenew_email';
 	public static final String EVENT_TYPE_RENEWAL_FINAL = 'autorenewal_email';
 	public static final String EVENT_TYPE_QUALIFICATION_AUTO = 'group_qualification_automation';
 	public static final String EVENT_TYPE_OA_INTRO_EMAIL = 'OA_intro_email';

@@ -6,7 +6,7 @@
  */
 public class EmailMessageUtil {
 	//Advising Email Template Names, added to filter out status update for below email templates
-	public static final Set<String> ADVISING_EMAIL_TEMPLATE_SET = new Set<String>{'Advising_Intro_Email', 'Advising_Followup_Email', 'Advising_Auto_Renewal_Email', 'Advising_Final_Reminder_Email', 'Advising_Intro_Email_Scorp', 'Advising_Intro_Email_Scorp_Tadas', 'Advising_Intro_Email_Tadas'};
+	public static final Set<String> ADVISING_EMAIL_TEMPLATE_SET = new Set<String>{'Advising_Intro_Email', 'Advising_Followup_Email', 'Advising_Auto_Renewal_Email', 'Advising_Final_Reminder_Email', 'Advising_Intro_Email_Scorp', 'Advising_Intro_Email_Scorp_Tadas', 'Advising_Intro_Email_Tadas', 'Level_Funded_Auto_Renewal_Advising_Email', 'Level_Funded_Transition_Advising_Check_In_Email', 'Level_Funded_Transition_Advising_Intro_Email'};
 
 	//Case Statuses
 	public static final String CASE_STATUS_NEW = 'New';
@@ -190,5 +190,5 @@ public class EmailMessageUtil {
 		}
 
 		return map_PatternMatchingByName;
-	} 
+	}
 }

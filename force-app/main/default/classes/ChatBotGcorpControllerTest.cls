@@ -60,6 +60,7 @@ public class ChatBotGcorpControllerTest {
 			.setRecordTypeId('Internal')
 			.setQuestion('Test')
 			.setChatVisitor(objLiveChatVisitor.Id)
+			.setSessionId('12345678')
 			.build();
 
 		insert objLiveChatTranscript;
@@ -102,6 +103,7 @@ public class ChatBotGcorpControllerTest {
 			.setRecordTypeId('Internal')
 			.setQuestion('Test')
 			.setChatVisitor(objLiveChatVisitor.Id)
+			.setSessionId('12345678')
 			.build();
 
 		insert objLiveChatTranscript;
@@ -143,6 +145,7 @@ public class ChatBotGcorpControllerTest {
 			.setRecordTypeId('Internal')
 			.setQuestion('Test')
 			.setChatVisitor(objLiveChatVisitor.Id)
+			.setSessionId('12345678')
 			.build();
 
 		insert objLiveChatTranscript;
@@ -184,6 +187,7 @@ public class ChatBotGcorpControllerTest {
 			.setRecordTypeId('Internal')
 			.setQuestion('Test')
 			.setChatVisitor(objLiveChatVisitor.Id)
+			.setSessionId('12345678')
 			.build();
 
 		insert objLiveChatTranscript;

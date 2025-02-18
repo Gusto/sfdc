@@ -1741,30 +1741,6 @@ If Case Type is not one of the restricted picklist values for Engagement, Payrol
     </decisions>
     <description>PLEASE make changes on top of this version going forward
 
-- Added TAM case routing
-- Added Engagement Alert routing
-- Synced with V13 entry criteria to resolve purgatory cases
-- Added Case in Route assignment for reroute prioritization
-- Added exception for Send Auto Email Behavior as these cases will be in Awaiting Response - fixed v2
-- Used Custom setting to get Engagement Case Queue ID
-- Added all origins/channels 
-- Add OOS sub flow
-- Removed queue assignment
-- Updated case reason logic
-- Updated case record
-- Added Null Check for Routing Team
-- Change Trigger only on update
-- Adding Custom Setting references and expanding omni routing criteria
-- Added condition to allow awaiting response cases to route
-- Adding Prior User OOO and Inactive check and route case to Queue
-- Added CaseInRoute in entry criteria
-- Added TAM Routing and new criteria for TAM decision
-- Added Entry condition, if Case Type is Gusto Global, Case Status should not be Closed
-- Email Alert Routing to General Alert Skill
-- Added logic for a new cloned case routing
-- Confidential Project (new TAM use case)
-- Added logic for updating case with required fields only (SG)
-- Removed IsEscalated logic
 - Adding TAM User OOO and Inactive check and route case to TAM skills
 - Integrate with Solve
 - BTE-4006 - Route QA Eligible Cases to QA Queue via Omni - Updated Logic
@@ -2226,7 +2202,7 @@ NOT(ISBLANK(TEXT({!$Record.Engagement_Alert__c})))
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <subflows>
         <description>To call omni channel routing flow</description>
         <name>Call_Omni_Sub_Flow</name>

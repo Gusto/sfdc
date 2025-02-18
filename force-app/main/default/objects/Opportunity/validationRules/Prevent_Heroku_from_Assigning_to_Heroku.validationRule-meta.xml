@@ -3,6 +3,6 @@
     <fullName>Prevent_Heroku_from_Assigning_to_Heroku</fullName>
     <active>true</active>
     <description>Heroku cannot change Company Opportunity Owner to Heroku</description>
-    <errorConditionFormula>AND( ISCHANGED( OwnerId ), $User.Id = &quot;00516000005BehJ&quot;,Owner.Id = &quot;00516000005BehJ&quot;, RecordTypeId = &quot;012G0000001B7uM&quot;, Account.RecordType.Name = &apos;Company&apos; )</errorConditionFormula>
+    <errorConditionFormula>AND( ISCHANGED( OwnerId ), $User.Id = &quot;00516000005BehJ&quot;,Owner.Id = &quot;00516000005BehJ&quot;, RecordType.Name = &quot;Acquisition&quot;, Account.RecordType.Name = &apos;Company&apos; )</errorConditionFormula>
     <errorMessage>Heroku cannot change Opportunity Owner to Heroku</errorMessage>
 </ValidationRule>

@@ -46,30 +46,33 @@ public with sharing class ChatBotController {
 
 		Map<Id, LiveChatTranscript> map_TranscriptRecords = new Map<Id, LiveChatTranscript>([SELECT Id, Name, AccountId FROM LiveChatTranscript WHERE Id IN :set_RoutableIds]);
 
-		if (map_TranscriptRecords.isEmpty()) {
-			return list_PayrollOutput;
-		}
-		for (LiveChatTranscript objTranscriptRecord : map_TranscriptRecords.values()) {
-			if (!String.isblank(objTranscriptRecord.AccountId)) {
-				set_AccountIds.add(objTranscriptRecord.AccountId);
+		if (!map_TranscriptRecords.isEmpty()) {
+			for (LiveChatTranscript objTranscriptRecord : map_TranscriptRecords.values()) {
+				if (!String.isblank(objTranscriptRecord.AccountId)) {
+					set_AccountIds.add(objTranscriptRecord.AccountId);
+				}
 			}
 		}
+
 		Map<Id, Account> map_AccountRecords = new Map<Id, Account>([SELECT Id, Name, Joined_Date_Panda__c FROM Account WHERE Id IN :set_AccountIds]);
 
-		for (LiveChatTranscript objTranscriptRecord : map_TranscriptRecords.values()) {
-			if (!String.isblank(objTranscriptRecord.AccountId)) {
-				objPayrollOutput.blnIsAccountAvailable = true;
-				if (map_AccountRecords.containsKey(objTranscriptRecord.AccountId) && map_AccountRecords.get(objTranscriptRecord.AccountId).Joined_Date_Panda__c != null) {
-					objPayrollOutput.blnIsAccountAvailable = false;
-					objPayrollOutput.blnIsAccountAvailableAndPayrollRun = true;
+		if (!map_TranscriptRecords.isEmpty()) {
+			for (LiveChatTranscript objTranscriptRecord : map_TranscriptRecords.values()) {
+				if (!String.isblank(objTranscriptRecord.AccountId)) {
+					objPayrollOutput.blnIsAccountAvailable = true;
+					if (map_AccountRecords.containsKey(objTranscriptRecord.AccountId) && map_AccountRecords.get(objTranscriptRecord.AccountId).Joined_Date_Panda__c != null) {
+						objPayrollOutput.blnIsAccountAvailable = false;
+						objPayrollOutput.blnIsAccountAvailableAndPayrollRun = true;
+					} else {
+						objPayrollOutput.blnIsAccountAvailableAndPayrollRun = false;
+					}
 				} else {
-					objPayrollOutput.blnIsAccountAvailableAndPayrollRun = false;
+					objPayrollOutput.blnIsAccountAvailable = false;
 				}
-			} else {
-				objPayrollOutput.blnIsAccountAvailable = false;
+				list_PayrollOutput.add(objPayrollOutput);
 			}
-			list_PayrollOutput.add(objPayrollOutput);
 		}
+
 		return list_PayrollOutput;
 	}
 }

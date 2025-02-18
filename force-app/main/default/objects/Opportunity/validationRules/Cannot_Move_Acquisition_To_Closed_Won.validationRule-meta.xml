@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Move_Acquisition_To_Closed_Won</fullName>
+    <active>true</active>
+    <description>Validation to ensure only admins, bsa and sales ops user can close won Acquisition opportunity.</description>
+    <errorConditionFormula>AND(
+    ISCHANGED(StageName),
+    ISPICKVAL(StageName, &quot;Closed Won&quot;),
+    RecordType.Name = &apos;Acquisition&apos; &amp;&amp;
+    NOT($User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorMessage>Cannot update Opportunity Stage: Setting to Closed Won is not allowed. Please reach out to Sales Ops for support.</errorMessage>
+</ValidationRule>

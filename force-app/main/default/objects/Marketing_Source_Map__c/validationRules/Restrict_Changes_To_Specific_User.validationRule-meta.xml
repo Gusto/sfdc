@@ -3,6 +3,6 @@
     <fullName>Restrict_Changes_To_Specific_User</fullName>
     <active>true</active>
     <description>Introduced for BSS-2591. Lead attribution has moved to accutics so marketing source map data need to be restricted.</description>
-    <errorConditionFormula>$User.Username != &apos;jess.moore@gusto.com&apos;</errorConditionFormula>
+    <errorConditionFormula>$User.Username != &apos;jess.moore@gusto.com.uat&apos;</errorConditionFormula>
     <errorMessage>Error: Lead attribution has moved to Accutics. Contact Jess Moore for assistance.</errorMessage>
 </ValidationRule>

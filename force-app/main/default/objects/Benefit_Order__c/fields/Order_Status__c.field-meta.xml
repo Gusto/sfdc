@@ -14,19 +14,14 @@ The picklist values for the Order Status on the Benefit Order and the Implementa
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>Closed Admin</fullName>
+                <default>false</default>
+                <label>Closed Admin</label>
+            </value>
+            <value>
                 <fullName>Blocked</fullName>
                 <default>false</default>
                 <label>Blocked</label>
-            </value>
-            <value>
-                <fullName>Ready for Intro</fullName>
-                <default>false</default>
-                <label>Ready for Intro</label>
-            </value>
-            <value>
-                <fullName>Collecting Documents</fullName>
-                <default>false</default>
-                <label>Collecting Documents</label>
             </value>
             <value>
                 <fullName>Awaiting Routing</fullName>
@@ -44,9 +39,9 @@ The picklist values for the Order Status on the Benefit Order and the Implementa
                 <label>With Advising</label>
             </value>
             <value>
-                <fullName>Approved</fullName>
+                <fullName>Canceled</fullName>
                 <default>false</default>
-                <label>Approved</label>
+                <label>Canceled</label>
             </value>
             <value>
                 <fullName>Closed Lost</fullName>
@@ -74,6 +69,41 @@ The picklist values for the Order Status on the Benefit Order and the Implementa
                 <label>Alignment Approved Post Renewal</label>
             </value>
             <value>
+                <fullName>Ready for Qualification</fullName>
+                <default>false</default>
+                <label>Ready for Qualification</label>
+            </value>
+            <value>
+                <fullName>Qualification</fullName>
+                <default>false</default>
+                <label>Qualification</label>
+            </value>
+            <value>
+                <fullName>Ready for Intro</fullName>
+                <default>false</default>
+                <label>Ready for Intro</label>
+            </value>
+            <value>
+                <fullName>Ready for Document Collection</fullName>
+                <default>false</default>
+                <label>Ready for Document Collection</label>
+            </value>
+            <value>
+                <fullName>Collecting Documents</fullName>
+                <default>false</default>
+                <label>Collecting Documents</label>
+            </value>
+            <value>
+                <fullName>Ready for Implementing Plans</fullName>
+                <default>false</default>
+                <label>Ready for Implementing Plans</label>
+            </value>
+            <value>
+                <fullName>Implementing Plans</fullName>
+                <default>false</default>
+                <label>Implementing Plans</label>
+            </value>
+            <value>
                 <fullName>Ready to Send Plan Review</fullName>
                 <default>false</default>
                 <label>Ready to Send Plan Review</label>
@@ -89,14 +119,34 @@ The picklist values for the Order Status on the Benefit Order and the Implementa
                 <label>Plans Confirmed</label>
             </value>
             <value>
-                <fullName>Ready for Qualification</fullName>
+                <fullName>Blocked Plan Review</fullName>
                 <default>false</default>
-                <label>Ready for Qualification</label>
+                <label>Blocked Plan Review</label>
             </value>
             <value>
-                <fullName>Qualification</fullName>
+                <fullName>Unblock Plan Review</fullName>
                 <default>false</default>
-                <label>Qualification</label>
+                <label>Unblock Plan Review</label>
+            </value>
+            <value>
+                <fullName>Enrollment Review Entry in Progress</fullName>
+                <default>false</default>
+                <label>Enrollment Review Entry in Progress</label>
+            </value>
+            <value>
+                <fullName>Ready to Send Enrollment Review</fullName>
+                <default>false</default>
+                <label>Ready to Send Enrollment Review</label>
+            </value>
+            <value>
+                <fullName>Enrollment Review Sent</fullName>
+                <default>false</default>
+                <label>Enrollment Review Sent</label>
+            </value>
+            <value>
+                <fullName>Enrollment Confirmed</fullName>
+                <default>false</default>
+                <label>Enrollment Confirmed</label>
             </value>
             <value>
                 <fullName>Ready for OE Prep</fullName>
@@ -164,51 +214,6 @@ The picklist values for the Order Status on the Benefit Order and the Implementa
                 <label>Pending Carrier Approval</label>
             </value>
             <value>
-                <fullName>Ready for Document Collection</fullName>
-                <default>false</default>
-                <label>Ready for Document Collection</label>
-            </value>
-            <value>
-                <fullName>Ready for Implementing Plans</fullName>
-                <default>false</default>
-                <label>Ready for Implementing Plans</label>
-            </value>
-            <value>
-                <fullName>Implementing Plans</fullName>
-                <default>false</default>
-                <label>Implementing Plans</label>
-            </value>
-            <value>
-                <fullName>Blocked Plan Review</fullName>
-                <default>false</default>
-                <label>Blocked Plan Review</label>
-            </value>
-            <value>
-                <fullName>Unblock Plan Review</fullName>
-                <default>false</default>
-                <label>Unblock Plan Review</label>
-            </value>
-            <value>
-                <fullName>Enrollment Review Entry in Progress</fullName>
-                <default>false</default>
-                <label>Enrollment Review Entry in Progress</label>
-            </value>
-            <value>
-                <fullName>Ready to Send Enrollment Review</fullName>
-                <default>false</default>
-                <label>Ready to Send Enrollment Review</label>
-            </value>
-            <value>
-                <fullName>Enrollment Review Sent</fullName>
-                <default>false</default>
-                <label>Enrollment Review Sent</label>
-            </value>
-            <value>
-                <fullName>Enrollment Confirmed</fullName>
-                <default>false</default>
-                <label>Enrollment Confirmed</label>
-            </value>
-            <value>
                 <fullName>Pending ER Signature</fullName>
                 <default>false</default>
                 <label>Pending ER Signature</label>
@@ -244,19 +249,14 @@ The picklist values for the Order Status on the Benefit Order and the Implementa
                 <label>Fulfillment prep</label>
             </value>
             <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
                 <fullName>Fulfilled</fullName>
                 <default>false</default>
                 <label>Fulfilled</label>
-            </value>
-            <value>
-                <fullName>Closed Admin</fullName>
-                <default>false</default>
-                <label>Closed Admin</label>
-            </value>
-            <value>
-                <fullName>Canceled</fullName>
-                <default>false</default>
-                <label>Canceled</label>
             </value>
         </valueSetDefinition>
     </valueSet>

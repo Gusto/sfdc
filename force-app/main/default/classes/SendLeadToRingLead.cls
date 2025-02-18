@@ -42,6 +42,14 @@ public with sharing class SendLeadToRingLead implements Queueable, Database.Allo
 		}
 	}
 
+	public class LeadWrapper {
+		public String Id;
+		public String RingLead_Record_Source = 'sf_trigger';
+		public String RingLead_Record_Type = 'Lead';
+		public String OwnerId;
+		public String RecordTypeId;
+	}
+
 	/**
 	 * @Description : Execute method of queable interface as entry point of queued job.
 	 * 				  It performs the callouts within allowed limit and chains new job if there are remaining callouts
@@ -70,20 +78,28 @@ public with sharing class SendLeadToRingLead implements Queueable, Database.Allo
 		for (Id idLead : map_Leads.keySet()) {
 			Lead objLead = map_Leads.get(idLead);
 			if (Limits.getLimitCallouts() > 0) {
-				RequestWrapper objRequestContent = new RequestWrapper(objLead.Id, objLead.Email, objLead.FirstName, objLead.LastName, objLead.Lead_Route_Count__c);
-				HttpRequest objRequest = new HttpRequest();
-				objRequest.setEndpoint('callout:Lead_Routing_Mulesoft');
-				objRequest.setMethod('POST');
-				objRequest.setBody(JSON.serialize(objRequestContent));
-				objRequest.setHeader('Content-Type', 'application/json');
-				Http http = new Http();
-				HTTPResponse objResponse = http.send(objRequest);
+				
+				LeadWrapper objLeadWrapper = new LeadWrapper();
+				objLeadWrapper.Id = objLead.Id;
+				objLeadWrapper.OwnerId = objLead.OwnerId;
+				objLeadWrapper.RecordTypeId = objLead.RecordTypeId;
 
-				// update lead route count flag if running from test class
-				if (Test.isRunningTest()) {
-					objLead.Lead_Route_Count__c = 2;
-					list_LeadsToUpdate.add(objLead);
-				}
+				String strJSONPayload = JSON.serialize(objLeadWrapper);
+				strJSONPayload = strJSONPayload.replaceAll('RingLead_Record_Source', '_RingLead_Record_Source');
+				strJSONPayload = strJSONPayload.replaceAll('RingLead_Record_Type', '_RingLead_Record_Type');
+
+				// Send custom callout to Mulesoft endpoint
+				HttpRequest objHTTPReq = new HttpRequest();
+				objHTTPReq.setEndpoint('https://dms.ringlead.com/api/v1/webtolead/12679/8c90b913-86a1-494e-b146-1f65a02e34b1/submission/');
+
+				objHTTPReq.setMethod('POST');
+				objHTTPReq.setBody(strJSONPayload);
+				objHTTPReq.setHeader('Content-Type', 'application/json');
+				objHTTPReq.setTimeOut(120000);
+
+				Http objHTTP = new Http();
+				HTTPResponse objHTTPRes = objHTTP.send(objHTTPReq);
+
 			} else {
 				map_LeadsRemaining.put(idLead, objLead);
 			}

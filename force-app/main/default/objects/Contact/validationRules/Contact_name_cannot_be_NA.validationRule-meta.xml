@@ -2,6 +2,7 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Contact_name_cannot_be_NA</fullName>
     <active>true</active>
+    <description>Cannot name cannot be moved from a different value to NA</description>
     <errorConditionFormula>FirstName = &quot;NA&quot; &amp;&amp;
 NOT (ISNEW())&amp;&amp;
 PRIORVALUE(FirstName) != &quot;NA&quot; &amp;&amp;

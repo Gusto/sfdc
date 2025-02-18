@@ -147,7 +147,7 @@ public class CarrierOrderApproveAuditControllerTest {
 		objCarrierOrder.Implementation_Stage__c = 'Approved';
 		objCarrierOrder.Approval_Notes__c = 'The note';
 		Test.startTest();
-		Object saveOrderResponse = CarrierOrderApproveAuditController.saveOrder(objCarrierOrder);
+		Object strResponse = CarrierOrderApproveAuditController.saveOrder(objCarrierOrder);
 		objCarrierOrder = [
 			SELECT Id, Implementation_Stage__c, Stage_Detail__c, Order_Type__c, Approval_Notes__c, Approval_Method__c, Benefit_Order__c, RecordTypeId
 			FROM Carrier_Order__c
@@ -155,7 +155,7 @@ public class CarrierOrderApproveAuditControllerTest {
 			LIMIT 1
 		];
 		Test.stopTest();
-		System.assertEquals(null, saveOrderResponse, 'Response should be null');
+		System.assertEquals(null, strResponse, 'Response should be null');
 		System.assertEquals('Approved', objCarrierOrder.Implementation_Stage__c, 'Implementation Stage should be approved');
 		System.assertEquals('The note', objCarrierOrder.Approval_Notes__c, 'Approved Notes should be the note');
 	}

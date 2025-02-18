@@ -76,9 +76,6 @@
                             <value>BrowseCatalogs</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>ViewDigitalWallet</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>CreateSalesSummaries</value>
                         </valueListItems>
                         <valueListItems>
@@ -890,6 +887,23 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Served_Up_Rule__c</fieldItem>
+                <identifier>RecordServed_Up_Rule_cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>ZP Sales Operations</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Time_Zone_Area_Code__c</fieldItem>
                 <identifier>RecordTime_Zone_Area_Code_cField</identifier>
             </fieldInstance>
@@ -1078,6 +1092,16 @@
                         <rightValue>Gusto Direct MDR</rightValue>
                     </criteria>
                 </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Served_Other_Rules__c</fieldItem>
+                <identifier>RecordServed_Other_Rules_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-01cf0fbb-2f44-4193-a38e-4ede14bf9803</name>
@@ -2822,87 +2846,6 @@
                 </componentInstanceProperties>
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList16</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>New</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>adminFilters</name>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>maxRecordsToDisplay</name>
-                    <value>10</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>parentFieldApiName</name>
-                    <value>Account.Id</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>relatedListApiName</name>
-                    <value>DOZISF__ZoomInfo_Records__r</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>relatedListDisplayType</name>
-                    <value>ADVGRID</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>relatedListFieldAliases</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>NAME</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Company_Name__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Employee_Count__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Company_Phone__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Industry__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__NAICS_Code__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Last_Funding_Round_Amount__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Last_Funding_Round_Date__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>DOZISF__Revenue__c</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>relatedListLabel</name>
-                    <value>ZoomInfo Records</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>showActionBar</name>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>sortFieldAlias</name>
-                    <value>__DEFAULT__</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>sortFieldOrder</name>
-                    <value>Default</value>
-                </componentInstanceProperties>
-                <componentName>lst:dynamicRelatedList</componentName>
-                <identifier>lst_dynamicRelatedList17</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

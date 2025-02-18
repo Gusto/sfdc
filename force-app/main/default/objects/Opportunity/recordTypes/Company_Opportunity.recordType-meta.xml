@@ -4,7 +4,7 @@
     <active>true</active>
     <businessProcess>Payroll Sales Process</businessProcess>
     <compactLayoutAssignment>Payroll</compactLayoutAssignment>
-    <description>Used to track the original Payroll sale to a Customer</description>
+    <description>Payroll Opportunity</description>
     <label>Company Opportunity</label>
     <picklistValues>
         <picklist>ACH_Speed__c</picklist>
@@ -125,23 +125,7 @@
     <picklistValues>
         <picklist>Additional_Opportunity_Services__c</picklist>
         <values>
-            <fullName>Advanced Time-Off</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Advanced Time-Off 2</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Employer of Record</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>HR Resources</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>HR Resources 2</fullName>
             <default>false</default>
         </values>
         <values>
@@ -153,39 +137,7 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Next-Day Direct Deposit</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Next-Day Direct Deposit 2</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Performance</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Performance 2</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Priority Support</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Priority Support 2</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Priority Support and HR Services</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Time Tracking</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Time Tracking 2</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1130,10 +1082,6 @@
             <fullName>Simple</fullName>
             <default>false</default>
         </values>
-        <values>
-            <fullName>Wholesale</fullName>
-            <default>false</default>
-        </values>
     </picklistValues>
     <picklistValues>
         <picklist>Current_Vision_Insurer__c</picklist>
@@ -1161,11 +1109,11 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>another_provider</fullName>
+            <fullName>We%27re new to running payroll</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>new</fullName>
+            <fullName>another_provider</fullName>
             <default>false</default>
         </values>
         <values>
@@ -1175,6 +1123,10 @@
     </picklistValues>
     <picklistValues>
         <picklist>Currently_Offer_Health_Benefits__c</picklist>
+        <values>
+            <fullName>NOT_YET</fullName>
+            <default>false</default>
+        </values>
         <values>
             <fullName>No</fullName>
             <default>false</default>
@@ -1553,7 +1505,27 @@
     <picklistValues>
         <picklist>Hold_Out_Record__c</picklist>
         <values>
+            <fullName>Hold Out - After Hours - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Catch All - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Catch All 2 - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Hold Out - Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Missed APD - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Upcoming APD - SBOB</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -2087,7 +2059,19 @@
     <picklistValues>
         <picklist>Open_to_Switching_Broker__c</picklist>
         <values>
+            <fullName>MANUALLY_ADD</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UNSURE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>USE_GUSTO</fullName>
             <default>false</default>
         </values>
         <values>
@@ -2326,10 +2310,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>sales_sb_fs_xx</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>sales_sb_ib_xx</fullName>
             <default>false</default>
         </values>
@@ -2522,30 +2502,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>Product_Experiments_Opportunity__c</picklist>
-        <values>
-            <fullName>expansion_downgrade_with_add_on</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>expansion_fall2023_downgrade_to_simple_with_a_la_carte</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>expansion_fall2023_onboarding_simple_with_a_la_carte</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>expansion_fall2023_simple_with_a_la_carte</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>expansion_onboarding_simple_tier_with_a_la_carte</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>expansion_simple_tier_with_add_on</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>priority_support_flat_fee_%24120</fullName>
             <default>false</default>
@@ -3864,10 +3820,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Day 2 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Day 30 Stalled in Onboarding - SBOB</fullName>
             <default>false</default>
         </values>
@@ -3877,26 +3829,6 @@
         </values>
         <values>
             <fullName>Day 7 Stalled in Onboarding - SBOB</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 10 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 14 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 3 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 5 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 7 - dSDR</fullName>
             <default>false</default>
         </values>
         <values>
@@ -3963,10 +3895,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Day 2 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Day 30 Stalled in Onboarding - SBOB</fullName>
             <default>false</default>
         </values>
@@ -3976,26 +3904,6 @@
         </values>
         <values>
             <fullName>Day 7 Stalled in Onboarding - SBOB</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 10 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 14 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 3 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 5 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 7 - dSDR</fullName>
             <default>false</default>
         </values>
         <values>
@@ -4526,6 +4434,10 @@
     <picklistValues>
         <picklist>Type</picklist>
         <values>
+            <fullName>Cross Sell</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Direct Payroll</fullName>
             <default>true</default>
         </values>
@@ -4585,10 +4497,6 @@
         </values>
         <values>
             <fullName>Premium Multi-EIN</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Simple</fullName>
             <default>false</default>
         </values>
     </picklistValues>

@@ -87,7 +87,7 @@ public without sharing class ProductDiscountTriggerHandler extends TriggerHandle
 		Set<String> set_ValidProductDiscounts = new Set<String>();
 		set_ValidProductDiscounts.addAll(System.Label.Eligible_Discount_Types.split(';'));
 		for (Product_Discount__c objPD : listnewRecords) {
-			if (ProductDiscountHelper.SET_VALID_GLOBAL_DISCOUNTS.contains(objPD.Discount_Type__c) && String.isNotBlank(objPD.ZP_Product_Id__c)) {
+			if (ProductDiscountHelper.SET_VALID_GLOBAL_DISCOUNTS.contains(objPD.Discount_Type__c) && String.isNotBlank(objPD.ZP_Product_Id__c) && (String.isNotBlank(objPD.Discount_Type__c) && !objPD.Discount_Type__c.containsIgnoreCase(ProductDiscountHelper.WHOLESALE_PARTNER_DISCOUNT))) {
 				objPD.addError('ZP_Product_Id__c', 'Global discounts such as Accountant discounts cannot be linked to a specific Product');
 			} else if (set_ValidProductDiscounts.contains(objPD.Discount_Type__c) && String.isBlank(objPD.ZP_Product_Id__c)) {
 				objPD.addError('ZP_Product_Id__c', 'Product-specific discounts must be linked to a specific Product');

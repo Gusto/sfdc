@@ -254,6 +254,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testagatha@gusto.com')
 			.setDescription('Test agatha prediction 1')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase1);
 
@@ -266,6 +268,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testagatha2@gusto.com')
 			.setDescription('Test agatha prediction 2')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase2);
 
@@ -278,6 +282,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testgold@gusto.com')
 			.setDescription('Test case with gold tier account')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase3);
 
@@ -290,6 +296,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testpremium@gusto.com')
 			.setDescription('Test case with premium account')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase4);
 
@@ -302,6 +310,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testaccountant@gusto.com')
 			.setDescription('Test case with accountant persona')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase5);
 
@@ -314,6 +324,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testgrower@gusto.com')
 			.setDescription('Test case with admin grower')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase6);
 
@@ -326,6 +338,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testbenefits@gusto.com')
 			.setDescription('Test case with admin benefits')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase7);
 
@@ -338,6 +352,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testtamcase@gusto.com')
 			.setDescription('Test case with TAM')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase8);
 
@@ -350,6 +366,8 @@ public class OmniSkillAssignmentFlowTest {
 			.setStatus(CaseUtils.STATUS_OPEN)
 			.setSuppliedEmail('testinactivetamcase@gusto.com')
 			.setDescription('Test case with inactive TAM')
+			.setSolveProcessedFlag('No')
+			.setInternalAIProcessedFlag('No')
 			.build();
 		list_Cases.add(objCase9);
 
@@ -379,7 +397,7 @@ public class OmniSkillAssignmentFlowTest {
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId, Skill.DeveloperName FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id AND Skill.DeveloperName = 'Gusto_Global'];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_PSR[0].RoutingPriority == 6, 'Routing priority should be 6 for Gusto Global');
+		Assert.isTrue(list_PSR[0].RoutingPriority == 7, 'Routing priority should be 7 for Gusto Global');
 		Assert.isTrue(list_Skills.size() == 1, 'Skill requirements are not correct');
 		Assert.areEqual('Gusto_Global', list_Skills[0].Skill.DeveloperName, 'Skill should be Gusto Global');
 	}
@@ -498,7 +516,7 @@ public class OmniSkillAssignmentFlowTest {
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_PSR[0].RoutingPriority == 3, 'Routing priority should be 3');
+		Assert.isTrue(list_PSR[0].RoutingPriority == 4, 'Routing priority should be 4');
 		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
@@ -530,7 +548,7 @@ public class OmniSkillAssignmentFlowTest {
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_PSR[0].RoutingPriority == 4, 'Routing priority should be 4');
+		Assert.isTrue(list_PSR[0].RoutingPriority == 5, 'Routing priority should be 5');
 		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
 	}
 
@@ -561,12 +579,12 @@ public class OmniSkillAssignmentFlowTest {
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_PSR[0].RoutingPriority == 5, 'Routing priority should be 5');
+		Assert.isTrue(list_PSR[0].RoutingPriority == 6, 'Routing priority should be 6');
 		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
 	/**
-	 * @description To test admin persona and grower company size
+	 * @description To admin persona and grower company size
 	 * @author		Ankit C
 	 */
 	@isTest
@@ -593,7 +611,7 @@ public class OmniSkillAssignmentFlowTest {
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_PSR[0].RoutingPriority == 7, 'Routing priority should be 7');
+		Assert.isTrue(list_PSR[0].RoutingPriority == 2, 'Routing priority should be 2');
 		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
 	}
 
@@ -652,7 +670,7 @@ public class OmniSkillAssignmentFlowTest {
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority, PreferredUserId FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_PSR[0].RoutingPriority == 2, 'Routing priority should be 2');
+		Assert.isTrue(list_PSR[0].RoutingPriority == 3, 'Routing priority should be 3');
 		Assert.isTrue(list_Skills.isEmpty(), 'Skill requirements should be empty for TAM case');
 		Assert.isTrue(list_PSR[0].PreferredUserId == objTAMUser.Id, 'Preferred User on the PSR should be TAM');
 	}

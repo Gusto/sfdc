@@ -117,7 +117,6 @@ public without sharing class EngagementCaseViewExtension_LEX {
 		List<Case_Reason_Classification__c> list_caseReasonClassifications = new List<Case_Reason_Classification__c>();
 		Map<String, Map<Id, String>> map_caseReasonToGroupMapOrdered = new Map<String, Map<Id, String>>();
 		String strRecordTypeToAdd;
-		String strGEPCXRecordTypeName = CaseUtils.RECTYPE_NAME_GEP_CX;
 		Map<String, String> map_FieldLabelToApiName = new Map<String, String>();
 		Map<Id, Map<String, Boolean>> map_RequiredFieldsByCaseReason = new Map<Id, Map<String, Boolean>>();
 		Map<String, Boolean> map_FieldRequiredByFieldName = new Map<String, Boolean>();
@@ -171,9 +170,9 @@ public without sharing class EngagementCaseViewExtension_LEX {
 				strSubProductArea = objCase.Sub_Product_Area__c;
 			}
 
-			String strCaseReasonQuery = 'SELECT Id, Name, Class__c, Type__c, Default_Type__c, Generic_Routing_Reason__c, Fields_To_Require__c, Product_Area__r.Name, Sub_Product_Area__r.Name, Case_Type_Pillar__c, Support_Level__c ';
-			if (!blnIsCalledFromRoutingCmp && objCase.RecordType.Name == CaseUtils.RECTYPE_NAME_GEP_CX) {
-				strCaseReasonQuery += ' FROM Case_Reason_Classification__c WHERE Active__c = true AND (Type__c = :strGEPCXRecordTypeName)  ';
+			String strCaseReasonQuery = 'SELECT Id, Name, Class__c, Type__c, Default_Type__c,  Generic_Routing_Reason__c, Fields_To_Require__c, Product_Area__r.Name, Sub_Product_Area__r.Name, Case_Type_Pillar__c, Support_Level__c ';
+			if (!blnIsCalledFromRoutingCmp && objCase.RecordType.Name == 'GEP CX') {
+				strCaseReasonQuery += ' FROM Case_Reason_Classification__c WHERE Active__c = true AND (Type__c = \'GEP CX\')  ';
 			} else if (!blnIsCalledFromRoutingCmp && objCase.RecordType.Name == CaseUtils.TYPE_ENGAGEMENT) {
 				strCaseReasonQuery += ' FROM Case_Reason_Classification__c WHERE Active__c = true AND (Default_Type__c =: StrEngagementType)  ';
 			} else {
@@ -525,8 +524,7 @@ public without sharing class EngagementCaseViewExtension_LEX {
 				Did_the_call_drop__c,
 				How_many_times_attempt_to_call_back__c,
 				Re_Route_Count__c,
-				Toggle__c,
-				Auto_Solve_Status__c 
+				Toggle__c
 			FROM Case
 			WHERE Id = :idCase
 		];
@@ -740,4 +738,20 @@ public without sharing class EngagementCaseViewExtension_LEX {
 			return strCaseId;
 		}
 	}
+	/**
+	 * @description Returns user's email signature
+	 * @author      Sirisha Kodi
+	 * @param       Null
+	 * @return      User's email signature
+	 **/
+    @AuraEnabled
+    public static String getUserEmailSignature() {
+		User userCurrent = [Select Id,Signature from User where Id=:userinfo.getuserId()];
+		string userSignature = userCurrent.Signature;
+		if (String.isNotBlank(userSignature)) {
+        	userSignature = userSignature.replace('\n','<br>');
+			return userSignature;
+		}
+		return '';
+    }
 }

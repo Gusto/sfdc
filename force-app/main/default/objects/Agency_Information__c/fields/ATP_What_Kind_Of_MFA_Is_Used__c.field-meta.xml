@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ATP_What_Kind_Of_MFA_Is_Used__c</fullName>
+    <label>What kind of MFA is used?</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>email</fullName>
+                <default>false</default>
+                <label>email</label>
+            </value>
+            <value>
+                <fullName>text</fullName>
+                <default>false</default>
+                <label>text</label>
+            </value>
+            <value>
+                <fullName>integrated with Slack</fullName>
+                <default>false</default>
+                <label>integrated with Slack</label>
+            </value>
+            <value>
+                <fullName>reCaptcha</fullName>
+                <default>false</default>
+                <label>reCaptcha</label>
+            </value>
+            <value>
+                <fullName>Authorization App (integrated w/ 1Password)</fullName>
+                <default>false</default>
+                <label>Authorization App (integrated w/ 1Password)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

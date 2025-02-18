@@ -869,8 +869,9 @@ public class GFTicketTriggerHelper {
 		objCase.Integration_Id__c = objTicket.Id__c;
 		objCase.Direction__c = 'Inbound';
 		objCase.Description = objTicket.Body__c?.unescapeXml();
-		objCase.Solve_Processed__c = CaseUtils.SOLVE_PROCESSED_NO;
+		objCase.Solve_Processed__c = 'No';
 		objCase.Internal_AI_Processed__c = CaseUtils.INTERNAL_SOLVE_PROCESSED_NO;
+
 		if (objTicket.Ticket_Type__c != GFTicketUtil.SUPPORT_FORM_TICKET_TYPE) {
 			objCase.Answer_IQ_Processed__c = 'Yes';
 		}

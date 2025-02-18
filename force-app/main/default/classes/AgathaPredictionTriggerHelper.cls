@@ -156,7 +156,6 @@ public with sharing class AgathaPredictionTriggerHelper {
 			if (objCase.RecordTypeId == CaseUtils.RECTYPE_ENGAGEMENT) {
 				objCase.Status = CaseUtils.STATUS_IN_PROGRESS;
 			}
-
 			if (objAgathaPrediction.Case_Reason_Code__c != null && objAgathaPrediction.Case_Reason_Code__c != '') {
 				if (set_CaseRecordTypes.contains(objCase.RecordTypeId)) {
 					if (classificationMap.containsKey(objAgathaPrediction.Case_Reason_Code__c.toLowerCase())) {
@@ -246,7 +245,7 @@ public with sharing class AgathaPredictionTriggerHelper {
 						String strEmailDomain = '';
 						if (String.isNotBlank(objCase.SuppliedEmail)) {
 							List<String> list_EmailSplits = objCase.SuppliedEmail.split('@');
-							if (!list_EmailSplits.isEmpty()) {
+							if (!list_EmailSplits.isEmpty() && list_EmailSplits.size() > 1) {
 								strEmailDomain = list_EmailSplits[1];
 							}
 						}
@@ -278,12 +277,10 @@ public with sharing class AgathaPredictionTriggerHelper {
 
 					blnRoutingReasonPopulated = true;
 				}
-
 				objCase.Answer_IQ_Processed__c = 'Yes';
-
 				objCase.setOptions(dmoNoRule);
 				/* (If owner is a group OR owner is an integration user) AND Auto Send Email is false
-				 AND blnRoutingReasonPopulated is true, use DML Options */
+				AND blnRoutingReasonPopulated is true, use DML Options */
 				if (
 					(strOwnerId.indexOf('00G') == 0 ||
 					objCase.Case_Owner_Role__c == 'Integration Users') &&
@@ -312,6 +309,9 @@ public with sharing class AgathaPredictionTriggerHelper {
 				}
 				if (agencyInfoMap.containsKey(strAgencyInfoId)) {
 					objCase.Agency_Information__c = agencyInfoMap.get(strAgencyInfoId).Id;
+					if (agencyInfoMap.get(strAgencyInfoId).OCR_Enabled__c && !objCase.Is_OCR_Processed__c) {
+						objCase.Status = CaseUtils.CASE_STATUS_READY_FOR_OCR_CAPTURE;
+					}
 				}
 
 				//If the prediction root cause is 'Informational', update Agency information based on prediction and Root cause as 'Informational'. We also need to assign the case to 'TaxRes Informational' Queue.
@@ -415,7 +415,8 @@ public with sharing class AgathaPredictionTriggerHelper {
 					Case_Owner_Role__c,
 					Auto_Response_Email_Content__c,
 					SuppliedEmail,
-					Routing_Team__c
+					Routing_Team__c,
+					Has_A_Valid_Recommendation__c 
 				FROM Case
 				WHERE Id IN :caseidSet
 			]

@@ -516,7 +516,7 @@ public without sharing class InboundCallController {
 
 			Account objAccount = list_Accounts[0];
 			Id idAccount = objAccount.id;
-			Id idOppPayrollRecordType = OpportunityUtil.COMPANY_OPPTY_RT_ID;
+			Id idOppPayrollRecordType = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 			Id idOppBenefitRecordTypeId = OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID;
 			Id idOppBORRecordTypeId = OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID;
 			if (list_Accounts.size() == 0) {

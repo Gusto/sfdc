@@ -92,8 +92,8 @@ public class OpportunityContactRolesControllerTest {
 
 		Opportunity objCompanyOpp = new TestDataFactory.OpportunityBuilder()
 			.setAccountId(objCompanyAccount.Id)
-			.setName('Test Company Opp')
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setName('Test Acquisition Opp')
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setCloseDate(Date.today())
 			.setStage('Posted')
 			.setZPCompanyID(objCompanyAccount.ZP_Company_Id__c)

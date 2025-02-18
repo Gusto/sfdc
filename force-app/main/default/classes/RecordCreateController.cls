@@ -413,13 +413,19 @@ public without sharing class RecordCreateController {
 
 					// Re query the opportunity to get updated contractor and employee counts
 					Opportunity objOppty = [
-						SELECT Id, NumberOfEmployees__c, Number_of_Contractors__c
+						SELECT Id, NumberOfEmployees__c, Number_of_Contractors__c,EE_Active_Count__c
 						FROM Opportunity
 						WHERE Id = :idRecord
 					];
 					// Create line items for default products
 					if (objRecordCreate != null && String.isNotBlank(objRecordCreate.Default_Products__c) && list_PriceBook != null) {
-						Decimal decNumberOfEmployees = objOppty.NumberOfEmployees__c != null ? objOppty.NumberOfEmployees__c : 0;
+						Decimal decNumberOfEmployees = 0;
+						if (objOppty.EE_Active_Count__c != null) {
+							decNumberOfEmployees = objOppty.EE_Active_Count__c;
+						} else {
+							decNumberOfEmployees = objOppty.NumberOfEmployees__c != null ? objOppty.NumberOfEmployees__c : 0;
+						}
+						//objOppty.NumberOfEmployees__c != null ? objOppty.NumberOfEmployees__c : 0;
 						Decimal decNumberOfContractors = objOppty.Number_of_Contractors__c != null ? objOppty.Number_of_Contractors__c : 0;
 						Decimal decQuantity = decNumberOfEmployees + decNumberOfContractors;
 
@@ -431,7 +437,8 @@ public without sharing class RecordCreateController {
 									list_EntryIds.add(objEntry.Id + ',' + decQuantity);
 								}
 							}
-							// Create line items for default products based on Default Producs
+							// Create line items for default products based on Default Products
+							System.debug('list_EntryIds: ' + list_EntryIds);
 							if (!list_EntryIds.isEmpty()) {
 								createLineItems(list_EntryIds, idRecord);
 							}
@@ -439,14 +446,14 @@ public without sharing class RecordCreateController {
 					}
 					// Query the opportunity and their line items
 					objOppty = [
-						SELECT Id, (SELECT Id, PricebookEntryId FROM OpportunityLineItems), Pricebook2Id, NumberOfEmployees__c, Number_of_Contractors__c
+						SELECT Id, (SELECT Id, PricebookEntryId FROM OpportunityLineItems), Pricebook2Id, NumberOfEmployees__c, Number_of_Contractors__c,EE_Active_Count__c
 						FROM Opportunity
 						WHERE Id = :idRecord
 					];
 					List<PricebookEntry> list_Products;
 					// Query all products related to Opportunity's Pricebook
 					if (objOppty.Pricebook2Id != null) {
-						list_Products = [SELECT Id, Product2Id, Product2.Name, UnitPrice FROM PricebookEntry WHERE Pricebook2Id = :objOppty.Pricebook2Id ORDER BY Product2.Name];
+						list_Products = [SELECT Id, Product2Id, Product2.Name, UnitPrice,Base_Price__c,Product2.Description FROM PricebookEntry WHERE Pricebook2Id = :objOppty.Pricebook2Id ORDER BY Product2.Name];
 					}
 					objResponseWrapper.objProductsWrapper = new ProductsWrapper(list_Products, objOppty);
 				}
@@ -502,8 +509,9 @@ public without sharing class RecordCreateController {
 		List<OpportunityLineItem> list_LineItemsToInsert = new List<OpportunityLineItem>();
 		List<OpportunityLineItem> list_LineItemsToUpdate = new List<OpportunityLineItem>();
 		List<OpportunityLineItem> list_LineItemsToDelete = new List<OpportunityLineItem>();
+		List<Id> selectedProductIds = new List<Id>();
 		try {
-			Opportunity objOppty = [SELECT Id, (SELECT Id, PricebookEntryId FROM OpportunityLineItems), Pricebook2Id, NumberOfEmployees__c FROM Opportunity WHERE Id = :idRecord];
+			Opportunity objOppty = [SELECT Id, (SELECT Id, PricebookEntryId,Base_Price__c,Unit_Price__c FROM OpportunityLineItems), Pricebook2Id, NumberOfEmployees__c,EE_Active_Count__c FROM Opportunity WHERE Id = :idRecord];
 
 			// Build a list of existing products on the opportunity
 			for (OpportunityLineItem objLineItem : objOppty.OpportunityLineItems) {
@@ -511,26 +519,50 @@ public without sharing class RecordCreateController {
 			}
 			// list_EntryIds is a comma separated list of pricebook entry Id and quantity
 			Set<Id> set_EntryIds = new Set<Id>();
+			System.debug('list_EntryIds: ' + list_EntryIds);
 			for (String strLineItem : list_EntryIds) {
 				set_EntryIds.add(strLineItem.split(',')[0]);
 			}
 
+			System.debug('set_EntryIds: ' + set_EntryIds);
 			// Map of pricebook entriy Id and pricebook entry
-			for (PricebookEntry objEntry : [SELECT Id, UnitPrice FROM PricebookEntry WHERE Id IN :set_EntryIds]) {
+			for (PricebookEntry objEntry : [SELECT Id, UnitPrice,Base_Price__c,Product2Id FROM PricebookEntry WHERE Id IN :set_EntryIds]) {
 				map_Entries.put(objEntry.Id, objEntry);
+				selectedProductIds.add(objEntry.Product2Id);
 			}
+
+			String strProductValidation = OpportunityProductController.validateSelectedProducts(idRecord, selectedProductIds);
+			if (String.isNotBlank(strProductValidation)) {
+				return strProductValidation;
+			}
+			
 			// Create line items ONLY when the number of employees is greater than 0
 			for (String strLineItem : list_EntryIds) {
+				System.debug('strLineItem: ' + strLineItem);
 				String strEntryId = strLineItem.split(',')[0];
 				Integer intQuantity = Integer.valueOf(strLineItem.split(',')[1]);
+				System.debug('intQuantity: ' + intQuantity);
+				String strDescription = '';
+				if (strLineItem.split(',').size() > 2) {
+					strDescription = strLineItem.split(',')[2];
+				}
 				// do not create line items for products that are already added
 				// check if the product is available in the pricebook
 				if (!map_ExistingProducts.containsKey(strEntryId) && map_Entries.containsKey(strEntryId)) {
 					PricebookEntry objEntry = map_Entries.get(strEntryId);
 					if (intQuantity > 0) {
-						list_LineItemsToInsert.add(
-							new OpportunityLineItem(OpportunityId = idRecord, PricebookEntryId = strEntryId, Quantity = intQuantity, UnitPrice = objEntry.UnitPrice, ServiceDate = Date.today())
-						);
+
+						OpportunityLineItem objOpportunityLineItem = new OpportunityLineItem();
+						objOpportunityLineItem.OpportunityId = idRecord;
+						//objOpportunityLineItem.Product2Id = priceBookEntry.product2Id;
+						objOpportunityLineItem.PricebookEntryId = strEntryId;
+						objOpportunityLineItem.Unit_Price__c = objEntry.UnitPrice;
+						objOpportunityLineItem.Base_Price__c = objEntry.Base_Price__c;
+						objOpportunityLineItem.Quantity = intQuantity;
+						objOpportunityLineItem.TotalPrice = objOpportunityLineItem.Unit_Price__c * objOpportunityLineItem.Quantity + objOpportunityLineItem.Base_Price__c;
+						objOpportunityLineItem.Description = strDescription;
+
+						list_LineItemsToInsert.add(objOpportunityLineItem);
 					}
 				} else if (map_ExistingProducts.containsKey(strEntryId)) {
 					OpportunityLineItem objLineItem = map_ExistingProducts.get(strEntryId);
@@ -543,6 +575,9 @@ public without sharing class RecordCreateController {
 					}
 				}
 			}
+			System.debug('list_LineItemsToInsert: ' + list_LineItemsToInsert);
+			System.debug('list_LineItemsToUpdate: ' + list_LineItemsToUpdate);
+			System.debug('list_LineItemsToDelete: ' + list_LineItemsToDelete);
 			if (!list_LineItemsToUpdate.isEmpty()) {
 				update list_LineItemsToUpdate;
 			}

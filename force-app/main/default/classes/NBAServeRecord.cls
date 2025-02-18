@@ -16,8 +16,10 @@ public without sharing class NBAServeRecord {
 	public static final String LOGIC_AND = 'AND';
 	public static final String LOGIC_OR = 'OR';
 	public static final String LOGIC = 'logic';
-	public static final String EMPTY_VALUE = 'Empty Value';
-	public static final String ANY_VALUE = 'Any Value';
+	public static final String EMPTY_VALUE = '[Blank/Empty Value]';
+	public static final String ANY_VALUE = '[Any Value]';
+	public static final String LOGGED_IN_USER = '[Logged In User]';
+	public static final String BUSINESS_HOURS = 'Gusto - Denver - Sales';
 
 	public class MyException extends Exception {
 	}
@@ -84,6 +86,9 @@ public without sharing class NBAServeRecord {
 
 		@AuraEnabled
 		public List<ServiceResourceSkill> list_ServiceResourceSkills;
+
+		@AuraEnabled
+		public String strWarningMessage;
 
 		public void setResponse(Boolean blnSuccess, String strMessage, SObject objRecord, Boolean blnException, String strExceptionType, String strRecordName) {
 			this.blnSuccess = blnSuccess;
@@ -431,6 +436,7 @@ public without sharing class NBAServeRecord {
 
 			// do not update served other rules if record is hold out
 			if (!blnHoldOut) {
+				Map<String, Id> map_UserErrors = new Map<String, Id>();
 				// if record is available, figure out other rules that the record satisfies and update the record
 				if (objRecordToReturn != null) {
 					//If blnExcludeServedOtherRules is true, it will only set the first rule in the field
@@ -439,42 +445,83 @@ public without sharing class NBAServeRecord {
 						: getCategoryAlignment(objRecordToReturn, list_RulesToSkip, objWrapper.objRuleConfig.name);
 					objRecordToReturn.put('Served_Other_Rules__c', String.join(list_OtherCategories, ';'));
 
-					//Adding user lookup fields for serving record
-					if (objPrimaryWrapper.userFieldsAssignment != null) {
-						for (String strField : objPrimaryWrapper.userFieldsAssignment) {
-							objRecordToReturn.put(strField, UserInfo.getUserId());
-						}
-					}
-
 					//Validate and update Field Mappings
 					if (objPrimaryWrapper.fieldMapping != null) {
+						List<BusinessHours> list_BusinessHours = [SELECT Id FROM BusinessHours WHERE Name = :BUSINESS_HOURS];
 						for (NBARequestWrapper.FieldMapping field : objPrimaryWrapper.fieldMapping) {
 							Boolean blnHasAnyValueMapping = false;
 							String strAnyValueTo = '';
+							String strFieldType = field.strFieldType;
 							Boolean blnHasChanged = false;
+							String strAnyValueDays = '';
+							String strAnyValueHours = '';
 							for (NBARequestWrapper.Mapping mapping : field.mapping) {
 								String strToValue = (mapping.toValue == EMPTY_VALUE) ? null : mapping.toValue;
 								String strFromValue = (mapping.fromValue == EMPTY_VALUE) ? null : mapping.fromValue;
+								strFromValue = strFromValue == LOGGED_IN_USER && strFieldType == 'REFERENCE' ? UserInfo.getUserId() : strFromValue;
 								if (mapping.fromValue == ANY_VALUE) {
 									blnHasAnyValueMapping = true;
 									strAnyValueTo = strToValue;
+									strAnyValueDays = mapping.toDays;
+									strAnyValueHours = mapping.toHours;
+									if (strFieldType == 'REFERENCE' && strToValue == LOGGED_IN_USER) {
+										strAnyValueTo = UserInfo.getUserId();
+									}
 									continue;
 								}
-								if (objRecordToReturn.get(field.selectedField) == strFromValue) {
-									objRecordToReturn.put(field.selectedField, strToValue);
+
+								if (strFieldType == 'BOOLEAN' && objRecordToReturn.get(field.selectedField) == Boolean.valueOf(strFromValue)) {
+									objRecordToReturn.put(field.selectedField, Boolean.valueOf(strToValue));
+									blnHasChanged = true;
+									break;
+								} else if (strFieldType == 'DATE' && dateFromValidator(objRecordToReturn, field.selectedField, strFromValue)) {
+									objRecordToReturn.put(field.selectedField, dateToGenerator(strToValue, mapping.toDays, list_BusinessHours.get(0)));
+									blnHasChanged = true;
+									break;
+								} else if (strFieldType == 'DATETIME' && dateTimeFromValidator(objRecordToReturn, field.selectedField, strFromValue)) {
+									objRecordToReturn.put(field.selectedField, dateTimeToGenerator(strToValue, mapping.toDays, mapping.toHours, list_BusinessHours.get(0)));
+									blnHasChanged = true;
+									break;
+								} else if (objRecordToReturn.get(field.selectedField) == strFromValue) {
+									if (strToValue == LOGGED_IN_USER && strFieldType == 'REFERENCE') {
+										objRecordToReturn.put(field.selectedField, UserInfo.getUserId());
+									} else {
+										objRecordToReturn.put(field.selectedField, strToValue);
+										if (strFieldType == 'REFERENCE' && String.isNotBlank(strToValue)) {
+											map_UserErrors.put(field.selectedField, strToValue);
+										}
+									}
 									blnHasChanged = true;
 									break;
 								}
 							}
 							if (blnHasAnyValueMapping && !blnHasChanged) {
-								objRecordToReturn.put(field.selectedField, strAnyValueTo);
+								if (strFieldType == 'BOOLEAN') {
+									objRecordToReturn.put(field.selectedField, Boolean.valueOf(strAnyValueTo));
+								} else if (strFieldType == 'DATE') {
+									objRecordToReturn.put(field.selectedField, dateToGenerator(strAnyValueTo, strAnyValueDays, list_BusinessHours.get(0)));
+								} else if (strFieldType == 'DATETIME') {
+									objRecordToReturn.put(field.selectedField, dateTimeToGenerator(strAnyValueTo, strAnyValueDays, strAnyValueHours, list_BusinessHours.get(0)));
+								} else {
+									objRecordToReturn.put(field.selectedField, strAnyValueTo);
+									if (strFieldType == 'REFERENCE' && String.isNotBlank(strAnyValueTo)) {
+										map_UserErrors.put(field.selectedField, strAnyValueTo);
+									}
+								}
 							}
 						}
 					}
-
-					// Set record owner if the rule has assign record owner set to true
-					if (objPrimaryWrapper != null && objPrimaryWrapper.assignRecordOwner != null && objPrimaryWrapper.assignRecordOwner) {
-						objRecordToReturn.put('OwnerId', UserInfo.getUserId());
+					String strErrors = '';
+					for (User objUser : [SELECT Id, IsActive, Name FROM User WHERE Id IN :map_UserErrors.values()]) {
+						if (!objUser.IsActive) {
+							List<String> list_Fields = new List<String>();
+							for (String strField : map_UserErrors.keySet()) {
+								if (map_UserErrors.get(strField) == objUser.Id) {
+									list_Fields.add(strField);
+								}
+							}
+							strErrors = strErrors + 'Fields (' + String.join(list_Fields, ', ') + ') are mapped to inactive user ' + objUser.Name + '. ';
+						}
 					}
 					// if record is unavailable, send an error message
 					if (!checkRecordAccess(objRecordToReturn)) {
@@ -505,6 +552,7 @@ public without sharing class NBAServeRecord {
 					update list_RecordsToUpdate;
 					objWrapper.setResponse(true, null, objRecordToReturn, false, null, strServingRecordName);
 					objWrapper.strRecordType = strTypeOfServingRecord;
+					objWrapper.strWarningMessage = strErrors;
 
 					// update rule sets with last ran with zero records
 					updateRuleSets(map_RuleSetsToUpdate);
@@ -906,5 +954,142 @@ public without sharing class NBAServeRecord {
 				Database.update(map_RuleSetsToUpdate.values(), false);
 			}
 		}
+	}
+
+	/**
+	 * @Description : Validates if record value on a date field matches with the criteria
+	 * @Parm        : SObject - sobject record, strFieldName - date field api name, strFromValue - this is from criteria
+	 * @Return      : Boolean flag to indicate if the record satisfies the criteria
+	 **/
+	public static Boolean dateFromValidator(SObject objRecord, String strFieldName, String strFromValue) {
+		if (strFromValue == null && objRecord.get(strFieldName) == null) {
+			return true;
+		} else if (strFromValue == '[Future Date]' && objRecord.get(strFieldName) != null && Date.valueOf(objRecord.get(strFieldName)) > Date.today()) {
+			return true;
+		} else if (strFromValue == '[Prior Date]' && objRecord.get(strFieldName) != null && Date.valueOf(objRecord.get(strFieldName)) < Date.today()) {
+			return true;
+		} else if (strFromValue == '[Today]' && objRecord.get(strFieldName) != null && Date.valueOf(objRecord.get(strFieldName)) == Date.today()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @Description : Validates if record value on a date/tome field matches with the criteria
+	 * @Parm        : SObject - sobject record, strFieldName - date/tome field api name, strFromValue - this is from criteria
+	 * @Return      : Boolean flag to indicate if the record satisfies the criteria
+	 **/
+	public static Boolean dateTimeFromValidator(SObject objRecord, String strFieldName, String strFromValue) {
+		if (strFromValue == null && objRecord.get(strFieldName) == null) {
+			return true;
+		} else if (strFromValue == '[Future Date]' && objRecord.get(strFieldName) != null && DateTime.valueOf(objRecord.get(strFieldName)) > DateTime.now()) {
+			return true;
+		} else if (strFromValue == '[Today]' && objRecord.get(strFieldName) != null && Date.valueOf(DateTime.valueOf(objRecord.get(strFieldName))) == Date.today()) {
+			return true;
+		} else if (strFromValue == '[Prior Date]' && objRecord.get(strFieldName) != null && DateTime.valueOf(objRecord.get(strFieldName)) < DateTime.now()) {
+			return true;
+		} else if (strFromValue == '[Now]' && objRecord.get(strFieldName) != null && DateTime.valueOf(objRecord.get(strFieldName)) == DateTime.now()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @Description : Generates date value based on the pattern sent to this method
+	 * @Parm        : strToValue - this controls what date value needs to be generated, strDays - this is the number of days to add or subtract
+	 * @Return      : Date - returns the generated date
+	 **/
+	public static Date dateToGenerator(String strToValue, String strDays, BusinessHours objBusinessHours) {
+		if (strToValue == null || strToValue == EMPTY_VALUE) {
+			return null;
+		} else if (strToValue == '[Today]') {
+			return Date.today();
+		} else if ((strToValue == '[Today + N Business Days]' || strToValue == '[Today - N Business Days]') && String.isNotBlank(strDays)) {
+			Date dtFinalDate;
+			if (strToValue.contains('+')) {
+				dtFinalDate = getNextBusinessDay(Date.today(), Integer.valueOf(strDays), objBusinessHours);
+			} else {
+				dtFinalDate = getNextBusinessDay(Date.today(), -Integer.valueOf(strDays), objBusinessHours);
+			}
+			return BusinessHours.nextStartDate(objBusinessHours.Id, DateTime.newInstance(dtFinalDate, Time.newInstance(0, 0, 0, 0))).date();
+		} else if ((strToValue == '[Today + N Days]' || strToValue == '[Today - N Days]') && String.isNotBlank(strDays)) {
+			if (strToValue.contains('+')) {
+				return Date.today().addDays(Integer.valueOf(strDays));
+			} else {
+				return Date.today().addDays(-Integer.valueOf(strDays));
+			}
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * @Description : Generates date/time value based on the pattern sent to this method
+	 * @Parm        : strToValue - this controls what date value needs to be generated, strDays - this is the number of days to add or subtract
+	 * @Return      : Date - returns the generated date/time
+	 **/
+	public static DateTime dateTimeToGenerator(String strToValue, String strDays, String strHours, BusinessHours objBusinessHours) {
+		if (strToValue == null || strToValue == EMPTY_VALUE) {
+			return null;
+		} else if (strToValue == '[Now]') {
+			return DateTime.now();
+		} else if ((strToValue == '[Now + N Business Days/Hours]' || strToValue == '[Now - N Business Days/Hours]') && String.isNotBlank(strDays)) {
+			Date dtFinalDate;
+			if (strToValue.contains('+')) {
+				dtFinalDate = getNextBusinessDay(Date.today(), Integer.valueOf(strDays), objBusinessHours);
+			} else {
+				dtFinalDate = getNextBusinessDay(Date.today(), -Integer.valueOf(strDays), objBusinessHours);
+			}
+
+			if (String.isBlank(strHours)) {
+				return DateTime.newInstance(dtFinalDate, Time.newInstance(DateTime.now().hour(), DateTime.now().minute(), DateTime.now().second(), DateTime.now().millisecond()));
+			} else {
+				List<String> list_Hours = strHours.split(':');
+				return DateTime.newInstance(dtFinalDate, Time.newInstance(Integer.valueOf(list_Hours[0]), Integer.valueOf(list_Hours[1]), 0, 0));
+			}
+		} else if ((strToValue == '[Now + N Days/Hours]' || strToValue == '[Now - N Days/Hours]') && String.isNotBlank(strDays)) {
+			if (String.isBlank(strHours)) {
+				if (strToValue.contains('+')) {
+					return DateTime.now().addDays(Integer.valueOf(strDays));
+				} else {
+					return DateTime.now().addDays(-Integer.valueOf(strDays));
+				}
+			} else {
+				List<String> list_Hours = strHours.split(':');
+
+				if (strToValue.contains('+')) {
+					Date dtFinalDate = Date.today().addDays(Integer.valueOf(strDays));
+					return DateTime.newInstance(dtFinalDate, Time.newInstance(Integer.valueOf(list_Hours[0]), Integer.valueOf(list_Hours[1]), 0, 0));
+				} else {
+					Date dtFinalDate = Date.today().addDays(-Integer.valueOf(strDays));
+					return DateTime.newInstance(dtFinalDate, Time.newInstance(Integer.valueOf(list_Hours[0]), Integer.valueOf(list_Hours[1]), 0, 0));
+				}
+			}
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * @Description : Adds or subracts N business days to a given date
+	 * @Parm        : dtFinalDate - date from which business days need to be added or subracted
+	 * @Parm		: intBusinessDaysToAdd - number of business days to add or subtract
+	 * @Parm		: objBusinessHours - business hours object
+	 * @Return      : Date - returns the generated date
+	 **/
+	public static Date getNextBusinessDay(Date dtFinalDate, Integer intBusinessDaysToAdd, BusinessHours objBusinessHours) {
+		if (dtFinalDate != null) {
+			Integer intDirection = intBusinessDaysToAdd < 0 ? -1 : 1;
+			while (intBusinessDaysToAdd != 0) {
+				dtFinalDate = dtFinalDate.addDays(intDirection);
+				Boolean blnWorkingDay = BusinessHours.isWithin(objBusinessHours.Id, DateTime.newInstance(dtFinalDate, Time.newInstance(15, 0, 0, 0)));
+				if (blnWorkingDay) {
+					intBusinessDaysToAdd -= intDirection;
+				}
+			}
+		}
+		return dtFinalDate;
 	}
 }

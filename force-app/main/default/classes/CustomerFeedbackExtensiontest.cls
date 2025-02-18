@@ -88,7 +88,7 @@ public class CustomerFeedbackExtensiontest {
 	private static testMethod void testClientFeedbackRecord() {
 		Account acc = TestUtility.CompanyAccount();
 		Account accReseller = TestUtility.ResellerAccount();
-		Opportunity opp = TestUtility.createOpportunity('Company Opportunity', acc.Id);
+		Opportunity opp = TestUtility.createOpportunity('Acquisition', acc.Id);
 		opp.Sold_By__c = accReseller.Id;
 		insert opp;
 

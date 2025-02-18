@@ -277,9 +277,6 @@ public with sharing class TaxResCaseMassEmailCtrl {
 	public List<SelectOption> getEmailTemplateFolderOpts() {
 		List<SelectOption> list_Opts = new List<SelectOption>();
 		list_Opts.add(new SelectOption('--None--', '--None--'));
-		//Folder fldrMassEmail = [SELECT Id, Name FROM Folder WHERE Name = 'Large Scale Issue Mass Email'];
-		//idMassEmailFolder = fldrMassEmail.Id;
-		//list_Opts.add(new SelectOption(fldrMassEmail.Id, fldrMassEmail.Name));
 
 		List<SelectOption> list_OtherOpts = new List<SelectOption>();
 		for (Folder objfolder : [SELECT Id, Name FROM Folder WHERE Name = 'Large Scale Issue Mass Email' OR Type = 'Email' ORDER BY Name ASC]) {

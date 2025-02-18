@@ -16,7 +16,6 @@
             </value>
         </inputParameters>
         <nameSegment>Opportunity.O_Alert_for_Unapproved_Large_Deal_Closed</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send MM Notification - Transfer to Partner</description>
@@ -37,7 +36,6 @@
             </value>
         </inputParameters>
         <nameSegment>Opportunity.MM_Notification_Transfer_to_Partner</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send Email Alert</description>
@@ -58,7 +56,6 @@
             </value>
         </inputParameters>
         <nameSegment>Opportunity.O_Blocked_BoR</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send Email Notification - HI managers for ROE exception on BoR/NP RT</description>
@@ -79,7 +76,6 @@
             </value>
         </inputParameters>
         <nameSegment>Opportunity.O_ROE_Email_Notification_HI</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send Email Notification - HI managers for ROE exception on PR RT</description>
@@ -100,7 +96,6 @@
             </value>
         </inputParameters>
         <nameSegment>Opportunity.O_ROE_Email_Notification_PR</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>55.0</apiVersion>
     <decisions>
@@ -252,7 +247,7 @@
                 <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Company Opportunity</stringValue>
+                    <stringValue>Acquisition</stringValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -299,7 +294,7 @@
                 <leftValueReference>var_Current_Oppty.Opportunity_Record_Type_Name__c</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Company Opportunity</stringValue>
+                    <stringValue>Acquisition</stringValue>
                 </rightValue>
             </conditions>
             <conditions>

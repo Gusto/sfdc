@@ -152,7 +152,7 @@
     <enableSearch>true</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <externalSharingModel>Private</externalSharingModel>
+    <externalSharingModel>ReadWrite</externalSharingModel>
     <label>Ticket</label>
     <nameField>
         <displayFormat>Ticket-{00000000}</displayFormat>
@@ -164,9 +164,9 @@
     <pluralLabel>Tickets</pluralLabel>
     <profileSearchLayouts>
         <fields>NAME</fields>
-        <fields>Ticket_Name__c</fields>
         <fields>Ticket_ID__c</fields>
         <fields>Status__c</fields>
+        <fields>Ticket_Name__c</fields>
         <fields>OWNER.FIRST_NAME</fields>
         <fields>CREATED_DATE</fields>
         <fields>Qualified__c</fields>

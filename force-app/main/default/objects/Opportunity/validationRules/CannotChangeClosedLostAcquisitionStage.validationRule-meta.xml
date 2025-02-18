@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CannotChangeClosedLostAcquisitionStage</fullName>
+    <active>true</active>
+    <description>Acquisition opportunity cannot move from closed lost to other stage</description>
+    <errorConditionFormula>AND(
+    ISPICKVAL(PRIORVALUE(StageName), &quot;Closed Lost&quot;),
+    NOT(ISPICKVAL(StageName, &quot;Closed Lost&quot;)),
+    RecordType.Name = &apos;Acquisition&apos; &amp;&amp;
+    NOT($User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorMessage>Cannot update Opportunity Stage: Once set to Closed Lost, the stage cannot be changed. Please reach out to Sales Ops for support.</errorMessage>
+</ValidationRule>

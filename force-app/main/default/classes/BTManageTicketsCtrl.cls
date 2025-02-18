@@ -141,7 +141,6 @@ public class BTManageTicketsCtrl {
 						OwnerId,
 						Follow_Up_Date__c,
 						Submission_Deadline_Date__c,
-						TAdA__c,
 						(SELECT Id, AccountId FROM Cases__r WHERE Type = 'Benefits BOR Carrier Case')
 					FROM Carrier_Order__c
 					WHERE Id = :idCurrentRecord

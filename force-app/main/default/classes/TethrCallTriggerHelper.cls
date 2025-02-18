@@ -5,8 +5,6 @@
 public without sharing class TethrCallTriggerHelper {
 	// Maps to hold task interactions, accounts
 	Map<String, Task> map_TaskInteractions = new Map<String, Task>();
-	public static final String OPPORTUNITY_OBJECT = 'Opportunity';
-	public static final String CASE_OBJECT = 'Case';
 
 	/**
 	 * Runs before insert logic.
@@ -67,9 +65,9 @@ public without sharing class TethrCallTriggerHelper {
 
 			// Update the Tethr call with the task's WhatId if it is an Opportunity, or Case
 			if (objTask.WhatId != null) {
-				if (objTask.What.Type == OPPORTUNITY_OBJECT) {
+				if (objTask.What.Type == 'Opportunity') {
 					objCall.Tethr__Opportunity__c = objTask.WhatId;
-				} else if (objTask.What.Type == CASE_OBJECT) {
+				} else if (objTask.What.Type == 'Case') {
 					objCall.Tethr__Case__c = objTask.WhatId;
 				}
 			}

@@ -42,6 +42,8 @@ public without sharing class AccountTriggerHandler extends TriggerHandler {
 				AccountTriggerHelper objHelper = new AccountTriggerHelper();
 				objHelper.processBeforeInsert(newRecords);
 			} catch (Exception ex) {
+                System.debug(ex.getMessage());
+                System.debug(ex.getStackTraceString());
 				ExceptionLogUtil.logException('AccountTriggerHandler', 'BeforeInsert', ex);
 			}
 		}
@@ -57,6 +59,8 @@ public without sharing class AccountTriggerHandler extends TriggerHandler {
 				AccountTriggerHelper objHelper = new AccountTriggerHelper();
 				objHelper.processAfterInsert(newRecordsMap);
 			} catch (Exception ex) {
+                System.debug(ex.getMessage());
+                System.debug(ex.getStackTraceString());
 				ExceptionLogUtil.logException('AccountTriggerHandler', 'AfterInsert', ex);
 			}
 		}
@@ -72,6 +76,8 @@ public without sharing class AccountTriggerHandler extends TriggerHandler {
 				AccountTriggerHelper objHelper = new AccountTriggerHelper();
 				objHelper.processBeforeUpdate(oldRecordsMap, newRecordsMap);
 			} catch (Exception ex) {
+                System.debug(ex.getMessage());
+                System.debug(ex.getStackTraceString());
 				ExceptionLogUtil.logException('AccountTriggerHandler', 'BeforeUpdate', ex);
 			}
 		}
@@ -87,6 +93,8 @@ public without sharing class AccountTriggerHandler extends TriggerHandler {
 				AccountTriggerHelper objHelper = new AccountTriggerHelper();
 				objHelper.processAfterUpdate(oldRecordsMap, newRecordsMap);
 			} catch (Exception ex) {
+                System.debug(ex.getMessage());
+                System.debug(ex.getStackTraceString());
 				ExceptionLogUtil.logException('AccountTriggerHandler', 'AfterUpdate', ex);
 			}
 		}
@@ -105,6 +113,8 @@ public without sharing class AccountTriggerHandler extends TriggerHandler {
 				Integer intException = 0 / 0;
 			}
 		} catch (Exception ex) {
+            System.debug(ex.getMessage());
+            System.debug(ex.getStackTraceString());
 			ExceptionLogUtil.logException('AccountTriggerHandler', 'BeforeDelete', ex);
 		}
 	}

@@ -330,6 +330,18 @@ public class EmailMessageTriggerHelperTest {
 			.setAuthorizedUser('Yes')
 			.build();
 		list_Cases.add(objCase24);
+        
+        Case objCase25 = new TestDataFactory.CaseBuilder()
+			.setAccountId(objAccount.Id)
+			.setContactId(objContactRecord.Id)
+			.setRecordTypeId('Engagement')
+			.setSubject('Testing Invalid Email Address for Spam emails')
+			.setDescription('Test')
+            .setOrigin(CaseUtils.ORIGIN_EMAIL)
+			.setStatus(CaseUtils.STATUS_OPEN)
+			.setAuthorizedUser('Yes')
+			.build();
+		list_Cases.add(objCase25);
 
 		Case objCase26 = new TestDataFactory.CaseBuilder()
 			.setAccountId(objAccount.Id)
@@ -369,6 +381,7 @@ public class EmailMessageTriggerHelperTest {
 		insert list_Cases;
 		Test.stopTest();
 
+
 		List<Case_Reason_Classification__c> list_CaseReasonClassifications = new List<Case_Reason_Classification__c>();
 		Case_Reason_Classification__c objCaseReasonClassification = new TestDataFactory.CaseReasonClassificationBuilder()
 			.setName('Middesk State Tax Registration')
@@ -376,6 +389,15 @@ public class EmailMessageTriggerHelperTest {
 			.setType('Engagement')
 			.build();
 		list_CaseReasonClassifications.add(objCaseReasonClassification);
+        
+        Case_Reason_Classification__c objCaseReasonClassification2 = new TestDataFactory.CaseReasonClassificationBuilder()
+			.setName('Spam')
+			.setIsActive(true)
+			.setClass('Class 0')
+			.setType('Engagement')
+			.setSurveyEligible(false)
+			.build();
+		list_CaseReasonClassifications.add(objCaseReasonClassification2);
 		insert list_CaseReasonClassifications;
 
 		Agency_Information__c objAgencyInformation = new Agency_Information__c();
@@ -1769,6 +1791,8 @@ public class EmailMessageTriggerHelperTest {
 
 		Id boRenewalRecType = cache.getRecordTypeId('Benefit_Order__c', 'New Plan');
 
+		Test.startTest();
+
 		Benefit_Order__c objBenefitOrder = new TestDataFactory.BenefitOrderBuilder()
 			.setRecordType(boRenewalRecType)
 			.setName('Test Benefit Order')
@@ -1784,14 +1808,8 @@ public class EmailMessageTriggerHelperTest {
 		insert objBenefitOrder;
 		TriggerHandler.clearAllBypasses();
 
-		Test.startTest();
 		objCase.Benefit_Order__c = objBenefitOrder.Id;
 		update objCase;
-
-		CaseTriggerHelper.skipTrigger = true;
-		objCase.Benefit_Order__c = objBenefitOrder.Id;
-		update objCase;
-		CaseTriggerHelper.skipTrigger = false;
 
 		EmailMessage objEmailMessage = new TestDataFactory.EmailMessageBuilder()
 			.setParentId(objCase.Id)
@@ -1823,6 +1841,7 @@ public class EmailMessageTriggerHelperTest {
 			System.assert(threeDaysAgo > caseObj.ClosedDate, 'The CloseDate should be three days in the past.');
 		}
 
+		Test.startTest();
 		BenefitOrderHelper.skipTrigger = true;
 
 		Opportunity objNewPlan = new TestDataFactory.OpportunityBuilder()
@@ -1837,7 +1856,6 @@ public class EmailMessageTriggerHelperTest {
 		insert objNewPlan;
 
 		Id boRenewalRecType = cache.getRecordTypeId('Benefit_Order__c', 'New Plan');
-        Test.startTest();
 		Benefit_Order__c objBenefitOrder = new TestDataFactory.BenefitOrderBuilder()
 			.setRecordType(boRenewalRecType)
 			.setName('Test Benefit Order')
@@ -1973,6 +1991,31 @@ public class EmailMessageTriggerHelperTest {
 
 		List<Case> list_Case2 = [SELECT Id, Status FROM Case WHERE Subject = :strSubject];
 		System.assertEquals(2, list_Case2.size(), 'There should be 2 cases.');
+	}
+    
+    /**
+	 * @author Sahil Goyal
+	 * @description assert for spam email messages to auto close the cases.
+	 */
+	@isTest
+	static void testInvalidSpamEmailCase() {
+		String strSubject = 'Testing Invalid Email Address for Spam emails';
+		Test.startTest();
+		List<Case> list_Case = [SELECT Id FROM Case WHERE RecordType.Name = 'Engagement' AND Subject = :strSubject];
+		EmailMessage objEmailMessage = new TestDataFactory.EmailMessageBuilder()
+			.setParentId(list_Case[0].Id)
+			.setFromAddress('test+2joq0a&kxp92&&246ba4d071def9e5ca15ad5e02819457a6f959e576246ba4d071def9e5ca15ad5e02819457a6f959e576@acme.com')
+			.setToAddress('test@gusto.com')
+			.setIncoming(true)
+			.setSubject(strSubject)
+			.setTextBody('Test')
+			.build();
+		insert objEmailMessage;
+		Test.stopTest();
+
+		List<Case> spam_case = [SELECT Id, Status FROM Case WHERE Subject = :strSubject];
+		System.assertEquals(1, spam_case.size(), 'There should be 1 case');
+        System.assertEquals(CaseUtils.STATUS_CLOSED, spam_case.get(0).Status, 'It should be Closed');
 	}
 
 	/**
@@ -2366,10 +2409,10 @@ public class EmailMessageTriggerHelperTest {
 		List<Case> list_CasesEmailSent = [
 			SELECT Id, Origin, BusinessHoursId, Auto_Close_Date_Time__c, Support_Level__c, Type
 			FROM Case
-			WHERE Origin IN ('Phone', 'Email') AND RecordType.Name = 'Engagement'
+			WHERE Origin IN ('Phone', 'Email') AND RecordType.Name = 'Engagement' AND Subject != 'Testing Invalid Email Address for Spam emails'
 		];
-
-		// Assert if the Case origin is updated to Email or Not
+        
+        // Assert if the Case origin is updated to Email or Not
 		System.assertEquals(list_CasesEmailSent[0].Origin, 'Email', 'Case origin should be email.');
 		System.assert(list_CasesEmailSent[0].Support_Level__c == 'Tier 1', 'Support Level not populated');
 		System.assert(list_CasesEmailSent[0].Type == 'Payroll', 'Type not populated');
@@ -2380,7 +2423,7 @@ public class EmailMessageTriggerHelperTest {
 
 		// Assert check for the Auto Close date time population
 		System.assertEquals(dExpectedAutoCloseDate, dActualAutoCloseDate, 'Auto Close Date doesnt match');
-	}
+    }
 
 	/**
 	 * @description Test Engagement status update awaiting response
@@ -2403,7 +2446,7 @@ public class EmailMessageTriggerHelperTest {
 		insert objEmailMessage;
 		Test.stopTest();
 		Case objCase2 = [SELECT Id, AccountId, Status FROM Case WHERE Subject = 'Test Engagement status update'];
-		//System.assertEquals(CaseUtils.STATUS_IN_PROGRESS, objCase2.Status, 'Case Status should match.');
+		System.assertEquals(CaseUtils.STATUS_IN_PROGRESS, objCase2.Status, 'Case Status should match.');
 	}
 
 	/**
@@ -2428,7 +2471,7 @@ public class EmailMessageTriggerHelperTest {
 		insert objEmailMessage;
 		Test.stopTest();
 		Case objCase2 = [SELECT Id, AccountId, Status FROM Case WHERE Subject = 'Test Engagement status update'];
-		//System.assertEquals(CaseUtils.STATUS_IN_PROGRESS, objCase2.Status, 'Case Status should match.');
+		System.assertEquals(CaseUtils.STATUS_IN_PROGRESS, objCase2.Status, 'Case Status should match.');
 	}
 
 	/**
@@ -2670,41 +2713,6 @@ public class EmailMessageTriggerHelperTest {
 	}
 
 	/**
-	 * @Author      : Ankit C
-	 * @Description : Test Method for email sent from middesk domain
-	 **/
-	@isTest
-	static void testMiddeskEmail() {
-		//create a case with Supplied email test@middesk.com
-		Test.startTest();
-		Case objCase = new TestDataFactory.CaseBuilder()
-			.setRecordTypeId('Engagement')
-			.setSubject('Test Case for Middesk Email')
-			.setDescription('Test')
-			.setStatus('Open')
-			.setType('Payroll')
-			.setSuppliedEmail('test@middesk.com')
-			.build();
-
-		insert objCase;
-
-		//create an email message with parent id as the case created above
-		EmailMessage objEmailMessage = new TestDataFactory.EmailMessageBuilder()
-			.setParentId(objCase.Id)
-			.setFromAddress('test@middesk.com')
-			.setToAddress('support@gusto.com')
-			.setIncoming(true)
-			.setSubject('Test Email from Middesk')
-			.setTextBody('Test')
-			.build();
-		insert objEmailMessage;
-		Test.stopTest();
-
-		objCase = [SELECT Id, Origin, Status, OwnerId, Routing_Case_Reason__c FROM Case WHERE Id = :objCase.Id];
-		Assert.areEqual('Middesk State Tax Registration', objCase.Routing_Case_Reason__c, 'Routing Case Reason should be Middesk State Tax Registration');
-	}
-
-	/**
 	 * @description Test recovery case Incoming email - reset status
 	 * @author Ajay Krishna P U
 	 */
@@ -2740,6 +2748,70 @@ public class EmailMessageTriggerHelperTest {
 		System.assertNotEquals(objCaseOldVersion.Latest_Customer_Response_Date_Time__c, objCaseNewVersion.Latest_Customer_Response_Date_Time__c, 'Latest customer response date time should be updated');
 	}
 
+	/*
+	 * @Author      : Ankit C
+	 * @Description : Test Method for email sent from middesk domain
+	 **/
+	@isTest
+	static void testMiddeskEmail() {
+		//create a case with Supplied email test@middesk.com
+		Test.startTest();
+		Case objCase = new TestDataFactory.CaseBuilder()
+			.setRecordTypeId('Engagement')
+			.setSubject('Test Case for Middesk Email')
+			.setDescription('Test')
+			.setStatus('Open')
+			.setType('Payroll')
+			.setSuppliedEmail('test@middesk.com')
+			.build();
+
+		insert objCase;
+
+		//create an email message with parent id as the case created above
+		EmailMessage objEmailMessage = new TestDataFactory.EmailMessageBuilder()
+			.setParentId(objCase.Id)
+			.setFromAddress('test@middesk.com')
+			.setToAddress('support@gusto.com')
+			.setIncoming(true)
+			.setSubject('Test Email from Middesk')
+			.setTextBody('Test')
+			.build();
+		insert objEmailMessage;
+		Test.stopTest();
+
+		objCase = [SELECT Id, Origin, Status, OwnerId, Routing_Case_Reason__c FROM Case WHERE Id = :objCase.Id];
+		Assert.areEqual('Middesk State Tax Registration', objCase.Routing_Case_Reason__c, 'Routing Case Reason should be Middesk State Tax Registration');
+	}
+	/*
+	 * @Author      : Aslam Juneid
+	 * @Description : Test Method for email sent on Closed Client Relations Case
+	 **/
+	@isTest
+	static void testClosedClientRelationCase() {
+		Case objCase30 = new TestDataFactory.CaseBuilder()
+			.setRecordTypeId('Client Relations')
+			.setSubject('Closed test case Client Relations')
+			.setDescription('Closed test case Client Relations')
+			.setStatus(CaseUtils.STATUS_CLOSED)
+			.setAuthorizedUser('Yes')
+			.build();
+		insert objCase30;
+		Case objCaseOldVersion = [SELECT Id, RecordTypeId, Status,Latest_Customer_Response_Date_Time__c FROM Case WHERE RecordTypeId = :EmailMessageUtil.RECTYPE_CLIENT_RELATIONS LIMIT 1];
+		Test.startTest();
+		EmailMessage objEmailMessage1 = new TestDataFactory.EmailMessageBuilder()
+			.setParentId(objCaseOldVersion.Id)
+			.setFromAddress('test@testClientRelatoin.com')
+			.setToAddress('test@dev.com')
+			.setIncoming(true)
+			.setSubject('Client Relation Case')
+			.setTextBody('Client Relation Case')
+			.build();
+		insert objEmailMessage1;
+		Test.stopTest();
+		Case objCaseNewVersion = [SELECT Id, Status, Latest_Customer_Response_Date_Time__c FROM Case WHERE Id = :objCaseOldVersion.Id];
+		System.assertEquals(CaseUtils.STATUS_RESPONSE_RECEIVED, objCaseNewVersion.Status);
+	}
+		
 	/**
 	 * @author Omar Benitez
 	 * @description assert email messages on closed cases should copy email to parent
@@ -2782,34 +2854,5 @@ public class EmailMessageTriggerHelperTest {
 		System.assertEquals(CaseUtils.STATUS_CLOSED, objCase1.Status, 'Case Status should keep as closed');
 		System.assertEquals(1, list_emailParent.size(), 'Parent Case shouild have one email linked ');
 		System.assertEquals(1, list_emailCase.size(), 'Case shouild have one email linked');
-	}
-	/*
-	 * @Author      : Aslam Juneid
-	 * @Description : Test Method for email sent on Closed Client Relations Case
-	 **/
-	@isTest
-	static void testClosedClientRelationCase() {
-		Case objCase30 = new TestDataFactory.CaseBuilder()
-			.setRecordTypeId('Client Relations')
-			.setSubject('Closed test case Client Relations')
-			.setDescription('Closed test case Client Relations')
-			.setStatus(CaseUtils.STATUS_CLOSED)
-			.setAuthorizedUser('Yes')
-			.build();
-		insert objCase30;
-		Case objCaseOldVersion = [SELECT Id, RecordTypeId, Status,Latest_Customer_Response_Date_Time__c FROM Case WHERE RecordTypeId = :EmailMessageUtil.RECTYPE_CLIENT_RELATIONS LIMIT 1];
-		Test.startTest();
-		EmailMessage objEmailMessage1 = new TestDataFactory.EmailMessageBuilder()
-			.setParentId(objCaseOldVersion.Id)
-			.setFromAddress('test@testClientRelatoin.com')
-			.setToAddress('test@dev.com')
-			.setIncoming(true)
-			.setSubject('Client Relation Case')
-			.setTextBody('Client Relation Case')
-			.build();
-		insert objEmailMessage1;
-		Test.stopTest();
-		Case objCaseNewVersion = [SELECT Id, Status, Latest_Customer_Response_Date_Time__c FROM Case WHERE Id = :objCaseOldVersion.Id];
-		System.assertEquals(CaseUtils.STATUS_RESPONSE_RECEIVED, objCaseNewVersion.Status);
 	}
 }

@@ -10,7 +10,6 @@ public with sharing class RelatedRecordsCtrl {
 	public static String strLWCToClassicMsg = 'Your lightning link has successfully been converted to a classic link!';
 	public static String strClassicToLWCMsg = 'Your classic link has successfully been converted to a lightning link!';
 	public static String strClassicURL = URL.getOrgDomainURL().toExternalForm();
-	//public static String strBenefitsFulfillmentRT = TaskUtil.TASK_BENEFIT_FULFILLMENT_RT_ID;
 	public static String strBenefitsFulfillmentRT = 'Benefits Fulfillment';
 	public static String strCompleted = TaskUtil.TASK_STATUS_COMPLETE;
 

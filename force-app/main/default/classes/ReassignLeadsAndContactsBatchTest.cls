@@ -75,7 +75,7 @@ public with sharing class ReassignLeadsAndContactsBatchTest {
 		update objInactiveUser;
 
 		Test.startTest();
-		ReassignLeadsAndContactsBatch.idTestUser = objInactiveUser.Id;
+        ReassignLeadsAndContactsBatch.idTestUser = objInactiveUser.Id;
 		Id batchJobId = Database.executeBatch(new ReassignLeadsAndContactsBatch(), 1000);
 		Test.stopTest();
 
@@ -104,7 +104,7 @@ public with sharing class ReassignLeadsAndContactsBatchTest {
 			Integer intYear = Date.today().year() + 1;
 			String strCronExp = '0 0 0 15 3 ? ' + intYear;
 
-			ReassignLeadsAndContactsBatch.idTestUser = objInactiveUser.Id;
+            ReassignLeadsAndContactsBatch.idTestUser = objInactiveUser.Id;
 			ReassignLeadsAndContactsScheduler objScheduler = new ReassignLeadsAndContactsScheduler();
 			String strJobId = System.schedule('Test ReassignLeadsAndContactsScheduler', strCronExp, objScheduler);
 			// Directly call Scheduler's execute method
@@ -118,7 +118,7 @@ public with sharing class ReassignLeadsAndContactsBatchTest {
 		Lead objLead = [SELECT OwnerId FROM Lead WHERE Email = 'test1@test.com'];
 		System.assertEquals(System.Label.Reseller_Inactive_Owner, objLead.OwnerId);
 
-		//User objAssertUser = [SELECT Id, Inactive__c FROM User WHERE LastName = 'Test LName' LIMIT 1];
-		//System.assertEquals(false, objAssertUser.Inactive__c, 'User Inactive__c flag should be unchecked');
+		User objAssertUser = [SELECT Id, Inactive__c FROM User WHERE LastName = 'Test LName' LIMIT 1];
+		System.assertEquals(false, objAssertUser.Inactive__c, 'User Inactive__c flag should be unchecked');
 	}
 }

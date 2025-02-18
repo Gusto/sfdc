@@ -334,7 +334,7 @@ public with sharing class PTPlayModeFacilitatorAssignmentCtrlTest {
 			HI_Effective_Date__c = System.today().addDays(30)
 		);
 		//opp1.RecordTypeId = cache.getRecordTypeId('Opportunity', 'Benefits Renewal');
-		opp1.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp1.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		testOpportunities.add(opp1);
 
 		Opportunity opp2 = new Opportunity(
@@ -347,7 +347,7 @@ public with sharing class PTPlayModeFacilitatorAssignmentCtrlTest {
 			HI_Effective_Date__c = System.today().addDays(30)
 		);
 		//opp1.RecordTypeId = cache.getRecordTypeId('Opportunity', 'Benefits Renewal');
-		opp1.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp1.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		testOpportunities.add(opp2);
 
 		Opportunity objOpp3 = new Opportunity(
@@ -359,12 +359,12 @@ public with sharing class PTPlayModeFacilitatorAssignmentCtrlTest {
 			NumberOfEmployees__c = 105,
 			HI_Effective_Date__c = System.today().addDays(30)
 		);
-		objOpp3.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		objOpp3.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		testOpportunities.add(objOpp3);
 
 		Opportunity objOpp4 = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
-			.setName('Company Opp')
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
+			.setName('Acquisition Opp')
 			.setAccountId(objNewAccount.Id)
 			.setStage('SAL')
 			.setCloseDate(System.today())
@@ -637,6 +637,7 @@ public with sharing class PTPlayModeFacilitatorAssignmentCtrlTest {
 			Previous_Payroll_Provider__c = 'ADP Run',
 			of_Benefits__c = 5
 		);
+		objOrder6.Exception_Request_Reason__c = 'Accountant has been let go';
 		lst_toInsertOrder.add(objOrder6);
 
 		Order objOrder7 = new TestDataFactory.OrderBuilder()
@@ -658,6 +659,7 @@ public with sharing class PTPlayModeFacilitatorAssignmentCtrlTest {
 			.setOfBenefits(5)
 			.setBlockedReason(null)
 			.build();
+		objorder7.Exception_Request_Reason__c = 'Accountant has been let go';
 		lst_toInsertOrder.add(objOrder7);
 
 		OrderTriggerHelper.skipTrigger = true;

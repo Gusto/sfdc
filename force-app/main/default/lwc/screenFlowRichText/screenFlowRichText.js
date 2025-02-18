@@ -10,7 +10,7 @@ export default class ScreenFlowRichText extends LightningElement {
     @api validity;
     @api fromSendPartnerFlow = false;
     @api disabledVar = false;
-    
+    @api usersignature = " ";
 
     allowedFormats = [
         'font',

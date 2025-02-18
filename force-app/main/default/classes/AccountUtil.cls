@@ -62,7 +62,6 @@ public with sharing class AccountUtil {
 	public final static String SALES_ENGMNT_STATUS_RAMP = 'Ramp';
 	public final static String SALES_ENGMNT_STATUS_FALSE_SAL = 'False SAL';
 	public final static String SALES_ENGMNT_STATUS_NURTURE = 'Nurture';
-	public final static String SALES_ENGMNT_STATUS_WORKING_SAL = 'Working SAL';
 	public final static String SALES_ENGMNT_STATUS_UNQUALIFIED = 'Unqualified';
 	public final static String SALES_ENGMNT_STATUS_PROSPECTIVE = 'Prospective';
 	public final static String SALES_ENGMNT_STATUS_ACTIVE = 'Active';
@@ -71,8 +70,6 @@ public with sharing class AccountUtil {
 	// Sales Engagement Status Detail Values
 	public final static String SALES_ENGMNT_STATUS_DETAIL_FIRM_ONBOARDING = 'Firm/Accountant Onboarding';
 	public final static String SALES_ENGMNT_STATUS_DETAIL_MDR_ATMPT_CNTCT = 'MDR Attempting Contact';
-	public final static String SALES_ENGMNT_STATUS_DETAIL_UNRESPONSIVE = 'Unresponsive';
-	public final static String SALES_ENGMNT_STATUS_DETAIL_NVR_ADDED_CLIENT = 'Never added 1st client';
 	public final static String SALES_ENGMNT_STATUS_DETAIL_NO_RECENT_CLIENTS = 'No Recent Clients';
 	public final static String SALES_ENGMNT_STATUS_DETAIL_MDR_TO_CNTCT = 'MDR To Contact';
 	public final static String SALES_ENGMNT_STATUS_DETAIL_PRE_MDR = 'Pre-MDR';
@@ -216,6 +213,7 @@ public with sharing class AccountUtil {
 	public final static String PARTNER_ROLE = 'partner';
 	public final static String SBIZ_ROLE = 'sb';
 	public final static String MDR_ROLE = 'mdr';
+	public final static String DEDICATED_CSM_ROLE = 'Dedicated CSM';
 
 	//User Roles Full Name
 	public final static String SALES_PARTNER_MANAGER_ROLE = 'sales_partner_xx_xx_mgr';
@@ -303,6 +301,9 @@ public with sharing class AccountUtil {
 
 	// Premium Tier product interest
 	public static final String PREMIUM_TIER_LOGACALL = 'premium_tier_logacall';
+
+	// ICP Log A Call product interest
+	public static final String ICP_LOGACALL = 'international_contractor_payment_logacall';
 
 	// Cross sell type
 	public static final String CROSS_SELL = 'Cross Sell';

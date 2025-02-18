@@ -140,10 +140,10 @@ public class SendProductUpsellToExternalPartnerTest {
 		Partnership_Interest__c objProdUpsell = new TestDataFactory.ProductUpsellBuilder()
 			.setContactId(objContact.Id)
 			.setAccountId(objAccount.Id)
-			.setOwnerId(objUser.Id)
 			.setNotes('Testing positive scenario.')
 			.setTier('Not Discussed')
 			.setProductInterestCountries('BQ;AW')
+			.setOwnerId(objUser.Id)
 			.build();
 		insert objProdUpsell;
 		// Set mock callout class
@@ -176,10 +176,10 @@ public class SendProductUpsellToExternalPartnerTest {
 		Partnership_Interest__c objProdUpsell = new TestDataFactory.ProductUpsellBuilder()
 			.setContactId(objContact.Id)
 			.setAccountId(objAccount.Id)
-			.setOwnerId(objUser.Id)
 			.setNotes('Testing positive scenario.')
 			.setTier('Not Discussed')
 			.setProductInterestCountries('BQ;AW')
+			.setOwnerId(objUser.Id)
 			.build();
 		insert objProdUpsell;
 		// Set mock callout class
@@ -213,9 +213,9 @@ public class SendProductUpsellToExternalPartnerTest {
 		Partnership_Interest__c objProdUpsell = new TestDataFactory.ProductUpsellBuilder()
 			.setContactId(objContact.Id)
 			.setAccountId(objAccount.Id)
-			.setOwnerId(objUser.Id)
 			.setNotes('Testing positive scenario.')
 			.setTier('Not Discussed')
+			.setOwnerId(objUser.Id)
 			.build();
 		insert objProdUpsell;
 

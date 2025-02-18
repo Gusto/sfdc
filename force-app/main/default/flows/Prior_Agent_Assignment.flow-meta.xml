@@ -63,7 +63,7 @@
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Yes</name>
-            <conditionLogic>((1 AND 2 AND 3) OR (4 AND 5 AND (6 OR 7) AND 8) OR ( 9 AND 10 AND 11)) AND NOT(12 AND (13 OR 15)) AND 14</conditionLogic>
+            <conditionLogic>((1 AND 2 AND 3) OR (4 AND 5 AND (6 OR 7) AND 8) OR ( 9 AND 10 AND 11)) AND NOT(12 AND 13)</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.Persona__c</leftValueReference>
                 <operator>EqualTo</operator>
@@ -155,20 +155,6 @@
                     <stringValue>Awaiting Response</stringValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>blnPriority0</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record__Prior.Status</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Awaiting Internal Support</stringValue>
-                </rightValue>
-            </conditions>
             <label>Yes</label>
         </rules>
     </decisions>
@@ -186,9 +172,11 @@
 - Added Negation of Origins/Channels
 - Adding Prior Owner OOO and Inactive check and skip routing
 - Adding new conditions for Engagement Closed Cases
+- Added conditions to exclude this flow for a new Case with TAM
 - Confidential Project (new TAM use case)
 - Removed IsEscalated Logic
-- Added conditions for TAM Cases</description>
+- Added conditions to run this flow for a reply on TAM Case
+- Added Manual RecordType Changes Routing</description>
     <environments>Default</environments>
     <formulas>
         <name>blnManualOwnerChange</name>
@@ -268,21 +256,21 @@ BEGINS({!$Record.OwnerId}, &quot;005&quot;)</expression>
             <targetReference>Get_Prior_Owner_Record</targetReference>
         </connector>
         <filterFormula>CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.Omni_Case_Record_Types__c} , {!$Record.RecordType.DeveloperName} ) &amp;&amp;
-            {!$Record.Channel__c} != &apos;Phone&apos; &amp;&amp;
-            {!$Record.Channel__c} != &apos;Chat&apos; &amp;&amp;
-            NOT( CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channels__c}, TEXT( {!$Record.Origin} ))) &amp;&amp;
-            {!$Record.Case_In_Route__c} = false &amp;&amp;
-            (
-            ( ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Response&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) &amp;&amp; NOT(ISCHANGED({!$Record.Re_Route_Count__c})) ) ||
-            ( ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;Open&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;))) ||
-            ( ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Internal Support&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; NOT(ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) ) ||
-            ( ISPICKVAL({!$Record__Prior.Status}, &apos;Closed&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) ) ||
-            ( {!$Record__Prior.OwnerId} != {!$Record.OwnerId} &amp;&amp; {!$Record.OwnerId} != NULL &amp;&amp; BEGINS({!$Record.OwnerId}, &quot;005&quot;) ) )</filterFormula>
+{!$Record.Channel__c} != &apos;Phone&apos; &amp;&amp;
+{!$Record.Channel__c} != &apos;Chat&apos; &amp;&amp;
+NOT( CONTAINS( {!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channels__c}, TEXT( {!$Record.Origin} ))) &amp;&amp;
+{!$Record.Case_In_Route__c} = false &amp;&amp;
+(
+( ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Response&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) &amp;&amp; NOT(ISCHANGED({!$Record.Re_Route_Count__c})) ) ||
+( ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;Open&apos;) &amp;&amp; NOT( ISPICKVAL({!$Record.Status}, &apos;Closed&apos;))) ||
+( ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Internal Support&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; NOT(ISPICKVAL({!$Record.Status}, &apos;Closed&apos;)) ) ||
+( ISPICKVAL({!$Record__Prior.Status}, &apos;Closed&apos;) &amp;&amp; ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) ) ||
+( {!$Record__Prior.OwnerId} != {!$Record.OwnerId} &amp;&amp; {!$Record.OwnerId} != NULL &amp;&amp; BEGINS({!$Record.OwnerId}, &quot;005&quot;) ) )</filterFormula>
         <object>Case</object>
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <subflows>
         <name>Route_to_Agent</name>
         <label>Route to Agent</label>

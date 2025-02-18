@@ -111,7 +111,7 @@ public class HIQuoteTriggerHelper {
 					} else {
 						map_AccountIdToHIOpportunity.put(strAcctId, objOpp);
 					}
-				} else if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+				} else if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || objOpp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) {
 					map_AccountIdToPayrollOpportunity.put(strAcctId, objOpp);
 				}
 			}
@@ -199,8 +199,10 @@ public class HIQuoteTriggerHelper {
 			WHERE
 				AccountId IN :set_AccountIds
 				AND (RecordTypeId = :OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID
-				OR RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID)
+				OR RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+				OR (RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID AND Type = :OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS))
 				AND StageName NOT IN :OpportunityUtil.set_ClosedOpportunityStage
+			ORDER BY CreatedDate ASC
 		];
 	}
 

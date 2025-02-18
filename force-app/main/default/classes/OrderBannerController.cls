@@ -38,11 +38,13 @@ public without sharing class OrderBannerController {
 
 		if (list_RolesForBannerOne.contains(strUserRole) || list_ProfilesForBannerOne.contains(strUserProfile)) {
 			blnRoleProfileForBannerOne = true;
+            System.debug('blnRoleProfileForBannerOne' + blnRoleProfileForBannerOne);
 		}
 		if (list_RolesForBannerOthers.contains(strUserRole) || list_ProfilesForBannerOthers.contains(strUserProfile)) {
 			blnRoleProfileForBannerOthers = true;
+             System.debug('blnRoleProfileForBannerOthers' + blnRoleProfileForBannerOthers);
 		}
-
+		
 		return new BannerVisibilityResult(blnRoleProfileForBannerOne, blnRoleProfileForBannerOthers);
 	}
 

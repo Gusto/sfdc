@@ -40,12 +40,15 @@ export default class RecordCreateCmp extends LightningElement {
 	@track draftValues = [];
 	@track map_RecordTypes = {};
 	@wire(EnclosingTabId) tabId;
+	@track autoSaveTimerId = "";
 
 	@track productColumns = [
-		{ label: "Product", fieldName: "name" },
-		{ label: "Sales Price", fieldName: "unitPrice", type: "currency" },
-		{ label: "Quantity", fieldName: "employees", type: "number", editable: true },
-		{ label: "Total Price", fieldName: "totalPrice", type: "currency" }
+		{ label: "Product", fieldName: "name" ,  initialWidth: 580},
+		{ label: "Quantity", fieldName: "employees", type: "number",  initialWidth: 110, editable: true },
+		{ label: "Base Price", fieldName: "basePrice", type: "currency" , initialWidth: 140 },
+		{ label: "List Price", fieldName: "unitPrice", type: "currency" ,  initialWidth: 140},
+		{ label: "Total Price", fieldName: "totalPrice", type: "currency" , initialWidth: 170},
+		{ label: "Line Description", fieldName: "description", type: "text" , editable: true, initialWidth: 250}
 	];
 	@track productData = [];
 	@track selectedProducts = [];
@@ -386,7 +389,16 @@ export default class RecordCreateCmp extends LightningElement {
 							// if record create has Add Products enabled - show products to add ONLY if products are available & quantity is greater than 0
 							if (this.objRecordCreate.Add_Products__c && result.objProductsWrapper && result.objProductsWrapper.list_Products.length > 0) {
 								this.objRecordCreate.objOppty = result.objProductsWrapper.objOppty;
-								let employees = result.objProductsWrapper.objOppty.NumberOfEmployees__c ? result.objProductsWrapper.objOppty.NumberOfEmployees__c : 0;
+								let employees = 0;
+
+								if (result.objProductsWrapper.objOppty.EE_Active_Count__c) {
+									employees = result.objProductsWrapper.objOppty.EE_Active_Count__c;
+								} else if (result.objProductsWrapper.objOppty.NumberOfEmployees__c) {
+									employees = result.objProductsWrapper.objOppty.NumberOfEmployees__c;
+								}
+
+								//result.objProductsWrapper.objOppty.NumberOfEmployees__c ? result.objProductsWrapper.objOppty.NumberOfEmployees__c : 0;
+
 								let contractors = result.objProductsWrapper.objOppty.Number_of_Contractors__c ? result.objProductsWrapper.objOppty.Number_of_Contractors__c : 0;
 								let quantity = employees + contractors;
 								// Update title
@@ -403,8 +415,10 @@ export default class RecordCreateCmp extends LightningElement {
 										name: element.Product2.Name,
 										unitPrice: element.UnitPrice,
 										Id: element.Id,
+										basePrice: element.Base_Price__c,
 										employees: quantity,
-										totalPrice: Number(element.UnitPrice) * quantity
+										totalPrice: Number(element.UnitPrice) * quantity + Number(element.Base_Price__c),
+										description: element.Product2.Description
 									});
 								});
 								this.productData = productsList;
@@ -423,16 +437,38 @@ export default class RecordCreateCmp extends LightningElement {
 							}
 						} else {
 							// In case of error, show error message
-							const toastEvent = new ShowToastEvent({
-								title: "Record create failed",
-								message: "Reason - " + result.strMessage,
-								variant: "error"
-							});
-							this.dispatchEvent(toastEvent);
+							const errorMessage = result.strMessage ? result.strMessage : "Unknown error";
+							if (errorMessage.includes('FIELD_CUSTOM_VALIDATION_EXCEPTION')) {
+								const extractedMessage = errorMessage.split('FIELD_CUSTOM_VALIDATION_EXCEPTION, ')[1]?.split(': []')[0];
+								console.log('extractedMessage : ' + extractedMessage);
+								const toastEvent = new ShowToastEvent({
+									title: "Record create failed",
+									message: "Reason - " + extractedMessage,
+									variant: "error"
+								});
+								this.dispatchEvent(toastEvent);
+							} else if (errorMessage.includes('Source_ID__c duplicates value')) {
+								const extractedMessage = 'Multiple Acquisition Opportunities of the same type cannot be created on the same date.';
+								console.log('extractedMessage : ' + extractedMessage);
+								const toastEvent = new ShowToastEvent({
+									title: "Record create failed",
+									message: "Reason - " + extractedMessage,
+									variant: "error"
+								});
+								this.dispatchEvent(toastEvent);
+							} else {
+								const toastEvent = new ShowToastEvent({
+									title: "Record create failed",
+									message: "Reason - " + errorMessage,
+									variant: "error"
+								});
+								this.dispatchEvent(toastEvent);
+							}
 						}
 						this.blnLoading = false;
 					})
 					.catch((error) => {
+						console.log('error ', error.body);
 						this.strErrorMessage = "Error in loading this page. Please contact your administrator. Reason: " + error?.body?.message || "Unknown error.";
 
 						// In case of error, show error message
@@ -457,10 +493,11 @@ export default class RecordCreateCmp extends LightningElement {
 		let list_NoQuantity = [];
 		selectedRows.forEach((element) => {
 			let quantity = element.employees ? element.employees : 0;
+			let description = element.description ? element.description : "";
 			if (quantity == 0) {
 				list_NoQuantity.push(element.name);
 			}
-			list_Products.push(element.Id + "," + quantity);
+			list_Products.push(element.Id + "," + quantity + "," + description);
 		});
 		// if no products selected - show warning message and return
 		if (list_Products.length == 0) {
@@ -557,15 +594,24 @@ export default class RecordCreateCmp extends LightningElement {
 
 	handleDataTableSave(event) {
 		let tempProducts = [];
+		console.log('event.detail.draftValues:' + event.detail.draftValues);
 		this.productData.forEach((element) => {
 			let draftElement = event.detail.draftValues.find((draftElement) => draftElement.Id === element.Id);
+			console.log('draftElement:' + draftElement);
+			//console.log('draftElement.description:' + draftElement.description);
 			if (draftElement) {
 				if (draftElement.employees && draftElement.employees > 0) {
 					element.employees = draftElement.employees;
-					element.totalPrice = Number(element.unitPrice) * Number(element.employees);
+					element.totalPrice = Number(element.unitPrice) * Number(element.employees) + Number(element.basePrice);
 				} else {
-					element.employees = 0;
-					element.totalPrice = 0;
+					if (element.employees <= 0) {
+						element.employees = 0;
+						element.totalPrice = 0;
+					}
+				}
+
+				if (draftElement.description) {
+					element.description = draftElement.description;
 				}
 			}
 			tempProducts.push(element);
@@ -617,7 +663,7 @@ export default class RecordCreateCmp extends LightningElement {
 				return;
 			}
 			if (focusComplete) {
-				console.log("tab focus complete");
+				console.log("cleared");
 				clearInterval(intervalId);
 				return;
 			}

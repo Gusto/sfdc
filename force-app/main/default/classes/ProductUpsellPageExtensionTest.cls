@@ -17,12 +17,13 @@ public class ProductUpsellPageExtensionTest {
         Opportunity opportunity = new Opportunity();
         opportunity.StageName='SAL';
         opportunity.CloseDate = system.today();
-        opportunity.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+        opportunity.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
         opportunity.AccountId = comp.Id;
         opportunity.NumberOfEmployees__c=1;
         opportunity.Number_of_Contractors__c=0;
         opportunity.ZP_Company_ID__c='12121212121212';
         opportunity.Source_Id__c='12121212121212';
+        opportunity.Name = 'Test Opportunity';
         insert opportunity;
         OpportunityContactRole roleObj = new OpportunityContactRole();
         roleObj.ContactId = cntct.Id;

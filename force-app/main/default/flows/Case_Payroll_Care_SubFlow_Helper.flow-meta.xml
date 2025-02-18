@@ -4,8 +4,8 @@
         <description>Send email alert that case was auto solved.</description>
         <name>Notify_customers_40_hours_after_the_case_is_responded</name>
         <label>Notify customers 40 hours after the case is responded</label>
-        <locationX>710</locationX>
-        <locationY>854</locationY>
+        <locationX>578</locationX>
+        <locationY>734</locationY>
         <actionName>Case.Engagement_Notifiy_customers_40_hours_after_the_case_is_responded</actionName>
         <actionType>emailAlert</actionType>
         <connector>
@@ -19,7 +19,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Engagement_Notifiy_customers_40_hours_after_the_case_is_responded</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Acknowledgement_Email</name>
@@ -39,12 +38,11 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Engagement_Send_Case_Acknowledgement_Email</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Suspension_Email</name>
         <label>Send Suspension Email</label>
-        <locationX>1370</locationX>
+        <locationX>1106</locationX>
         <locationY>398</locationY>
         <actionName>Case.Send_Suspension_Email</actionName>
         <actionType>emailAlert</actionType>
@@ -59,35 +57,13 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Send_Suspension_Email</nameSegment>
-        <versionSegment>1</versionSegment>
-    </actionCalls>
-    <actionCalls>
-        <description>This is to send an authorized user email when it is transferred from Fulfillment to Care</description>
-        <name>Send_Unauthorized_Email</name>
-        <label>Send Unauthorized Email</label>
-        <locationX>1106</locationX>
-        <locationY>398</locationY>
-        <actionName>Case.Unauthorized_Email</actionName>
-        <actionType>emailAlert</actionType>
-        <connector>
-            <targetReference>Update_Automated_Email_Sent_field</targetReference>
-        </connector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>SObjectRowId</name>
-            <value>
-                <elementReference>objCase.Id</elementReference>
-            </value>
-        </inputParameters>
-        <nameSegment>Case.Unauthorized_Email</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>This invokable method will skip CaseTriggerHelper class.</description>
         <name>Skip_Trigger</name>
         <label>Skip Trigger</label>
-        <locationX>578</locationX>
-        <locationY>1310</locationY>
+        <locationX>446</locationX>
+        <locationY>1190</locationY>
         <actionName>CaseTriggerHelper</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -105,15 +81,14 @@
             </value>
         </inputParameters>
         <nameSegment>CaseTriggerHelper</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>56.0</apiVersion>
     <assignments>
         <description>Add objCase record to Case list for DML update.</description>
         <name>Add_objCase_to_list_Cases</name>
         <label>Add objCase to list_Cases</label>
-        <locationX>578</locationX>
-        <locationY>1682</locationY>
+        <locationX>446</locationX>
+        <locationY>1562</locationY>
         <assignmentItems>
             <assignToReference>list_Cases</assignToReference>
             <operator>Add</operator>
@@ -129,7 +104,7 @@
         <description>Initializing Fault Line details for fault paths in objExceptionLogEvent record.</description>
         <name>Initializing_Fault_Line_Details</name>
         <label>Initializing Fault Line Details (Add Logic below this node)</label>
-        <locationX>842</locationX>
+        <locationX>710</locationX>
         <locationY>158</locationY>
         <assignmentItems>
             <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
@@ -167,8 +142,8 @@
         <description>After Auto solve email alert was sent reset Automation Message and Automation Status.</description>
         <name>Reset_Automation_Fields</name>
         <label>Reset Automation Fields</label>
-        <locationX>710</locationX>
-        <locationY>974</locationY>
+        <locationX>578</locationX>
+        <locationY>854</locationY>
         <assignmentItems>
             <assignToReference>objCase.Automation_Message__c</assignToReference>
             <operator>Assign</operator>
@@ -195,27 +170,11 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Update_Automated_Email_Sent_field</name>
-        <label>Update Automated Email Sent field</label>
-        <locationX>1106</locationX>
-        <locationY>518</locationY>
-        <assignmentItems>
-            <assignToReference>objCase.Automated_Email_Sent__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>Fulfillment to Care Auto Response - Unauthorized (Flow)</stringValue>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Automation_Message_Email_Alert</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <description>Update objExceptionLogMessage with Fault Line details.</description>
         <name>Update_objCase_Failed</name>
         <label>Update objCase Failed</label>
-        <locationX>842</locationX>
-        <locationY>1922</locationY>
+        <locationX>710</locationX>
+        <locationY>1802</locationY>
         <assignmentItems>
             <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
             <operator>Assign</operator>
@@ -231,8 +190,8 @@
         <description>If Automation Message field on Case is populated for an email alert this decision will rout to the path with the correct email alert. Please add your email alert here if you are using the automation message field.</description>
         <name>Automation_Message_Email_Alert</name>
         <label>Automation Message Email Alert</label>
-        <locationX>842</locationX>
-        <locationY>734</locationY>
+        <locationX>710</locationX>
+        <locationY>614</locationY>
         <defaultConnector>
             <targetReference>Skip_Case_Trigger</targetReference>
         </defaultConnector>
@@ -277,7 +236,7 @@
     <decisions>
         <name>Payroll_Care_Route</name>
         <label>Payroll Care - Route</label>
-        <locationX>842</locationX>
+        <locationX>710</locationX>
         <locationY>278</locationY>
         <defaultConnector>
             <targetReference>Automation_Message_Email_Alert</targetReference>
@@ -477,53 +436,6 @@
             <label>APIntego Status Changed</label>
         </rules>
         <rules>
-            <name>Fulfillment_to_Care_Auto_Response_Unauthorized</name>
-            <conditionLogic>1 AND 2 AND 3 AND 4 AND (5 OR 6)</conditionLogic>
-            <conditions>
-                <leftValueReference>objCase.RecordTypeId</leftValueReference>
-                <operator>NotEqualTo</operator>
-                <rightValue>
-                    <elementReference>objOldCase.RecordTypeId</elementReference>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>objCase.Automated_Email_Sent__c</leftValueReference>
-                <operator>EqualTo</operator>
-            </conditions>
-            <conditions>
-                <leftValueReference>objCase.Authorized_User__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>No</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>objCase.CreatedDate</leftValueReference>
-                <operator>GreaterThan</operator>
-                <rightValue>
-                    <dateTimeValue>2019-01-23T07:59:00.000Z</dateTimeValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>objCase.ContactEmail</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>objCase.SuppliedEmail</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Send_Unauthorized_Email</targetReference>
-            </connector>
-            <label>Fulfillment to Care Auto Response - Unauthorized</label>
-        </rules>
-        <rules>
             <name>Payroll_Suspension_Creation</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
@@ -556,8 +468,8 @@
     <decisions>
         <name>Skip_Case_Trigger</name>
         <label>Skip Case Trigger? (Add Logic above this node)</label>
-        <locationX>842</locationX>
-        <locationY>1190</locationY>
+        <locationX>710</locationX>
+        <locationY>1070</locationY>
         <defaultConnector>
             <targetReference>Was_objCase_Updated</targetReference>
         </defaultConnector>
@@ -582,8 +494,8 @@
         <description>If objCase has been updated add to list_Case</description>
         <name>Was_objCase_Updated</name>
         <label>Was objCase Updated?</label>
-        <locationX>842</locationX>
-        <locationY>1562</locationY>
+        <locationX>710</locationX>
+        <locationY>1442</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Updated</name>
@@ -698,8 +610,8 @@
         <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
         <name>Exception_Log_Event</name>
         <label>Exception Log Event</label>
-        <locationX>842</locationX>
-        <locationY>2042</locationY>
+        <locationX>710</locationX>
+        <locationY>1922</locationY>
         <inputReference>objExceptionLogEvent</inputReference>
     </recordCreates>
     <recordCreates>
@@ -735,8 +647,8 @@
         <description>Final DML Update</description>
         <name>Update_list_Cases</name>
         <label>Update list_Cases</label>
-        <locationX>578</locationX>
-        <locationY>1802</locationY>
+        <locationX>446</locationX>
+        <locationY>1682</locationY>
         <faultConnector>
             <targetReference>Update_objCase_Failed</targetReference>
         </faultConnector>
@@ -744,7 +656,7 @@
     </recordUpdates>
     <sourceTemplate>TEMPLATE_Case_Helper_Flow</sourceTemplate>
     <start>
-        <locationX>716</locationX>
+        <locationX>584</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Initializing_Fault_Line_Details</targetReference>

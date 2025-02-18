@@ -220,6 +220,7 @@ public class SubscriptionCenterUtil implements Queueable, Database.AllowsCallout
 					list_Requests.add(objRequest);
 				}
 			}
+			System.debug('JSON request ' + JSON.serializePretty(list_Requests));
 			if (!list_Requests.isEmpty()) {
 				map_subscriptionCalloutRequests.put((Id) objSObject.get('Id'), JSON.serializePretty(list_Requests));
 			}

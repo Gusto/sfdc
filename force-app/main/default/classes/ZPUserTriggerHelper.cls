@@ -258,7 +258,7 @@ public class ZPUserTriggerHelper {
 				(
 					SELECT Id, StageName, CreatedDate, Account.Last_Activity_Date__c, Order__r.Status, Isclosed, Order__c, Stage_Detail__c, IsWon
 					FROM Opportunities
-					WHERE RecordType.Name = 'Company Opportunity'
+					WHERE (RecordType.Name = 'Company Opportunity' OR RecordType.Name = 'Acquisition')
 				),
 				(SELECT Id, Owner_Role_Formula__c, Status, Type, ActivityDate FROM Tasks WHERE Owner_Role_Formula__c LIKE 'sales%' AND ActivityDate >= LAST_N_DAYS:60 ORDER BY ActivityDate DESC),
 				(SELECT Id, Type__c FROM ZP_user_roles__r LIMIT 1)

@@ -461,7 +461,6 @@ private class CarrierOrderTriggerHelperTest {
 			.setGroupNumber('12346; 4562563;5624855')
 			.build();
 		insert objChangeCarrierOrder;
-
 		Test.stopTest();
 
 		Id idCaseRecordType = Cache.getRecordTypeId('Case', 'Benefits Change Case');
@@ -979,7 +978,7 @@ private class CarrierOrderTriggerHelperTest {
 
 		System.assert(list_CarrierOrder[0].Implementation_Stage__c == 'Ready for Confirmation', 'CO stage again set as: Ready for Confirmation');
 	}
-	
+
 	/**
 	 * @description  This method is used to test the setSubmissionForTadaPreOESetup Method.
 	 * @param        null
@@ -1020,7 +1019,7 @@ private class CarrierOrderTriggerHelperTest {
 
 		List<Carrier_Order__c> list_CarrierOrder = [SELECT Id, Group_Submission_Date__c,Confirmation_Owner__c, Implementation_Stage__c FROM Carrier_Order__c WHERE Id = :objCarrierOrder.Id];
 
-		// System.assert(list_CarrierOrder[0].Group_Submission_Date__c == system.today().addDays(3), true);
+		System.assert(list_CarrierOrder[0].Group_Submission_Date__c == system.today().addDays(3), true);
 	}
 
 	/**
@@ -1098,7 +1097,7 @@ private class CarrierOrderTriggerHelperTest {
 		Test.stopTest();
 		System.assertEquals(
 			[SELECT Id, Submission_Deadline__c FROM Carrier_Order__c WHERE Id = :objCarrierOrder.id].Submission_Deadline__c,
-			dtSubmissionDate,//Date.newInstance(objBenefitOrder.Coverage_Effective_Date__c.year(), objBenefitOrder.Coverage_Effective_Date__c.month(), 10),
+			dtSubmissionDate,
 			'Submission Deadline value is not changed.'
 		);
 	}
@@ -2738,7 +2737,7 @@ private class CarrierOrderTriggerHelperTest {
 		System.assertEquals(CarrierOrderUtil.CO_STATUS_READY_FOR_SUBMISSION_PREP, objBORecord.Order_Status__c, 'Order status not populated');
 		System.assertEquals(objCO1.Stage_Detail__c, objBORecord.Status_Detail__c, 'Order status detail not populated');
 	}
-
+	
 	/**
 	 * @description  Method for setting Special enrollment start date
 	 * @param        null
@@ -2837,11 +2836,35 @@ private class CarrierOrderTriggerHelperTest {
 		List<Carrier_Order__c> list_CarrierOrder = [SELECT Id, Submission_Deadline_Start_Date__c FROM Carrier_Order__c where Id =:objCarrierOrder.Id];
 		System.assert(list_CarrierOrder[0].Submission_Deadline_Start_Date__c != null, 'Submission_Deadline_Start_Date__c on Carrier Order is not null.');
 	}
-	
+
 	/**
-	 * @description	Method for checking Carrier Order Owner To The Opened Tickets
-	 * @param		null
-	 * @return		null
+	 * @description  Method for setting Special enrollment start date
+	 * @param        null
+	 * @return       null
+	 **/
+	@isTest
+	static void testValidateCarrierOrderStage() {
+		Exception validationException;
+		try {
+			Test.startTest();
+
+			Carrier_Order__c objCarrierOrder = [SELECT Id, Implementation_Stage__c, Benefit_Order__c FROM Carrier_Order__c WHERE RecordTypeId = :CO_RT_BENEFITS_BOR AND Name = 'TestCarrierOrder'];
+
+			objCarrierOrder.Implementation_Stage__c = 'Approved';
+			update objCarrierOrder;
+
+			Test.stopTest();
+		}
+		catch(Exception ex) {
+			validationException = ex;
+		}
+		System.assertEquals(validationException.getMessage().contains(System.Label.RestrictOrderApproveErrorMessage), true, 'Approved Order Email validation does not match');
+	}
+
+	/**
+	 * @description  Method for setting Special enrollment start date
+	 * @param        null
+	 * @return       null
 	 **/
 	@isTest
 	static void testTicketOnwerChangedOnCOOwner() {
@@ -2891,29 +2914,6 @@ private class CarrierOrderTriggerHelperTest {
 		Test.stopTest();
 		Ticket__c objTicket1 = [SELECT Id, OwnerId FROM Ticket__c WHERE Carrier_Order__c = :objCO.Id LIMIT 1];
 		System.assertEquals(objCO.OwnerId, objTicket1.OwnerId, 'Ticket Owner should be same as of Carrier Order Owner.');
-	}
-	/**
-	 * @description  Method for setting Special enrollment start date
-	 * @param        null
-	 * @return       null
-	 **/
-	@isTest
-	static void testValidateCarrierOrderStage() {
-		Exception validationException;
-		try {
-			Test.startTest();
-
-			Carrier_Order__c objCarrierOrder = [SELECT Id, Implementation_Stage__c, Benefit_Order__c FROM Carrier_Order__c WHERE RecordTypeId = :CO_RT_BENEFITS_BOR AND Name = 'TestCarrierOrder'];
-
-			objCarrierOrder.Implementation_Stage__c = 'Approved';
-			update objCarrierOrder;
-
-			Test.stopTest();
-		}
-		catch(Exception ex) {
-			validationException = ex;
-		}
-		System.assertEquals(validationException.getMessage().contains(System.Label.RestrictOrderApproveErrorMessage), true, 'Approved Order Email validation does not match');
 	}
 
 	/**

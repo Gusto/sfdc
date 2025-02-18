@@ -1823,7 +1823,7 @@ public class LeadTriggerHelperTest {
 		System.assertEquals(objMemberAssert.Recent_Campaign__c, objLeadToUpdate.Recent_Campaign__c, 'Recent Campaign is incorrect.');
 		System.assertEquals(objMemberAssert.Recent_Content__c, objLeadToUpdate.Recent_Content__c, 'Recent Content is incorrect.');
 	}
-	
+
 	/**
 	 * @author      Prity Kumari
 	 * @description Test  Routing for Lead created by Sales.
@@ -2057,6 +2057,7 @@ public class LeadTriggerHelperTest {
 			.setQuestion('Test')
 			.setChatVisitor(objChatVisitor.Id)
 			.setLeadId(objLead.Id)
+			.setSessionId('12345678')
 			.build();
 
 		insert objLiveChat;
@@ -2363,8 +2364,8 @@ public class LeadTriggerHelperTest {
     static void testSetCampaignInfoInLead() {
         // Retrieve the Qualified Integration user
 		String QUALIFIED_INTEGRATION_USERNAME = 'Qualified Integration';
-        User objQualifiedUser = [SELECT Id FROM User WHERE Name = :QUALIFIED_INTEGRATION_USERNAME LIMIT 1];
-
+        User qualifiedUser = [SELECT Id FROM User WHERE Name = :QUALIFIED_INTEGRATION_USERNAME LIMIT 1];
+        
 		Lead objLead1 = new TestDataFactory.LeadBuilder()
 		.setRecordTypeId(LeadUtil.LABEL_COMPANY)
 		.setFirstName('FName')
@@ -2392,11 +2393,11 @@ public class LeadTriggerHelperTest {
         );
 		insert objCamp1;
         // Run the test method as the Qualified Integration user
-        System.runAs(objQualifiedUser) {
+        System.runAs(qualifiedUser) {
 			objLead1.accutics_id__c ='A1';
 			update objLead1;
         }
-
+        
         // Reload the leads to verify updates
         Lead objUpdatedLead1 = [SELECT Accutics_ID__c, Lead_Channel__c, Accutics_Affiliate_Platform__c, Accutics_Affiliate_Type__c FROM Lead WHERE Id = :objLead1.Id];
 

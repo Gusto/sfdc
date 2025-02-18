@@ -46,8 +46,8 @@ public with sharing class CalculateResellerMetricsBatchTest {
 		insert new List<Account>{ objCompanyAccount, objResellerAccount };
 
 		Opportunity objOppty = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
-			.setName('Company Account - Payroll')
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
+			.setName('Acquisition Opportunity')
 			.setAccountId(objCompanyAccount.Id)
 			.setStage('MQL')
 			.setCloseDate(System.today())
@@ -91,8 +91,8 @@ public with sharing class CalculateResellerMetricsBatchTest {
 		insert new List<Account>{ objCompanyAccount, objResellerAccount };
 
 		Opportunity objOppty = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
-			.setName('Company Account - Payroll')
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
+			.setName('Acquisition Opportunity')
 			.setAccountId(objCompanyAccount.Id)
 			.setStage('MQL')
 			.setCloseDate(System.today())

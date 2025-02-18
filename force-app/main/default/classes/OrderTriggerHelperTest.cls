@@ -5,6 +5,7 @@ public class OrderTriggerHelperTest {
 	public static List<Opportunity> testOppList;
 	static final Id ORDER_RT_COMPANYMIGRATION = Cache.getRecordTypeId('Order', 'Company Migration');
 	static final Id LOGGED_IN_USER_ID = userInfo.getUserId();
+	static final Id TTF_RT_PAYROLLTRANSFER = Cache.getRecordTypeId('Transition_To_Fulfillment__c', 'Payroll Transfer');
 
 	static {
 		createTestData();
@@ -692,6 +693,7 @@ public class OrderTriggerHelperTest {
 				ord.Active_Employee_Count__c = 10;
 				ord.EffectiveDate = System.today();
 				ord.Status = 'Drafted';
+              
 				orderList.add(ord);
 			}
 			OrderTriggerHelper.skipTrigger = true;
@@ -701,7 +703,7 @@ public class OrderTriggerHelperTest {
 			User_Role__c userRoleObj = new User_Role__c();
 			userRoleObj.User__c = adminUser.Id;
 			insert userRoleObj;
-
+            
 			Benefit_Order_Allocation__c boa = new Benefit_Order_Allocation__c(User_Role__c = userRoleObj.Id, User__c = adminUser.Id);
 			insert boa;
 
@@ -867,6 +869,7 @@ public class OrderTriggerHelperTest {
 			objOrder.Team_Invitation_Preference__c = 'admin';
 			OrderTriggerHelper.skipTrigger = true;
 			insert objOrder;
+
 			Case objCase = TestDataFactory.createCaseRecord('Payroll Transfer Case', false);
 			objCase.Status = 'New';
 			objCase.origin = 'Panda';
@@ -886,4 +889,70 @@ public class OrderTriggerHelperTest {
 			System.assert(list_EmailMessages.size() > 0, 'list_EmailMessages size should be greater than 0.');
 		}
 	}
+	/**
+	 * @Author      : Debasmita Rawooth
+	 * @Description : Method to test Payroll Transfer TTF creation from Order
+	 * @Parm        : null
+	 * @Return      : null
+	 **/
+	/*@isTest
+	static void testTTFCreation() {
+		User objUser = [SELECT Id FROM User WHERE Email = 'test_adminUser@gusto.com'];
+		System.runAs(objUser) {
+			Test.startTest();
+			OrderTriggerHelper.skipTrigger = false;
+			Order objOrder = new TestDataFactory.OrderBuilder()
+				.setAccountId(testAccountList[0].Id)
+				.setOpportunityId(testOppList[0].Id)
+				.setRecordTypeId(ORDER_RT_COMPANYMIGRATION)
+				.setStatus('Drafted')
+				.setOwnerId(UserInfo.getUserId())
+				.setEffectiveDate(System.today())
+				.setDemoComplete('Yes')
+				.setPrevPayrollProvider('Sage')
+				.setExceptionRequest(false)
+				.setExceptionRequestReason('Accountant has been let go')
+				.setTwoFactorRequired('Yes')
+				.setPointOfContactName('Test')
+				.build();
+			insert objOrder;
+
+			Test.stopTest();
+
+			List<Order> list_Orders = [
+				SELECT Id, Payroll_Run_Date__c, Facilitator_Due_Date__c
+				FROM Order
+				WHERE Id = :objOrder.Id
+			];
+			List<Transition_To_Fulfillment__c> list_TTF = [
+				SELECT
+					Id,
+					Name,
+					RecordTypeId,
+					TTF_Status__c,
+					Order__c,
+					Account__c,
+					Opportunity__c,
+					Demo_Complete__c,
+					Previous_Payroll_Provider__c,
+					Point_of_Contact_Name__c,
+					Exception_Request__c,
+					Reason_for_exception_request__c,
+					Doesnot_require_2_factor_Authentication__c
+				FROM Transition_To_Fulfillment__c
+				WHERE Order__c = :objOrder.Id
+			];
+			System.assertEquals(1, list_TTF.size(), 'There should be 1 record of Transition_To_Fulfillment__c in list.');
+			System.assertEquals(TTF_RT_PAYROLLTRANSFER, list_TTF[0].RecordTypeId, 'RecordTypeId should match.');
+			System.assertEquals(objOrder.AccountId, list_TTF[0].Account__c, 'Account Id should match.');
+			System.assertEquals(objOrder.OpportunityId, list_TTF[0].Opportunity__c, 'Opportunity Id should match.');
+			System.assertEquals('Sales Submitted', list_TTF[0].TTF_Status__c, 'TTF_Status__c should be Sales Submitted.');
+			System.assertEquals(objOrder.Demo_Complete__c, list_TTF[0].Demo_Complete__c, 'Demo_Complete__c should match.');
+			System.assertEquals(objOrder.Previous_Payroll_Provider__c, list_TTF[0].Previous_Payroll_Provider__c, 'Previous_Payroll_Provider__c should match.');
+			System.assertEquals(objOrder.Point_of_Contact_Name__c, list_TTF[0].Point_of_Contact_Name__c, 'Point_of_Contact_Name__c should match.');
+			System.assertEquals('No', list_TTF[0].Exception_Request__c, 'Exception_Request__c should be No.');
+			System.assertEquals(objOrder.Exception_Request_Reason__c, list_TTF[0].Reason_for_exception_request__c, 'Reason_for_exception_request__c should be same as Exception_Request_Reason__c.');
+			System.assertEquals('N', list_TTF[0].Doesnot_require_2_factor_Authentication__c, 'Doesnot_require_2_factor_Authentication__c should be N.');
+		}
+	}*/
 }

@@ -5,6 +5,7 @@
     <description>Restrict users from routing cases to queues that are no longer monitored and will be deprecated.</description>
     <errorConditionFormula>ISCHANGED(OwnerId) &amp;&amp;
 (Owner:Queue.QueueName = &apos;FSC Benefits Class 3&apos; ||
+Owner:Queue.QueueName = &apos;FSC Benefits Class 3&apos; ||
 Owner:Queue.QueueName = &apos;FSC Payroll Class 2&apos; ||
 Owner:Queue.QueueName = &apos;FSC Payroll Class 3&apos; ||
 Owner:Queue.QueueName = &apos;Payroll Class 1&apos; ||

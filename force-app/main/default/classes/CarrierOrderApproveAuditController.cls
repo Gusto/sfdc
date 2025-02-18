@@ -168,8 +168,8 @@ public without sharing class CarrierOrderApproveAuditController {
 				update bo;
 				BenefitOrderHelper.skipTrigger = false;
 			}
-		} catch (Exception exceptionRecord) {
-			return exceptionRecord;
+		} catch (Exception e) {
+			return e;
 		}
 		return null;
 	}

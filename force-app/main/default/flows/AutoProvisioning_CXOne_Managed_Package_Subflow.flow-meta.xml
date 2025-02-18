@@ -6,16 +6,16 @@
         <name>Assign_License_Fields</name>
         <label>Assign License Fields</label>
         <locationX>176</locationX>
-        <locationY>350</locationY>
+        <locationY>398</locationY>
         <assignmentItems>
-            <assignToReference>License_Assignment.PackageLicenseId__NotFound</assignToReference>
+            <assignToReference>License_Assignment.PackageLicenseId</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>CXOne_Managed_Package_ID</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>License_Assignment.UserId__NotFound</assignToReference>
+            <assignToReference>License_Assignment.UserId</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>User_ID</elementReference>
@@ -29,7 +29,7 @@
         <name>Was_existing_record_found</name>
         <label>Was existing record found?</label>
         <locationX>176</locationX>
-        <locationY>566</locationY>
+        <locationY>638</locationY>
         <defaultConnector>
             <targetReference>Assign_License_to_User</targetReference>
         </defaultConnector>
@@ -77,12 +77,6 @@
         </rules>
     </decisions>
     <description>Assign and remove licenses for the CXOne Managed Package.</description>
-    <environments>Default</environments>
-    <formulas>
-        <name>CXOneNameSpace</name>
-        <dataType>String</dataType>
-        <expression>{!$Label.Nice_CXOne}</expression>
-    </formulas>
     <interviewLabel>AutoProvisioning - CXOne Managed Package (Subflow) {!$Flow.CurrentDateTime}</interviewLabel>
     <label>AutoProvisioning - CXOne Managed Package (Subflow)</label>
     <processMetadataValues>
@@ -109,7 +103,7 @@
         <name>Assign_License_to_User</name>
         <label>Assign License to User</label>
         <locationX>440</locationX>
-        <locationY>674</locationY>
+        <locationY>758</locationY>
         <inputReference>License_Assignment</inputReference>
     </recordCreates>
     <recordDeletes>
@@ -117,7 +111,7 @@
         <name>Remove_Managed_Package_License</name>
         <label>Remove Managed Package License</label>
         <locationX>176</locationX>
-        <locationY>674</locationY>
+        <locationY>758</locationY>
         <inputReference>Found_Assignment</inputReference>
     </recordDeletes>
     <recordLookups>
@@ -125,7 +119,7 @@
         <name>Get_the_Managed_Package_ID</name>
         <label>Get the Managed Package ID</label>
         <locationX>176</locationX>
-        <locationY>134</locationY>
+        <locationY>158</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_User_Record</targetReference>
@@ -135,7 +129,7 @@
             <field>NamespacePrefix</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>CXOneNameSpace</elementReference>
+                <stringValue>icAgentConsole</stringValue>
             </value>
         </filters>
         <object>PackageLicense</object>
@@ -149,7 +143,7 @@
         <name>Get_User_Record</name>
         <label>Get User Record</label>
         <locationX>176</locationX>
-        <locationY>242</locationY>
+        <locationY>278</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_License_Fields</targetReference>
@@ -171,24 +165,24 @@
         <name>Look_for_Existing_Assignment_Record</name>
         <label>Look for Existing Assignment Record</label>
         <locationX>176</locationX>
-        <locationY>458</locationY>
+        <locationY>518</locationY>
         <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Was_existing_record_found</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>PackageLicenseId__NotFound</field>
+            <field>PackageLicenseId</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>License_Assignment.PackageLicenseId__NotFound</elementReference>
+                <elementReference>License_Assignment.PackageLicenseId</elementReference>
             </value>
         </filters>
         <filters>
-            <field>UserId__NotFound</field>
+            <field>UserId</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>License_Assignment.UserId__NotFound</elementReference>
+                <elementReference>License_Assignment.UserId</elementReference>
             </value>
         </filters>
         <object>UserPackageLicense</object>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StageCannotBeMovedFromClosedToNew</fullName>
+    <active>false</active>
+    <errorConditionFormula>PRIORVALUE(StageName) = &apos;Closed Won&apos; &amp;&amp;  TEXT(StageName)= &apos;New&apos;</errorConditionFormula>
+    <errorMessage>StageCannotBeMovedFromClosedToNew</errorMessage>
+</ValidationRule>

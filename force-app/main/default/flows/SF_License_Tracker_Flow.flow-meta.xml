@@ -1231,7 +1231,7 @@
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>PackageLicenseId__NotFound</field>
+            <field>PackageLicenseId</field>
             <operator>EqualTo</operator>
             <value>
                 <elementReference>var_CXOne_Managed_Package_License_Data.Id</elementReference>
@@ -1241,8 +1241,8 @@
         <outputReference>var_Last_CXOne_License_Assignment_Data</outputReference>
         <queriedFields>Id</queriedFields>
         <queriedFields>CreatedDate</queriedFields>
-        <queriedFields>UserId__NotFound</queriedFields>
-        <queriedFields>PackageLicenseId__NotFound</queriedFields>
+        <queriedFields>UserId</queriedFields>
+        <queriedFields>PackageLicenseId</queriedFields>
         <sortField>CreatedDate</sortField>
         <sortOrder>Desc</sortOrder>
     </recordLookups>

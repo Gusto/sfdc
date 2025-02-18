@@ -38,7 +38,7 @@ public with sharing class CommonAppOpenControllerTest {
 		insert objAccount;
 
 		Opportunity objOppty = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('Test Company Oppty')
 			.setAccountId(objAccount.Id)
 			.setStage('MQL')
@@ -86,7 +86,7 @@ public with sharing class CommonAppOpenControllerTest {
 		insert objAccount;
 
 		Opportunity objOppty = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('Test Company Oppty')
 			.setAccountId(objAccount.Id)
 			.setStage('MQL')
@@ -117,7 +117,7 @@ public with sharing class CommonAppOpenControllerTest {
 		insert objAccount;
 
 		Opportunity objOppty = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('Test Company Oppty')
 			.setAccountId(objAccount.Id)
 			.setStage('MQL')

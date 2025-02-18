@@ -76,6 +76,17 @@
 						]
 					});
 					toastEvent.fire();
+
+					if (result.strWarningMessage) {
+						var warningEvent = $A.get("e.force:showToast");
+						warningEvent.setParams({
+							type: "warning",
+							mode: "dismissible",
+							"title": "Please contact admin",
+							"message": result.strWarningMessage
+						});
+						warningEvent.fire();
+					}
 	
 					var workspaceAPI = cmp.find("workspace");
 					let strURL = "/lightning/r/ " + result.strRecordType + "/" + result.objRecord.Id + "/view";

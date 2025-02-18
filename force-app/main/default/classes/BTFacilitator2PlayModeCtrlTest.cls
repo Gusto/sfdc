@@ -79,7 +79,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 		}
 	}
 
-    @isTest
+	@isTest
 	static void TestEnrolmentReview() {
 		Test.startTest();
 		System.runAs(objUserInOffice) {
@@ -140,7 +140,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 		Test.stopTest();
 	}
 
-    @isTest
+	@isTest
 	static void TestPlanReview() {
 		Test.startTest();
 		System.runAs(objUserInOffice) {
@@ -190,7 +190,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 		Test.stopTest();
 	}
 
-    @isTest
+	@isTest
 	static void TestPlayModeERMultiEIN() {
 		System.runAs(objUserInOffice) {
 			Utils.skipTrigger(true);
@@ -275,7 +275,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 		}
 	}
 
-    @isTest
+	@isTest
 	static void TestPlayModeER() {
 		System.runAs(objUserInOffice) {
 			Utils.skipTrigger(true);
@@ -363,7 +363,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 		}
 	}
 
-    @isTest
+	@isTest
 	static void TestPlayModePlanReviewMultiEIN() {
 		Test.startTest();
 		System.runAs(objUserInOffice) {
@@ -438,6 +438,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 			Ctrl.checkStatusOfCarrierOrders();
 
 			Ctrl.fetchEligibleCO();
+			Test.stopTest();
 
 			// Check that Implementation Stage of Carrier Order is correct
 			obj_CarrierOrder = [SELECT Implementation_Stage__c FROM Carrier_Order__c WHERE Id = :obj_CarrierOrder.Id];
@@ -447,10 +448,9 @@ public class BTFacilitator2PlayModeCtrlTest {
 			Ticket__c createdTicket = [SELECT Id FROM Ticket__c WHERE Carrier_Order__c = :obj_CarrierOrder.Id LIMIT 1];
 			System.assertNotEquals(null, createdTicket, 'A ticket should have been created for the carrier order');
 		}
-		Test.stopTest();
 	}
 
-    @isTest
+	@isTest
 	static void TestPlayModePlanReview() {
 		System.runAs(objUserInOffice) {
 			Utils.skipTrigger(true);
@@ -539,7 +539,7 @@ public class BTFacilitator2PlayModeCtrlTest {
 		}
 	}
 
-    @isTest
+	@isTest
 	static void TestPlayModePlanReviewPlanBuild() {
 		System.runAs(objUserInOffice) {
 			Utils.skipTrigger(true);

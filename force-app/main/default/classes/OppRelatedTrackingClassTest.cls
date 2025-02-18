@@ -11,7 +11,7 @@ public class OppRelatedTrackingClassTest {
         opportunity.Name = 'Test';
         opportunity.StageName = 'SAL';
         opportunity.CloseDate = System.today();
-        opportunity.RecordTypeId = cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+        opportunity.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
         insert opportunity;
         
         Opportunity_Related_Tracking__c  ort = new Opportunity_Related_Tracking__c ();

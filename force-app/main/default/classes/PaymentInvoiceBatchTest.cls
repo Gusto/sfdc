@@ -411,7 +411,7 @@ public class PaymentInvoiceBatchTest {
 	}
 
 	/**
-	 * @description Test if Payment Invoice batch runs and attaches to tier upsell opportunity
+	 * @description Test if Payment Invoice batch runs and attaches to Cross-Sell and Upsell opportunity
 	 * @author      Praveen Sethu
 	 **/
 	@isTest
@@ -426,7 +426,7 @@ public class PaymentInvoiceBatchTest {
 		// Create a company account and set pricing, upsell open opp to true and set first month invoice generated to true
 		Account objCompAccount = new TestDataFactory.AccountBuilder()
 			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
-			.setName('Tier upsell Account')
+			.setName('Cross-Sell and Upsell Account')
 			.setZPCompanyId('1234567890')
 			.setPricing(objTierConfig.New_Price_1__c)
 			.setFirstMonthInvoiceGenerated(true)
@@ -435,7 +435,7 @@ public class PaymentInvoiceBatchTest {
 		insert objCompAccount;
 
 		OpportunityTriggerHelper.skipTrigger = true;
-		// Create a tier upsell opportunity
+		// Create a Cross-Sell and Upsell opportunity
 		Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
 			.setAccountId(objCompAccount.Id)
 			.setName('Test Opp 1')
@@ -475,7 +475,7 @@ public class PaymentInvoiceBatchTest {
 		clsScehule.execute(null);
 		Test.stopTest();
 
-		// assert if invoice is attached to tier upsell opportunity
+		// assert if invoice is attached to Cross-Sell and Upsell opportunity
 		Opportunity objOpptyAssert = [SELECT Id, Payment_Invoice__c, NumberOfEmployees__c, Number_of_Contractors__c FROM Opportunity WHERE Id = :objOpportunity.Id];
 
 		// assert if opportunity employees and contractor count is updated

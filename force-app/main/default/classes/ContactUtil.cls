@@ -18,6 +18,13 @@ public class ContactUtil {
 	public static final String CAMPAIGN_TYPE_WEBSITE = 'Website';
 	public static final String CAMPAIGN_TYPE_SUBSCRIPTION = 'Subscription';
 
+	// ZP User Roles
+	public static final String ZPUSERROLE_ACCOUNTANT = 'Accountant';
+	public static final String ZPUSERROLE_ADMIN = 'Admin';
+	public static final String ZPUSERROLE_SIGNATORY = 'Signatory';
+	public static final String ZPUSERROLE_CONTRACTOR = 'Contractor';
+	public static final String ZPUSERROLE_EMPLOYEE = 'Employee';
+
 	public static final Set<String> set_RecentSourceCampaignTypes = new Set<String>{
 		CAMPAIGN_TYPE_WEBINAR,
 		CAMPAIGN_TYPE_EVENT,

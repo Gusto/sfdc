@@ -5,5 +5,5 @@
     <errorConditionFormula>ISNEW() &amp;&amp;
 IsWon &amp;&amp; NOT($User.Exempt_from_Validation_Rules__c)&amp;&amp; Text(Upsell_Tier__c) != &apos;International Contractor Payment&apos;</errorConditionFormula>
     <errorDisplayField>StageName</errorDisplayField>
-    <errorMessage>You cannot Closed Won an Opportunity upon creation.</errorMessage>
+    <errorMessage>Opportunities cannot be marked as Closed Won at the time of creation.</errorMessage>
 </ValidationRule>

@@ -302,6 +302,18 @@ public with sharing class HIBenefitChangeApplicationTriggerHelper {
 		return change;
 	}
 
+	private string getWaitingPeriodInfo(String companyInformation) {
+		String waitingPeriod = '';
+		map<String, String> valueMap = IntegrationUtils.getIntegrationValueMap('Opportunity', 'Waiting_Period__c');
+		if (valueMap.containsKey(waitingPeriod)) {
+			waitingPeriod = valueMap.get(waitingPeriod);
+		}
+
+		waitingPeriod = IntegrationUtils.getJsonParsedMap(companyInformation, 'waiting_period');
+
+		return waitingPeriod;
+	}
+
 	public static map<String, List<HI_Aasm_Event__c>> getEventData(Set<String> applicationIds) {
 		map<String, List<HI_Aasm_Event__c>> asamEvents = new Map<String, List<HI_Aasm_Event__c>>();
 		map<string, string> recordableIdWhoDunnitIdMap = new Map<string, string>();

@@ -6,12 +6,12 @@
 IF(OR( CONTAINS(Case.RecordType.Name , &quot;Payroll Care&quot;),CONTAINS(Case.RecordType.Name, &quot;Benefits Care&quot;)), &quot;support@gusto.com&quot;,
 IF(CONTAINS(Case.RecordType.Name , &quot;Tax Res&quot;), &quot;support@gusto.com&quot;,
 IF(CONTAINS(Case.RecordType.Name , &quot;Benefits BYB&quot;), &quot;connect-broker@gusto.com&quot;,
-IF(CONTAINS(Case.RecordType.Name , &quot;Benefits Change Case&quot;), &quot;renewalcarriercomms@gusto.com&quot;,
-IF(CONTAINS(Case.RecordType.Name , &quot;Benefits Renewal Case&quot;), &quot;renewalcarriercomms@gusto.com&quot;,
 IF(CONTAINS(Case.RecordType.Name , &quot;Benefits New Plan Case&quot;), &quot;newplans@gusto.com&quot;,
 IF(CONTAINS(Case.RecordType.Name , &quot;Modern Bank&quot;), &quot;wallet@gusto.com&quot;,
 IF(CONTAINS(Case.RecordType.Name , &quot;Payroll Transfer Case&quot;),&quot;payrollonboarding@gusto.com&quot;,
-IF(CONTAINS(Case.RecordType.Name, &quot;Client Relations&quot;), &quot;clientrelations@gusto.com&quot;, &quot;support@gusto.com&quot;))))))))))</formula>
+IF(CONTAINS(Case.RecordType.Name, &quot;Client Relations&quot;), &quot;clientrelations@gusto.com&quot;,
+IF(AND(ISPICKVAL(Case.Type, &quot;Carrier Submission&quot;),OR(CONTAINS(Case.RecordType.Name , &quot;Benefits Change Case&quot;),CONTAINS(Case.RecordType.Name , &quot;Benefits Renewal Case&quot;))),&quot;renewalcarriercomms@gusto.com&quot;,
+IF(AND(NOT(ISPICKVAL(Case.Type, &quot;Carrier Submission&quot;)),OR(CONTAINS(Case.RecordType.Name , &quot;Benefits Change Case&quot;),CONTAINS(Case.RecordType.Name , &quot;Benefits Renewal Case&quot;))),&quot;renewals@gusto.com&quot;,&quot;support_uat@gusto.com&quot;))))))))))</formula>
     </fieldOverrides>
     <optionsCreateFeedItem>true</optionsCreateFeedItem>
     <quickActionLayout>
@@ -48,7 +48,7 @@ IF(CONTAINS(Case.RecordType.Name, &quot;Client Relations&quot;), &quot;clientrel
                 <uiBehavior>Edit</uiBehavior>
             </quickActionLayoutItems>
         </quickActionLayoutColumns>
-        <quickActionLayoutColumns/>
+        <quickActionLayoutColumns />
     </quickActionLayout>
     <quickActionSendEmailOptions>
         <ignoreDefaultEmailTemplateSubject>true</ignoreDefaultEmailTemplateSubject>

@@ -20,6 +20,7 @@ public with sharing class NewTransitionToFulfillmentController {
 	static final String TTF_RT_PAYROLL_TFR = 'Payroll Transfer';
 	static final String TTF_API_NAME = 'Transition_to_Fulfillment__c';
 	static final String OPP_RT_COM_OPP = 'Company Opportunity';
+	static final String OPP_RT_ACQUISITION = 'Acquisition';
 	static final String OPP_RT_BENEFIT_NEW_PLAN = 'Benefits New Plan';
 	static final Id OPP_RT_BENEFIT_NEW_PLAN_ID = Schema.SObjectType.Opportunity.getRecordTypeInfosByName().get(OPP_RT_BENEFIT_NEW_PLAN).getRecordTypeId();
 	static final String OPP_RT_BENEFIT_RENEWAL = 'Benefits Renewal';
@@ -146,7 +147,7 @@ public with sharing class NewTransitionToFulfillmentController {
 				if (oppList.get(0).RecordType.Name == OPP_RT_BENEFIT_BYB) {
 					pageRef.getParameters().put('RecordType', Schema.SObjectType.Transition_to_Fulfillment__c.getRecordTypeInfosByName().get(TTF_RT_BENEFIT_BYB).getRecordTypeId());
 				}
-				if (oppList.get(0).RecordType.Name == OPP_RT_COM_OPP) {
+				if (oppList.get(0).RecordType.Name == OPP_RT_COM_OPP || oppList.get(0).RecordType.Name == OPP_RT_ACQUISITION) {
 					PageReference pageRefLocal = new PageReference('/apex/CreateEditPayrollTransferTTF?oppId=' + strOpptyId + '&retURL=' + strRetURL);
 					pageRefLocal.setRedirect(true);
 					return pageRefLocal; // @Neha , 16 Sep 2019 , redirect to CreateEditPayrollTransferTTF for Payroll TTF

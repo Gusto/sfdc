@@ -19,7 +19,7 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Intro_Email_Exception_Request_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
+        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <description>This will trigger the Intro Email Alert (Payroll_Transfer_Intro_Email_ADP_Run_Alert) for Payroll Transfer</description>
@@ -40,7 +40,7 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Payroll_Transfer_Intro_Email_ADP_Run_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
+        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <description>This will trigger the Intro Email Alert for Payroll Transfer</description>
@@ -61,7 +61,7 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Payroll_Transfer_Intro_Email_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
+        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <description>This will trigger the Intro Email Alert (Payroll_Transfer_Intro_Email_IOP_QBOI_Alert) for Payroll Transfer</description>
@@ -82,24 +82,7 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Payroll_Transfer_Intro_Email_IOP_QBOI_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
-    </actionCalls>
-    <actionCalls>
-        <name>Update_Email_Message_body_with_notification_body_2</name>
-        <label>Update Email Message body with notification body 2</label>
-        <locationX>861</locationX>
-        <locationY>937</locationY>
-        <actionName>EmailMessageTriggerHelper</actionName>
-        <actionType>apex</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>list_Ids</name>
-            <value>
-                <elementReference>Case_record_after_wait.Id</elementReference>
-            </value>
-        </inputParameters>
-        <nameSegment>EmailMessageTriggerHelper</nameSegment>
-        <versionSegment>1</versionSegment>
+        <offset>0</offset>
     </actionCalls>
     <apiVersion>49.0</apiVersion>
     <assignments>
@@ -367,9 +350,6 @@
         <locationX>634</locationX>
         <locationY>656</locationY>
         <assignRecordIdToReference>emailMessageRecord.Id</assignRecordIdToReference>
-        <connector>
-            <targetReference>Update_Email_Message_body_with_notification_body_2</targetReference>
-        </connector>
         <inputAssignments>
             <field>CcAddress</field>
             <value>
@@ -408,9 +388,6 @@
         <locationX>947</locationX>
         <locationY>653</locationY>
         <assignRecordIdToReference>emailMessageRecord.Id</assignRecordIdToReference>
-        <connector>
-            <targetReference>Update_Email_Message_body_with_notification_body_2</targetReference>
-        </connector>
         <inputAssignments>
             <field>CcAddress</field>
             <value>
@@ -449,9 +426,6 @@
         <locationX>1208</locationX>
         <locationY>791</locationY>
         <assignRecordIdToReference>emailMessageRecord.Id</assignRecordIdToReference>
-        <connector>
-            <targetReference>Update_Email_Message_body_with_notification_body_2</targetReference>
-        </connector>
         <inputAssignments>
             <field>CcAddress</field>
             <value>
@@ -491,9 +465,6 @@
         <locationX>1754</locationX>
         <locationY>737</locationY>
         <assignRecordIdToReference>emailMessageRecord.Id</assignRecordIdToReference>
-        <connector>
-            <targetReference>Update_Email_Message_body_with_notification_body_2</targetReference>
-        </connector>
         <inputAssignments>
             <field>CcAddress</field>
             <value>
@@ -607,7 +578,7 @@
             <targetReference>Input_Case_Contact_populated</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <description>AE email address plus additional POC.</description>
         <name>EmailCCAddresses</name>

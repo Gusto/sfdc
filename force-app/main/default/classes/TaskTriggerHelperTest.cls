@@ -311,6 +311,7 @@ public class TaskTriggerHelperTest {
 	 **/
 	@isTest
 	static void testIfWhatIdIsOppty() {
+		Account objAccount = [SELECT Id FROM Account WHERE RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID LIMIT 1];
 		Opportunity objOppty = [SELECT Id FROM Opportunity WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID LIMIT 1];
 
 		Test.startTest();
@@ -884,6 +885,7 @@ public class TaskTriggerHelperTest {
 	 **/
 	@isTest
 	static void testIfLastCallConnectIsUpdatedOnOpportunity() {
+		Account objAccount = [SELECT Id FROM Account WHERE RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID LIMIT 1];
 		Opportunity objOppty = [SELECT Id FROM Opportunity WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID LIMIT 1];
 
 		Test.startTest();
@@ -1862,12 +1864,26 @@ public class TaskTriggerHelperTest {
 
 		objTask.Feature_Request__c = objTemplate.Sub_Type__c;
 		objTask.Status = TaskUtil.TASK_STATUS_COMPLETE;
+		objTask.OwnerId = UserInfo.getUserId();
 		update objTask;
 
 		List<Task> list_Tasks = [SELECT Id, Priority, Type FROM Task WHERE WhatId = :objTicket.Id AND Feature_Request__c = :objTemplate.Task_Identifier__c ORDER BY LastModifiedDate DESC LIMIT 1];
 		System.assert(!list_Tasks.isEmpty(), 'Auto Task Creation failed');
 		System.assert(list_Tasks[0].Priority == objTemplate.Priority__c, 'Invalid Task Priority');
 		System.assert(list_Tasks[0].Type == objTemplate.Task_Type__c, 'Invalid Task Type');
+
+		Ardius_Configuration__c objConfig = Ardius_Configuration__c.getInstance();
+		objConfig.Ticket_Integration_Users__c = UserInfo.getUserId();
+		objConfig.Core_CS_RnD_Gustie__c = UserInfo.getUserId();
+		upsert objConfig;
+
+		objTask.Status = TaskUtil.TASK_STATUS_COMPLETE;
+		objTask.Feature_Request__c = TaskUtil.TASK_RD_EVALUATION_CALL;
+		update objTask;
+
+		Task objTaskAssert = [SELECT Id, OwnerId, Owner.Name FROM Task WHERE Id = :objTask.Id];
+		System.assertEquals(UserInfo.getUserId(), objTaskAssert.OwnerId, 'Assign owner success');
+
 		Test.stopTest();
 	}
 

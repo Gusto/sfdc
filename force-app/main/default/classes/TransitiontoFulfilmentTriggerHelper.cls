@@ -481,12 +481,14 @@ public class TransitiontoFulfilmentTriggerHelper {
 			Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>([SELECT id, RecordTypeId, (SELECT id FROM Orders ORDER BY CreatedDate DESC) FROM Opportunity WHERE id IN :opportunityIdSet]);
 
 			String companyOpportunityRecordTypeId = cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+			String strAcquisitionOpptyRecordTypeId = cache.getRecordTypeId('Opportunity', 'Acquisition');
 			for (Transition_to_Fulfillment__c transitionToFulFillmentRec : transitiontoFulfillmentList) {
 				if (
 					oppMap.keyset().size() > 0 &&
 					transitionToFulFillmentRec.Opportunity__c != null &&
 					oppMap.containsKey(transitionToFulFillmentRec.Opportunity__c) &&
-					oppMap.get(transitionToFulFillmentRec.Opportunity__c).RecordTypeId.equals(companyOpportunityRecordTypeId) &&
+					(oppMap.get(transitionToFulFillmentRec.Opportunity__c).RecordTypeId.equals(companyOpportunityRecordTypeId) ||
+					oppMap.get(transitionToFulFillmentRec.Opportunity__c).RecordTypeId.equals(strAcquisitionOpptyRecordTypeId)) &&
 					oppMap.get(transitionToFulFillmentRec.Opportunity__c).Orders.size() > 0
 				) {
 					if (updateTTF) {

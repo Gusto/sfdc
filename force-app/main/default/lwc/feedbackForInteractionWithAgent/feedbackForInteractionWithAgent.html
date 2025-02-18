@@ -1,0 +1,38 @@
+<template>
+    <div class="feedback-for-interaction-with-agent-container">
+        <p style="feeback-heading">
+            On a scale of 1 to 5 how easy was it to work with {agentName} today? Please provide a rating for your interaction with {agentName}, with 1 being "not easy" and 5 being "very easy".
+        </p>
+
+        <lightning-combobox 
+            name="rating" 
+            label="Rate Interaction" 
+            options={options} 
+            onchange={handleRatingInteractionChange}> 
+        </lightning-combobox>
+
+        <lightning-textarea 
+            name="feedback" 
+            label="Feedback" 
+            value={feedback} 
+            class="feedback-input" 
+            onchange={handleRatingFeedbackChange}>
+        </lightning-textarea>
+
+        <div class="slds-align--absolute-center feedback-btn-container">
+            <lightning-button 
+                variant="brand-outline" 
+                label="Skip" 
+                title="Skip" 
+                onclick={handleCancel}>
+            </lightning-button>
+            <lightning-button 
+                variant="brand" 
+                class="slds-m-left--small" 
+                label="Save" 
+                title="Save" 
+                onclick={handleSave}>
+            </lightning-button>
+        </div>
+    </div>
+</template>

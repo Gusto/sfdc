@@ -1,0 +1,62 @@
+/* opportunityLineItemTable.css */
+:host {
+    display: block;
+}
+
+.slds-modal {
+    display: block; /* Ensure modal is visible */
+    position: fixed;
+    z-index: 1000; /* Layer it above all other elements */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100rem;
+    max-width: 70rem;
+    border-radius: 0.5rem;
+}
+
+.slds-backdrop {
+    display: block; /* Ensure backdrop is visible */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Darker semi-transparent overlay */
+    z-index: 999; /* Place it behind the modal */
+}
+
+.slds-modal__container {
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.slds-modal__header,
+.slds-modal__footer {
+    margin: 0;
+}
+
+.slds-modal__content {
+    margin: 0;
+}
+
+.loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent background */
+    z-index: 2000; /* Higher than modal */
+}
+
+.lightning-datatable {
+    margin-bottom: 50px; /* Make room for sticky actions */
+}
+
+.datatable-custom .slds-button {
+    margin: 0 5px; /* Add space between buttons if needed */
+}

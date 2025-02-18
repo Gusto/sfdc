@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CRNF_Select_Amendment_Type__c</fullName>
+    <label>Select Amendment Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Same form as original filing</fullName>
+                <default>false</default>
+                <label>Same form as original filing</label>
+            </value>
+            <value>
+                <fullName>Own unique form</fullName>
+                <default>false</default>
+                <label>Own unique form</label>
+            </value>
+            <value>
+                <fullName>Accepts generic amendment form</fullName>
+                <default>false</default>
+                <label>Accepts generic amendment form</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

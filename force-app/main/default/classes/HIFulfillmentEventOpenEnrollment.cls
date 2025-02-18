@@ -13,7 +13,7 @@ public with sharing class HIFulfillmentEventOpenEnrollment {
 	private static final string BENEFITSTATUS_OE = 'OE';
 	private static final string BENEFITSTATUS_EXTENDED = 'OE Extended';
 	private static final string BENEFITSTATUS_COMPLETED = 'OE Verification/Checking Participation';
-	private static final String DEAD_UNPROCESSED_EVENT = 'Relevant Benefit Order was not found or Benefit Order not in eligible status.';
+	private static final String DEAD_UNPROCESSED_EVENT = 'Relevant Benefit Order was not found.';
 	public static Boolean blnTestException = false;
 
 
@@ -41,13 +41,16 @@ public with sharing class HIFulfillmentEventOpenEnrollment {
 		List<HIFullfillmentEventWrapper> list_HiWrapper = UtilitiesFactory.getDecryptedHIEventStr(list_FulfillmentList);
 		map<String, HI_Fulfillment_Event__c> map_HiFulfillEvent = new Map<String, HI_Fulfillment_Event__c>();
 		map<String, HIFulfillmentEventOpenEntrollmentJSON> map_HIFulfillOEJSON = new Map<String, HIFulfillmentEventOpenEntrollmentJSON>();
-		if (!list_HiWrapper.isEmpty()) {
+		System.debug('list_HiWrapper' + JSON.serializePretty(list_HiWrapper));
+        if (!list_HiWrapper.isEmpty()) {
 			for (HIFullfillmentEventWrapper objHiWrapper : list_HiWrapper) {
 				try {
 					HIFulfillmentEventOpenEntrollmentJSON objOpenEntrollmentJSON = (HIFulfillmentEventOpenEntrollmentJSON) JSON.deserialize(
 						objHiWrapper.jsonString,
 						HIFulfillmentEventOpenEntrollmentJSON.class
 					);
+                    
+                    System.debug('objOpenEntrollmentJSON' + JSON.serializePretty(objOpenEntrollmentJSON));
 
 					if (objOpenEntrollmentJSON.fulfillment_id == null) {
 						map_HIFulfillOEJSON.put(objOpenEntrollmentJSON.company_id, objOpenEntrollmentJSON);
@@ -79,13 +82,20 @@ public with sharing class HIFulfillmentEventOpenEnrollment {
 			if (String.isNotBlank(objConfigSettings.BO_Do_Not_Update_Staus_on_HI_OE_event__c)) {
 				list_doNotUpdateBenefitOrder = objConfigSettings.BO_Do_Not_Update_Staus_on_HI_OE_event__c.split(';');
 			}
-
+			System.debug('map_HIFulfillment' + JSON.serializePretty(map_HIFulfillment));
+            System.debug('map_HIFulfillOEJSON' + JSON.serializePretty(map_HIFulfillOEJSON));
+            System.debug('map_HIFulfillEvent' + JSON.serializePretty(map_HIFulfillEvent));
 			List<Benefit_Order__c> list_BenefitOrders = [
 				SELECT RecordType.DeveloperName, Application_Id__c, Opportunity_Type__c, Order_Status__c, ZP_Company_ID__c
 				FROM Benefit_Order__c
 				WHERE (Application_Id__c IN :map_HIFulfillment.keySet() OR (ZP_Company_Id__c IN :map_HIFulfillOEJSON.keySet() AND RecordTypeId = :BenefitOrderUtil.BYB_BENEFIT_ORDER_RT_ID AND Order_Status__c = 'OE'))
 				AND Order_Status__c <> null AND Order_Status__c  NOT IN :list_doNotUpdateBenefitOrder
 			];
+            /*List<Benefit_Order__c> list_BenefitOrders = [
+				SELECT RecordType.DeveloperName, Application_Id__c, Opportunity_Type__c, Order_Status__c, ZP_Company_ID__c
+				FROM Benefit_Order__c
+				WHERE (Application_Id__c IN :map_HIFulfillment.keySet())
+			];*/
 			if (list_BenefitOrders != null && list_BenefitOrders.size() > 0) {
 				List<Benefit_Order__c> list_UpdateBenefitOrders = new List<Benefit_Order__c>();
 				/*building the benefitorder list for updating the order status*/
@@ -145,11 +155,17 @@ public with sharing class HIFulfillmentEventOpenEnrollment {
 					}
 				} catch (Exception e) {
 					for (String fullfillId : map_HIFulfillEvent.keySet()) {
+						if (map_HIFulfillment.containsKey(fullfillId) == false) {
+							continue;
+						}
 						HIFulfillmentEventTriggerHelper.setProcessingState(IntegrationUtils.ERROR_STATE, 'Benefit order process failed', map_HIFulfillEvent.get(fullfillId));
 					}
 				}
 			} else {
 				for (String strFulfillableId : map_HIFulfillEvent.keySet()) {
+					if (map_HIFulfillment.containsKey(strFulfillableId) == false) {
+						continue;
+					}
 					HIFulfillmentEventTriggerHelper.setProcessingState(IntegrationUtils.DEAD_STATE, DEAD_UNPROCESSED_EVENT, map_HIFulfillEvent.get(strFulfillableId));
 				}
 			}

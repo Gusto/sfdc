@@ -2,13 +2,14 @@
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <alerts>
         <fullName>CX_Send_Chat_Transcript</fullName>
+        <ccEmails>soujanya.nentur@gusto.com</ccEmails>
         <description>CX Send Chat Transcript</description>
         <protected>false</protected>
         <recipients>
             <field>ContactId</field>
             <type>contactLookup</type>
         </recipients>
-        <senderAddress>support@gusto.com</senderAddress>
+        <senderAddress>support_uat@gusto.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>Lasha/Chat_Transcript</template>
     </alerts>

@@ -146,7 +146,7 @@ public class Controller {
 		}
 
 		if (opportunity.StageName == 'Closed Lost') {
-			if (cache.getRecordTypeId('Opportunity', 'Company Opportunity') == opportunity.RecordTypeId) {
+			if (cache.getRecordTypeId('Opportunity', 'Company Opportunity') == opportunity.RecordTypeId || cache.getRecordTypeId('Opportunity', 'Acquisition') == opportunity.RecordTypeId) {
 				opportunity.Close_Lost_EE_size__c = opportunity.NumberofEmployees__c;
 				opportunity.Close_Lost_Payment_Plan__c = opportunity.Opp_Payment_Plan__c;
 				opportunity.Close_Lost_Amount__c = opportunity.Amount;

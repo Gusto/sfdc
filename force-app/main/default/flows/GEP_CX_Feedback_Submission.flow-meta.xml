@@ -11,7 +11,7 @@
     </choices>
     <choices>
         <name>Feedback</name>
-        <choiceText>Feedback</choiceText>
+        <choiceText>GEP CX Community - Feedback</choiceText>
         <dataType>String</dataType>
         <value>
             <stringValue>GEP CX Community - Feedback</stringValue>
@@ -238,12 +238,14 @@
             <dataType>String</dataType>
             <fieldText>Request Type</fieldText>
             <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>Description</name>
             <fieldText>Description</fieldText>
             <fieldType>LargeTextArea</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>false</isRequired>
         </fields>
         <showFooter>true</showFooter>
@@ -273,5 +275,5 @@
             <targetReference>Feedback_Submission</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
 </Flow>

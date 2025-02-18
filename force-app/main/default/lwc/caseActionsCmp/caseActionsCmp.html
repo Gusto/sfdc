@@ -58,6 +58,33 @@
                 </div>
             </lightning-layout-item>
 
+            <template if:true={blnIsPhoneOriginFieldsAvailable}>
+                <div class="slds-form-element record-form">
+                    <div class="slds-form-element__control">
+                        <lightning-record-edit-form record-id={idCase} object-api-name="Case">
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                Reason for Call
+                            </label>
+                            <lightning-input-field data-visibility="true" data-input-field="true" required="true" field-name="Reason_for_Call__c" data-api="Reason_for_Call__c" onchange={handleDataChange} value={objCase.Reason_for_Call__c} variant="label-hidden">
+                            </lightning-input-field>
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                Resolution
+                            </label>
+                            <lightning-input-field data-visibility="true" data-input-field="true" required="true" field-name="Resolution__c" data-api="Resolution__c" onchange={handleDataChange} value={objCase.Resolution__c} variant="label-hidden">
+                            </lightning-input-field>
+                            <lightning-input-field data-visibility="true" data-input-field="true" field-name="Ticket_Jira_Link__c" data-api="Ticket_Jira_Link__c" onchange={handleDataChange} value={objCase.Ticket_Jira_Link__c}>
+                            </lightning-input-field>
+                            <lightning-input-field data-visibility="true" data-input-field="true" field-name="Did_the_call_drop__c" data-api="Did_the_call_drop__c" onchange={handleDataChange} value={objCase.Did_the_call_drop__c}>
+                            </lightning-input-field>
+                            <lightning-input-field data-visibility="true" data-input-field="true" field-name="How_many_times_attempt_to_call_back__c" data-api="How_many_times_attempt_to_call_back__c" onchange={handleDataChange} value={objCase.How_many_times_attempt_to_call_back__c}>
+                            </lightning-input-field>
+                        </lightning-record-edit-form>
+                    </div>
+                </div>
+            </template>
+
             <template if:true={blnIsPartnerAccountVisible}>
                 <div class="slds-form-element record-form">
                     <div class="slds-form-element__control">

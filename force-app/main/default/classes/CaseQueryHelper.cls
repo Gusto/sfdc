@@ -226,7 +226,6 @@ public class CaseQueryHelper {
 				]
 			);
 		}
-
 		return list_CaseReasons;
 	}
 
@@ -494,7 +493,7 @@ public class CaseQueryHelper {
 		}
 
 		return map_InactiveTaxResCaseRoutingRules;
-	}
+	}	
 
 	/**
 	 * @Author: Elavarasan N
@@ -502,14 +501,19 @@ public class CaseQueryHelper {
 	 * @Desc: Query the case milestone records
 	 */
 	public static List<CaseMilestone> queryCaseMileStoneData(Set<Id> set_MileStoneIds) {
+
 		List<CaseMilestone> list_MileStoneRecords = new List<CaseMilestone>();
-
+		
 		if (set_MileStoneIds != null && !set_MileStoneIds.isEmpty()) {
-			list_MileStoneRecords = [SELECT Id, CaseId, CompletionDate, IsCompleted, MilestoneTypeId FROM CaseMilestone WHERE ID IN :set_MileStoneIds AND CaseId != NULL];
+			list_MileStoneRecords =  [
+				SELECT Id, CaseId, CompletionDate, IsCompleted, MilestoneTypeId 
+				FROM CaseMilestone 
+				WHERE CaseId IN :set_MileStoneIds AND CaseId != null
+			]; 
 		}
-
+		
 		return list_MileStoneRecords;
-	}
+	}	
 
 	/**
 	 * @Author: Elavarasan N
@@ -517,16 +521,21 @@ public class CaseQueryHelper {
 	 * @Desc: Query the carrier records
 	 */
 	public static Map<Id, Carrier__c> queryCaseCarrierData(Set<Id> set_CarrierIds) {
+		
 		Map<Id, Carrier__c> map_Carrier = new Map<Id, Carrier__c>();
 
 		if (set_CarrierIds != null && !set_CarrierIds.isEmpty()) {
-			for (Carrier__c objCarrier : [SELECT Id, Submission_Method__c, Follow_Up_Method__c, Carrier_Id__c FROM Carrier__c WHERE Id IN :set_CarrierIds]) {
+			for (Carrier__c objCarrier : [
+				SELECT Id, Submission_Method__c, Follow_Up_Method__c, Carrier_Id__c 
+				FROM Carrier__c 
+				WHERE Id IN :set_CarrierIds
+			]) {
 				map_Carrier.put(objCarrier.Id, objCarrier);
 			}
 		}
-
+		
 		return map_Carrier;
-	}
+	}	
 
 	/**
 	 * @Author: Elavarasan N
@@ -534,13 +543,18 @@ public class CaseQueryHelper {
 	 * @Desc: Query the carrier records
 	 */
 	public static Map<String, Id> queryMileStoneTypeData() {
+
 		if (map_MileStoneTypeByName == null) {
 			map_MileStoneTypeByName = new Map<String, Id>();
-			for (MileStoneType objMileStoneType : [SELECT Id, Name FROM MileStoneType WHERE Name != NULL]) {
+			for (MileStoneType objMileStoneType : [
+				SELECT Id, Name 
+				FROM MileStoneType 
+				WHERE Name != null
+			]) {
 				map_MileStoneTypeByName.put(objMileStoneType.Name, objMileStoneType.Id);
 			}
 		}
-
+		
 		return map_MileStoneTypeByName;
 	}
 }

@@ -635,8 +635,7 @@ public class BTFacilitator2PlayModeCtrl {
 							tempCo.Assignment_Message__c = 'SUCCESS: Plan Review order';
 							tempCo.Implementation_Stage__c = CO_STAGE_IMPLEMENTATION_PLANS;
 							Datetime start = System.Now();
-							//Reduced delay time from 3 seconds to 1 second  BT-60475
-							while (System.Now().getTime() < start.getTime() + 1000) {
+							while (System.Now().getTime() < start.getTime() + 3000) {
 							} //Delay
 							database.update(tempCo, true);
 							strCOId = tempCo.Id;

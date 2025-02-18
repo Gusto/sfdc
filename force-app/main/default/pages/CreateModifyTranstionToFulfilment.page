@@ -155,6 +155,7 @@
 													</apex:outputPanel>
 												</apex:repeat>  
 											</td>
+												<!-- <apex:outputField value="{!cRole.Role}" /></td> -->
 											<td>
 												<apex:inputField value="{!cRole.IsPrimary}">
 													<apex:actionSupport event="onchange" action="{!selectPrimary}" rerender="frm" status="status">
@@ -286,8 +287,8 @@
 													<apex:outputPanel rendered="{!IF(contactId == cRole.ContactId,true,false)}">
 														<apex:outputText value="{!map_ContactIdRole[contactId]}" />
 													</apex:outputPanel>
-												</apex:repeat>
-											</td>
+												</apex:repeat> 
+												<!-- <apex:outputField value="{!cRole.Role}" /> --></td>
 											<td>
 												<apex:inputField value="{!cRole.IsPrimary}">
 													<apex:actionSupport event="onchange" action="{!selectPrimary}" rerender="frm" status="status">

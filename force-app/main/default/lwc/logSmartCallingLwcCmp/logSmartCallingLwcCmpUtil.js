@@ -15,6 +15,9 @@ const USER_ROLE = { SALES_SB_OB_XX: "sales_sb_ob_xx", SALES_SB_OB_SME: "sales_sb
 const TASK_PRIORITY = { HIGH: "High", NORMAL: "Normal", LOW: "Low" };
 const HI_OPPORTUNITY_TYPE = { HI_BENEFITS_NEW_PLAN: "HI Benefits New Plan", HI_BENEFITS_BOR: "HI Benefits BoR", BENEFITS_BYOB: "Benefits BYOB" };
 
+const ACQUISITION_OPPORTUNITY_TYPE = { NEW_BUSINESS: "New Business", WINBACK: "Winback"};
+
+
 const TASK_SUBJECT = { FOLLOW_UP_CALL: "Follow up Call" };
 const OPP_STAGE = { RAW: "Raw" };
 const ARDIUS_OPP_STAGE = { NEW: "New" };
@@ -85,7 +88,7 @@ const ERROR_MSGS = {
 	PRODUCT_INTEREST_COUNTRIES_REQUIRED: "Product Interest Countries are required if add product interest is checked.",
 	LEAD_PASS_FIELDS_REQUIRED: "Please select at least one country in the Product Interest Countries or Additional Countries to Save this Lead Pass.",
 	LEAD_PASS_NOT_AVAILABLE: "This action is not available for your user role and profile. Please contact your PE if you feel this is an error.",
-	CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS: "Cross Sell Opportunity for International Contractor Payment Already exists in Open / Closed Won Status.",
+	CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS: "An ICP Opportunity cannot be created because this Account already has an existing ICP Opportunity.",
 	WORKERS_COMP_INTEREST_REQUIRED: "Please select a value in Workers Comp Interest before saving.",
 	CONTACT_EMAIL_REQUIRED_FOR_NEXT: "The selected Contact is missing an email address. Please ensure an email is added to proceed.",
 	UPSELL_OPPORTUNITY_FOR_EMPLOYER_ALREADY_EXISTS: "UpSell Opportunity for Employer of record Already exists in Open / Closed Won Status."
@@ -163,6 +166,11 @@ const list_HIOptyTypeOptions = [
 	PicklistOption.setLabelAndValue(HI_OPPORTUNITY_TYPE.BENEFITS_BYOB)
 ];
 
+const list_AcquisitionOptyTypeOptions = [
+	PicklistOption.setLabelAndValue(ACQUISITION_OPPORTUNITY_TYPE.NEW_BUSINESS),
+	PicklistOption.setLabelAndValue(ACQUISITION_OPPORTUNITY_TYPE.WINBACK)
+];
+
 const labels = {
 	TASK_CALL_PICKLIST: TASK_CALL_PICKLIST,
 	TAX_YEAR_LABEL: TAX_YEAR_LABEL
@@ -227,6 +235,7 @@ export {
 	populateTaskType,
 	list_PriorityOptions,
 	list_HIOptyTypeOptions,
+	list_AcquisitionOptyTypeOptions,
 	labels,
 	DISPOSITION_HELP_TEXT,
 	REC_TYPE_NAMES,

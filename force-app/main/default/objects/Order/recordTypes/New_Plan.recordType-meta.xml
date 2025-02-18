@@ -1023,6 +1023,17 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Demo_Complete__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Direct_Deposit_Speed__c</picklist>
         <values>
             <fullName>2-day</fullName>
@@ -1249,6 +1260,10 @@
     <picklistValues>
         <picklist>Pay_Date_Cancel_Sub_Reason__c</picklist>
         <values>
+            <fullName>Customer Choice - Company Sold %2F Acquisition</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Customer Choice - Natural Disaster</fullName>
             <default>false</default>
         </values>
@@ -1357,11 +1372,19 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Sales Qualification - Self Onboarding</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Sales Qualification - Uncommitted</fullName>
             <default>false</default>
         </values>
         <values>
             <fullName>Sales Qualification - Using previous provider through quarter close</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unresponsive Customer - Migration complete</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1443,6 +1466,37 @@
         </values>
         <values>
             <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Pay_Schedule__c</picklist>
+        <values>
+            <fullName>Annually</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Every other week</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Every week</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monthly</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quarterly</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Semiannually</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Twice per month</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1840,18 +1894,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>Tax_Payer_Type__c</picklist>
-        <values>
-            <fullName>PC</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>PLLC</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>PS</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>Sole Proprietorship</fullName>
             <default>false</default>

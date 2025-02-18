@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gusto_S_Authorization_Process__c</fullName>
+    <label>Gusto&apos;s Authorization Process</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Gusto self-serves via portal or via files sent to agency</fullName>
+                <default>false</default>
+                <label>Gusto self-serves via portal or via files sent to agency</label>
+            </value>
+            <value>
+                <fullName>Customer self-serves via portal</fullName>
+                <default>false</default>
+                <label>Customer self-serves via portal</label>
+            </value>
+            <value>
+                <fullName>Joint effort</fullName>
+                <default>false</default>
+                <label>Joint effort</label>
+            </value>
+            <value>
+                <fullName>POA Pre-req</fullName>
+                <default>false</default>
+                <label>POA Pre-req</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

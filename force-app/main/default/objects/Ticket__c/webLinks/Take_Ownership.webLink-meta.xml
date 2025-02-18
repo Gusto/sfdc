@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Take_Ownership</fullName>
+    <availability>online</availability>
+    <description>WIP - Take Ownership for Tickets</description>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Take Ownership</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>{!REQUIRESCRIPT(&quot;/soap/ajax/31.0/connection.js&quot;)}
+
+try{
+
+    var TicketToUpdate = new sforce.SObject(&quot;Ticket__c&quot;);
+
+    TicketToUpdate.Id = &quot;{!Ticket__c.Id}&quot;;
+
+    TicketToUpdate.OwnerId = &quot;{!$User.Id}&quot;;
+
+    var result = sforce.connection.update([TicketToUpdate]);
+
+    if(result[0].success == &quot;true&quot;){
+
+        location.reload();
+
+    }
+
+    else{
+
+        alert(
+
+            &quot;An Error has Occurred. Error: &quot; + 
+
+            result[0].errors.message
+
+        );
+
+    }
+
+}
+
+catch(e){
+
+    alert(
+
+        &quot;An Error has Occurred. Error: &quot; + 
+
+        e
+
+    );
+
+}</url>
+</WebLink>

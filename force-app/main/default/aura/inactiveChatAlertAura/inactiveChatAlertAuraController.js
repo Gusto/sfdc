@@ -34,9 +34,9 @@
 
 	// Handler for chat ended event
 	onChatEnded: function (component, event, helper) {
-		// Get the record Id from the event
+		// Get the record ID from the event
 		let recordId = event.getParam("recordId");
-		// Check if the component's record ID includes the event's record Id
+		// Check if the component's record ID includes the event's record ID
 		if (component.get("v.recordId").includes(recordId)) {
 			// Call the helper function to snooze the tab
 			helper.snoozeTab(component);

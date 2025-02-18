@@ -102,7 +102,6 @@
             </value>
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>58.0</apiVersion>
     <assignments>
@@ -211,7 +210,6 @@
         </connector>
     </assignments>
     <decisions>
-        <description>Route case only when status is Open or In Progress</description>
         <name>Check_Case_Status</name>
         <label>Check Case Status</label>
         <locationX>578</locationX>
@@ -418,8 +416,6 @@
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Case</object>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>Status</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
@@ -429,7 +425,7 @@
             <targetReference>Validate_Routing</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <subflows>
         <name>Omni_Vendor_OOS_Flow</name>
         <label>Omni Vendor OOS Flow</label>
@@ -465,6 +461,16 @@
     <variables>
         <description>If the owner of a case has manually been changed from one advocate to antoth</description>
         <name>blnManualOwnerChange</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>blnManualRecordTypeChange</name>
         <dataType>Boolean</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>

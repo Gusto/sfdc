@@ -74,7 +74,7 @@ public class ZPCompanyOnboardingTriggerHelperTest {
 			HI_Effective_Date__c = system.today().addDays(30)
 		);
 		//opp1.RecordTypeId = cache.getRecordTypeId('Opportunity', 'Benefits Renewal');
-		opp1.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp1.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		testOpportunities.add(opp1);
 
 		OpportunityTriggerHelper.skipTrigger = true;

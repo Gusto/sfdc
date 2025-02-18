@@ -48,28 +48,6 @@ public class CaseMassUpdateLightningControllerTest {
 		list_Cases.add(objCase5);
 		CaseTriggerHelper.skipTrigger = true;
 		insert list_Cases;
-
-		List<Case_RecordType_FieldSet_Setting__c> list_CaseRecordTypeFieldSetting = new List<Case_RecordType_FieldSet_Setting__c>();
-
-		Case_RecordType_FieldSet_Setting__c obj = new Case_RecordType_FieldSet_Setting__c();
-		obj.Name = 'MF Member/Group Updates';
-		obj.Field_Set_API_Name__c = 'MF_Mass_Update';
-
-		list_CaseRecordTypeFieldSetting.add(obj);
-
-		Case_RecordType_FieldSet_Setting__c obj1 = new Case_RecordType_FieldSet_Setting__c();
-		obj1.Name = 'MF NHE';
-		obj1.Field_Set_API_Name__c = 'MF_Mass_Update';
-
-		list_CaseRecordTypeFieldSetting.add(obj1);
-
-		Case_RecordType_FieldSet_Setting__c obj2 = new Case_RecordType_FieldSet_Setting__c();
-		obj2.Name = 'MF Termination';
-		obj2.Field_Set_API_Name__c = 'MF_Mass_Update';
-
-		list_CaseRecordTypeFieldSetting.add(obj2);
-
-		insert list_CaseRecordTypeFieldSetting;
 	}
 
 	static testMethod void testFetchRelatedCases() {
@@ -246,6 +224,7 @@ public class CaseMassUpdateLightningControllerTest {
 		System.assertEquals(list_QueriedCases[0].OwnerId, ID_LOGGED_USER);
 		System.assertEquals(list_QueriedCases[0].Status, 'Ready for Research');
 	}
+
 	/**
 	 * @Author:         Pawan Kumar
 	 * @Description:    Tests testMassUpdateAndRouteCaseMFRT() for MFRT Cases

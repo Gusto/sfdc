@@ -30,23 +30,23 @@ public without sharing class GlobalQueryHelper {
 	public static Map<String, BusinessHours> map_AllBusinessHours;
 	public static List<Tax_Rate__c> list_TaxResTaxRates = new List<Tax_Rate__c>();
 	public static Map<Id, User_Role__c> map_SpecialistUserRoles;
-	public static Map<Id, User> map_BenefitsComplianceUser;
 	public static Map<String, CaseTeamRole> map_CaseTeamRole;
 	public static Map<String, String> map_MRRReasonIndexingStatus;
 
-	public static Map<String, String> getMRRReasonIndexingStatusMap() {
-		if (map_MRRReasonIndexingStatus == null) {
-			map_MRRReasonIndexingStatus = new Map<String, String>();
-			for (AutoIndexingStatus_Based_On_MRR__mdt objReasonIndexingStatus : AutoIndexingStatus_Based_On_MRR__mdt.getAll().values()) {
-				if (String.isNotBlank(objReasonIndexingStatus.MRR_Reason__c)) {
-					for (String strMRRReason : objReasonIndexingStatus.MRR_Reason__c.split(';')) {
-						map_MRRReasonIndexingStatus.put(strMRRReason, objReasonIndexingStatus.Auto_Index_Status__c);
-					}
-				}
-			}
-		}
-		return map_MRRReasonIndexingStatus;
-	}
+    public static Map<String, String> getMRRReasonIndexingStatusMap() {
+        if(map_MRRReasonIndexingStatus == null) {
+            map_MRRReasonIndexingStatus = new Map<String, String>();
+            for(AutoIndexingStatus_Based_On_MRR__mdt objReasonIndexingStatus : AutoIndexingStatus_Based_On_MRR__mdt.getAll().values()) {
+                system.debug('objReasonIndexingStatus.MRR_Reason__c ***** '+objReasonIndexingStatus.MRR_Reason__c + '-->'+objReasonIndexingStatus.Auto_Index_Status__c);
+                if(String.isNotBlank(objReasonIndexingStatus.MRR_Reason__c )) {
+                    for(String strMRRReason : objReasonIndexingStatus.MRR_Reason__c.split(';')) {
+                        map_MRRReasonIndexingStatus.put(strMRRReason, objReasonIndexingStatus.Auto_Index_Status__c );
+                    }
+                }
+            }
+        }
+        return map_MRRReasonIndexingStatus;
+    }
 
 	public static Map<Id, UserRole> getIdUserRoleMap() {
 		if (allIdUserRoleMap == null) {
@@ -65,6 +65,7 @@ public without sharing class GlobalQueryHelper {
 		}
 		return allNameUserRoleMap;
 	}
+	public static Map<Id, User> map_BenefitsComplianceUser;
 
 	/**
 	 * @author      Pravesh
@@ -97,6 +98,21 @@ public without sharing class GlobalQueryHelper {
 		}
 		return map_BenefitsComplianceUser;
 	}
+
+	/**
+     * @description     Method to get getGroupIdByQueueName
+     * @Author          Sindhu
+     * @param String    NA
+     * @return          String strCaseQueue
+     */
+    public static Id getGroupIdByQueueName(String strCaseQueue) {
+        Id groupId;
+        List<Group> list_Groups = [SELECT Id FROM Group WHERE Type = :CaseUtils.STRG_QUEUE AND Name = :strCaseQueue LIMIT 1];
+        if (!list_Groups.isEmpty()) {
+            groupId = list_Groups[0].Id;
+        }
+        return groupId;
+    }
 
 	/**
 	 * @author      Ankit CS
@@ -164,21 +180,6 @@ public without sharing class GlobalQueryHelper {
 	public static BusinessHours getBusinessHoursByName(String strBusinessHourName) {
 		Map<String, BusinessHours> map_BusinessHours = getAllBusinessHoursMap();
 		return map_BusinessHours.get(strBusinessHourName);
-	}
-
-	/**
-	 * @description     Method to get getGroupIdByQueueName
-	 * @Author          Sindhu
-	 * @param String    NA
-	 * @return          String strCaseQueue
-	 */
-	public static Id getGroupIdByQueueName(String strCaseQueue) {
-		Id groupId;
-		List<Group> list_Groups = [SELECT Id FROM Group WHERE Type = :CaseUtils.STRG_QUEUE AND Name = :strCaseQueue LIMIT 1];
-		if (!list_Groups.isEmpty()) {
-			groupId = list_Groups[0].Id;
-		}
-		return groupId;
 	}
 
 	/**
@@ -582,6 +583,7 @@ public without sharing class GlobalQueryHelper {
 		);
 	}
 
+	//Shyam : Added "OCR_Enabled__c, AutoSolve_Enabled__c" fields in the query
 	public static Map<Id, Agency_Information__c> getAllAgencyInformation() {
 		if (map_Agency == null || Test.isRunningTest()) {
 			map_Agency = new Map<Id, Agency_Information__c>(
@@ -611,7 +613,6 @@ public without sharing class GlobalQueryHelper {
 
 		return map_CaseTeamRole;
 	}
-
 	/**
 	 * @description   To query Agency Information records and store map of names as keys
 	 * @author        Sanjay Paryani
@@ -719,6 +720,19 @@ public without sharing class GlobalQueryHelper {
 		}
 	}
 
+	/**
+	 * @description     Method to get all tax rates
+	 * @Author          Elavarasan N
+	 * @param String    NA
+	 * @return          List<Tax_Rate__c>
+	 */
+	public static List<Tax_Rate__c> getAllTaxRates() {
+		if (list_TaxResTaxRates == null || list_TaxResTaxRates.isEmpty()) {
+			list_TaxResTaxRates = [SELECT Id, Name, Agency_Information__c, ZP_Tax_Rate_Name__c FROM Tax_Rate__c];
+		}
+		return list_TaxResTaxRates;
+	}
+
 	/*
 	 * @Description    Get Case Hitory by Field or otherwise
 	 * @Author         Elavarasan N
@@ -736,19 +750,6 @@ public without sharing class GlobalQueryHelper {
 			}
 		}
 		return list_CaseHistory;
-	}
-
-	/**
-	 * @description     Method to get all tax rates
-	 * @Author          Elavarasan N
-	 * @param String    NA
-	 * @return          List<Tax_Rate__c>
-	 */
-	public static List<Tax_Rate__c> getAllTaxRates() {
-		if (list_TaxResTaxRates == null || list_TaxResTaxRates.isEmpty()) {
-			list_TaxResTaxRates = [SELECT Id, Name, Agency_Information__c, ZP_Tax_Rate_Name__c FROM Tax_Rate__c];
-		}
-		return list_TaxResTaxRates;
 	}
 
 	/**

@@ -34,6 +34,15 @@ public with sharing class SendAccountToRingLead {
 		}
 	}
 
+	public class AccountWrapper {
+		public String Id;
+		public String RingLead_Record_Source = 'sf_trigger';
+		public String RingLead_Record_Type = 'Account';
+		public String SoldBy;
+		public String OwnerId;
+		public String RecordTypeId;
+	}
+
 	/**
 	 * @description Receives account Id from Flow and sends it to Mulesoft which then sends to RingLead for Routing
 	 * @author      Praveen Sethu
@@ -46,21 +55,38 @@ public with sharing class SendAccountToRingLead {
 		try {
 			// Iterate over all wrapper objects
 			for (RequestWrapper objWrapper : list_ReqWrappers) {
-				// Send custom callout to Mulesoft endpoint
-				HttpRequest objHTTPReq = new HttpRequest();
-				objHTTPReq.setEndpoint('callout:Account_Routing_Mulesoft');
-				objHTTPReq.setMethod('POST');
-				objHTTPReq.setBody(JSON.serialize(objWrapper));
-				objHTTPReq.setHeader('Content-Type', 'application/json');
-				objHTTPReq.setTimeOut(120000);
+				for (Account objAcc : [SELECT Id, Sold_By__c, OwnerId, RecordTypeId FROM Account WHERE Id = :objWrapper.idRecord]) {
+					AccountWrapper objAccountWrapper = new AccountWrapper();
+					objAccountWrapper.Id = objAcc.Id;
+					objAccountWrapper.SoldBy = objAcc.Sold_By__c;
+					objAccountWrapper.OwnerId = objAcc.OwnerId;
+					objAccountWrapper.RecordTypeId = objAcc.RecordTypeId;
 
-				Http objHTTP = new Http();
-				HTTPResponse objHTTPRes = objHTTP.send(objHTTPReq);
+					String strJSONPayload = JSON.serialize(objAccountWrapper);
+					strJSONPayload = strJSONPayload.replaceAll('RingLead_Record_Source', '_RingLead_Record_Source');
+					strJSONPayload = strJSONPayload.replaceAll('RingLead_Record_Type', '_RingLead_Record_Type');
+					strJSONPayload = strJSONPayload.replaceAll('SoldBy', 'Sold_By__c');
 
-				// update account route count flag if running from test class
-				if (Test.isRunningTest()) {
-					Account objAcc = new Account(Id = objWrapper.idRecord, Account_Route_Count__c = 2);
-					list_AccountsToUpdate.add(objAcc);
+					// Send custom callout to Mulesoft endpoint
+					HttpRequest objHTTPReq = new HttpRequest();
+					System.debug('Routing Type: ' + objWrapper.strRoutingType);
+					if (objWrapper.strRoutingType == 'HI Owner')
+						objHTTPReq.setEndpoint('https://login.ringlead.com/api/v1/webtolead/12679/73183429-e851-4879-9e87-803631a2de4c/submission/');
+					else if (objWrapper.strRoutingType == 'Regular') {
+						objHTTPReq.setEndpoint('https://dms.ringlead.com/api/v1/webtolead/12679/b3e78976-3789-4fd0-b78b-1fa288e9f8ba/submission/');
+					}
+
+					System.debug(strJSONPayload);
+
+					objHTTPReq.setMethod('POST');
+					objHTTPReq.setBody(strJSONPayload);
+					objHTTPReq.setHeader('Content-Type', 'application/json');
+					objHTTPReq.setTimeOut(120000);
+
+					System.debug(strJSONPayload);
+
+					Http objHTTP = new Http();
+					HTTPResponse objHTTPRes = objHTTP.send(objHTTPReq);
 				}
 			}
 

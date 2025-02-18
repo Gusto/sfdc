@@ -111,6 +111,22 @@ private class UR_ManageCSVCtrl_Test {
 
 	static testMethod void uploadCSVProgress() {
 		Research_Project_Master__c projectObj = UR_TestDataUtil.createResearchProjectMaster('Test Case 22');
+		
+		UXR_CSV_Staging__c objStaging = new UXR_CSV_Staging__c();
+		objStaging.Research_Project_Master__c = projectObj.Id;
+		objStaging.First_Name__c = 'Test1';
+		objStaging.Last_Name__c = 'Test1';
+		objStaging.Email__c = 'Test1@gmail.com';
+		objStaging.CSV_Header__c = false;
+		objStaging.CSV_File_Name__c = 'test@.csv';
+		objStaging.User_Id__c = '12121';
+		objStaging.Employee_Id__c = '12111';
+		objStaging.Company_Id__c = '12222';
+		objStaging.Status__c = 'Fail';
+		objStaging.Message__c = 'Company Id does not exist';
+		objStaging.Accountant_Firm_Id__c = '121211';
+		insert objStaging;
+
 		ApexPages.Standardcontroller sc = new ApexPages.Standardcontroller(projectObj);
 		ApexPages.currentPage().getParameters().put('projectId', projectObj.Id);
 		UR_ManageCSVCtrl controller = new UR_ManageCSVCtrl(sc);
@@ -235,6 +251,7 @@ private class UR_ManageCSVCtrl_Test {
 		insert objUploadInfo3;
 
 		Research_Project_Master__c projectObj = UR_TestDataUtil.createResearchProjectMaster('Test Case 22');
+
 		List<Contact> contactList = [SELECT id FROM contact LIMIT 2];
 		List<Research_Project_Detail__c> projectDetailList = UR_TestDataUtil.createResearchProjectDetails(contactList, projectObj.Id);
 		//projectObj.Project_Status__c = 'Complete';

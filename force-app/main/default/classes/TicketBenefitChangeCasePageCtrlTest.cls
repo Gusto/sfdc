@@ -17,6 +17,8 @@ private class TicketBenefitChangeCasePageCtrlTest {
         ApexPages.StandardController stdController = new ApexPages.StandardController(tck);
         TicketBenefitChangeCasePageCtrl extension = new TicketBenefitChangeCasePageCtrl(stdController);
         extension.initMethod();
+        TicketBenefitChangeCasePageCtrl.getFulfilmentCaseWithTicket(tck.id);
+        TicketBenefitChangeCasePageCtrl.saveFulfillmentCase(tck);
         
         Test.stopTest();
     }

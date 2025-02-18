@@ -14,7 +14,8 @@
  * @group       Product Discount
  */
 public without sharing class ProductDiscountHelper {
-	public static final Set<String> SET_VALID_GLOBAL_DISCOUNTS = new Set<String>{ 'accountant' };
+	public static final Set<String> SET_VALID_GLOBAL_DISCOUNTS = new Set<String>{ 'accountant','wholesale_partner_discount'};
+	public static final String WHOLESALE_PARTNER_DISCOUNT = 'wholesale_partner_discount';
 
 	/**
 	 * Unified place to generate the unique identifier for ProductDiscount (OpportunityId + Discount Type + ProductID [if present])
@@ -133,9 +134,12 @@ public without sharing class ProductDiscountHelper {
 				AND Is_Invoiced__c = FALSE
 				AND StageName != :OpportunityUtil.CLOSED_LOST_STAGE
 		]) {
+			System.debug('objOpp.Product_Discounts__r: ' + objOpp.Product_Discounts__r);
 			map_Opportunities.put(objOpp.Id, objOpp);
 		}
 
+		System.debug('map_Opportunities: ' + map_Opportunities);
+		
 		for (Opportunity objOpp : map_Opportunities.values()) {
 			Decimal decPremiumTierDiscount = 0;
 			Decimal decInternationalEmployeesForUpsell = objOpp.Account.International_Employees__c;
@@ -145,7 +149,7 @@ public without sharing class ProductDiscountHelper {
 				String.isNotBlank(objOpp.Upsell_Tier__c) &&
 				objOpp.Upsell_Tier__c.containsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD)
 			) {
-				if (objOpp.Account.International_Employees__c == null) {
+				if ((objOpp.Account.International_Employees__c == null)) {
 					decInternationalEmployeesForUpsell = 1;
 				}
 			}
@@ -289,12 +293,37 @@ public without sharing class ProductDiscountHelper {
 				set_OpportunityIDs.add(objOpp.Id);
 			}
 		}
-
+		System.debug('set_AccountIDs: ' + set_AccountIDs);
 		if (!set_AccountIDs.isEmpty()) {
 			new ProductDiscountHelper().handleAccountantProductDiscounts(set_AccountIDs, new Set<Id>());
 		}
+		System.debug('set_OpportunityIDs: ' + set_OpportunityIDs);
 		if (!set_OpportunityIDs.isEmpty()) {
 			new ProductDiscountHelper().applyDiscountsToOLIs(set_OpportunityIDs);
 		}
+	}
+	
+	/**
+	 * @description  Method to apply wholesale discount to all the OpportunityLineItems            
+	 *
+	 * @param set_OpportunityIds 
+	 */
+	public void applyWholeSaleDiscount(Set<String> set_OpportunityIds) {
+
+		
+		List<Opportunity> list_Opportunities = [
+			SELECT Id, Sold_By__c, Sold_By__r.Discount__c, Account.Reward_Eligible__c, RecordTypeId, (SELECT Id, Discount, Product2Id, Product2.ExternalId FROM OpportunityLineItems)
+			FROM Opportunity
+			WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID AND Id IN :set_OpportunityIds
+		];
+		List<OpportunityLineItem> list_olisToUpdate = new List<OpportunityLineItem>();
+		for (Opportunity objOpp : list_Opportunities) {
+			list_olisToUpdate.addAll(objOpp.OpportunityLineItems);
+		}
+		TriggerHandler.bypass('OpportunityTriggerHandler');
+		TriggerHandler.bypass('AccountTriggerHandler');
+		update list_olisToUpdate;
+		TriggerHandler.clearBypass('OpportunityTriggerHandler');
+		TriggerHandler.clearBypass('AccountTriggerHandler');
 	}
 }

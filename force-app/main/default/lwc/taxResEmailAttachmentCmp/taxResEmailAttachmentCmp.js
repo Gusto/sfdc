@@ -3,6 +3,7 @@ import getFiles from "@salesforce/apex/TaxResCaseActionsController.getAvailableF
 
 export default class TaxResEmailAttachmentCmp extends LightningElement {
 	@api recordId;
+
 	list_AvailableFiles;
 	list_SelectedFiles;
 	list_SelectedAttachments;
@@ -12,18 +13,21 @@ export default class TaxResEmailAttachmentCmp extends LightningElement {
 		try {
 			let result = await getFiles({ strCaseId: this.recordId });
 			let tempData = [];
-			for (var key in result) {
-				let objFile = {};
-				let tempList = result[key].split("=");
-				objFile.Id = key;
-				objFile.Name = tempList[1];
-				objFile.fileUrl = "/" + key;
-				objFile.Type = tempList[0];
-				tempData.push(objFile);
+			if (result) {
+				for (var key in result) {
+					let objFile = {};
+					let tempList = result[key].split("=");
+	
+					objFile.Id = key;
+					objFile.Name = tempList[1];
+					objFile.fileUrl = "/" + key;
+					objFile.Type = tempList[0];
+					tempData.push(objFile);
+				}
 			}
 			this.list_AvailableFiles = tempData;
 		} catch (error) {
-			displayToast(this, "Error!", error.body.message, "error", "");
+			console.error(error);
 		}
 	}
 
@@ -41,13 +45,13 @@ export default class TaxResEmailAttachmentCmp extends LightningElement {
 	}
 
 	closeModal(event) {
-		event.preventDefault();
-		const closeEvent = new CustomEvent("closemodalpopup", {});
+        event.preventDefault();
+		const closeEvent = new CustomEvent("closemodalpopup", { });
 		this.dispatchEvent(closeEvent);
 	}
 
 	handleOk(event) {
-		event.preventDefault();
+        event.preventDefault();
 		const okEvent = new CustomEvent("handleokpopup", {
 			detail: {
 				selectedFiles: this.list_SelectedFiles,

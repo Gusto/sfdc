@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Prevent_Opp_Stage_From_ER_Confirm</fullName>
-    <active>true</active>
+    <active>false</active>
     <description>Preventing the opportunity to move from ER Confirm</description>
     <errorConditionFormula>ISPICKVAL(PRIORVALUE(StageName),&apos;ER Confirm&apos;)
 &amp;&amp; (RecordType.Name = &apos;Benefits New Plan&apos; || RecordType.Name = &apos;Benefits Renewal&apos;)

@@ -15,7 +15,6 @@
             </value>
         </inputParameters>
         <nameSegment>TaxComplianceController</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Auto_Solve_Email</name>
@@ -39,7 +38,6 @@
             </value>
         </inputParameters>
         <nameSegment>TaxResAutoSolveUtil</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Case_Closing_Email</name>
@@ -56,7 +54,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Parent_Case_Closing_Email_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Case_Reopening_Email</name>
@@ -73,7 +70,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Parent_Case_Reopening_Email_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_generic_email_alert</name>
@@ -93,7 +89,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Auto_Email_From_Case_Reason</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_initial_response_when_Account_Specialist_pickup_a_Case</name>
@@ -117,7 +112,6 @@
             </value>
         </inputParameters>
         <nameSegment>TaxResAutoSolveEmailHelper</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>With_SUI_rate_Send_generic_email_alert</name>
@@ -137,7 +131,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Auto_Email_From_Case_Reason</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>55.0</apiVersion>
     <assignments>
@@ -1478,7 +1471,7 @@ INCLUDES({!$Record.Mass_Email_Step__c} , &apos;SUI Rate Auto-Solve fired&apos;)<
         </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <subflows>
         <name>Send_Email_Alert</name>
         <label>Send Email Alert</label>
@@ -1533,6 +1526,7 @@ INCLUDES({!$Record.Mass_Email_Step__c} , &apos;SUI Rate Auto-Solve fired&apos;)<
         <isViewedAsPlainText>false</isViewedAsPlainText>
         <text>&lt;p&gt;{!$Record.Automation_Message__c}&lt;/p&gt;&lt;p&gt;{!$Record.Record_Type_Name__c}&lt;/p&gt;&lt;p&gt;{!$Record.Automation_Status__c}&lt;/p&gt;&lt;p&gt;{!$Record.Tax_Res_Auto_Response_Sent__c}&lt;/p&gt;&lt;p&gt;{!$User.Username}&lt;/p&gt;</text>
     </textTemplates>
+    <triggerOrder>500</triggerOrder>
     <variables>
         <name>bool_IsAnyChildCaseOpen</name>
         <dataType>Boolean</dataType>

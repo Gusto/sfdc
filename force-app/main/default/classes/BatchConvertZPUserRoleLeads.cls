@@ -51,7 +51,8 @@ public with sharing class BatchConvertZPUserRoleLeads implements Database.Batcha
 		for (Opportunity objOpportunity : [
 			SELECT Id, AccountId, ZP_Company_ID__c, OwnerId
 			FROM Opportunity
-			WHERE AccountId IN :set_AccountIds AND RecordTypeId = :ZPUserRoleUtil.COMPANY_OPPTY_RT_ID
+			WHERE AccountId IN :set_AccountIds AND (RecordTypeId = :ZPUserRoleUtil.COMPANY_OPPTY_RT_ID OR RecordTypeId = :ZPUserRoleUtil.ACQUISITION_OPPTY_RT_ID)
+			ORDER BY CreatedDate ASC
 		]) {
 			map_OpportunityByAccountId.put(objOpportunity.AccountId, objOpportunity);
 		}

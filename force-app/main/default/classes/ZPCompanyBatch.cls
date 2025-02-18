@@ -4,6 +4,7 @@
  * @see ZPCompanyBatchTest
  */
 public without sharing class ZPCompanyBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
+	public static Set<Id> set_OpptyIdsToRoute = new Set<Id>();
 	public Database.QueryLocator start(Database.BatchableContext bc) {
 		String strQuery = 'SELECT Id FROM ZP_Company__c WHERE Is_Large_Firm_Id__c = FALSE AND (Processing_State__c=\'Error\' OR Processing_State__c=\'Queued\')';
 		return Database.getQueryLocator(strQuery);

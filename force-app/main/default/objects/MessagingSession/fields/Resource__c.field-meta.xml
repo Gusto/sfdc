@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resource__c</fullName>
+    <description>Action items completed by internal recipient post chat</description>
+    <inlineHelpText>Action items completed by internal recipient post chat</inlineHelpText>
+    <label>Resource</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Resource Provided</fullName>
+                <default>false</default>
+                <label>Resource Provided</label>
+            </value>
+            <value>
+                <fullName>Resource Needed/Not Available</fullName>
+                <default>false</default>
+                <label>Resource Needed/Not Available</label>
+            </value>
+            <value>
+                <fullName>Resource Update Needed</fullName>
+                <default>false</default>
+                <label>Resource Update Needed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -9,6 +9,7 @@ import getCaseDetails from "@salesforce/apex/TaxResNoticeIndexDetailsController.
 import updateCaseForPI from "@salesforce/apex/TaxResChecklistController.updateCaseForPILateDepositAutosolve";
 import LateDepositAmountErrorMsg from '@salesforce/label/c.P_I_Late_Deposit_Amount_Error_Message';
 
+
 const list_ShelvingFields = ["Shelved_Reason__c", "Follow_Up_Date__c"];
 const PI_LATE_DEPOSIT_PARTIAL_AUTOSOLVE_FIRED = "P&I Late Deposit/Amendment Partial Auto-Solve Fired";
 const label = { LateDepositAmountErrorMsg };
@@ -53,7 +54,7 @@ export default class TaxResCaseActions extends LightningElement {
 	getCurrentCaseDetails() {
 		return new Promise((resolve, reject) => {
 			this.blnIsLoading = true;
-
+			
 			getCaseDetails({strCaseId : this.recordId})
 				.then((result) => {
 					//if record is retrieved successfully
@@ -95,6 +96,7 @@ export default class TaxResCaseActions extends LightningElement {
 				this.blnIsJira = false;
 			}
 		}
+
 		if (event.target.name === "confirmAutosolve" || event.target.name === "declineAutosolve") {
 			this.confirmDeclineAutosolve(event.target.name);
 		}
@@ -103,7 +105,7 @@ export default class TaxResCaseActions extends LightningElement {
 	confirmDeclineAutosolve(action) {
 		return new Promise((resolve, reject) => {
 			this.blnIsLoading = true;
-
+			
 			getCaseDetails({strCaseId : this.recordId})
 				.then((result) => {
 					//if record is retrieved successfully

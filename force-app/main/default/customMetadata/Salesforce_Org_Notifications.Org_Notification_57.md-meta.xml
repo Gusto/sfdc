@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>Payops_Notification__c</field>
-        <value xsi:type="xsd:boolean">true</value>
+        <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>
         <field>Point_Of_Contact__c</field>
@@ -40,6 +40,6 @@
     </values>
     <values>
         <field>SOQL_Query__c</field>
-        <value xsi:type="xsd:string">SELECT COUNT() FROM case WHERE Automation_Message__c = &apos;Auto-Solve Batch&apos; AND Status != &apos;Solved&apos; AND Status != &apos;Closed&apos; AND Automation_Status__c = &apos;Failed&apos; AND Mass_Email_Step__C != null AND Automation_Message_Follow_Up__c != &apos;The case has multiple attachments so could not auto close the case&apos; AND Automation_Message_Follow_Up__c != &apos;The contact email address is marked as bounced&apos;</value>
+        <value xsi:type="xsd:string">SELECT COUNT() FROM case WHERE Automation_Message__c = &apos;Auto-Solve Batch&apos; AND Status != &apos;Solved&apos; AND Status != &apos;Closed&apos; AND Automation_Status__c = &apos;Failed&apos; AND Mass_Email_Step__C != null</value>
     </values>
 </CustomMetadata>

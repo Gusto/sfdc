@@ -5,7 +5,7 @@
     <description>Prevent update of Number of Employees and Amount after the end of the third month from the close date for Sales Opportunities.</description>
     <errorConditionFormula>NOT($User.Exempt_from_Validation_Rules__c) &amp;&amp;
 (ISCHANGED(Amount) || ISCHANGED(NumberOfEmployees__c)) &amp;&amp;
-(RecordType.Name == &apos;Company Opportunity&apos; || RecordType.Name == &apos;Benefits New Plan&apos; || RecordType.Name == &apos;Benefits BoR&apos; || RecordType.Name == &apos;Benefits QSEHRA&apos;)&amp;&amp;
+(RecordType.Name == &apos;Acquisition&apos; || RecordType.Name == &apos;Benefits New Plan&apos; || RecordType.Name == &apos;Benefits BoR&apos;)&amp;&amp;
 (TODAY() &gt; IF( MONTH(ADDMONTHS(Closed_Won_Date__c,2)) = 12,
 DATE(YEAR(ADDMONTHS(Closed_Won_Date__c,2)),12,31),
 DATE(YEAR(ADDMONTHS(Closed_Won_Date__c,2)),MONTH(ADDMONTHS(Closed_Won_Date__c,2)) + 1, 1) - 1))</errorConditionFormula>

@@ -3,7 +3,7 @@
     <fullName>Tier_Upsell_Opportunity</fullName>
     <active>true</active>
     <businessProcess>Upsell Opportunity Process</businessProcess>
-    <description>Used to track sales for upgrades of Tier or Add Ons, or new Employee of Record and International Contractor Payment sales</description>
+    <description>Tier Upsell Opportunity</description>
     <label>Tier Upsell Opportunity</label>
     <picklistValues>
         <picklist>ACH_Speed__c</picklist>
@@ -1078,10 +1078,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Contractor Only</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Core</fullName>
             <default>false</default>
         </values>
@@ -1107,10 +1103,6 @@
         </values>
         <values>
             <fullName>Simple</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Wholesale</fullName>
             <default>false</default>
         </values>
         <values>
@@ -1144,11 +1136,11 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>another_provider</fullName>
+            <fullName>We%27re new to running payroll</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>new</fullName>
+            <fullName>another_provider</fullName>
             <default>false</default>
         </values>
         <values>
@@ -1158,6 +1150,10 @@
     </picklistValues>
     <picklistValues>
         <picklist>Currently_Offer_Health_Benefits__c</picklist>
+        <values>
+            <fullName>NOT_YET</fullName>
+            <default>false</default>
+        </values>
         <values>
             <fullName>No</fullName>
             <default>false</default>
@@ -1524,7 +1520,27 @@
     <picklistValues>
         <picklist>Hold_Out_Record__c</picklist>
         <values>
+            <fullName>Hold Out - After Hours - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Catch All - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Catch All 2 - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Hold Out - Greeter - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Missed APD - SBOB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hold Out - Upcoming APD - SBOB</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1617,10 +1633,6 @@
         </values>
         <values>
             <fullName>Direct Signup</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>F90 25%2B</fullName>
             <default>false</default>
         </values>
         <values>
@@ -1757,10 +1769,6 @@
         </values>
         <values>
             <fullName>Sales Inquiry</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Sandbox %2B High Risk</fullName>
             <default>false</default>
         </values>
         <values>
@@ -3731,10 +3739,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Day 2 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Day 30 Stalled in Onboarding - SBOB</fullName>
             <default>false</default>
         </values>
@@ -3744,26 +3748,6 @@
         </values>
         <values>
             <fullName>Day 7 Stalled in Onboarding - SBOB</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 10 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 14 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 3 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 5 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 7 - dSDR</fullName>
             <default>false</default>
         </values>
         <values>
@@ -3830,10 +3814,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Day 2 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Day 30 Stalled in Onboarding - SBOB</fullName>
             <default>false</default>
         </values>
@@ -3843,26 +3823,6 @@
         </values>
         <values>
             <fullName>Day 7 Stalled in Onboarding - SBOB</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 10 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 14 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 3 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 5 - dSDR</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Direct SDR Day 7 - dSDR</fullName>
             <default>false</default>
         </values>
         <values>
@@ -4306,10 +4266,6 @@
         <picklist>Type</picklist>
         <values>
             <fullName>Cross Sell</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Tier Upsell</fullName>
             <default>false</default>
         </values>
         <values>

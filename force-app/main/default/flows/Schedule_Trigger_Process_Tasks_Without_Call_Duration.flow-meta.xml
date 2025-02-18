@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <assignments>
+        <name>Add_Task_For_Update</name>
+        <label>Add Task For Update</label>
+        <locationX>704</locationX>
+        <locationY>2148</locationY>
+        <assignmentItems>
+            <assignToReference>TasksToUpdate</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Over_Tasks_To_Process</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Over_Tasks_To_Process</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Call_End_Date_Time</name>
+        <label>Assign Call End Date Time</label>
+        <locationX>704</locationX>
+        <locationY>1824</locationY>
+        <assignmentItems>
+            <assignToReference>DateTimeString</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Over_All_Nice_Interactions.Call_End_Date_and_Time__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Populate_Task_End_Time</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Call_Start_Date_Time</name>
+        <label>Assign Call Start Date Time</label>
+        <locationX>704</locationX>
+        <locationY>1284</locationY>
+        <assignmentItems>
+            <assignToReference>DateTimeString</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Over_All_Nice_Interactions.Call_Start_Date_and_Time__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>test_ass_1</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Collect Filtered Tasks To Process</description>
+        <name>Collect_Filtered_Tasks_To_Process</name>
+        <label>Collect Filtered Tasks To Process</label>
+        <locationX>440</locationX>
+        <locationY>576</locationY>
+        <assignmentItems>
+            <assignToReference>Tasks_To_Process</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Over_All_Tasks_Fetched</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Genesys_Ids_To_Process</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Over_All_Tasks_Fetched.Genesys_Interaction_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Over_All_Tasks_Fetched</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Populate task duration from nice interaction</description>
+        <name>Populate_Task_Duration</name>
+        <label>Populate Task Duration</label>
+        <locationX>704</locationX>
+        <locationY>2040</locationY>
+        <assignmentItems>
+            <assignToReference>Loop_Over_Tasks_To_Process.CallDurationInSeconds</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>ConvertDurationToNumber</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_Task_For_Update</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Populate Task date completed with call end time from nice interaction</description>
+        <name>Populate_Task_End_Time</name>
+        <label>Populate Task End Time</label>
+        <locationX>704</locationX>
+        <locationY>1932</locationY>
+        <assignmentItems>
+            <assignToReference>Loop_Over_Tasks_To_Process.Date_Completed__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CalculatedDateTIme</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Populate_Task_Duration</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Populate Task Start Time with call start time from nice interaction</description>
+        <name>Populate_Task_Start_Time</name>
+        <label>Populate Task Start Time</label>
+        <locationX>704</locationX>
+        <locationY>1716</locationY>
+        <assignmentItems>
+            <assignToReference>Loop_Over_Tasks_To_Process.Start_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CalculatedDateTIme</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Assign_Call_End_Date_Time</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>test_ass_1</name>
+        <label>test ass 1</label>
+        <locationX>704</locationX>
+        <locationY>1392</locationY>
+        <assignmentItems>
+            <assignToReference>test</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>FormattedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>test_ass_2</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>test_ass_2</name>
+        <label>test ass 2</label>
+        <locationX>704</locationX>
+        <locationY>1500</locationY>
+        <assignmentItems>
+            <assignToReference>test</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>FormattedTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>test_ass_3</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>test_ass_3</name>
+        <label>test ass 3</label>
+        <locationX>704</locationX>
+        <locationY>1608</locationY>
+        <assignmentItems>
+            <assignToReference>test</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CalculatedDateTIme</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Populate_Task_Start_Time</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Check Genesys Id not Random</description>
+        <name>Check_Genesys_Id_not_Random</name>
+        <label>Check Genesys Id not Random</label>
+        <locationX>352</locationX>
+        <locationY>468</locationY>
+        <defaultConnector>
+            <targetReference>Collect_Filtered_Tasks_To_Process</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Valid Genesys Id</defaultConnectorLabel>
+        <rules>
+            <name>Invalid_Genesys_Id</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Over_All_Tasks_Fetched.Genesys_Interaction_Id__c</leftValueReference>
+                <operator>StartsWith</operator>
+                <rightValue>
+                    <stringValue>FK-</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Loop_Over_All_Tasks_Fetched</targetReference>
+            </connector>
+            <label>Invalid Genesys Id</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Match_genesys_Id</name>
+        <label>Match genesys Id</label>
+        <locationX>836</locationX>
+        <locationY>1176</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Over_Tasks_To_Process</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No match</defaultConnectorLabel>
+        <rules>
+            <name>Equal</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Over_Tasks_To_Process.Genesys_Interaction_Id__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Loop_Over_All_Nice_Interactions.ContactID__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Call_Start_Date_Time</targetReference>
+            </connector>
+            <label>Equal</label>
+        </rules>
+    </decisions>
+    <description>Used to process all call tasks without call duration that have a nice interaction id.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>CalculatedDateTIme</name>
+        <dataType>DateTime</dataType>
+        <expression>DATETIMEVALUE({!FormattedDate} + &apos; &apos; + {!FormattedTime}) + 7</expression>
+    </formulas>
+    <formulas>
+        <name>ConvertDurationToNumber</name>
+        <dataType>Number</dataType>
+        <expression>VALUE({!Loop_Over_All_Nice_Interactions.Call_Duration_in_Sec__c})</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Extract Date Part</description>
+        <name>DatePart</name>
+        <dataType>String</dataType>
+        <expression>LEFT({!DateTimeString}, FIND(&apos; &apos;, {!DateTimeString}) - 1)</expression>
+    </formulas>
+    <formulas>
+        <name>FormattedDate</name>
+        <dataType>String</dataType>
+        <expression>RIGHT({!DatePart}, 4) + &apos;-&apos; +
+LEFT({!DatePart}, FIND(&apos;/&apos;, {!DatePart}) - 1) + &apos;-&apos; + 
+TRIM(MID({!DatePart}, FIND(&apos;/&apos;, {!DatePart}) +1 , FIND(&apos;/&apos;, {!DatePart} , FIND(&apos;/&apos;, {!DatePart}) +1 ) -  FIND(&apos;/&apos;, {!DatePart})-1))</expression>
+    </formulas>
+    <formulas>
+        <name>FormattedTime</name>
+        <dataType>String</dataType>
+        <expression>CASE(
+{!MeridiemPart}, 
+&apos;PM&apos;, 
+IF (LEFT({!TimePart}, FIND(&apos;:&apos;, {!TimePart}) - 1) != &apos;12&apos;, TEXT(VALUE(LEFT({!TimePart}, FIND(&apos;:&apos;, {!TimePart}) - 1)) + 12), LEFT({!TimePart}, FIND(&apos;:&apos;, {!TimePart}) - 1)),
+LEFT({!TimePart}, FIND(&apos;:&apos;, {!TimePart}) - 1)
+) + &apos;:&apos; + 
+TRIM(MID({!TimePart}, FIND(&apos;:&apos;, {!TimePart}) +1 , FIND(&apos;:&apos;, {!TimePart} , FIND(&apos;:&apos;, {!TimePart}) +1 ) -  FIND(&apos;:&apos;, {!TimePart})-1)) + &apos;:&apos; +
+RIGHT({!TimePart}, 2)</expression>
+    </formulas>
+    <formulas>
+        <name>MeridiemPart</name>
+        <dataType>String</dataType>
+        <expression>RIGHT({!DateTimeString}, 2)</expression>
+    </formulas>
+    <formulas>
+        <description>Extract Time Part</description>
+        <name>TimePart</name>
+        <dataType>String</dataType>
+        <expression>TRIM(MID({!DateTimeString}, FIND(&apos; &apos;, {!DateTimeString}) +1 , FIND(&apos; &apos;, {!DateTimeString} , FIND(&apos; &apos;, {!DateTimeString}) +1 ) -  FIND(&apos; &apos;, {!DateTimeString})))</expression>
+    </formulas>
+    <interviewLabel>Schedule Trigger: Process Tasks Without Call Duration {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Schedule Trigger: Process Tasks Without Call Duration</label>
+    <loops>
+        <description>Loop Over All Nice Interactions</description>
+        <name>Loop_Over_All_Nice_Interactions</name>
+        <label>Loop Over All Nice Interactions</label>
+        <locationX>176</locationX>
+        <locationY>960</locationY>
+        <collectionReference>Get_Nice_Interactions</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Loop_Over_Tasks_To_Process</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Update_Tasks</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <description>Loop Over All Tasks Fetched</description>
+        <name>Loop_Over_All_Tasks_Fetched</name>
+        <label>Loop Over All Tasks Fetched</label>
+        <locationX>176</locationX>
+        <locationY>360</locationY>
+        <collectionReference>Get_Tasks_Without_Call_Duration</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_Genesys_Id_not_Random</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Nice_Interactions</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_Over_Tasks_To_Process</name>
+        <label>Loop Over Tasks To Process</label>
+        <locationX>616</locationX>
+        <locationY>1068</locationY>
+        <collectionReference>Tasks_To_Process</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Match_genesys_Id</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Loop_Over_All_Nice_Interactions</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Update_Exception</name>
+        <label>Update Exception</label>
+        <locationX>440</locationX>
+        <locationY>2616</locationY>
+        <inputAssignments>
+            <field>Message__c</field>
+            <value>
+                <stringValue>Task update failed in Schedule Trigger: Process Tasks Without Call Duration flow</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Exception_Log__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <description>Get Nice Interaction records related related to the tasks to process</description>
+        <name>Get_Nice_Interactions</name>
+        <label>Get Nice Interactions</label>
+        <locationX>176</locationX>
+        <locationY>852</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Over_All_Nice_Interactions</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>ContactID__c</field>
+            <operator>In</operator>
+            <value>
+                <elementReference>Genesys_Ids_To_Process</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>NICE_Interaction__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Fetch all call tasks without duration that have a nice interaction Id associated</description>
+        <name>Get_Tasks_Without_Call_Duration</name>
+        <label>Get Tasks Without Call Duration</label>
+        <locationX>176</locationX>
+        <locationY>252</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Over_All_Tasks_Fetched</targetReference>
+        </connector>
+        <filterLogic>(1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9 OR 10) AND 11 AND 12 AND (13 OR 14)</filterLogic>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Call</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Inbound Call</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Outbound Call</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Scheduled Call</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Qualification Call</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Regular Call</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>New Partner Onboarding</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Other</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Pitch w/o Demo</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Pitch/Demo</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Genesys_Interaction_Id__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>CallDurationInSeconds</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Connect</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Voicemail</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Task</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>CallDurationInSeconds</queriedFields>
+        <queriedFields>Genesys_Interaction_Id__c</queriedFields>
+        <queriedFields>Date_Completed__c</queriedFields>
+        <queriedFields>Start_Date__c</queriedFields>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Asc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Tasks</name>
+        <label>Update Tasks</label>
+        <locationX>176</locationX>
+        <locationY>2508</locationY>
+        <faultConnector>
+            <targetReference>Update_Exception</targetReference>
+        </faultConnector>
+        <inputReference>TasksToUpdate</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Tasks_Without_Call_Duration</targetReference>
+        </connector>
+        <schedule>
+            <frequency>Once</frequency>
+            <startDate>2024-05-07</startDate>
+            <startTime>09:30:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <name>currentItemFromSourceCollection</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+    <variables>
+        <name>DateTimeString</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Collect all nice interaction Ids to process</description>
+        <name>Genesys_Ids_To_Process</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Filter all fetched tasks to remove ones that have Genesys interaction Id beginning with &quot;FK-&quot;</description>
+        <name>Tasks_To_Process</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+    <variables>
+        <name>TasksToUpdate</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+    <variables>
+        <name>test</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

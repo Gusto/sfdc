@@ -7,7 +7,7 @@ public class TaskUtil {
 	public final static Id TASK_CALL_RT_ID = Cache.getRecordTypeId('Task', 'Call');
 	public static final Id TASK_CHAT_RT_ID = Cache.getRecordTypeId('Task', 'Chat');
 	public static final Id TASK_ADVISING_CALL_RT_ID = Cache.getRecordTypeId('Task', 'Advising Call');
-	public static final String TASK_BENEFIT_FULFILLMENT_RT_ID = RecordTypes.getRecordTypeIdFromDeveloperName('Task', 'Benefits_Fulfillment');
+	public static final String TASK_BENEFIT_FULFILLMENT_RT_ID = Cache.getRecordTypeIdFromDeveloperName('Task', 'Benefits_Fulfillment');
 	public final static Id ARDIUS_TICKET_RT_ID = RecordTypes.getRecordTypeIdFromDeveloperName('Ticket__c', 'Ardius');
 
 	// Status:
@@ -61,6 +61,7 @@ public class TaskUtil {
 	public static final String TASK_SUBJECT_REVISION_NEEDED = 'Revisions';
 	public static final String TASK_SUBJECT_APPROVAL_CALL = 'Approval Call - ';
 	public static final String TASK_FEATURE_REQUEST = 'TSK_Approval_Call';
+	public static final String TASK_RD_EVALUATION_CALL = 'R&D Evaluation Call';
 
 	public static final String USER_PROFILE_NAME_BENEFITS_CARE = 'Benefits Care';
 	public static final String USER_PROFILE_NAME_PAYROLL_CARE = 'Payroll Care';
@@ -70,7 +71,7 @@ public class TaskUtil {
 	public static final String USER_PROFILE_NAME_GUSTO_DIRECT_MDR = 'Gusto Direct MDR';
 	public static final String USER_PROFILE_PARTNER_AE = '_del_ZP Partner AE';
 	public static final String USER_PROFILE_SDR = '_del_ZP SDR';
-    	public static final String USER_PERMISSION_SET_TASK_RECORD_TYPE_UPDATE = 'TaskRecordTypeUpdate';
+	public static final String USER_PERMISSION_SET_TASK_RECORD_TYPE_UPDATE = 'TaskRecordTypeUpdate';
 
 	public static final String USER_NAME_MARKETO = 'marketo';
 	public static final String USER_ROLE_SALES = 'sales';
@@ -114,7 +115,7 @@ public class TaskUtil {
 	public static final String OUTREACH_APPLICATION = 'Outreach Application';
 
 	public static final String ARDIUS_TASK_TEMPLATE = 'Ardius Task';
-    	public static final String NICE_CXONE_CLASSIC = 'NICE CXone Classic';//Added by Sujan for BPO-1990
+	public static final String NICE_CXONE_CLASSIC = 'NICE CXone Classic';//Added by Sujan for BPO-1990
 
 	public final static Set<String> set_MDRTaskRecTypes {
 		get {
@@ -151,4 +152,25 @@ public class TaskUtil {
 
 	public final static Set<String> set_ValidationErrorsToIgnoreLogging = new Set<String>{ 'The owner cannot be changed once an opportunity is closed', '\'Lead Status Detail\' is required' };
 	public final static String PARENT_CARRIER_CASE_CLOSED_TASK_DESCRIPTION = 'A response was received on the carrier communications case associated to this Carrier Order. Please review the carrier response and determine if action needs to be taken.';
+
+	private static Set<Id> set_CoreCsRnDGustieIds_backup = null;
+	/**
+	 * @description Get Core CSM Users for Ardius
+	 * @return      Set<Id>
+	 */
+	public static Set<Id> getCoreCSRnDGusties() {
+		if (set_CoreCsRnDGustieIds_backup != null) {
+			return set_CoreCsRnDGustieIds_backup;
+		}
+
+		Ardius_Configuration__c objArdiusConfiguration = Ardius_Configuration__c.getInstance();
+		Set<Id> set_CoreCsRnDGustieIds = new Set<Id>();
+		if (objArdiusConfiguration.Core_CS_RnD_Gustie__c != null) {
+			for (String strUserId : objArdiusConfiguration.Core_CS_RnD_Gustie__c.split(';')) {
+				set_CoreCsRnDGustieIds.add(strUserId);
+			}
+		}
+		set_CoreCsRnDGustieIds_backup = set_CoreCsRnDGustieIds;
+		return set_CoreCsRnDGustieIds;
+	}
 }

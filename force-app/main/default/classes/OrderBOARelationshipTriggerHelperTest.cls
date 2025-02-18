@@ -78,7 +78,7 @@ public class OrderBOARelationshipTriggerHelperTest {
 			HI_Effective_Date__c = system.today().addDays(30)
 		);
 		//opp1.RecordTypeId = cache.getRecordTypeId('Opportunity', 'Benefits Renewal');
-		opp1.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp1.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		insert opp1;
 
 		Transition_to_Fulfillment__c rec = new Transition_to_Fulfillment__c(
@@ -158,5 +158,22 @@ public class OrderBOARelationshipTriggerHelperTest {
 		if (lst_boas.size() > 0 && lst_orders.size() > 0) {
 			insert new Order_BOA_Relationship__c(Orders__c = lst_orders.get(0).Id, Benefit_Order_Allocation__c = lst_boas.get(0).id);
 		}
+	}
+
+	@isTest
+	static void deleteRecordTestMethod() {
+		list<Order> lst_orders = [SELECT id FROM Order];
+		list<Benefit_Order_Allocation__c> lst_boas = [SELECT id FROM Benefit_Order_Allocation__c];
+
+		if (lst_boas.size() > 0 && lst_orders.size() > 0) {
+			insert new Order_BOA_Relationship__c(Orders__c = lst_orders.get(0).Id, Benefit_Order_Allocation__c = lst_boas.get(0).id);
+		}
+
+		Test.startTest();
+		List<Order_BOA_Relationship__c> list_orderBOARelationship = [SELECT id FROM  Order_BOA_Relationship__c];
+		if (list_orderBOARelationship.size() > 0) {
+			delete list_orderBOARelationship;
+		}
+		Test.stopTest();
 	}
 }

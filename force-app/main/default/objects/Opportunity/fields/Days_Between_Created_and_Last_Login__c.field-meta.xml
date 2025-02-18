@@ -4,7 +4,7 @@
     <description>Note: The Last Login Time is only populated until the first payroll opportunity is closed.</description>
     <externalId>false</externalId>
     <formula>IF(
-  (RecordType.Name == &apos;Company Opportunity&apos; &amp;&amp; NOT(IsClosed)),  
+  (RecordType.Name == &apos;Acquisition&apos; &amp;&amp; NOT(IsClosed)),  
   Account.Last_Login_Time__c - CreatedDate,
   VALUE(&apos;&apos;)
 )</formula>

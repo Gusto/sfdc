@@ -16,7 +16,8 @@ Opportunity__r.Is_Fraud__c = false,
 Opportunity__r.Potential_Fraud_Opportunity_Formula__c = false,
 Opportunity__r.ZP_Company_Approval_Status__c != &apos;rejected&apos;,
 Opportunity__r.ZP_Company_ID__c != null,
-Opportunity__r.RecordType.Name = &apos;Company Opportunity&apos;,
+Opportunity__r.RecordType.Name = &apos;Acquisition&apos;,
+ISPICKVAL(Opportunity__r.Type,&apos;New Business&apos;),
 Opportunity__r.Account_Overall_Status__c != &apos;Suspended&apos;
 )</formula>
     <label>Sbiz Eligible</label>

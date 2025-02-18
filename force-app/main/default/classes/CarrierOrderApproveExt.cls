@@ -100,6 +100,7 @@ public class CarrierOrderApproveExt {
 
 	private void BindPickList() {
 		lstImplementationStage = new List<SelectOption>();
+		String recordTypeName = Schema.getGlobalDescribe().get('Carrier_Order__c').getDescribe().getRecordTypeInfosById().get(carrierObj.recordTypeId).getName();
 		for (SelectOption status : Cache.getFieldPickListValues('Carrier_Order__c', 'Implementation_Stage__c')) {
 			//Changes by DS dated 02nd Nov 2019
 			//Given by Ashveej
@@ -116,6 +117,9 @@ public class CarrierOrderApproveExt {
 			}
 
 			if (status.getLabel().containsIgnoreCase('Approved')) {
+				lstImplementationStage.add(status);
+			}
+			if (recordTypeName == 'Renewal' && status.getLabel().containsIgnoreCase('Approved Pending EE Audit')) {
 				lstImplementationStage.add(status);
 			}
 		}

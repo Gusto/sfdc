@@ -5,7 +5,7 @@
         <name>Assign_Case_Fields1</name>
         <label>Assign Case Fields</label>
         <locationX>50</locationX>
-        <locationY>947</locationY>
+        <locationY>1247</locationY>
         <assignmentItems>
             <assignToReference>CaseFieldsToUpdate.Benefits_Owner_Class__c</assignToReference>
             <operator>Assign</operator>
@@ -33,7 +33,7 @@
         <name>Assign_Case_Fields2</name>
         <label>Assign Case Fields</label>
         <locationX>314</locationX>
-        <locationY>1055</locationY>
+        <locationY>1355</locationY>
         <assignmentItems>
             <assignToReference>CaseFieldsToUpdate.Benefits_Owner_Class__c</assignToReference>
             <operator>Assign</operator>
@@ -70,7 +70,7 @@
         <name>Assign_Case_Fields3</name>
         <label>Assign Case Fields</label>
         <locationX>578</locationX>
-        <locationY>1055</locationY>
+        <locationY>1355</locationY>
         <assignmentItems>
             <assignToReference>CaseFieldsToUpdate.Benefits_Owner_Class__c</assignToReference>
             <operator>Assign</operator>
@@ -104,10 +104,27 @@
         </connector>
     </assignments>
     <assignments>
+        <description>Reset the &apos;Omni Trigger Flag&apos; on case, so that the case follows traditional omni channel path</description>
+        <name>Reset_Omni_Trigger_Flag</name>
+        <label>Reset Omni Trigger Flag</label>
+        <locationX>314</locationX>
+        <locationY>539</locationY>
+        <assignmentItems>
+            <assignToReference>CaseFieldsToUpdate.Trigger_Omni_Flow__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>UpdateCaseStatus</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>Set_Permission_Not_Granted_as_Auto_Solve_Status</name>
         <label>Set Permission Not Granted as Auto Solve Status</label>
         <locationX>314</locationX>
-        <locationY>647</locationY>
+        <locationY>947</locationY>
         <assignmentItems>
             <assignToReference>CaseFieldsToUpdate.Auto_Solve_Status__c</assignToReference>
             <operator>Assign</operator>
@@ -124,7 +141,7 @@
         <name>UpdateCaseStatus</name>
         <label>Update Case Status</label>
         <locationX>446</locationX>
-        <locationY>431</locationY>
+        <locationY>731</locationY>
         <assignmentItems>
             <assignToReference>CaseFieldsToUpdate.Id</assignToReference>
             <operator>Assign</operator>
@@ -155,7 +172,7 @@
         <name>Case_Eligible_for_Solve_Permission_Not_Granted</name>
         <label>Case Eligible for Solve Permission Not Granted</label>
         <locationX>446</locationX>
-        <locationY>539</locationY>
+        <locationY>839</locationY>
         <defaultConnector>
             <targetReference>Polpulate_Case_owner</targetReference>
         </defaultConnector>
@@ -187,7 +204,7 @@
         <name>Is_the_Secondary_Owner_Null1</name>
         <label>Is the Secondary Owner Null?</label>
         <locationX>446</locationX>
-        <locationY>947</locationY>
+        <locationY>1247</locationY>
         <defaultConnector>
             <targetReference>Assign_Case_Fields3</targetReference>
         </defaultConnector>
@@ -209,10 +226,36 @@
         </rules>
     </decisions>
     <decisions>
+        <description>&apos;Trigger Omni Flow&apos; is a checkbox that is set on case, when a solve recommendation was sent on the case previously.</description>
+        <name>Omni_Trigger_Flag_Check</name>
+        <label>Omni Trigger Flag Check</label>
+        <locationX>446</locationX>
+        <locationY>431</locationY>
+        <defaultConnector>
+            <targetReference>UpdateCaseStatus</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Set_to_True</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Case.Trigger_Omni_Flow__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reset_Omni_Trigger_Flag</targetReference>
+            </connector>
+            <label>Set to True</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Polpulate_Case_owner</name>
         <label>Polpulate Case owner</label>
         <locationX>446</locationX>
-        <locationY>839</locationY>
+        <locationY>1139</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>If_Case_Owner_is_group</name>
@@ -264,7 +307,8 @@
 - Removed references to Prior_Agent__c
 - Integrate Solve with Omni
 - Blank out &apos;Solve Trigger Time&apos;
-- BTE-4205- Automate Auto-Solve Status on Case</description>
+- BTE-4205- Automate Auto-Solve Status on Case
+- BTE-4480: Auto-Solve Auto-Send Automation</description>
     <environments>Default</environments>
     <formulas>
         <name>FormulaDateTimeBlank</name>
@@ -300,7 +344,7 @@
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>UpdateCaseStatus</targetReference>
+            <targetReference>Omni_Trigger_Flag_Check</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -318,7 +362,7 @@
         <name>Update_Case</name>
         <label>Update Case</label>
         <locationX>446</locationX>
-        <locationY>1331</locationY>
+        <locationY>1631</locationY>
         <inputReference>CaseFieldsToUpdate</inputReference>
     </recordUpdates>
     <start>

@@ -8,6 +8,7 @@ NOT(Incoming),
 ISPICKVAL(Parent.Auto_Solve_Status__c, &apos;Eligible&apos;),
 NOT(ISPICKVAL(Parent.QA_Status__c, &apos;Approved&apos;)),
 NOT(ISPICKVAL(Parent.QA_Status__c, &apos;Rejected&apos;)),
-NOT(Solve_Email__c))</errorConditionFormula>
+NOT(Solve_Email__c),
+NOT(BEGINS(TextBody, &apos;Chat Started&apos;)))</errorConditionFormula>
     <errorMessage>There is a valid auto-solve response on this Case that needs to be approved or rejected before you will be able to manually email the customer. To prevent losing the email you&apos;ve composed, copy it before you proceed with the auto-solve QA process.</errorMessage>
 </ValidationRule>

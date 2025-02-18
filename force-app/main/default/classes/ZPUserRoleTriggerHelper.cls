@@ -838,16 +838,9 @@ public class ZPUserRoleTriggerHelper {
 			set_OppRecordTypeIds.add(ZPUserRoleUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID);
 			set_OppRecordTypeIds.add(ZPUserRoleUtil.BENEFITS_RENEWAL_OPPTY_RT_ID);
 			set_OppRecordTypeIds.add(ZPUserRoleUtil.BENEFITS_BYOB_OPPTY_RT_ID);
+			set_OppRecordTypeIds.add(ZPUserRoleUtil.ACQUISITION_OPPTY_RT_ID);
 		}
 
-		if (
-			set_UserRoleNames.contains(PRIMARY_PAYROLL_ADMIN) ||
-			set_UserRoleNames.contains(PAYROLL_ADMIN) ||
-			set_UserRoleNames.contains(BENEFIT_SIGNATORY) ||
-			set_UserRoleNames.contains(BENEFITS_ADMIN)
-		) {
-			set_OppRecordTypeIds.add(ZPUserRoleUtil.BENEFITS_QSEHRA_OPPTY_RT_ID);
-		}
 
 		for (Opportunity objOpportunity : queryOpportunities(set_AccountIds, set_OppRecordTypeIds, set_AllowedRoles)) {
 			for (OpportunityContactRole objOppConRole : objOpportunity.OpportunityContactRoles) {

@@ -4,8 +4,8 @@ public class SendComplianceToAsanaRoutingTest {
     @TestSetup
     static void setupTestData() {
         Test.setMock(HttpCalloutMock.class, new ComplianceToAsanaCalloutMock(200));
-        Case objParentCase = TestDataFactory.createCaseRecord('Compliance', true);
-        Case objChildCase = TestDataFactory.createCaseRecord('Compliance', true);
+        Case objParentCase = TestDataFactory.createCaseRecord('Compliance', false);
+        Case objChildCase = TestDataFactory.createCaseRecord('Compliance', false);
                 
         Account objAccount = TestDataFactory.CompanyAccount();
         Contact objContact = TestDataFactory.createTestContact(objAccount.Id);
@@ -13,6 +13,8 @@ public class SendComplianceToAsanaRoutingTest {
         insert objAgencyInfo;
        
         List<Case> list_cases = new List<Case>();
+        list_cases.add(objParentCase);
+        list_cases.add(objChildCase);
         Case objCase = new TestDataFactory.CaseBuilder()
             .setRecordTypeId('Compliance')
             .setAccountId(objAccount.Id)
@@ -23,7 +25,8 @@ public class SendComplianceToAsanaRoutingTest {
             .setStatus('Open')
             .setOwnerId(UserInfo.getUserId())
             .build();
-        insert objCase;
+        list_cases.add(objCase);
+        insert list_cases;
         
         Case objCase1 = new TestDataFactory.CaseBuilder()
             .setRecordTypeId('Compliance')
@@ -45,7 +48,7 @@ public class SendComplianceToAsanaRoutingTest {
     static void testAutopopulationOnChildCase1() {
         
         // Parent case
-        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c,CreatedDate,Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
+        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c,ParentId,CreatedDate,Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
         Case objParentCase = list_Cases[0];
         
         Case objChildCase = list_Cases[1];
@@ -70,15 +73,14 @@ public class SendComplianceToAsanaRoutingTest {
         objTaxCompliance.Eng_Status__c = 'In progress';
         objTaxCompliance.Follow_up_Date__c = System.Today();
         objTaxCompliance.Agency_Due_Date__c = System.Today().addDays(2);
+        Test.startTest();
         update objTaxCompliance;
         
-        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c FROM  Tax_Compliance__c limit 1]);                                                                  
+        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c,Case__r.Parent.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c,Eng_Size_Estimate__c,Eng_Estimated_Launch_Date__c FROM  Tax_Compliance__c limit 1]);                                                                  
         SendComplianceToAsanaRouting.RequestWrapperUpdate objRequestWrapperUpdate = new SendComplianceToAsanaRouting.RequestWrapperUpdate(mapTaxCompliance.values()[0],objParentCase,'783728');
         SendComplianceToAsanaRouting objSendComplianceToAsanaRouting1 = new SendComplianceToAsanaRouting(mapTaxCompliance, false);
         String strUpdateResponse = '{"status":"success","event_id":"a96269a0-1a11-11ef-abaf-02208e4ca769","message":"update"}';
         ComplianceAsanaUpdateResponse objResponseUpdateWrapper = ComplianceAsanaUpdateResponse.parse(strUpdateResponse);
-        
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ComplianceToAsanaCalloutMock(200));
         System.enqueueJob(objSendComplianceToAsanaRouting1);
         Test.stopTest();
@@ -91,7 +93,7 @@ public class SendComplianceToAsanaRoutingTest {
     static void testAutopopulationOnChildCase2() {
         
         // Parent case
-        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c,CreatedDate,Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
+        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c,CreatedDate,ParentId,Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
         Case objParentCase = list_Cases[0];
         
         Case objChildCase = list_Cases[1];
@@ -116,16 +118,15 @@ public class SendComplianceToAsanaRoutingTest {
         objTaxCompliance.Eng_Status__c = 'In progress';
         objTaxCompliance.Follow_up_Date__c = System.Today();
         objTaxCompliance.Agency_Due_Date__c = System.Today().addDays(2);
+        Test.startTest();
         update objTaxCompliance;
-        
-        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c FROM  Tax_Compliance__c limit 1]);
+
+        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.ParentId,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c,Case__r.Parent.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c,Eng_Size_Estimate__c,Eng_Estimated_Launch_Date__c FROM  Tax_Compliance__c limit 1]);
         SendComplianceToAsanaRouting.RequestWrapperInsert objRequestWrapperInsert = new SendComplianceToAsanaRouting.RequestWrapperInsert(mapTaxCompliance.values()[0],objParentCase,'1206129625555843','783728');
         SendComplianceToAsanaRouting objSendComplianceToAsanaRouting2 = new SendComplianceToAsanaRouting(mapTaxCompliance, true);
         Asana_Project_Detail__mdt objAsanaProjectDetail = Asana_Project_Detail__mdt.getInstance('Gusto_Compliance_Watchlist_RoadMap');
         String strInsertResponse = '{"status":"success","event_id":"a96269a0-1a11-11ef-abaf-02208e4ca769","error_message":"test","message":{"asana_task_id":"12345"}}'; 
         ComplianceAsanaIntegrationResponse objResponseWrapper = ComplianceAsanaIntegrationResponse.parse(strInsertResponse);
- 
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ComplianceToAsanaCalloutMock(200));  
         System.enqueueJob(objSendComplianceToAsanaRouting2);
         Test.stopTest();
@@ -137,7 +138,7 @@ public class SendComplianceToAsanaRoutingTest {
     static void testAutopopulationOnChildCaseExceptionHandle() {
         
         // Parent case
-        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c, Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
+        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c,ParentId, Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
         Case objParentCase = list_Cases[0];
         
         Case objChildCase = list_Cases[1];
@@ -162,11 +163,11 @@ public class SendComplianceToAsanaRoutingTest {
         objTaxCompliance.Eng_Status__c = 'In progress';
         objTaxCompliance.Follow_up_Date__c = System.Today();
         objTaxCompliance.Agency_Due_Date__c = System.Today().addDays(2);
+       	Test.startTest();
         update objTaxCompliance;
         
-        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c FROM  Tax_Compliance__c]);
+        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate,Case__r.ParentId, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c,Case__r.parent.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c,Eng_Size_Estimate__c,Eng_Estimated_Launch_Date__c FROM  Tax_Compliance__c]);
         SendComplianceToAsanaRouting objSendComplianceToAsanaRouting2 = new SendComplianceToAsanaRouting(mapTaxCompliance, true);
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ComplianceToAsanaCalloutMock(200));
         System.enqueueJob(objSendComplianceToAsanaRouting2);      
         Test.stopTest();
@@ -177,7 +178,7 @@ public class SendComplianceToAsanaRoutingTest {
     static void testAutopopulationOnChildCase3() {
         
         // Parent case
-        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c, Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
+        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c, Agency_Information__r.Name, Compliance_Score__c,ParentId, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
         Case objParentCase = list_Cases[0];
         
         Case objChildCase = list_Cases[1];
@@ -202,11 +203,11 @@ public class SendComplianceToAsanaRoutingTest {
         objTaxCompliance.Eng_Status__c = 'In progress';
         objTaxCompliance.Follow_up_Date__c = System.Today();
         objTaxCompliance.Agency_Due_Date__c = System.Today().addDays(2);
+        Test.startTest();
         update objTaxCompliance;
         
-        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c FROM  Tax_Compliance__c limit 1]);
+        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId,Case__r.ParentId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c,Case__r.parent.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c,Eng_Size_Estimate__c,Eng_Estimated_Launch_Date__c FROM  Tax_Compliance__c limit 1]);
         SendComplianceToAsanaRouting objSendComplianceToAsanaRouting2 = new SendComplianceToAsanaRouting(mapTaxCompliance, true);
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ComplianceToAsanaCalloutMock(400));
         System.enqueueJob(objSendComplianceToAsanaRouting2);
         Test.stopTest();
@@ -217,7 +218,7 @@ public class SendComplianceToAsanaRoutingTest {
     static void testAutopopulationOnChildCase4() {
         
         // Parent case
-        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c, Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
+        List<Case> list_Cases = [SELECT Id, Subject,Status, Description, Batch_Id__c, ParentId,Agency_Information__r.Name, Compliance_Score__c, (SELECT Id, Agency_Due_Date__c, Eng_Due_Date__c, System_impacted__c FROM Tax_Compliance__r) FROM Case WHERE RecordType.Name = 'Compliance' LIMIT 2];
         Case objParentCase = list_Cases[0];
         
         Case objChildCase = list_Cases[1];
@@ -242,11 +243,11 @@ public class SendComplianceToAsanaRoutingTest {
         objTaxCompliance.Eng_Status__c = 'In progress';
         objTaxCompliance.Follow_up_Date__c = System.Today();
         objTaxCompliance.Agency_Due_Date__c = System.Today().addDays(2);
+        Test.startTest();
         update objTaxCompliance;
         
-        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c, Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c FROM  Tax_Compliance__c limit 1]);
+        Map<Id, Tax_Compliance__c> mapTaxCompliance =  new Map<Id, Tax_Compliance__c>( [SELECT Id,Name, Case__c,Case__r.Id,Case__r.CreatedDate, Case__r.OwnerId,Case__r.ParentId, Case__r.Owner.Name, Case__r.Status, Case__r.Case_Owner_Name__c, Case__r.Subject, Case__r.Description, Case__r.Batch_Id__c, Case__r.parent.Batch_Id__c,Case__r.Agency_Information__r.Name, Case__r.Compliance_Score__c, Classification_Type__c, Compliance_Team_POC__c, Customer_Count__c, Resource_Link__c, EPDD_DRI__c , Frequency_of_Update__c, System_impacted__c, Impacts__c, CX_Comms__c, Help_Center_IKB_External__c, Help_Center_IKB_Internal__c, Knowledge_Management_Readiness__c, Customer_Comms__c , In_App_content__c, Eng_Status__c, Follow_up_Date__c, Agency_Due_Date__c,Eng_Due_Date__c, Who_Owns_this_Initiative__c,Tier__c,Eng_Size_Estimate__c,Eng_Estimated_Launch_Date__c FROM  Tax_Compliance__c limit 1]);
         SendComplianceToAsanaRouting objSendComplianceToAsanaRouting1 = new SendComplianceToAsanaRouting(mapTaxCompliance, false);
-        Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ComplianceToAsanaCalloutMock(400));    
         System.enqueueJob(objSendComplianceToAsanaRouting1);
         Test.stopTest();

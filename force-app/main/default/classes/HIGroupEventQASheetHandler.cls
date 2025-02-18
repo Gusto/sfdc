@@ -19,15 +19,8 @@ public class HIGroupEventQASheetHandler {
 		'NewPlansApplication' => 'Benefits_New_Plan',
 		'BenefitChangeApplication' => 'Benefits_Change'
 	};
-	private static Map<String, String> map_coverageType = new Map<String, String>{
-		'long_term_disability' => 'Long Term Disability',
-		'short_term_disability' => 'Short Term Disability'
-	};
-	private static Map<String, String> map_companyDoc = new Map<String, String>{
-		'pending_in_gusto' => 'Pending in Gusto',
-		'exists_in_gdrive' => 'In gdrive',
-		'request_from_er' => 'Request from ER'
-	};
+	private static Map<String, String> map_coverageType = new Map<String, String>{ 'long_term_disability' => 'Long Term Disability', 'short_term_disability' => 'Short Term Disability' };
+	private static Map<String, String> map_companyDoc = new Map<String, String>{ 'pending_in_gusto' => 'Pending in Gusto', 'exists_in_gdrive' => 'In gdrive', 'request_from_er' => 'Request from ER' };
 	public Map<String, String> map_TaDaTypes = new Map<String, String>{
 		'hsa' => 'HSA',
 		'commuter' => 'Commuter',
@@ -109,9 +102,7 @@ public class HIGroupEventQASheetHandler {
 				if (list_QASheet != null && list_QASheet.size() > 0) {
 					for (QA_Sheet__c objQASheet : list_QASheet) {
 						HIQASheetWrapper objHIQASheetWrapper = map_HIQASheetWrapper.get(objQASheet.Opportunity__r.Application_Id__c);
-						String str_applicationType = map_QAEvent_OpptyType.get(objHIQASheetWrapper.Application_type) != null
-							? map_QAEvent_OpptyType.get(objHIQASheetWrapper.Application_type)
-							: '';
+						String str_applicationType = map_QAEvent_OpptyType.get(objHIQASheetWrapper.Application_type) != null ? map_QAEvent_OpptyType.get(objHIQASheetWrapper.Application_type) : '';
 
 						if (str_applicationType != null && str_applicationType != objQASheet.Opportunity__r.RecordType.DeveloperName) {
 							continue;
@@ -123,7 +114,10 @@ public class HIGroupEventQASheetHandler {
 						objQASheet.Date_Established__c = objHIQASheetWrapper.date_business_established;
 						objQASheet.Entity_Type__c = objHIQASheetWrapper.entity_type;
 						objQASheet.Signatory_Name_Title__c = objHIQASheetWrapper.panda_signatory_name_and_title;
-						objQASheet.Taxed_as_s_corp__c = objHIQASheetWrapper.taxable_as_scorp != null && objHIQASheetWrapper.taxable_as_scorp == true ? HIGroupEventUtil.YES_VALUE : HIGroupEventUtil.NO_VALUE;
+						objQASheet.Taxed_as_s_corp__c = objHIQASheetWrapper.taxable_as_scorp != null &&
+							objHIQASheetWrapper.taxable_as_scorp == true
+							? HIGroupEventUtil.YES_VALUE
+							: HIGroupEventUtil.NO_VALUE;
 						objQASheet.SIC_Code__c = objHIQASheetWrapper.sic_code;
 						objQASheet.WC_Status__c = objHIQASheetWrapper.wc_status;
 						objQASheet.Secretary_of_State_Registration_Status__c = objHIQASheetWrapper.secretary_of_state_registration_status;
@@ -131,7 +125,7 @@ public class HIGroupEventQASheetHandler {
 						objQASheet.Waived_waiting_period_for_new_hires__c = objHIQASheetWrapper.waiving_initial_waiting_period;
 
 						if (objHIQaSheetWrapper.address_change_to_be_made_by_submission != null) {
-							objQASheet.Does_group_have_an_address_change__c = objHIQaSheetWrapper.address_change_to_be_made_by_submission ? HIGroupEventUtil.Y_VALUE :  HIGroupEventUtil.N_VALUE ;
+							objQASheet.Does_group_have_an_address_change__c = objHIQaSheetWrapper.address_change_to_be_made_by_submission ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE;
 						}
 						if (objHIQaSheetWrapper.submit_for_special_enrollment != null) {
 							objQASheet.Special_Enrollment__c = objHIQaSheetWrapper.submit_for_special_enrollment ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE;
@@ -144,7 +138,7 @@ public class HIGroupEventQASheetHandler {
 									set_newTAdAs.add(map_TaDaTypes.get(strLowerCaseTadaType));
 								}
 							}
-							objQASheet.New_TAdAs__c = String.join(new List<String> (set_newTAdAs), ';');
+							objQASheet.New_TAdAs__c = String.join(new List<String>(set_newTAdAs), ';');
 						}
 						if (objHIQaSheetWrapper.types_of_renewing_tadas != null && !objHIQaSheetWrapper.types_of_renewing_tadas.isEmpty()) {
 							set_newTAdAs = new Set<String>();
@@ -154,7 +148,7 @@ public class HIGroupEventQASheetHandler {
 									set_newTAdAs.add(map_TaDaTypes.get(strLowerCaseTadaType));
 								}
 							}
-							objQASheet.Renewing_TAdAs__c = String.join(new List<String> (set_newTAdAs), ';');
+							objQASheet.Renewing_TAdAs__c = String.join(new List<String>(set_newTAdAs), ';');
 						}
 						if (objHIQaSheetWrapper.peo_switcher != null) {
 							objQASheet.PEO_switcher__c = objHIQaSheetWrapper.peo_switcher == 'Yes' ? 'Y' : 'N';
@@ -212,7 +206,7 @@ public class HIGroupEventQASheetHandler {
 					try {
 						upsert map_qaSheetToUpdate.values();
 					} catch (exception ex) {
-						ExceptionLogUtil.logException('HIGroupEventQASheetHandler', 'processInformation',ex);
+						ExceptionLogUtil.logException('HIGroupEventQASheetHandler', 'processInformation', ex);
 					}
 					upsertQlc(map_qaSheetToUpdate.keySet(), map_qlcWrapper, map_Qlc, map_qasIdToWrapper);
 					createCOWithBasic(set_BenefitOrderIds);
@@ -226,14 +220,18 @@ public class HIGroupEventQASheetHandler {
 				for (String strIdVal : map_HIGroupEvent.keySet()) {
 					HIGroupEvent__c objHIGroup = map_HIGroupEvent.get(strIdVal);
 					HIGroupEventTriggerHelper.setProcessingState(IntegrationUtils.ERROR_STATE, 'QA Sheet processing failed. ' + objEx.getMessage() + ' \n ' + objEx.getStackTraceString(), objHIGroup);
-					ExceptionLogUtil.logException(
-						'HIGroupEventQASheetHandler', 'processInformation', objEx);
+					ExceptionLogUtil.logException('HIGroupEventQASheetHandler', 'processInformation', objEx);
 				}
 			}
 		}
 	}
 
-	private void upsertQlc(Set<String> set_opptyIds, Map<String, HIQASheetWrapper.QALineOfCoverageWrapper> map_qlcWrapper, Map<String, QA_Lines_Of_Coverage__c> map_Qlc, Map<String, HIQASheetWrapper> map_qasIdToWrapper) {
+	private void upsertQlc(
+		Set<String> set_opptyIds,
+		Map<String, HIQASheetWrapper.QALineOfCoverageWrapper> map_qlcWrapper,
+		Map<String, QA_Lines_Of_Coverage__c> map_Qlc,
+		Map<String, HIQASheetWrapper> map_qasIdToWrapper
+	) {
 		Set<String> set_strOpptyIds = new Set<String>();
 		Set<String> set_carrierStateId = new Set<String>();
 		Map<String, Company_Level_Documents__c> map_ToUpsertDocNameClDocsRecord = new Map<String, Company_Level_Documents__c>();
@@ -281,25 +279,29 @@ public class HIGroupEventQASheetHandler {
 				objNewQlc.Waiting_Period_Description__c = objQlWrapper.waiting_period_description;
 				//objNewQlc.Rating_Structure_Composite_Age_Banded__c = objQlWrapper.composite_rated;
 				objNewQlc.New_Carrier__c = objQlWrapper.carrier_switch != null ? (objQlWrapper.carrier_switch ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE) : '';
-				objNewQlc.Waiting_Period_change__c = objQlWrapper.waiting_period_change != null ? (objQlWrapper.waiting_period_change ? HIGroupEventUtil.Y_VALUE :  HIGroupEventUtil.N_VALUE) : '';
-				objNewQlc.New_line_of_Coverage__c = objQlWrapper.new_line_of_coverage != null ? (objQlWrapper.new_line_of_coverage ? HIGroupEventUtil.Y_VALUE :  HIGroupEventUtil.N_VALUE) : '';
+				objNewQlc.Waiting_Period_change__c = objQlWrapper.waiting_period_change != null ? (objQlWrapper.waiting_period_change ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE) : '';
+				objNewQlc.New_line_of_Coverage__c = objQlWrapper.new_line_of_coverage != null ? (objQlWrapper.new_line_of_coverage ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE) : '';
 				objNewQlc.Plan_changes__c = objQlWrapper.plan_change != null ? (objQlWrapper.plan_change ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE) : '';
-				objNewQlc.Contribution_change__c = objQlWrapper.contribution_change != null ? (objQlWrapper.contribution_change ? HIGroupEventUtil.Y_VALUE :  HIGroupEventUtil.N_VALUE) : '';
-				objNewQlc.Does_group_have_an_alignment__c = objHIQASheetWrapper.alignment_to_be_requested_by_submission != null ? (objHIQASheetWrapper.alignment_to_be_requested_by_submission ? HIGroupEventUtil.Y_VALUE :  HIGroupEventUtil.N_VALUE) : '';
-				objNewQlc.Rate_Change__c = objHIQASheetWrapper.has_rating_structure_change != null ? (objHIQASheetWrapper.has_rating_structure_change ? HIGroupEventUtil.Y_VALUE :  HIGroupEventUtil.N_VALUE) : '';
+				objNewQlc.Contribution_change__c = objQlWrapper.contribution_change != null ? (objQlWrapper.contribution_change ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE) : '';
+				objNewQlc.Does_group_have_an_alignment__c = objHIQASheetWrapper.alignment_to_be_requested_by_submission != null
+					? (objHIQASheetWrapper.alignment_to_be_requested_by_submission ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE)
+					: '';
+				objNewQlc.Rate_Change__c = objHIQASheetWrapper.has_rating_structure_change != null
+					? (objHIQASheetWrapper.has_rating_structure_change ? HIGroupEventUtil.Y_VALUE : HIGroupEventUtil.N_VALUE)
+					: '';
 
 				if (objQlWrapper.plan_description != null) {
 					String strPlanDescription = '';
 					if (objQlWrapper.plan_description.plan_additions != null && !objQlWrapper.plan_description.plan_additions.isEmpty()) {
-						strPlanDescription += HIGroupEventUtil.PLAN_ADDITIONS +'\n' + String.join(objQlWrapper.plan_description.plan_additions, '\n') + '\n';
+						strPlanDescription += HIGroupEventUtil.PLAN_ADDITIONS + '\n' + String.join(objQlWrapper.plan_description.plan_additions, '\n') + '\n';
 					}
 
 					if (objQlWrapper.plan_description.plan_removals != null && !objQlWrapper.plan_description.plan_removals.isEmpty()) {
-						strPlanDescription += HIGroupEventUtil.PLAN_REMOVALS +'\n' + String.join(objQlWrapper.plan_description.plan_removals, '\n') + '\n';
+						strPlanDescription += HIGroupEventUtil.PLAN_REMOVALS + '\n' + String.join(objQlWrapper.plan_description.plan_removals, '\n') + '\n';
 					}
 
 					if (objQlWrapper.plan_description.plan_renewals != null && !objQlWrapper.plan_description.plan_renewals.isEmpty()) {
-						strPlanDescription += HIGroupEventUtil.PLAN_RENEWALS +'\n' + String.join(objQlWrapper.plan_description.plan_renewals, '\n') + '\n';
+						strPlanDescription += HIGroupEventUtil.PLAN_RENEWALS + '\n' + String.join(objQlWrapper.plan_description.plan_renewals, '\n') + '\n';
 					}
 
 					objNewQlc.Plan_Description__c = strPlanDescription;
@@ -416,6 +418,7 @@ public class HIGroupEventQASheetHandler {
 			}
 		}
 	}
+
 	@TestVisible
 	private String formatString(String strActualText, Integer intMaxlength, String strSeperator) {
 		if (String.isBlank(strActualText)) {
@@ -464,9 +467,6 @@ public class HIGroupEventQASheetHandler {
 						objBasicCarrierOrder.name = objbo.Account__r.Name + ' ' + CARRIER_BASIC_PACIFIC_SETUP;
 					}
 					if (objBasicCarrierOrder != null) {
-						if (objBasicCarrierOrder.Name.length() > 80) {
-							objBasicCarrierOrder.Name = objBasicCarrierOrder.Name.subString(0, 80);
-						}
 						objBasicCarrierOrder.benefit_order__c = objbo.Id;
 						objBasicCarrierOrder.Benefit_Types__c = TransitiontoFulfilmentUtil.CARRIER_NAME_BASIC;
 						objBasicCarrierOrder.Carrier__c = Label.BASIC_Carrier;

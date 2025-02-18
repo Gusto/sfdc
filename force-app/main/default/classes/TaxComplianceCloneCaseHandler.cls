@@ -174,11 +174,9 @@ public without sharing  class TaxComplianceCloneCaseHandler {
         
         List<Tax_Compliance__c> list_ClonedComplianceRecordsToInsert = new List<Tax_Compliance__c>();
         List<Tax_Questionnaire__c> list_ClonedQuestionnaireRecordsToInsert = new List<Tax_Questionnaire__c>();
-        String strcaseIds='caseIds';
-        String strmaintenanceRecordType='maintenanceRecordType';
-        
-        Map<String, Object> bindVars = new Map<String, Object>{strcaseIds=>map_MasterToClonedCaseIds.keyset(),strmaintenanceRecordType=>CaseUtils.RECTYPE_NAME_MAINTENACE_QUESTIONNAIRE};
+        Map<String, Object> bindVars = new Map<String, Object>{'caseIds'=>map_MasterToClonedCaseIds.keyset(),'maintenanceRecordType'=>CaseUtils.RECTYPE_NAME_MAINTENACE_QUESTIONNAIRE};
         String strcasesoql = 'SELECT ID ,(SELECT '+strtaxCompliancesoql+' FROM Tax_Compliance__r),(SELECT '+strtaxQuestionnairesoql+ ' FROM Tax_Questionnaire__r WHERE RecordType.Name != :maintenanceRecordType) FROM Case WHERE Id =:caseIds ';
+        // system.debug(casesoql);
         List<Case> list_CaseFetched = Database.queryWithBinds(strcasesoql,bindVars,AccessLevel.SYSTEM_MODE);
         
         for(Case objCase : list_CaseFetched){ 

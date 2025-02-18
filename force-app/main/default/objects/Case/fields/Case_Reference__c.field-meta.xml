@@ -5,7 +5,7 @@
 
 10/6. Changed RIGHT( Id, 4) to RIGHT( Id, 5)</description>
     <externalId>false</externalId>
-    <formula>&quot;ref:!&quot; + LEFT( $Organization.Id, 6) + SUBSTITUTE(RIGHT($Organization.Id,10), &quot;0&quot;, &quot;&quot; ) +&quot;.!&quot;+ LEFT( Id, 6) + RIGHT( Id, 6) + &quot;:ref&quot;</formula>
+    <formula>&quot;ref:!&quot; + LEFT( $Organization.Id, 6) + SUBSTITUTE(RIGHT($Organization.Id,10), &quot;0&quot;, &quot;&quot; ) +&quot;.!&quot;+ LEFT( Id, 4) + SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(Id, RIGHT( Id, 5), &quot;&quot;), LEFT( Id, 4), &quot;&quot;), &quot;0&quot;, &quot;&quot;) + RIGHT( Id, 6) + &quot;:ref&quot;</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Case Reference</label>
     <required>false</required>

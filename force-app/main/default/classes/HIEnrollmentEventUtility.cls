@@ -158,7 +158,7 @@ public class HIEnrollmentEventUtility {
 	public static final String COMPANY_SUSPENSION_AUDIT_SUBJECT = 'This company has a suspended payroll, but their benefits have not yet been suspended.';
 	public static final String AUDIT_CASE_ALREADY_EXIST = 'Audit case already exist.';
 
-	public static final String PAYROLL_SUSPENSION_AUDIT_DESCRIPTION = 'Please make at least 3 attempts to reach all Full Access admins on this group’s Gusto account, and give them adequate time to respond to our request. This will help ensure we offboard this group’s benefits in a compliant manner. For more information on how to process this, see the following Wiki article on Payroll Suspension Audits. https://confluence.gustocorp.com/pages/viewpage.action?spaceKey=hitops&title=Payroll+Suspension+Audit';
+	public static final String PAYROLL_SUSPENSION_AUDIT_DESCRIPTION = 'This case has generated because the company has suspended payroll but currently has active benefits. Please make at least 3 attempts to reach all Full Access admins on this group’s Gusto account, and give them adequate time to respond to our request. This will help ensure we offboard this group’s benefits in a compliant manner. For more information on how to process this, see the following Wiki article on Payroll Suspension Audits. https://confluence.gustocorp.com/pages/viewpage.action?spaceKey=hitops&title=Payroll+Suspension+Audit';
 
 	public static final String SUBMITTED_CASE_MESSAGE = 'This employee has made changes to their benefits. Please refer to hippo to confirm this EE\'s selections. If the EE no longer has benefits with this Carrier, send a termination';
 
@@ -579,9 +579,8 @@ public class HIEnrollmentEventUtility {
 		Case objCase;
 		if (map_ExistingCases != null && map_ExistingCases.containsKey(strKey)) {
 			objCase = map_ExistingCases.get(strKey);
-
+			//BBO-1456 Start
 			if (objCase != null) {
-				//BBO-1456 Start
 				if (strDestroyReason == 'cancellation_qle') {
 					objCase.Fulfillment_Type__c = 'Canceled due to QLE';
 				} else if (strDestroyReason == 'changed_policy_selection') {

@@ -18,7 +18,6 @@
             </value>
         </inputParameters>
         <nameSegment>Transition_to_Fulfillment__c.Email_notification_to_Partner_AE_AM</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send intro email with exception request template</description>
@@ -39,7 +38,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Intro_Email_Exception_Request_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_intro_email</name>
@@ -59,7 +57,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Payroll_Transfer_Intro_Email_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send Payroll Transfer: Intro Email - IOP/QBOI Alert_TTF</description>
@@ -80,7 +77,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Payroll_Transfer_Intro_Email_IOP_QBOI_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Update Email Message body with notification body</description>
@@ -90,9 +86,6 @@
         <locationY>650</locationY>
         <actionName>EmailMessageTriggerHelper</actionName>
         <actionType>apex</actionType>
-        <connector>
-            <targetReference>Update_Intro_Notification_Sent</targetReference>
-        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>list_Ids</name>
@@ -101,7 +94,6 @@
             </value>
         </inputParameters>
         <nameSegment>EmailMessageTriggerHelper</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <decisions>
@@ -345,28 +337,6 @@
         <object>EmailMessage</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
-    <recordUpdates>
-        <description>Update Intro Notification Sent on TTF</description>
-        <name>Update_Intro_Notification_Sent</name>
-        <label>Update Intro Notification Sent</label>
-        <locationX>446</locationX>
-        <locationY>758</locationY>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>TTF_Source_Record.Id</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <field>Intro_Notification_Sent__c</field>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputAssignments>
-        <object>Transition_to_Fulfillment__c</object>
-    </recordUpdates>
     <runInMode>DefaultMode</runInMode>
     <start>
         <locationX>320</locationX>

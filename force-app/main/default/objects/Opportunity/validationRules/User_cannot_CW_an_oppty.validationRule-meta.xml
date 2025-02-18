@@ -3,7 +3,7 @@
     <fullName>User_cannot_CW_an_oppty</fullName>
     <active>true</active>
     <description>Restrict Sales Reps from CW opportunities.</description>
-    <errorConditionFormula>OR(AND(ISCHANGED(StageName), IsWon, CONTAINS($UserRole.Name, &apos;sales&apos;), RecordType.Name=&apos;Company Opportunity&apos;), AND(ISCHANGED(StageName), IsWon, CONTAINS($UserRole.Name, &apos;sales&apos;), OR(RecordType.Name=&apos;Benefits New Plan&apos;, RecordType.Name=&apos;Benefits BoR&apos;, RecordType.Name=&apos;Benefits BYOB&apos;), NOT(ISPICKVAL(PRIORVALUE(StageName), &quot;ER Confirm&quot;))))</errorConditionFormula>
+    <errorConditionFormula>OR(AND(ISCHANGED(StageName), IsWon, CONTAINS($UserRole.Name, &apos;sales&apos;), RecordType.Name !=&apos;Acquisition&apos;), AND(ISCHANGED(StageName), IsWon, CONTAINS($UserRole.Name, &apos;sales&apos;), OR(RecordType.Name=&apos;Benefits New Plan&apos;, RecordType.Name=&apos;Benefits BoR&apos;, RecordType.Name=&apos;Benefits BYOB&apos;), NOT(ISPICKVAL(PRIORVALUE(StageName), &quot;ER Confirm&quot;))))</errorConditionFormula>
     <errorDisplayField>StageName</errorDisplayField>
     <errorMessage>You cannot manually update an oppty to Won. It can only be done through the app. If you need help, please log a JIRA ticket.</errorMessage>
 </ValidationRule>

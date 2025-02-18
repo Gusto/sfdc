@@ -1,0 +1,33 @@
+<template>
+    <select name="feedback" class="feedback-rating-container" disabled={isDisableRating} data-conversationid="rating">
+        <template for:each={rating} for:item="ratingItem">
+            <template if:true={ratingItem.selected}>
+                <option value={ratingItem.value} key={ratingItem.value} selected>{ratingItem.dynamicId}</option>
+            </template>
+            <template if:false={ratingItem.selected}>
+                <option value={ratingItem.value} key={ratingItem.value}>{ratingItem.dynamicId}</option>
+            </template>
+        </template>
+    </select>
+
+    <div class="slds-form-element__help select-any-rating-warning">Please select any rating</div>
+
+    <lightning-textarea
+        name="feedbackTxt"
+        data-id="feedback"
+        placeholder="Please provide feedback"
+        class="feedback-txt-area"
+        value={defaultFeedback}
+        disabled={isDisableRating}>
+    </lightning-textarea>
+
+    <div>
+        <button
+            onclick={handleFeedbackSubmit}
+            class="slds-button slds-button_brand submit-button feedback-submit-btn"
+            if:false={isDisableRating}
+            data-id="submitbtn">
+            Submit
+        </button>
+    </div>
+</template>

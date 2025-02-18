@@ -1,5 +1,4 @@
 ({
-	// Function to snooze the tab
 	snoozeTab: function (component, event, helper) {
 		if (component.get("v.intCount") !== 2) {
 			// Increment the count

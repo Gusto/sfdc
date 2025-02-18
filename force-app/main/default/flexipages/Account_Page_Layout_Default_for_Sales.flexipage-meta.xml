@@ -78,7 +78,7 @@
                 <componentName>logSmartCallingAuraCmp</componentName>
                 <identifier>c_logSmartCallingAuraCmp</identifier>
                 <visibilityRule>
-                    <booleanFilter>1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9</booleanFilter>
+                    <booleanFilter>1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8</booleanFilter>
                     <criteria>
                         <leftValue>{!$User.UserRole.DeveloperName}</leftValue>
                         <operator>CONTAINS</operator>
@@ -118,11 +118,6 @@
                         <leftValue>{!$User.UserRole.DeveloperName}</leftValue>
                         <operator>CONTAINS</operator>
                         <rightValue>sales_partner_am_xx</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!$User.UserRole.DeveloperName}</leftValue>
-                        <operator>CONTAINS</operator>
-                        <rightValue>Business_Insurance</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>

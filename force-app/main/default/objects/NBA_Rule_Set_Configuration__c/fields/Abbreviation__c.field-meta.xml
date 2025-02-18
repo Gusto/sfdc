@@ -2,11 +2,11 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Abbreviation__c</fullName>
     <caseSensitive>true</caseSensitive>
-    <description>Used to identity each rule set configuration by team abbreviation. The value is suffixed to the Served Up Rule and Served Other Rules field on Lead and Opportunity when records get served to the user. The format is &quot;Rule Name&quot; (from NBA Rule Set) &amp; &quot; - &quot; &amp; &quot;Abbreviation&quot;. This value is passed to the Task fields when the Task is created for logging a call.</description>
+    <description>Used to identity each rule set by team abbreviation. The value is suffixed to the Served Up Rule and Served Other Rules field on Serving Object when records are served to the user. The format is &quot;Rule Name&quot; (from NBA Rule Set) &amp; &quot; - &quot; &amp; &quot;Abbreviation&quot; and is limited to 5 characters. This value is also passed to the Task fields when the Task is created for logging a call when applicable.</description>
     <externalId>false</externalId>
-    <inlineHelpText>Used to identity each rule set configuration by team abbreviation. The value is suffixed to the Served Up Rule and Served Other Rules field on Lead and Opportunity when records get served to the user. The format is &quot;Rule Name&quot; (from NBA Rule Set) &amp; &quot; - &quot; &amp; &quot;Abbreviation&quot;. This value is passed to the Task fields when the Task is created for logging a call.</inlineHelpText>
+    <inlineHelpText>Used to identity each rule set by team abbreviation. The value is suffixed to the Served Up Rule and Served Other Rules field on Serving Object when records are served to the user. The format is &quot;Rule Name&quot; (from NBA Rule Set) &amp; &quot; - &quot; &amp; &quot;Abbreviation&quot; and is limited to 5 characters. This value is also passed to the Task fields when the Task is created for logging a call when applicable.</inlineHelpText>
     <label>Team Abbreviation</label>
-    <length>20</length>
+    <length>5</length>
     <required>true</required>
     <trackTrending>false</trackTrending>
     <type>Text</type>

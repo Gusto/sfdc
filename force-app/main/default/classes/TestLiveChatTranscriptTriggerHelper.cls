@@ -575,7 +575,7 @@ public class TestLiveChatTranscriptTriggerHelper {
 			.setLastName('LName')
 			.setEmail('testingSource@gusto.com')
 			.setPhone('9876424575')
-			.setCompany('Xero Partner')
+			.setCompany('Test')
 			.setStatus('New')
 			.setLeadSource('Sourcing Error')
 			.build();
@@ -1003,6 +1003,65 @@ public class TestLiveChatTranscriptTriggerHelper {
 		System.assertEquals(objCaseAssert.Company_Size__c, objLiveChatTranscript.Company_Size__c, 'Case Size is not Populated');
 		Test.stopTest();
 	}
+
+	/**
+	 * @author      Ankit C
+	 * @description Test if the pillar fields are getting updated
+	 **/
+	@isTest
+	public static void testCasePillarMapping() {
+		Account objAccount = [SELECT Id FROM Account WHERE Name = 'Company Account 1' LIMIT 1];
+		Contact objContact = [SELECT Id FROM Contact WHERE Email = 'newmember1@campaign.com' LIMIT 1];
+
+		Test.startTest();
+		LiveChatVisitor objVisitor = new LiveChatVisitor();
+		insert objVisitor;
+
+		LiveChatTranscript objLiveChatTranscript = new TestDataFactory.LiveChatTranscriptBuilder()
+			.setCompanyId('1111111111')
+			.setCompanyUUID('e512de89-9639-474b-aebf-0cf26b3075ea')
+			.setVisitorEmailAddress('newmember@campaign.com')
+			.setVisitorFirstName('Vernetta')
+			.setVisitorLastName('Stiedemann')
+			.setCompanyName('Company Account 1')
+			.setRecordTypeId('External')
+			.setQuestion('Test')
+			.setChatVisitor(objVisitor.Id)
+			.build();
+		insert objLiveChatTranscript;
+
+		Case objCase = new TestDataFactory.CaseBuilder()
+			.setAccountId(objAccount.Id)
+			.setContactId(objContact.Id)
+			.setRecordTypeId('Engagement')
+			.setType('Payroll')
+			.setSubject('Test Engagement Chat Case')
+			.setOrigin('Chat')
+			.setStatus('Open')
+			.setSuppliedEmail('newmember1@campaign.com')
+			.setDescription('Test Engagement Chat Case')
+			.build();
+		insert objCase;
+
+		objLiveChatTranscript.CaseId = objCase.Id;
+		objLiveChatTranscript.Request_Type__c = 'Payroll';
+		objLiveChatTranscript.Support_Level__c = 'Tier 1';
+		objLiveChatTranscript.Persona__c = 'Accountant';
+		objLiveChatTranscript.Company_Size__c = 'Standard 5-24';
+		update objLiveChatTranscript;
+
+		objLiveChatTranscript.Persona__c = 'Admin';
+		update objLiveChatTranscript;
+		Test.stopTest();
+
+		objCase = [SELECT Id, Case_Pillar__c, Sub_Pillar__c, WFM_Queue_Tag__c, Pillar_Key__c, Sub_Pillar_Key__c FROM Case WHERE Id = :objCase.Id];
+		Assert.isTrue(String.isNotBlank(objCase.Case_Pillar__c), 'Pillar was not updated on Case');
+		Assert.isTrue(String.isNotBlank(objCase.Sub_Pillar__c), 'Sub-Pillar was not updated on Case');
+		Assert.isTrue(String.isNotBlank(objCase.WFM_Queue_Tag__c), 'WFM Queue Tag was not updated on Case');
+		Assert.isTrue(String.isNotBlank(objCase.Pillar_Key__c), 'Pillar Key was not updated on Case');
+		Assert.isTrue(String.isNotBlank(objCase.Sub_Pillar_Key__c), 'Sub-Pillar Key was not updated on Case');
+	}
+	
 	/**
 	 * @author      Sirisha K
 	 * @description Test Case Reason Classification on Live Chat Transcript
@@ -1063,7 +1122,7 @@ public class TestLiveChatTranscriptTriggerHelper {
 		update objLiveChatTranscript;
 		Test.stopTest();
 
-		objCase = [SELECT Id, Routing_Case_Reason__c, Routing_Case_Reason_Classification__c, Second_Level__c,ORCA_Predicted_Support_Level__c, ORCA_Predicted_Specialization__c, ORCA_Predicted_Case_Reason_Confidence__c, ORCA_Predicted_Specialization_Confidence__c, ORCA_Predicted_Support_Level_Confidence__c, ORCA_Predicted_Type_Confidence__c, ORCA_Predicted_Case_Reason__c FROM Case WHERE Id = :objCase.Id];
+		objCase = [SELECT Id, Routing_Case_Reason__c, Routing_Case_Reason_Classification__c, Second_Level__c,ORCA_Predicted_Support_Level__c, ORCA_Predicted_Specialization__c, ORCA_Predicted_Case_Reason_Confidence__c, ORCA_Predicted_Specialization_Confidence__c, ORCA_Predicted_Support_Level_Confidence__c, ORCA_Predicted_Type_Confidence__c, ORCA_Predicted_Case_Reason__c  FROM Case WHERE Id = :objCase.Id];
 		Case_Reason_Classification__c objCaseReason = [SELECT Id, Name FROM Case_Reason_Classification__c WHERE Reason_Code__c = 'zp_giving_or_charity'];
 		Assert.isTrue(String.isNotBlank(objCase.Second_Level__c), 'Second_Level__c updated on Case');
 		Assert.isTrue(String.isNotBlank(objCase.ORCA_Predicted_Support_Level__c), 'ORCA Predicted Support Level updated on Case');
@@ -1074,65 +1133,6 @@ public class TestLiveChatTranscriptTriggerHelper {
 		Assert.isTrue(String.isNotBlank(objCase.ORCA_Predicted_Type_Confidence__c), 'ORCA Predicted Type Confidence updated on Case');
 		Assert.isTrue(String.isNotBlank(objCase.ORCA_Predicted_Case_Reason__c), 'ORCA Predicted Case Reason updated on Case');
 		Assert.isTrue(String.isNotBlank(objNewChat.WFM_Queue_Tag__c), 'WFM Queue Tag was not updated on Chat');
-	}
-
-	/**
-	 * @author      Ankit C
-	 * @description Test if the pillar fields are getting updated
-	 **/
-	@isTest
-	public static void testCasePillarMapping() {
-		Account objAccount = [SELECT Id FROM Account WHERE Name = 'Company Account 1' LIMIT 1];
-		Contact objContact = [SELECT Id FROM Contact WHERE Email = 'newmember1@campaign.com' LIMIT 1];
-
-		Test.startTest();
-		LiveChatVisitor objVisitor = new LiveChatVisitor();
-		insert objVisitor;
-
-		LiveChatTranscript objLiveChatTranscript = new TestDataFactory.LiveChatTranscriptBuilder()
-			.setCompanyId('1111111111')
-			.setCompanyUUID('e512de89-9639-474b-aebf-0cf26b3075ea')
-			.setVisitorEmailAddress('newmember@campaign.com')
-			.setVisitorFirstName('Vernetta')
-			.setVisitorLastName('Stiedemann')
-			.setCompanyName('Company Account 1')
-			.setRecordTypeId('External')
-			.setQuestion('Test')
-			.setChatVisitor(objVisitor.Id)
-			.build();
-		insert objLiveChatTranscript;
-
-		Case objCase = new TestDataFactory.CaseBuilder()
-			.setAccountId(objAccount.Id)
-			.setContactId(objContact.Id)
-			.setRecordTypeId('Engagement')
-			.setType('Payroll')
-			.setSubject('Test Engagement Chat Case')
-			.setOrigin('Chat')
-			.setStatus('Open')
-			.setSuppliedEmail('newmember1@campaign.com')
-			.setDescription('Test Engagement Chat Case')
-			.build();
-		insert objCase;
-
-		objLiveChatTranscript.CaseId = objCase.Id;
-		objLiveChatTranscript.Request_Type__c = 'Payroll';
-		objLiveChatTranscript.Support_Level__c = 'Tier 1';
-		objLiveChatTranscript.Persona__c = 'Accountant';
-		objLiveChatTranscript.Company_Size__c = 'Standard 5-24';
-		
-		update objLiveChatTranscript;
-
-		objLiveChatTranscript.Persona__c = 'Admin';
-		update objLiveChatTranscript;
-		Test.stopTest();
-
-		objCase = [SELECT Id, Case_Pillar__c, Sub_Pillar__c, WFM_Queue_Tag__c, Pillar_Key__c, Sub_Pillar_Key__c FROM Case WHERE Id = :objCase.Id];
-		Assert.isTrue(String.isNotBlank(objCase.Case_Pillar__c), 'Pillar was not updated on Case');
-		Assert.isTrue(String.isNotBlank(objCase.Sub_Pillar__c), 'Sub-Pillar was not updated on Case');
-		Assert.isTrue(String.isNotBlank(objCase.WFM_Queue_Tag__c), 'WFM Queue Tag was not updated on Case');
-		Assert.isTrue(String.isNotBlank(objCase.Pillar_Key__c), 'Pillar Key was not updated on Case');
-		Assert.isTrue(String.isNotBlank(objCase.Sub_Pillar_Key__c), 'Sub-Pillar Key was not updated on Case');
 	}
 
 	/**

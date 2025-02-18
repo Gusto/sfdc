@@ -1,7 +1,6 @@
 /**
  * @description       Utility methods for HI Benefits Batch processing
  * @author            Nigam Goyal
- * TestClassName 	  HIBatchUtilTest
  **/
 public with sharing class HIBatchUtil {
 	public static final String FILTER_TYPE_BASE_QUERY = 'Base Query';

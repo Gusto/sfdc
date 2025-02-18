@@ -5,7 +5,7 @@
         <name>Update_Failed</name>
         <label>Update Failed</label>
         <locationX>1166</locationX>
-        <locationY>744</locationY>
+        <locationY>684</locationY>
         <assignmentItems>
             <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
             <operator>Assign</operator>
@@ -21,7 +21,7 @@
         <name>RecordType_DeveloperName</name>
         <label>RecordType DeveloperName</label>
         <locationX>506</locationX>
-        <locationY>288</locationY>
+        <locationY>276</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Payroll_Care</name>
@@ -96,14 +96,14 @@
         <name>Exception_Log_Event</name>
         <label>Exception Log Event</label>
         <locationX>1166</locationX>
-        <locationY>864</locationY>
+        <locationY>792</locationY>
         <inputReference>objExceptionLogEvent</inputReference>
     </recordCreates>
     <recordUpdates>
         <name>Update_Case</name>
         <label>Update Case</label>
         <locationX>506</locationX>
-        <locationY>624</locationY>
+        <locationY>576</locationY>
         <faultConnector>
             <targetReference>Update_Failed</targetReference>
         </faultConnector>
@@ -123,8 +123,8 @@
                 <targetReference>RecordType_DeveloperName</targetReference>
             </connector>
             <label>1 Hour after Case Updated</label>
-            <offsetNumber>1</offsetNumber>
-            <offsetUnit>Hours</offsetUnit>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
             <recordField>Case_Updated__c</recordField>
             <timeSource>RecordField</timeSource>
         </scheduledPaths>
@@ -135,7 +135,7 @@
         <name>Reopen_Case_after_1_hour_FSC</name>
         <label>Reopen Case after 1 hour</label>
         <locationX>374</locationX>
-        <locationY>408</locationY>
+        <locationY>384</locationY>
         <connector>
             <targetReference>Update_Case</targetReference>
         </connector>
@@ -152,7 +152,7 @@
         <name>Reopen_Case_after_1_hour_MB</name>
         <label>Reopen Case after 1 hour</label>
         <locationX>638</locationX>
-        <locationY>408</locationY>
+        <locationY>384</locationY>
         <connector>
             <targetReference>Update_Case</targetReference>
         </connector>
@@ -169,7 +169,7 @@
         <name>Reopen_Case_after_1_hour_PRC</name>
         <label>Reopen Case after 1 hour</label>
         <locationX>110</locationX>
-        <locationY>408</locationY>
+        <locationY>384</locationY>
         <connector>
             <targetReference>Update_Case</targetReference>
         </connector>

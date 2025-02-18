@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_Rounding_Requirement__c</fullName>
+    <label>Payment Rounding Requirement</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Payment &amp; filing must match</fullName>
+                <default>false</default>
+                <label>Payment &amp; filing must match</label>
+            </value>
+            <value>
+                <fullName>N/A</fullName>
+                <default>false</default>
+                <label>N/A</label>
+            </value>
+            <value>
+                <fullName>Round to the nearest dollar</fullName>
+                <default>false</default>
+                <label>Round to the nearest dollar</label>
+            </value>
+            <value>
+                <fullName>Round to the nearest penny/cent</fullName>
+                <default>false</default>
+                <label>Round to the nearest penny/cent</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

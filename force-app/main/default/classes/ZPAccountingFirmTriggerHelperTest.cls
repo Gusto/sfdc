@@ -470,7 +470,10 @@ public class ZPAccountingFirmTriggerHelperTest {
 	 **/
 	@isTest
 	static void testResellerLeadConversionPartnerOwner() {
-		List<User> list_Users = [SELECT Id FROM User WHERE Email IN ('partneruser@testorg.com', 'mdruser@testorg.com')];
+		map<String, User> map_Users = new Map<String, User>();
+		for (User objUser : [SELECT Id, Email FROM User WHERE Email IN ('partneruser@testorg.com', 'mdruser@testorg.com')]) {
+			map_Users.put(objUser.Email, objUser);
+		}
 
 		LeadTriggerHelper.skipTrigger = true;
 		// Create a new reseller lead. Skip Lead Trigger for faster lead inserts
@@ -482,7 +485,7 @@ public class ZPAccountingFirmTriggerHelperTest {
 			.setLeadSource('Sourcing Error')
 			.setPhone('123456789')
 			.setCompany('Reseller Lead 1')
-			.setOwnerId(list_Users[1].Id)
+			.setOwnerId(map_Users.get('mdruser@testorg.com').Id)
 			.build();
 		insert objLead;
 		LeadTriggerHelper.skipTrigger = false;
@@ -492,7 +495,7 @@ public class ZPAccountingFirmTriggerHelperTest {
 			.setRecordTypeId(AccountUtil.RESELLER_ACCOUNT_RT_ID)
 			.setName('Test Reseller Account 2')
 			.setZPFirmId('111111122222')
-			.setOwnerId(list_Users[0].Id)
+			.setOwnerId(map_Users.get('partneruser@testorg.com').Id)
 			.build();
 		insert objAccount;
 		AccountTriggerHelper.skipTrigger = false;
@@ -512,7 +515,7 @@ public class ZPAccountingFirmTriggerHelperTest {
 		Lead objLeadAssert = [SELECT Id, IsConverted, ConvertedAccountId FROM Lead WHERE Email = 'reseller@normalizeddomain.com'];
 		System.assertEquals(true, objLeadAssert.IsConverted, 'Lead  is not converted');
 		System.assertEquals(objAccountAssert.Id, objLeadAssert.ConvertedAccountId, 'Lead did not convert properly');
-		System.assertEquals(list_Users[0].Id, objAccountAssert.OwnerId, 'Account Owner is incorrect');
+		System.assertEquals(map_Users.get('partneruser@testorg.com').Id, objAccountAssert.OwnerId, 'Account Owner is incorrect');
 	}
 
 	/**

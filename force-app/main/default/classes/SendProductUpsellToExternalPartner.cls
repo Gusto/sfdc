@@ -9,6 +9,7 @@ public with sharing class SendProductUpsellToExternalPartner {
 	public static final String REMOTE = 'remote';
 	public static final String GUIDELINE = 'guideline';
 	public static final String NEXT_INSURANCE = 'nextInsurance';
+	public static final String VESTWELL = 'vestwell';
 
 	/**
 	 * @description  Wrapper used to receieve input from Flow
@@ -107,6 +108,8 @@ public with sharing class SendProductUpsellToExternalPartner {
 					payload = getGuidelineAPIPayload(list_ProductUpsell[0]);
 				} else if (strAPIName == NEXT_INSURANCE) {
 					payload = getNextAPIPayload(list_ProductUpsell[0]);
+				} else if (strAPIName == VESTWELL) {
+					payload = getVestwellAPIPayload(list_ProductUpsell[0]);
 				}
 				objHTTPRes = sendHttpRequest(payload);
 
@@ -635,6 +638,105 @@ public with sharing class SendProductUpsellToExternalPartner {
 				}
 			}
 
+			objJsonGen.writeEndObject();
+
+			String strJSON = objJsonGen.getAsString();
+
+			return strJSON;
+		}
+    }
+        
+     /**
+	 * @description	Method to generate JSON string for VESTWELL
+	 * @author		Debasmita Rawooth
+	 * @param       objProdUpsell - Product Upsell record
+	 * @return      String
+	 **/
+	public static String getVestwellAPIPayload(Partnership_Interest__c objProdUpsell) {
+		if (objProdUpsell == null) {
+			return null;
+		} else {
+			JSONGenerator objJsonGen = JSON.createGenerator(true);
+			objJsonGen.writeStartObject();
+			objJsonGen.writeStringField('target_system', VESTWELL);
+			objJsonGen.writeStringField('puid', objProdUpsell.PUID__c);
+
+			if (objProdUpsell.OwnerId != null) {
+				if (objProdUpsell.Owner.FirstName != null) {
+					objJsonGen.writeStringField('partner_rep_first_name', objProdUpsell.Owner.FirstName);
+				}
+				if (objProdUpsell.Owner.LastName != null) {
+					objJsonGen.writeStringField('partner_rep_last_name', objProdUpsell.Owner.LastName);
+				}
+				if (objProdUpsell.Owner.Email != null) {
+					objJsonGen.writeStringField('partner_rep_email', objProdUpsell.Owner.Email);
+				}
+			}
+
+			if (objProdUpsell.Contact__c != null) {
+				if (objProdUpsell.Contact__r.FirstName != null) {
+					objJsonGen.writeStringField('referral_first_name', objProdUpsell.Contact__r.FirstName);
+				}
+
+				if (objProdUpsell.Contact__r.LastName != null) {
+					objJsonGen.writeStringField('referral_last_name', objProdUpsell.Contact__r.LastName);
+				}
+
+				if (objProdUpsell.Contact__r.Email != null) {
+					objJsonGen.writeStringField('referral_email', objProdUpsell.Contact__r.Email);
+				}
+
+				if (objProdUpsell.Contact__r.Phone != null) {
+					objJsonGen.writeStringField('referral_phone_number', objProdUpsell.Contact__r.Phone);
+				} else if (objProdUpsell.Contact__r.MobilePhone != null) {
+					objJsonGen.writeStringField('referral_phone_number', objProdUpsell.Contact__r.MobilePhone);
+				}
+			}
+
+			if (objProdUpsell.Account__c != null) {
+				if (objProdUpsell.Account__r.Name != null) {
+					objJsonGen.writeStringField('referral_company_name', objProdUpsell.Account__r.Name);
+				}
+
+				if (objProdUpsell.Account__r.Website != null) {
+					objJsonGen.writeStringField('referral_company_website', objProdUpsell.Account__r.Website);
+				}
+                
+                if (objProdUpsell.Account__r.BillingStreet != null) {
+					objJsonGen.writeStringField('referral_street', objProdUpsell.Account__r.BillingStreet);
+				}
+            	if (objProdUpsell.Account__r.BillingCity != null) {
+					objJsonGen.writeStringField('referral_city', objProdUpsell.Account__r.BillingCity);
+				}
+				if (objProdUpsell.Account__r.BillingState != null) {
+					objJsonGen.writeStringField('referral_state', objProdUpsell.Account__r.BillingState);
+				}
+				if (objProdUpsell.Account__r.BillingPostalCode != null) {
+					objJsonGen.writeStringField('referral_zip_code', objProdUpsell.Account__r.BillingPostalCode);
+				}
+                
+				if (objProdUpsell.Account__r.Joined_Date_Panda__c != null) {
+					objJsonGen.writeDateTimeField('first_payroll_date', objProdUpsell.Account__r.Joined_Date_Panda__c);
+				}
+			}
+
+			if (objProdUpsell.Employees__c != null) {
+				objJsonGen.writeNumberField('referral_number_of_employees', objProdUpsell.Employees__c);
+			}
+            
+            if (objProdUpsell.X401k_Notes__c != null) {
+				objJsonGen.writeStringField('referral_rep_notes', objProdUpsell.X401k_Notes__c);
+			}
+            
+            if (objProdUpsell.Tier_Upgrade__c != null) {
+				objJsonGen.writeStringField('tier', objProdUpsell.Tier_Upgrade__c);
+			}
+            
+            if (objProdUpsell.Account__r.Has_Benefits_401k__c) {
+				objJsonGen.writeBooleanField('referral_existing_401k_bool', true);
+			} else {
+				objJsonGen.writeBooleanField('referral_existing_401k_bool', false);
+			}
 			objJsonGen.writeEndObject();
 
 			String strJSON = objJsonGen.getAsString();

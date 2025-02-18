@@ -252,7 +252,7 @@ private class CustomConfigurationTest {
 		Opportunity objOppty = new Opportunity();
 		objOppty.AccountId = objAccnt.Id;
 		objOppty.Name = 'Test Opp BNP';
-		objOppty.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		objOppty.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		objOppty.CloseDate = System.today();
 		objOppty.StageName = OpportunityUtil.SAL_STAGE;
 		objOppty.Pricebook2Id = Test.getStandardPriceBookId();
@@ -343,7 +343,7 @@ private class CustomConfigurationTest {
 		account = new Account(Id = objOppty.AccountId, ZP_Company_ID__c = zp_company_id);
 		update account;
 
-		objOppty.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		objOppty.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		objOppty.ZP_Company_ID__c = zp_company_id;
 		insert objOppty;
 
@@ -416,49 +416,31 @@ private class CustomConfigurationTest {
 	}
 
 	static Benefit_Order__c newBenefitOrder(Opportunity objOppty, String recordType) {
-		Benefit_Order__c benefitOrder = new TestDataFactory.BenefitOrderBuilder()
-			.setRecordType(Cache.getRecordTypeId('Benefit_Order__c', recordType))
-			.setName('Test Benefit Order')
-			.setAccount(objOppty.AccountId)
-			.setOpp(objOppty.Id)
-			.setCoverageEffectiveDate(System.today())
-			.setSubmissionDeadline(System.today())
-			.setOwnerID(UserInfo.getUserId())
-			.build();
+		Benefit_Order__c benefitOrder = (Benefit_Order__c) SmartFactory.createSObject('Benefit_Order__c', false);
+
+		benefitOrder.Account__c = objOppty.AccountId;
+		benefitOrder.Opportunity__c = objOppty.Id;
+		benefitOrder.RecordTypeId = Cache.getRecordTypeId('Benefit_Order__c', recordType);
 
 		insert benefitOrder;
 		return benefitOrder;
 	}
 
 	static Carrier_Order__c newCarrierOrder(Benefit_Order__c benefitOrder, Carrier__c carrier) {
-		Carrier_Order__c carrierOrder = new TestDataFactory.CarrierOrderBuilder()
-		.setBenefitOrder(benefitOrder.Id)
-		.setOwnerID(UserInfo.getUserId())
-		.setFollowUpDate(system.today().addDays(1))
-		.setRecordTypeId(Cache.getRecordTypeId('Carrier_Order__c', 'New Plan'))
-		.setCarrier(carrier.Id)		
-		.build();
+		Carrier_Order__c carrierOrder = (Carrier_Order__c) SmartFactory.createSObject('Carrier_Order__c', false);
+
+		carrierOrder.Benefit_Order__c = benefitOrder.Id;
+		carrierOrder.Carrier__c = carrier.Id;
 
 		insert carrierOrder;
 		return carrierOrder;
 	}
 
 	static Carrier__c newCarrier() {
-		Confirmation_Automation_Eligible_Carrier__mdt objCarrierConfiguration = [SELECT Carrier_Id__c FROM Confirmation_Automation_Eligible_Carrier__mdt WHERE Carrier_Id__c != NULL LIMIT 1];
+		Carrier__c carrier = (Carrier__c) SmartFactory.createSObject('Carrier__c', false);
 
-		State__c objState = new TestDataFactory.StateBuilder().setName('TEST STATE').setAbbreviation('TS').build();
-		insert objState;
-
-		List<Carrier__c> list_Carriers = new List<Carrier__c>();
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder()
-			.setName('TEST CARRIER')
-			.setState(objState.Id)
-			.setId('25')
-			.setCarrierId(objCarrierConfiguration.Carrier_Id__c)
-			.setGroupSubmissionEvent('Same')
-			.build();
-		insert objCarrier;
-		return objCarrier;
+		insert carrier;
+		return carrier;
 	}
 
 	static Benefit_Order__c create_benefit_order_with_carrier_order(String typeOfOrder) {

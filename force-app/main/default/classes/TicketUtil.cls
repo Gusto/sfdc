@@ -10,10 +10,10 @@ public class TicketUtil {
 	public static final String PERFIX_USER = '005';
 	public static final String LABEL_ALL = 'All';
 	public static final String LABEL_MY = 'My';
+	public static final String TICKET_LOST_OUT_OF_BUSINESS = 'Out of business';
 
 	public static final String TICKET_STATUS_CLOSED = 'Closed';
 	public static final String TICKET_STATUS_INPROGRESS = 'InProgress';
-	public static final String TICKET_STATUS_IN_PROGRESS = 'In Progress';
 	public static final String TICKET_STATUS_ESCALATED = 'Escalated';
 	public static final String TICKET_STATUS_INCOMPLETE = 'Incomplete';
 	public static final String TICKET_STATUS_ER_OUTREACH_REQ = 'ER Outreach Required';
@@ -112,6 +112,7 @@ public class TicketUtil {
 	public static final String QA_ERROR_TEAM_ADVISING = 'Advising Fulfillment';
 
 	//Messages
+	public static final String ERR_CARRIER_ORDER_HAS_OPEN_TASK = 'Closing this ticket will move the Carrier Order to ‘Approved’. This order is unable to be approved as there is an open task on the carrier order. Please complete any open tasks, then close this ticket.';
 	public static final String REQ_MSG_QC_ERROR_TYPE_DETAIL = 'Please select QC Error Type Detail.';
 	public static final String REQ_MSG_QC_ERROR_TYPE = 'Please select QC Error Type.';
 	public static final String REQ_MSG_TICKET_AMPLIFIER = 'Ticket Amplifier is required.';

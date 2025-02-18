@@ -1,0 +1,85 @@
+<template>
+    <div class="container">
+        <lightning-layout>
+            <lightning-layout-item flexibility="auto, no-grow" padding="around-small">
+                <div class="custom-box slds-box slds-p-around_medium slds-text-align_center">
+                    <lightning-input class={checkBoxLabel} type="checkbox" labe="Show/Hide" onchange={handleShowCompChBxChange} checked={isShowComp}> </lightning-input>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item flexibility="auto" padding="around-small">
+                <div class="custom-box slds-box slds-p-around_medium slds-text-align_center"><b>Deposit Frequency/Schedule</b></div>
+            </lightning-layout-item>
+        </lightning-layout>
+    
+        <template if:true={isShowComp}>
+        
+    <lightning-card  title="Deposit Frequency/Schedule" >
+
+        <!-- modal start -->      
+        <template if:true={isShowModal}>
+            <section  role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- modal header start -->
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please Note</h2>
+                </header>
+
+                <!-- modal body start -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>You have deselected {checkBox_labelsList_Str}. Please acknowledge: if you click Submit you will delete this section & all field details</p>
+                </div>
+
+                <!-- modal footer start-->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="success" label="Submit" title="Successful action" onclick={handleSubmitButton} class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button variant="brand-outline" label="Cancel" title="Unsuccessful action" onclick={hideModalBox} class="slds-m-right_x-small"></lightning-button>
+                </footer>
+
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        <!-- modal end -->
+
+    <!-- form start -->
+    <template lwc:if={reloadForm}>
+        <template for:each={getFormNameObjList} for:item="childObj">
+            <lightning-input class={checkBoxLabel} key={childObj.form.Id} type="checkbox" label={childObj.formLabel} data-id={childObj.form.Id} data-api={childObj.formLabel} onchange={handleInputCheckBoxChange} checked={childObj.areDetailsVisible}> </lightning-input>
+                <form key={childObj.form.Id}  lwc:if={childObj.areDetailsVisible} class="slds-border_top" >
+                    <lightning-card  >
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                                <!-- lightning-input start -->
+
+                                <div class="slds-form-element ">
+                                    <lightning-combobox label="Deposit Frequency/Schedule Type" options={picklistVals_depositFrequencySchduleType} data-id={childObj.form.Id} variant="label-inline" data-api="Deposit_Frequency_Schedule_Type__c" value={childObj.form.Deposit_Frequency_Schedule_Type__c} onchange={handleOnChange}></lightning-combobox>
+                                </div>
+
+                                <div class="slds-form-element ">
+                                    <lightning-input label="Deposit - Schedule Behavior" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Deposit_Schedule_Behavior__c" value={childObj.form.Deposit_Schedule_Behavior__c} onchange={handleOnChange}></lightning-input>
+                                </div>
+
+                                <lightning-input label="Deposit - Due Date info/link" type="String" data-id={childObj.form.Id} variant="label-inline" data-api="Deposit_Due_Date_Info_Link__c" value={childObj.form.Deposit_Due_Date_Info_Link__c} onchange={handleOnChange}> </lightning-input>
+
+                                <lightning-combobox label="Is currently forced or fallback?" options={picklistVals_isCurrentlyForced} data-id={childObj.form.Id} variant="label-inline" data-api="Is_Currently_Forced_Or_Fallback__c" value={childObj.form.Is_Currently_Forced_Or_Fallback__c} onchange={handleOnChange}></lightning-combobox>
+
+                                <!-- lightning-input end -->    
+                            </div>
+                        </div>
+                    </lightning-card>
+                    </form>
+        </template>
+    </template>
+    <!-- form end -->
+
+
+    <lightning-layout horizontal-align="spread" style="padding:5px">
+        <lightning-layout-item size="6" flexibility="auto"  class="slds-text-align_right">
+            <lightning-button class=" slds-m-top_medium" variant="brand" type="submit" label="Submit" onclick={handleFormSubmit}> </lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+
+</lightning-card>
+</template>
+</div>
+</template>

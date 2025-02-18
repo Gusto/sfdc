@@ -38,7 +38,9 @@ public with sharing class HIGroupEventAdvisingEmailAutomationTest {
 		' "long_term_disability": [{"carrier_name": "Beam", "plan_name": "Beam Smart Premium Plus 100/80/50/50-1500 + Adult Ortho (4A)" }], ' +
 		' "short_term_disability": [ {"carrier_name": "HUMANA","plan_name": "HUMANA Smart Premium Plus 100/80/50/50-1500 + Adult Ortho (4A)" } ], "tadas": "fsa,dca"}';
 	public static String STR_JSON_AUTO_RENEWAL = '{"company_id":72397,"application_id":7239712,"application_type":"renewal","selection_deadline":"2021-01-25"}';
-	public static String STR_JSON_ERROR = '{"company":72397,"application_id":7239712,"application_type":"renewal","selection_deadline":"2021-01"}';
+	public static String STR_JSON_ERROR = '{"application_id":7239712,"application_type":"renewal","selection_deadline":"2021-01"}';
+	public static String STR_JSON_LF_INTRO = '{"company_id":72397,"application_id":7239712,"application_type":"renewal","selection_deadline":"2024-11-06","benefit_address":{"street_1":"1 Street","street_2":"Apt 1","city":"San Francisco","state":"CA","zip":"94105","country":"US"},"alternate_recommendation_type":"carrier_switch","default_renewal_rate_change":"16%","alternate_package_savings":"28%","default_cost_breakdown_pdf":"zp/link/to/default_package_123.pdf","alternate_cost_breakdown_pdf":"zp/link/to/alternate_package_456.pdf","alternate_package_carrier":"United Healthcare"}';
+	public static String STR_JSON_LF_AUTO_RENEWAL = '{"company_id":72397,"application_id":7239712,"application_type":"renewal","selection_deadline":"2025-12-09"}';
 
 	@TestSetup
 	static void createTestData() {
@@ -52,6 +54,7 @@ public with sharing class HIGroupEventAdvisingEmailAutomationTest {
 		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('inbound_support_pilot_false').setBody('Test Body').build());
 		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('inbound_support_pilot_true').setBody('Test Body 123 - please call 415-463-1380').build());
 		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('advising_team_signature').setBody('Regards, Advising Team').build());
+		list_EmailMacro.add(new TestDataFactory.EmailMacroBuilder().setMacroIdentifier('level_funded_intro_email_carrier_switch_non-TX').setBody(' level_funded_intro_email Regards, Advising Team').build());
 
 		insert list_EmailMacro;
 
@@ -433,5 +436,74 @@ public with sharing class HIGroupEventAdvisingEmailAutomationTest {
 
 		System.assertEquals(strExpectedMsg, list_HIEvents[0].Message__c, HIGroupEventAdvisingEmailAutomation.ERROR_MSG_INVALID_SELECTION_DEADLINE);
 		System.assertEquals(IntegrationUtils.DEAD_STATE, list_HIEvents[0].Processing_State__c, HIGroupEventAdvisingEmailAutomation.ERROR_MSG_INVALID_SELECTION_DEADLINE);
+	}
+
+	/**
+	 * @description  This method is used to test HI Group event process for level_funded_intro_email Event type.
+	 * @param        null
+	 * @return       null
+	 **/
+	@isTest
+	static void levelFundedTransitionAdvisingIntroEmail() {
+		Test.startTest();
+		HIGroupEvent__c objHIGroupEvent = new TestDataFactory.HIGroupEventBuilder()
+			.setEventId('ecbc176c-815e-4bc3-b545-58f3fe4deae81')
+			.setEventType(HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_INTRO_EMAIL )
+			.setEventInfo(STR_JSON_LF_INTRO)
+			.build();
+
+		insert objHIGroupEvent;
+		Test.stopTest();
+
+		List<Opportunity> list_Opp = [SELECT Id, Advising_Email__c, StageName FROM Opportunity LIMIT 1];
+
+		System.assert(list_Opp.size() > 0, 'Opportunity is Present.');
+		System.assertEquals(HIGroupEventAdvisingEmailAutomation.LFT_INTRO, list_Opp[0].Advising_Email__c, 'Level Funded Transition Advising Intro Email, scussfully sent.');
+	}
+
+	/**
+	 * @description  This method is used to test HI Group event process for level_funded_autorenew_email Event type.
+	 * @param        null
+	 * @return       null
+	 **/
+	@isTest
+	static void levelFundedTransitionAdvisingAutoRenewalEmail() {
+		Test.startTest();
+		HIGroupEvent__c objHIGroupEvent = new TestDataFactory.HIGroupEventBuilder()
+			.setEventId('ecbc176c-815e-4bc3-b545-58f3fe4deae82')
+			.setEventType(HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_AUTO_RENEWAL_EMAIL )
+			.setEventInfo(STR_JSON_LF_AUTO_RENEWAL)
+			.build();
+
+		insert objHIGroupEvent;
+		Test.stopTest();
+
+		List<Opportunity> list_Opp = [SELECT Id, Advising_Email__c, StageName FROM Opportunity LIMIT 1];
+
+		System.assert(list_Opp.size() > 0, 'Opportunity is Present.');
+		System.assertEquals(HIGroupEventAdvisingEmailAutomation.LFT_AUTO_RENEW, list_Opp[0].Advising_Email__c, 'Level Funded Auto Renewal Advising Email, scussfully sent.');
+	}
+
+	/**
+	 * @description  This method is used to test HI Group event process for level_funded_transition_renewal_check_in_email Event type.
+	 * @param        null
+	 * @return       null
+	 **/
+	@isTest
+	static void levelFundedTransitionRenewalCheckIn() {
+		Test.startTest();
+		HIGroupEvent__c objHIGroupEvent = new TestDataFactory.HIGroupEventBuilder()
+			.setEventId('ecbc176c-815e-4bc3-b545-58f3fe4deae82')
+			.setEventType(HIGroupEventUtil.EVENT_TYPE_LEVEL_FUNDED_TRANSITION_RENEWAL_CHECKIN_EMAIL )
+			.setEventInfo(STR_JSON_LF_AUTO_RENEWAL)
+			.build();
+
+		insert objHIGroupEvent;
+		Test.stopTest();
+
+		List<Opportunity> list_Opp = [SELECT Id, Advising_Email__c, StageName FROM Opportunity LIMIT 1];
+
+		System.assert(list_Opp.size() > 0, 'Opportunity is Present.');
+		System.assertEquals(HIGroupEventAdvisingEmailAutomation.LFT_TRANS_CHECK_IN, list_Opp[0].Advising_Email__c, 'Level Funded Auto Renewal Advising Email, scussfully sent.');
 	}
 }

@@ -1666,7 +1666,7 @@ private without sharing class TicketTriggerHelperTest {
 		//Make Ticket closed/Lost
 		objTicket1.Status__c = TicketUtil.TICKET_STATUS_CLOSED;
 		objTicket2.Status__c = TicketUtil.TICKET_STATUS_LOST;
-		objTicket2.Lost_Detail__c = 'Out of business';
+		objTicket2.Lost_Detail__c = TicketUtil.TICKET_LOST_OUT_OF_BUSINESS;
 		update new List<Ticket__c>{ objTicket1, ObjTicket2 };
 
 		map_Results = new Map<Id, Ticket__c>([SELECT Id, Status__c, Unresponsive__c, Tax_Year__c, Communication_Status__c FROM Ticket__c WHERE Id = :new List<Id>{ objTicket1.Id, objTicket2.Id }]);
@@ -2132,6 +2132,7 @@ private without sharing class TicketTriggerHelperTest {
 			.setOwnerId(UserInfo.getUserId())
 			.setStatus(TicketUtil.TICKET_STATUS_LOST)
 			.setRecordTypeId(TicketUtil.ARDIUS_TICKET_RT_ID)
+			.setLostDetail('Out of business')
 			.setOppId(objOpp1.Id)
 			.build();
 		insert objTicket;
@@ -2149,6 +2150,7 @@ private without sharing class TicketTriggerHelperTest {
 		insert objTicket2;
 
 		objTicket2.Status__c = TicketUtil.TICKET_STATUS_LOST;
+		objTicket2.Lost_Detail__c = 'Out of business';
 		update objTicket2;
 
 		objOpp2 = [SELECT Id, StageName FROM Opportunity WHERE Id = :objOpp2.Id];
@@ -2185,7 +2187,7 @@ private without sharing class TicketTriggerHelperTest {
 		insert objTicket;
 
 		objOpp1 = [SELECT Id, StageName, Ticket_Status__c FROM Opportunity WHERE Id = :objOpp1.Id];
-		System.assertEquals(OpportunityUtil.DISCOVERY_CALL_SCHEDULED_STAGE, objOpp1.StageName, 'Opportunity not updated to new');
+		System.assertEquals(OpportunityUtil.NEW_STAGE, objOpp1.StageName, 'Opportunity not updated to new');
 
 		//On ticket Insert --> Assert related ticket status is populated on opportunity
 		System.assertEquals(objTicket.Status__c, objOpp1.Ticket_Status__c, 'Ticket status not populated on opportunity');
@@ -2198,7 +2200,7 @@ private without sharing class TicketTriggerHelperTest {
 		update objTicket;
 
 		objOpp1 = [SELECT Id, StageName, Ticket_Status__c FROM Opportunity WHERE Id = :objOpp1.Id];
-		System.assertEquals(OpportunityUtil.DISCOVERY_CALL_SCHEDULED_STAGE, objOpp1.StageName, 'Opportunity2 not updated to new');
+		System.assertEquals(OpportunityUtil.NEW_STAGE, objOpp1.StageName, 'Opportunity2 not updated to new');
 
 		//On ticket update --> Assert related ticket status is updated on opportunity
 		System.assertEquals(objTicket.Status__c, objOpp1.Ticket_Status__c, 'Ticket status not updated on opportunity');

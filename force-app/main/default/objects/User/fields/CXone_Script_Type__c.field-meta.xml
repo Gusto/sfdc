@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CXone_Script_Type__c</fullName>
+    <label>CXone_Script_Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>direct</fullName>
+                <default>false</default>
+                <label>direct</label>
+            </value>
+            <value>
+                <fullName>payroll</fullName>
+                <default>false</default>
+                <label>payroll</label>
+            </value>
+            <value>
+                <fullName>sales</fullName>
+                <default>false</default>
+                <label>sales</label>
+            </value>
+            <value>
+                <fullName>taxes</fullName>
+                <default>false</default>
+                <label>taxes</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

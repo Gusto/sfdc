@@ -4,27 +4,27 @@
     <protected>false</protected>
     <values>
         <field>Additional_Link__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Is_Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>Notification__c</field>
-        <value xsi:type="xsd:string">There are more than 0 opportunities with International payroll interest on the account but not updated on the opportunity.</value>
+        <value xsi:type="xsd:string">Tax Res Auto Solve Package Due Date  Reminder</value>
     </values>
     <values>
         <field>Payops_Notification__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>Point_Of_Contact__c</field>
-        <value xsi:type="xsd:string">S02QJK7JRK2</value>
+        <value xsi:type="xsd:string">S088P2J2SS0</value>
     </values>
     <values>
         <field>Point_of_Contact_Name__c</field>
-        <value xsi:type="xsd:string">Praveen Sethu</value>
+        <value xsi:type="xsd:string">Avi Kadakia</value>
     </values>
     <values>
         <field>Query_Return_Type__c</field>
@@ -36,10 +36,10 @@
     </values>
     <values>
         <field>Report_Link__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">https://gusto--uat.sandbox.lightning.force.com/lightning/r/Report/00OTH000001we1J2AQ/view</value>
     </values>
     <values>
         <field>SOQL_Query__c</field>
-        <value xsi:type="xsd:string">select count() from opportunity where recordtype.name = &apos;company opportunity&apos; and account.product_interest__c != null and isclosed = false and additional_opportunity_services__c excludes (&apos;international payroll&apos;) and account.product_interest_countries__c includes (&apos;CA&apos;)</value>
+        <value xsi:type="xsd:string">SELECT COUNT() FROM Auto_Solve_Package__c WHERE AutoSolvePackageStatus__c = &apos;Active&apos; AND ( Due_Date__c&gt;= TODAY  AND Due_Date__c &lt;= NEXT_N_DAYS:7 )</value>
     </values>
 </CustomMetadata>

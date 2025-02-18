@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <description>Auto close opportunities when they meet criteria</description>
+    <environments>Default</environments>
+    <formulas>
+        <description>Last login time from account</description>
+        <name>Account_Last_Login_Time</name>
+        <dataType>Date</dataType>
+        <expression>{!$Record.Account.Last_Login_Time__c}</expression>
+    </formulas>
+    <formulas>
+        <description>Stores date 35 days ago</description>
+        <name>Date35DaysAgo</name>
+        <dataType>Date</dataType>
+        <expression>TODAY() - 35</expression>
+    </formulas>
+    <formulas>
+        <description>Stores date 7 days ago</description>
+        <name>Date7DaysAgo</name>
+        <dataType>Date</dataType>
+        <expression>TODAY() - 7</expression>
+    </formulas>
+    <formulas>
+        <description>Stores todays date</description>
+        <name>DateToday</name>
+        <dataType>Date</dataType>
+        <expression>TODAY()</expression>
+    </formulas>
+    <interviewLabel>Schedule Trigger: Opportunity Auto Close {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Schedule Trigger: Opportunity Auto Close</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1 AND 2 AND (3 OR 4) AND 5 AND 6 AND 7</filterLogic>
+        <filters>
+            <field>Opportunity_Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Company Opportunity</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Opportunity_Owner_Role__c</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>sales_sb_</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Anchor_Pay_Date__c</field>
+            <operator>EqualTo</operator>
+        </filters>
+        <filters>
+            <field>Anchor_Pay_Date__c</field>
+            <operator>LessThan</operator>
+            <value>
+                <elementReference>Today</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>CreatedDate</field>
+            <operator>LessThan</operator>
+            <value>
+                <elementReference>DaysAgo35</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Days_Since_Last_Set_Up_Step__c</field>
+            <operator>GreaterThan</operator>
+            <value>
+                <numberValue>21.0</numberValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Closed Lost</stringValue>
+            </value>
+        </filters>
+        <object>Opportunity</object>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2024-03-15</startDate>
+            <startTime>14:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>InvalidDraft</status>
+    <variables>
+        <description>Stores date 35 days ago</description>
+        <name>DaysAgo35</name>
+        <dataType>Date</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>Date35DaysAgo</elementReference>
+        </value>
+    </variables>
+    <variables>
+        <description>Stores date 7 days ago</description>
+        <name>DaysAgo7</name>
+        <dataType>Date</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>Date7DaysAgo</elementReference>
+        </value>
+    </variables>
+    <variables>
+        <description>Stores today&apos;s date</description>
+        <name>Today</name>
+        <dataType>Date</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <elementReference>DateToday</elementReference>
+        </value>
+    </variables>
+</Flow>

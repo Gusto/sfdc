@@ -26,7 +26,6 @@
             <assignToReference>Payment_Invoice_Queued_Count</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send success notification that all invoices have been created in Salesforce</description>
@@ -59,7 +58,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send error notification that invoice counts don&apos;t match</description>
@@ -92,7 +90,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send error notification that invoices are not linked to any account</description>
@@ -122,7 +119,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Post notification that querying invoices not linked to any account failed.</description>
@@ -152,7 +148,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Post notification that payment invoice query failed</description>
@@ -182,7 +177,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>55.0</apiVersion>
     <assignments>
@@ -418,7 +412,7 @@
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <description>Error message to notify invoices are linked to Error Account</description>
         <name>Invoices_Linked_To_Blank_Account_Message</name>

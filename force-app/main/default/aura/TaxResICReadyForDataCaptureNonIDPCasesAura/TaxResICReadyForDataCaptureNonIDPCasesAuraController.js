@@ -7,6 +7,9 @@
 		var workspaceAPI = component.find("workspace");
 		var strMatchingTabId = "";
 
+        console.log("strCaseId ===> " + strCaseId);
+        console.log("workspaceAPI ===> " + workspaceAPI);
+
 		workspaceAPI
         .getAllTabInfo()
         .then(function (response) {
@@ -19,6 +22,8 @@
                     }
                 }
             }
+
+            console.log("strMatchingTabId ===> " + strMatchingTabId);
 
             /**if same pod already open focus on tab */
             if (strMatchingTabId) {

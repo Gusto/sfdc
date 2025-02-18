@@ -80,7 +80,7 @@ public with sharing class CreateEditPayrollTransferTTFCtrl {
 
 				String strAccountQuery = 'SELECT Id,Name,Bulk_Migration__c,ParentId,(SELECT Id,Transition_to_Fulfillment__c,Bulk_Migration__c,First_Check_Date__c,First_Check_Date_Week_Number__c,Closed_Owner_Division__c FROM Orders WHERE RecordType.NAme =\'Company Migration\')';
 				strAccountQuery +=
-					',(SELECT Id,Bulk_Migration__c,Source_ID__c,ZP_Company_ID_from_Account__c, Owner_Division__c FROM Opportunities WHERE REcordType.Name=\'Company Opportunity\' AND IsCLosed = false) FROM Account WHERE RecordType.Name =\'Company\' AND Id IN (SELECT AccountId FROM Order WHERE RecordType.NAme =\'Company Migration\' AND Status NOT IN: setOrderStatusToExclude) AND ZP_Company_Id__c != null AND Id != \'' +
+					',(SELECT Id,Bulk_Migration__c,Source_ID__c,ZP_Company_ID_from_Account__c, Owner_Division__c FROM Opportunities WHERE REcordType.Name=\'Acquisition\' AND IsCLosed = false) FROM Account WHERE RecordType.Name =\'Company\' AND Id IN (SELECT AccountId FROM Order WHERE RecordType.NAme =\'Company Migration\' AND Status NOT IN: setOrderStatusToExclude) AND ZP_Company_Id__c != null AND Id != \'' +
 					ttfREcord.Account__c +
 					'\'';
 
@@ -310,7 +310,7 @@ public with sharing class CreateEditPayrollTransferTTFCtrl {
 
 					//fetch accounts related to BMR
 					String strAccQuery = 'SELECT Id,Name,Bulk_Migration__c,ParentId,(SELECT Id,Transition_to_Fulfillment__c,Bulk_Migration__c,First_Check_Date__c,First_Check_Date_Week_Number__c,Closed_Owner_Division__c  FROM Orders WHERE RecordType.NAme =\'Company Migration\')';
-					strAccQuery += ',(SELECT Id,Bulk_Migration__c,Source_ID__c,ZP_Company_ID_from_Account__c FROM Opportunities WHERE REcordType.Name=\'Company Opportunity\' AND IsClosed = False)';
+					strAccQuery += ',(SELECT Id,Bulk_Migration__c,Source_ID__c,ZP_Company_ID_from_Account__c FROM Opportunities WHERE REcordType.Name=\'Acquisition\' AND IsClosed = False)';
 					strAccQuery +=
 						' FROM Account WHERE RecordType.Name =\'Company\' AND Id IN (SELECT AccountId FROM Order WHERE RecordType.NAme =\'Company Migration\') AND Id != \'' +
 						ttfREcord.Account__c +

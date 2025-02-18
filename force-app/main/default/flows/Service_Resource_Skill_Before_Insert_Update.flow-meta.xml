@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <constants>
+        <name>Profile_VendorCX</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Vendor CX</stringValue>
+        </value>
+    </constants>
+    <customErrors>
+        <name>Skill_Change_Not_Allowed</name>
+        <label>Skill Change Not Allowed</label>
+        <locationX>50</locationX>
+        <locationY>503</locationY>
+        <customErrorMessages>
+            <errorMessage>Error: Unable to modify skills for non-Vendor CX profile Service Resource agent. Please ensure that you have the appropriate permissions and try again.</errorMessage>
+            <isFieldError>false</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+    <decisions>
+        <name>Check_Service_Resource_s_Profile</name>
+        <label>Check Service Resource&apos;s Profile</label>
+        <locationX>182</locationX>
+        <locationY>395</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Not_Vendor_CX_Profile</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Permission.Omni_Channel_Service_Resources_and_Skills_VendorWFM</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Parent_Service_Resource.RelatedRecord.Profile.Name</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>Profile_VendorCX</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Parent_Service_Resource.ResourceType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>A</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Skill_Change_Not_Allowed</targetReference>
+            </connector>
+            <label>Not Vendor CX Profile</label>
+        </rules>
+    </decisions>
+    <description>PLEASE make changes on top of this version going forward
+
+- Alert WFM users against altering agent skills for Non-VendorCX profiles</description>
+    <environments>Default</environments>
+    <interviewLabel>Service Resource Skill Before Insert/Update {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Service Resource Skill Before Insert/Update</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Parent_Service_Resource</name>
+        <label>Get Parent Service Resource</label>
+        <locationX>182</locationX>
+        <locationY>287</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Service_Resource_s_Profile</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.ServiceResourceId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>ServiceResource</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Parent_Service_Resource</targetReference>
+        </connector>
+        <filterFormula>NOT({!$Permission.Bypass_Flows})</filterFormula>
+        <object>ServiceResourceSkill</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+</Flow>

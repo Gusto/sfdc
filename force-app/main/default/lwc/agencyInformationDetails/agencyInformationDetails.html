@@ -1,0 +1,30 @@
+<template>
+    <template if:true={isLoading}>
+        <lightning-spinner style="margin-top: 3rem;" alternative-text="Loading" size="medium"></lightning-spinner>
+    </template>
+    <template if:false={isLoading}>
+        <lightning-accordion
+        allow-multiple-sections-open
+        active-section-name={section}
+        onsectiontoggle={handleSectionToggle}>
+        <template for:each={sectionData} for:item="section">
+        <lightning-accordion-section key={section.Id} name={section.RecordTypeName} label={section.RecordTypeName}>
+        <lightning-record-edit-form 
+        object-api-name={section.ObjectApiName}
+        record-id={section.RecordId}>
+        <div class="flex">
+        <template for:each={section.fieldDataList} for:item="field">
+        <template   if:true={field.isVisible}>
+            <lightning-input-field key={field.FieldAPIName} onchange={handledisplayMinSUIrate}
+            field-name={field.FieldAPIName}  > 
+            </lightning-input-field>
+        </template>
+        </template>
+        </div>
+        </lightning-record-edit-form>
+        </lightning-accordion-section>
+        </template>
+        </lightning-accordion>
+    <lightning-button variant="brand" label="Submit" title="Submit" onclick={submit} class="slds-m-left_x-small"></lightning-button>
+    </template>
+</template>

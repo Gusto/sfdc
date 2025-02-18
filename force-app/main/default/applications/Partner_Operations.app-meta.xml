@@ -20,7 +20,6 @@
     </actionOverrides>
     <brand>
         <headerColor>#2BABAD</headerColor>
-        <logo>Gusto_logo_f45d48</logo>
         <logoVersion>1</logoVersion>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
@@ -94,6 +93,24 @@
         <pageOrSobjectType>Account</pageOrSobjectType>
         <recordType>Account.Partner</recordType>
         <type>Flexipage</type>
+        <profile>ZP Dev Contractor (Setup Only)</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>Partner</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Partner</recordType>
+        <type>Flexipage</type>
+        <profile>ZP Dev Contractor (Setup Only)</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>Partner</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Partner</recordType>
+        <type>Flexipage</type>
         <profile>ZP API Connection</profile>
     </profileActionOverrides>
     <profileActionOverrides>
@@ -104,6 +121,24 @@
         <recordType>Account.Partner</recordType>
         <type>Flexipage</type>
         <profile>ZP API Connection</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>Partner</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Partner</recordType>
+        <type>Flexipage</type>
+        <profile>ZP Administrator - Vendor</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>Partner</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Partner</recordType>
+        <type>Flexipage</type>
+        <profile>ZP Administrator - Vendor</profile>
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
@@ -231,15 +266,6 @@
         <type>Flexipage</type>
         <profile>ZP System Administrator</profile>
     </profileActionOverrides>
-    <profileActionOverrides>
-        <actionName>View</actionName>
-        <content>threepanelLeftPin</content>
-        <formFactor>Large</formFactor>
-        <pageOrSobjectType>Case</pageOrSobjectType>
-        <recordType>Case.GEP_CX</recordType>
-        <type>Flexipage</type>
-        <profile>Biztech-BSA</profile>
-    </profileActionOverrides>
     <setupExperience>service</setupExperience>
     <tabs>standard-Account</tabs>
     <tabs>standard-Contact</tabs>
@@ -247,12 +273,16 @@
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
     <tabs>ZP_Product_Line__c</tabs>
-    <tabs>HI_Fsa_Policy_Detail__c</tabs>
+    <tabs>Log__c</tabs>
+    <tabs>PT_Order_Team_Capacity__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Partner_Operations_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>HI_Fsa_Policy_Detail__c</tab>
+            <tab>Log__c</tab>
+        </mappings>
+        <mappings>
+            <tab>PT_Order_Team_Capacity__c</tab>
         </mappings>
         <mappings>
             <tab>ZP_Product_Line__c</tab>

@@ -5,7 +5,7 @@
     <formula>/* Check if direct */
 IF(RecordTypeId = &quot;012G0000001B3o4&quot;,
     /* Check if production */
-    IF($Organization.Id = &quot;00DG0000000hKQi&quot;,
+    IF($Organization.Id = &quot;00D020000004i4T&quot;,
         /*If production*/
         IF(ISBLANK(ZP_Company_Lead_ID__c), &quot;- No Link -&quot;, &quot;https://app.gusto.com/panda/company_leads/&quot; + ZP_Company_Lead_ID__c
         ),
@@ -16,7 +16,7 @@ IF(RecordTypeId = &quot;012G0000001B3o4&quot;,
     /* Check if partner */
     IF(RecordTypeId = &quot;01216000000WdT5&quot;,
         /* Check if production */
-        IF($Organization.Id = &quot;00DG0000000hKQi&quot;,
+        IF($Organization.Id = &quot;00D020000004i4T&quot;,
             /*If production*/
             IF(ISBLANK(ZP_Accountant_Lead_ID__c), &quot;- No Link -&quot;, &quot;https://app.gusto.com/panda/accountant_leads/&quot; + ZP_Accountant_Lead_ID__c
             ),

@@ -137,7 +137,7 @@ public class OmniBacklogControllerTest {
 		objCase.Type = 'Payroll';
 		objCase.Status = 'In Progress';
 		objCase.Answer_IQ_Processed__c = 'Yes';
-		objCase.Solve_Processed__c = CaseUtils.SOLVE_PROCESSED_NO;
+		objCase.Solve_Processed__c = 'Yes';
 		Test.startTest();
 		update objCase;
 

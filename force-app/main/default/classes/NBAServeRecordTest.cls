@@ -51,6 +51,74 @@ public class NBAServeRecordTest {
 		objOrderByField.selectedField = 'createddate';
 		objRequestWrapper.list_OrderByFields = new List<NBARequestWrapper.OrderByField>{ objOrderByField };
 
+		objRequestWrapper.fieldMapping = new List<NBARequestWrapper.FieldMapping>();
+
+		// Boolean field with from value = ANY VALUE
+		NBARequestWrapper.FieldMapping objBooleanField = new NBARequestWrapper.FieldMapping();
+		objBooleanField.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping objBooleanMapping = new NBARequestWrapper.Mapping();
+		objBooleanMapping.fromValue = NBAServeRecord.ANY_VALUE;
+		objBooleanMapping.toValue = 'true';
+		objBooleanField.mapping.add(objBooleanMapping);
+		objBooleanField.selectedField = 'is_historical__c';
+		objBooleanField.strFieldType = 'BOOLEAN';
+		objRequestWrapper.fieldMapping.add(objBooleanField);
+
+		// Boolean field with from value = false
+		NBARequestWrapper.FieldMapping objBooleanField2 = new NBARequestWrapper.FieldMapping();
+		objBooleanField2.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping objBooleanMapping2 = new NBARequestWrapper.Mapping();
+		objBooleanMapping2.fromValue = 'false';
+		objBooleanMapping2.toValue = 'true';
+		objBooleanField2.mapping.add(objBooleanMapping2);
+		objBooleanField2.selectedField = 'Is_Fraud__c';
+		objBooleanField2.strFieldType = 'BOOLEAN';
+		objRequestWrapper.fieldMapping.add(objBooleanField2);
+
+		// Date field - From value = ANY updating to TODAY
+		NBARequestWrapper.FieldMapping objDateField = new NBARequestWrapper.FieldMapping();
+		objDateField.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping objDateFieldMapping = new NBARequestWrapper.Mapping();
+		objDateFieldMapping.fromValue = NBAServeRecord.ANY_VALUE;
+		objDateFieldMapping.toValue = '[Today]';
+		objDateField.mapping.add(objDateFieldMapping);
+		objDateField.selectedField = 'Anchor_Pay_Date__c';
+		objDateField.strFieldType = 'DATE';
+		objRequestWrapper.fieldMapping.add(objDateField);
+
+		// Date field - From value = Empty value updating to TODAY
+		NBARequestWrapper.FieldMapping objDateField2 = new NBARequestWrapper.FieldMapping();
+		objDateField2.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping objDateFieldMapping2 = new NBARequestWrapper.Mapping();
+		objDateFieldMapping2.fromValue = NBAServeRecord.EMPTY_VALUE;
+		objDateFieldMapping2.toValue = '[Today]';
+		objDateField2.mapping.add(objDateFieldMapping2);
+		objDateField2.selectedField = 'BOR_Date__c';
+		objDateField2.strFieldType = 'DATE';
+		objRequestWrapper.fieldMapping.add(objDateField2);
+
+		// DateTime field - From value = Empty value updating to TODAY
+		NBARequestWrapper.FieldMapping objDateTime = new NBARequestWrapper.FieldMapping();
+		objDateTime.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping objDateTimeMapping = new NBARequestWrapper.Mapping();
+		objDateTimeMapping.fromValue = NBAServeRecord.EMPTY_VALUE;
+		objDateTimeMapping.toValue = '[Now]';
+		objDateTime.mapping.add(objDateTimeMapping);
+		objDateTime.selectedField = 'Add_Signatory_Completed_Date__c';
+		objDateTime.strFieldType = 'DATETIME';
+		objRequestWrapper.fieldMapping.add(objDateTime);
+
+		// DateTime field - From value = Any value value updating to TODAY
+		NBARequestWrapper.FieldMapping objDateTime2 = new NBARequestWrapper.FieldMapping();
+		objDateTime2.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping objDateTimeMapping2 = new NBARequestWrapper.Mapping();
+		objDateTimeMapping2.fromValue = NBAServeRecord.ANY_VALUE;
+		objDateTimeMapping2.toValue = '[Now]';
+		objDateTime2.mapping.add(objDateTimeMapping2);
+		objDateTime2.selectedField = 'Add_Employees_Completed_Date__c';
+		objDateTime2.strFieldType = 'DATETIME';
+		objRequestWrapper.fieldMapping.add(objDateTime2);
+
 		NBA_Rule_Set__c objRuleSet = new TestDataFactory.NBARuleSetBuilder().setRuleName('Test Rule Set').setPriority(1).setRuleSetConfig(objRuleSetConfig.Id).setActive(true).build();
 		insert objRuleSet;
 
@@ -100,10 +168,30 @@ public class NBAServeRecordTest {
 		System.assertEquals(objOppty.Id, objWrapper.objRecord.Id, 'Wrapper class should return the same record Id as the opportunity record inserted');
 
 		// assert if served up details are updated on the Opportunity
-		Opportunity objAssert = [SELECT Id, Served_Up_Rule__c, Served_Up_Time__c, Served_Other_Rules__c FROM Opportunity WHERE Id = :objOppty.Id];
+		Opportunity objAssert = [
+			SELECT
+				Id,
+				Served_Up_Rule__c,
+				Served_Up_Time__c,
+				Served_Other_Rules__c,
+				is_historical__c,
+				Is_Fraud__c,
+				Anchor_Pay_Date__c,
+				BOR_Date__c,
+				Add_Signatory_Completed_Date__c,
+				Add_Employees_Completed_Date__c
+			FROM Opportunity
+			WHERE Id = :objOppty.Id
+		];
 		System.assertEquals(true, objAssert.Served_Up_Rule__c != null, 'Served Up Rule on Opportunity should not be null');
 		System.assertEquals(true, objAssert.Served_Up_Time__c != null, 'Served Up Time on Opportunity should not be null');
 		System.assertEquals(true, objAssert.Served_Other_Rules__c != null, 'Served Other Rules on Opportunity should not be null');
+		System.assertEquals(true, objAssert.is_historical__c, 'Historical field not set to true');
+		System.assertEquals(true, objAssert.Is_Fraud__c, 'Fraud field not set to true');
+		System.assertEquals(Date.today(), objAssert.Anchor_Pay_Date__c, 'Anchor Pay Date not set to Today');
+		System.assertEquals(Date.today(), objAssert.BOR_Date__c, 'BoR Date not set to Today');
+		System.assertEquals(true, objAssert.Add_Signatory_Completed_Date__c != null, 'Add Signatory Completed Date not set');
+		System.assertEquals(true, objAssert.Add_Employees_Completed_Date__c != null, 'Add Employees Completed Date not set');
 	}
 
 	/**
@@ -1105,6 +1193,17 @@ public class NBAServeRecordTest {
 		objRequestWrapper.servingField = 'id';
 		objRequestWrapper.userFieldsAssignment = new List<String>{ 'audit_owner__c', 'confirmation_owner__c' };
 		objRequestWrapper.baseObject = 'Carrier_Order__c';
+
+		objRequestWrapper.fieldMapping = new List<NBARequestWrapper.FieldMapping>();
+		NBARequestWrapper.FieldMapping fieldMapping = new NBARequestWrapper.FieldMapping();
+		fieldMapping.mapping = new List<NBARequestWrapper.Mapping>();
+		NBARequestWrapper.Mapping mapping = new NBARequestWrapper.Mapping();
+		mapping.fromValue = NBAServeRecord.ANY_VALUE;
+		mapping.toValue = NBAServeRecord.LOGGED_IN_USER;
+		fieldMapping.mapping.add(mapping);
+		fieldMapping.selectedField = 'audit_owner__c';
+		fieldMapping.strFieldType = 'REFERENCE';
+		objRequestWrapper.fieldMapping.add(fieldMapping);
 
 		NBARequestWrapper.OrderByField objOrderByField = new NBARequestWrapper.OrderByField();
 		objOrderByField.selectedRelationField = null;
@@ -2183,5 +2282,45 @@ public class NBAServeRecordTest {
 		// assert success flag from wrapper class
 		objCarrierOrder = [SELECT Id, audit_owner__c, Implementation_Stage__c FROM Carrier_Order__c LIMIT 1];
 		System.assertEquals('Qualification', objCarrierOrder[0].Implementation_Stage__c, 'Stage should not change since the date is in the future');
+	}
+
+	@isTest
+	static void testDateValidators() {
+		Account objCompAcc = new TestDataFactory.AccountBuilder().setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID).setName('NBA Demo Account').setZPCompanyId('1234567890').build();
+		objCompAcc.Joined_Date_Panda__c = Date.today().addDays(2);
+		objCompAcc.Anchor_Pay_Date__c = Date.today();
+		insert objCompAcc;
+
+		SObject objRecord = new Account();
+		Boolean blnValue = NBAServeRecord.dateFromValidator(objRecord, 'CreatedDate', null);
+		System.assertEquals(true, blnValue, 'Null attribute didn\'t return true');
+
+		Id idRecord = objCompAcc.Id;
+		objRecord = Database.query('SELECT Id, Anchor_Pay_Date__c, Joined_Date_Panda__c FROM Account WHERE Id = :idRecord');
+		blnValue = NBAServeRecord.dateFromValidator(objRecord, 'Anchor_Pay_Date__c', '[Today]');
+		System.assertEquals(true, blnValue, 'Today attribute didn\'t return true');
+
+		blnValue = NBAServeRecord.dateFromValidator(objRecord, 'Joined_Date_Panda__c', '[Future Date]');
+		System.assertEquals(true, blnValue, 'Future Date attribute didn\'t return true');
+	}
+
+	@isTest
+	static void testDateTimeValidators() {
+		Account objCompAcc = new TestDataFactory.AccountBuilder().setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID).setName('NBA Demo Account').setZPCompanyId('1234567890').build();
+		objCompAcc.Current_Tier_Start_Date__c = DateTime.now().addDays(2);
+		objCompAcc.Date_of_Last_Upsell_Conversation__c = DateTime.now().addDays(-2);
+		insert objCompAcc;
+
+		SObject objRecord = new Account();
+		Boolean blnValue = NBAServeRecord.dateTimeFromValidator(objRecord, 'CreatedDate', null);
+		System.assertEquals(true, blnValue, 'Null attribute didn\'t return true');
+
+		Id idRecord = objCompAcc.Id;
+		objRecord = Database.query('SELECT Id, Current_Tier_Start_Date__c, Date_of_Last_Upsell_Conversation__c FROM Account WHERE Id = :idRecord');
+		blnValue = NBAServeRecord.dateTimeFromValidator(objRecord, 'Date_of_Last_Upsell_Conversation__c', '[Prior Date]');
+		System.assertEquals(true, blnValue, 'Prior Date attribute didn\'t return true');
+
+		blnValue = NBAServeRecord.dateTimeFromValidator(objRecord, 'Current_Tier_Start_Date__c', '[Future Date]');
+		System.assertEquals(true, blnValue, 'Future Date attribute didn\'t return true');
 	}
 }

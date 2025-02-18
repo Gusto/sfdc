@@ -65,6 +65,11 @@ public class LeadTriggerHelper {
 
 	public static User objCurrentUser; //current user info
 	public static Set<String> set_RoutedLeadsHash;
+	public static Lead_Randomize__c objRandomize;
+	public static Integer intNumberOfCompanyLeadsHoldOut;
+	public static Integer intNumberOfResellerLeadsHoldOut;
+	public static Integer intCompanyLeadsCreatedToday;
+	public static Integer intResellerLeadsCreatedToday;
 	public static List<String> list_Competitors = Label.Competitors.toLowerCase().split(',');
 	public static List<String> list_Partners = Label.Partners.toLowerCase().split(',');
 	public static List<String> list_Employees = Label.Employees.toLowerCase().split(',');
@@ -704,8 +709,7 @@ public class LeadTriggerHelper {
 			//set AQL date time if status is null or AQL during creation
 			if (
 				objLead.Status != null &&
-				(objLead.Status ==
-				LeadUtil.LEAD_STATUS_AQL || // AQL Status
+				(objLead.Status == LeadUtil.LEAD_STATUS_AQL || // AQL Status
 				objLead.Status == LeadUtil.LEAD_STATUS_MQL) // If Lead is directly promoted to MQL, set AQL Date Time
 			) {
 				objLead.AQL_Date_Time__c = System.now();
@@ -1612,8 +1616,7 @@ public class LeadTriggerHelper {
 				if (isDataCollect) {
 					set_SourceKeys.add(strSourceKey.toLowerCase());
 					if (
-						objOldLead !=
-						null //add map only on lead update - since on insert id isn't yet created.
+						objOldLead != null //add map only on lead update - since on insert id isn't yet created.
 					) {
 						map_LeadIdToSrcKey.put(objLead.Id, strSourceKey.toLowerCase());
 					}
@@ -1627,13 +1630,11 @@ public class LeadTriggerHelper {
 	public void generateMktgSourceMap() {
 		for (Marketing_Source_Map__c objMSM : [SELECT Id, Source_Key__c, Type__c, Has_Referral_Token__c FROM Marketing_Source_Map__c WHERE Source_Key__c IN :set_SourceKeys]) {
 			if (
-				objMSM.Type__c ==
-				LeadUtil.LABEL_COMPANY //company type
+				objMSM.Type__c == LeadUtil.LABEL_COMPANY //company type
 			) {
 				map_CompanyMSKeyMap.put(objMSM.Source_Key__c, objMSM.Id);
 			} else if (
-				objMSM.Type__c ==
-				LeadUtil.LABEL_RESELLER //reseller type
+				objMSM.Type__c == LeadUtil.LABEL_RESELLER //reseller type
 			) {
 				map_ResellerMSKeyMap.put(objMSM.Source_Key__c, objMSM.Id);
 			}
@@ -1926,9 +1927,9 @@ public class LeadTriggerHelper {
 					: map_ConvertedOppIdToOpp.get(objLead.ConvertedOpportunityId);
 				Boolean blnIsOppUpdated = false;
 
-				if (objLead.ZP_Company_ID__c != objOpp.ZP_Company_ID__c || objLead.ZP_Company_ID__c != objOpp.Source_ID__c || objLead.Referral_Type__c != objOpp.Referral_Type__c) {
+				if (objLead.ZP_Company_ID__c != objOpp.ZP_Company_ID__c || objLead.Referral_Type__c != objOpp.Referral_Type__c) {
 					objOpp.ZP_Company_ID__c = objLead.ZP_Company_ID__c;
-					objOpp.Source_ID__c = objLead.ZP_Company_ID__c;
+					//objOpp.Source_ID__c = objLead.ZP_Company_ID__c;
 					// Set Referral Information (Referral Type and Referred By)
 					if (
 						String.isNotBlank(objLead.Referral_Type__c) &&
@@ -2617,7 +2618,7 @@ public class LeadTriggerHelper {
 		for (Opportunity objOpp : [
 			SELECT Id, Source_ID__c, ZP_Company_ID__c, Sold_By__c, Referred_By__c, SAL_Reason__c, Referral_Type__c, Accutics_ID__c, Lead_Channel__c, Lead_Medium__c, LeadSource, Lead_Campaign__c
 			FROM Opportunity
-			WHERE Id IN :set_AllConvertedOppIds AND RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+			WHERE Id IN :set_AllConvertedOppIds AND (RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID OR RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 		]) {
 			map_ConvertedOppIdToOpp.put(objOpp.Id, objOpp);
 		}

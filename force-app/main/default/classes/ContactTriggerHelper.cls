@@ -970,7 +970,7 @@ public class ContactTriggerHelper {
 						map_AccWIthOutreachValues.put(objAcc.Id, new Map<String, Id>());
 					}
 					for (Opportunity objOpp : objAcc.Opportunities) {
-						if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+						if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || objOpp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) {
 							//set oppId of opportunity is payroll opps
 							map_AccWIthOutreachValues.get(objAcc.Id).put('OppId', objOpp.Id);
 							//set soldBYreferredby for payroll ops

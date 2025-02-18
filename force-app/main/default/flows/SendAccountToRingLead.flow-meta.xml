@@ -4,7 +4,7 @@
         <name>SendAccountToDMS</name>
         <label>SendAccountToDMS</label>
         <locationX>176</locationX>
-        <locationY>431</locationY>
+        <locationY>455</locationY>
         <actionName>UniqueEntry__RingLeadGlobal</actionName>
         <actionType>apex</actionType>
         <dataTypeMappings>
@@ -49,14 +49,13 @@
             </value>
         </inputParameters>
         <nameSegment>UniqueEntry__RingLeadGlobal</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>53.0</apiVersion>
     <assignments>
         <name>Data_in_Bulk</name>
         <label>Data in Bulk</label>
         <locationX>176</locationX>
-        <locationY>323</locationY>
+        <locationY>335</locationY>
         <assignmentItems>
             <assignToReference>oldRecordsBulk</assignToReference>
             <operator>Add</operator>
@@ -75,7 +74,6 @@
             <targetReference>SendAccountToDMS</targetReference>
         </connector>
     </assignments>
-    <environments>Default</environments>
     <interviewLabel>SendAccountToRingLead {!$Flow.CurrentDateTime}</interviewLabel>
     <label>SendAccountToRingLead</label>
     <processMetadataValues>
@@ -103,20 +101,8 @@
         <connector>
             <targetReference>Data_in_Bulk</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Product_Interest__c</field>
-            <operator>IsChanged</operator>
-        </filters>
-        <filters>
-            <field>Product_Interest__c</field>
-            <operator>Contains</operator>
-            <value>
-                <stringValue>premium_tier</stringValue>
-            </value>
-        </filters>
         <object>Account</object>
-        <recordTriggerType>Update</recordTriggerType>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>

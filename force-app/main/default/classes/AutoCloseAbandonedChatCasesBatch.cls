@@ -27,8 +27,8 @@ public class AutoCloseAbandonedChatCasesBatch implements Database.Batchable<sObj
         strQuery = strQuery + 'RecordTypeId IN :set_RecordTypeIds ' +
             'AND (Origin = :strOriginChat ' +
             'OR (Origin = :strOriginGusto AND Channel__c = :strOriginChat)) ' +
-            'AND Status IN :set_Statuses ' +
-            'AND CreatedDate <= N_DAYS_AGO:3';
+            'AND Status IN :set_Statuses ';// +
+           // 'AND CreatedDate <= N_DAYS_AGO:3';
         
         return Database.getQueryLocator(strQuery);
     }

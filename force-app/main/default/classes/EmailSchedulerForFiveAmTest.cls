@@ -27,13 +27,12 @@ public class EmailSchedulerForFiveAmTest {
 
 		// insert opportunity list
 		list_Opportunities = new List<Opportunity>();
-		Id companyOpportunityRecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
 		for (Integer i = 0; i < 5; i++) {
 			Opportunity objOpp = new TestDataFactory.OpportunityBuilder()
 				.setName('Test Oppty')
 				.setStage('New')
 				.setCloseDate(Date.today().addDays(5))
-				.setRecordTypeId(companyOpportunityRecordTypeId)
+				.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 				.setAccountId(list_Accounts[i].Id)
 				.build();
 			list_Opportunities.add(objOpp);

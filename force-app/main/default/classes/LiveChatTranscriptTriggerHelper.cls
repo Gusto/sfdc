@@ -16,9 +16,7 @@ public class LiveChatTranscriptTriggerHelper {
 	public static Boolean skipTrigger = false;
 	public static Boolean boolTestThis = false;
 	List<BusinessHours> bizHours = new List<BusinessHours>([SELECT Id, Name FROM BusinessHours WHERE Name = 'Gusto - Denver - Engagement']);
-	public static List<String> list_Specializations = String.isNotBlank(Label.Engagement_Specializations) 
-		? Label.Engagement_Specializations.split(';') 
-		: new List<String>();
+	public static List<String> list_Specializations = String.isNotBlank(Label.Engagement_Specializations) ? Label.Engagement_Specializations.split(';') : new List<String>();
 	public static Set<String> set_CompanyIds = new Set<String>();
 	public static Set<String> set_VisitorEmailAddresses = new Set<String>();
 	public static Map<String, Id> map_CompanyIdToAccId = new Map<String, Id>();
@@ -29,7 +27,6 @@ public class LiveChatTranscriptTriggerHelper {
 	public static Map<String, Case_Pillar_Mapping__c> map_PillarWOCompanySize = new Map<String, Case_Pillar_Mapping__c>();
 	public final static String GCORP_V2_BUTTON = 'GcorpV2';
 	public final static String GCORP_PRICING_BUTTON = 'GCorpPricing';
-	public static final String TYPE_CANCELNOAGENT = 'CancelNoAgent';
 	public static String NOT_PREDICTED = 'not_predicted';
 	public static final Id RECTYPE_ENGAGEMENT = Cache.getRecordTypeId('Case', 'Engagement');
 
@@ -143,7 +140,15 @@ public class LiveChatTranscriptTriggerHelper {
 	}
 
 	public static List<Opportunity> queryCompanyOpportunity(List<String> set_AccountIds) {
-		return [SELECT Id, AccountId FROM Opportunity WHERE AccountId IN :set_AccountIds AND RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID];
+		return [
+			SELECT Id, AccountId
+			FROM Opportunity
+			WHERE
+				AccountId IN :set_AccountIds
+				AND (RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+				OR (RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID
+				AND Type = :OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS))
+		];
 	}
 
 	public static List<Contact> queryContacts(Set<String> set_VisitorEmailAddresses) {
@@ -248,14 +253,17 @@ public class LiveChatTranscriptTriggerHelper {
 	}
 
 	public void OnAfterUpdate(Map<Id, LiveChatTranscript> map_OldChatById, Map<Id, LiveChatTranscript> map_ChatById) {
-		
+		if (skipTrigger) {
+			return;
+		}
+
 		Map<Id, LiveChatTranscript> map_ChatTranscriptById = new Map<Id, LiveChatTranscript>();
 		Map<Id, AgentWork> map_AgentWorkByChatId = new Map<Id, AgentWork>();
 		List<LiveChatTranscript> list_ChatTranscriptsToUpdate = new List<LiveChatTranscript>();
 		List<Case> list_Cases = new List<Case>();
 		List<Lead> list_Leads = new List<Lead>();
 		List<Case_Audit_Log__c> list_CaseAuditLogs = new List<Case_Audit_Log__c>();
-			
+
 		if (map_ChatById != null && !map_ChatById.isEmpty()) {
 			List<Id> list_ChatButtonIds = new List<Id>();
 			Set<Id> set_CaseIds = new Set<Id>();
@@ -269,7 +277,6 @@ public class LiveChatTranscriptTriggerHelper {
 				if (objChat.LeadId != null) {
 					set_LeadIds.add(objChat.LeadId);
 				}
-
 			}
 
 			Map<Id, LiveChatButton> map_ChatButtonsById = new Map<Id, LiveChatButton>([SELECT Id, MasterLabel FROM LiveChatButton WHERE Id IN :list_ChatButtonIds]);
@@ -278,10 +285,12 @@ public class LiveChatTranscriptTriggerHelper {
 			Map<String, LiveChatTranscriptEvent> map_ChatEventByChatId = queryChatEvents(map_ChatById.keySet());
 			getCasePillarMappings();
 
-			List<AgentWork> list_AgentWorks = [SELECT Id, Activetime, CloseDateTime, WorkItemId, UserId, AcceptDateTime, HandleTime, RequestDateTime
-												FROM AgentWork
-												WHERE WorkItemId IN :map_ChatById.keySet()
-												ORDER BY CreatedDate ASC];
+			List<AgentWork> list_AgentWorks = [
+				SELECT Id, Activetime, CloseDateTime, WorkItemId, UserId, AcceptDateTime, HandleTime, RequestDateTime
+				FROM AgentWork
+				WHERE WorkItemId IN :map_ChatById.keySet()
+				ORDER BY CreatedDate ASC
+			];
 
 			List<Case_Reason_Classification__c> list_NoActionCaseReasons = CaseQueryHelper.queryCaseReason(CaseUtils.STR_AUTO_SOLVED_CASE_REASON);
 
@@ -289,7 +298,6 @@ public class LiveChatTranscriptTriggerHelper {
 				map_AgentWorkByChatId.put(objAgentWork.WorkItemId, objAgentWork);
 			}
 
-			
 			for (LiveChatTranscript objChat : [
 				SELECT
 					Id,
@@ -339,7 +347,7 @@ public class LiveChatTranscriptTriggerHelper {
 					ORCA_Predicted_Case_Reason__c,
 					ORCA_Predicted_Specialization__c,
 					ORCA_Predicted_Support_Level__c,
-					Second_Level__c 
+					Second_Level__c
 				FROM LiveChatTranscript
 				WHERE Id IN :map_ChatById.keySet()
 			]) {
@@ -348,125 +356,116 @@ public class LiveChatTranscriptTriggerHelper {
 
 				if (objChat.CaseId != null && map_CaseById.containsKey(objChat.CaseId)) {
 					Case objCase = map_CaseById.get(objChat.CaseId);
-					if (
-						objChat.Request_Type__c != null &&
-						objChat.Support_Level__c != null &&
-						objChat.Persona__c != null &&
-						!objCase.IsClosed
-					) {
-							objCase.Type = objChat.Request_Type__c;
-							objCase.Support_Level__c = objChat.Support_Level__c;
-							objCase.Persona__c = objChat.Persona__c;
-							objCase.Company_Size__c = objChat.Company_Size__c;
-							objCase.RecordTypeId = RECTYPE_ENGAGEMENT;
+					if (objChat.Request_Type__c != null && objChat.Support_Level__c != null && objChat.Persona__c != null && !objCase.IsClosed) {
+						objCase.Type = objChat.Request_Type__c;
+						objCase.Support_Level__c = objChat.Support_Level__c;
+						objCase.Persona__c = objChat.Persona__c;
+						objCase.Company_Size__c = objChat.Company_Size__c;
+						objCase.RecordTypeId = RECTYPE_ENGAGEMENT;
 					}
-					
-					if (
-						objChat.RecordTypeId == Utils.CHAT_EXTERNAL_RT_ID &&
-						!objCase.IsClosed &&
-						objCase.RecordTypeId == RECTYPE_ENGAGEMENT
-					) {
+
+					if (objChat.RecordTypeId == Utils.CHAT_EXTERNAL_RT_ID && !objCase.IsClosed && objCase.RecordTypeId == RECTYPE_ENGAGEMENT) {
 						if (
 							(objOldChat.Request_Type__c != objChat.Request_Type__c ||
 							objOldChat.Company_Size__c != objChat.Company_Size__c ||
 							objOldChat.Persona__c != objChat.Persona__c ||
-							objOldChat.Support_Level__c != objChat.Support_Level__c) ||
-							(String.isBlank(objOldChat.CaseId) && String.isNotBlank(objChat.CaseId))
+							objOldChat.Support_Level__c != objChat.Support_Level__c) || (String.isBlank(objOldChat.CaseId) && String.isNotBlank(objChat.CaseId))
 						) {
 							objCase = updatePillarMapping(objCase, objChat, map_PillarMappingByKey, map_PillarWOCompanySize);
-							//If chat is transferred, the WFM Queue tag on chat must be updated
 							objChat.WFM_Queue_Tag__c = objCase.WFM_Queue_Tag__c;
 							list_ChatTranscriptsToUpdate.add(objChat);
 						}
 
-						if (
-							String.isBlank(objOldChat.CaseId) && 
-							String.isNotBlank(objChat.CaseId)
-						) {
+						if (String.isBlank(objOldChat.CaseId) && String.isNotBlank(objChat.CaseId)) {
 							objCase.ORCA_Predicted_Specialization__c = objChat.ORCA_Predicted_Specialization__c;
 							objCase.ORCA_Predicted_Support_Level__c = objChat.ORCA_Predicted_Support_Level__c;
 							objCase.Second_Level__c = objChat.Second_Level__c;
 							objCase.ORCA_Predicted_Case_Reason__c = objChat.ORCA_Predicted_Case_Reason__c;
-							objCase.ORCA_Predicted_Case_Reason_Confidence__c = objChat.ORCA_Predicted_Case_Reason_Confidence__c;					
+							objCase.ORCA_Predicted_Case_Reason_Confidence__c = objChat.ORCA_Predicted_Case_Reason_Confidence__c;
 							objCase.ORCA_Predicted_Specialization_Confidence__c = objChat.ORCA_Predicted_Specialization_Confidence__c;
 							objCase.ORCA_Predicted_Support_Level_Confidence__c = objChat.ORCA_Predicted_Support_Level_Confidence__c;
 							objCase.ORCA_Predicted_Type_Confidence__c = objChat.ORCA_Predicted_Type_Confidence__c;
 						}
 					}
 
-					if (objChat.Status == Utils.CHAT_STATUS_MISSED &&
-						objChat.RecordTypeId == Utils.CHAT_EXTERNAL_RT_ID && 
+					if (
+						objChat.Status == Utils.CHAT_STATUS_MISSED &&
+						objChat.RecordTypeId == Utils.CHAT_EXTERNAL_RT_ID &&
 						!objCase.IsClosed &&
-						objCase.RecordTypeId != CaseUtils.RECTYPE_R_D_TAX_CREDITS) {
-							String strEngCancelOwnerId = GlobalQueryHelper.getQueueIdByDevName(CaseUtils.QUEUE_NAME_ENGAGEMENT_CANCELED_CHATS);
-							String strVisitorCancelChatOwnerId = GlobalQueryHelper.getQueueIdByDevName(CaseUtils.QUEUE_NAME_CARE_VISITOR_ABANDONED_CHATS);
-							if (map_ChatEventByChatId?.containsKey(objChat.Id) && 
-								objCase.RecordTypeId == RECTYPE_ENGAGEMENT &&
-								(String.isNotBlank(strEngCancelOwnerId) || String.isNotBlank(strVisitorCancelChatOwnerId)))
-							 {
-								objCase.OwnerId = (map_ChatEventByChatId.get(objChat.Id).Type == Utils.CHAT_EVENT_TYPE_CANCELNOAGENT) ? strEngCancelOwnerId : strVisitorCancelChatOwnerId;
-								objCase.Audience__c = CaseUtils.AUDIENCE_OTHER;
-								if (!list_NoActionCaseReasons.isEmpty()) {
-									objCase.Confirm_Case_Reason_Classification__c = list_NoActionCaseReasons[0].Id;
-								}
+						objCase.RecordTypeId != CaseUtils.RECTYPE_R_D_TAX_CREDITS
+					) {
+						String strEngCancelOwnerId = GlobalQueryHelper.getQueueIdByDevName(CaseUtils.QUEUE_NAME_ENGAGEMENT_CANCELED_CHATS);
+						String strVisitorCancelChatOwnerId = GlobalQueryHelper.getQueueIdByDevName(CaseUtils.QUEUE_NAME_CARE_VISITOR_ABANDONED_CHATS);
+						if (
+							map_ChatEventByChatId?.containsKey(objChat.Id) &&
+							objCase.RecordTypeId == RECTYPE_ENGAGEMENT &&
+							(String.isNotBlank(strEngCancelOwnerId) || String.isNotBlank(strVisitorCancelChatOwnerId))
+						) {
+							objCase.OwnerId = (map_ChatEventByChatId.get(objChat.Id).Type == Utils.CHAT_EVENT_TYPE_CANCELNOAGENT) ? strEngCancelOwnerId : strVisitorCancelChatOwnerId;
+							objCase.Audience__c = CaseUtils.AUDIENCE_OTHER;
+							if (!list_NoActionCaseReasons.isEmpty()) {
+								objCase.Confirm_Case_Reason_Classification__c = list_NoActionCaseReasons[0].Id;
 							}
-
-							objCase.Status = CaseUtils.STATUS_CLOSED;
-						}
-
-					if (objChat.RecordType.Name != CaseUtils.INTERNAL_TEAM &&
-						!objCase.IsClosed) {
-							objCase.Direction__c =  CaseUtils.DIRECTION_INBOUND;
-							objCase.Recent_Queue_Id__c = (String) objChat.LiveChatButtonId;
-							objCase.Recent_Queue_Name__c = map_ChatButtonsById.get(objChat.LiveChatButtonId)?.MasterLabel + ' - ' + CaseUtils.ORIGIN_CHAT;
-
-							if (Test.isRunningTest() && boolTestThis) {
-								objChat.Status = Utils.CHAT_STATUS_MISSED;
-							}
-
-							objCase.Recent_Queue_Name__c += ' - ' + objChat.Status;
-
-							if (String.isNotBlank(objChat.Body)) {
-								objCase.Description = objChat.Body.stripHtmlTags(); // to be only handle for external
+							if(map_ChatEventByChatId.get(objChat.Id).Type == Utils.CHAT_EVENT_TYPE_DURATION_TIME_OUT){
+								objCase.Status = CaseUtils.STATUS_OPEN;
+								objCase.OwnerId = strVisitorCancelChatOwnerId;
 							}
 						}
 
-					if (map_AgentWorkByChatId.containsKey(objChat.Id) &&
-						(objChat.Status != objOldChat.Status || (objChat.CaseId != null && objOldChat.CaseId == null))) {
-							AgentWork objAgentWork = map_AgentWorkByChatId.get(objChat.Id);
+						objCase.Status = CaseUtils.STATUS_CLOSED;
+					}
 
-							Case_Audit_Log__c objAuditLog = new Case_Audit_Log__c();
-							objAuditLog.Case__c = objCase.Id;
-							objAuditLog.Direction__c = CaseUtils.DIRECTION_INBOUND;
+					if (objChat.RecordType.Name != CaseUtils.INTERNAL_TEAM && !objCase.IsClosed) {
+						objCase.Direction__c = CaseUtils.DIRECTION_INBOUND;
+						objCase.Recent_Queue_Id__c = (String) objChat.LiveChatButtonId;
+						objCase.Recent_Queue_Name__c = map_ChatButtonsById.get(objChat.LiveChatButtonId)?.MasterLabel + ' - ' + CaseUtils.ORIGIN_CHAT;
 
-							if (objChat.RecordType.Name == CaseUtils.INTERNAL_TEAM) {
-								objAuditLog.Event_Type__c = CaseUtils.INTERNAL_TEAM + ' ' + CaseUtils.ORIGIN_CHAT;
-							} else {
-								objAuditLog.Event_Type__c = CaseUtils.ORIGIN_CHAT;
+						if (Test.isRunningTest() && boolTestThis) {
+							objChat.Status = 'Missed';
+						}
+
+						objCase.Recent_Queue_Name__c += ' - ' + objChat.Status;
+
+						if (String.isNotBlank(objChat.Body)) {
+							objCase.Description = objChat.Body.stripHtmlTags(); // to be only handle for external
+						}
+					}
+
+					if (map_AgentWorkByChatId.containsKey(objChat.Id) && (objChat.Status != objOldChat.Status || (objChat.CaseId != null && objOldChat.CaseId == null))) {
+						AgentWork objAgentWork = map_AgentWorkByChatId.get(objChat.Id);
+
+						Case_Audit_Log__c objAuditLog = new Case_Audit_Log__c();
+						objAuditLog.Case__c = objCase.Id;
+						objAuditLog.Direction__c = CaseUtils.DIRECTION_INBOUND;
+
+						if (objChat.RecordType.Name == CaseUtils.INTERNAL_TEAM) {
+							objAuditLog.Event_Type__c = CaseUtils.INTERNAL_TEAM + ' ' + CaseUtils.ORIGIN_CHAT;
+						} else {
+							objAuditLog.Event_Type__c = CaseUtils.ORIGIN_CHAT;
+						}
+
+						objAuditLog.Advocate__c = objAgentWork.UserId;
+						objAuditLog.To_Date_Time__c = objAgentWork.CloseDateTime;
+						objAuditLog.From_Date_Time__c = objAgentWork.AcceptDateTime;
+						objAuditLog.Live_Channel_Start_Time__c = objAgentWork.RequestDateTime;
+
+						if (bizHours != null && !bizHours.isEmpty()) {
+							objAuditLog.Business_Hours__c = bizHours[0].Id;
+
+							if (!Test.isRunningTest() && objAgentWork.RequestDateTime != null && objAgentWork.AcceptDateTime != null) {
+								Long milliSeconds = BusinessHours.diff(bizHours[0].Id, objAgentWork.RequestDateTime, objAgentWork.AcceptDateTime);
+								objAuditLog.Live_Channel_Wait_Time_In_Seconds__c = milliSeconds / 1000;
 							}
+						}
 
-							objAuditLog.Advocate__c = objAgentWork.UserId;
-							objAuditLog.To_Date_Time__c = objAgentWork.CloseDateTime;
-							objAuditLog.From_Date_Time__c = objAgentWork.AcceptDateTime;
-							objAuditLog.Live_Channel_Start_Time__c = objAgentWork.RequestDateTime;
+						if (objChat.Status == Utils.CHAT_STATUS_COMPLETED) {
+							objChat.Case_Number__c = objChat.Case.CaseNumber;
+							objChat.Active_Time__c = objAgentWork.Activetime;
+							objChat.Tab_Close_Time__c = objAgentWork.CloseDateTime;
+							list_ChatTranscriptsToUpdate.add(objChat);
+						}
 
-							if (bizHours != null && !bizHours.isEmpty()) {
-								objAuditLog.Business_Hours__c = bizHours[0].Id;
-
-								if (!Test.isRunningTest() && objAgentWork.RequestDateTime != null && objAgentWork.AcceptDateTime != null) {
-									Long milliSeconds = BusinessHours.diff(bizHours[0].Id, objAgentWork.RequestDateTime, objAgentWork.AcceptDateTime);
-									objAuditLog.Live_Channel_Wait_Time_In_Seconds__c = milliSeconds / 1000;
-								}
-							}
-
-							if ((objOldChat.Status != objChat.Status) && (objChat.Status == Utils.CHAT_STATUS_COMPLETED)) {
-								objChat.Case_Number__c = objChat.Case.CaseNumber;
-								objChat.Active_Time__c = objAgentWork.Activetime;
-								objChat.Tab_Close_Time__c = objAgentWork.CloseDateTime;
-								list_ChatTranscriptsToUpdate.add(objChat);
-							}
-
-							list_CaseAuditLogs.add(objAuditLog);
+						list_CaseAuditLogs.add(objAuditLog);
 					}
 
 					list_Cases.add(objCase);
@@ -480,15 +479,13 @@ public class LiveChatTranscriptTriggerHelper {
 						objLead.Phone = objChat.Phone__c;
 					}
 					// update Alternate_Phone__c if Phone on transcript is different from Phone on related Lead
-					if (String.isNotBlank(objChat.Phone__c) &&
-						String.isNotBlank(objLead.Phone) &&
-						(objChat.Phone__c != objLead.Phone)
-					) {
+					if (String.isNotBlank(objChat.Phone__c) && String.isNotBlank(objLead.Phone) && (objChat.Phone__c != objLead.Phone)) {
 						objLead.Alternate_Phone__c = objChat.Phone__c;
 					}
 
 					if (objLead.Createdby.Name == LeadUtil.PLATFORM_INTEGRATION_USER) {
-						if (String.isNotBlank(objChat.Lead_Source__c) &&
+						if (
+							String.isNotBlank(objChat.Lead_Source__c) &&
 							(String.isBlank(objLead.LeadSource) ||
 							objLead.LeadSource == LeadUtil.LEADSOURCE_SRC_ERROR ||
 							objLead.LeadSource == LeadUtil.LEADSOURCE_OUTBOUND)
@@ -496,9 +493,7 @@ public class LiveChatTranscriptTriggerHelper {
 							objLead.LeadSource = objChat.Lead_Source__c;
 						}
 						// update attribution fields on Lead if they are blank
-						if (String.isNotBlank(objChat.ZP_Lead_Campaign__c) &&
-							(String.isBlank(objLead.ZP_Lead_Campaign__c) || objLead.ZP_Lead_Campaign__c == LeadUtil.LABEL_LEAD_CAMP_OTHER)
-						) {
+						if (String.isNotBlank(objChat.ZP_Lead_Campaign__c) && (String.isBlank(objLead.ZP_Lead_Campaign__c) || objLead.ZP_Lead_Campaign__c == LeadUtil.LABEL_LEAD_CAMP_OTHER)) {
 							objLead.ZP_Lead_Campaign__c = objChat.ZP_Lead_Campaign__c;
 						}
 						if (String.isNotBlank(objChat.Trk_UTM_Medium__c) && String.isBlank(objLead.Trk_UTM_Medium__c)) {
@@ -546,7 +541,9 @@ public class LiveChatTranscriptTriggerHelper {
 						if (String.isNotBlank(objChat.Last_Form_Fill_URL__c) && String.isBlank(objLead.Last_Form_Fill_URL__c)) {
 							objLead.Last_Form_Fill_URL__c = objChat.Last_Form_Fill_URL__c;
 						}
-						if (objChat.LiveChatButtonId != null && map_ChatButtonsById.containsKey(objChat.LiveChatButtonId) &&
+						if (
+							objChat.LiveChatButtonId != null &&
+							map_ChatButtonsById.containsKey(objChat.LiveChatButtonId) &&
 							(String.isBlank(objLead.Lead_Creation_Offer__c) || objLead.Lead_Creation_Offer__c == LeadUtil.LEADCREATION_OFFER_PROD_GEN)
 						) {
 							if (map_ChatButtonsById.get(objChat.LiveChatButtonId).MasterLabel == GCORP_V2_BUTTON) {
@@ -602,7 +599,6 @@ public class LiveChatTranscriptTriggerHelper {
 					update list_Leads;
 					TriggerHandler.clearBypass('LeadTriggerHandler');
 				}
-
 			} catch (Exception ex) {
 				ExceptionLogUtil.logException('LiveChatTranscriptTriggerHelper', 'OnAfterUpdate', ex.getMessage(), ex.getStackTraceString());
 			}
@@ -690,16 +686,12 @@ public class LiveChatTranscriptTriggerHelper {
 	 **/
 	public Map<String, LiveChatTranscriptEvent> queryChatEvents(Set<Id> set_ChatIds) {
 		Map<String, LiveChatTranscriptEvent> map_ChatEventByChatId = new Map<String, LiveChatTranscriptEvent>();
+		Set<String> liveChatTranscripteventTypes = new Set<String>{Utils.CHAT_EVENT_TYPE_DURATION_TIME_OUT,Utils.CHAT_EVENT_TYPE_CANCELNOAGENT,Utils.CHAT_EVENT_TYPE_CANCELVISITOR};
 		if (!set_ChatIds.isEmpty()) {
 			for (LiveChatTranscriptEvent objEvent : [
-				SELECT
-					Id,
-					Type,
-					LiveChatTranscriptId
+				SELECT Id, Type, LiveChatTranscriptId
 				FROM LiveChatTranscriptEvent
-				WHERE LiveChatTranscriptId IN :set_ChatIds
-				AND (Type = :Utils.CHAT_EVENT_TYPE_CANCELNOAGENT 
-					OR Type = :Utils.CHAT_EVENT_TYPE_CANCELVISITOR)
+				WHERE LiveChatTranscriptId IN :set_ChatIds AND Type IN :liveChatTranscripteventTypes
 			]) {
 				map_ChatEventByChatId.put(objEvent.LiveChatTranscriptId, objEvent);
 			}
@@ -715,21 +707,20 @@ public class LiveChatTranscriptTriggerHelper {
 	 * 				  objChat - LiveChatTranscript from trigger.new
 	 * @Return      : objCase - Case associated to the Chat
 	 **/
-	private Case updatePillarMapping(Case objCase, LiveChatTranscript objChat, Map<String, Case_Pillar_Mapping__c> map_PillarMappingByKey, Map<String, Case_Pillar_Mapping__c> map_PillarWOCompanySize) {
+	private Case updatePillarMapping(
+		Case objCase,
+		LiveChatTranscript objChat,
+		Map<String, Case_Pillar_Mapping__c> map_PillarMappingByKey,
+		Map<String, Case_Pillar_Mapping__c> map_PillarWOCompanySize
+	) {
 		objCase.Type = objChat.Request_Type__c;
 		objCase.Support_Level__c = objChat.Support_Level__c;
 		objCase.Persona__c = objChat.Persona__c;
 		objCase.Company_Size__c = objChat.Company_Size__c;
 		String strKey = '';
-		if (
-			(objCase.Origin == CaseUtils.ORIGIN_EMAIL || 
-			(objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_EMAIL))
-		) {
+		if ((objCase.Origin == CaseUtils.ORIGIN_EMAIL || (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_EMAIL))) {
 			strKey = CaseUtils.ORIGIN_EMAIL;
-		} else if (
-			(objCase.Origin == CaseUtils.ORIGIN_CHAT || 
-			(objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_CHAT))
-		) {
+		} else if ((objCase.Origin == CaseUtils.ORIGIN_CHAT || (objCase.Origin == CaseUtils.ORIGIN_GUSTO && objCase.Channel__c == CaseUtils.ORIGIN_CHAT))) {
 			strKey = CaseUtils.ORIGIN_CHAT;
 		}
 
@@ -752,10 +743,7 @@ public class LiveChatTranscriptTriggerHelper {
 
 		strKey = strKey.toLowerCase();
 
-		if (
-			(objCase.Persona__c == CaseUtils.MEMBER_PERSONA || objCase.Persona__c == CaseUtils.ACCOUNTANT_PERSONA) && 
-			map_PillarWOCompanySize.containsKey(strKey)
-		) {
+		if ((objCase.Persona__c == CaseUtils.MEMBER_PERSONA || objCase.Persona__c == CaseUtils.ACCOUNTANT_PERSONA) && map_PillarWOCompanySize.containsKey(strKey)) {
 			objCase.Case_Pillar__c = map_PillarWOCompanySize.get(strKey).Pillar__c;
 			objCase.Sub_Pillar__c = map_PillarWOCompanySize.get(strKey).Sub_Pillar__c;
 			objCase.WFM_Queue_Tag__c = map_PillarWOCompanySize.get(strKey).WFM_Queue_Tag__c;
@@ -780,14 +768,14 @@ public class LiveChatTranscriptTriggerHelper {
 					 Based on Case Reason Code present in the ORCA predicted values 
 	* @Param       : New Chat Transcript records that are of External Record Type
 	*/
-	private void processInformation(List<LiveChatTranscript> newChatTranscriptList ) {
-		try{
+	private void processInformation(List<LiveChatTranscript> newChatTranscriptList) {
+		try {
 			Set<String> reasoncodeSet = new Set<String>();
-			Map<String,Case_Reason_Classification__c> map_CaseReasonClassification = new Map<String,Case_Reason_Classification__c>();
+			Map<String, Case_Reason_Classification__c> map_CaseReasonClassification = new Map<String, Case_Reason_Classification__c>();
 			getCasePillarMappings();
 
-			for(LiveChatTranscript eachChatRec : newChatTranscriptList) {
-				if(
+			for (LiveChatTranscript eachChatRec : newChatTranscriptList) {
+				if (
 					eachChatRec.ORCA_Predicted_Case_Reason__c != null &&
 					eachChatRec.ORCA_Predicted_Case_Reason__c != '' &&
 					eachChatRec.ORCA_Predicted_Case_Reason__c != AgathaPredictionTriggerHelper.AGATHAPREDICTION_NOT_PREDICTED
@@ -796,20 +784,20 @@ public class LiveChatTranscriptTriggerHelper {
 				}
 			}
 
-			if(!reasoncodeSet.isEmpty()) {
+			if (!reasoncodeSet.isEmpty()) {
 				map_CaseReasonClassification = getReasonClassificationMap(reasoncodeSet);
 			}
 
-			for(LiveChatTranscript eachChatRec : newChatTranscriptList) {
-				if(
+			for (LiveChatTranscript eachChatRec : newChatTranscriptList) {
+				if (
 					eachChatRec.ORCA_Predicted_Case_Reason__c != null &&
 					eachChatRec.ORCA_Predicted_Case_Reason__c != '' &&
 					eachChatRec.ORCA_Predicted_Case_Reason__c != AgathaPredictionTriggerHelper.AGATHAPREDICTION_NOT_PREDICTED &&
 					map_CaseReasonClassification.containsKey(eachChatRec.ORCA_Predicted_Case_Reason__c)
 				) {
-					// If ORCA predicts the chat with a reason code that matches with the CRC object, update the following fields 
+					// If ORCA predicts the chat with a reason code that matches with the CRC object, update the following fields
 					Case_Reason_Classification__c objReason = map_CaseReasonClassification.get(eachChatRec.ORCA_Predicted_Case_Reason__c);
-					eachChatRec.Routing_Case_Reason_Classification__c  = objReason.Id;
+					eachChatRec.Routing_Case_Reason_Classification__c = objReason.Id;
 					eachChatRec.Request_Type__c = objReason.Case_Type_Pillar__c;
 					eachChatRec.Support_Level__c = objReason.Support_Level__c;
 					eachChatRec.Team__c = objReason.Routing_Team__c;
@@ -836,10 +824,7 @@ public class LiveChatTranscriptTriggerHelper {
 
 				strKey = strKey.toLowerCase();
 
-				if (
-					(eachChatRec.Persona__c == CaseUtils.MEMBER_PERSONA || eachChatRec.Persona__c == CaseUtils.ACCOUNTANT_PERSONA) && 
-					map_PillarWOCompanySize.containsKey(strKey)
-				) {
+				if ((eachChatRec.Persona__c == CaseUtils.MEMBER_PERSONA || eachChatRec.Persona__c == CaseUtils.ACCOUNTANT_PERSONA) && map_PillarWOCompanySize.containsKey(strKey)) {
 					eachChatRec.WFM_Queue_Tag__c = map_PillarWOCompanySize.get(strKey).WFM_Queue_Tag__c;
 				} else if (map_PillarMappingByKey.containsKey(strKey)) {
 					eachChatRec.WFM_Queue_Tag__c = map_PillarMappingByKey.get(strKey).WFM_Queue_Tag__c;
@@ -853,10 +838,10 @@ public class LiveChatTranscriptTriggerHelper {
 	/**
 	 * @Author      : Sirisha Kodi
 	 * @Description : returns the map of CaseReasons and their respective CaseReasonClassifications
-	 * @Param       : reason code - unique identifier on CRC object 
-	 * @Return      : Map of CaseReasons and their respective CaseReasonClassifications, 
-	 * 				  referred from AgathaPredictionTriggerHelper for Email cases and 
-	 * 				  LiveChatTranscriptTriggerHelper for Chat cases 
+	 * @Param       : reason code - unique identifier on CRC object
+	 * @Return      : Map of CaseReasons and their respective CaseReasonClassifications,
+	 * 				  referred from AgathaPredictionTriggerHelper for Email cases and
+	 * 				  LiveChatTranscriptTriggerHelper for Chat cases
 	 */
 	private map<String, Case_Reason_Classification__c> getReasonClassificationMap(Set<String> reasonSet) {
 		map<String, Case_Reason_Classification__c> reasonIdMap = new Map<String, Case_Reason_Classification__c>();
@@ -895,7 +880,7 @@ public class LiveChatTranscriptTriggerHelper {
 	/**
 	 * @Author      : Ankit C
 	 * @Description : Created the maps for Case_Pillar_Mapping__c
-	 * @Param       : None 
+	 * @Param       : None
 	 * @Return      : NA
 	 */
 	private void getCasePillarMappings() {
@@ -912,7 +897,7 @@ public class LiveChatTranscriptTriggerHelper {
 				strKey += objMapping.Case_Type__c + '' + objMapping.Persona__c + '' + objMapping.Support_Level__c + '' + objMapping.Company_Size__c;
 				strKey2 += objMapping.Case_Type__c + '' + objMapping.Persona__c + '' + objMapping.Support_Level__c;
 			}
-			
+
 			map_PillarMappingByKey.put(strKey.toLowerCase(), objMapping);
 			map_PillarWOCompanySize.put(strKey2.toLowerCase(), objMapping);
 		}

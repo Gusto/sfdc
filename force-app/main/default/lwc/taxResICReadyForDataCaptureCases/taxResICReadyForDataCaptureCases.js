@@ -106,6 +106,7 @@ export default class TaxResICReadyForDataCaptureCases extends LightningElement {
 
 	//method that calls apex method to get List of eligible cases
 	getEligibleCases() {
+		console.log(this.selectedIndexing)
 		return new Promise((resolve, reject) => {
 			this.blnIsLoading = true;
 			getCases({

@@ -2,11 +2,11 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Opportunity_Team__c</fullName>
     <externalId>false</externalId>
-    <formula>IF( AND(Opportunity.RecordType.DeveloperName = &apos;Company_Opportunity&apos;, OR( ISBLANK(Opportunity.NumberOfEmployees__c)  ,Opportunity.NumberOfEmployees__c &lt; 10), Opportunity.Sold_By__c = null,Opportunity.Referred_By__c=null),
+    <formula>IF( AND(Opportunity.RecordType.DeveloperName = &apos;Acquisition&apos;, OR( ISBLANK(Opportunity.NumberOfEmployees__c)  ,Opportunity.NumberOfEmployees__c &lt; 10), Opportunity.Sold_By__c = null,Opportunity.Referred_By__c=null),
 &apos;Small Business Sales&apos;,
-IF( OR(AND(Opportunity.RecordType.DeveloperName = &apos;Company_Opportunity&apos;,Opportunity.NumberOfEmployees__c &gt;= 10,Opportunity.Sold_By__c = null, Opportunity.Referred_By__c= null, NOT( ISPICKVAL(Opportunity.LeadSource, &apos;P2P Referral&apos;))), AND(Opportunity.NumberOfEmployees__c &gt;= 10,Opportunity.Sold_By__c = null, Opportunity.Referred_By__c= null) ),
+IF( OR(AND(Opportunity.RecordType.DeveloperName = &apos;Acquisition&apos;,Opportunity.NumberOfEmployees__c &gt;= 10,Opportunity.Sold_By__c = null, Opportunity.Referred_By__c= null, NOT( ISPICKVAL(Opportunity.LeadSource, &apos;P2P Referral&apos;))), AND(Opportunity.NumberOfEmployees__c &gt;= 10,Opportunity.Sold_By__c = null, Opportunity.Referred_By__c= null) ),
 &apos;Mid Market Sales&apos;,
-IF(AND(Opportunity.RecordType.DeveloperName = &apos;Company_Opportunity&apos;, OR(Opportunity.Referred_By__c != null,Opportunity.Sold_By__c != null),OR(ISPICKVAL(Opportunity.LeadSource, &apos;P2P Referral&apos;),
+IF(AND(Opportunity.RecordType.DeveloperName = &apos;Acquisition&apos;, OR(Opportunity.Referred_By__c != null,Opportunity.Sold_By__c != null),OR(ISPICKVAL(Opportunity.LeadSource, &apos;P2P Referral&apos;),
 OR(Opportunity.Owner.UserRole.DeveloperName = &apos;sales_partner_am_xx&apos; ,Opportunity.Owner.UserRole.DeveloperName = &apos;sales_partner_ae_xx&apos; ,Opportunity.Owner.UserRole.DeveloperName = &apos;sales_partner_xx_xx_mgr&apos;))),
 &apos;Partner Sales&apos;,
 IF(Opportunity.NumberOfEmployees__c &gt;= 10,&apos;Mid Market Sales&apos;,&apos;Small Business Sales&apos;) 

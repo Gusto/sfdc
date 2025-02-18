@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Assign_correct_values_to_the_solve_record</name>
+        <label>Assign correct values to the solve record</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignmentItems>
+            <assignToReference>SolveRecord.QA_User__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>SolveRecord.Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Claimed</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Status</targetReference>
+        </connector>
+    </assignments>
+    <description>This flow is invoked from &apos;Forethought Solve Recommendation Screen Flow&apos;</description>
+    <environments>Default</environments>
+    <interviewLabel>Forethought Claim Status Sub-Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Forethought Claim Status Sub-Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <description>Updates the Status on &apos;ForethoughtSolveEmailConversation&apos; record to &apos;Claimed&apos; and QA User to the current user</description>
+        <name>Update_Status</name>
+        <label>Update Status</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <inputReference>SolveRecord</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Assign_correct_values_to_the_solve_record</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <variables>
+        <name>SolveRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>forethought__ForethoughtSolveEmailConversation__c</objectType>
+    </variables>
+</Flow>

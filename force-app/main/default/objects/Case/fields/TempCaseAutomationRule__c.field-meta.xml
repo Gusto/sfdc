@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TempCaseAutomationRule__c</fullName>
+    <formula>IF(AND(CONTAINS(Text(Type), &quot;Carrier Submission&quot;),(OR(CONTAINS(RecordType.Name , &quot;Benefits Change Case&quot;), CONTAINS(RecordType.Name , &quot;Benefits Renewal Case&quot;)))),true,IF(AND(NOT(CONTAINS(Text(Type), &quot;Carrier Submission&quot;)),OR(CONTAINS(RecordType.Name , &quot;Benefits Change Case&quot;),CONTAINS(RecordType.Name , &quot;Benefits Renewal Case&quot;))),true,false))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Temp Case Automation Rule</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

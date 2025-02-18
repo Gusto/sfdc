@@ -170,6 +170,9 @@ export default class CaseRoutingClassification extends LightningElement {
             Id: recordid
         };
 
+        console.log('routingReasonClassification ' + this.routingReasonClassification);
+
+
         updateCase({
             objCase: objCase,
             strTypeName: this.caseReasonType,

@@ -5,10 +5,9 @@
  * @see          OrderOnboardingStepsControllerTest
  **/
 public with sharing class OrderOnboardingStepsController {
-	
 	public static final String OBJ_TYPE_ORDER = 'Order';
 	public static final String OBJ_TYPE_OPPORTUNITY = 'Opportunity';
-	
+
 	/**
 	 * @description Gather onboarding steps from company opportunity linked to Order
 	 * @author      Praveen Sethu
@@ -36,7 +35,7 @@ public with sharing class OrderOnboardingStepsController {
 		}
 		return objOppToReturn;
 	}
-	
+
 	/**
 	 * @description Query company opportunity based on id/accountId
 	 * @param       idQueryBy - OpportunityId/AccountId
@@ -61,7 +60,12 @@ public with sharing class OrderOnboardingStepsController {
 				ZP_Ran_Payroll__c,
 				Pricebook2.Product_Tier__c
 			FROM Opportunity
-			WHERE (Id = :idQueryBy OR AccountId = :idQueryBy) AND RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+			WHERE
+				(Id = :idQueryBy
+				OR AccountId = :idQueryBy)
+				AND (RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+				OR (RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID
+				AND Type = :OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS))
 			ORDER BY CreatedDate DESC
 		];
 		if (!list_Opportunities.isEmpty()) {

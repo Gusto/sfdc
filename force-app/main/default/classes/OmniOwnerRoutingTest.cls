@@ -85,6 +85,7 @@ public class OmniOwnerRoutingTest {
             .setGustoGlobalId(map_RoutingConfigByName.get('Engagement_Gusto_Global').Id)
             .setEngagementAlertId(map_RoutingConfigByName.get('Engagement_Alert_Cases').Id)
             .setOfflineId(map_RoutingConfigByName.get('Engagement_Case_Offline').Id)
+            .setManualOwnerChangeId(map_RoutingConfigByName.get('Engagement_Manual_Owner_Change').Id)
             .build();
         
         insert objFlowConfiguration;
@@ -297,7 +298,7 @@ public class OmniOwnerRoutingTest {
         Assert.isTrue( objCase.OwnerId != idOldOwner);
         Assert.isTrue((String.valueOf(objCase.OwnerId).startswith('005')) );
         Assert.isTrue(!list_PSR.isEmpty());
-        Assert.isTrue(list_PSR[0].RoutingPriority == 0); 
+        Assert.isTrue(list_PSR[0].RoutingPriority == 0);
          List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
         Assert.isTrue(list_Skills.isEmpty());
     }

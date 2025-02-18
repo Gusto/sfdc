@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Compliance_Score_Validation</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND( Record_Type_Name__c==&apos;Compliance&apos;,
+    ISBLANK(ParentId),
+    ISBLANK(Compliance_Score__c))</errorConditionFormula>
+    <errorDisplayField>Compliance_Score__c</errorDisplayField>
+    <errorMessage>Compliance Score is Mandatory for Parent Case</errorMessage>
+</ValidationRule>

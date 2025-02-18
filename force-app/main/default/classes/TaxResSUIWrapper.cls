@@ -7,6 +7,8 @@
 public class TaxResSUIWrapper {
 
 	//declare variables which is passed from OCR
+	//public String tax_rate;
+	//public String tax_rate_key;
 	public String TaxRate;
 	public String TaxRateKey;
 

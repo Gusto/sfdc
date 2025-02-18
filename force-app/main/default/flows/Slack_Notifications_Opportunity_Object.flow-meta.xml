@@ -7,6 +7,9 @@
         <locationY>900</locationY>
         <actionName>slackv2__invokePostMessage</actionName>
         <actionType>apex</actionType>
+        <connector>
+            <targetReference>Deactivate_Slack_Notification_Pending</targetReference>
+        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>message</name>
@@ -28,7 +31,6 @@
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Slack_Message_To_Benefits_Plan_Without_TTF</name>
@@ -37,6 +39,9 @@
         <locationY>900</locationY>
         <actionName>slackv2__invokePostMessage</actionName>
         <actionType>apex</actionType>
+        <connector>
+            <targetReference>Deactivate_Slack_Notification_Pending</targetReference>
+        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>message</name>
@@ -58,7 +63,6 @@
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>53.0</apiVersion>
     <assignments>
@@ -270,6 +274,19 @@
         <queriedFields>recordtype_name__c</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordUpdates>
+        <name>Deactivate_Slack_Notification_Pending</name>
+        <label>Deactivate Slack Notification Pending</label>
+        <locationX>506</locationX>
+        <locationY>1092</locationY>
+        <inputAssignments>
+            <field>SlackNotificationPending__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -317,7 +334,7 @@
         </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>benefitsOppPlanTemplate</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

@@ -57,6 +57,10 @@ public class ReRouteCaseController {
                 (objCase.Specialization__c != objOldCase.Specialization__c && String.isNotBlank(objCase.Specialization__c))) {
                     return new List<Boolean> { blnIsSkillMatched };
             }
+            List<String> subPillars= new List<String>{CaseUtils.CARE_PREMIER_PAYROLL,CaseUtils.CARE_PREMIER_TAXES,CaseUtils.CARE_MEMBERS,CaseUtils.CARE_PREMIER_BENEFITS};
+            if(subPillars.contains(objCase.Sub_Pillar__c)  && objCase.Support_Level__c  != objOldCase.Support_Level__c ){
+                return new List<Boolean> { blnIsSkillMatched };
+            }
 
             // Update the case pillar
             objCase = CaseTriggerHelper.updateCasePillar(objCase, objOldCase);

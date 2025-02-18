@@ -15,7 +15,7 @@ const CASE_TYPE = {
 	BENEFITS_NEW_PLAN_CASE: "Benefits New Plan Case",
 	BENEFITS_RENEWAL_CASE: "Benefits Renewal Case",
 	MEMEBER_FULFILLMENT_EMAILS: "Member Fulfillment Emails",
-	CONCIERGE_CLASS_3: "Concierge Class 3",
+	//CONCIERGE_CLASS_3: "Concierge Class 3",
 	ENGAGEMENT: "Engagement"
 };
 
@@ -33,7 +33,7 @@ const list_CaseTypeOptions = [
 	PicklistOption.setLabelAndValue(CASE_TYPE.BENEFITS_NEW_PLAN_CASE),
 	PicklistOption.setLabelAndValue(CASE_TYPE.BENEFITS_RENEWAL_CASE),
 	PicklistOption.setLabelAndValue(CASE_TYPE.MEMEBER_FULFILLMENT_EMAILS),
-	PicklistOption.setLabelAndValue(CASE_TYPE.CONCIERGE_CLASS_3)
+	//PicklistOption.setLabelAndValue(CASE_TYPE.CONCIERGE_CLASS_3)
 ];
 
 export {

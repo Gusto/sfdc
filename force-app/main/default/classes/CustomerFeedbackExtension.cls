@@ -12,7 +12,7 @@ public class CustomerFeedbackExtension {
 	public static final Id RENEWAL_CASE_RT_ID = Cache.getRecordTypeId('Case', 'Benefits Renewal Case');
 	public static final Id ADVISING_FEEDBACK_RT_ID = Cache.getRecordTypeId('Customer_Feedback__c', 'Advising Feedback');
 	public static final String LABEL_BENEFITS = 'Benefits';
-	public static final Id COMPANY_OPPORTUNITY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+	public static final Id COMPANY_OPPORTUNITY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Acquisition');
 	public static final Id RESELLER_ACCOUNT_RT_ID = Cache.getRecordTypeId('Account', 'Reseller');
 	public static final Id ACCOUNTING_FIRM_RT_ID = Cache.getRecordTypeId('Customer_Feedback__c', 'Accounting Firm');
 	public static final Id COMPANY_ACCOUNT_RT_ID = Cache.getRecordTypeId('Account', 'Company');

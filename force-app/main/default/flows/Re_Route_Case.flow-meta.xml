@@ -24,11 +24,11 @@
             </value>
         </inputParameters>
         <nameSegment>ReRouteCaseController</nameSegment>
+        <offset>0</offset>
         <outputParameters>
             <assignToReference>blnSkillsAreSame</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>58.0</apiVersion>
     <assignments>
@@ -599,8 +599,8 @@
         <description>This will contain all Specializations from Case</description>
         <name>picklistCaseSpecialization</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Specialization__c</picklistField>
         <picklistObject>Case</picklistObject>
     </dynamicChoiceSets>
@@ -608,8 +608,8 @@
         <description>Case Reason Classification Case Type Pillar picklist values</description>
         <name>picklistCaseTypePillar</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Case_Type_Pillar__c</picklistField>
         <picklistObject>Case_Reason_Classification__c</picklistObject>
     </dynamicChoiceSets>
@@ -617,8 +617,8 @@
         <description>Case Reason Classification Support Level picklist values</description>
         <name>picklistSupportLevel</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Support_Level__c</picklistField>
         <picklistObject>Case_Reason_Classification__c</picklistObject>
     </dynamicChoiceSets>
@@ -626,8 +626,8 @@
         <description>Case Team Picklist values.</description>
         <name>picklistTeam</name>
         <dataType>Picklist</dataType>
-        <displayField xsi:nil="true"/>
-        <object xsi:nil="true"/>
+        <displayField xsi:nil="true" />
+        <object xsi:nil="true" />
         <picklistField>Routing_Team__c</picklistField>
         <picklistObject>Case</picklistObject>
     </dynamicChoiceSets>
@@ -870,6 +870,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
             <dataType>String</dataType>
             <fieldText>Do you want to route this case to Engagement?</fieldText>
             <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <fields>
@@ -885,6 +886,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Are you routing this case to a specialization team?</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
@@ -922,6 +924,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Specialization</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
@@ -962,6 +965,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Team</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
@@ -1037,6 +1041,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Case Type</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
@@ -1076,6 +1081,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Support Level</fieldText>
                     <fieldType>DropdownBox</fieldType>
+                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>

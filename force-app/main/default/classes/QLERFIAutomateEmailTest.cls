@@ -75,6 +75,17 @@ private class QLERFIAutomateEmailTest {
 			}
 		}
 		update list_Cases;
+
+		TicketTriggerHelper.skipTrigger = true;
+		Ticket__c objTicket = new TestDataFactory.TicketBuilder()
+			.setRecordTypeId(TicketUtil.ADVISING_FULFILLMENT_TICKET_RT_ID)
+			.setCaseId(list_Cases[2].Id)
+			.setEscalationReason('Recertification')
+			.setStatus('New')
+			.setOwnerId(UserInfo.getUserId())
+			.build();
+		insert objTicket;
+		TicketTriggerHelper.skipTrigger = false;
 		Utils.skipTrigger(false);
 	}
 
@@ -177,8 +188,10 @@ private class QLERFIAutomateEmailTest {
 		Test.stopTest();
 		if(OrganizationUtilities.canSendEmails()){
 			EmailMessage objEmailMessage = [SELECT RelatedToId, Email_Template_Name__c FROM EmailMessage WHERE RelatedToId = : objCase.Id];
+			Ticket__c objTicket = [Select Id, Recert_Status__c FROM Ticket__c WHERE Case__c = :objCase.Id];
 			System.assert(objEmailMessage != null, 'Follow up email is send.');
 			System.assertEquals('Follow_up_email_11', objEmailMessage.Email_Template_Name__c, 'Follow up 1 email is send.');
+			System.assertNotEquals('Recert Failed', objTicket.Recert_Status__c, 'Status is set to Recert Failed');
 		}
 	}
 
@@ -202,8 +215,11 @@ private class QLERFIAutomateEmailTest {
 		Test.stopTest();
 		if(OrganizationUtilities.canSendEmails()){
 			EmailMessage objEmailMessage = [SELECT RelatedToId, Email_Template_Name__c, FromAddress FROM EmailMessage WHERE RelatedToId = : objCase.Id];
+			Ticket__c objTicket = [Select Id, Recert_Status__c FROM Ticket__c WHERE Case__c = :objCase.Id];
 			System.assert(objEmailMessage != null, 'Follow up email is send.');
+			System.assertEquals('renewals@gusto.com', objEmailMessage.FromAddress, 'Reminder email not sent from renewals@gusto.com.');
 			System.assertEquals('Follow_up_email_21', objEmailMessage.Email_Template_Name__c, 'Follow up 2 email is send.');
+			System.assertEquals('Recert Failed', objTicket.Recert_Status__c, 'Status is set to not Recert Failed');
 		}
 	}
 }

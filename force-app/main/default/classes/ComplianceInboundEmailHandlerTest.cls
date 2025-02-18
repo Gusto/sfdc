@@ -50,9 +50,8 @@ public class ComplianceInboundEmailHandlerTest {
         System.assertEquals(true, resultTaxCompliance.success, 'Inbound email handling failed for TaxComplianceEmailHandler');
         System.assertEquals(true, resultPayrollProduct.success, 'Inbound email handling failed for PayrollProductComplianceEmailHandler');
         
-        /*
         // Verify case creation
-        List<Case> list_Cases = [SELECT Id, Priority, Origin, OwnerId, Subject, Type, OCR_Message__c, RecordTypeId, Status FROM Case where Origin ='Email'];
+        List<Case> list_Cases = [SELECT Id, Priority, Origin, OwnerId, Subject, Type, OCR_Message__c, RecordTypeId, Status FROM Case];
         System.assertEquals(2, list_Cases.size());
         Case objCase = list_Cases[0];
         System.assertEquals(CaseUtils.STRG_MEDIUM, objCase.Priority, 'Incorrect Priority');
@@ -67,10 +66,10 @@ public class ComplianceInboundEmailHandlerTest {
         System.assertEquals(2, list_TaxComplianceRecords.size());
         Tax_Compliance__c objTaxComplianceRecord = list_TaxComplianceRecords[0];
         System.assertEquals(objCase.Id, objTaxComplianceRecord.Case__c, 'Incorrect Case Id');
-        System.assertEquals(CaseUtils.STRG_TIER, objTaxComplianceRecord.Tier__c, 'Incorrect Tier'); 
-        System.assertEquals(CaseUtils.STRG_FREQUENCT_OF_UPDATE, objTaxComplianceRecord.Frequency_of_Update__c, 'Incorrect Frequency of Update');
-        System.assertEquals(CaseUtils.STRG_ClASSIFICATION_TYPE, objTaxComplianceRecord.Classification_Type__c, 'Incorrect Classification Type'); 
-        */
+        //System.assertEquals(CaseUtils.STRG_TIER, objTaxComplianceRecord.Tier__c, 'Incorrect Tier'); 
+        //System.assertEquals(CaseUtils.STRG_FREQUENCT_OF_UPDATE, objTaxComplianceRecord.Frequency_of_Update__c, 'Incorrect Frequency of Update');
+        //System.assertEquals(CaseUtils.STRG_ClASSIFICATION_TYPE, objTaxComplianceRecord.Classification_Type__c, 'Incorrect Classification Type'); 
+        
     }
     
     @isTest

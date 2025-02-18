@@ -140,6 +140,7 @@ public with sharing class TaxNoticePackageBatch implements Database.Batchable<sO
 					strQuery = strSelectQry + ' ' + strDynamicQry;
 					strQueryUsed = strQuery;
 					List<Tax_Notice_Index__c> list_TaxNoticeIndexs = Database.query(strQuery);
+                    System.debug('list_TaxNoticeIndexs == ' + list_TaxNoticeIndexs);
 					if (!list_TaxNoticeIndexs?.isEmpty()) {
 						for (Tax_Notice_Index__c objTaxNotice : list_TaxNoticeIndexs) {
 							Case objCasestoUpdate = new Case(Id = objTaxNotice.Case__c, Mass_Email_Step__c = objTaxNotice.Case__r.Mass_Email_Step__c);

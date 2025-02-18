@@ -101,14 +101,14 @@ public class CustomerHealthTriggerHelper {
 	}
 
 	/** Populate Customer Health Information on Account **/
-	public static void updateAccountInformation(Customer_Health__c objCustHealth, Customer_Health__c objOldRecord) {
+	public static void updateAccountInformation(Customer_Health__c objCustHealth, Customer_Health__c objOldRecord){
 		if (objCustHealth.Account__c == null) {
 			return;
 		}
 
 		Boolean blnUpdateAccount = false;
 
-		Account objAccount = new Account(Id = objCustHealth.Account__c);
+		Account objAccount = new Account(Id=objCustHealth.Account__c);
 
 		/** Update NP Rank on Account **/
 		if (objCustHealth.HI_NP_Rank__c != null && (objOldRecord == null || (objCustHealth.HI_NP_Rank__c != objOldRecord.HI_NP_Rank__c))) {
@@ -117,31 +117,35 @@ public class CustomerHealthTriggerHelper {
 		}
 
 		/** Update Customer Health Score on Account **/
-		if (objOldRecord == null || (objCustHealth.Health_Score__c != objOldRecord.Health_Score__c)) {
+		if(objOldRecord == null || (objCustHealth.Health_Score__c != objOldRecord.Health_Score__c)){
 			objAccount.Customer_Health_Score__c = objCustHealth.Health_Score__c;
 			blnUpdateAccount = true;
 		}
 
 		/** Update Churn Risk on Account **/
-		if (objOldRecord == null || (objCustHealth.Churn_Risk_Bucket__c != objOldRecord.Churn_Risk_Bucket__c)) {
+		if(objOldRecord == null || (objCustHealth.Churn_Risk_Bucket__c != objOldRecord.Churn_Risk_Bucket__c)){
 			objAccount.Churn_Risk__c = objCustHealth.Churn_Risk_Bucket__c;
 			blnUpdateAccount = true;
 		}
 
 		/** Update Upgrade Propensity on Account **/
-		if (objOldRecord == null || (objCustHealth.Upgrade_Propensity__c != objOldRecord.Upgrade_Propensity__c)) {
+		if(objOldRecord == null || (objCustHealth.Upgrade_Propensity__c != objOldRecord.Upgrade_Propensity__c)){
 			objAccount.Upgrade_Propensity__c = objCustHealth.Upgrade_Propensity__c;
 			blnUpdateAccount = true;
 		}
 
-		if (blnUpdateAccount) {
+		if(blnUpdateAccount){
 			map_AccountsToUpdate.put(objCustHealth.Account__c, objAccount);
 		}
 	}
 
 	/** Query Accounts **/
 	public static void queryAccounts() {
-		for (Account objAccount : [SELECT Id, Name, ZP_Company_ID__c FROM Account WHERE ZP_Company_ID__c IN :set_CompanyIds]) {
+		for (Account objAccount : [
+			SELECT Id, Name, ZP_Company_ID__c
+			FROM Account
+			WHERE ZP_Company_ID__c IN :set_CompanyIds
+		]) {
 			map_CompIdToAccount.put(objAccount.ZP_Company_ID__c, objAccount);
 		}
 	}

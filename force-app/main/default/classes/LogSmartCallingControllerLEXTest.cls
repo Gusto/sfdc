@@ -556,7 +556,7 @@ public class LogSmartCallingControllerLEXTest {
 		objComponentParameters.list_ObjectDetailValues = list_FieldSetProperties;
 		objComponentParameters.blnDoNotCall = true;
 		objComponentParameters.strFollowUpDate = String.valueOf(System.today().addDays(4));
-		objComponentParameters.strFollowUpSubject = 'Test strFollowUpSubject';
+		objComponentParameters.strFollowUpSubject = 'Test strFollowUpSubject';		
 		objComponentParameters.blnCreatePayrollOpportunity = true;
 		objComponentParameters.strPayrollOpportunityName = 'Test strPayrollOpportunityName';
 		objComponentParameters.strPayrollOpportunityStage = 'Open';
@@ -1287,7 +1287,7 @@ public class LogSmartCallingControllerLEXTest {
 		String strMetadata = objResponseWrapper.strMetadataProperties;
 		String strDataInJson = JSON.serialize(objComponentParameters);
 		String result = LogSmartCallingControllerLEX.saveRecords(strDataInJson, strMetadata, true, '');
-		System.assertNotEquals(LogSmartCallingUtil.CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS, result, 'The error message should indicate that a cross-sell opportunity already exists.');
+		System.assertEquals(LogSmartCallingUtil.CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS, result, 'The error message should indicate that a cross-sell opportunity already exists.');
 		Test.stopTest();
 	}
 
@@ -1353,13 +1353,13 @@ public class LogSmartCallingControllerLEXTest {
 			System.debug('Exception Occured: ' + objException);
 		}
 
-		/**Account objAccountForAssert = [SELECT Id, Product_Interest__c, Product_Interest_Countries__c FROM Account WHERE Name = 'Test Co.'];
+		Account objAccountForAssert = [SELECT Id, Product_Interest__c, Product_Interest_Countries__c FROM Account WHERE Name = 'Test Co.'];
 		System.assertEquals(true, objAccountForAssert.Product_Interest__c.contains('international_payroll_logacall'), 'Product Interest is log a call.');
 
 		Partnership_Interest__c objProductUpsellForAssert = [SELECT Id, Product_Interest__c FROM Partnership_Interest__c WHERE Contact__c = :list_Contacts[0].Id LIMIT 1];
 
 		System.assertEquals(AccountUtil.EMPLOYER_OF_RECORD, objProductUpsellForAssert.Product_Interest__c, 'Product Interest is not a Employer of Record.');
-		System.assertEquals(true, objAccountForAssert.Product_Interest_Countries__c.contains('AR'), 'Product Interest Country is Argentina.');**/
+		System.assertEquals(true, objAccountForAssert.Product_Interest_Countries__c.contains('AR'), 'Product Interest Country is Argentina.');
 		Test.stopTest();
 	}
 
@@ -1396,7 +1396,7 @@ public class LogSmartCallingControllerLEXTest {
 			System.debug('Exception Occured: ' + objException);
 		}
 		Test.stopTest();
-		/**Account objAccountForAssert = [SELECT Id, Product_Interest__c, Product_Interest_Countries__c FROM Account WHERE Name = 'Test Co.'];
+		Account objAccountForAssert = [SELECT Id, Product_Interest__c, Product_Interest_Countries__c FROM Account WHERE Name = 'Test Co.'];
 		System.assertEquals(true, objAccountForAssert.Product_Interest__c.contains('international_payroll_logacall'), 'Product Interest is log a call.');
 
 		Partnership_Interest__c objProductUpsellForAssert = [SELECT Id, Product_Interest__c FROM Partnership_Interest__c WHERE Contact__c = :list_Contacts[0].Id LIMIT 1];
@@ -1433,7 +1433,7 @@ public class LogSmartCallingControllerLEXTest {
 			if (objProductUpsell.Product_Interest_Countries__c.split(';').size() > 2) {
 				System.assertEquals(true, objProductUpsell.Product_Interest_Countries__c.contains('BR'), 'Product Interest Country does not have Brazil.');
 			}
-		}**/
+		}
 	}
 
 	/**

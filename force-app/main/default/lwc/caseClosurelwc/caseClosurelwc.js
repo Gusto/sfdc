@@ -99,8 +99,8 @@ export default class CaseClosurelwc extends NavigationMixin(LightningElement) {
 	@track subReasonError = false;
 	@track blnAudienceError = false;
 	@track partnerAccountError = false;
-	@track blnhandleCaseReasonSelectedLoaded = false;
 	@track stateError = false;
+	@track blnhandleCaseReasonSelectedLoaded = false;
 	countryError = false;
 	countryBoolean = false;
 	status;

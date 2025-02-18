@@ -16,17 +16,10 @@ private class CreateTransitionToConfirmationExt_Test {
 			.build();
 		insert objBenefitOrder;
 
-		State__c objState = new TestDataFactory.StateBuilder()
-			.setName('TEST STATE')
-			.setAbbreviation('TS')
-			.build();
+		State__c objState = new TestDataFactory.StateBuilder().setName('TEST STATE').setAbbreviation('TS').build();
 		insert objState;
 
-		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder()
-			.setName('TEST CARRIER')
-			.setUniqueName('TEST CARRIER')
-			.setState('TS')
-			.build();
+		Carrier__c objCarrier = new TestDataFactory.CarrierBuilder().setName('TEST CARRIER').setUniqueName('TEST CARRIER').setState('TS').build();
 		insert objCarrier;
 
 		Carrier_Order__c objCarrierOrder = new TestDataFactory.CarrierOrderBuilder()

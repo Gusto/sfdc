@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Target_System__c</fullName>
-    <description>Target systems interested to receive subscription data from Salesforce. Whenever subscription preference changes on Contact, we review interested categories of targeted systems and send subscription data to each system.</description>
+    <description>Target system interested to receive subscription preference data from Salesforce. Whenever subscription preference changes on Contact or Lead, we review interested categories of targeted systems and send subscription preference data to each system.</description>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <inlineHelpText>Target systems interested to receive subscription data from Salesforce. Whenever subscription preference changes on Contact, we review interested categories of targeted systems and send subscription data to each system.</inlineHelpText>
+    <inlineHelpText>Target system interested to receive subscription preference data from Salesforce. Whenever subscription preference changes on Contact or Lead, we review interested categories of targeted systems and send subscription preference data to each system.</inlineHelpText>
     <label>Target System</label>
     <required>false</required>
     <type>Picklist</type>
@@ -20,6 +20,11 @@
                 <fullName>sendgrid</fullName>
                 <default>false</default>
                 <label>Sendgrid</label>
+            </value>
+            <value>
+                <fullName>Test</fullName>
+                <default>false</default>
+                <label>Test</label>
             </value>
         </valueSetDefinition>
     </valueSet>

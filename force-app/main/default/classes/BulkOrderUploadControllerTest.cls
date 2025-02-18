@@ -65,7 +65,7 @@ public class BulkOrderUploadControllerTest {
 		insert conRec1;
 
 		Opportunity opp = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('TEST OPPORTUNITY')
 			.setAccountId(accRec1.Id)
 			.setStage('SAL')

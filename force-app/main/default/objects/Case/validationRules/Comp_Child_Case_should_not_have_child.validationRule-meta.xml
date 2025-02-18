@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Comp_Child_Case_should_not_have_child</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISNEW() &amp;&amp; Record_Type_Name__c = &apos;Compliance&apos; &amp;&amp;  Parent.ParentId  != null</errorConditionFormula>
+    <errorMessage>Child case can not have child case</errorMessage>
+</ValidationRule>

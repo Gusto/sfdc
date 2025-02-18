@@ -1,0 +1,58 @@
+<template>
+    <div data-id="chatcontainer" class="scrollable-card">
+        <section role="log" class="slds-chat autoscroll">
+            <div class="slds-chat-list content">
+                <template for:each={chatMessages} for:item="message" for:index="index">
+                    <template if:true={message.sender}>
+                        <li class="slds-chat-listitem slds-chat-listitem_inbound" data-listid={message.messageId} key={message.messageId}>
+                            <div class="slds-chat-message">
+                                <!-- Display avatar icon -->
+                                <span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
+                                    <abbr 
+                                        class="slds-avatar__initials slds-avatar__initials_inverse avator-icon" 
+                                        title={message.senderName} > 
+                                        {message.timer} 
+                                    </abbr>
+                                </span>
+
+                                <div class="slds-chat-message__body">
+                                    <!-- Display if AI is typing -->
+									<c-typing-animation-cmp is-typing={message.typing}></c-typing-animation-cmp>
+
+                                    <div class="slds-chat-message__text slds-chat-message__text_inbound" if:false={message.typing} data-id="responseDiv">
+                                        <span>{message.content}</span>
+                                        <br /><br />
+                                        <span if:true={message.contentURL} class="content-article">
+                                            <a href={message.contentURL} target="_blank">Here is a knowledge article about this</a>
+                                        </span>
+                                    </div>
+
+                                    <div class="slds-chat-message__meta" aria-label="Sender">{message.senderName}</div>
+                                </div>
+                            </div>
+
+                            <div class="rate" if:true={message.displayRating}>
+                                <div if:true={message.isDisplayRatingDropdown}>
+                                    <c-chima-ai-feedback-rating data-conversationid={message.messageId} onfeedbacksubmit={handleFeedbackSubmit}></c-chima-ai-feedback-rating>
+
+                                    <div if:true={message.isShowError} class="slds-form-element__help feedback-submit-error">
+                                        {message.errorMessage}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                </template>
+            </div>
+
+            <!-- Chat input form -->
+            <div class="slds-chat-composer sticky-footer">
+                <c-chima-ai-chat-footer 
+                    is-loading={isLoading} 
+                    onnewchat={startNewChat}
+                    onpromptsubmit={handleSubmitPrompt}>
+                </c-chima-ai-chat-footer>
+            </div>
+        </section>
+    </div>
+</template>

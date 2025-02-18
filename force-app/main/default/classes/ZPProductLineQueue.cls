@@ -1,5 +1,5 @@
 /**
- * @description Queuable class to process insert and updates asynchronously.
+ * @description Queueable class to process insert and updates asynchronously.
  * @group ZP_Product_Line__c
  * Test: ZPProductLineTriggerHelperTest
  */

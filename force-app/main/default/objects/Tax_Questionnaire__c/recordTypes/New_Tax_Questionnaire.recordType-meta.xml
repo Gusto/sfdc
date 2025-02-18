@@ -4,6 +4,116 @@
     <active>true</active>
     <label>New Tax Questionnaire</label>
     <picklistValues>
+        <picklist>AF1099_Clean_File_Required__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AF1099_File_Encryption_Requirements__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AF1099_File_Naming_Requirements__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AF1099_File_Size_Limitations__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AF1099_File_Validations_Fatal_Non_Fatal__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AFW2_Clean_file_required__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AFW2_File_Encryption_Requirements__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AFW2_File_Naming_Requirements__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AFW2_File_Size_Limitations__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>AFW2_File_Validations_Fatal_Non_Fatal__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Agency_Accepts_Generic_Annual_Form__c</picklist>
         <values>
             <fullName>N%2FA - No Annual Form Needed</fullName>
@@ -63,46 +173,29 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Data_Element_Changes__c</picklist>
+        <picklist>Current_Payment_Method__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>ACH Credit</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Deposit_Payment_Changes__c</picklist>
-        <values>
-            <fullName>No</fullName>
+            <fullName>ACH Debit</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Dormancy_Period_Changes__c</picklist>
-        <values>
-            <fullName>No</fullName>
+            <fullName>Bulk ACH Credit</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>EFT_Authorization_Required__c</picklist>
-        <values>
-            <fullName>No</fullName>
+            <fullName>Bulk ACH Debit</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -118,13 +211,24 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Filing_Due_Date_Changes__c</picklist>
+        <picklist>Electronic_Funds_Transfer_Req_Threshold__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>N</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>File_Encryption_Requirements__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -163,18 +267,22 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Form_Changes_NHR__c</picklist>
+        <picklist>Form_s_saved_in_Pufferfish_Drive__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>N%2FA%2C Generic Form for all Forms</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>Pending Final Forms From Agency</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes%2C All Official Forms Saved</fullName>
             <default>false</default>
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Form_s_saved_in_Pufferfish_Drive__c</picklist>
+        <picklist>Forms_Saved_in_Pufferfish_Drive__c</picklist>
         <values>
             <fullName>N%2FA%2C Generic Form for all Forms</fullName>
             <default>false</default>
@@ -269,24 +377,13 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Is_A_Payment_Coupon_Required__c</picklist>
+        <picklist>Is_State_Reporting_Required_Even_If_Rep__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>N</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Is_A_Zero_Payment_Required__c</picklist>
-        <values>
-            <fullName>No</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Yes</fullName>
+            <fullName>Y</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -302,6 +399,17 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Is_This_Reported_To_The_State_Through_CO__c</picklist>
+        <values>
+            <fullName>N</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Y</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Local_EIN_Required__c</picklist>
         <values>
             <fullName>Unique EIN format%28see details%29</fullName>
@@ -313,28 +421,6 @@
         </values>
         <values>
             <fullName>Uses State EIN</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>New_Employer_Rate__c</picklist>
-        <values>
-            <fullName>No</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Yes</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Notification_Changes__c</picklist>
-        <values>
-            <fullName>No</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Yes</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -396,6 +482,33 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Payment_Method__c</picklist>
+        <values>
+            <fullName>ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Registration_req_d__c</picklist>
         <values>
             <fullName>N</fullName>
@@ -407,13 +520,13 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Reporting_Changes__c</picklist>
+        <picklist>Required_If_There_Is_No_Withholding__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>N</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>Y</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -429,13 +542,13 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>SUI_Rate_Changes__c</picklist>
+        <picklist>Standard_Occupational_Code_SOC_Report__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>N</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>Y</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -461,11 +574,11 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Local%3A Generic</fullName>
+            <fullName>Local%3A generic</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Local%3A Unique</fullName>
+            <fullName>Local%3A unique</fullName>
             <default>false</default>
         </values>
         <values>
@@ -509,13 +622,29 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Unclaimed_Property_Agency_Payment_Change__c</picklist>
+        <picklist>Unclaimed_Property_AgePayment_Method__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>ACH Credit</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Credit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk ACH Debit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bulk Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Individual Check</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -547,18 +676,18 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Unit_Reporting_Required__c</picklist>
+        <picklist>Unit_Reporting_Required_Report_By_Locat__c</picklist>
         <values>
-            <fullName>No</fullName>
+            <fullName>N</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Yes</fullName>
+            <fullName>Y</fullName>
             <default>false</default>
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Update_Is_Needed_To_HC_IKB__c</picklist>
+        <picklist>Unit_Reporting_Required__c</picklist>
         <values>
             <fullName>No</fullName>
             <default>false</default>

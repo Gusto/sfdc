@@ -9,7 +9,7 @@
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Yes</name>
-            <conditionLogic>and</conditionLogic>
+            <conditionLogic>(5 OR 7) AND (2 AND 3 AND 4 AND 1 AND 6) AND 8</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.LiveChatTranscriptId</leftValueReference>
                 <operator>IsNull</operator>
@@ -53,6 +53,13 @@
                 </rightValue>
             </conditions>
             <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>PushAssignment</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
                 <leftValueReference>$Record.LiveChatTranscript.Case.IsClosed</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
@@ -67,7 +74,7 @@
     </decisions>
     <description>Handles transferring Cases and sending customers chat transcript emails
  - added check to update case only if case owner is different from the chat agent.
- BTC-4596 - Update the flow to prevent running into validation rule on case owner update</description>
+BTC-4596 - Update the flow to prevent running into validation rule on case owner update</description>
     <environments>Default</environments>
     <interviewLabel>Transfer Chat {!$Flow.CurrentDateTime}</interviewLabel>
     <label>CX Chat Flow</label>

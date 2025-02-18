@@ -100,6 +100,7 @@ public class RelatedRecordsCtrlTest {
 			.setEscalationReason('Rate Discrepancy')
 			.setPriority(TicketUtil.TICKET_PRIORITY_LOW)
 			.setEscalationReasonDetail('Incorrect rates for plan year')
+			.setReportingTeam('Confirmation')
 			.setTeam(TicketUtil.TICKET_TEAM_ONBOARDING)
 			.setSubTeam(TicketUtil.TICKET_ROLE_IMPLEMENTATION)
 			.setBenefitOrderId(objBO.Id)

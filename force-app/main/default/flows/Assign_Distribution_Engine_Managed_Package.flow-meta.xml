@@ -8,14 +8,14 @@
         <locationX>588</locationX>
         <locationY>48</locationY>
         <assignmentItems>
-            <assignToReference>License_Assignment.PackageLicenseId__NotFound</assignToReference>
+            <assignToReference>License_Assignment.PackageLicenseId</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>Distribution_Engine_ID</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>License_Assignment.UserId__NotFound</assignToReference>
+            <assignToReference>License_Assignment.UserId</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>User_ID</elementReference>
@@ -115,17 +115,17 @@
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>PackageLicenseId__NotFound</field>
+            <field>PackageLicenseId</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>License_Assignment.PackageLicenseId__NotFound</elementReference>
+                <elementReference>License_Assignment.PackageLicenseId</elementReference>
             </value>
         </filters>
         <filters>
-            <field>UserId__NotFound</field>
+            <field>UserId</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>License_Assignment.UserId__NotFound</elementReference>
+                <elementReference>License_Assignment.UserId</elementReference>
             </value>
         </filters>
         <object>UserPackageLicense</object>

@@ -5,7 +5,7 @@
         <name>Update_Date_Last_Set_Up_Step</name>
         <label>Update Date Last Set Up Step</label>
         <locationX>50</locationX>
-        <locationY>431</locationY>
+        <locationY>395</locationY>
         <assignmentItems>
             <assignToReference>$Record.Date_Last_Set_Up_Step__c</assignToReference>
             <operator>Assign</operator>
@@ -18,16 +18,16 @@
         <name>Check_whether_set_up_steps_fields_updated</name>
         <label>Check whether set up steps fields updated</label>
         <locationX>182</locationX>
-        <locationY>311</locationY>
+        <locationY>287</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Outcome</name>
             <conditionLogic>((1 AND 2) OR (3 AND 4) OR (5 AND 6) OR (7 AND 8) OR (9 AND 10) OR (11 AND 12) OR (13 AND 14) OR (15 AND 16) OR (17 AND 18) OR (19 AND 20) OR (21 AND 22))</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.ZP_Add_Company_Addresses__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Add_Company_Addresses__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -39,9 +39,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Add_Employees__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Add_Employees__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -53,9 +53,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Set_Up_Federal_Taxes__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Set_Up_Federal_Taxes__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -67,9 +67,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Set_Up_State_Taxes__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Set_Up_State_Taxes__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -81,9 +81,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Set_Up_Bank_Account__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Set_Up_Bank_Account__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -95,9 +95,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Select_a_Payroll_Schedule__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Select_a_Payroll_Schedule__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -109,9 +109,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Report_Previous_Paystubs__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Report_Previous_Paystubs__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -123,9 +123,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Add_Signatory__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Add_Signatory__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -137,9 +137,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Sign_Company_Forms__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Sign_Company_Forms__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -151,9 +151,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Verify_Company_Bank_Account__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Verify_Company_Bank_Account__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -165,9 +165,9 @@
             </conditions>
             <conditions>
                 <leftValueReference>$Record.ZP_Enter_Unpaid_Tax_Liabilities__c</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>IsChanged</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ZP_Enter_Unpaid_Tax_Liabilities__c</elementReference>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -183,10 +183,10 @@
             <label>Outcome</label>
         </rules>
     </decisions>
-    <description>1. Moved all decision criteria to starting trigger part.
-2. Timestamp when Last Set Up Step fields update on Company Opportunity</description>
+    <description>1. Timestamp when Last Set Up Step fields update on Company Opportunity</description>
+    <environments>Default</environments>
     <interviewLabel>Company Opportunity Flow {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>Company Opportunity Flow</label>
+    <label>Opportunity - Company Opportunity Before Actions</label>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -212,166 +212,12 @@
         <connector>
             <targetReference>Check_whether_set_up_steps_fields_updated</targetReference>
         </connector>
-        <filterLogic>(1 AND ((2 AND 3) OR (4 AND 5) OR (6 AND 7) OR (8 AND 9) OR (10 AND 11) OR (12 AND 13) OR (14 AND 15) OR (16 AND 17) OR (18 AND 19) OR (20 AND 21) OR (22 AND 23)))</filterLogic>
+        <filterLogic>and</filterLogic>
         <filters>
             <field>Opportunity_Record_Type_Name__c</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Company Opportunity</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Add_Company_Addresses__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Add_Company_Addresses__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Add_Employees__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Add_Employees__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Set_Up_Federal_Taxes__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Set_Up_Federal_Taxes__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Set_Up_State_Taxes__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Set_Up_State_Taxes__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Set_Up_Bank_Account__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Set_Up_Bank_Account__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Select_a_Payroll_Schedule__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Select_a_Payroll_Schedule__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Report_Previous_Paystubs__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Report_Previous_Paystubs__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Add_Signatory__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Add_Signatory__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Sign_Company_Forms__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Sign_Company_Forms__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Verify_Company_Bank_Account__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Verify_Company_Bank_Account__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Enter_Unpaid_Tax_Liabilities__c</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ZP_Enter_Unpaid_Tax_Liabilities__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
+                <stringValue>Acquisition</stringValue>
             </value>
         </filters>
         <object>Opportunity</object>

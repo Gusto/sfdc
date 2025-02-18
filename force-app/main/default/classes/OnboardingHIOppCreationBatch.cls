@@ -8,7 +8,7 @@ global class OnboardingHIOppCreationBatch implements Database.Batchable<sObject>
 			' Which_Gusto_benefits_interested_in__c, When_to_start_offering_benefits__c, Who_to_contact__c, Existing_Health_Benefits_Renewal_Date__c, Contribution_to_EE_Health_Coverage_cost__c, Interested_in_offering_HI_to_employees__c, Interest_in_adding_benefits_to_Gusto__c ' + 
 			' FROM ZP_Company__c WHERE Onboarding_HI_Opp_Created__c = false' +
 			' AND Process_HI_Opp_Creation__c = true AND Skip_Onboarding_Opp_Creation__c = false' +
-			' AND CreatedDate >= 2020-08-01T00:00:01z AND CreatedDate < TODAY';
+			' AND CreatedDate >= 2020-08-01T00:00:01z';
 		return Database.getQueryLocator(strQuery);
 	}
 

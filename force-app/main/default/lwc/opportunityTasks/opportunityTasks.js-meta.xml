@@ -11,7 +11,9 @@
         <targetConfig targets="lightning__RecordPage">
             <property label="Task RecordTypes" name="strTaskRecordTypes" type="String" description="Comma separated Task RecordTypes, for eg. Standard,Call,Email"/> 
             <property label="Task RecordType To Icon Name" name="strTaskRecordTypeToIconName" type="String" description="Field contains RecordType Developer Names and their corresponding icons, where each RecordType and its icon are separated by semicolons, and different RecordType-icon pairs are separated by a comma, for eg. Call;utility:call,Chat;utility:chat"/>
+            <property label="Activity Heading" name="activityHeading" type="String" description="The label for the sObject activities being displayed"/>
             <objects>
+                <object>Opportunity</object>
                 <object>Ticket__c</object>
             </objects>
         </targetConfig>

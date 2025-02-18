@@ -1,0 +1,23 @@
+<template>
+    <div class="chat-input-container">
+        <lightning-icon
+            icon-name="utility:anywhere_chat"
+            alternative-text="New Chat"
+            variant="success"
+            size="small"
+            title="New Chat"
+            onclick={startNewChat}
+            class="new-chat"
+            disabled={isLoading}
+        ></lightning-icon>
+        <input
+            class="chat-input"
+            type="text"
+            placeholder="Type your message..."
+            value={userQuestion}
+            oninput={handleQuestionChange}
+            onkeydown={handleKeyDown}
+            disabled={isLoading}
+        />
+    </div>
+</template>

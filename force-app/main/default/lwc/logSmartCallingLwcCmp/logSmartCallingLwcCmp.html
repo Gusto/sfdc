@@ -228,23 +228,36 @@
 				</lightning-layout>
 			</div>
 
-			<lightning-layout multiple-rows if:true={blnShowPartnerSalesType}>
-					
+			<!--<div if:true={blnShowTaskTypeSection} class="slds-p-vertical_x-small slds-p-horizontal_medium">-->
+				<lightning-layout multiple-rows if:true={blnShowPartnerSalesType}>
+					<!--<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+						<lightning-combobox
+							name="Type"
+							label="Source"
+							data-name="type"
+							placeholder="Select Type"
+							options={list_TaskTypeOptionsByProfile}
+							value={objParameters.strTaskType}
+							onchange={handleTaskTypeChange}
+						>
+						</lightning-combobox>
+					</lightning-layout-item>-->
 
-				<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
-					<lightning-combobox
-						name="partnerSalesType"
-						label="Partner Sales Task Type"
-						data-name="partnerSalesType"
-						placeholder="Partner Sales Task Type"
-						value={objParameters.strPartnerSalesTaskType}
-						options={list_PartnerSalesTypeOptions}
-						onchange={handlePartnerSalesTypeChange}
-						disabled={blnDisablePartnerSalesType}
-					>
-					</lightning-combobox>
-				</lightning-layout-item>
-			</lightning-layout>
+					<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+						<lightning-combobox
+							name="partnerSalesType"
+							label="Partner Sales Task Type"
+							data-name="partnerSalesType"
+							placeholder="Partner Sales Task Type"
+							value={objParameters.strPartnerSalesTaskType}
+							options={list_PartnerSalesTypeOptions}
+							onchange={handlePartnerSalesTypeChange}
+							disabled={blnDisablePartnerSalesType}
+						>
+						</lightning-combobox>
+					</lightning-layout-item>
+				</lightning-layout>
+			<!--</div>-->
 
 			<lightning-layout multiple-rows>
 				<lightning-layout-item if:true={objAllSmartCalling.Show_Subject__c} size="12" class="slds-p-vertical_x-small slds-p-horizontal_medium">
@@ -591,18 +604,18 @@
 					<lightning-input
 						type="checkbox"
 						value={blnCreatePayrollOpty}
-						label="Create Payroll Opportunity"
-						name="Create Payroll Opportunity"
+						label="Create Acquisition Opportunity"
+						name="Create Acquisition Opportunity"
 						onchange={handleCreatePayrollOp}
 					></lightning-input>
 				</div>
 				<template if:true={blnCreatePayrollOpty}>
-					<lightning-accordion allow-multiple-sections-open active-section-name="Create Payroll Opportunity">
-						<lightning-accordion-section name="Create Payroll Opportunity" label="Create Payroll Opportunity">
+					<lightning-accordion allow-multiple-sections-open active-section-name="Create Acquisition Opportunity">
+						<lightning-accordion-section name="Create Acquisition Opportunity" label="Create Acquisition Opportunity">
 							<lightning-layout multiple-rows>
-								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+								<!--<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
 									<lightning-input type="text" label="Opportunity Name" data-name="payroll-opportunity" required onchange={handlePayrollOpportunityNameChange}></lightning-input>
-								</lightning-layout-item>
+								</lightning-layout-item> -->
 								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
 									<lightning-combobox
 										name="Opportunity Stage"
@@ -613,8 +626,21 @@
 										onchange={handleOptyStageChange}
 									></lightning-combobox>
 								</lightning-layout-item>
+								
 								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
-									<lightning-input type="date" name="Close Date" label="Close Date" data-name="payroll-opportunity" required onchange={handlePayrollOpportunityCloseDateChange}>
+									<lightning-combobox
+										name="Type"
+										label="Type"
+										data-name="payroll-opportunity"
+										required
+										options={list_AcquisitionOptyTypeOptions}
+										onchange={handleAcquisitionOptyTypeChange}
+									>
+									</lightning-combobox>
+								</lightning-layout-item>
+
+								<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+									<lightning-input type="date" name="Close Date" label="Close Date" data-name="payroll-opportunity" required onchange={handlePayrollOpportunityCloseDateChange} value={objParameters.strAcquisitionOpportunityCloseDate}>
 									</lightning-input>
 								</lightning-layout-item>
 							</lightning-layout>

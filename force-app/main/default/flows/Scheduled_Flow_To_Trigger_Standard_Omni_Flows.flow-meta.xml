@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>This Flow allows to trigger traditional omni channel flows on the case that previously were triggered via Solve</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>ForumulaBlankDateTimeValue</name>
+        <dataType>DateTime</dataType>
+        <expression>DATETIMEVALUE(&quot;&quot;)</expression>
+    </formulas>
+    <interviewLabel>Scheduled Flow To Trigger Standard Omni Flows {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Scheduled Flow To Trigger Standard Omni Flows</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Case_To_Trigger_Standard_Omni</name>
+        <label>Update Case To Trigger Standard Omni</label>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OwnerId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Solve_QA_Queue__c</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_Cases_Queue_ID__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Solve_QA_Omni_Trigger_Time__c</field>
+            <value>
+                <elementReference>ForumulaBlankDateTimeValue</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OwnerId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>00GTH0000027vzh2AA</stringValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Trigger_Standard_Omni</name>
+            <connector>
+                <targetReference>Update_Case_To_Trigger_Standard_Omni</targetReference>
+            </connector>
+            <label>Trigger Standard Omni</label>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>Solve_QA_Omni_Trigger_Time__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+</Flow>

@@ -4,7 +4,7 @@
         <name>Existing_Case_Chatter_Post</name>
         <label>Existing Case Chatter Post</label>
         <locationX>182</locationX>
-        <locationY>1430</locationY>
+        <locationY>1322</locationY>
         <actionName>chatterPost</actionName>
         <actionType>chatterPost</actionType>
         <connector>
@@ -25,13 +25,12 @@
         </inputParameters>
         <nameSegment>chatterPost</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>New_Case_Chatter_Post</name>
         <label>New Case Chatter Post</label>
         <locationX>182</locationX>
-        <locationY>1322</locationY>
+        <locationY>1214</locationY>
         <actionName>chatterPost</actionName>
         <actionType>chatterPost</actionType>
         <connector>
@@ -52,7 +51,6 @@
         </inputParameters>
         <nameSegment>chatterPost</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Acknowledgement_Email</name>
@@ -72,7 +70,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Engagement_Send_Case_Acknowledgement_Email</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_Auto_Solve_Email_with_Attachments</name>
@@ -82,7 +79,7 @@
         <actionName>TaxResAutoSolveEmailHelper</actionName>
         <actionType>apex</actionType>
         <connector>
-            <targetReference>Update_Auto_Solve_Email_Sent</targetReference>
+            <targetReference>Previously_Answered_Auto_Solve_Check</targetReference>
         </connector>
         <faultConnector>
             <isGoTo>true</isGoTo>
@@ -96,7 +93,6 @@
             </value>
         </inputParameters>
         <nameSegment>TaxResAutoSolveEmailHelper</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Send Data Capture Auto Solve Email Alert</description>
@@ -120,7 +116,6 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Auto_Email_From_Case_Reason</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Send_UnAuthorized_Email_Notification</name>
@@ -140,14 +135,13 @@
             </value>
         </inputParameters>
         <nameSegment>Case.Engagement_Payroll_Taxres_Send_UnAuthorized_Email_Notification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>This invokable method will skip CaseTriggerHelper class.</description>
         <name>Skip_Trigger</name>
         <label>Skip Trigger</label>
         <locationX>1106</locationX>
-        <locationY>1814</locationY>
+        <locationY>1706</locationY>
         <actionName>CaseTriggerHelper</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -165,7 +159,6 @@
             </value>
         </inputParameters>
         <nameSegment>CaseTriggerHelper</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>56.0</apiVersion>
     <assignments>
@@ -173,7 +166,7 @@
         <name>Add_objCase_to_list_Cases</name>
         <label>Add objCase to list_Cases</label>
         <locationX>1370</locationX>
-        <locationY>2054</locationY>
+        <locationY>1946</locationY>
         <assignmentItems>
             <assignToReference>list_Cases</assignToReference>
             <operator>Add</operator>
@@ -189,7 +182,7 @@
         <name>Closed_Reason_Assignment</name>
         <label>Closed Reason Assignment</label>
         <locationX>182</locationX>
-        <locationY>1214</locationY>
+        <locationY>1106</locationY>
         <assignmentItems>
             <assignToReference>objCase.Closed_Reason__c</assignToReference>
             <operator>Assign</operator>
@@ -267,8 +260,8 @@
         <description>Update Auto Solve Email sent and close case</description>
         <name>Update_Auto_Solve_Email_Sent</name>
         <label>Update Auto Solve Email Sent</label>
-        <locationX>314</locationX>
-        <locationY>998</locationY>
+        <locationX>50</locationX>
+        <locationY>674</locationY>
         <assignmentItems>
             <assignToReference>objCase.Automation_Status__c</assignToReference>
             <operator>Assign</operator>
@@ -340,7 +333,7 @@
         <name>Previously_Answered_Auto_Solve_Check</name>
         <label>Previously Answered Auto Solve Check</label>
         <locationX>314</locationX>
-        <locationY>1106</locationY>
+        <locationY>998</locationY>
         <defaultConnector>
             <targetReference>Skip_Case_Trigger</targetReference>
         </defaultConnector>
@@ -379,7 +372,7 @@
         <name>Skip_Case_Trigger</name>
         <label>Skip Case Trigger? (Add Logic above this node)</label>
         <locationX>1370</locationX>
-        <locationY>1706</locationY>
+        <locationY>1598</locationY>
         <defaultConnector>
             <targetReference>Add_objCase_to_list_Cases</targetReference>
         </defaultConnector>
@@ -654,8 +647,8 @@
             <label>Notify UnAuthorized Users</label>
         </rules>
     </decisions>
-    <description>- Ela: Moved &quot;Update Auto Solve Email Sent&quot; to common from under no notice attached
-- Shyam: Updated for Autosolve email with attachments
+    <description>- Shyam: Updated for Autosolve email with attachments
+- Ankit : Removed Gusto Address &amp; Case Origin Electronic notice check and left only Yes path. and added has no notice attached condition
 - Shyam: Added &apos;P&amp;I Late Deposit/Amendment Autosolve&apos; condition
 - Shyam: Added &apos;Below Tolerance Auto Solve fired&apos; condition in formulaValidAutoCloseCase
 - Ela: Added logic to update the case status after the email is sent
@@ -808,7 +801,7 @@ INCLUDES({!objCase.Mass_Email_Step__c} , &apos;SUI Rate Auto-Solve fired&apos; )
         <name>Update_objCase</name>
         <label>Update objCase</label>
         <locationX>1370</locationX>
-        <locationY>2162</locationY>
+        <locationY>2054</locationY>
         <faultConnector>
             <isGoTo>true</isGoTo>
             <targetReference>Update_objCase_Failed</targetReference>
@@ -823,7 +816,7 @@ INCLUDES({!objCase.Mass_Email_Step__c} , &apos;SUI Rate Auto-Solve fired&apos; )
             <targetReference>Initializing_Fault_Line_Details</targetReference>
         </connector>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <textTemplates>
         <name>EmailText</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Publish_Case_Info_To_Kafka</name>
+        <label>Publish Case Info To Kafka</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>Case.Publish_Case_Info_To_Kafka</actionName>
+        <actionType>outboundMessage</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>Case.Publish_Case_Info_To_Kafka</nameSegment>
+    </actionCalls>
+    <apiVersion>63.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>Publish Case Enrollment Information to Kafka {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Publish Case Enrollment Information to Kafka</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Publish_Case_Info_To_Kafka</targetReference>
+        </connector>
+        <filterFormula>NOT(ISBLANK({!$Record.Enrollment_Id__c}) ) &amp;&amp; ( ISPICKVAL( {!$Record.Type} ,&quot;NHE&quot;) || ISPICKVAL( {!$Record.Type} ,&quot;QLE&quot;) ) &amp;&amp; NOT(ISNEW()) &amp;&amp; ISCHANGED( {!$Record.Status} ) &amp;&amp; ISPICKVAL({!$Record.Historical_Data__c},&quot;&quot;)</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

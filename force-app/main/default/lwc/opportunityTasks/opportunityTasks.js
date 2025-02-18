@@ -3,24 +3,25 @@
  */
 import { LightningElement, wire, api } from "lwc";
 import { refreshApex } from "@salesforce/apex";
-import getOpportunityTasks from "@salesforce/apex/OpportunityTaskController.getOpportunityTasks";
-
+import getActivities from "@salesforce/apex/OpportunityTaskController.getsObjectActivities";
 export default class OpportunityTasks extends LightningElement {
 	@api recordId;
+	@api activityHeading = 'Opportunity Activities';
 	@api strTaskRecordTypes;
 	@api strTaskRecordTypeToIconName;
-	listTasks = [];
-	objWiredTasksResult;
+    
+	listActivities = [];
+	objWiredActivitiesResult;
 	mapTaskRecordTypeToIcon = new Map();
 
 	/**
-	 * Wire method to fetch tasks related to opportunity
+	 * Wire method to fetch tasks/events related to sObject
 	 */
-	@wire(getOpportunityTasks, { idTicket: "$recordId", strTaskRecordTypeDevNames: "$strTaskRecordTypes" })
+	@wire(getActivities, { idRecord: "$recordId", strTaskRecordTypeDevNames: "$strTaskRecordTypes" })
 	wiredTasks(result) {
-		this.objWiredTasksResult = result;
+		this.objWiredActivitiesResult = result;
 		if (result.data) {
-			this.listTasks = result.data;
+			this.listActivities = result.data;
 		} else if (result.error) {
 			console.error("Error: ", result.error);
 		}
@@ -53,7 +54,7 @@ export default class OpportunityTasks extends LightningElement {
 	 * Refreshes the data coming from wire method
 	 */
 	handleRefresh() {
-		refreshApex(this.objWiredTasksResult);
+		refreshApex(this.objWiredActivitiesResult);
 	}
 
 	/**
@@ -78,9 +79,9 @@ export default class OpportunityTasks extends LightningElement {
 	 * @param {Boolean} blnIsExpanded
 	 */
 	doExpandOrCollapse(blnIsExpanded) {
-		let listTasks = this.template.querySelectorAll("c-opportunity-task-detail");
-		listTasks.forEach((objTask) => {
-			objTask.doExpandCollapse(blnIsExpanded);
+		let listActivities = this.template.querySelectorAll("c-opportunity-task-detail");
+		listActivities.forEach((objActivity) => {
+			objActivity.doExpandCollapse(blnIsExpanded);
 		});
 	}
 }

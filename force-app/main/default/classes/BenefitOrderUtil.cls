@@ -45,6 +45,14 @@ public class BenefitOrderUtil {
 		STATUS_CLOSED_LOST
 	};
 
+	public static Set<String> set_ClosedOrderStatusForBOToShowData = new Set<String>{
+		STATUS_BLOCKED,
+		STATUS_APPROVED,
+		STATUS_CLOSED_LOST,
+		STATUS_FULFILLED,
+		STATUS_CLOSED_ADMIN,
+		STATUS_CANCELLED
+	};
 	// Record Type Ids
 	public static final Id RENEWAL_ALIGNMENT_BENEFIT_ORDER_RT_ID = Cache.getRecordTypeId(
 		'Benefit_Order__c',

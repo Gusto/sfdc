@@ -14,6 +14,10 @@ public class CreateTicketControllerTest {
 	 **/
 	@testSetup
 	static void setupData() {
+
+		AccountTriggerHelper.skipTrigger = true;
+		ContactTriggerHelper.skipTrigger = true;
+
 		User objThisUser = [SELECT Id FROM User WHERE Id = :UserInfo.getUserId()];
 		User objUser = new User();
 
@@ -40,9 +44,6 @@ public class CreateTicketControllerTest {
 				.build();
 			insert objUser;
 		}
-
-		AccountTriggerHelper.skipTrigger = true;
-		ContactTriggerHelper.skipTrigger = true;
 
 		// Create Company Accounts
 		List<Account> list_Accounts = new List<Account>();
@@ -95,19 +96,19 @@ public class CreateTicketControllerTest {
 		CaseTriggerHelper.skipTrigger = false;
 
 		// Create a new Ticket Config
-    		List<Ticket_Config__c> list_TicketConfig = new List<Ticket_Config__c>();
+		List<Ticket_Config__c> list_TicketConfig = new List<Ticket_Config__c>();
 		Ticket_Config__c objTicketConfig = new TestDataFactory.TicketConfigBuilder()
 			.setName('Test MYBC - Escalations')
 			.setRecordType('Advising Fulfillment')
 			.setOwnerType('Case Owner')
 			.setQueueId('MYBC - Escalations')
-                        .setTeam('Member Operations')
+			.setTeam('Member Operations')
 			.setTicketReason('Member Operation Reason 1')
 			.setTicketSubReason('Member Operation Sub Reason 11')
 			.setIsActive(true)
 			.build();
-      
-    		Ticket_Config__c objTicketConfig2 = new TestDataFactory.TicketConfigBuilder()
+
+		Ticket_Config__c objTicketConfig2 = new TestDataFactory.TicketConfigBuilder()
 			.setName('Test MYBC - Escalations')
 			.setRecordType('Advising Fulfillment')
 			.setOwnerType('Case Owner')
@@ -230,7 +231,7 @@ public class CreateTicketControllerTest {
 	static void testupdateTicket3() {
 		Account objNewAccount = TestUtility.CompanyAccount();
 		Opportunity objNewOpportunity = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setAccountId(objNewAccount.Id)
 			.setName('Test Oppty 1')
 			.setStage('New')

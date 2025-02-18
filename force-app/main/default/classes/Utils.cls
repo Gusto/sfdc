@@ -3,7 +3,7 @@
  * @description  : Common methods
  * @test classes : UtilsTest, BenefitOrderHelperTests, PartnerAccountBatchTest
  **/
-public without sharing class Utils {
+public without sharing class Utils { 
 	public static Configuration_Settings__c ORG_WIDE_CONFIG_SETTINGS = Configuration_Settings__c.getOrgDefaults();
 	public static Map<String, String> stateTaxCodeMap;
 	public static Map<String, String> map_StateAbb = new Map<String, String>();
@@ -42,6 +42,7 @@ public without sharing class Utils {
 	public static String CHAT_STATUS_Dropped = 'Dropped';
 	public static String CHAT_EVENT_TYPE_CANCELNOAGENT = 'CancelNoAgent';
 	public static String CHAT_EVENT_TYPE_CANCELVISITOR = 'CancelVisitor';
+	public static String CHAT_EVENT_TYPE_DURATION_TIME_OUT = 'ConnectionTimeout';
 	public final static Id CHAT_EXTERNAL_RT_ID = Schema.SObjectType.LiveChatTranscript.getRecordTypeInfosByDeveloperName().get('External').getRecordTypeId();
 	
 	//There are only few records having  Partner Type as 'TAdA'
@@ -496,7 +497,7 @@ public without sharing class Utils {
 		}
 		return dtmNext24Hours;
 	}
-
+  
 	public static Date getNextBusinessDayFromDate(Date dte) {
 		Date startOfWeek = dte.toStartOfWeek();
 		Integer dayOfWeek = startOfWeek.daysBetween(dte);
@@ -514,19 +515,19 @@ public without sharing class Utils {
 	 * @description       Returns no of non working days 
 	 * 					  The logic does not Consider Holidays as of now.
 	 *
-	 * @param dtStartDate Start Date
-	 * @param dtEndDate End Date
+	 * @param startDate Start Date
+	 * @param endDate End Date
 	 * @return            Integer number of non working days
 	 */
-	public static Integer getNumberOfNonWorkingDays(Date dtStartDate, Date dtEndDate) {
-		Integer intNonWorkingDays = 0;
-		for (integer i=0; i <= dtStartDate.daysBetween(dtEndDate); i++) {
-			 Date dtNextDay = dtStartDate + i;
-			 if(isWeekendDay(dtNextDay)){
-				intNonWorkingDays = intNonWorkingDays + 1;
-			 }
+	public static Integer getNumberOfNonWorkingDays(Date startDate, Date endDate) {
+		Integer nonWorkingDays = 0;
+		for(integer i=0; i <= startDate.daysBetween(endDate); i++){
+			Date dt = startDate + i;
+			if(isWeekendDay(dt)){
+				nonWorkingDays = nonWorkingDays + 1;
+			}
 		}
-		return intNonWorkingDays;
+		return nonWorkingDays;
 	}
 
 	/**
@@ -640,8 +641,10 @@ public without sharing class Utils {
 		return FieldNameString;
 	}
 
+	// Added By Atul
 	public static Schema.DescribeSObjectResult getSObjectDescribe(String strObjectName){
-		return ((SObject)Type.forName(strObjectName).newInstance()).getSObjectType().getDescribe(); 
+		Schema.DescribeSObjectResult sObjectDescribe = ((SObject)Type.forName(strObjectName).newInstance()).getSObjectType().getDescribe(); 
+		return sObjectDescribe;
 	}
 	//business hours logic
 	public static Long businessHours(Id businessHoursId, DateTime oppCreatedDate, DateTime secondDate) {

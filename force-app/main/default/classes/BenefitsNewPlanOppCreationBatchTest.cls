@@ -72,7 +72,7 @@ public class BenefitsNewPlanOppCreationBatchTest {
 		insert list_Accounts;
 
 		Opportunity objOpportunity1 = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('Test Opp1')
 			.setAccountId(list_Accounts[0].Id)
 			.setStage('Raw')

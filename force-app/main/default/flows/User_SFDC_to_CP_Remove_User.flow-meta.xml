@@ -4,7 +4,7 @@
         <name>GET_Chili_Piper_User_ID</name>
         <label>GET Chili Piper User ID</label>
         <locationX>308</locationX>
-        <locationY>288</locationY>
+        <locationY>276</locationY>
         <actionName>ChiliPiper_GET_User_ID</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -22,14 +22,13 @@
             <assignToReference>Chili_Piper_User_ID</assignToReference>
             <name>output</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>This APEX Class removes the Chili Piper User from any Workspaces, Queues, Licenses.</description>
         <name>Remove_CP_User</name>
         <label>Remove CP User</label>
         <locationX>308</locationX>
-        <locationY>408</locationY>
+        <locationY>384</locationY>
         <actionName>ChiliPiper_DELETE_User</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -41,7 +40,6 @@
         </inputParameters>
         <nameSegment>ChiliPiper_DELETE_User</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>56.0</apiVersion>
     <environments>Default</environments>

@@ -18,12 +18,10 @@
             </value>
         </inputParameters>
         <nameSegment>SalesforceOrgNotificationFlowCtrl</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>totalRecord</assignToReference>
             <name>intTotalRecCount</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Get_Org_Limit_Details</name>
@@ -37,12 +35,10 @@
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>SalesforceOrgNotificationCtrl</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>objSalesforceOrgLimitDetails</assignToReference>
             <name>objSalesforceOrgLimitDetails</name>
         </outputParameters>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Post_Message_For_Increase_Threshold</name>
@@ -74,8 +70,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Post_Message_For_Increase_Threshold_Payops</name>
@@ -107,8 +101,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Post_Message_To_Biztech_Backend_System_Notifications_For_Async_Limit</name>
@@ -140,8 +132,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Post_Message_To_Biztech_Backend_System_Notifications_For_Daily_API_Limit</name>
@@ -173,8 +163,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Post_Message_To_Biztech_Backend_System_Notifications_For_Single_Email_Message</name>
@@ -206,8 +194,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Post_Utility_Reminder_Notification</name>
@@ -239,8 +225,6 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
-        <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>58.0</apiVersion>
     <assignments>

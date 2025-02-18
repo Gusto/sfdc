@@ -478,7 +478,11 @@ public class ZPCompanyMigrationTriggerHelper {
 		for (Opportunity objOpp : [
 			SELECT Id, StageName, IsClosed, IsWon, Name, ZP_Company_ID__c, Source_Id__c
 			FROM Opportunity
-			WHERE Source_Id__c IN :set_CompanyIds AND RecordTypeid = :ZPCompanyMigrationUtil.COMPANY_OPPORTUNITY_RT_ID
+			WHERE
+				ZP_Company_ID__c IN :set_CompanyIds
+				AND (RecordTypeId = :ZPCompanyMigrationUtil.COMPANY_OPPORTUNITY_RT_ID
+				OR (RecordTypeId = :ZPCompanyMigrationUtil.ACQUISITION_OPPTY_RT_ID
+				AND Type = :ZPCompanyMigrationUtil.OPP_TYPE_NEW_BUSINESS))
 			ORDER BY createddate ASC
 		]) {
 			map_Opportunities.put('' + objOpp.ZP_Company_ID__c, objOpp);

@@ -18,7 +18,7 @@
                                 <criteria>
                                     <leftValue>{!Record.Opportunity_Record_Type_Name__c}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Company Opportunity</rightValue>
+                                    <rightValue>Acquisition</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -174,7 +174,7 @@
                 <identifier>force_relatedListSingleContainer</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-6c018124-214e-4c01-8220-9385746fc4c7</name>
+        <name>Facet-fe20835e-91d0-4511-b376-3def965da154</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -228,7 +228,7 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-6c018124-214e-4c01-8220-9385746fc4c7</value>
+                    <value>Facet-fe20835e-91d0-4511-b376-3def965da154</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
@@ -307,6 +307,32 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Opportunity.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>OpportunityContactRoles</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer2</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -552,6 +578,9 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>title</name>
+                </componentInstanceProperties>
                 <componentName>nbaCategoryAlignmentCmp</componentName>
                 <identifier>c_nbaCategoryAlignmentCmp</identifier>
             </componentInstance>

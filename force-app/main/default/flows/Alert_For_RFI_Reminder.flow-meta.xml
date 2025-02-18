@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <description>Initializing Fault Line details for fault paths in objExceptionLogEvent record.</description>
+        <name>Initialize_Fault_Path_Details</name>
+        <label>Initialize Fault Path Details</label>
+        <locationX>1012</locationX>
+        <locationY>695</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strExceptionLogMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <description>Sets requires action when RFI information is not received</description>
+    <environments>Default</environments>
+    <interviewLabel>Alert For RFI Reminder {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Alert For RFI Reminder</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>1012</locationX>
+        <locationY>803</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordUpdates>
+        <name>Set_Requires_Action_to_True</name>
+        <label>Set Requires Action to True</label>
+        <locationX>176</locationX>
+        <locationY>587</locationY>
+        <faultConnector>
+            <targetReference>Initialize_Fault_Path_Details</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Requires_Action__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Set_RFI_Status_to_RFI_Violated</name>
+        <label>Set RFI Status to RFI Violated</label>
+        <locationX>484</locationX>
+        <locationY>276</locationY>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Initialize_Fault_Path_Details</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>RFI_Status__c</field>
+            <value>
+                <stringValue>RFI Violated</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Requires_Action__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>1 AND 2 AND ( 3 OR 4 OR 5 OR 6 OR 7 OR 8 ) AND 9</filterLogic>
+        <filters>
+            <field>RFI_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Requested</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MF QLE</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MF NHE</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MF Termination</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MF Member/Group Updates</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Member Fulfillment Emails</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Record_Type_Name__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>MF Audit</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Historical_Data__c</field>
+            <operator>EqualTo</operator>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X5_Hours_After_Case_RFI_6th_Business_Day</name>
+            <connector>
+                <targetReference>Set_Requires_Action_to_True</targetReference>
+            </connector>
+            <label>5 Hours After Case: RFI 6th Business Day</label>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>RFI_6th_Business_Day__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X5_Hours_After_Case_RFI_3rd_Business_Day</name>
+            <connector>
+                <targetReference>Set_Requires_Action_to_True</targetReference>
+            </connector>
+            <label>5 Hours After Case: RFI 3rd Business Day</label>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>RFI_3rd_Business_Day__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X5_Hours_After_Case_RFI_9th_Business_Day</name>
+            <connector>
+                <targetReference>Set_RFI_Status_to_RFI_Violated</targetReference>
+            </connector>
+            <label>5 Hours After Case: RFI 9th Business Day</label>
+            <offsetNumber>5</offsetNumber>
+            <offsetUnit>Hours</offsetUnit>
+            <recordField>RFI_9th_Business_Day__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;p&gt;Fault Message: {!$Flow.FaultMessage}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Interview Guid: {!$Flow.InterviewGuid}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Current Record: {!$Flow.CurrentRecord}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.&amp;nbsp;&amp;nbsp;&lt;/p&gt;&lt;p&gt;https://gusto.lightning.force.com/lightning/setup/Pausedflows/home&lt;/p&gt;</text>
+    </textTemplates>
+    <triggerOrder>17</triggerOrder>
+    <variables>
+        <description>Exception Log Event Object to capture fault path details.</description>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+</Flow>

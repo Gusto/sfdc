@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Check__c</fullName>
+    <formula>ISPICKVAL( Type , &apos;Termination&apos;) &amp;&amp; NOT( ISPICKVAL( Status , &apos;Closed&apos;)) &amp;&amp; ISPICKVAL( Automation_Status__c , &apos;&apos;) &amp;&amp; Record_Type_Name__c = &apos;MF Termination&apos; &amp;&amp; Integration_Id__c &lt;&gt; null &amp;&amp; NOT( ISPICKVAL( Type , &apos;Cancellation&apos;)) &amp;&amp; BO_Is_Multi_EIN__c = false &amp;&amp; OR(( Carrier_Id__c = &apos;60&apos; &amp;&amp; IF( INCLUDES( Carrier__r.State__c , &apos;TX&apos;) || INCLUDES( Carrier__r.State__c , &apos;CO&apos;) , MF_No_Of_Days_To_Effective_Date__c &gt;= -29, OR(( MF_No_Of_Days_To_Effective_Date__c &gt;= -45 &amp;&amp; State_Carrier_Id__c = &apos;301&apos; ),MF_No_Of_Days_To_Effective_Date__c &gt;= -45))),((( State_Carrier_Id__c = &apos;28&apos; || State_Carrier_Id__c = &apos;56&apos; || State_Carrier_Id__c = &apos;3&apos; || State_Carrier_Id__c = &apos;1501&apos; || State_Carrier_Id__c = &apos;102&apos; || State_Carrier_Id__c = &apos;51&apos; || State_Carrier_Id__c = &apos;144&apos; || State_Carrier_Id__c = &apos;695&apos; || State_Carrier_Id__c = &apos;71&apos; || State_Carrier_Id__c = &apos;1224&apos; || State_Carrier_Id__c = &apos;1225&apos; || State_Carrier_Id__c = &apos;5&apos;) || ( Carrier_Id__c = &apos;48&apos; || Carrier_Id__c = &apos;8&apos; || Carrier_Id__c = &apos;64&apos; || Carrier_Id__c = &apos;4&apos; || Carrier_Id__c = &apos;18&apos; || Carrier_Id__c = &apos;53&apos;)) &amp;&amp; MF_No_Of_Days_To_Effective_Date__c &gt;= -29), ( State_Carrier_Id__c = &apos;234&apos; &amp;&amp; MF_No_Of_Days_To_Effective_Date__c &gt;= -49),( Carrier_Id__c = &apos;24&apos; &amp;&amp; MF_No_Of_Days_To_Effective_Date__c &gt;= -69))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Check</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

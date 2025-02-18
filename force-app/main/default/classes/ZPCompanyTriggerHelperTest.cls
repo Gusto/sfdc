@@ -123,7 +123,6 @@ public class ZPCompanyTriggerHelperTest {
 			.build();
 
 		ZPCompanyTriggerHelper.skipTrigger = true;
-		objZPCompany.Fake_Record__c = true;
 		insert objZPCompany;
 		ZPCompanyTriggerHelper.skipTrigger = false;
 
@@ -526,12 +525,13 @@ public class ZPCompanyTriggerHelperTest {
 		TriggerHandler.clearBypass('AccountTriggerHandler');
 
 		Opportunity objCompanyOpportunity = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setAccountId(objAccountCompany1.Id)
 			.setName('Test Company opp 1')
 			.setStage(OpportunityUtil.QUALIFIED_STAGE)
 			.setCloseDate(System.today())
-			.setSourceId(objAccountCompany1.ZP_Company_Id__c)
+			.setSourceId(objAccountCompany1.ZP_Company_Id__c + '-newbusiness' + '-' + System.today().month() + '-' + System.today().day() + '-' + System.today().year())
+            .setZPCompanyId(objAccountCompany1.ZP_Company_Id__c)
 			.build();
 
 		TriggerHandler.bypass('OpportunityTriggerHandler');
@@ -628,7 +628,7 @@ public class ZPCompanyTriggerHelperTest {
 
 		Test.stopTest();
 
-		Opportunity objOpp = [SELECT Id, ZP_Add_Company_Addresses__c, Referred_by__c, StageName FROM Opportunity WHERE Source_Id__c = :objZPCompany.Id__c];
+		Opportunity objOpp = [SELECT Id, ZP_Add_Company_Addresses__c, Referred_by__c, StageName FROM Opportunity WHERE ZP_Company_Id__c = :objZPCompany.Id__c];
 		System.assertEquals(objOpp.Referred_by__c, objResellerAccount.Id, 'Referred by not updated on opportunity.');
 
 		checkForExceptions();
@@ -1019,7 +1019,7 @@ public class ZPCompanyTriggerHelperTest {
 		System.assertEquals(null, objAccountUpdateAssert.Partner_Billing__c, 'Partner Billing not correctly set on account.');
 		System.assertEquals(false, objAccountUpdateAssert.Reward_Eligible__c, 'Reward Eligible not correctly set on account.');
 
-		Opportunity objOpportunityUpdateAssert = [SELECT Id, Billed_To__c, Sold_By__c FROM Opportunity WHERE Source_ID__c = :objZPCompanyReseller.Id__c];
+		Opportunity objOpportunityUpdateAssert = [SELECT Id, Billed_To__c, Sold_By__c FROM Opportunity WHERE ZP_Company_ID__c = :objZPCompanyReseller.Id__c];
 
 		System.assertEquals(null, objOpportunityUpdateAssert.Sold_By__c, 'Sold By not correctly set on opportunity.');
 		System.assertEquals(null, objOpportunityUpdateAssert.Billed_To__c, 'Billed To not correctly set on opportunity.');
@@ -1261,7 +1261,7 @@ public class ZPCompanyTriggerHelperTest {
 		Account objCompanyAccountAssert = [SELECT Id, Sold_By__c FROM Account WHERE ZP_Company_Id__c = :objZPCompany.Id__c];
 		System.assertEquals(objResellerAccountAssert.Id, objCompanyAccountAssert.Sold_By__c, 'Sold By not correctly populated on account.');
 
-		Opportunity objCompanyOppAssert = [SELECT Id, Sold_By__c, False_Sold_By__c FROM Opportunity WHERE Source_Id__c = :objZPCompany.Id__c];
+		Opportunity objCompanyOppAssert = [SELECT Id, Sold_By__c, False_Sold_By__c FROM Opportunity WHERE ZP_Company_Id__c = :objZPCompany.Id__c];
 		System.assertEquals(objResellerAccountAssert.Id, objCompanyOppAssert.Sold_By__c, 'Sold By not correctly populated on opportunity.');
 		System.assertEquals(true, objCompanyOppAssert.False_Sold_By__c, 'False Sold By not correctly updated on opportunity.');
 	}
@@ -1327,7 +1327,7 @@ public class ZPCompanyTriggerHelperTest {
 		Test.stopTest();
 
 		// Assert Company Account and Company Opportunity got created
-		Account objAccntAssert = [SELECT Id, (SELECT Id FROM Opportunities WHERE RecordType.Name = 'Company Opportunity') FROM Account WHERE ZP_Company_Id__c = :objCompany.Id__c];
+		Account objAccntAssert = [SELECT Id, (SELECT Id FROM Opportunities WHERE RecordType.Name = 'Acquisition') FROM Account WHERE ZP_Company_Id__c = :objCompany.Id__c];
 		System.assertNotEquals(null, objAccntAssert, 'Account not created.');
 		System.assertEquals(1, objAccntAssert.Opportunities.size(), 'Opportunity not created or multiple opportunities.');
 
@@ -1340,6 +1340,7 @@ public class ZPCompanyTriggerHelperTest {
 	 **/
 	@isTest
 	static void testAccountEmployeeUpdate() {
+
 		Test.startTest();
 		ZP_Company__c objZPCompany = new TestDataFactory.ZPCompanyBuilder()
 			.setZPCompanyId('1234887')
@@ -1353,7 +1354,7 @@ public class ZPCompanyTriggerHelperTest {
 			.setContractorCount(3)
 			.build();
 		insert objZPCompany;
-
+	
 		Test.stopTest();
 
 		Account objAssertAccount = [SELECT Id, Number_of_Active_Contractors__c, Number_of_Active_Employees__c FROM Account WHERE ZP_Company_ID__c = '1234887'];
@@ -1365,6 +1366,7 @@ public class ZPCompanyTriggerHelperTest {
 		System.assertEquals(3, objAssertOpportunity.Number_of_Contractors__c, 'Contractor counts do not match');
 		// Finally check if there are any exceptions logged
 		checkForExceptions();
+		
 	}
 
 	/**
@@ -1552,7 +1554,7 @@ public class ZPCompanyTriggerHelperTest {
 
 		Test.stopTest();
 		checkForExceptions();
-		Opportunity objCompanyOppAssert = [SELECT Id, False_Sold_By__c FROM Opportunity WHERE Source_Id__c = :objZPCompany.Id__c];
+		Opportunity objCompanyOppAssert = [SELECT Id, False_Sold_By__c FROM Opportunity WHERE ZP_Company_ID__c = :objZPCompany.Id__c];
 		System.assertEquals(false, objCompanyOppAssert.False_Sold_By__c, 'False Sold By is incorrect on opportunity.');
 	}
 
@@ -1741,6 +1743,8 @@ public class ZPCompanyTriggerHelperTest {
 			.setZPCompanyID('companyId1')
 			.build();
 
+		Test.startTest();
+
 		TriggerHandler.bypass('LeadTriggerHandler');
 		insert objLead;
 		TriggerHandler.clearBypass('LeadTriggerHandler');
@@ -1752,8 +1756,6 @@ public class ZPCompanyTriggerHelperTest {
 		System.assertEquals(true, objLeadAssert.IsConverted, 'Lead not converted.');
 		System.assertNotEquals(null, objLeadAssert.ConvertedAccountId, 'Converted account id not populated on Lead.');
 		System.assertNotEquals(null, objLeadAssert.ConvertedOpportunityId, 'Converted opportunity id not populated on Lead.');
-
-		Test.startTest();
 
 		ZP_Company__c objZPCompany = new TestDataFactory.ZPCompanyBuilder()
 			.setZPCompanyId(objLead.ZP_Company_ID__c)
@@ -2172,7 +2174,7 @@ public class ZPCompanyTriggerHelperTest {
 		System.assertEquals(AccountUtil.QUALIFIED_STATUS_UNQUALIFIED, objCompanyAccountAssert.Qualified_Status__c, 'Account Qualified status is incorrect.');
 		System.assertEquals(AccountUtil.QUALIFIED_STATUS_DETAIL_DELETED_ACCOUNT, objCompanyAccountAssert.Qualified_Status_Detail__c, 'Account Qualified status detail is incorrect.');
 
-		Opportunity objCompanyOppAssert = [SELECT Id, StageName, Stage_Detail__c FROM Opportunity WHERE Source_Id__c = :objZPCompany.Id__c];
+		Opportunity objCompanyOppAssert = [SELECT Id, StageName, Stage_Detail__c FROM Opportunity WHERE ZP_Company_Id__c = :objZPCompany.Id__c];
 		System.assertEquals(OpportunityUtil.CLOSED_LOST_STAGE, objCompanyOppAssert.StageName, 'Opportunity Stage not Closed Lost.');
 		System.assertEquals(OpportunityUtil.BENEFITS_BYOB_STAGE_DETAIL, objCompanyOppAssert.Stage_Detail__c, 'Opportunity Stage detail is incorrect.');
 
@@ -2456,7 +2458,7 @@ public class ZPCompanyTriggerHelperTest {
 		insert objZPCompany;
 		Test.stopTest();
 
-		Account objAccount = [SELECT Id, Confirmed_MRB__c, Workers_Comp_Status__c, Provider_401K__c FROM Account WHERE ZP_Company_ID__c = '12344321567'];
+		Account objAccount = [SELECT Id, Confirmed_MRB__c,Workers_Comp_Status__c,Provider_401K__c  FROM Account WHERE ZP_Company_ID__c = '12344321567'];
 		Assert.isTrue(objAccount.Confirmed_MRB__c, 'Confirmed MRB was not updated');
 		Assert.areEqual(objAccount.Workers_Comp_Status__c, objZPCompany.Workers_Comp_Status__c, 'Worker Comp Status is incorrect.');
 		Assert.areEqual(objAccount.Provider_401K__c, objZPCompany.Provider_401K__c, '401k Provider is incorrect.');
@@ -2524,7 +2526,7 @@ public class ZPCompanyTriggerHelperTest {
 			.setCreatedAtDate(System.today())
 			.setNumberOfActiveEEs(4)
 			.setContributionToEEHealthCoverage('Yes')
-			.setCurrentOfferHealthBenefits('true')
+			.setCurrentOfferHealthBenefits('No')
 			.setExistingHealthRenewalDate('2024-05-08')
 			.setInterestInAddingBenefitsToGusto('Yes')
 			.setInterestedInOfferingHIToEmp('Yes')
@@ -2552,7 +2554,7 @@ public class ZPCompanyTriggerHelperTest {
 			objZPCompany.Contribution_to_EE_Health_Coverage_cost__c,
 			'Contribution_to_EE_Health_Coverage_cost__c was not updated'
 		);
-		System.assertEquals(objOpportunityAssert.Currently_Offer_Health_Benefits__c, 'Yes', 'Currently_Offer_Health_Benefits__c was not updated');
+		System.assertEquals(objOpportunityAssert.Currently_Offer_Health_Benefits__c, objZPCompany.Currently_Offer_Health_Benefits__c, 'Currently_Offer_Health_Benefits__c was not updated');
 		System.assertEquals(
 			objOpportunityAssert.Existing_Health_Benefits_Renewal_Date__c,
 			objZPCompany.Existing_Health_Benefits_Renewal_Date__c,

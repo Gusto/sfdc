@@ -343,8 +343,8 @@ public without sharing class EventTriggerHelper extends TriggerHandler {
 						Id,
 						AccountId,
 						RecordType.Name,
-						Last_Contact_Activity__c,
 						Last_Contact_Connect__c,
+						Last_Contact_Activity__c,
 						Account.RecordTypeId,
 						Account.Sold_By__c,
 						Account.Sold_By__r.Last_Activity_Date__c,
@@ -883,7 +883,8 @@ public without sharing class EventTriggerHelper extends TriggerHandler {
 
 					// update last call connect on account if last call connect on opportunity is updated
 					if (
-						objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+						(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+						objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) &&
 						objOpportunity.AccountId != null &&
 						(objOpportunity.Account.Last_Call_Connect__c == null ||
 						objOpportunity.Last_Call_Connect__c > objOpportunity.Account.Last_Call_Connect__c)
@@ -912,13 +913,7 @@ public without sharing class EventTriggerHelper extends TriggerHandler {
 	 * @Return      : N/A
 	 **/
 	public Map<Id, Account> queryAccounts(Set<Id> set_AccountIds) {
-		return new Map<Id, Account>(
-			[
-				SELECT Id, Last_Call_Connect__c
-				FROM Account
-				WHERE Id IN :set_AccountIds
-			]
-		);
+		return new Map<Id, Account>([SELECT Id, Last_Call_Connect__c FROM Account WHERE Id IN :set_AccountIds]);
 	}
 
 	/**
@@ -928,13 +923,7 @@ public without sharing class EventTriggerHelper extends TriggerHandler {
 	 * @Return      : N/A
 	 **/
 	public Map<Id, Opportunity> queryOpportunities(Set<Id> set_OpportunityIds) {
-		return new Map<Id, Opportunity>(
-			[
-				SELECT Id, AccountId, Account.Last_Call_Connect__c, Last_Call_Connect__c, RecordTypeId
-				FROM Opportunity
-				WHERE Id IN :set_OpportunityIds
-			]
-		);
+		return new Map<Id, Opportunity>([SELECT Id, AccountId, Account.Last_Call_Connect__c, Last_Call_Connect__c, RecordTypeId FROM Opportunity WHERE Id IN :set_OpportunityIds]);
 	}
 
 	/**
@@ -944,13 +933,7 @@ public without sharing class EventTriggerHelper extends TriggerHandler {
 	 * @Return      : N/A
 	 **/
 	public Map<Id, Lead> queryLeads(Set<Id> set_LeadIds) {
-		return new Map<Id, Lead>(
-			[
-				SELECT Id, Last_Call_Connect__c
-				FROM Lead
-				WHERE Id IN :set_LeadIds
-			]
-		);
+		return new Map<Id, Lead>([SELECT Id, Last_Call_Connect__c FROM Lead WHERE Id IN :set_LeadIds]);
 	}
 
 	/**

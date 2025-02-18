@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Managed_By_Partner_Program__c</fullName>
-    <formula>/*
-*  012G0000001B7uMIAS   Company Opportunity 
-*/
-
-AND(
-  RecordTypeId = &apos;012G0000001B7uM&apos;,
+    <formula>AND(
+  RecordType.Name = &apos;Acquisition&apos;,
   OR(
     NOT( ISBLANK(Sold_By__c)),
     NOT( ISBLANK(Referred_By__c))

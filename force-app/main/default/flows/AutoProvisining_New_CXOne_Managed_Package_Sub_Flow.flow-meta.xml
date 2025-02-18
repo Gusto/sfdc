@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <assignments>
+        <description>Assign fields for the license assignment</description>
+        <name>Assign_License_Fields</name>
+        <label>Assign License Fields</label>
+        <locationX>176</locationX>
+        <locationY>350</locationY>
+        <assignmentItems>
+            <assignToReference>License_Assignment.PackageLicenseId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>CXOne_Managed_Package_ID</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>License_Assignment.UserId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>User_ID</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Look_for_Existing_Assignment_Record</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Was_existing_record_found</name>
+        <label>Was existing record found?</label>
+        <locationX>176</locationX>
+        <locationY>566</locationY>
+        <defaultConnector>
+            <targetReference>Assign_License_to_User</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Record Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Found_Record</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Found_Assignment</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_User_Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Found Record</label>
+        </rules>
+        <rules>
+            <name>Found_for_Deactivated_User</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Found_Assignment</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_User_Record.IsActive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Remove_Managed_Package_License</targetReference>
+            </connector>
+            <label>Found for Deactivated User</label>
+        </rules>
+    </decisions>
+    <description>Activate and deactivate licenses to the new CXONe Managed Package</description>
+    <environments>Default</environments>
+    <interviewLabel>AutoProvisining - New CXOne Managed Package (Sub Flow) {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>AutoProvisining - New CXOne Managed Package (Sub Flow)</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Assign Managed Package License to the user</description>
+        <name>Assign_License_to_User</name>
+        <label>Assign License to User</label>
+        <locationX>440</locationX>
+        <locationY>674</locationY>
+        <inputReference>License_Assignment</inputReference>
+    </recordCreates>
+    <recordDeletes>
+        <description>Remove the Managed Package License from Deactivated user</description>
+        <name>Remove_Managed_Package_License</name>
+        <label>Remove Managed Package License</label>
+        <locationX>176</locationX>
+        <locationY>674</locationY>
+        <inputReference>Found_Assignment</inputReference>
+    </recordDeletes>
+    <recordLookups>
+        <description>Get the managed package IDf</description>
+        <name>Get_the_Managed_Package_ID</name>
+        <label>Get the Managed Package ID</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_User_Record</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>NamespacePrefix</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>NICECXoneAgent</stringValue>
+            </value>
+        </filters>
+        <object>PackageLicense</object>
+        <outputAssignments>
+            <assignToReference>CXOne_Managed_Package_ID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordLookups>
+        <description>Get the record for the user that triggered the parent flow.</description>
+        <name>Get_User_Record</name>
+        <label>Get User Record</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_License_Fields</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>User_ID</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Search for existing record and exit if found</description>
+        <name>Look_for_Existing_Assignment_Record</name>
+        <label>Look for Existing Assignment Record</label>
+        <locationX>176</locationX>
+        <locationY>458</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_existing_record_found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>PackageLicenseId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>License_Assignment.PackageLicenseId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>UserId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>License_Assignment.UserId</elementReference>
+            </value>
+        </filters>
+        <object>UserPackageLicense</object>
+        <outputReference>Found_Assignment</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <runInMode>SystemModeWithoutSharing</runInMode>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_the_Managed_Package_ID</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <variables>
+        <description>The ID of the managed package</description>
+        <name>CXOne_Managed_Package_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>Found_Assignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <name>License_Assignment</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>UserPackageLicense</objectType>
+    </variables>
+    <variables>
+        <description>The user ID of the person being assigned the managed package license</description>
+        <name>User_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+</Flow>

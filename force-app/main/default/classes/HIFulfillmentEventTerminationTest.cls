@@ -526,6 +526,7 @@ private class HIFulfillmentEventTerminationTest {
 			FROM Case
 			WHERE Carrier__r.Key__c = 'principal_co' AND Status != 'Closed'
 		];
+		System.debug('map_ExistingCases'+JSON.serializePretty(map_ExistingCases));
 		System.assertNotEquals(objExistingCase.Id, list_NewCreatedCases[0].Id, 'New termination case is not created.');
 		System.assertEquals(objExistingCase.Selection_Ids__c, list_NewCreatedCases[0].Selection_Ids__c, 'There is no existing case related to Selection Ids.');
 
@@ -666,6 +667,7 @@ private class HIFulfillmentEventTerminationTest {
 			FROM Case
 			WHERE Carrier__r.Key__c = 'beam_dental_ca'
 		];
+		System.debug('list_UpdatedCases' + JSON.serializePretty(list_UpdatedCases));
 		System.assertEquals('New', list_UpdatedCases[0].Status, 'Case Status is not updated.');
 		System.assertEquals('Test321', list_UpdatedCases[0].Integration_Id__c, 'Case Integration Id is not updated.');
 		System.assertEquals('Test321-beam_dental_ca', list_UpdatedCases[0].Integration_Key__c, 'Case Integration Key is not updated.');

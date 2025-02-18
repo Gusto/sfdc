@@ -19,6 +19,18 @@ public without sharing class Cache {
 	}
 
 	/**
+	 * @description          Safe method to get Record Type Id, as it relies on RecordTypeName
+	 *
+	 * @param objectType     SObject name
+	 * @param recordTypeName Record Type DeveloperName
+	 * @return               `Id`
+	 * @deprecated Use RecordTypes.getRecordTypeIdFromName(objectType, recordTypeDeveloperName)
+	 */
+	public static Id getRecordTypeIdFromDeveloperName(String objectType, String recordTypeDeveloperName) {
+		return RecordTypes.getRecordTypeIdFromDeveloperName(objectType, recordTypeDeveloperName);
+	}
+
+	/**
 	 * @description Get RecordTypeName from Id and ObjectType
 	 * @param  objectType   SObject name
 	 * @param  recordTypeId `RecordType` Id

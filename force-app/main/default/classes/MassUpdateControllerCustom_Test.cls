@@ -47,7 +47,6 @@ private class MassUpdateControllerCustom_Test {
 			.setLocaleSidKey('en_US')
 			.setTimeZoneSidKey('America/Los_Angeles')
 			.setExemptfromValidationRules(true)
-            .setMassUpdateListView(true)
             .setEmail('test@test.com')
             .setProfileId(UserInfo.getProfileId());
         

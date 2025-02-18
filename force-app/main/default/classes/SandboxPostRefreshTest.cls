@@ -177,14 +177,14 @@ public class SandboxPostRefreshTest {
         
         User objUser = new User(
             Alias = 'standt', 
-            Email='standstandarduserABC123abcbabsjsjajarduser@testorg.com', 
+            Email='standarduser@testorg.com', 
             EmailEncodingKey='UTF-8', 
             LastName='Testing', 
             LanguageLocaleKey='en_US', 
             LocaleSidKey='en_US', 
             ProfileId = objProfile.Id, 
             TimeZoneSidKey='America/Los_Angeles', 
-            UserName='standarduserABC123abcbabsjsjaj@testorg.com'
+            UserName='standarduserABC123@testorg.com'
         );
         
         INSERT objUser;

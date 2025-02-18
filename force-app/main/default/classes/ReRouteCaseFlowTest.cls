@@ -1,5 +1,5 @@
 /*
- * Description: This test class contains test methods to test various scenarios in the Re-Route case flow.
+ * Description: This test class contains test methods to test varios scenarios in the Re-Route case flow.
  * Author: Soujanya N.J
  * Date: 08/09/2024
  */
@@ -18,7 +18,7 @@ public class ReRouteCaseFlowTest {
         Profile objProfile = [SELECT Id FROM Profile WHERE Name = 'ZP System Administrator'];
 
 		User objUser = new TestDataFactory.UserBuilder()
-			.setUserName('testUser123@gusto.com')
+			.setUserName('testUser@gusto.com')
 			.setFirstName('Test')
 			.setLastName('User')
 			.setEmail('testUser@gusto.com')
@@ -182,7 +182,7 @@ public class ReRouteCaseFlowTest {
 	@isTest
 	static void testRouteSpecializationCase() {
 
-		User objTAMUser = [SELECT Id FROM User WHERE Username = 'testUser123@gusto.com'];
+		User objTAMUser = [SELECT Id FROM User WHERE Username = 'testUser@gusto.com'];
 		Case objCase = [SELECT Id,Type, Support_Level__c, Case_In_Route__c, Is_Case_Manual_Create__c, Toggle__c,owner.name FROM Case WHERE Subject  = 'Test Specialization Case'];
 
 		Agatha_Prediction__c objPrediction = new TestDataFactory.AgathaPredictionBuilder()
@@ -251,23 +251,23 @@ public class ReRouteCaseFlowTest {
 			objCase.Routing_Case_Reason__c = 'Route to Spanish';
 			objCase.Routing_Case_Reason_Classification__c  = objCaseReasonClassification.Id;
 			objCase.Specialization__c = 'Spanish';
-       	 		objCase.Type = 'Benefits';
+       	 	objCase.Type = 'Benefits';
 			objCase.Support_Level__c = 'Tier 2';
-       	 		objCase.Case_In_Route__c = True;
-        		objCase.Persona__c = 'Admin';
-        		objCase.Toggle__c = !objCase.Toggle__c;
-        		objCase.Company_Size__c = 'Grower 25-49';
-        		objCase.Is_Case_Manual_Create__c  = False;
+       	 	objCase.Case_In_Route__c = True;
+        	objCase.Persona__c = 'Admin';
+        	objCase.Toggle__c = !objCase.Toggle__c;
+        	objCase.Company_Size__c = 'Grower 25-49';
+        	objCase.Is_Case_Manual_Create__c  = False;
 
 			Test.StartTest();
 			update objCase;
 			Test.StopTest();
 
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
-        	List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId, Skill.DeveloperName FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
-        	Assert.isTrue(!list_Skills.isEmpty(), 'Skill Requirement is Spanish');
+        List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId, Skill.DeveloperName FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
+        Assert.isTrue(!list_Skills.isEmpty(), 'Skill Requirement is Spanish');
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-       		Assert.isTrue(list_PSR[0].RoutingPriority == 2, 'Routing priority should be 2');
+        Assert.isTrue(list_PSR[0].RoutingPriority == 2, 'Routing priority should be 2');
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class ReRouteCaseFlowTest {
 		Test.StopTest();
 
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
-		Assert.isTrue(list_PSR.isEmpty(), 'PSR was created');
+		Assert.isTrue(list_PSR.isEmpty(), 'PSR was not created');
 	}
 
 

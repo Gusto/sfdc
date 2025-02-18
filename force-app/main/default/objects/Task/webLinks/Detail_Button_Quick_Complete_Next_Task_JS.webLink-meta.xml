@@ -80,7 +80,7 @@ nextRecordId =records[0].Id;
 update_Task.Status = &apos;Completed&apos;; 
 update_Task.Date_Completed__c = getDateTime(); 
 result = sforce.connection.update([update_Task]); 
-window.location.reload(); 
+//window.location.reload(); 
 if(nextRecordId!=null){ 
 window.location=&apos;/&apos;+nextRecordId; 
 } else{ 

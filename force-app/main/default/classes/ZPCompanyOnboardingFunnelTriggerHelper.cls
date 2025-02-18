@@ -364,6 +364,7 @@ public class ZPCompanyOnboardingFunnelTriggerHelper {
 	private map<String, Opportunity> getOpportunitys(Set<String> companyIdSet, boolean closed) {
 		map<String, Opportunity> oppMap = new Map<String, Opportunity>();
 		Id idCompanyOpptyRecType = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		Id idAcquisitionRecType = Cache.getRecordTypeId('Opportunity', 'Acquisition');
 		Id idEmbeddedCompanyRecType = Cache.getRecordTypeId('Opportunity', 'Embedded Company Opportunity');
 		for (Opportunity opp : [
 			SELECT
@@ -385,18 +386,17 @@ public class ZPCompanyOnboardingFunnelTriggerHelper {
 				RecordTypeId
 			FROM Opportunity
 			WHERE
-				((Source_Id__c != NULL
-				AND Source_Id__c IN :companyIdSet)
-				OR (ZP_Company_ID__c != NULL
-				AND ZP_Company_ID__c IN :companyIdSet))
+				(Source_Id__c IN :companyIdSet
+				OR ZP_Company_ID__c IN :companyIdSet)
 				AND (RecordTypeId = :idCompanyOpptyRecType
-				OR RecordTypeId = :idEmbeddedCompanyRecType)
+				OR RecordTypeId = :idEmbeddedCompanyRecType
+				OR RecordTypeId = :idAcquisitionRecType)
 				AND IsClosed = :closed
 		]) {
 			if (opp.RecordTypeId == idEmbeddedCompanyRecType) {
 				oppMap.put('' + opp.ZP_Company_ID__c, opp);
 			} else {
-				oppMap.put('' + opp.Source_Id__c, opp);
+				oppMap.put('' + opp.ZP_Company_ID__c, opp);
 			}
 		}
 		return oppMap;

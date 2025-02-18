@@ -36,7 +36,6 @@ public with sharing class TaxResAutoSolveEmailHelper {
 		Map<Id, Set<Attachment>> map_CaseIdToAttachmentIds = new Map<Id, Set<Attachment>>();
 
 		Map<Id, Id> map_ContactIdToCaseId = new Map<Id, Id>();
-        Map<Id, String> map_CaseIdvsFilesToIgnore = new Map<Id, String>();
 
 		List<OrgWideEmailAddress> list_objOrgEmailAddressSupport = GlobalQueryHelper.getOrgWideEmailByAdd('support@gusto.com');
 		EmailTemplate objEmailTemplate = [SELECT Id, DeveloperName FROM EmailTemplate WHERE DeveloperName = :STR_AUTO_GENERIC_EMAIL_CUSTOM_TEMPLATE];
@@ -45,30 +44,6 @@ public with sharing class TaxResAutoSolveEmailHelper {
 			map_CaseIdToCase.put(objCase.Id, objCase);
 			if (objCase.ContactId != null) {
 				map_ContactIdToCaseId.put(objCase.ContactId, objCase.Id);
-			}
-		}
-
-        //getting file names which need to be ignored while sending the emails (Files created after IDP Capture Complete)
-		for (Case objCase : [
-			SELECT Id, (SELECT Id, Attachment_Names__c FROM Tax_Notice_Indexs__r WHERE RecordType.DeveloperName = 'OCR')
-			FROM Case
-			WHERE Id IN :map_CaseIdToCase.keySet()
-			AND Baby_Case_Identifier__c = NULL
-		]) {
-			String strFileNames = '';
-			if (objCase.Tax_Notice_Indexs__r != null) {
-				for (Tax_Notice_Index__c objNotice : objCase.Tax_Notice_Indexs__r) {
-					if (objNotice.Attachment_Names__c != null && !String.isBlank(objNotice.Attachment_Names__c)) {
-						if (String.isBlank(strFileNames)) {
-							strFileNames = objNotice.Attachment_Names__c;
-						} else {
-							strFileNames += ',' + objNotice.Attachment_Names__c;
-						}
-					}
-				}
-				if (!String.isBlank(strFileNames)) {
-					map_CaseIdvsFilesToIgnore.put(objCase.Id, strFileNames);
-				}
 			}
 		}
 
@@ -114,16 +89,11 @@ public with sharing class TaxResAutoSolveEmailHelper {
 		//fetching attachments from attachment object for Case
 		for (Attachment objAttachment : [SELECT Id, ParentId, Body, Name, ContentType FROM Attachment WHERE ParentId IN :set_CaseIds AND Name != NULL ORDER BY CreatedDate ASC]) { 
 			Set<Attachment> set_AttachmentIds = new Set<Attachment>();
-			
-			if (map_CaseIdvsFilesToIgnore.containsKey(objAttachment.ParentId) && map_CaseIdvsFilesToIgnore.get(objAttachment.ParentId) != null && (map_CaseIdvsFilesToIgnore.get(objAttachment.ParentId)).contains(objAttachment.Name)) {
-				//Do not add attachment if it contains in FilesToIgnore
-			} else {
-				if (map_CaseIdToAttachmentIds.get(objAttachment.ParentId) != null) { 
-					set_AttachmentIds = map_CaseIdToAttachmentIds.get(objAttachment.ParentId);
-				}
-				set_AttachmentIds.add(objAttachment);
-				map_CaseIdToAttachmentIds.put(objAttachment.ParentId, set_AttachmentIds);
+			if (map_CaseIdToAttachmentIds.get(objAttachment.ParentId) != null) { 
+				set_AttachmentIds = map_CaseIdToAttachmentIds.get(objAttachment.ParentId);
 			}
+			set_AttachmentIds.add(objAttachment);
+			map_CaseIdToAttachmentIds.put(objAttachment.ParentId, set_AttachmentIds);
 		}
 
 		/*segregate the cases on the basis of the attachment size. If case attachment is greater than 1 then that case

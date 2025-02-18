@@ -66,9 +66,9 @@ public with sharing class ZPUserRoleUtil {
 	public final static Id BENEFITS_BOR_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits BoR');
 	public final static Id BENEFITS_CHANGE_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits Change');
 	public final static Id BENEFITS_RENEWAL_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits Renewal');
-	public final static Id BENEFITS_QSEHRA_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits QSEHRA');
 	public final static Id CUSTOMER_SUCCESS_RT_ID = Cache.getRecordTypeId('Opportunity', 'Customer Success');
 	public final static Id BENEFITS_BYOB_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits BYOB');
+	public final static Id ACQUISITION_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Acquisition');
 
 	// Lead record types
 	public static final Id LEAD_RESELLER_RT_ID = Cache.getRecordTypeId('Lead', 'Reseller');

@@ -143,7 +143,7 @@ public class TransitionToNotesOnBODetailExt {
 		blnShowConfirmationEmailBtn = false;
 		Set<String> set_ValidBORecTypes = new Set<String>{ 'Renewal', 'Change', 'New_Plan' };
 		Set<String> set_OrderStatusToExclude = new Set<String>{ 'Canceled', 'Closed Admin' };
-		Set<String> set_CarriersToExclude = new Set<String>{ 'Basic'};
+		Set<String> set_CarriersToExclude = new Set<String>{ CarrierOrderUtil.Name_BASIC};
 		Benefit_Order__c objBO;
 		List<Benefit_Order__c> list_BO = new List<Benefit_Order__c>();
 		list_BO = [

@@ -54,7 +54,7 @@ public without sharing class LogSmartCallingControllerLEX {
 				map_InternationalPayrollCountriesNew.put(objCountryMetadata.MasterLabel, objCountryMetadata);
 			}
 		}
-		System.debug('map_InternationalPayrollCountriesNew 53::' + map_InternationalPayrollCountriesNew);
+
 		try {
 			Id idUserId = UserInfo.getUserId();
 			User objUserDetails = GlobalQueryHelper.queryActiveUsers(new Set<Id>{ idUserId })?.get(idUserId);
@@ -403,7 +403,7 @@ public without sharing class LogSmartCallingControllerLEX {
 				if ((objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_CONTRACTOR_PAYMENT_LOGACALL) || (objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL)) {
 					String strUpsellTier = objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_CONTRACTOR_PAYMENT_LOGACALL ? '%' + AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT + '%' : null;
 					strUpsellTier = objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL ? '%' + AccountUtil.EMPLOYER_OF_RECORD + '%' : strUpsellTier;
-					List<Opportunity> opportunitiesRelatedToAccount = [
+					List<Opportunity> opportunitiesRelatedToAccountUpsell = [
 						SELECT Id, StageName
 						FROM Opportunity
 						WHERE
@@ -412,10 +412,21 @@ public without sharing class LogSmartCallingControllerLEX {
 							AND Upsell_Tier__c LIKE :strUpsellTier
 							AND IsWon = TRUE AND IsClosed = TRUE
 					];
-					if (!opportunitiesRelatedToAccount.isEmpty()) {
+					List<Opportunity> opportunitiesRelatedToAccountICP = [
+						SELECT Id, StageName
+						FROM Opportunity
+						WHERE
+							AccountId = :objData.productInterestAccountId
+							AND RecordTypeId = :OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID
+							AND Upsell_Tier__c LIKE :strUpsellTier
+							AND ((IsWon = TRUE AND IsClosed = TRUE) OR (IsClosed = FALSE))
+					];
+					if (!opportunitiesRelatedToAccountICP.isEmpty()) {
 						if(objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_CONTRACTOR_PAYMENT_LOGACALL) {
 							return LogSmartCallingUtil.CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS;
 						}
+					}
+					if (!opportunitiesRelatedToAccountUpsell.isEmpty()) {
 						if(objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL) {
 							return LogSmartCallingUtil.UPSELL_OPPORTUNITY_FOR_EMPLOYER_ALREADY_EXISTS;
 						}
@@ -710,6 +721,8 @@ public without sharing class LogSmartCallingControllerLEX {
 			}
 
 			if (blnIsAccount) {
+				TaskTriggerHelper.SkipTrigger = true;
+
 				String strProductUpsellId;
 				if (objData.blnCreateProductUpsell) {
 					strProductUpsellId = createProductUpsell(objData);
@@ -881,14 +894,12 @@ public without sharing class LogSmartCallingControllerLEX {
 			//Countries selected to send to remote
 			if (String.isNotBlank(objData.strLeadPassCountries)) {
 				for (String strLeadPassCountry : objData.strLeadPassCountries.split(',')) {
-					//list_LeadPassCountries.add(map_ProductInterestCountriesOptions.get(strLeadPassCountry));
 					list_LeadPassCountries.add(strLeadPassCountry);
 				}
 			}
 			//Additional countries selected to send to remote that are not already sent or waiting to be sent
 			if (String.isNotBlank(objData.strLeadPassCountriesAdditional)) {
 				for (String strLeadPassCountryAdditional : objData.strLeadPassCountriesAdditional.split(',')) {
-					//list_LeadPassCountriesAdditional.add(map_ProductInterestCountriesOptions.get(strLeadPassCountryAdditional));
 					list_LeadPassCountriesAdditional.add(strLeadPassCountryAdditional);
 					blnUpdateAccount = true;
 				}
@@ -1011,15 +1022,14 @@ public without sharing class LogSmartCallingControllerLEX {
 			}
 
 			List<FieldSetProperties> list_ObjectDetailValues = objData.list_ObjectDetailValues;
-			if (list_ObjectDetailValues != null && !list_ObjectDetailValues.isEmpty()) 
-			{
+			if (list_ObjectDetailValues != null && !list_ObjectDetailValues.isEmpty()) {
 				Map<String, Object> map_ObjectDetailValues = constructRecord(list_ObjectDetailValues, LogSmartCallingUtil.SOBJECT_API_NAME_ACCOUNT);
 				if (objMetadata.Current_Record__c || objMetadata.Additional_Info__c) {
 					for (String strFieldApi : map_ObjectDetailValues.keySet()) {
 						objAccountToUpdate.put(strFieldApi, map_ObjectDetailValues.get(strFieldApi));
 					}
 				}
-
+				
 				if (map_ObjectDetailValues.containsKey(LogSmartCallingUtil.FIELD_API_LIKELIHOOD_TO_STAY_WITH_GUSTO)) {
 					objAccountToUpdate.put(LogSmartCallingUtil.FIELD_API_LIKELIHOOD_TO_STAY_WITH_GUSTO, map_ObjectDetailValues.get(LogSmartCallingUtil.FIELD_API_LIKELIHOOD_TO_STAY_WITH_GUSTO));
 				}
@@ -1027,7 +1037,7 @@ public without sharing class LogSmartCallingControllerLEX {
 				if (map_ObjectDetailValues.containsKey(LogSmartCallingUtil.FIELD_API_GUSTO_RETENTION_NOTES)) {
 					objAccountToUpdate.put(LogSmartCallingUtil.FIELD_API_GUSTO_RETENTION_NOTES, map_ObjectDetailValues.get(LogSmartCallingUtil.FIELD_API_GUSTO_RETENTION_NOTES));
 				}
-			}	
+			}
 
 			// update last call connect
 			if (
@@ -1286,11 +1296,17 @@ public without sharing class LogSmartCallingControllerLEX {
 	 * @return      : NA
 	 **/
 	public static void createPayrollOpportunity(ComponentParameters objData, Account objAccount) {
+		Date dtCloseDate = System.today();
+		if (objData.strAcquisitionOpportunityCloseDate != null || Test.isRunningTest()) {
+			dtCloseDate = Date.valueOf(objData.strAcquisitionOpportunityCloseDate);
+		}
+
 		Opportunity objPayrollOpportunity = new Opportunity(
-			RecordTypeId = LogSmartCallingUtil.COMPANY_OPPTY_RT_ID,
-			CloseDate = Date.valueOf(objData.strPayrollOpportunityCloseDate),
+			RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID,
+			CloseDate = dtCloseDate,
 			StageName = objData.strPayrollOpportunityStage,
-			Name = objData.strPayrollOpportunityName,
+			Type = objData.strAcquisitionType,
+			//Name = objData.strPayrollOpportunityName,
 			AccountId = objData.strRecordId
 		);
 
@@ -1316,7 +1332,7 @@ public without sharing class LogSmartCallingControllerLEX {
 	 **/
 	public static void createHIOpportunity(ComponentParameters objData, AllSmartCalling__mdt objMetadata, User objUserDetails, String strAccountId, String strOpportunityName) {
 		Opportunity objHiOpportunity = new Opportunity();
-        	OpportunityContactRole objHiOpportunityContRole;
+        OpportunityContactRole objHiOpportunityContRole;
 		if (objData.strObjectName == LogSmartCallingUtil.SOBJECT_API_NAME_ACCOUNT || objData.strObjectName == LogSmartCallingUtil.SOBJECT_API_NAME_OPPORTUNITY) {
 			objHiOpportunity.AccountId = strAccountId;
 		}
@@ -1350,7 +1366,7 @@ public without sharing class LogSmartCallingControllerLEX {
 			TaskTriggerHelper.SkipTrigger = false;
 		}
         
-        	if(String.isNotBlank(objData.strSelectedHIOppConId)){
+        if(String.isNotBlank(objData.strSelectedHIOppConId)){
 			objHiOpportunityContRole = new OpportunityContactRole();
 			objHiOpportunityContRole.ContactId = objData.strSelectedHIOppConId;
 			objHiOpportunityContRole.OpportunityId = objHiOpportunity.Id;
@@ -1585,6 +1601,21 @@ public without sharing class LogSmartCallingControllerLEX {
 						objProductUpsellRecord.Ardius__c = true;
 						blnValidateProductUpsell = true;
 						list_PartnershipInterestForInsert.add(objProductUpsellRecord);
+					}
+
+					if (map_ProductUpsellValues.containsKey(LogSmartCallingUtil.FIELD_API_ACCOUNTING_PARTNER)) {
+						blnValidateProductUpsell = true;
+					}
+
+					if (
+						blnValidateProductUpsell &&
+						!objProductUpsellRecord.Workers_Comp_Interest__c &&
+						!objProductUpsellRecord.X401k_Interest__c &&
+						!objProductUpsellRecord.X529_Interest__c &&
+						!objProductUpsellRecord.Ardius__c &&
+						String.isBlank(objProductUpsellRecord.Accounting_Partner__c)
+					) {
+						return '';
 					}
 				}
 			} else {
@@ -1885,6 +1916,8 @@ public without sharing class LogSmartCallingControllerLEX {
 		public String strLeadPassCountries { get; set; }
 		public String strLeadPassCountriesAdditional { get; set; }
 		public String strSelectedHIOppConId { get; set; }
+		public String strAcquisitionType { get; set; }
+		public String strAcquisitionOpportunityCloseDate { get; set; }
 		public ComponentParameters() {
 			strRecordId = '';
 			strObjectName = '';
@@ -1904,7 +1937,7 @@ public without sharing class LogSmartCallingControllerLEX {
 			strHIOpportunityState = '';
 			strHIOpportunityEmployees = '';
 			strHIOpportunityNotes = '';
-            		strSelectedHIOppConId = '';
+            strSelectedHIOppConId = '';
 			strWhoId = '';
 			strWhatId = '';
 			strPhoneNumber = '';
@@ -1917,6 +1950,8 @@ public without sharing class LogSmartCallingControllerLEX {
 			strType = '';
 			strTaxYear = '';
 			productInterestAccountId = '';
+			strAcquisitionType = '';
+			strAcquisitionOpportunityCloseDate = '';
 
 			list_ProductUpsellValues = new List<FieldSetProperties>();
 			list_ObjectDetailValues = new List<FieldSetProperties>();
@@ -2386,6 +2421,7 @@ public without sharing class LogSmartCallingControllerLEX {
 				Product_Upsell_Fields__c,
 				Product_Upsell_Fieldset__c,
 				Product_Interest__c,
+				Show_Retention_Notes__c,
 				Show_Cases__c,
 				Show_Roles__c,
 				Show_Task_Type__c,
@@ -2393,7 +2429,6 @@ public without sharing class LogSmartCallingControllerLEX {
 				Show_Partner_Sales_Type__c,
 				Show_Subject__c,
 				Show_Live_HI_Transfer__c,
-				Show_Retention_Notes__c,
 				Show_Source__c,
 				Show_Feature_Request__c,
 				Show_Point_of_Contact__c,

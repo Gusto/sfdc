@@ -5,7 +5,8 @@
 @isTest
 public class HIGroupEventQASheetHandlerTest {
 	public static String STR_JSON =
-		'{"new_tadas":["test","test1"],"renewing_tadas":["test","test1"],"terminating_hsa":true,"peo_switcher":"Test","has_prior_coverage":true,"waiving_initial_waiting_period": "yes","application_type":"NewPlansApplication","application_id":4971,"original_group_type":"New Plan","company_id":"100989002",' +
+		'{"new_tadas":["test","test1"],"renewing_tadas":["test","test1"],"terminating_hsa":true,"peo_switcher":"Test","has_prior_coverage":true,' +
+		'"waiving_initial_waiting_period": "yes","application_type":"NewPlansApplication","application_id":4971,"original_group_type":"New Plan","company_id":"100989002",' +
 		'"benefit_address":null,"filing_address":{"street_1":"501 Sheldon Rue","street_2":"Apt. 758","city":"Irvine","state":"CA","zip":"92618","county_name":"Orange",' +
 		'"country":"USA"},"entity_type":"LLC","npa_panda_s_corp_mismatch":true,"scheduled_payroll_run_dates":["2017-07-31"],"wc_status":"No Policy","fein":"123456789",' +
 		'"applied_for_benefits_previously":false,"date_of_first_hired_ee":"2020-08-01","new_hires_not_on_qwr":"claudia","advocate_additional_details":"notes for advocate abcded",' +
@@ -23,7 +24,8 @@ public class HIGroupEventQASheetHandlerTest {
 		'","ees_with_status_mismatch":"claudia-fulltime max-ft","unprocessed_selections":null,' +
 		'"date_new_hire_payroll_ready":"2020-08-14","date_group_payroll_ready":"2020-08-15","manual_oe_required":null,"sic_valid_for_all_lines":null,' +
 		'"owner_percent_need_to_be_collected":"yes","tada_owner_eligibility":"","plan_successors_predecessors":[{"predecessor_policy_name":"A", "successor_plan_name":"B"}],' +
-		'"at_risk_not_meeting_ancillary_participation":null,"employer_communication":null,"personal_notes":null,"qual_loc_data":[{"plan_description":{"plan_additions":["A"],"plan_removals":["A"],"plan_renewals":["A"]},"state_carrier_id":1,"benefit_type":"medical",' +
+		'"at_risk_not_meeting_ancillary_participation":null,"employer_communication":null,"personal_notes":null,"qual_loc_data":[{"plan_description":{"plan_additions":["A"],' +
+		'"plan_removals":["A"],"plan_renewals":["A"]},"state_carrier_id":1,"benefit_type":"medical",' +
 		'"carrier_outreach_notes":null,"verified_rates":null,"risk_of_not_meeting_participation":null,"is_sic_valid":null,"documents_required_for_submission":"*1 qwr *2 roll *3 tax *4 form",' +
 		'"can_offer_both_carriers_selected":null,"enough_non_owner_ees_eligible_for_coverage":"yes","effective_date_allowed":"yes","meet_affiliate_requirements":null,' +
 		'"benefit_address_meet_carrier_requirements":"no","located_in_area_carrier_allows":"yes","have_enough_in_state_ees":"yes","select_plan_network_available_to_each_ee":"yes",' +
@@ -84,11 +86,7 @@ public class HIGroupEventQASheetHandlerTest {
 			.setNumberOfPlansAllowedOnEnrolleCount('Demo Text')
 			.build();
 
-		Account objAccount = new TestDataFactory.AccountBuilder()
-			.setName('Test Account')
-			.setZPCompanyId('100989002')
-			.setRecordTypeId('Company')
-			.build();
+		Account objAccount = new TestDataFactory.AccountBuilder().setName('Test Account').setZPCompanyId('100989002').setRecordTypeId('Company').build();
 		insert objAccount;
 
 		insert new TestDataFactory.OpportunityBuilder()

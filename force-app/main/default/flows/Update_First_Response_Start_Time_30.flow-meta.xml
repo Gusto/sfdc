@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <description>Initializing Fault Line details for fault paths in objExceptionLogEvent record.</description>
+        <name>Initialize_Fault_Path_Details</name>
+        <label>Initialize Fault Path Details</label>
+        <locationX>572</locationX>
+        <locationY>587</locationY>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>{!strExceptionLogMessage}</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.EventUuid</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Method_Name__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentStage</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objExceptionLogEvent.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Exception_Log_Event</targetReference>
+        </connector>
+    </assignments>
+    <description>Update First Response Start Time to today and status to new for MF Cases</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Now</name>
+        <dataType>DateTime</dataType>
+        <expression>NOW()</expression>
+    </formulas>
+    <interviewLabel>Update First Response Start Time &gt; 30 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update First Response Start Time &gt; 30</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Create Exception Log event from fault line details in objExceptionLogEvent</description>
+        <name>Exception_Log_Event</name>
+        <label>Exception Log Event</label>
+        <locationX>572</locationX>
+        <locationY>695</locationY>
+        <inputReference>objExceptionLogEvent</inputReference>
+    </recordCreates>
+    <recordUpdates>
+        <name>Update_Case</name>
+        <label>Update Case</label>
+        <locationX>176</locationX>
+        <locationY>479</locationY>
+        <faultConnector>
+            <targetReference>Initialize_Fault_Path_Details</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>First_Response_Start_Time__c</field>
+            <value>
+                <elementReference>Now</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>New</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>ISPICKVAL({!$Record.Status} ,&quot;Draft&quot;) &amp;&amp; OR( {!$Record.RecordType.Name}=&quot;MF NHE&quot;, {!$Record.RecordType.Name}=&quot;MF QLE&quot;, {!$Record.RecordType.Name}=&quot;MF Termination&quot;, {!$Record.RecordType.Name}=&quot;MF Member/Group Updates&quot; ) &amp;&amp; IF({!$Record.Anticipated_Effective_Date__c} &gt; TODAY()+30 &amp;&amp; ISNULL( {!$Record.First_Response_Start_Time__c} ), True , IF({!$Record.Termination_Date__c} &gt; TODAY()+30 &amp;&amp; ISNULL( {!$Record.First_Response_Start_Time__c} ), True , False ) ) &amp;&amp; ISPICKVAL({!$Record.Historical_Data__c},&quot;&quot;) &amp;&amp; IF((CONTAINS({!$Record.Integration_Key__c},&quot;BASIC&quot;)),False,True)</filterFormula>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>X30_Days_Before_Case_Termination_Date</name>
+            <connector>
+                <targetReference>Update_Case</targetReference>
+            </connector>
+            <label>30 Days Before Case: Termination Date</label>
+            <offsetNumber>-30</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Termination_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <scheduledPaths>
+            <name>X30_Days_Before_Case_Anticipated_Effective_Date</name>
+            <connector>
+                <targetReference>Update_Case</targetReference>
+            </connector>
+            <label>30 Days Before Case: Anticipated Effective Date</label>
+            <offsetNumber>-30</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Anticipated_Effective_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Exception Log Message containing flow details in a fault path.</description>
+        <name>strExceptionLogMessage</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;p&gt;Fault Message: {!$Flow.FaultMessage}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Interview Guid: {!$Flow.InterviewGuid}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;Current Record: {!$Flow.CurrentRecord}&lt;/p&gt;&lt;p&gt;----&lt;/p&gt;&lt;p&gt;You can find failed flow interviews with the link below. The link below is for Production failed interviews, but if you would like to find them in another environment in Setup, simply search for ‘Paused and Failed Flow Interviews’ in Setup’s Quick Find bar, and switch to the All Failed Flow Interviews List View. You can use the interview &quot;Interview Guid&quot; above to locate this specific failures.&amp;nbsp;&amp;nbsp;&lt;/p&gt;&lt;p&gt;https://gusto.lightning.force.com/lightning/setup/Pausedflows/home&lt;/p&gt;</text>
+    </textTemplates>
+    <triggerOrder>18</triggerOrder>
+    <variables>
+        <name>objExceptionLogEvent</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+</Flow>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <alerts>
-        <fullName>Alert_2243_Auto_Response_Email</fullName>
-        <description>Alert 2243 - Auto Response Email</description>
+        <fullName>Alert_2243</fullName>
+        <description>Alert 2243</description>
         <protected>false</protected>
         <recipients>
             <field>ContactId</field>
@@ -10,7 +10,7 @@
         </recipients>
         <senderAddress>wallet@gusto.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
-        <template>All/Alert_2243_Auto_Response_Email</template>
+        <template>unfiled$public/Alert_2243</template>
     </alerts>
     <alerts>
         <fullName>Auto_Email_1</fullName>
@@ -333,7 +333,7 @@
             <field>SuppliedEmail</field>
             <type>email</type>
         </recipients>
-        <senderAddress>support@gusto.com</senderAddress>
+        <senderAddress>support_uat@gusto.com</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>Auto_Responses/Notify_requester_of_received_request_COVID_19</template>
     </alerts>
@@ -346,8 +346,8 @@
             <type>caseTeam</type>
         </recipients>
         <recipients>
-            <field>ContactEmail</field>
-            <type>email</type>
+            <field>TTF_Point_Of_Contact__c</field>
+            <type>contactLookup</type>
         </recipients>
         <recipients>
             <field>Order_AE_Email__c</field>
@@ -629,8 +629,8 @@
             <type>caseTeam</type>
         </recipients>
         <recipients>
-            <field>ContactEmail</field>
-            <type>email</type>
+            <field>TTF_Point_Of_Contact__c</field>
+            <type>contactLookup</type>
         </recipients>
         <recipients>
             <field>Order_AE_Email__c</field>
@@ -649,8 +649,8 @@
             <type>caseTeam</type>
         </recipients>
         <recipients>
-            <field>ContactEmail</field>
-            <type>email</type>
+            <field>TTF_Point_Of_Contact__c</field>
+            <type>contactLookup</type>
         </recipients>
         <recipients>
             <field>Order_AE_Email__c</field>
@@ -1140,6 +1140,30 @@ IF( Anticipated_Effective_Date__c &gt; TODAY() , DATETIMEVALUE(TEXT(YEAR(Anticip
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>MF_update_case_owner_to_MF_Automation_FU</fullName>
+        <description>update case to MF Automation Follow Up queue</description>
+        <field>OwnerId</field>
+        <lookupValue>MF_Automation_Follow_Up</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>MF update case owner to MF Automation FU</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>MF_update_case_owner_to_MF_Followup</fullName>
+        <description>update case owner to MF Followup when followup automation fails</description>
+        <field>OwnerId</field>
+        <lookupValue>MF_Followup</lookupValue>
+        <lookupValueType>Queue</lookupValueType>
+        <name>MF update case owner to MF Followup</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>LookupValue</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Priority_is_Low</fullName>
         <field>Priority</field>
         <literalValue>Low</literalValue>
@@ -1316,6 +1340,17 @@ TEXT(Type)</formula>
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Update_Case_status_to_On_Hold</fullName>
+        <description>Update status to ‘On Hold’</description>
+        <field>Status</field>
+        <literalValue>On Hold</literalValue>
+        <name>Update Case status to ‘On Hold’</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Update_First_Response_Start_Time_To_Toda</fullName>
         <field>First_Response_Start_Time__c</field>
         <formula>NOW()</formula>
@@ -1363,6 +1398,16 @@ TEXT(Type)</formula>
         <field>Status</field>
         <literalValue>Open</literalValue>
         <name>Update Status to Open</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>update_status_to_on_hold_updates</fullName>
+        <field>Status</field>
+        <literalValue>On Hold</literalValue>
+        <name>update status to on hold - updates</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Literal</operation>
         <protected>false</protected>
@@ -1470,7 +1515,7 @@ TEXT(Type)</formula>
     </outboundMessages>
     <rules>
         <fullName>Alert For RFI Reminder v1</fullName>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Case.RFI_Status__c</field>
             <operation>equals</operation>
@@ -1560,8 +1605,89 @@ TEXT(Type)</formula>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
     <rules>
+        <fullName>MF NHE%3A update the status to On Hold when case is created</fullName>
+        <actions>
+            <name>Update_Case_status_to_On_Hold</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MF NHE,MF Termination</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.MF_Group_Number__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.MF_No_Of_Days_To_Effective_Date__c</field>
+            <operation>greaterOrEqual</operation>
+            <value>-23</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Automation_Status__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Status</field>
+            <operation>equals</operation>
+            <value>Draft,New</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Carrier_Name__c</field>
+            <operation>notEqual</operation>
+            <value>BASIC,Alegeus</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Integration_Id__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>update the status to On Hold when case is created</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
+        <fullName>MF update%3A update the status to On Hold when case is created</fullName>
+        <actions>
+            <name>update_status_to_on_hold_updates</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>false</active>
+        <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+        <criteriaItems>
+            <field>Case.RecordTypeId</field>
+            <operation>equals</operation>
+            <value>MF Member/Group Updates</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.MF_Group_Number__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Automation_Status__c</field>
+            <operation>equals</operation>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Status</field>
+            <operation>equals</operation>
+            <value>Draft,New</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Carrier_Name__c</field>
+            <operation>notEqual</operation>
+            <value>Alegeus</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>Case.Integration_Key__c</field>
+            <operation>notEqual</operation>
+        </criteriaItems>
+        <description>update the status to On Hold when case is created</description>
+        <triggerType>onCreateOnly</triggerType>
+    </rules>
+    <rules>
         <fullName>NHE Update First Response Start Time %3C30</fullName>
-        <active>true</active>
+        <active>false</active>
         <description>NHE Update First Response Start Time when a case is created
 
 IF(
@@ -1588,7 +1714,7 @@ ISChanged(OwnerId)&amp;&amp;
             <name>Set_Requires_Action_to_True</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Case.RecordTypeId</field>
             <operation>equals</operation>
@@ -1659,7 +1785,7 @@ ISChanged(OwnerId)&amp;&amp;
             <name>Publish_Case_Info_To_Kafka</name>
             <type>OutboundMessage</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <description>Publish Case Enrollment Information  to Kafka</description>
         <formula>NOT(ISBLANK(Enrollment_Id__c) )  &amp;&amp; (        ISPICKVAL( Type ,&quot;NHE&quot;)        ||        ISPICKVAL( Type ,&quot;QLE&quot;)     )  &amp;&amp;  NOT(ISNEW())  &amp;&amp; ISCHANGED( Status ) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
         <triggerType>onAllChanges</triggerType>
@@ -1691,7 +1817,7 @@ ISChanged(OwnerId)&amp;&amp;
             <name>Increment_Followup_Date_Change_count</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <description>Track Followup Date Change Count</description>
         <formula>NOT(ISNEW()) &amp;&amp; ISCHANGED( Follow_Up_Date__c ) &amp;&amp; NOT (ISBLANK( PRIORVALUE(Follow_Up_Date__c) )) &amp;&amp;  OR(RecordType.Name=&quot;MF Audit&quot; , RecordType.Name=&quot;MF Member/Group Updates&quot;,RecordType.Name=&quot;MF NHE&quot;,RecordType.Name=&quot;MF QLE&quot;,RecordType.Name=&quot;MF Termination&quot;,RecordType.Name=&quot;Member Fulfillment Emails&quot;,RecordType.Name=&quot;MF Group Updates&quot;) &amp;&amp; ISPICKVAL(Historical_Data__c,&quot;&quot;)</formula>
         <triggerType>onAllChanges</triggerType>
@@ -1725,7 +1851,7 @@ ISChanged(OwnerId)&amp;&amp;
             <name>Update_First_Response_Start_Time_To_Toda</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <description>Update First Response Start Time when a case is created
 
 IF(
@@ -1773,7 +1899,7 @@ ISChanged(OwnerId)&amp;&amp;
             <name>Priority_set_High</name>
             <type>FieldUpdate</type>
         </actions>
-        <active>true</active>
+        <active>false</active>
         <criteriaItems>
             <field>Case.RecordTypeId</field>
             <operation>equals</operation>

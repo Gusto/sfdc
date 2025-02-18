@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Required_Fields_for_MF_Viking_Master</fullName>
-    <active>false</active>
+    <active>true</active>
     <description>Required fields for MF Viking Master.</description>
-    <errorConditionFormula>$User.Exempt_from_Validation_Rules__c = false &amp;&amp;
+    <errorConditionFormula>ISNEW() &amp;&amp;
+$User.Exempt_from_Validation_Rules__c = false &amp;&amp;
 RecordType.Name = &apos;MF Viking Master&apos; &amp;&amp; 
 (ISBLANK(Description) ||
 ISBLANK(Subject) ||

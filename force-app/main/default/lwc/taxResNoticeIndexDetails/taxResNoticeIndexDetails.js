@@ -171,7 +171,6 @@ export default class TaxResNoticeIndexDetails extends LightningElement {
 
 					this.parseFormNumbers(agencySuiFormNumbers);
 					this.getTaxRates();
-					this.getTaxNoticeType();
 				}
 			})
 			.catch((error) => {
@@ -185,6 +184,7 @@ export default class TaxResNoticeIndexDetails extends LightningElement {
 				if (!this.idNoticeIndexRecord) {
 					this.handleRAFAutomation();
 				}
+				this.getTaxNoticeType();
 			});
 	}
 

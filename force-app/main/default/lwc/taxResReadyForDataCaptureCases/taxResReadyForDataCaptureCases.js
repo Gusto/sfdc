@@ -31,6 +31,12 @@ const columnsPE = [
 		hideDefaultActions: true,
 		target: "_blank"
 	},
+	/* {
+		label: "Is OCR Case",
+		fieldName: "IsOCRProcessed",
+		type: "text",
+		sortable: true
+	}, */
 	{ label: "Auto Index Status", fieldName: "autoIndexStatus", type: "Text", sortable: true },
 	{ label: "Case Number", fieldName: "caseNumber", type: "text", sortable: true },
 	{ label: "Case Owner", fieldName: "caseOwner", type: "text", sortable: true },
@@ -157,9 +163,14 @@ export default class TaxResReadyForDataCaptureCases extends LightningElement {
 				});
 
 				this.list_Cases = [...this.list_Cases, ...list_tempCases];
+
+				/* let list_sortedCases = Object.values(this.list_UnAssignedCases).sort((a, b) => b.isPartiallyIndexed - a.isPartiallyIndexed);
+				this.list_Cases = list_sortedCases; */
+
 				this.strErrorMsg = undefined;
 			})
 			.catch((error) => {
+				console.log(JSON.stringify(error))
 				let errorMessage = CASE_LOAD_MESSAGE_ERROR;
 				if (error.body && error.body.message) {
 					errorMessage = error.body.message;
@@ -177,6 +188,7 @@ export default class TaxResReadyForDataCaptureCases extends LightningElement {
 	createTableInstance(objCase) {
 		let tempCase = {};
 		tempCase.id = objCase.Id;
+		//tempCase.IsOCRProcessed = objCase.Is_OCR_Processed__c;
 		tempCase.dynamicIcon = objCase.Auto_Indexing_Status__c == PARTIALLY_INDEXED ? 'custom:custom53' : '';
 		tempCase.autoIndexStatus = objCase.Auto_Indexing_Status__c;
 		tempCase.caseNumber = objCase.CaseNumber;
@@ -195,6 +207,8 @@ export default class TaxResReadyForDataCaptureCases extends LightningElement {
 	handleColumnSort(event) {
 		this.strSortedBy = event.detail.fieldName;
 		this.strSortedDirection = event.detail.sortDirection;
+		console.log(this.strSortedBy)
+		console.log(this.strSortedDirection)
 		this.resetDataTableVariables();
 		this.getEligibleCases();
 	}

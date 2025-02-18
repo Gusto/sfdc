@@ -6,6 +6,7 @@
   ISCHANGED(OwnerId),  
   PRIORVALUE(OwnerId) &lt;&gt; $User.Id,
   NOT(CONTAINS(Owner:Queue.QueueName , &apos;Raw&apos;)), 
+  $Profile.Name &lt;&gt; &apos;People Enabler&apos;,
   NOT($User.Exempt_from_Validation_Rules__c),
   NOT(Skip_MQL_Routing__c),
   NOT(Lead_Owner_Change__c)

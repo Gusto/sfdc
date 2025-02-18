@@ -10,7 +10,8 @@
                                onchange={handleChange}             
                                share-with-entity-id={recordId}
                                disabled={disabledVar}
-                               message-when-bad-input={errorMessage} >
+                               message-when-bad-input={errorMessage}
+                               disabled-categories= "FORMAT_FONT,FORMAT_TEXT,FORMAT_BODY,ALIGN_TEXT,REMOVE_FORMATTING">
     </lightning-input-rich-text>
 </template>
 <template lwc:else>
@@ -24,7 +25,7 @@
                                     onchange={handleChange}             
                                     share-with-entity-id={recordId}
                                     disabled={disabledVar}
-                                    message-when-bad-input={errorMessage}>
+                                    message-when-bad-input={errorMessage} >
         </lightning-input-rich-text>
 </template>
 </template>

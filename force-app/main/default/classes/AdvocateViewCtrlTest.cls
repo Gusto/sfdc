@@ -63,8 +63,8 @@ public class AdvocateViewCtrlTest {
 
 			for (Integer i = 0; i < 5; i++) {
 				Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
-					.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
-					.setName('Company Opportunity' + i)
+					.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
+					.setName('Acquisition Opportunity' + i)
 					.setAccountId(list_Accounts[i].Id)
 					.setStage('Open')
 					.setCloseDate(System.today())
@@ -357,12 +357,11 @@ public class AdvocateViewCtrlTest {
 
 			// insert opportunity list
 			List<Opportunity> list_Opportunities = new List<Opportunity>();
-			Id companyOpportunityRecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
 
 			for (Integer i = 0; i < 5; i++) {
 				Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
-					.setRecordTypeId(companyOpportunityRecordTypeId)
-					.setName('Company Opportunity' + i)
+					.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
+					.setName('Acquisition Opportunity' + i)
 					.setAccountId(list_Accounts[i].Id)
 					.setStage('Open')
 					.setCloseDate(System.today())

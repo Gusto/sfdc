@@ -117,8 +117,8 @@ public without sharing class LeadConversion {
 								'Leadconversion',
 								'LeadConvertResultsHandler-handle',
 								error.getMessage() +
-									'\nLeadId : ' +
-									convertResult.getLeadId(), //LeadId added to the error message to help identify the erroring lead
+								'\nLeadId : ' +
+								convertResult.getLeadId(), //LeadId added to the error message to help identify the erroring lead
 								String.join(error.getFields(), ',')
 							);
 						}
@@ -149,7 +149,12 @@ public without sharing class LeadConversion {
 					for (Opportunity o : [
 						SELECT Id, AccountId, (SELECT Id, ContactId, OpportunityId, Role, IsPrimary FROM OpportunityContactRoles WHERE ContactId IN :contacts)
 						FROM Opportunity
-						WHERE AccountId IN :accountIdSet AND RecordTypeId = :Cache.getRecordTypeId('Opportunity', 'Company Opportunity') AND IsWon = FALSE AND StageName != 'Closed - Lost'
+						WHERE
+							AccountId IN :accountIdSet
+							AND (RecordTypeId = :Cache.getRecordTypeId('Opportunity', 'Company Opportunity')
+							OR RecordTypeId = :Cache.getRecordTypeId('Opportunity', 'Acquisition'))
+							AND IsWon = FALSE
+							AND StageName != 'Closed - Lost'
 					]) {
 						if (accountIdToOpenOppsMap.containsKey(o.AccountId)) {
 							accountIdToOpenOppsMap.get(o.AccountId).add(o);

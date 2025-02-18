@@ -9,7 +9,6 @@
 @isTest
 public with sharing class TaxResCaseActionsControllerTest {
 	static String MASTERCHECKLIST_TAXRES_RT_ID = Cache.getRecordTypeId('BOR_Master_Checklist__c', 'Tax Res');
-	static String PAYOPS_TAXRES_RT_ID = Cache.getRecordTypeId('PayOps_Checklists__c', 'Tax Res');
 
 	/**
 	 * @Author      :  Pravesh Rana

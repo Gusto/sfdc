@@ -1,0 +1,49 @@
+<template>
+	<div class="solidborder">
+		<lightning-card class="bordered-card" title="Opportunity Contact Roles" icon-name="standard:contact">
+			<div class="slds-p-around_medium">
+				<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_fixed-layout">
+					<thead>
+						<tr class="slds-text-title_bold">
+							<th scope="col">
+								<div class="slds-truncate" title="Contact Name">Contact Name</div>
+							</th>
+							<th scope="col">
+								<div class="slds-truncate" title="Role">Role</div>
+							</th>
+							<th scope="col">
+								<div class="slds-truncate" title="Primary Contact">Primary Contact</div>
+							</th>
+							<th scope="col">
+								<div class="slds-truncate" title="Additional Contact">Additional Contact</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<template for:each={contactRoles} for:item="contact">
+							<tr key={contact.ContactId}>
+								<td>
+									<div class="slds-truncate" title={contact.ContactName}>{contact.ContactName}</div>
+								</td>
+								<td>
+									<div class="slds-truncate" title={contact.Role}>{contact.Role}</div>
+								</td>
+								<td>
+									<lightning-input type="checkbox" checked={contact.isPrimaryContact} data-id={contact.ContactId} onchange={handlePrimaryCheckboxChange}> </lightning-input>
+								</td>
+								<td>
+									<lightning-input type="checkbox" checked={contact.isAdditionalContact} data-id={contact.ContactId} onchange={handleAdditionalCheckboxChange}> </lightning-input>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Save button container -->
+			<div class="slds-align_absolute-center slds-m-top_large save-button-container">
+				<lightning-button label="Save Contact Roles" onclick={handleSave} class="slds-m-bottom_small"></lightning-button>
+			</div>
+		</lightning-card>
+	</div>
+</template>

@@ -77,6 +77,7 @@ public class SendNotificationsTTFFlowTest {
 			.build();
 		objTTF.Order__c = objOrder.Id;
 		objTTF.Contact__c = objContact.Id;
+		objTTF.NAICS_code__c = '123';
 		insert objTTF;
         
         objOrder.Transition_to_Fulfillment__c = objTTF.Id;
@@ -96,7 +97,7 @@ public class SendNotificationsTTFFlowTest {
 		User objDirectSalesUser = [SELECT Id, UserRoleId, UserRole.DeveloperName, UserRole.Name, Profile.Name FROM User WHERE Profile.Name = 'Direct Sales User' AND IsActive = TRUE LIMIT 1];
 		objDirectSalesUser.Exempt_from_Validation_Rules__c = true;
 		update objDirectSalesUser;
-		Transition_to_Fulfillment__c objTTF = [SELECT TTF_Status__c, Intro_Notification_Sent__c, RecordType.Name, Order__r.Bulk_Migration__c, Contact__r.Email FROM Transition_to_Fulfillment__c]
+		Transition_to_Fulfillment__c objTTF = [SELECT TTF_Status__c, Intro_Notification_Sent__c, RecordType.Name, Order__r.Bulk_Migration__c, Contact__r.Email FROM Transition_to_Fulfillment__c WHERE NAICS_code__c = '123']
 			.get(0);
 		Test.startTest();
         TransitionToFulfilmentTriggerHelper.skipTrigger=true;
@@ -136,7 +137,7 @@ public class SendNotificationsTTFFlowTest {
 		User objDirectSalesUser = [SELECT Id, UserRoleId, UserRole.DeveloperName, UserRole.Name, Profile.Name FROM User WHERE Profile.Name = 'Direct Sales User' AND IsActive = TRUE LIMIT 1];
 		objDirectSalesUser.Exempt_from_Validation_Rules__c = true;
 		update objDirectSalesUser;
-		Transition_to_Fulfillment__c objTTF = [SELECT TTF_Status__c, Intro_Notification_Sent__c, RecordType.Name, Order__r.Bulk_Migration__c, Contact__r.Email FROM Transition_to_Fulfillment__c]
+		Transition_to_Fulfillment__c objTTF = [SELECT TTF_Status__c, Intro_Notification_Sent__c, RecordType.Name, Order__r.Bulk_Migration__c, Contact__r.Email FROM Transition_to_Fulfillment__c WHERE NAICS_code__c = '123']
 			.get(0);
 		Test.startTest();
         TransitionToFulfilmentTriggerHelper.skipTrigger = true;
@@ -177,7 +178,7 @@ public class SendNotificationsTTFFlowTest {
 		User objDirectSalesUser = [SELECT Id, UserRoleId, UserRole.DeveloperName, UserRole.Name, Profile.Name FROM User WHERE Profile.Name = 'Direct Sales User' AND IsActive = TRUE LIMIT 1];
 		objDirectSalesUser.Exempt_from_Validation_Rules__c = true;
 		update objDirectSalesUser;
-		Transition_to_Fulfillment__c objTTF = [SELECT TTF_Status__c, Intro_Notification_Sent__c, RecordType.Name, Order__r.Bulk_Migration__c, Contact__r.Email FROM Transition_to_Fulfillment__c]
+		Transition_to_Fulfillment__c objTTF = [SELECT TTF_Status__c, Intro_Notification_Sent__c, RecordType.Name, Order__r.Bulk_Migration__c, Contact__r.Email FROM Transition_to_Fulfillment__c WHERE NAICS_code__c = '123']
 			.get(0);
 		Test.startTest();
         TransitionToFulfilmentTriggerHelper.skipTrigger = true;

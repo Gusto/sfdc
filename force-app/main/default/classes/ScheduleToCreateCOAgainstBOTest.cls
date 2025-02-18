@@ -23,7 +23,7 @@ public class ScheduleToCreateCOAgainstBOTest {
 		pol1.Is_Selected__c = true;
 		insert pol1;
 
-		//insert new Configuration_Settings__c(Submission_Deadline_Days__c = 5);BBO-1937
+		//insert new Configuration_Settings__c(Submission_Deadline_Days__c = 5); BBO-1937
 
 		test.startTest();
 		ScheduleToCreateCarrierOrderAgainstBO objCreateCarrierOrder = new ScheduleToCreateCarrierOrderAgainstBO();

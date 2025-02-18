@@ -335,7 +335,11 @@ public with sharing class SubmissionAutomationHelper {
 					if (String.isNotBlank(objSubmissionRules.HI_Carrier_Id__c)) {
 						set_HICarrierIds.addAll(objSubmissionRules.HI_Carrier_Id__c.split(';'));
 					}
-
+					System.debug('set_HICarrierIds--------->' + set_HICarrierIds);
+                    System.debug(objSubmissionRules.Carrier_Id__c + '--------->' + objCO.Carrier__r.Carrier_Id__c);
+                    System.debug(objSubmissionRules.Order_Type__c + '--------->' + objCO.Order_Assignment__c);
+                    System.debug(objCO.Carrier__r.Id__c + '--------->' + set_HICarrierIds.contains(objCO.Carrier__r.Id__c));
+                    System.debug('--------->' + set_HICarrierIds);
 					if (
 						objSubmissionRules.Carrier_Id__c.equalsIgnoreCase(objCO.Carrier__r.Carrier_Id__c) &&
 						objSubmissionRules.Order_Type__c != null &&
@@ -361,10 +365,12 @@ public with sharing class SubmissionAutomationHelper {
 								blnWithinBusinessDays = false;
 							}
 						}
-
+						System.debug('-111-------->' + blnWithinBusinessDays);
 						if (blnWithinBusinessDays) {
+                            System.debug('--------->' + objSubmissionRules.Submission_Type__c);
 							if (objSubmissionRules.Submission_Type__c?.equalsIgnoreCase(Utils.HI_ONLY) && validateHIOnlyCOForAutomation(objSubmissionRules, objCO)) {
-								objCO.Eligible_for_Submission_Automation__c = true;
+								System.debug('--------->' + objSubmissionRules.Submission_Type__c);
+                                objCO.Eligible_for_Submission_Automation__c = true;
 								objCO.Sent_to_HI_for_Submission__c = false;
 								objCO.HI_Submission_Automation_Status__c = '';
 								objCO.HI_Submission_Automation_Message__c = '';

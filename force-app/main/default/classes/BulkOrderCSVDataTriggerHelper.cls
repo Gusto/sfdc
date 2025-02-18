@@ -158,7 +158,7 @@ public class BulkOrderCSVDataTriggerHelper {
 				(
 					SELECT Id, amount, Previous_Payroll_Provider__c, stageName, ZP_Company_ID__c
 					FROM Opportunities
-					WHERE RecordTypeId = :cache.getRecordTypeId('Opportunity', 'Company Opportunity') AND ZP_Company_ID__c IN :set_CompanyIds
+					WHERE RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID AND ZP_Company_ID__c IN :set_CompanyIds
 					ORDER BY CreatedDate DESC
 					LIMIT 1
 				)

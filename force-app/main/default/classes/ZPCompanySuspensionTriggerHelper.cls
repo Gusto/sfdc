@@ -249,6 +249,7 @@ public class ZPCompanySuspensionTriggerHelper {
 	 */
 	private Map<String, Account> getAccounts(Set<String> set_CompanyIds) {
 		Id idCompanyOpptyRType = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		Id idAcquisitionRType = Cache.getRecordTypeId('Opportunity', 'Acquisition');
 		Id idCompanyAccRType = Cache.getRecordTypeId('Account', 'Company');
 		Map<String, Account> map_Accounts = new Map<String, Account>();
 		for (Account objAcc : [
@@ -256,7 +257,11 @@ public class ZPCompanySuspensionTriggerHelper {
 				Id,
 				Name,
 				ZP_Company_ID__c,
-				(SELECT Id, StageName, IsClosed, IsWon, Name, ZP_Company_ID__c, Source_Id__c, ZP_Company_Suspended__c FROM Opportunities WHERE RecordTypeId = :idCompanyOpptyRType AND IsClosed = FALSE)
+				(
+					SELECT Id, StageName, IsClosed, IsWon, Name, ZP_Company_ID__c, Source_Id__c, ZP_Company_Suspended__c
+					FROM Opportunities
+					WHERE (RecordTypeId = :idCompanyOpptyRType OR (RecordTypeId = :idAcquisitionRType AND Type = 'New Business')) AND IsClosed = FALSE
+				)
 			FROM Account
 			WHERE ZP_Company_ID__c IN :set_CompanyIds AND RecordTypeId = :idCompanyAccRType
 		]) {

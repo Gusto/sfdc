@@ -119,6 +119,20 @@
 						></lightning-input>
 					</div>
 				</div>
+
+				<!-- Temporarily comment this for demo -->
+				<!-- <div class="slds-size_3-of-12" style="padding-right: 25px; position: relative; top: 25px">
+					<lightning-input
+						type="checkbox"
+						label="Enable logging of served records"
+						name="enableLogging"
+						onchange={handleLoggingChange}
+						data-attribute="enableLogging"
+						disabled={blnViewOnlyAccess}
+						checked={logEnabled}
+						field-level-help="When enabled, the system will log the records served by the rule. This will help in tracking the records served by the rule and the number of times each record is served by a rule"
+					></lightning-input>
+				</div> -->
 			</div>
 
 			<br />
@@ -514,10 +528,12 @@
 										<h3 class="slds-text-heading_small">Custom Functions</h3>
 										<ul>
 											<li>
-												<b>N Business Days Ago: </b> Use this function to query a specified number of business days in the past. This function excludes weekends but does not account for Holidays, the function works for date and datetime fields.
+												<b>N Business Days Ago: </b> Use this function to query a specified number of business days in the past. This function excludes weekends but does not
+												account for Holidays, the function works for date and datetime fields.
 											</li>
 											<li>
-												<b>N Business Days Future: </b> Use this function to query a specified number of business days in the future. This function excludes weekends and Holidays, the function works for date and datetime fields.
+												<b>N Business Days Future: </b> Use this function to query a specified number of business days in the future. This function excludes weekends and
+												Holidays, the function works for date and datetime fields.
 											</li>
 											<li>
 												<b> User functions: </b> Use <code> MYSELF</code> function to query records assigned to the logged in user. You can also this on any user lookup field.
@@ -642,7 +658,6 @@
 													</div>
 												</td>
 
-
 												<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="padding: 15px; vertical-align: top">
 													<div class="slds-text-align_center">
 														<lightning-combobox
@@ -753,125 +768,131 @@
 							<!-- user lookup fields -->
 							<div class="slds-grid slds-wrap slds-box">
 								<br />
-								<div class="slds-text-heading_small">Set Field Values</div>
+								<div class="slds-text-heading_small">Set Serving Field Values</div>
 								<br />
 								<div class="slds-size_12-of-12">
-									<template if:false={chosenObject.isMissingfields}>
-										<div style="padding-top: 10px">
-											<lightning-input
-												type="checkbox"
-												label="Assign Record Owner when serving"
-												name="assignRecordOwner"
-												onchange={handleObjectChangeBoolean}
-												data-object={chosenObject.baseObject}
-												data-attribute="assignRecordOwner"
-												checked={chosenObject.assignRecordOwner}
-												disabled={blnViewOnlyAccess}
-											></lightning-input>
-										</div>
-										<br />
-									</template>
-									<div class="slds-size_6-of-12">
-										<c-multi-select-pick-list-cmp
-											label="Select additional User Lookup Fields to update with the logged in user on serving record."
-											name="resourceFilter"
-											data-object={chosenObject.baseObject}
-											multi-select="true"
-											onselectoption={handleSelectUserLookups}
-											options={chosenObject.list_userLookupFields}
-											selected-values={chosenObject.userFieldsAssignment}
-											disabled={blnViewOnlyAccess}
-										></c-multi-select-pick-list-cmp>
-									</div>
-									<br />
-									<br />
 									<div class="slds-size_12-of-12">
-										<div class="slds-form-element__label" style="position: absolute;">Add Fields and value mappings to update the value when serving the record.
-											<div style="display: inline-block; position: relative;transform: translateY(-30%);">
-												<lightning-helptext content="[Blank/Empty Value] and [Any Value] are not pick list values, they can be selected to indicate that the 'From' value can be blank or any available pick list value."></lightning-helptext>
+										<div class="slds-form-element__label" style="position: absolute">
+											Add Fields and mappings to update the value for a field when a record is served.
+											<div style="display: inline-block; position: relative; transform: translateY(-30%)">
+												<lightning-helptext
+													content="[Blank/Empty Value] can be selected to indicate a From/To value is blank, [Any Value]  can be used to indicate a From value can be any available value and is evaluated last if there are other mappings for the same field."
+												></lightning-helptext>
 											</div>
 										</div>
 										<br />
 										<br />
-											<template lwc:if={chosenObject.blnShowFieldMappingTable}>
-												<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="border: 1px solid">
-													<template for:each={chosenObject.fieldMapping} for:item="fieldMapping">
-														<tr class="slds-hint-parent" key={fieldMapping.fieldId}>
-															<td class="slds-border_bottom slds-border_left" style="width: 10px; border: 1px solid" rowspan={fieldMapping.mappingSize}>
-																<div class="slds-text-align_center" style="position: relative; top: 7px">{fieldMapping.fieldId}</div>
-															</td>
-															<td class="slds-border_bottom slds-border_left" style="border: 1px solid; vertical-align: top;" rowspan={fieldMapping.mappingSize}>
-																<div class="slds-text-align_center">
-																	<c-auto-complete-cmp
-																		autocompletelist={chosenObject.list_picklistFieldsLabels}
-																		label="Choose field"
-																		onfilterlist={handleFilterList}
-																		onfilterselected={handleChangeFieldValue}
-																		icon="standard:picklist_type"
-																		disablemouseover="false"
-																		blnisvisible="true"
-																		data-object={chosenObject.baseObject}
-																		data-index={fieldMapping.fieldId}
-																		data-uniqueid={fieldMapping.uniqueId}
-																		selectedvalue={fieldMapping.selectedFieldLabel}
-																		str-place-holder=''
-																		id={fieldMapping.uniqueId}
-																		data-source="picklist"
-																		bln-disabled={blnViewOnlyAccess}
-																	></c-auto-complete-cmp>
-																</div>
-															</td>
-															<td style="height: 0px; padding: 0px;"></td>
-															<td style="height: 0px; padding: 0px;"></td>
-															<td style="height: 0px; padding: 0px;"></td>
-															<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px;" rowspan={fieldMapping.mappingSize}>
-																<div class="slds-text-align_center">
-																	<span class="tooltip">
-																		<div style="position:relative">
-																			<lightning-button
-																				variant="brand"
-																				label="+"
-																				disabled={fieldMapping.blnAddMapping}																		data-object={chosenObject.baseObject}
-																				data-index={fieldMapping.fieldId}
-																				onclick={handleAddPicklistValueMapping}
-																			></lightning-button>
-																			<div class=" tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left" style="position:absolute;top:-50px;left:-2px">
-																			<div class="slds-popover__body">Add Value Mapping.</div>
-																			</div>
+										<template lwc:if={chosenObject.blnShowFieldMappingTable}>
+											<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="border: 1px solid">
+												<template for:each={chosenObject.fieldMapping} for:item="fieldMapping">
+													<tr class="slds-hint-parent" key={fieldMapping.fieldId}>
+														<td class="slds-border_bottom slds-border_left" style="width: 10px; border: 1px solid" rowspan={fieldMapping.mappingSize}>
+															<div class="slds-text-align_center" style="position: relative; top: 7px">{fieldMapping.fieldId}</div>
+														</td>
+
+														<td class="slds-border_bottom slds-border_left" style="border: 1px solid; vertical-align: top" rowspan={fieldMapping.mappingSize}>
+															<div class="slds-text-align_center">
+																<lightning-combobox
+																	name="chooseFieldMappingType"
+																	label="Choose field mapping type"
+																	options={getfieldmapping}
+																	disabled={blnViewOnlyAccess}
+																	value={fieldMapping.fieldMappingType}
+																	data-object={chosenObject.baseObject}
+																	data-index={fieldMapping.fieldId}
+																></lightning-combobox>
+															</div>
+														</td>
+
+														<td class="slds-border_bottom slds-border_left" style="border: 1px solid; vertical-align: top" rowspan={fieldMapping.mappingSize}>
+															<div class="slds-text-align_center">
+																<c-auto-complete-cmp
+																	autocompletelist={chosenObject.list_picklistFieldsLabels}
+																	label="Choose field"
+																	onfilterlist={handleFilterList}
+																	onfilterselected={handleChangeFieldValue}
+																	icon="standard:picklist_type"
+																	disablemouseover="false"
+																	blnisvisible="true"
+																	data-object={chosenObject.baseObject}
+																	data-index={fieldMapping.fieldId}
+																	data-uniqueid={fieldMapping.uniqueId}
+																	selectedvalue={fieldMapping.selectedFieldLabel}
+																	str-place-holder=""
+																	id={fieldMapping.uniqueId}
+																	data-source="picklist"
+																	bln-disabled={blnViewOnlyAccess}
+																	data-fieldid={fieldMapping.uniqueId}
+																></c-auto-complete-cmp>
+															</div>
+														</td>
+														<td style="height: 0px; padding: 0px"></td>
+														<td style="height: 0px; padding: 0px"></td>
+														<td style="height: 0px; padding: 0px"></td>
+														<td
+															class="slds-border_bottom slds-border_left slds-border_top slds-border_right"
+															style="width: 5%; padding: 15px"
+															rowspan={fieldMapping.mappingSize}
+														>
+															<div class="slds-text-align_center">
+																<span class="tooltip">
+																	<div style="position: relative">
+																		<lightning-button
+																			variant="brand"
+																			label="+"
+																			disabled={fieldMapping.blnAddMapping}
+																			data-object={chosenObject.baseObject}
+																			data-index={fieldMapping.fieldId}
+																			onclick={handleAddPicklistValueMapping}
+																		></lightning-button>
+																		<div
+																			class="tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left"
+																			style="position: absolute; top: -50px; left: -2px"
+																		>
+																			<div class="slds-popover__body">Add Mapping Row</div>
 																		</div>
-																	</span>
-																</div>
-															</td>
-															<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px" rowspan={fieldMapping.mappingSize}>
-																<div class="slds-text-align_center">
-																	<span class="tooltip">
-																		<div style="position:relative">
-																			<lightning-button-icon
-																				icon-name="utility:delete"
-																				variant="brand"
-																				data-index={fieldMapping.fieldId}
-																				alternative-text="Delete"
-																				data-object={chosenObject.baseObject}
-																				onclick={handleRemoveField}
-																				title="Delete"
-																				disabled={blnViewOnlyAccess}
-																			></lightning-button-icon>
-																			<div class=" tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left" style="position:absolute;top:-50px;left:-2px">
-																				<div class="slds-popover__body">Delete Field.</div>
-																			</div>
+																	</div>
+																</span>
+															</div>
+														</td>
+														<td
+															class="slds-border_bottom slds-border_left slds-border_top slds-border_right"
+															style="width: 5%; padding: 15px"
+															rowspan={fieldMapping.mappingSize}
+														>
+															<div class="slds-text-align_center">
+																<span class="tooltip">
+																	<div style="position: relative">
+																		<lightning-button-icon
+																			icon-name="utility:delete"
+																			variant="brand"
+																			data-index={fieldMapping.fieldId}
+																			alternative-text="Delete"
+																			data-object={chosenObject.baseObject}
+																			onclick={handleRemoveField}
+																			title="Delete"
+																			disabled={blnViewOnlyAccess}
+																		></lightning-button-icon>
+																		<div
+																			class="tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left"
+																			style="position: absolute; top: -50px; left: -2px"
+																		>
+																			<div class="slds-popover__body">Delete Field</div>
 																		</div>
-																	</span>
-																</div>
-															</td>
-														</tr>
-														<template for:each={fieldMapping.mapping} for:item="mapping">
-															<tr class="slds-hint-parent" key={mapping.mappingId}>
-																<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
-																	<div class="slds-text-align_center">
+																	</div>
+																</span>
+															</div>
+														</td>
+													</tr>
+													<template for:each={fieldMapping.mapping} for:item="mapping">
+														<tr class="slds-hint-parent" key={mapping.mappingId}>
+															<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+																<div class="slds-text-align_center">
+																	<template if:false={fieldMapping.isSearchable}>
 																		<lightning-combobox
 																			label="From:"
 																			value={mapping.fromValue}
-																			placeholder="Select Picklist field"
+																			placeholder="Choose from value"
 																			options={fieldMapping.fromOptions}
 																			data-picklist={fieldMapping.fieldId}
 																			data-index={mapping.mappingId}
@@ -881,77 +902,306 @@
 																			onchange={handleChangeMapValue}
 																			disabled={blnViewOnlyAccess}
 																		></lightning-combobox>
-																	</div>
-																</td>
-																<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
-																	<div class="slds-text-align_center">
-																		<lightning-combobox
-																			label="To:"
-																			value={mapping.toValue}
-																			placeholder="Select Picklist field"
-																			options={fieldMapping.toOptions}
-																			data-picklist={fieldMapping.fieldId}
-																			data-uniqueid={mapping.toId}
-																			data-index={mapping.mappingId}
-																			data-option="toValue"
-																			data-object={chosenObject.baseObject}
-																			onchange={handleChangeMapValue}
-																			disabled={blnViewOnlyAccess}
-																		></lightning-combobox>
-																	</div>
-																</td>													
-																<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px">
-																	<div class="slds-text-align_center">
-																		<span class="tooltip">
-																			<div style="position:relative">
-																				<lightning-button-icon
-																					icon-name="utility:delete"
-																					variant="brand"
-																					data-index={mapping.mappingId}
-																					data-picklist={fieldMapping.fieldId}
-																					alternative-text="Delete"
-																					data-object={chosenObject.baseObject}
-																					onclick={handleRemoveMapping}
-																					title="Delete"
-																					disabled={fieldMapping.blnDisabledDelete}
-																				></lightning-button-icon>
-																				<div class=" tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left" style="position:absolute;top:-50px;left:-2px">
-																					<div class="slds-popover__body">Delete Value Mapping.</div>
+																	</template>
+
+																	<template if:true={fieldMapping.isSearchable}>
+																		<template if:true={fieldMapping.isQueueEligible}>
+																			<div class="slds-grid slds-wrap">
+																				<div class="slds-size_3-of-12 slds-align_absolute-center">
+																					<lightning-input
+																						type="checkbox"
+																						label="Queue"
+																						name="chooseQueue"
+																						data-option="fromQueueEnabled"
+																						data-object={chosenObject.baseObject}
+																						data-picklist={fieldMapping.fieldId}
+																						data-index={mapping.mappingId}
+																						checked={mapping.fromQueueEnabled}
+																						disabled={blnViewOnlyAccess}
+																						onchange={handleQueueSelection}
+																						data-source="fromValue"
+																					></lightning-input>
+																				</div>
+																				<div class="slds-size_9-of-12">
+																					<c-auto-complete-cmp
+																						autocompletelist={list_ActiveUsersLabel}
+																						label="From:"
+																						onfilterlist={handleFilterList}
+																						onfilterselected={handleReferenceFieldChange}
+																						icon="standard:user"
+																						disablemouseover="false"
+																						blnisvisible="true"
+																						data-object={chosenObject.baseObject}
+																						data-picklist={fieldMapping.fieldId}
+																						data-option="fromValue"
+																						data-index={mapping.mappingId}
+																						selectedvalue={mapping.fromValue}
+																						str-place-holder="Choose from value"
+																						data-source="users"
+																						bln-disabled={blnViewOnlyAccess}
+																						data-searchid={mapping.fromId}
+																					></c-auto-complete-cmp>
 																				</div>
 																			</div>
-																		</span>
-																		
-																	</div>
-																</td>
-															</tr>
-														</template>
+																		</template>
+																		<template if:false={fieldMapping.isQueueEligible}>
+																			<c-auto-complete-cmp
+																				autocompletelist={list_ActiveUsersLabel}
+																				label="From:"
+																				onfilterlist={handleFilterList}
+																				onfilterselected={handleReferenceFieldChange}
+																				icon="standard:user"
+																				disablemouseover="false"
+																				blnisvisible="true"
+																				data-object={chosenObject.baseObject}
+																				data-picklist={fieldMapping.fieldId}
+																				data-option="fromValue"
+																				data-index={mapping.mappingId}
+																				selectedvalue={mapping.fromValue}
+																				str-place-holder="Choose from value"
+																				data-source="users"
+																				bln-disabled={blnViewOnlyAccess}
+																				data-searchid={mapping.fromId}
+																			></c-auto-complete-cmp>
+																		</template>
+																	</template>
+																</div>
+															</td>
+															<td class="slds-border_bottom" style="border: 1px solid; vertical-align: top">
+																<div class="slds-text-align_center">
+																	<template if:false={fieldMapping.isSearchable}>
+																		<template if:false={mapping.isDateField}>
+																			<lightning-combobox
+																				label="To:"
+																				value={mapping.toValue}
+																				placeholder="Choose to value"
+																				options={fieldMapping.toOptions}
+																				data-picklist={fieldMapping.fieldId}
+																				data-uniqueid={mapping.toId}
+																				data-index={mapping.mappingId}
+																				data-option="toValue"
+																				data-object={chosenObject.baseObject}
+																				onchange={handleChangeMapValue}
+																				disabled={blnViewOnlyAccess}
+																			></lightning-combobox>
+																		</template>
+
+																		<template if:true={mapping.isDateField}>
+																			<table>
+																				<tr>
+																					<td style="width: 20px">
+																						<lightning-combobox
+																							label="To:"
+																							value={mapping.toValue}
+																							placeholder="Choose to value"
+																							options={fieldMapping.toOptions}
+																							data-picklist={fieldMapping.fieldId}
+																							data-uniqueid={mapping.toId}
+																							data-index={mapping.mappingId}
+																							data-option="toValue"
+																							data-object={chosenObject.baseObject}
+																							onchange={handleChangeMapValue}
+																							disabled={blnViewOnlyAccess}
+																						></lightning-combobox>
+																					</td>
+
+																					<template if:false={mapping.isDateTimeField}>
+																						<td style="width: 10px">
+																							<lightning-input
+																								type="number"
+																								label="Number of Days"
+																								value={mapping.toDays}
+																								step="1"
+																								min="1"
+																								maxlength="4"
+																								data-picklist={fieldMapping.fieldId}
+																								data-uniqueid={mapping.toId}
+																								data-index={mapping.mappingId}
+																								data-option="toDays"
+																								data-object={chosenObject.baseObject}
+																								onchange={handleChangeMapValue}
+																								disabled={blnViewOnlyAccess}
+																								data-todays={mapping.toId}
+																								required="true"
+																								message-when-value-missing="Value is required."
+																								field-level-help="Enter the Number of Days as a whole number greater than zero. (1, 2, 3, etc.)"
+																								message-when-bad-input="Please enter a whole number greater than 0."
+																								message-when-range-underflow="Please enter a whole number greater than 0."
+																								message-when-step-mismatch="Please enter a whole number greater than 0."
+																							></lightning-input>
+																						</td>
+																					</template>
+
+																					<template if:true={mapping.isDateTimeField}>
+																						<td style="width: 10px">
+																							<lightning-input
+																								type="number"
+																								label="Number of Days"
+																								value={mapping.toDays}
+																								step="1"
+																								min="0"
+																								maxlength="4"
+																								data-picklist={fieldMapping.fieldId}
+																								data-uniqueid={mapping.toId}
+																								data-index={mapping.mappingId}
+																								data-option="toDays"
+																								data-object={chosenObject.baseObject}
+																								onchange={handleChangeMapValue}
+																								disabled={blnViewOnlyAccess}
+																								data-todays={mapping.toId}
+																								required="true"
+																								message-when-value-missing="Value is required."
+																								message-when-bad-input="Please enter a whole number zero or greater."
+																								message-when-range-underflow="Please enter a whole number zero or greater."
+																								message-when-step-mismatch="Please enter a whole number zero or greater."
+																								field-level-help="Number of Days is required be a whole number greater than 0 if Time is not filled in. Enter 0 in Number of Days if only Time will be utilized."
+																							></lightning-input>
+																						</td>
+
+																						<td style="width: 150px">
+																							<lightning-input
+																								type="time"
+																								name="input1"
+																								label="Time"
+																								value={mapping.toHours}
+																								data-picklist={fieldMapping.fieldId}
+																								data-uniqueid={mapping.toId}
+																								data-hours={mapping.toId}
+																								data-index={mapping.mappingId}
+																								data-option="toHours"
+																								data-object={chosenObject.baseObject}
+																								onchange={handleChangeMapValue}
+																								disabled={blnViewOnlyAccess}
+																								field-level-help="Select the time to be set in the past or future. Example: Number of Days = 2 for [Now + N Business Days/Hours] and Time is 8 am and the record is served on a Friday, the date will be set to Tuesday at 8 am as 2 business days from Friday. If Number of Days is set and Time is blank, the date/time field will be set to the current time the record is served for the day in the future or past. Time is set in the user’s time zone."
+																							></lightning-input>
+																						</td>
+																					</template>
+																				</tr>
+																			</table>
+																		</template>
+																	</template>
+																	<template if:true={fieldMapping.isSearchable}>
+																		<template if:true={fieldMapping.isQueueEligible}>
+																			<div class="slds-grid slds-wrap">
+																				<div class="slds-size_3-of-12 slds-align_absolute-center">
+																					<lightning-input
+																						type="checkbox"
+																						label="Queue"
+																						name="chooseQueue"
+																						data-option="toQueueEnabled"
+																						data-object={chosenObject.baseObject}
+																						data-picklist={fieldMapping.fieldId}
+																						data-index={mapping.mappingId}
+																						checked={mapping.toQueueEnabled}
+																						disabled={blnViewOnlyAccess}
+																						onchange={handleQueueSelection}
+																						data-source="toValue"
+																					></lightning-input>
+																				</div>
+
+																				<div class="slds-size_9-of-12">
+																					<c-auto-complete-cmp
+																						autocompletelist={list_ActiveUsersLabel}
+																						label="To:"
+																						onfilterlist={handleFilterList}
+																						onfilterselected={handleReferenceFieldChange}
+																						icon="standard:user"
+																						disablemouseover="false"
+																						blnisvisible="true"
+																						data-object={chosenObject.baseObject}
+																						data-picklist={fieldMapping.fieldId}
+																						data-index={mapping.mappingId}
+																						data-option="toValue"
+																						selectedvalue={mapping.toValue}
+																						str-place-holder="Choose to value"
+																						data-source="users"
+																						bln-disabled={blnViewOnlyAccess}
+																						data-searchid={mapping.toId}
+																					></c-auto-complete-cmp>
+																				</div>
+																			</div>
+																		</template>
+
+																		<template if:false={fieldMapping.isQueueEligible}>
+																			<c-auto-complete-cmp
+																				autocompletelist={list_ActiveUsersLabel}
+																				label="To:"
+																				onfilterlist={handleFilterList}
+																				onfilterselected={handleReferenceFieldChange}
+																				icon="standard:user"
+																				disablemouseover="false"
+																				blnisvisible="true"
+																				data-object={chosenObject.baseObject}
+																				data-picklist={fieldMapping.fieldId}
+																				data-index={mapping.mappingId}
+																				data-option="toValue"
+																				selectedvalue={mapping.toValue}
+																				str-place-holder="Choose to value"
+																				data-source="users"
+																				bln-disabled={blnViewOnlyAccess}
+																				data-searchid={mapping.toId}
+																			></c-auto-complete-cmp>
+																		</template>
+																	</template>
+																</div>
+															</td>
+															<td class="slds-border_bottom slds-border_left slds-border_top slds-border_right" style="width: 5%; padding: 15px">
+																<div class="slds-text-align_center">
+																	<span class="tooltip">
+																		<div style="position: relative">
+																			<lightning-button-icon
+																				icon-name="utility:delete"
+																				variant="brand"
+																				data-index={mapping.mappingId}
+																				data-picklist={fieldMapping.fieldId}
+																				alternative-text="Delete"
+																				data-object={chosenObject.baseObject}
+																				onclick={handleRemoveMapping}
+																				title="Delete"
+																				disabled={fieldMapping.blnDisabledDelete}
+																			></lightning-button-icon>
+																			<div
+																				class="tooltiptext slds-popover slds-popover_tooltip slds-nubbin_bottom-left"
+																				style="position: absolute; top: -50px; left: -2px"
+																			>
+																				<div class="slds-popover__body">Delete Mapping</div>
+																			</div>
+																		</div>
+																	</span>
+																</div>
+															</td>
+														</tr>
 													</template>
-												</table>
-											</template>
-											
-											<br />
-											<div class="slds-truncate slds-text-align_center slds-align_absolute-center">
-												<lightning-button
-													variant="brand"
-													label="Add Field Mapping"
-													disabled={chosenObject.blnAddFieldMapping}
-													data-object={chosenObject.baseObject}
-													onclick={handleAddFieldMapping}
-												></lightning-button>
-											</div>
+												</template>
+											</table>
+										</template>
+
+										<br />
+										<div class="slds-truncate slds-text-align_center slds-align_absolute-center">
+											<lightning-button
+												variant="brand"
+												label="Add Serving Record Field Mapping"
+												disabled={chosenObject.blnAddFieldMapping}
+												data-object={chosenObject.baseObject}
+												onclick={handleAddFieldMapping}
+											></lightning-button>
 										</div>
 									</div>
 								</div>
-								<br />
-								<br />
+							</div>
+							<br />
+							<br />
 
 							<!-- talking points -->
 							<div class="slds-grid slds-wrap">
 								<div class="slds-size_12-of-12">
 									<div class="slds-box slds-box_x-small">
-										<div class="slds-form-heading_small">Talking Points
-											<div style="display: inline-block; position: relative;transform: translateY(-10%);">
-												<lightning-helptext content="The NBA Category component should be added to the lightning record page of the served object to display this help text to users. The component can be labeled whatever is appropriate for the team the ruleset applies to."></lightning-helptext>
+										<div class="slds-form-heading_small">
+											Talking Points
+											<div style="display: inline-block; position: relative; transform: translateY(-10%)">
+												<lightning-helptext
+													content="The NBA Category component should be added to the lightning record page of the served object to display this help text to users. The component can be labeled whatever is appropriate for the team the ruleset applies to."
+												></lightning-helptext>
 											</div>
 										</div>
 										<lightning-input-rich-text

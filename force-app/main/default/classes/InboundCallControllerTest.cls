@@ -74,7 +74,7 @@ public with sharing class InboundCallControllerTest {
 		//create opportunity
 		TriggerHandler.bypass('OpportunityTriggerHandler');
 		Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('Test Opp')
 			.setAccountId(objAccnt.Id)
 			.setStage('Open')

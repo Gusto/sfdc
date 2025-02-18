@@ -3,7 +3,7 @@
 		<lightning-card icon-name="standard:disclosure_and_compliance">
 			<!--Title-->
 			<div slot="title">
-				<b class="slds-text-heading_medium">Opportunity Activities</b>
+				<b class="slds-text-heading_small">{activityHeading}</b>
 			</div>
 
 			<!--Button actions-->
@@ -15,12 +15,12 @@
 				</lightning-button-group>
 			</div>
 
-			<!--Tasks-->
+			<!--For sObject Tasks/Events-->
 			<div>
 				<ul class="slds-timeline">
-					<template for:each={listTasks} for:item="objTask">
-						<li key={objTask.Id}>
-							<c-opportunity-task-detail obj-task={objTask} map-task-record-type-to-icon={mapTaskRecordTypeToIcon}></c-opportunity-task-detail>
+					<template for:each={listActivities} for:item="objActivity">
+						<li key={objActivity.Id}>
+							<c-opportunity-task-detail obj-activity={objActivity} map-task-record-type-to-icon={mapTaskRecordTypeToIcon}></c-opportunity-task-detail>
 						</li>
 					</template>
 				</ul>

@@ -172,6 +172,8 @@ export default class CaseRoutingCmp extends NavigationMixin(LightningElement) {
         let objCase = this.objCaseRecord;
         objCase.Re_Route_Count__c = objCase.Re_Route_Count__c ? objCase.Re_Route_Count__c + 1 : 1;
         this.blnIsLoading = true;
+
+        console.log('this.strRoutingReasonClassification ' + this.strRoutingReasonClassification);
         updateCase({
             objCase: objCase,
             strTypeName: this.strCaseReasonType,

@@ -132,14 +132,14 @@ public class HIQASheetWrapper {
         public Boolean alignment_to_be_requested_by_submission;
     }
 
-    public class CompanyDocWrapper{
-        public String document;
-        public String option;
-    }
+	public class CompanyDocWrapper {
+		public String document;
+		public String option;
+	}
 
-    public class PlanDescription{
-        public String[] plan_additions;
-        public String[] plan_removals;
-        public String[] plan_renewals;
-    }
+	public class PlanDescription {
+		public String[] plan_additions;
+		public String[] plan_removals;
+		public String[] plan_renewals;
+	}
 }

@@ -80,22 +80,20 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 	list_TaxNoticeTypes = [];
 	blnIsMRR = false;
 
-	@track objConfidenceScore = {};
-	list_ConfidenceScoreSetting = [];
-	objLayoutSize = {
-		"Client_Tax_ID_Conf_Score__c": 6,
-		"Interest_Amount_Due_Conf_Score__c": 6,
-		"Multi_Yr_Qtr_Indicator_Conf_Score__c": 6,
-		"Notice_Form_Number_Conf_Score__c": 6,
-		"Penalty_Amount_Due_Conf_Score__c": 6,
-		"Tax_Amount_Due_Conf_Score__c": 6,
-		"Tax_Notice_Date_Conf_Score__c": 6,
-		"Tax_Notice_Numeration_Conf_Score__c": 6,
-		"Tax_Notice_Type_Conf_Score__c": 6,
-		"Total_Amount_Due_Conf_Score__c": 6,
-		"Year_Quarter_Conf_Score__c": 6,
-		"Tax_Notice_Due_Date_Conf_Score__c": 6
-	};
+    @track objConfidenceScore = {};
+    list_ConfidenceScoreSetting = [];
+    objLayoutSize = {"Client_Tax_ID_Conf_Score__c": 6,
+					"Interest_Amount_Due_Conf_Score__c": 6,
+					"Multi_Yr_Qtr_Indicator_Conf_Score__c": 6,
+					"Notice_Form_Number_Conf_Score__c": 6,
+					"Penalty_Amount_Due_Conf_Score__c": 6,
+					"Tax_Amount_Due_Conf_Score__c": 6,
+					"Tax_Notice_Date_Conf_Score__c": 6,
+					"Tax_Notice_Numeration_Conf_Score__c": 6,
+					"Tax_Notice_Type_Conf_Score__c": 6,
+					"Total_Amount_Due_Conf_Score__c": 6,
+					"Year_Quarter_Conf_Score__c": 6,
+					"Tax_Notice_Due_Date_Conf_Score__c": 6};
 
 	get suiRateOptions() {
 		return [
@@ -120,6 +118,7 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 	async getDetails() {
 		await this.getRelatedCaseDetails();
 		await this.getRequiredFieldsInfo();
+        //await this.getTNDCConfidenceScore();
 	}
 
 	//retrieve case details on page load
@@ -145,11 +144,11 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 						if (result.Tax_Notice_Indexs__r[0].Tax_Notice_Due_Date__c) {
 							this.blnIsNoticeDueDateNotPopulated = false;
 						}
-						if (result.Tax_Notice_Indexs__r[0].Manual_Review_Required__c) {
+						if(result.Tax_Notice_Indexs__r[0].Manual_Review_Required__c) {
 							this.blnIsMRR = true;
 						}
 
-						if (this.dtEffectiveDate != null && this.dtEffectiveDate != undefined && this.dtEffectiveDate != '') {
+						if (this.dtEffectiveDate) {
 							let quarter = Math.ceil(this.dtEffectiveDate.split("-")[1].trim() / 3);
 							let yrQtr = "Q" + quarter + " " + this.dtEffectiveDate.split("-")[0].trim();
 							this.suiYrQtr = yrQtr;
@@ -245,50 +244,60 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 			});
 	}
 
-	//get TNDC confidence scores
-	getTNDCConfidenceScore() {
-		getConfidenceScore({ objCaseId: this.recordId })
-			.then(data => {
-				if (data) {
-					this.list_ConfidenceScoreSetting = data;
-					let objTaxNotice;
-					if (this.objCase.Tax_Notice_Indexs__r != null && this.objCase.Tax_Notice_Indexs__r != undefined) {
-						objTaxNotice = this.objCase.Tax_Notice_Indexs__r[0];
-					}
+    //get TNDC confidence scores
+    getTNDCConfidenceScore() {
+        getConfidenceScore({ objCaseId: this.recordId })
+        .then(data => {
+            if (data) {
+                this.list_ConfidenceScoreSetting = data;
+                let objTaxNotice;
+				console.log('case === ' + this.objCase)
+				console.log('Tax_Notice_Indexs__r == ' + this.objCase.Tax_Notice_Indexs__r)
+				if (this.objCase.Tax_Notice_Indexs__r != null && this.objCase.Tax_Notice_Indexs__r != undefined) {
+					objTaxNotice = this.objCase.Tax_Notice_Indexs__r[0];
+					
+					console.log('objTaxNotice.MRR_Reason__c  : '+objTaxNotice.MRR_Reason__c);
+					console.log('objTaxNotice.Id  : '+objTaxNotice.Id);
+				}
+				
+                data.forEach(element => {
+					console.log('element.Field_Api_Name__c  : '+element.Field_Api_Name__c);
+                    if(objTaxNotice) {
 
-					data.forEach(element => {
-						if (objTaxNotice) {
-
-							if (objTaxNotice.Agency_Information__r.OCR_Enabled__c == false || objTaxNotice.Bypass_Manual_Validation__c || MRR_Reasons_TNDC.includes(objTaxNotice.MRR_Reason__c)) {
-								this.objConfidenceScore[element.Field_Api_Name__c] = false;
-							}
-							else if (objTaxNotice[element.Field_Api_Name__c] == null ||
-								objTaxNotice[element.Field_Api_Name__c] == '' ||
-								objTaxNotice[element.Field_Api_Name__c] == undefined ||
-								objTaxNotice[element.Field_Api_Name__c] < element.Confidence_Score__c) {
+						if(objTaxNotice.Bypass_Manual_Validation__c || MRR_Reasons_TNDC.includes(objTaxNotice.MRR_Reason__c)) {
+							this.objConfidenceScore[element.Field_Api_Name__c] = false;
+						}
+						else if (objTaxNotice[element.Field_Api_Name__c] == null ||
+							objTaxNotice[element.Field_Api_Name__c] == '' ||
+							objTaxNotice[element.Field_Api_Name__c] == undefined ||
+							objTaxNotice[element.Field_Api_Name__c] < element.Confidence_Score__c) {
 								if (this.objCase.Status == CASE_STATUS_READY_FOR_DATA_CAPTURE || this.objCase.Status == CASE_STATUS_DATA_CAPTURE_IN_PROGRESS) {
 									this.objConfidenceScore[element.Field_Api_Name__c] = true;
-									this.objConfidenceScore[element.Field_Api_Name__c + '#fieldName'] = element.MasterLabel;
-									this.objConfidenceScore[element.Field_Api_Name__c + '#validationFieldName'] = element.Manual_Validation_Field_Api_Name__c;
+									this.objConfidenceScore[element.Field_Api_Name__c+'#fieldName'] = element.MasterLabel;
+									this.objConfidenceScore[element.Field_Api_Name__c+'#validationFieldName'] = element.Manual_Validation_Field_Api_Name__c;
 
 									this.objLayoutSize[element.Field_Api_Name__c] = 4;
+
+								/*	console.log(element.Field_Api_Name__c + " == " + objTaxNotice[element.Field_Api_Name__c])
+									if(element.Field_Api_Name__c == 'Tax_Notice_Type_Conf_Score__c') {
+											this.objConfidenceScore[element.Field_Api_Name__c] = false;
+											this.objLayoutSize[element.Field_Api_Name__c] = 6;
+									} */
+
 								}
-							} else {
-								this.objConfidenceScore[element.Field_Api_Name__c] = false;
-							}
+						} else {
+							this.objConfidenceScore[element.Field_Api_Name__c] = false;
 						}
-					});
-				}
-			})
-			.catch(error => {
-				let errorMessage = error;
-				if (error.body && error.body.message) {
-					errorMessage = error.body.message;
-				}
-				errorMessage = errorMessage ? errorMessage : "Error while retrieving TNDC Confidence Score Setting.";
-				this.showMessage("Error!", errorMessage, "error", null);
-			});
-	}
+					}
+                });
+                console.log('this.objConfidenceScore  : '+JSON.stringify(this.objConfidenceScore));
+				console.log('this.objLayoutSize : '+JSON.stringify(this.objLayoutSize));
+            }
+        })
+        .catch(error => {
+            console.log("Error ==> " + JSON.stringify(error))
+        });
+    }
 
 	//retrieve semi-colon separated form numbers
 	getEligibleSuiRateFormNumbers() {
@@ -507,24 +516,25 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 			});
 		}
 
-		let list_ManualValidationFields = [];
-		this.list_ConfidenceScoreSetting.forEach(element => {
-			if (this.objConfidenceScore[element.Field_Api_Name__c] && !fields[this.objConfidenceScore[element.Field_Api_Name__c + '#validationFieldName']]) {
-				list_ManualValidationFields.push(this.objConfidenceScore[element.Field_Api_Name__c + '#fieldName']);
-			}
-		});
+        let list_ManualValidationFields = [];
+        this.list_ConfidenceScoreSetting.forEach(element => {
+            if (this.objConfidenceScore[element.Field_Api_Name__c] && !fields[this.objConfidenceScore[element.Field_Api_Name__c+'#validationFieldName']]) {
+                list_ManualValidationFields.push(this.objConfidenceScore[element.Field_Api_Name__c+'#fieldName']);
+            }
+        });
+        console.log(list_ManualValidationFields)
 
-		if (emptyRequiredFields) {
-			this.showMessage(REQUIRED_FIELDS_MISSING, emptyRequiredFields, "warning", "sticky");
+        if (emptyRequiredFields) {
+            this.showMessage(REQUIRED_FIELDS_MISSING, emptyRequiredFields, "warning", "sticky");
 			this.blnCompletedCase = false;
 			this.blnIsLoading = false;
-		} else if (list_ManualValidationFields.length > 0 && this.blnCompletedCase && !this.blnIsNoticeMissing) {
-			this.showMessage("Below Fields are not validated", list_ManualValidationFields.join(", "), "warning", "sticky");
+        } else if (list_ManualValidationFields.length > 0 && this.blnCompletedCase && !this.blnIsNoticeMissing) {
+            this.showMessage("Below Fields are not validated", list_ManualValidationFields.join(", "), "warning", "sticky");
 			this.blnCompletedCase = false;
 			this.blnIsLoading = false;
-		} else {
-			this.template.querySelector("lightning-record-edit-form").submit(fields);
-		}
+        } else {
+            this.template.querySelector("lightning-record-edit-form").submit(fields);
+        }
 	}
 
 	//handle "Success" event of "Submit" event on button click
@@ -610,7 +620,7 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 			strTNDCId: this.idNoticeIndexRecord,
 			list_TaxRateValues: this.list_TNDCSuiRate
 		})
-			.then((result) => { })
+			.then((result) => {})
 			.catch((error) => {
 				let errorMessage = error;
 				if (error.body && error.body.message) {

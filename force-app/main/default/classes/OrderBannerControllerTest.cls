@@ -72,7 +72,7 @@ public class OrderBannerControllerTest {
 			.setStage('SAL')
 			.setCloseDate(System.today())
 			.setName('test opp')
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setAccountId(objAccount.Id)
 			.setNumberOfEE(1)
 			.setZPCompanyId('12121212121212')

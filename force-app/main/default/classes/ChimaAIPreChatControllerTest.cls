@@ -189,4 +189,25 @@ public class ChimaAIPreChatControllerTest {
 
 		System.assert(!lst_ExceptionLog.isEmpty(), 'Exception log should be created');
 	}
+
+	/**
+	 * @author      Yogesh Kherajani
+	 * @description Test method for get todays current user AI Interaction record
+	 **/    
+    @isTest
+    static void testGetTodayLiveChatTranscripts(){
+        LiveChatTranscript objLiveChatTranscript = [SELECT Id FROM LiveChatTranscript ORDER BY CreatedDate DESC LIMIT 1];
+
+		AI_Interaction_Detail__c objAIInteractionDetail = new TestDataFactory.AIInteractionDetailBuilder()
+			.setUserQuestion('How to add an employee?')
+			.setAIResponse('Here is the article')
+			.setLiveChatTranscript(objLiveChatTranscript.Id)
+			.build();
+
+		insert objAIInteractionDetail;
+        
+        List<AI_Interaction_Detail__c> lst_AIInteractionDetail = ChimaAIPreChatController.getTodayLiveChatTranscripts(new List<String>{});
+        
+        System.assert(!lst_AIInteractionDetail.isEMpty(), 'Ai Interaction should be created');
+    }
 }

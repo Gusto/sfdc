@@ -328,12 +328,12 @@ private class EngagementCaseViewExtensionTest {
 		extension.theCase.Status = 'Solved';
 		extension.SaveTaxResCase();
 
-		System.assertNotEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'Solved', 'Case status should not be Solved.');
+		System.assertNotEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'Solved', 'Case Status should not be Solved.');
 
 		extension.theCase.Confirm_Case_Reason__c = '1099 Adjustment';
 		extension.SaveTaxResCase();
 		extension.unmergeCase();
-		System.assertNotEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'Solved', 'Case status should not be Solved.');
+		System.assertNotEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'Solved', 'Case Status should not be Solved.');
 		Test.stopTest();
 	}
 	@isTest
@@ -350,7 +350,7 @@ private class EngagementCaseViewExtensionTest {
 		extension.unmergeCase();
 		Test.stopTest();
 
-		System.assertNotEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'Solved', 'Case status should not be Solved.');
+		System.assertNotEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'Solved', 'Case Status should not be Solved.');
 	}
 	@isTest
 	static void testTakeItPayrollOpsAuditCase() {
@@ -361,7 +361,7 @@ private class EngagementCaseViewExtensionTest {
 		extension.acceptCase();
 		Test.stopTest();
 
-		System.assertEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'In Progress', 'Case Status should be In Progress');
+		System.assertEquals([SELECT Status FROM Case WHERE Id = :obj_Case.Id].Status, 'In Progress', 'Case Status should be In Progress.');
 	}
 	static void setupTestRun(Case objCase) {
 		ApexPages.StandardController stdController = new ApexPages.StandardController(objCase);

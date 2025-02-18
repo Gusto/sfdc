@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Type_Of_Auth_Required_For_Exchange__c</fullName>
+    <label>Type of Auth. required for exchange</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>POA</fullName>
+                <default>false</default>
+                <label>POA</label>
+            </value>
+            <value>
+                <fullName>MOU</fullName>
+                <default>false</default>
+                <label>MOU</label>
+            </value>
+            <value>
+                <fullName>TPA</fullName>
+                <default>false</default>
+                <label>TPA</label>
+            </value>
+            <value>
+                <fullName>LOI</fullName>
+                <default>false</default>
+                <label>LOI</label>
+            </value>
+            <value>
+                <fullName>Combined: MOU/POA</fullName>
+                <default>false</default>
+                <label>Combined: MOU/POA</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

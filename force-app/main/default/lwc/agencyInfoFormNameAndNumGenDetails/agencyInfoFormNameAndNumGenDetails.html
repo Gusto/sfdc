@@ -1,0 +1,116 @@
+<template>
+    <div class="container">
+        
+        <lightning-layout>
+            <lightning-layout-item flexibility="auto, no-grow" padding="around-small">
+                <div class="custom-box slds-box slds-p-around_medium slds-text-align_center">
+                    <lightning-input class={checkBoxLabel} type="checkbox" labe="Show/Hide" onchange={handleShowCompChBxChange} checked={isShowComp}> </lightning-input>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item flexibility="auto" padding="around-small">
+                <div class="custom-box slds-box slds-p-around_medium slds-text-align_center"><b>Form Name & Number - General Details</b></div>
+            </lightning-layout-item>
+        </lightning-layout>
+    
+        <template if:true={isShowComp}>
+            
+    <lightning-card  title="Form Name And Number- General Details" >
+
+        <!-- modal start -->      
+        <template if:true={isShowModal}>
+            <section  role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- modal header start -->
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Please Note</h2>
+                </header>
+
+                <!-- modal body start -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>You have deselected {checkBox_labelsList_Str}. Please acknowledge: if you click Submit you will delete this section & all field details</p>
+                </div>
+
+                <!-- modal footer start-->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="success" label="Submit" title="Successful action" onclick={handleSubmitButton} class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button variant="brand-outline" label="Cancel" title="Unsuccessful action" onclick={hideModalBox} class="slds-m-right_x-small"></lightning-button>
+                </footer>
+
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        <!-- modal end -->
+
+    <!-- form start -->
+    <template lwc:if={reloadForm}>
+        <template for:each={getFormNameObjList} for:item="formNmeObj">
+            <lightning-input class={checkBoxLabel} key={formNmeObj.form.Id} type="checkbox" label={formNmeObj.formLabel} data-id={formNmeObj.form.Id} data-api={formNmeObj.formLabel} onchange={handleInputCheckBoxChange} checked={formNmeObj.areDetailsVisible}> </lightning-input>
+                <form key={formNmeObj.form.Id}  lwc:if={formNmeObj.areDetailsVisible} class="slds-border_top" >
+                    <lightning-card  >
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                                <!-- lightning-input start -->
+                                <div class="slds-form-element ">
+                                    <lightning-input label="Form Name & Number" type="String" data-id={formNmeObj.form.Id} variant="label-inline" data-api="Form_Name_Number_Text__c" value={formNmeObj.form.Form_Name_Number_Text__c} onchange={handleOnChange}> </lightning-input>
+                                </div>
+                                <div class="slds-form-element ">
+                                    <lightning-combobox label="Main Filing Format" options={picklistVals_mainFilingFormat} data-id={formNmeObj.form.Id} variant="label-inline" data-api="Main_Filing_Format__c" value={formNmeObj.form.Main_Filing_Format__c} onchange={handleOnChange}></lightning-combobox>
+                                </div>
+
+                                <div class="slds-form-element ">
+                                    <div class="slds-grid">
+                                    <div class="slds-col slds-size_1-of-3">
+                                        <div id="variants" class="slds-p-vertical_x-small slds-grid slds-grid_vertical-align-center">          
+                                            
+                                        <div class="slds-form-element__label" style="text-align: left; width: 100%; margin-top: 0.25rem;">Filing Due Dates</div>                      
+                                            <lightning-icon icon-name="utility:info" alternative-text="Info!" variant="info" class="slds-col"
+                                            title="MM/DD/YYYY or if multiple: MM/DD/YYYY, MM/DD/YYYY, etc  " size="xx-small"> </lightning-icon>
+
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_2-of-3">
+                                        <lightning-input variant="label-hidden" label="Filing Due Dates" placeholder="MM/DD/YYYY" type="String" data-id={formNmeObj.form.Id} data-api="Filing_Due_Date_s__c" value={formNmeObj.form.Filing_Due_Date_s__c} onchange={handleOnChange}> </lightning-input>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <div class="slds-form-element ">
+                                    <div class="slds-grid">
+                                        <lightning-combobox label="Representation In App" options={picklistVals_repInApp} data-id={formNmeObj.form.Id} variant="label-inline" data-api="Representation_In_App__c" value={formNmeObj.form.Representation_In_App__c} onchange={handleOnChange}></lightning-combobox>
+                                    </div>
+                                </div>
+
+                                <lightning-combobox label="Does the Form Change Annually?" options={picklistVals_doesFormChange} data-id={formNmeObj.form.Id} variant="label-inline" data-api="Does_The_Form_Change_Annually__c" value={formNmeObj.form.Does_The_Form_Change_Annually__c} onchange={handleOnChange}></lightning-combobox>
+                                
+
+                                <div class="slds-form-element ">
+                                    <lightning-combobox label="Can we send Paper?" options={picklistVals_canSendPaper} variant="label-inline" data-id={formNmeObj.form.Id} data-api="Can_We_Send_Paper__c" value={formNmeObj.form.Can_We_Send_Paper__c} onchange={handleOnChange}></lightning-combobox>
+                                </div>
+
+                                <div class="slds-form-element ">
+                                    <lightning-input label="If Paper Filing, Address & Payee" type="String" data-id={formNmeObj.form.Id} variant="label-inline" data-api="If_Paper_Filing_Address_Payee_Info__c" value={formNmeObj.form.If_Paper_Filing_Address_Payee_Info__c} onchange={handleOnChange}> </lightning-input>
+                                </div>
+
+                                
+                            
+                                <!-- lightning-input end -->    
+                            </div>
+                        </div>
+                    </lightning-card>
+                    </form>
+        </template>
+    </template>
+    <!-- form end -->
+
+
+    <lightning-layout horizontal-align="spread" style="padding:5px">
+        <lightning-layout-item size="6" flexibility="auto"  class="slds-text-align_right">
+            <lightning-button class=" slds-m-top_medium" variant="brand" type="submit" label="Submit" onclick={handleFormSubmit}> </lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+
+</lightning-card>
+    </template>
+</div>
+</template>

@@ -55,6 +55,8 @@
         public Boolean help_center_ikb_ready_to_publish;
         public Boolean knowledge_management_readiness;
         public String created_date;
+        public String eng_size_estimate;
+        public String eng_estimate_launch_date;
 
         /**
          * @description Parameterized Constructor for callout request wrapper
@@ -69,7 +71,12 @@
                 this.status = objCase.Status;
                 this.subject = objCase.Subject;
                 this.description = objCase.Description != null ? objCase.Description : '';
-                this.parent_task_id = objCase.Batch_Id__c != null ? objCase.Batch_Id__c : '';
+                if(objCase.ParentId != null){
+                    this.parent_task_id = objCase.Parent.Batch_Id__c != null ? objCase.Parent.Batch_Id__c : '';
+                }
+                else{
+                    this.parent_task_id = objCase.Batch_Id__c != null ? objCase.Batch_Id__c : '';  
+                }
                 this.agency_information = objCase.Agency_Information__r.Name != null ? objCase.Agency_Information__r.Name : '';
                 this.compliance_risk_score = objCase.Compliance_Score__c;
                 this.due_date = strFormatAsanaDate(objCompliance.Agency_Due_Date__c);
@@ -94,6 +101,9 @@
                 this.compliance_team_poc = objCompliance.Compliance_Team_POC__c != null ? objCompliance.Compliance_Team_POC__c : '';
                 this.project_id = projectId; // Assigned Project ID (default) for Asana Project Name - Gusto Compliance Watchlist RoadMap   
             	this.created_date= strFormatAsanaDate(Date.valueOf(objCase.CreatedDate));
+                this.eng_size_estimate = objCompliance.Eng_Size_Estimate__c  != null ? objCompliance.Eng_Size_Estimate__c  : '';
+                this.eng_estimate_launch_date = objCompliance.Eng_Estimated_Launch_Date__c  != null ? strFormatAsanaDate(Date.valueOf(objCompliance.Eng_Estimated_Launch_Date__c )) : '';
+          
             }
         }
     }
@@ -106,6 +116,7 @@
         public String case_id;
         public String compliance_id;
         public String assignee;
+        public String parent_task_id;
         public String status;
         public String subject;
         public String description;
@@ -132,13 +143,15 @@
         public Boolean knowledge_management_readiness;
         public Boolean help_center_ikb_ready_to_publish;
         public String created_date;
+        public String eng_size_estimate;
+        public String eng_estimate_launch_date;
 
         /**
          * @description Parameterized Constructor for callout request wrapper
          * @param       Tax_Compliance__c details to be sent in payload
          **/
         public RequestWrapperUpdate(Tax_Compliance__c objCompliance, Case objCase, String assigneeGid) {
-            if (objCase != null && objCompliance != null && assigneeGid!= null) {
+            if(objCase != null && objCompliance != null && assigneeGid!= null) {
                 this.task_id = objCase.Batch_Id__c;
                 this.case_id = objCase.Id;
                 this.compliance_id = objCompliance.Id; 
@@ -169,6 +182,9 @@
                 this.classification_type = objCompliance.Classification_Type__c != null ? objCompliance.Classification_Type__c : '';
                 this.compliance_team_poc = objCompliance.Compliance_Team_POC__c != null ? objCompliance.Compliance_Team_POC__c : ''; 
             	this.created_date= strFormatAsanaDate(Date.valueOf(objCase.CreatedDate));
+                this.eng_size_estimate = objCompliance.Eng_Size_Estimate__c  != null ? objCompliance.Eng_Size_Estimate__c  : '';
+                this.eng_estimate_launch_date = objCompliance.Eng_Estimated_Launch_Date__c  != null ? strFormatAsanaDate(Date.valueOf(objCompliance.Eng_Estimated_Launch_Date__c )) : '';
+            
             }
         }
     }
@@ -257,7 +273,8 @@
                 Http objHttp = new Http();
                 HTTPResponse objResponse = new HTTPResponse();
                 
-                if (blnIsCaseInsert) {
+                if(blnIsCaseInsert) {
+                    system.debug('***************insert 3');
                     RequestWrapperInsert objRequestContent = new RequestWrapperInsert(objCompliance, objCase, strProjectId, strAssigneeGid);
                     objRequest.setEndpoint('callout:Tax_Compliance_Routing_Mulesoft2Asana');
                     objRequest.setMethod('POST');
@@ -284,6 +301,7 @@
                     }
                     
                     } else {
+                        system.debug('***************update 3');
                     RequestWrapperUpdate objRequestContent = new RequestWrapperUpdate(objCompliance, objCase, strAssigneeGid);
                     objRequest.setEndpoint(String.format('callout:Tax_Compliance_Routing_Mulesoft2Asana/{0}',new String[]{objCase.Batch_Id__c}));
                     objRequest.setMethod('PATCH');

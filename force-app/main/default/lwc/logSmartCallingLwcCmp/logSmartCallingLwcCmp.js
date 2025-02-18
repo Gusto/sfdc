@@ -59,10 +59,12 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 		strHIOpportunityStage: util.OPP_STAGE.RAW,
 		strArdiusOpportunityStage: util.ARDIUS_OPP_STAGE.GP,
 		strHIOpportunityCloseDate: "",
+		strAcquisitionOpportunityCloseDate: "",
 		strArdiusOpportunityCloseDate: "",
 		strHIOpportunityState: "",
 		strHIOpportunityEmployees: "",
 		strHIOpportunityNotes: "",
+		strAcquisitionType: "",
 		blnHIOpportunityLiveTransfer: false,
 		strWhoId: "",
 		strWhatId: "",
@@ -214,7 +216,12 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 		return util.list_HIOptyTypeOptions;
 	}
 
+	get list_AcquisitionOptyTypeOptions() {
+		return util.list_AcquisitionOptyTypeOptions;
+	}
+
 	get list_FeatureRequestTypeOptions() {
+		console.log("FRT===>", util.list_FeatureRequestTypeOptions);
 		return util.list_FeatureRequestTypeOptions;
 	}
 	get blnIsCXUser() {
@@ -376,6 +383,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 
 				if (result?.strMetadataProperties) {
 					let strHIOpportunityCloseDate = "";
+					let strAcquisitionOpportunityCloseDate = "";
 					let strArdiusOpportunityCloseDate = "";
 					this.blnAllowArdiusOpty = result.disableArdiusOpp;
 					this.list_AccountContacts = JSON.parse(JSON.stringify(result?.list_AccountContacts));
@@ -402,6 +410,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 
 					if (this.blnIsAccount || this.blnIsOpportunity) {
 						strHIOpportunityCloseDate = this.getLastDateofMonth();
+						strAcquisitionOpportunityCloseDate = this.getDateAfter30Days();
 						strArdiusOpportunityCloseDate = this.getLastDateofMonth();
 						this.objParameters.strWhatId = this.recordId;
 						this.selSObjectName = this.objectApiName;
@@ -418,6 +427,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 					}
 
 					this.objParameters.strHIOpportunityCloseDate = strHIOpportunityCloseDate;
+					this.objParameters.strAcquisitionOpportunityCloseDate = strAcquisitionOpportunityCloseDate;
 					this.objParameters.strArdiusOpportunityCloseDate = strArdiusOpportunityCloseDate;
 				} else {
 					console.error(util.ERROR_MSGS.NO_ALL_SMART_CALLING_METADATA);
@@ -443,7 +453,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 		this.objAllSmartCalling?.Payroll_Opp_Stages__c?.split(",")?.forEach((strStage) => {
 			list_PayrollOptyStages.push(util.PicklistOption.setLabelAndValue(strStage));
 		});
-		this.list_PayrollOptyStages = list_PayrollOptyStages;
+		this.list_PayrollOptyStages = list_PayrollOptyStages; 
 
 		//HI opportunity
 		const list_HIOptyStageOptions = [];
@@ -949,6 +959,10 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 		this.objParameters.strHIOpportunityType = event.detail.value;
 	}
 
+	handleAcquisitionOptyTypeChange(event) {
+		this.objParameters.strAcquisitionType = event.detail.value;
+	}
+
 	handleHIOptyStageChange(event) {
 		this.objParameters.strHIOpportunityStage = event.detail.value;
 	}
@@ -1018,7 +1032,6 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 					let list_LeadPassOptionsAdditional = [];
 					list_SelectedProductInterestCountries.forEach((country) => {
 						let countryLabel = this.map_AllCountries[country];
-						//list_LeadPassOptions.push(util.PicklistOption.setLabelAndValue(countryLabel));
 						list_LeadPassOptions.push(new util.PicklistOption(countryLabel, country));
 						if (!this.list_CountriesSentToRemoteToDisplay.includes(countryLabel) && !this.supportedCountries.includes(country)) {
 							list_LeadPassOptionsSelected.push(country);
@@ -1032,7 +1045,6 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 					list_ProductInterestCountryOptions.forEach((country) => {
 						let countryLabel = this.map_AllCountries[country];
 						if (!list_SelectedProductInterestCountries.includes(country) && !this.list_LeadPassOptionsSelected.includes(country) && !this.supportedCountries.includes(country)) {
-							//list_LeadPassOptionsAdditional.push(util.PicklistOption.setLabelAndValue(countryLabel));
 							list_LeadPassOptionsAdditional.push(new util.PicklistOption(countryLabel, country));
 						}
 					});
@@ -1175,7 +1187,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 				this.objAllSmartCalling?.Secondary_POC_Exclude_Roles__c?.split(",")?.forEach((role) => list_SecPOCExcludeRoles.push(role));
 				if((this.blnIsOpportunity || this.blnIsAccount) && this.objAllSmartCalling?.Show_Secondary_POC__c && !list_SecPOCExcludeRoles?.includes(this.userRoleName) && this.list_AccountContacts.length > 1){
 					this.blnShowSecondaryContact = true;
-			}
+				}
 			}
 
 		}
@@ -1219,6 +1231,10 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 
 	handleHIOptyCloseDateChange(event) {
 		this.objParameters.strHIOpportunityCloseDate = event.detail.value;
+	}
+
+	handleAcquisitionCloseDateChange(event) {
+		this.objParameters.strAcquisitionOpportunityCloseDate = event.detail.value;
 	}
 
 	handleHIOptyEmployeesChange(event) {
@@ -1532,6 +1548,16 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 		const intLastDate = dtLastDay.getDate();
 		return `${dtLastDay.getFullYear()}-${intNextMonth <= 9 ? "0" + intNextMonth : intNextMonth}-${intLastDate <= 9 ? "0" + intLastDate : intLastDate}`;
 	}
+
+	getDateAfter30Days() {
+		const dtToday = new Date();
+		const dtFuture = new Date();
+		dtFuture.setDate(dtToday.getDate() + 30);
+		const intMonth = dtFuture.getMonth() + 1;
+		const intDate = dtFuture.getDate();
+		return `${dtFuture.getFullYear()}-${intMonth <= 9 ? "0" + intMonth : intMonth}-${intDate <= 9 ? "0" + intDate : intDate}`;
+	}
+	
 
 	handleSelectOptionChange(event) {
 		const { selOption, sObjectName } = event.detail;

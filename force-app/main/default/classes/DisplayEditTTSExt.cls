@@ -342,6 +342,7 @@ public class DisplayEditTTSExt {
 
 		//BY:PR, Date:OCT-7-2020, Desc: introduce null check via if condition
 		String strSOQLQAL = '';
+        system.debug('strQAObjId==> '+strQAObjId);
 		if (String.isNotBlank(strQAObjId)) {
 			strSOQLQAL =
 				'select ' +
@@ -588,11 +589,14 @@ public class DisplayEditTTSExt {
 			//for updating child carrier order
 
 			Set<id> set_SelectedCOIds = new Set<id>();
+            system.debug('QALinesOfCoverage==> '+QALinesOfCoverage);
 			for (QA_Lines_Of_Coverage__c loc : QALinesOfCoverage) {
 				if (loc.Request_for_Submission__c == true) {
 					set_SelectedCOIds.add(loc.Carrier_Order__c);
 				}
 			}
+            system.debug('set_SelectedCOIds=> '+set_SelectedCOIds);
+            system.debug('CurrentRecId==> '+CurrentRecId);
 			List<Carrier_Order__c> list_CarrierOrders = [
 				SELECT
 					Id,
@@ -624,6 +628,7 @@ public class DisplayEditTTSExt {
 				FROM Carrier_Order__c
 				WHERE Benefit_Order__c != NULL AND Benefit_Order__c = :CurrentRecId AND Id IN :set_SelectedCOIds
 			];
+            system.debug('list_CarrierOrders==> '+list_CarrierOrders);
 			List<Carrier_Order__c> list_ChildSelectedCarrierOrder = [
 				SELECT Id, name, Order_Type__c, Implementation_Stage__c, Stage_Detail__c, Parent_Carrier_Order__c, Is_Multi_EIN__c, OwnerId, Is_Order_Eligible_For_Sub_Automation__c, Carrier__c
 				FROM Carrier_Order__c
@@ -642,12 +647,14 @@ public class DisplayEditTTSExt {
 					set_COIds.add(objChildCO.Id);
 				}
 			}
+            system.debug('set_COIds==> '+set_COIds);
 			map_COIdWithSelectedPolicy = HIGroupEventTTSNotePostOEEmail.getSelectedPolicy(set_COIds);
 
 			for (Carrier_Order__c objCO : list_CarrierOrders) {
 				//DS[30-09-2020]: Status should not be changed if the Implementation stage is Ready for confirmation,
 				//pending confirmaiton, submission prep, approved or approved pending ee audit
 				if (!set_ExcluededImplementationStage.isEmpty() && !set_ExcluededImplementationStage.contains(objCO.Implementation_Stage__c)) {
+                    system.debug('map_COIdWithSelectedPolicy==> '+map_COIdWithSelectedPolicy);
 					if ((objCO.Carrier__c != null && objCO.Carrier__c == Label.BASIC_Carrier) || map_COIdWithSelectedPolicy.containsKey(objCO.Id)) {
 						objCO.Implementation_Stage__c = CarrierOrderUtil.CO_STATUS_READY_FOR_SUBMISSION_PREP; // ignore tada pre oe setup- carrier order type
 						objCO.Is_Order_Eligible_For_Sub_Automation__c = true;

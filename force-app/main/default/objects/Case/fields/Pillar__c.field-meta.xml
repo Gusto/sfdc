@@ -6,7 +6,7 @@
     <formula>IF( 
     ISPICKVAL(Persona__c, &apos;Accountant&apos;) , 
     &apos;Care Accountants&apos;, 
-     IF(  
+    IF(  
         AND(
                 ISPICKVAL(Persona__c, &apos;Admin&apos;), 
                 ISPICKVAL(Company_Size__c, &apos;Grower 50&apos;)

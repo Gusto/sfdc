@@ -16,7 +16,7 @@ public with sharing class LogSmartCallingUtil {
 	public static final Id CALL_TASK_RT_ID = Cache.getRecordTypeId('Task', 'Call');
 
 	public static final Id COMPANY_OPPTY_RT_ID = Cache.getRecordTypeId(SOBJECT_API_NAME_OPPORTUNITY, 'Company Opportunity');
-	public static final Id UPSELL_OPPTY_RT_ID = Cache.getRecordTypeId(SOBJECT_API_NAME_OPPORTUNITY, 'Tier Upsell Opportunity');
+	public static final Id UPSELL_OPPTY_RT_ID = OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID;
 
 	public final static Id BENEFITS_NEW_PLAN_OPPTY_RT_ID = Cache.getRecordTypeId(SOBJECT_API_NAME_OPPORTUNITY, 'Benefits New Plan');
 	public final static Id BENEFITS_BOR_OPPTY_RT_ID = Cache.getRecordTypeId(SOBJECT_API_NAME_OPPORTUNITY, 'Benefits BoR');
@@ -155,7 +155,7 @@ public with sharing class LogSmartCallingUtil {
 	public static final String RETRY_STATE = 'Retry';
 	public static final String ERROR_STATE = 'Error';
 	public static final String INTERNATIONAL_PAYROLL = 'International Payroll';
-	public static final String CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS = 'Cross Sell Opportunity for International Contractor Payment Already exists in Closed Won Status.';
+	public static final String CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS = 'An ICP Opportunity cannot be created because this Account already has an existing ICP Opportunity.';
 	public static final String UPSELL_OPPORTUNITY_FOR_EMPLOYER_ALREADY_EXISTS = 'UpSell Opportunity for Employer of record Already exists in Closed Won Status.';
 	public static final String BENEFITS_OPPORTUNITY_CONTACT_ROLE = 'Benefits Admin';
 

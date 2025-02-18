@@ -2,8 +2,8 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Fake_Record__c</fullName>
     <defaultValue>false</defaultValue>
-    <description>This field is set by Mulesoft on Company creation by calling OpenAI&apos;s endpoint to check legitimacy of the company name. If the company name is valid and data is found on the internet - the field will be false. If no information is found and company name is invalid - the field will be set to true on creation and won&apos;t be processed in Salesforce (Processing state will be updated to Dead)</description>
-    <inlineHelpText>This field is set by Mulesoft on Company creation by calling OpenAI&apos;s endpoint to check legitimacy of the company name. If the company name is valid and data is found on the internet - the field will be false. If no information is found and company name is invalid - the field will be set to true on creation and won&apos;t be processed in Salesforce (Processing state will be updated to Dead)</inlineHelpText>
+    <description>This field is set by Mulesoft on Company creation by calling OpenAI&apos;s endpoint to check legitimacy of the company name and their email address. If the company name and email are valid - the field will be false. If no information is found and company name is invalid - the field will be set to true on creation and won&apos;t be processed in Salesforce (Processing state will be updated to Dead)</description>
+    <inlineHelpText>This field is set by Mulesoft on Company creation by calling OpenAI&apos;s endpoint to check legitimacy of the company name and their email address. If the company name and email are valid - the field will be false. If no information is found and company name is invalid - the field will be set to true on creation and won&apos;t be processed in Salesforce (Processing state will be updated to Dead)</inlineHelpText>
     <label>Fake Record</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

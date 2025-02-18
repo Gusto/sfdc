@@ -50,6 +50,7 @@ public without sharing class OpportunityUtil {
 	public static final String VERIFYINGELIGIBILITY_BENEFITSCURRENTSTEP = 'Verifying Eligibility';
 	public static final String LEVEL_FUNDED_TYPE = 'Level funded';
 	public static final String LEVEL_FUNDED_BOR = 'Level-funded BOR';
+	public static final String FULLY_FUNDED_TYPE = 'Fully funded';
 	public static final String FULLY_INSURED_TYPE = 'Fully Insured';
 
 	public final static Integer DEFAULT_CLOSEDAYS = 30;
@@ -96,6 +97,7 @@ public without sharing class OpportunityUtil {
 	public final static String PRIORITY_SUPPORT_CONTRACTOR = Tier_Config__c.getOrgDefaults() != null
 		? Tier_Config__c.getOrgDefaults().Priority_Support_Contractor_Line_Item__c
 		: 'Priority Support and HR Services - Contractor';
+	public final static String BENEFITS_DEFAULT_PROD = Label.Benefits_Default_Prod;
 
 	// Product Types
 	public final static String PRODUCT_TYPE_MONTHLY = 'Monthly';
@@ -106,31 +108,30 @@ public without sharing class OpportunityUtil {
 
 	// Product Category
 	public final static String PRODUCT_CATEGORY_PAYROLL = 'Payroll';
+	public final static String TIER_UPSELL_OPPORTUNITY_RT_NAME = 'Tier_Upsell_Opportunity';
 
 	// RecordTypes
 	public final static Id COMPANY_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
-	public final static Id TIER_UPSELL_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Tier Upsell Opportunity');
+	public final static Id TIER_UPSELL_OPPTY_RT_ID = Cache.getRecordTypeIdFromDeveloperName('Opportunity', TIER_UPSELL_OPPORTUNITY_RT_NAME);
 	public final static Id BENEFITS_NEW_PLAN_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits New Plan');
 	public final static Id BENEFITS_BOR_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits BoR');
 	public final static Id BENEFITS_CHANGE_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits Change');
 	public final static Id BENEFITS_RENEWAL_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits Renewal');
-	public final static Id BENEFITS_QSEHRA_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits QSEHRA');
 	public final static Id BIZDEV_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'BizDev Opportunity');
 	public final static Id CUSTOMER_SUCCESS_RT_ID = Cache.getRecordTypeId('Opportunity', 'Customer Success');
 	public final static Id BENEFITS_BYOB_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Benefits BYOB');
 	public final static Id R_D_TAX_CREDITS_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Tax Credits');
 	public final static Id EMBEDDED_COMPANY_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Embedded Company Opportunity');
 	public final static Id GROWTH_EXPANSION_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Growth/Expansion');
+	public final static Id ACQUISITION_OPPTY_RT_ID = Cache.getRecordTypeId('Opportunity', 'Acquisition');
 	public final static Set<Id> set_BenefitRTChangeEmployees = new Set<Id>{ BENEFITS_NEW_PLAN_OPPTY_RT_ID, BENEFITS_BOR_OPPTY_RT_ID, BENEFITS_BYOB_OPPTY_RT_ID };
 	public final static Set<Id> set_BenefitRTUpdateStage = new Set<Id>{ BENEFITS_NEW_PLAN_OPPTY_RT_ID, BENEFITS_RENEWAL_OPPTY_RT_ID, BENEFITS_CHANGE_OPPTY_RT_ID };
 	public final static Set<Id> set_ArdiusRecordTypeIds = new Set<Id>{ R_D_TAX_CREDITS_OPPTY_RT_ID };
 	public final static Set<Id> set_ArdiusExtendedRecordTypeIds = new Set<Id>{
-		R_D_TAX_CREDITS_OPPTY_RT_ID,
-		Cache.getRecordTypeId('Opportunity', 'Ardius Sales'),
-		Cache.getRecordTypeId('Opportunity', 'Ardius Marketing')
+		R_D_TAX_CREDITS_OPPTY_RT_ID
 	};
-	public final static Set<Id> set_NewPlanRenewalBenefitRT = new Set<Id>{ BENEFITS_NEW_PLAN_OPPTY_RT_ID, BENEFITS_RENEWAL_OPPTY_RT_ID };
 
+	public final static Set<Id> set_NewPlanRenewalBenefitRT = new Set<Id>{ BENEFITS_NEW_PLAN_OPPTY_RT_ID, BENEFITS_RENEWAL_OPPTY_RT_ID };
 	// To Be Moved
 	public final static String HIPPO_ORIGIN = 'Hippo';
 	public final static Id BENEFITS_CHANGE_CASE_RT_ID = Cache.getRecordTypeId('Case', 'Benefits Change Case');
@@ -181,7 +182,7 @@ public without sharing class OpportunityUtil {
 
 	public static final String INTERNATIONAL_CONTRACTOR_PAYMENT = 'International Contractor Payment';
 	// Dedicated CSM and Core CSM Role Ids
-	public static final Set<Id> CSM_ROLE_IDS = new Set<Id> {'00E8Y000001nusnUAA', '00E8Y000001nussUAA'};
+	public static final Set<Id> CSM_ROLE_IDS = new Set<Id>{ '00E8Y000001nusnUAA', '00E8Y000001nussUAA' };
 
 	//Opportunity Split Type
 	public final static String SPLIT_TYPE_REVENUE = 'Revenue';
@@ -195,10 +196,14 @@ public without sharing class OpportunityUtil {
 	public final static String INTERNATIONAL_PAYROLL_AND_TIER_UPSELL = 'Employer of Record and Tier Upsell';
 	public static final String ACCOUNT_TIER_PREMIUM = 'Premium';
 	public final static String UPSELL_TIER_INTERNATIONNAL_PAYROLL = 'Employer of Record';
+	public final static String TYPE_UPSELL_CROSS_SELL = 'Upsell/Cross-Sell';
 
 	//Pricebook types
 	public final static String PRICE_BOOK_RD_PREMIUM = 'R&D Tax Credits - Gusto Premium Order Form';
 	public final static String PRICE_BOOK_RD_STANDARD = 'R&D Tax Credits - Gusto Standard';
+
+	// Opportunity types
+	public final static String OPPTY_TYPE_NEW_BUSINESS = 'New Business';
 
 	public static Boolean blnIsLoggedInUserWorkatoIntUser() {
 		return (strLoggedInUserLoginName.startsWith(strWorkatoIntegrationUserName));
@@ -252,7 +257,10 @@ public without sharing class OpportunityUtil {
 		OpportunityUtil.BENEFITS_RENEWAL_OPPTY_RT_ID => new List<String>{ 'Direct Renewal', '', 'Benefits Renewal' },
 		OpportunityUtil.BIZDEV_OPPTY_RT_ID => new List<String>{ 'Business Development', '', 'BizDev' },
 		OpportunityUtil.CUSTOMER_SUCCESS_RT_ID => new List<String>{ 'Customer Success', '', 'Customer Success' },
-		OpportunityUtil.BENEFITS_BYOB_OPPTY_RT_ID => new List<String>{ 'Direct BYB', '', 'Benefits BYB' }
+		OpportunityUtil.BENEFITS_BYOB_OPPTY_RT_ID => new List<String>{ 'Direct BYB', '', 'Benefits BYB' },
+		OpportunityUtil.BENEFITS_CHANGE_OPPTY_RT_ID => new List<String>{ 'Benefits Change', '', 'Benefits Change' },
+		OpportunityUtil.BIZDEV_OPPTY_RT_ID => new List<String>{ 'BizDev Opportunity', '', 'BizDev Opportunity' },
+		OpportunityUtil.EMBEDDED_COMPANY_OPPTY_RT_ID => new List<String>{ 'Embedded Company', '', 'Embedded Company' }
 	};
 
 	public final static Map<String, String> map_StageSandlerMapping = new Map<String, String>{
@@ -279,7 +287,7 @@ public without sharing class OpportunityUtil {
 	public static final String STATE_CALIFORNIA = 'California';
 	private static Map<Integer, Advising_Email_Automation_Follow_Up__mdt> map_AdvisingEmailAutomationFollowUp;
 	public static final String CANCELLED_STAGE = 'Cancelled';
-	public static Set<String> set_OppCloseStageName = new Set<String>{ CLOSED_LOST_STAGE, CANCELLED_STAGE, CLOSED_ADMIN_STAGE};
+	public static Set<String> set_OppCloseStageName = new Set<String>{ CLOSED_LOST_STAGE, CANCELLED_STAGE, CLOSED_ADMIN_STAGE };
 
 	//BY PR, businessHour object
 	public static final BusinessHours objDefaultBuinessHourRec = GlobalQueryHelper.getDefaultBusinessHour();
@@ -313,7 +321,6 @@ public without sharing class OpportunityUtil {
 		list_RegionSettings = [SELECT Id, Calendly_Link__c, Region_Name__c, States__c FROM Region_Setting__mdt];
 	}
 
-
 	private static void fetchAdvisingEmailAutomationFollowUp() {
 		map_AdvisingEmailAutomationFollowUp = new Map<Integer, Advising_Email_Automation_Follow_Up__mdt>();
 		for (Advising_Email_Automation_Follow_Up__mdt ae : [SELECT Id, MasterLabel, DeveloperName, First_Follow_Up__c, Second_Follow_Up__c FROM Advising_Email_Automation_Follow_Up__mdt]) {
@@ -329,7 +336,7 @@ public without sharing class OpportunityUtil {
 			SELECT
 				Id,
 				Name,
-				(SELECT Id, UnitPrice, Product2.Name, Product2.Product_Type__c, toLabel(Product2.Product_Category__c), Product2.Discounts_Available__c FROM PriceBookEntries WHERE UnitPrice > 0)
+				(SELECT Id, UnitPrice, Product2.Name, Product2.Product_Type__c, toLabel(Product2.Product_Category__c), Product2.Discounts_Available__c,Base_Price__c FROM PriceBookEntries WHERE UnitPrice > 0)
 			FROM PriceBook2
 			WHERE IsActive = TRUE
 		]) {
@@ -417,7 +424,7 @@ public without sharing class OpportunityUtil {
 			objOppty.RecordTypeId == COMPANY_OPPTY_RT_ID ||
 			objOppty.RecordTypeId == BENEFITS_NEW_PLAN_OPPTY_RT_ID ||
 			objOppty.RecordTypeId == BENEFITS_BOR_OPPTY_RT_ID ||
-			objOppty.RecordTypeId == BENEFITS_QSEHRA_OPPTY_RT_ID
+			objOppty.RecordTypeId == ACQUISITION_OPPTY_RT_ID
 		) {
 			return true;
 		}

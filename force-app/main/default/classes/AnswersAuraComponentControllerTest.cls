@@ -7,6 +7,7 @@ public class AnswersAuraComponentControllerTest {
 		Case objCase = TestDataFactory.createCaseRecord('Payroll Care', false);
 		// Set Owner Id to Logged In User Id
 		objCase.OwnerId = UserInfo.getUserId();
+		objCase.Prior_Agent__c = UserInfo.getUserId();
 		// Insert new payroll care case with owner id as logged in user Id
 		insert objCase;
 		Test.startTest();

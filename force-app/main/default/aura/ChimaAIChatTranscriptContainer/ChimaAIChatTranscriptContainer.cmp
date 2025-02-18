@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	<lightning:workspaceAPI aura:id="workspace" />
+    
+    <c:chimaAIChatTranscript recordId="{!v.recordId}" ontabdisable="{!c.currentDisableTab}"></c:chimaAIChatTranscript>
+</aura:component>

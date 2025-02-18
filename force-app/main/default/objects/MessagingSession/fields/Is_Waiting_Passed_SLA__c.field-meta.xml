@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Waiting_Passed_SLA__c</fullName>
+    <formula>AND(
+ISPICKVAL( Status , &quot;Waiting&quot;),
+(NOW() - CreatedDate) * 24 * 60 &gt; 1
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Is Waiting Passed SLA</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -3,6 +3,6 @@
     <fullName>DueDate_EngDueDate_Mandatory</fullName>
     <active>true</active>
     <description>DueDate_EngDueDate_Mandatory when classification type is selected as compliance Requirment</description>
-    <errorConditionFormula>AND(NOT( $User.Exempt_from_Validation_Rules__c),ISNEW()=false, INCLUDES(Classification_Type__c,&quot;Compliance Requirement&quot;) ,OR(ISBLANK( Agency_Due_Date__c ), ISBLANK( Eng_Due_Date__c )))</errorConditionFormula>
+    <errorConditionFormula>AND(NOT( $User.Exempt_from_Validation_Rules__c),ISNEW()=false, INCLUDES(Classification_Type__c,&quot;Compliance Requirement&quot;)  ,OR(ISBLANK(  Agency_Due_Date__c ), ISBLANK( Eng_Due_Date__c )))</errorConditionFormula>
     <errorMessage>Please enter Due Date and Eng Due Date</errorMessage>
 </ValidationRule>

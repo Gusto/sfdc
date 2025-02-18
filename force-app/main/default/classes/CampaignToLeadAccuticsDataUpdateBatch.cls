@@ -13,7 +13,7 @@ public without sharing class CampaignToLeadAccuticsDataUpdateBatch implements Da
         // Convert the list of fields into a comma-separated string, properly formatted for SOQL
         String strQuery = 'SELECT Id, ' + String.join(list_campaignFields, ', ') +
             ' FROM Campaign' +
-            ' WHERE Accutics_UpdateStatus__c = \'tobeprocessed\' AND LastModifiedDate = LAST_N_DAYS:7';
+            ' WHERE Accutics_UpdateStatus__c = \'tobeprocessed\' AND LastModifiedDate = LAST_N_DAYS:7 limit 100';
         
         // Execute the query and return the result
         return Database.getQueryLocator(strQuery);
@@ -59,19 +59,17 @@ public without sharing class CampaignToLeadAccuticsDataUpdateBatch implements Da
                 
                 // Iterate over the Campaign list and update corresponding Lead fields
                 for (Campaign objCampaign : list_Campaign) {
-                    if (map_accuticsIdToLeads != null && map_accuticsIdToLeads.containsKey(objCampaign.Accutics_ID__c)) {
-                        for (Lead objLeadToUpdate : map_accuticsIdToLeads.get(objCampaign.Accutics_ID__c)) {
-                            boolean blnEligibleForUpdate = false;
-                            for (String strCampaignField : map_CampaignToLeads.keySet()) {
-                                String strLeadField = map_CampaignToLeads.get(strCampaignField);
-                                if (objCampaign.get(strCampaignField) != objLeadToUpdate.get(strLeadField)) {
-                                    objLeadToUpdate.put(strLeadField, objCampaign.get(strCampaignField));
-                                    blnEligibleForUpdate = true;
-                                }
+                    for (Lead objLeadToUpdate : map_accuticsIdToLeads.get(objCampaign.Accutics_ID__c)) {
+                        boolean blnEligibleForUpdate = false;
+                        for (String strCampaignField : map_CampaignToLeads.keySet()) {
+                            String strLeadField = map_CampaignToLeads.get(strCampaignField);
+                            if (objCampaign.get(strCampaignField) != objLeadToUpdate.get(strLeadField)) {
+                                objLeadToUpdate.put(strLeadField, objCampaign.get(strCampaignField));
+                                blnEligibleForUpdate = true;
                             }
-                            if (blnEligibleForUpdate){
-                                list_leadsToUpdate.add(objLeadToUpdate);
-                            }
+                        }
+                        if (blnEligibleForUpdate){
+                            list_leadsToUpdate.add(objLeadToUpdate);
                         }
                     }
                 }

@@ -949,7 +949,7 @@ public without sharing class GFLeadTriggerHelper {
 				Payroll_Relationship__c,
 				No_of_Clients_Bucket__c,
 				No_of_Clients__c,
-            	No_Clients_Payroll__c,
+				No_Clients_Payroll__c,
 				HI_Signup__c,
 				Visitor_Id__c,
 				Session_Id__c,
@@ -1049,7 +1049,7 @@ public without sharing class GFLeadTriggerHelper {
 				Payroll_Relationship__c,
 				No_of_Clients_Bucket__c,
 				No_of_Clients__c,
-            	No_Clients_Payroll__c,
+				No_Clients_Payroll__c,
 				HI_Signup__c,
 				Visitor_Id__c,
 				Session_Id__c,
@@ -1107,7 +1107,7 @@ public without sharing class GFLeadTriggerHelper {
 				(
 					SELECT Id, StageName, CreatedDate, Account.Last_Activity_Date__c, Order__r.Status, Isclosed, Order__c, Stage_Detail__c, IsWon, ContactId
 					FROM Opportunities
-					WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+					WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID OR RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID
 				),
 				(SELECT Id, Owner_Role_Formula__c, Status, Type, ActivityDate FROM Tasks WHERE Owner_Role_Formula__c LIKE 'sales%' AND ActivityDate >= LAST_N_DAYS:60 ORDER BY ActivityDate DESC),
 				(SELECT Id, Type__c FROM ZP_user_roles__r WHERE Type__c NOT IN ('Role::Employee', 'Role::Contractor') LIMIT 1)
@@ -1135,7 +1135,7 @@ public without sharing class GFLeadTriggerHelper {
 				(
 					SELECT Id, StageName, CreatedDate, Account.Last_Activity_Date__c, Order__r.Status, isclosed, Order__c, Stage_Detail__c
 					FROM Opportunities
-					WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID AND Account.RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID
+					WHERE (RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID OR RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID) AND Account.RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID
 				)
 			FROM Account
 			WHERE

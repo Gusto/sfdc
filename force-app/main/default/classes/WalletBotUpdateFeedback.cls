@@ -5,6 +5,10 @@
  * @see          WalletBotUpdateFeedbackTest
  **/
 public without sharing class WalletBotUpdateFeedback {
+
+	// Static variable to store test messaging session
+	public static MessagingSession objTestMessagingSession;
+
 	/**
 	 * @Author:			Praveen Sethu
 	 * @Description:	Used by wallet chat bot to store feedback (reaction & responses) on transcript
@@ -13,10 +17,16 @@ public without sharing class WalletBotUpdateFeedback {
 	@InvocableMethod(label='Update Wallet Bot Feedback')
 	public static List<FeedbackOutput> updateFeedback(List<FeedbackInput> list_FeedbackInput) {
 		try {
+			// Validate input list
+			if (list_FeedbackInput.isEmpty() || String.isBlank(list_FeedbackInput[0].strChatKey)) {
+				return new List<FeedbackOutput>{ new FeedbackOutput('Invalid input or missing ChatKey', false) };
+			}
+			
 			FeedbackInput objInput = list_FeedbackInput.get(0);
+			List<LiveChatTranscript> list_ChatTranscripts = [SELECT Id FROM LiveChatTranscript WHERE ChatKey = :objInput.strChatKey];
 
-			if (objInput != null && String.isNotBlank(objInput.strChatKey)) {
-				LiveChatTranscript objTranscript = Test.isRunningTest() ? new LiveChatTranscript() : [SELECT Id FROM LiveChatTranscript WHERE ChatKey = :objInput.strChatKey];
+			if (!list_ChatTranscripts.isEmpty()) {
+				LiveChatTranscript objTranscript = list_ChatTranscripts[0];
 
 				if (String.isNotBlank(objInput.strReaction)) {
 					objTranscript.Wallet_Bot_Feedback_Reaction__c = objInput.strReaction;
@@ -31,6 +41,37 @@ public without sharing class WalletBotUpdateFeedback {
 				}
 
 				update objTranscript;
+                
+                return new List<FeedbackOutput>{ new FeedbackOutput('success', true) };
+			} else {
+				List<MessagingSession> list_MessagingSessions = new List<MessagingSession>();
+				if (!Test.isRunningTest()) {
+					list_MessagingSessions = [SELECT Id FROM MessagingSession WHERE SessionKey = :objInput.strChatKey];
+				} else {
+					list_MessagingSessions = new List<MessagingSession>{ objTestMessagingSession };
+				}
+
+				if (!list_MessagingSessions.isEmpty()) {
+					MessagingSession objMessagingSession = list_MessagingSessions[0];
+
+					if (String.isNotBlank(objInput.strReaction)) {
+						objMessagingSession.Wallet_Bot_Feedback_Reaction__c = objInput.strReaction;
+					}
+
+					if (String.isNotBlank(objInput.strFreeFormResponse)) {
+						objMessagingSession.Wallet_Bot_Feedback_Text__c = objInput.strFreeFormResponse;
+					}
+
+					if (String.isNotBlank(objInput.strQuestionAnswered)) {
+						objMessagingSession.Wallet_Bot_Question_Answered__c = objInput.strQuestionAnswered;
+					}
+
+					if (!Test.isRunningTest()) {
+						update objMessagingSession;
+					}
+                    
+                    return new List<FeedbackOutput>{ new FeedbackOutput('success', true) };
+				}
 			}
 		} catch (Exception objException) {
 			ExceptionLogUtil.logException('WalletBotUpdateFeedback', 'beforeInsert', null, objException);

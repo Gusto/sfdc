@@ -95,7 +95,7 @@ public with sharing class CalculateResellerMetricsBatch implements Database.Batc
 		// Build a map of sold by and child opportunties
 		// Build a map of referred by and child opportunities
 		for (Opportunity objOppty : [
-			SELECT Id, IsClosed, StageName, CreatedDate, RecordTypeId, Amount, Sold_by__c, Referred_by__c
+			SELECT Id, IsClosed, StageName, CreatedDate, RecordTypeId, Amount, Sold_by__c, Referred_by__c, Type
 			FROM Opportunity
 			WHERE Sold_By__c IN :set_AccountIds OR Referred_By__c IN :set_AccountIds
 			ORDER BY CreatedDate ASC
@@ -157,7 +157,11 @@ public with sharing class CalculateResellerMetricsBatch implements Database.Batc
 							}
 
 							// Company Opportunity
-							if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+							if (
+								objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+								(objOpp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+								objOpp.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)
+							) {
 								// closed this fiscal quarter
 								if (OpportunityUtil.isCurrentFQ(objOpp.CreatedDate.date())) {
 									intAddsCurrentFQ++;
@@ -176,7 +180,11 @@ public with sharing class CalculateResellerMetricsBatch implements Database.Batc
 					} else {
 						intRefOpen++;
 						// Company Opportunity
-						if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+						if (
+							objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+							(objOpp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+							objOpp.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)
+						) {
 							decRefAmount += objOpp.Amount != null ? objOpp.Amount : 0;
 						}
 					}
@@ -204,7 +212,11 @@ public with sharing class CalculateResellerMetricsBatch implements Database.Batc
 							}
 
 							// Company Opportunity
-							if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+							if (
+								objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+								(objOpp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+								objOpp.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)
+							) {
 								// closed this fiscal quarter
 								if (OpportunityUtil.isCurrentFQ(objOpp.CreatedDate.date())) {
 									intAddsCurrentFQ++;
@@ -223,7 +235,11 @@ public with sharing class CalculateResellerMetricsBatch implements Database.Batc
 					} else {
 						intSoldOpen++;
 						// Company Opportunity
-						if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+						if (
+							objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+							(objOpp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+							objOpp.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)
+						) {
 							decSoldAmount += objOpp.Amount != null ? objOpp.Amount : 0;
 						}
 					}

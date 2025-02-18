@@ -20,6 +20,7 @@ public with sharing class ArdiusIntegrationHelperTest {
 		Ardius_Configuration__c objArdiusConfig = new TestDataFactory.ArdiusConfigurationBuilder()
 			.setActivateTicketIntegration(true)
 			.setIntegrationInDebugMode(true)
+			.setBypassOLIFlow(false)
 			.build();
 		insert objArdiusConfig;
 

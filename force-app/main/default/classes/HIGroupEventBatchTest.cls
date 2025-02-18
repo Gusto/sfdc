@@ -294,7 +294,7 @@ private class HIGroupEventBatchTest {
         '{"event_id":11001,"company_id":72239,"application_id":11001,"application_type":"New Plan","email_body":"test email body","event_type":"OA_intro_email"}'
       )
       .build();
-    objHIGroupEvent2.Processed_At__c = System.now().addDays(-30);
+    objHIGroupEvent2.Processed_At__c = System.now().addDays(-90);
     insert objHIGroupEvent2;
 
     HIGroupEvent__c objHIGroupEvent3 = new TestDataFactory.HIGroupEventBuilder()
@@ -405,7 +405,7 @@ private class HIGroupEventBatchTest {
     for (HIGroupEvent__c objHIGroupsEvents : list_QueriedEvent) {
       if (
         objHIGroupsEvents.Processing_State__c == 'Dead' &&
-        objHIGroupsEvents.Processed_At__c < System.now().addDays(-30)
+        objHIGroupsEvents.Processed_At__c < System.now().addDays(-90)
       ) {
         List_newGroup.add(objHIGroupsEvents);
       }

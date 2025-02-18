@@ -48,7 +48,7 @@ public class CreateEditOrdFaciChkLstCtrlTest {
 
 		//Opportunity
 		Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setAccountId(account.Id)
 			.setName('TestOppty1')
 			.setCloseDate(Date.today())
@@ -56,7 +56,7 @@ public class CreateEditOrdFaciChkLstCtrlTest {
 			.build();
 
 		Opportunity objOpportunity1 = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setAccountId(account1.Id)
 			.setName('TestOppty1')
 			.setCloseDate(Date.today())

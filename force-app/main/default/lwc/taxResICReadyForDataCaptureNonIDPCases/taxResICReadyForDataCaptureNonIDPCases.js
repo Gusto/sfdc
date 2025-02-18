@@ -81,6 +81,7 @@ export default class TaxResICReadyForDataCaptureNonIDPCases extends LightningEle
 
 	//method that calls apex method to get List of eligible cases
 	getEligibleCases() {
+        console.log('test')
 		return new Promise((resolve, reject) => {
 			this.blnIsLoading = true;
 			getCases({
@@ -216,6 +217,7 @@ export default class TaxResICReadyForDataCaptureNonIDPCases extends LightningEle
 	}
 
 	openCaseRecord(strCaseId) {
+		console.log("strCaseId ===> " + strCaseId);
 		if (strCaseId) {
 			const recordNavigation = new CustomEvent("OpenCaseRecord", {
 				detail: {

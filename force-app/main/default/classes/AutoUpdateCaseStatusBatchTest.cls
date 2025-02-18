@@ -475,7 +475,7 @@ public class AutoUpdateCaseStatusBatchTest {
 			} else if (objCase.Type.contains('Modern Bank')) {
 				System.assertEquals(CaseUtils.RECTYPE_MODERN_BANK_READ_ONLY, objCase.RecordTypeId, 'Case auto close RecordType was not updated ' + objCase.Subject);
 			} else if (objCase.Type.contains('PayrollOps Audit')) {
-				// System.assertEquals(CaseUtils.RECTYPE_PAYROLLOPS_AUDIT_READ_ONLY, objCase.RecordTypeId, 'Case auto close RecordType was not updated ' + objCase.Subject);
+				//System.assertNotEquals(CaseUtils.RECTYPE_PAYROLLOPS_AUDIT_READ_ONLY, objCase.RecordTypeId, 'Case auto close RecordType was not updated ' + objCase.Subject);
 			} else if (objCase.Type.contains('Tax Res')) {
 				System.assertEquals(CaseUtils.RECTYPE_TAXRES_READ_ONLY, objCase.RecordTypeId, 'Case auto close RecordType was not updated ' + objCase.Subject);
 				System.assertEquals(null, objCase.Confirm_Case_Reason__c, 'Tax Res Case does not need a Confirm Case reason');

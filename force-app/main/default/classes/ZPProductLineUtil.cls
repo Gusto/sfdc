@@ -31,6 +31,25 @@ public with sharing class ZPProductLineUtil {
 	public static final String ERR_MSG_BASE_PRODUCT = 'Base Product does not exist';
 	public static final String ERR_MSG_PRODUCT_ERROR = 'Product Id and Pricing Plan Id does not exist';
 
+	public final static Map<String, String> map_ExternalIdAndProductName = new Map<String, String>{
+		'premium' => 'Legacy Premium',
+		'premium_v2' => 'Premium',
+		'premium_crb' => 'Premium CRB',
+		'premium_multi_ein' => 'Premium Multi-EIN',
+		'simple' => 'Simple',
+		'plus' => 'Plus',
+		'contractor_only' => 'contractor_only',
+		'Advanced time-off' => 'Advanced Time-Off',
+		'HR services' => 'HR Services',
+		'Advanced time-off premium' => 'Advanced Time-Off Premium',
+		'Next-day direct deposit' => 'Next-Day Direct Deposit',
+		'Performance & engagement' => 'Performance And Engagement',
+		'Priority support' => 'Priority Support',
+		'Priority Support and HR Services' => 'Priority Support and HR Services',
+		'Time and project tracking' => 'Time And Project Tracking',
+		'wholesale' => 'Wholesale'
+	};
+
 	// RecordTypeIds:
 	public static final Id COMPANY_ACCOUNT_RT_ID = RecordTypes.getRecordTypeIdFromDeveloperName('Account', 'Company');
 
@@ -64,7 +83,7 @@ public with sharing class ZPProductLineUtil {
 				Pricing_Plan_ID__c,
 				Product_Line_ID__c,
 				Product_Tier__c,
-				(SELECT Id, Product2.Name, Product2.Product_Category__c, Product2.Pricing_Plan_ID__c, Product2.Product_Line_ID__c FROM PriceBookEntries)
+				(SELECT Id, Name,Product2.Name, Product2.Product_Category__c, Product2.Pricing_Plan_ID__c, Product2.Product_Line_ID__c,Product2.Product_Type__c, UnitPrice,Product2.ExternalId,PriceBook2.Name,PriceBook2Id FROM PriceBookEntries)
 			FROM PriceBook2
 			WHERE isActive = TRUE
 		];
@@ -78,10 +97,24 @@ public with sharing class ZPProductLineUtil {
 	 **/
 	public static List<ZP_Product_Line__c> queryZPProductLine(Set<String> set_CompanyIds) {
 		return [
-			SELECT Id, Company_Base_ID__c, Company_Enrollment_ID__c, Company_ID__c, Parent_ID__c, Pricing_Plan_ID__c, Product_Line_ID__c, Start_Date__c, Status__c, Type__c
+			SELECT Id, Company_Base_ID__c, Company_Enrollment_ID__c, Company_ID__c, Parent_ID__c, Pricing_Plan_ID__c, Product_Line_ID__c, Start_Date__c, Status__c, Type__c,Assigned_Quantity__c,Product_Name__c
 			FROM ZP_Product_Line__c
 			WHERE Company_Id__c IN :set_CompanyIds AND Status__c !=: STATUS_DELETED
 			ORDER BY Start_Date__c DESC
+		];
+	}
+
+	/**
+	 * @Author      : Anurag Gautam
+	 * @Description : Query Opportunity
+	 * @Parm        : set_CompanyIds
+	 * @Return      : query results - List of Opportunity
+	 **/
+	public static List<Opportunity> queryOpportunity(Set<String> set_CompanyIds) {
+		return [
+			SELECT Id, ZP_Company_ID_from_Account__c, Pricebook2Id, (Select Id,Product2.Product_Type__c from opportunityLineItems)
+			FROM Opportunity
+			WHERE ZP_Company_ID_from_Account__c IN :set_CompanyIds AND RecordTypeId =: OpportunityUtil.COMPANY_OPPTY_RT_ID
 		];
 	}
 }

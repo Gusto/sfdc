@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>63.0</apiVersion>
+    <assignments>
+        <name>Accountant_Persona</name>
+        <label>Accountant Persona</label>
+        <locationX>50</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Persona__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Accountant</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Admin_Persona</name>
+        <label>Admin Persona</label>
+        <locationX>842</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Persona__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Admin</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Company_Size_Assignment</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign Default Type &apos;Payroll&apos; to a case that has Type not populated.</description>
+        <name>Assign_Default_Type</name>
+        <label>Assign Default Type</label>
+        <locationX>974</locationX>
+        <locationY>1634</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Type</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Payroll</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>RecordType_Engagement</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Update Case Record Type to Engagement</description>
+        <name>Assign_Engagement_RecordType</name>
+        <label>Assign Engagement RecordType</label>
+        <locationX>842</locationX>
+        <locationY>1934</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.RecordTypeId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_RecordType_ID__c</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Routing_team_external</name>
+        <label>Assign Routing team external</label>
+        <locationX>710</locationX>
+        <locationY>950</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Routing_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>External</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Support_Level_NULL</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Routing_team_external_micro</name>
+        <label>Assign Routing team external</label>
+        <locationX>446</locationX>
+        <locationY>950</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Routing_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>External</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Support_Level_NULL</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Routing_Team_Internal</name>
+        <label>Assign Routing Team Internal</label>
+        <locationX>974</locationX>
+        <locationY>950</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Routing_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Internal</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Support_Level_NULL</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assign Tier 1 to Support Level if NULL</description>
+        <name>Assign_Tier1</name>
+        <label>Assign Tier1</label>
+        <locationX>842</locationX>
+        <locationY>1334</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Support_Level__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Tier 1</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Case_Type_Check</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Default_Company_Size</name>
+        <label>Default Company Size</label>
+        <locationX>1370</locationX>
+        <locationY>458</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Standard 5-24</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>If we are unable to predict on persona add Admin Skill and Company size here.</description>
+        <name>Default_Persona_Company_Size</name>
+        <label>Default Persona &amp; Company Size</label>
+        <locationX>1898</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Persona__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Admin</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Standard 5-24</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Grower_25_49_Size</name>
+        <label>Grower 25-49 Size</label>
+        <locationX>578</locationX>
+        <locationY>458</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Grower 25-49</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Grower_50_Size</name>
+        <label>Grower 50 Size</label>
+        <locationX>1106</locationX>
+        <locationY>458</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Grower 50</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Member_Persona</name>
+        <label>Member Persona</label>
+        <locationX>1634</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Persona__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Member</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Micro_0_4_Size</name>
+        <label>Micro 0-4 Size</label>
+        <locationX>842</locationX>
+        <locationY>458</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Micro 0-4</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Standard_5_24_Size</name>
+        <label>Standard 5-24 Size</label>
+        <locationX>314</locationX>
+        <locationY>458</locationY>
+        <assignmentItems>
+            <assignToReference>objCase.Company_Size__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Standard 5-24</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Routing_Team</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>If Case Type is null populate this field with our default value of Payroll. 
+If Case Type is not one of the restricted picklist values for Engagement, Payroll Care, or benefits Care update the Case type to our Default value.</description>
+        <name>Case_Type_Check</name>
+        <label>Case Type Check</label>
+        <locationX>974</locationX>
+        <locationY>1526</locationY>
+        <defaultConnector>
+            <targetReference>RecordType_Engagement</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Type Populated</defaultConnectorLabel>
+        <rules>
+            <name>Type_NOT_Populated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Type</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <isGoTo>true</isGoTo>
+                <targetReference>Assign_Default_Type</targetReference>
+            </connector>
+            <label>Type NOT Populated</label>
+        </rules>
+        <rules>
+            <name>Type_Outside_of_Restricted_Values</name>
+            <conditionLogic>NOT(1)</conditionLogic>
+            <conditions>
+                <leftValueReference>$Setup.Engagement_Flow_Configuration__c.Accepted_Type_Values__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <elementReference>triggeringCase.Type</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Default_Type</targetReference>
+            </connector>
+            <label>Type Outside of Restricted Values</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Company_Size_Assignment</name>
+        <label>Company Size Assignment</label>
+        <locationX>842</locationX>
+        <locationY>350</locationY>
+        <defaultConnector>
+            <targetReference>Default_Company_Size</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Standard_5_24</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>5.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>24.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Standard_5_24_Size</targetReference>
+            </connector>
+            <label>Standard 5-24</label>
+        </rules>
+        <rules>
+            <name>Grower_25_49</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>25.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>49.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Grower_25_49_Size</targetReference>
+            </connector>
+            <label>Grower 25-49</label>
+        </rules>
+        <rules>
+            <name>Micro_0_4</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>4.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Micro_0_4_Size</targetReference>
+            </connector>
+            <label>Micro 0-4</label>
+        </rules>
+        <rules>
+            <name>Grower_50</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Account.Number_of_Active_Employees__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>50.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Grower_50_Size</targetReference>
+            </connector>
+            <label>Grower 50</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Set Default Routing team based on persona, company size, Routing Case Reason, and Team value on case</description>
+        <name>Default_Routing_Team</name>
+        <label>Default Routing Team</label>
+        <locationX>974</locationX>
+        <locationY>734</locationY>
+        <defaultConnector>
+            <targetReference>Support_Level_NULL</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Routing Team Populated</defaultConnectorLabel>
+        <rules>
+            <name>Routing_Team_NOT_Populated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Routing_Team__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Default_Team</targetReference>
+            </connector>
+            <label>Routing Team NOT Populated</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>What default value should be set based on Persona and Company Size.</description>
+        <name>Default_Team</name>
+        <label>Default Team</label>
+        <locationX>710</locationX>
+        <locationY>842</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Routing_Team_Internal</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default</defaultConnectorLabel>
+        <rules>
+            <name>Admin_Micro</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objCase.Persona__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Admin</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>objCase.Company_Size__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Micro 0-4</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Routing_team_external_micro</targetReference>
+            </connector>
+            <label>Admin Micro</label>
+        </rules>
+        <rules>
+            <name>Member_0</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>objCase.Persona__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Member</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Routing_team_external</targetReference>
+            </connector>
+            <label>Member</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Persona_Assignment</name>
+        <label>Persona Assignment</label>
+        <locationX>974</locationX>
+        <locationY>134</locationY>
+        <defaultConnector>
+            <targetReference>Default_Persona_Company_Size</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Persona</defaultConnectorLabel>
+        <rules>
+            <name>Accountant</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Contact.ZP_User_Role__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Accountant</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Accountant_Persona</targetReference>
+            </connector>
+            <label>Accountant</label>
+        </rules>
+        <rules>
+            <name>Admin</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Contact.ZP_User_Role__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Admin</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>triggeringCase.Contact.ZP_User_Role__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Signatory</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Admin_Persona</targetReference>
+            </connector>
+            <label>Admin</label>
+        </rules>
+        <rules>
+            <name>Member</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Contact.ZP_User_Role__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Employee</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>triggeringCase.Contact.ZP_User_Role__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Contractor</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Member_Persona</targetReference>
+            </connector>
+            <label>Member</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If Record Type is not Engagement Update to Engagement.</description>
+        <name>RecordType_Engagement</name>
+        <label>RecordType Engagement?</label>
+        <locationX>974</locationX>
+        <locationY>1826</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>NOT_Engagement_RT</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.RecordTypeId</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Setup.Engagement_Flow_Configuration__c.Engagement_RecordType_ID__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Engagement_RecordType</targetReference>
+            </connector>
+            <label>NOT Engagement RT</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>If Support_Level__c is not populated update the default Tier 1 value</description>
+        <name>Support_Level_NULL</name>
+        <label>Support Level NULL?</label>
+        <locationX>974</locationX>
+        <locationY>1226</locationY>
+        <defaultConnector>
+            <targetReference>Case_Type_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Support Level Populated</defaultConnectorLabel>
+        <rules>
+            <name>Support_Level_NOT_Populated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>triggeringCase.Support_Level__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Tier1</targetReference>
+            </connector>
+            <label>Support Level NOT Populated</label>
+        </rules>
+    </decisions>
+    <description>This Sub Flow is invoked from Record Trigger : Case Engagement Omni Flow. 
+Contains logic to set default values to Type, Company Size, Persona and Support Level fields</description>
+    <environments>Default</environments>
+    <interviewLabel>Sub Flow : Case Engagement Set Highlight Panel Fields {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Sub Flow : Case Engagement Set Highlight Panel Fields</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>848</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Persona_Assignment</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Triggering Case passed from the &apos;Record Trigger: Case Engagement Omni Flow&apos;</description>
+        <name>objCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <name>triggeringCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

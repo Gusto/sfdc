@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IKB_Help_Center_Confluence_article_or_ot__c</fullName>
+    <label>Does a resource exist for this topic?</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Yes</fullName>
+                <default>false</default>
+                <label>Yes</label>
+            </value>
+            <value>
+                <fullName>No</fullName>
+                <default>false</default>
+                <label>No</label>
+            </value>
+            <value>
+                <fullName>Yes, but needs an update</fullName>
+                <default>false</default>
+                <label>Yes, but needs an update</label>
+            </value>
+            <value>
+                <fullName>Topic is too specific</fullName>
+                <default>false</default>
+                <label>Topic is too specific</label>
+            </value>
+            <value>
+                <fullName>Chat closed too soon</fullName>
+                <default>false</default>
+                <label>Chat closed too soon</label>
+            </value>
+            <value>
+                <fullName>Incorrect Resource Used</fullName>
+                <default>false</default>
+                <label>Incorrect Resource Used</label>
+            </value>
+            <value>
+                <fullName>Correct Resource Used: IC misunderstanding</fullName>
+                <default>false</default>
+                <label>Correct Resource Used: IC misunderstanding</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

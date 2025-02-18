@@ -7,6 +7,9 @@
         <locationY>492</locationY>
         <actionName>slackv2__invokePostMessage</actionName>
         <actionType>apex</actionType>
+        <connector>
+            <targetReference>Update_Contact</targetReference>
+        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>message</name>
@@ -28,7 +31,6 @@
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
         <offset>0</offset>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <assignments>
@@ -109,7 +111,7 @@
             <field>slackv2__Channel_Name__c</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>new-contact-test-slack-channel</stringValue>
+                <elementReference>$Label.Partner_General_Notification</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -117,6 +119,19 @@
         <queriedFields>Id</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordUpdates>
+        <name>Update_Contact</name>
+        <label>Update Contact</label>
+        <locationX>308</locationX>
+        <locationY>600</locationY>
+        <inputAssignments>
+            <field>Send_To_Partner_Slack_New_Add__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -143,7 +158,7 @@
         </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>SendNotiToPartnerTemplate</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cannot_Edit_Closed_Won_Acquisition</fullName>
+    <active>true</active>
+    <description>Cannot update fields: No changes can be made to a Closed Won Opportunity</description>
+    <errorConditionFormula>AND(
+    ISPICKVAL(StageName, &quot;Closed Won&quot;),
+    NOT(ISCHANGED(StageName)),
+    RecordType.Name = &apos;Acquisition&apos; ,
+    NOT($User.Exempt_from_Validation_Rules__c)
+)</errorConditionFormula>
+    <errorMessage>Cannot update fields: No changes can be made to a Closed Won Opportunity. Please reach out to Sales Ops for support.</errorMessage>
+</ValidationRule>

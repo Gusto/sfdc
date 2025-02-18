@@ -33,7 +33,7 @@ public class ZPCompanyMigrationTriggerHelperTest {
 		Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
 			.setName('Test Opportunity')
 			.setAccountId(objAccount.Id)
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setStage('SAL')
 			.setCloseDate(System.today())
 			.setZPCompanyId(objAccount.ZP_Company_ID__c)
@@ -226,7 +226,7 @@ public class ZPCompanyMigrationTriggerHelperTest {
 		List<Account> list_Accounts = [SELECT Id, ZP_Company_ID__c FROM Account LIMIT 1];
 
 		Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('TestOpp')
 			.setAccountId(list_Accounts[0].Id)
 			.setStage('SAL')

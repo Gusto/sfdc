@@ -467,7 +467,7 @@ private class HIFulfillmentEventEmployeeUpdateTest {
             HIFulfillmentBotResponseJSON objBotJson = new HIFulfillmentBotResponseJSON();
             objBotJson = (HIFulfillmentBotResponseJSON)JSON.deserialize(deCryptedText, HIFulfillmentBotResponseJSON.class);
             system.debug(CaseObj);
-            system.debug(objBotJson.member_level_event_uuids);
+            system.debug(objBotJson);
         }
         Blob decryptedBlob = EncodingUtil.base64Decode(list_CaseResults[0].Fulfillment_Event_Encrypted_JSON__c);
         Blob encryptionKey = EncryptionUtils.getEncryptionKey('Master');

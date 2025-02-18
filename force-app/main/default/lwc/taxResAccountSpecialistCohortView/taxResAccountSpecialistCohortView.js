@@ -207,13 +207,16 @@ export default class TaxResAccountSpecialistCohortView extends LightningElement 
 			assignedCases.CaseNumber = objC.objCase.CaseNumber;
 			assignedCases.Escalatedto = "";
 			assignedCases.EscalatedtoIcon = "";
+			
 			if (objC.objCase.Mass_Email_Step__c != null && objC.objCase.Mass_Email_Step__c.includes("P&I Late Deposit/Amendment Partial Auto-Solve Fired")) {
 				assignedCases.PnIIcon = "standard:campaign";
 			}
+			
 			if (objC.objCase.Escalatedto__c != null && objC.objCase.Escalatedto__c != "PE/Captain") {
 				assignedCases.Escalatedto = "slds-text-color_error";
 				assignedCases.EscalatedtoIcon = "standard:incident";
 			}
+
 			assignedCases.AccountName = objC.objCase.Account ? objC.objCase.Account.Name : '';
 			assignedCases.AgencyInformation = objC.objCase.Agency_Information__c ? objC.objCase.Agency_Information__r.Name : '';
 			assignedCases.TaxNoticeFormNumber = objC.objCase.Tax_Notice_Form_Number__c;
@@ -260,7 +263,6 @@ export default class TaxResAccountSpecialistCohortView extends LightningElement 
 				if (this.strSortedByActionRequiredNewCases && this.list_ActionRequiredNewCasesData != undefined && this.list_ActionRequiredNewCasesData.length > 0) {
 					this.sortData(this.strSortedByActionRequiredNewCases, this.strSortedDirectionActionRequiredNewCases, "New");
 				}
-
 				resolve("done");
 			})
 				.catch((error) => {
@@ -273,6 +275,7 @@ export default class TaxResAccountSpecialistCohortView extends LightningElement 
 		});
 	}
 
+	//Method for sorting the data
 	sortData(fieldname, direction, casesType) {
 		let parseData;
 		if(casesType == "New") {

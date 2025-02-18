@@ -74,6 +74,7 @@ public without sharing class OpportunityTriggerHandler extends TriggerHandler {
 				OpportunityTriggerHelper objHelper = new OpportunityTriggerHelper();
 				objHelper.processBeforeUpdate(newRecords, oldRecordsMap);
 			} catch (Exception ex) {
+				System.debug('OpportunityTriggerHandler.beforeUpdate: ' + ex.getMessage());
 				if (!ex.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION')) {
 					ExceptionLogUtil.logException('OpportunityTriggerHandler', 'BeforeUpdate', ex);
 				}

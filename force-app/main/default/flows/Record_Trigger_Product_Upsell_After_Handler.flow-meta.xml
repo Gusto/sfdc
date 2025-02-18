@@ -157,15 +157,15 @@
         </connector>
         <flowName>SubFlow_Product_Upsell_Email</flowName>
         <inputAssignments>
-            <name>RecordId</name>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
             <name>objRecordOld</name>
             <value>
                 <elementReference>$Record__Prior</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>RecordId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
             </value>
         </inputAssignments>
     </subflows>

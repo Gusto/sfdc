@@ -82,12 +82,7 @@ public with sharing class TaskTemplateUtilTest {
 	 */
 	@isTest
 	static void testResolveMergeFields() {
-		Ticket__c objTicket = new Ticket__c(
-            Description__c = 'Test Tick', 
-            Status__c = 'New', 
-            Account__r = new Account(Name = 'Test Account'), 
-            Opportunity__c = null
-        );
+		Ticket__c objTicket = new Ticket__c(Description__c = 'Test Tick', Status__c = 'New', Account__r = new Account(Name = 'Test Account'), Opportunity__c = null);
 
 		Task_Template__mdt objTemplate = new Task_Template__mdt(Merge_Fields__c = 'Name,Account__r.Name');
 

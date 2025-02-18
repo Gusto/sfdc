@@ -20,24 +20,27 @@ public class OpportunityJobs implements Database.Batchable<sObject>, Database.St
 	public Database.QueryLocator start(Database.BatchableContext bc) {
 		if (String.isBlank(strQuery)) {
 			Id idCompanyRecordType = OpportunityUtil.COMPANY_OPPTY_RT_ID;
+			Id idAcquisitionRecordType = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
+			Set<Id> set_CompanyRecTypes = new Set<Id>{ idCompanyRecordType, idAcquisitionRecordType };
 			Id idUpsellRecordType = OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID;
-			String strWhereClause = '((CreatedDate <= :dtToday AND' +
-			' Additional_Opportunity_Services__c EXCLUDES (' +
-			'\'' +
-			AccountUtil.EMPLOYER_OF_RECORD +
-			'\'' +
-			'))' +
-			' OR (CreatedDate <= :dtTodayForInternationalPayroll AND' +
-			' Additional_Opportunity_Services__c INCLUDES (' +
-			'\'' +
-			AccountUtil.EMPLOYER_OF_RECORD +
-			'\'' +
-			'))' +
-			')';
+			String strWhereClause =
+				'((CreatedDate <= :dtToday AND' +
+				' Additional_Opportunity_Services__c EXCLUDES (' +
+				'\'' +
+				AccountUtil.EMPLOYER_OF_RECORD +
+				'\'' +
+				'))' +
+				' OR (CreatedDate <= :dtTodayForInternationalPayroll AND' +
+				' Additional_Opportunity_Services__c INCLUDES (' +
+				'\'' +
+				AccountUtil.EMPLOYER_OF_RECORD +
+				'\'' +
+				'))' +
+				')';
 
 			strQuery =
-				'SELECT Id, RecordtypeId, CreatedDate, Name, Benefits_Opt_Out__c, Upsell_Tier__c,Sold_By__r.Apply_to_all_clients__c, ' +
-				'Sold_By__r.Benefits_Email_Opt_Out__c, Account.Upsell_Opp_Open__c,Account.Upsell_Tier_Opps_Open__c FROM Opportunity WHERE ((RecordTypeId = :idCompanyRecordType ' +
+				'SELECT Id, RecordtypeId, CreatedDate, Name, Type, Benefits_Opt_Out__c, Upsell_Tier__c,Sold_By__r.Apply_to_all_clients__c, ' +
+				'Sold_By__r.Benefits_Email_Opt_Out__c, Account.Upsell_Opp_Open__c,Account.Upsell_Tier_Opps_Open__c FROM Opportunity WHERE ((RecordTypeId IN :set_CompanyRecTypes ' +
 				'AND Sold_By__c != NULL AND Sold_By__r.Benefit_Opt_Out_Sync__c = true) OR (RecordTypeId = :idUpsellRecordType AND ' +
 				strWhereClause +
 				')) AND IsClosed = false';
@@ -53,10 +56,14 @@ public class OpportunityJobs implements Database.Batchable<sObject>, Database.St
 		Set<Id> set_AccIds = new Set<Id>();
 		Set<Id> set_UpsellAccIds = new Set<Id>();
 		Id idCompanyRecordType = OpportunityUtil.COMPANY_OPPTY_RT_ID;
+		Id idAcquisitionRecordType = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		Id idUpsellRecordType = OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID;
-		Map<Id,String> map_IdAndUpsellOpenOpp = new Map<Id,String>();
+		Map<Id, String> map_IdAndUpsellOpenOpp = new Map<Id, String>();
 		for (Opportunity objOpp : list_Opportunity) {
-			if (objOpp.RecordtypeId == idCompanyRecordType && objOpp.Sold_By__c != null) {
+			if (
+				(objOpp.RecordtypeId == idCompanyRecordType || (objOpp.RecordtypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOpp.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)) &&
+				objOpp.Sold_By__c != null
+			) {
 				objOpp.Benefits_Opt_Out__c = objOpp.Sold_By__r.Benefits_Email_Opt_Out__c;
 				list_OppsToUpdate.add(objOpp);
 				set_AccIds.add(objOpp.Sold_By__c);

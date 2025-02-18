@@ -804,16 +804,6 @@
                         idChosenButton = idVendorSMEPRCButton;
                     }
                 }
-                //if Internal Benefits is chosen and user is C&C gustie
-                else if (!strVendor && strRequestType === "Internal Benefits") {
-                    console.log("@@gustie FSC");
-                    idChosenButton = idFSCButton;
-                }
-                //if External Benefits or Payroll is chosen and user is C&C gustie
-                else if (!strVendor && (strRequestType === "External Benefits" || strRequestType === "Payroll")) {
-                    console.log("@@gustie PRC");
-                    idChosenButton = idPRCButton;
-                }
                 else {
                     console.log("@@ELSE PRC");
                     idChosenButton = idPRCButton;

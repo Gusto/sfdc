@@ -34,6 +34,30 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>orderBannerWarningsCmp</componentName>
+                <identifier>c_orderBannerWarningsCmp</identifier>
+                <visibilityRule>
+                    <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                    <criteria>
+                        <leftValue>{!Record.Status}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Drafted</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Status}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Sales Submitted</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Status}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Sales Follow-up</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>hideUpdateButton</name>
                     <value>false</value>
@@ -145,12 +169,6 @@
                 </componentInstanceProperties>
                 <componentName>runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>showContactRolesOnOrderCmp</componentName>
-                <identifier>c_showContactRolesOnOrderCmp</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>

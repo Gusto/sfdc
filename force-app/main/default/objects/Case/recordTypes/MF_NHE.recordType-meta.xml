@@ -3,7 +3,6 @@
     <fullName>MF_NHE</fullName>
     <active>true</active>
     <businessProcess>Member Fulfillment - NHE</businessProcess>
-    <compactLayoutAssignment>BenefitsManagement</compactLayoutAssignment>
     <description>Member Fulfillment - NHE</description>
     <label>MF NHE</label>
     <picklistValues>
@@ -254,22 +253,6 @@
         <picklist>Auto_Indexing_Status__c</picklist>
         <values>
             <fullName>Failed</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Failed%3A No Attachment</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Failed%3A No Valid Document</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Failed%3A System Issue</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Failed%3A Untrained Document</fullName>
             <default>false</default>
         </values>
         <values>
@@ -5087,6 +5070,53 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Skill_Level__c</picklist>
+        <values>
+            <fullName>0</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>10</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>7</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>8</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>9</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Social_Media_Platform__c</picklist>
         <values>
             <fullName>Facebook</fullName>
@@ -5820,6 +5850,21 @@
         </values>
         <values>
             <fullName>Tier 2</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Supported_Tenure__c</picklist>
+        <values>
+            <fullName>0-3 months</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3-6 months</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6-9 months</fullName>
             <default>false</default>
         </values>
     </picklistValues>

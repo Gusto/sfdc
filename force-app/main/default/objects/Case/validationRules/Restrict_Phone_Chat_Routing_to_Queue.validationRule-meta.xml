@@ -7,6 +7,6 @@
  $Profile.Name &lt;&gt; &apos;Vendor CX&apos; &amp;&amp;
  Owner:Queue.DeveloperName = &apos;Engagement_Cases&apos; &amp;&amp;
  ( CONTAINS(  $Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channels__c , TEXT(Origin)) ||
-Channel__c = &apos;Phone&apos; || Channel__c = &apos;Chat&apos;)</errorConditionFormula>
+Channel__c = &apos;Phone&apos; || Channel__c = &apos;Chat&apos;) &amp;&amp; Channel__c != &apos;Voicemail&apos;</errorConditionFormula>
     <errorMessage>These Cases can not be routed to this queue.</errorMessage>
 </ValidationRule>

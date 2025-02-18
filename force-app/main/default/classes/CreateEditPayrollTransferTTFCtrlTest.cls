@@ -65,23 +65,23 @@ class CreateEditPayrollTransferTTFCtrlTest {
 		//Opportunities
 		testOpportunities = new List<Opportunity>();
 		Opportunity opp1 = new Opportunity(AccountId = objAccount1.id, StageName = 'SAL', Closedate = System.today(), NumberOfEmployees__c = 12, HI_Effective_Date__c = System.today().addDays(30));
-		opp1.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp1.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		opp1.Source_Id__c = 'TestAcc001';
-		opp1.Name = objAccount1.Name + 'Company Opportunity';
+		opp1.Name = objAccount1.Name + 'Acquisition Opportunity';
 		testOpportunities.add(opp1);
 
 		Opportunity opp2 = opp1.clone(false);
 		opp2.Source_Id__c = 'TestAcc002';
-		opp2.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp2.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		opp2.AccountId = objAccount2.Id;
-		opp2.Name = objAccount2.Name + 'Company Opportunity';
+		opp2.Name = objAccount2.Name + 'Acquisition Opportunity';
 		testOpportunities.add(opp2);
 
 		Opportunity opp3 = opp1.clone(false);
-		opp3.RecordTypeId = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp3.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		opp3.AccountId = objAccount3.Id;
 		opp3.Source_Id__c = 'TestAcc003';
-		opp3.Name = objAccount3.Name + 'Company Opportunity';
+		opp3.Name = objAccount3.Name + 'Acquisition Opportunity';
 		opp3.Owner_Division__c = 'Small Business';
 		testOpportunities.add(opp3);
 
@@ -89,9 +89,9 @@ class CreateEditPayrollTransferTTFCtrlTest {
 			.setAccountId(account4.Id)
 			.setStage('SAL')
 			.setCloseDate(System.today())
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setSourceID('TestAcc004')
-			.setName(account4.Name + 'Company Opportunity')
+			.setName(account4.Name + 'Acquisition Opportunity')
 			.build();
 
 		opp4.Owner_Division__c = 'Partner';
@@ -101,9 +101,9 @@ class CreateEditPayrollTransferTTFCtrlTest {
 			.setAccountId(objAccount1.Id)
 			.setStage('SAL')
 			.setCloseDate(System.today())
-			.setRecordTypeId(OpportunityUtil.COMPANY_OPPTY_RT_ID)
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setSourceID('TestOppty123')
-			.setName(objAccount1.Name + 'Company Opportunity')
+			.setName(objAccount1.Name + 'Acquisition Opportunity')
 			.build();
 	   
 		testOpportunities.add(objOppty);
@@ -557,7 +557,7 @@ class CreateEditPayrollTransferTTFCtrlTest {
 	@isTest
 	private static void testPayrollTransferNoOrderException() {
         setupTestData();
-        Opportunity objOpp = [SELECT Id, Source_ID__c FROM Opportunity WHERE RecordTypeId =:OpportunityUtil.COMPANY_OPPTY_RT_ID AND Source_ID__c = 'TestOppty123' LIMIT 1];
+        Opportunity objOpp = [SELECT Id, Source_ID__c FROM Opportunity WHERE RecordTypeId =:OpportunityUtil.ACQUISITION_OPPTY_RT_ID AND Source_ID__c = 'TestOppty123' LIMIT 1];
         
         Test.startTest();
         

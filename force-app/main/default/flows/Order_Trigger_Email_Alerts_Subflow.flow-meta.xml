@@ -15,11 +15,10 @@
             </value>
         </inputParameters>
         <nameSegment>Order.Payroll_Transfer_Order_Advocate_Assignment_Failure_Notification</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
-        <name>Order_Facilitator_Assignment_Email_Alert</name>
-        <label>Order Facilitator Assignment Email Alert</label>
+        <name>Order_Assignment_Email_Alert</name>
+        <label>Order Assignment Email Alert</label>
         <locationX>50</locationX>
         <locationY>950</locationY>
         <actionName>Order.Payroll_Trasnfer_Order_Facilitator_Assignment_Email_Alert</actionName>
@@ -35,7 +34,6 @@
             </value>
         </inputParameters>
         <nameSegment>Order.Payroll_Trasnfer_Order_Facilitator_Assignment_Email_Alert</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <description>Submit Single Order Migration Approval.</description>
@@ -46,7 +44,7 @@
         <actionName>submit</actionName>
         <actionType>submit</actionType>
         <connector>
-            <targetReference>Payroll_Transfer_Facilitator_Assignment_Notification_Check</targetReference>
+            <targetReference>Payroll_Transfer_Order_Assignment_Notification_Check</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -63,7 +61,6 @@
         </inputParameters>
         <nameSegment>submit</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>55.0</apiVersion>
     <decisions>
@@ -112,7 +109,7 @@
         <locationX>182</locationX>
         <locationY>434</locationY>
         <defaultConnector>
-            <targetReference>Payroll_Transfer_Facilitator_Assignment_Notification_Check</targetReference>
+            <targetReference>Payroll_Transfer_Order_Assignment_Notification_Check</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -196,8 +193,8 @@
         </rules>
     </decisions>
     <decisions>
-        <name>Payroll_Transfer_Facilitator_Assignment_Notification_Check</name>
-        <label>Payroll Transfer Facilitator Assignment Notification Check</label>
+        <name>Payroll_Transfer_Order_Assignment_Notification_Check</name>
+        <label>Payroll Transfer Order Assignment Notification Check</label>
         <locationX>182</locationX>
         <locationY>842</locationY>
         <defaultConnector>
@@ -205,13 +202,13 @@
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>Facilitator_Assignment_Notification</name>
+            <name>Order_Assignment_Notification</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>OrderRec.Data_Entry_Assist__c</leftValueReference>
+                <leftValueReference>OrderRec.OwnerId</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
-                    <elementReference>OrderRecOld.Data_Entry_Assist__c</elementReference>
+                    <elementReference>OrderRecOld.OwnerId</elementReference>
                 </rightValue>
             </conditions>
             <conditions>
@@ -222,9 +219,9 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Order_Facilitator_Assignment_Email_Alert</targetReference>
+                <targetReference>Order_Assignment_Email_Alert</targetReference>
             </connector>
-            <label>Facilitator Assignment Notification</label>
+            <label>Order Assignment Notification</label>
         </rules>
     </decisions>
     <environments>Default</environments>

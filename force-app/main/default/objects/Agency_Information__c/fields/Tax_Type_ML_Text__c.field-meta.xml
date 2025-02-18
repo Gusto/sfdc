@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tax_Type_ML_Text__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Withholding&quot; ), &quot;Withholding; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Unemployment&quot; ), &quot;Unemployment; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Local: Local Service Tax (LST)&quot; ), &quot;Local: Local Service Tax (LST); &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Local: Local Occupational Tax (OPT)&quot; ), &quot;Local: Local Occupational Tax (OPT); &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Local: Income Tax (EIT, City, etc)&quot; ), &quot;Local: Income Tax (EIT, City, etc); &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;WorkersComp&quot; ), &quot;WorkersComp; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Paid Family Medical Leave&quot; ), &quot;Paid Family Medical Leave; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Garnishments / Child Support&quot; ), &quot;Garnishments / Child Support; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;New Hire Reporting&quot; ), &quot;New Hire Reporting; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Unclaimed Property&quot; ), &quot;Unclaimed Property; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;State Retirement Plan&quot; ), &quot;State Retirement Plan; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Unsupported&quot; ), &quot;Unsupported; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Gusto Local Generic&quot; ), &quot;Gusto Local Generic; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Collector&quot; ), &quot;Collector; &quot;,null ) &amp;
+IF ( INCLUDES ( Tax_Type_Tax_Topic__c , &quot;Combined-Report&quot; ), &quot;Combined-Report; &quot;,null )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Tax Type (ML) Text</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

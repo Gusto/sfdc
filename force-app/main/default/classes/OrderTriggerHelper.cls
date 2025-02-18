@@ -6,6 +6,7 @@ public class OrderTriggerHelper extends TriggerHandler {
 	public static final Id idFBOSForecast_RT_Advocate = cache.getRecordTypeId('Payroll_Transfer_FBOS_Forecast__c', 'Advocate');
 	public static final Id idFBOSForecast_RT_Facilitator = cache.getRecordTypeId('Payroll_Transfer_FBOS_Forecast__c', 'Facilitator');
 	public static final Id idOpportunity_RT_Company = cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+	public static final Id idAcquisitionRecordType = cache.getRecordTypeId('Opportunity', 'Acquisition');
 	public static final Id idCase_RT_PTCase = cache.getRecordTypeId('Case', 'Payroll Transfer Case');
 	public static BusinessHours objBusinessHour = GlobalQueryHelper.getDefaultBusinessHour();
 	//BY:PR, Date: Desc-7-2020, Desc: constant which we can use to calculate Due Date
@@ -185,12 +186,7 @@ public class OrderTriggerHelper extends TriggerHandler {
 				}
 			}
 
-			if (
-				String.isNotBlank(orderObj.Migration_State__c) &&
-				orderObj.Migration_State__c == OrderUtils.BASICS_COMPLETED &&
-				orderObj.OpportunityId != null &&
-				orderObj.Transition_to_Fulfillment__c == null
-			) {
+			if (String.isNotBlank(orderObj.Migration_State__c) && orderObj.Migration_State__c == OrderUtils.BASICS_COMPLETED && orderObj.OpportunityId != null) {
 				list_submitTTFNotificationEligibleOrders.add(orderObj);
 			}
 		}
@@ -529,8 +525,7 @@ public class OrderTriggerHelper extends TriggerHandler {
 				String.isNotBlank(ord.Migration_State__c) &&
 				ord.Migration_State__c == OrderUtils.BASICS_COMPLETED &&
 				oldOrderRec.Migration_State__c != OrderUtils.BASICS_COMPLETED &&
-				ord.OpportunityId != null &&
-				ord.Transition_to_Fulfillment__c == null
+				ord.OpportunityId != null
 			) {
 				list_submitTTFNotificationEligibleOrders.add(ord);
 			}
@@ -1040,7 +1035,9 @@ public class OrderTriggerHelper extends TriggerHandler {
 		Id companyRecordTypeId = idOpportunity_RT_Company;
 
 		// Query all open opportunities where record type = company opportunity and Company_Migration__c is blank
-		Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>([SELECT Id, Order_Status__c, Order__c, AccountId FROM Opportunity WHERE id IN :oppIdSet AND RecordTypeId = :companyRecordTypeId]);
+		Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>(
+			[SELECT Id, Order_Status__c, Order__c, AccountId FROM Opportunity WHERE id IN :oppIdSet AND (RecordTypeId = :companyRecordTypeId OR RecordTypeId = :idAcquisitionRecordType)]
+		);
 
 		List<Opportunity> toBeUpdatedOppList = new List<Opportunity>();
 		for (Order ord : newOrdersList) {
@@ -1110,45 +1107,47 @@ public class OrderTriggerHelper extends TriggerHandler {
 
 		Set<Id> set_OrderOwnerWithNoPhone = new Set<Id>(); // Id of OrderOwners whose phone number is not set on case
 		// @Neha, For Email Signature change : Added Order_Owner_Phone__c to case query
-		for (Case objCase : [
-			SELECT
-				Id,
-				X2_Business_Days_From_Last_Notification__c,
-				Status,
-				Order_Owner_Calendly_Link__c,
-				Send_Survey__c,
-				Order_Owner_Phone__c,
-				Order_Owner_Phone_Extension__c,
-				Order_Payroll_Run_Date__c,
-				Order__c,
-				Order__r.Exception_Request__c,
-				OwnerId,
-				Contact_Related_Concierge_Account__c,
-				Order__r.Owner.FirstName,
-				Order__r.Owner.LastName,
-				Order_Owner_Name__c,
-				account.Tier__c,
-				account.Priority_Support__c,
-				Order__r.OwnerId,
-				Order_AE_Email__c,
-				ContactId,
-				Order_Notification__c,
-				Origin,
-				Account.Name,
-				AccountId,
-				Error_Message__c,
-				Contact_First_Name__c,
-				Case_Reference__c
-			FROM Case
-			WHERE
-				Order__c IN :orderIdSet
-				AND RecordTypeId = :idCase_RT_PTCase // SJay - 12/3/2020 - Defined RT globally
-				AND ((Integration_Key__c != NULL
-				AND origin = :CASE_ORIGIN_PANDA)
-				OR origin = :CASE_ORIGIN_GUSTO
-				OR origin = :CASE_ORIGIN_EMAIL)
-				AND Status != :CaseUtils.STATUS_CLOSED
-		]) {
+		for (
+			Case objCase : [
+				SELECT
+					Id,
+					X2_Business_Days_From_Last_Notification__c,
+					Status,
+					Order_Owner_Calendly_Link__c,
+					Send_Survey__c,
+					Order_Owner_Phone__c,
+					Order_Owner_Phone_Extension__c,
+					Order_Payroll_Run_Date__c,
+					Order__c,
+					Order__r.Transition_to_Fulfillment__r.Exception_Request__c,
+					OwnerId,
+					Contact_Related_Concierge_Account__c,
+					Order__r.Owner.FirstName,
+					Order__r.Owner.LastName,
+					Order_Owner_Name__c,
+					account.Tier__c,
+					account.Priority_Support__c,
+					Order__r.OwnerId,
+					Order_AE_Email__c,
+					ContactId,
+					Order_Notification__c,
+					Origin,
+					Account.Name,
+					AccountId,
+					Error_Message__c,
+					Contact_First_Name__c,
+					Case_Reference__c
+				FROM Case
+				WHERE
+					Order__c IN :orderIdSet
+					AND RecordTypeId = :idCase_RT_PTCase // SJay - 12/3/2020 - Defined RT globally
+					AND ((Integration_Key__c != NULL
+					AND origin = :CASE_ORIGIN_PANDA)
+					OR origin = :CASE_ORIGIN_GUSTO
+					OR origin = :CASE_ORIGIN_EMAIL)
+					AND Status != :CaseUtils.STATUS_CLOSED
+			]
+		) {
 			if (objCase.origin != CASE_ORIGIN_EMAIL) {
 				map_OrderCases.put(objCase.Order__c, objCase);
 
@@ -1285,7 +1284,7 @@ public class OrderTriggerHelper extends TriggerHandler {
 						orderObj.OwnerId != oldOrder.OwnerId &&
 						string.valueOf(oldOrder.OwnerId).startsWith('00G') &&
 						string.valueOf(orderObj.OwnerId).startsWith('005') &&
-						cse.Order__r.Exception_Request__c &&
+						cse.Order__r.Transition_to_Fulfillment__r.Exception_Request__c == 'Yes' &&
 						(cse.Account.Tier__c != ACCOUNT_TIER_SELECT &&
 						cse.Account.Tier__c != ACCOUNT_TIER_PREMIUM)
 					) {
@@ -1366,7 +1365,9 @@ public class OrderTriggerHelper extends TriggerHandler {
 					'OrderTriggerHelper',
 					'updateCaseStatus_OwnerAndOrderNotifications',
 					objException.getMessage(),
-					objException.getStackTraceString() + '. line number: ' + objException.getLineNumber()
+					objException.getStackTraceString() +
+					'. line number: ' +
+					objException.getLineNumber()
 				);
 			}
 
@@ -1481,7 +1482,11 @@ public class OrderTriggerHelper extends TriggerHandler {
 		// Yuvraj 29-06-2020 : Added Benefits_List__c in query
 		Map<Id, Account> accounWithOppMap = new Map<Id, Account>(
 			[
-				SELECT Id, Name, Benefits_List__c, (SELECT Id, Order_Status__c, Order__c, AccountId FROM Opportunities WHERE isWon = FALSE AND RecordTypeId = :companyRecordTypeId)
+				SELECT
+					Id,
+					Name,
+					Benefits_List__c,
+					(SELECT Id, Order_Status__c, Order__c, AccountId FROM Opportunities WHERE isWon = FALSE AND (RecordTypeId = :companyRecordTypeId OR RecordTypeId = :idAcquisitionRecordType))
 				FROM Account
 				WHERE Id IN :accountIdSet
 			]
@@ -2042,7 +2047,9 @@ public class OrderTriggerHelper extends TriggerHandler {
 					ExceptionLogUtil.logException(
 						'OrderTriggerHelper',
 						'sendTTFSubmitNotification',
-						objExeption.getMessage() + ' ON Line ' + objExeption.getLineNumber(),
+						objExeption.getMessage() +
+						' ON Line ' +
+						objExeption.getLineNumber(),
 						objExeption.getStackTraceString()
 					);
 				}

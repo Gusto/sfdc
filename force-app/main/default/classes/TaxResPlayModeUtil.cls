@@ -177,6 +177,7 @@ public with sharing class TaxResPlayModeUtil {
 						strTempSkill = strTempSkill + '|' + list_SkillsBreakDown[8];
 						set_AlternateSkills.add(strTempSkill);
 						set_CasePatterns.add(strTempSkill);
+                        system.debug('strTempSkill******'+strTempSkill);
 					}
 				}
 
@@ -306,6 +307,7 @@ public with sharing class TaxResPlayModeUtil {
 				WHERE User_Skill_Hash__c IN :set_SkillPatterns AND Active__c = TRUE AND User_Role__c != NULL AND User_Role__r.User_Skill_team__c = :CaseUtils.TAXRES_ACCOUNT_SPECIALIST
 			]) {
 				Set<String> set_TempUserIds = new Set<String>();
+                system.debug('objSkill*******'+objSkill);
 				String strPrimaryUser = objSkill.User_Role__r.User__c;
 				if (map_SkillPatternSetOfRelatedUserIds.containsKey(objSkill.User_Skill_Hash__c)) {
 					set_TempUserIds = map_SkillPatternSetOfRelatedUserIds.get(objSkill.User_Skill_Hash__c);

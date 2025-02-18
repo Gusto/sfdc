@@ -24,8 +24,8 @@ public with sharing class HIHealthPolicyDetailTriggerHelper {
 
 	public void OnAfterInsert(Map<ID, HI_Health_Policy_Detail__c> newStateMap) {
 		if (queue == false) {
-			HIHealthPolicyDetailQueue updateJob = new HIHealthPolicyDetailQueue(newStateMap.values());
-			ID jobID = System.enqueueJob(updateJob);
+			//HIHealthPolicyDetailQueue updateJob = new HIHealthPolicyDetailQueue(newStateMap.values());
+			//ID jobID = System.enqueueJob(updateJob);
 		}
 	}
 
@@ -46,8 +46,8 @@ public with sharing class HIHealthPolicyDetailTriggerHelper {
 
 	public void OnAfterUpdate(Map<ID, HI_Health_Policy_Detail__c> oldStateMap, Map<ID, HI_Health_Policy_Detail__c> newStateMap) {
 		if (queue == false) {
-			HIHealthPolicyDetailQueue updateJob = new HIHealthPolicyDetailQueue(newStateMap.values());
-			ID jobID = System.enqueueJob(updateJob);
+			//HIHealthPolicyDetailQueue updateJob = new HIHealthPolicyDetailQueue(newStateMap.values());
+			//ID jobID = System.enqueueJob(updateJob);
 		}
 	}
 

@@ -48,7 +48,7 @@ public class BulkOrderCSVDataTriggerHelperTest {
 		insert objContact;
 
 		Opportunity objOpportunity = new TestDataFactory.OpportunityBuilder()
-			.setRecordTypeId(Cache.getRecordTypeId('Opportunity', 'Company Opportunity'))
+			.setRecordTypeId(OpportunityUtil.ACQUISITION_OPPTY_RT_ID)
 			.setName('TEST OPPORTUNITY')
 			.setAccountId(objAccount.Id)
 			.setStage('Raw')

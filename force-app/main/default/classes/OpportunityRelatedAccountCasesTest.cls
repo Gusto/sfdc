@@ -4,8 +4,9 @@ public class OpportunityRelatedAccountCasesTest {
 		Account acc = TestUtility.CompanyAccount();
 
 		Opportunity opp = new Opportunity();
-		opp.RecordTypeId = cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		opp.RecordTypeId = OpportunityUtil.ACQUISITION_OPPTY_RT_ID;
 		opp.AccountId = acc.id;
+		opp.Name = 'Test Opportunity';
 		insert opp;
 
 		Case cas = new Case(Status = 'New', Priority = 'Medium', Origin = 'Email', AccountId = acc.id);

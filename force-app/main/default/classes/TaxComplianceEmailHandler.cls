@@ -19,12 +19,9 @@ global class TaxComplianceEmailHandler implements Messaging.InboundEmailHandler 
             Id caseId = EmailMessages.getRecordIdFromEmail(email.subject, email.plainTextBody, email.htmlBody);
             
             // If we haven't found the Case ID, try finding it using headers.
-            //if(!Test.isrunningTest()){
-                if (caseId == null) {
-                    caseId = Cases.getCaseIdFromEmailHeaders(email.headers);  
-                }
-           // }
-            system.debug('caseId...'+caseId);
+            if (caseId == null) {
+                caseId = Cases.getCaseIdFromEmailHeaders(email.headers);  
+            }
             
             if (caseId != null) {
                 objCase = [SELECT ID FROM CASE WHERE ID =:caseId];

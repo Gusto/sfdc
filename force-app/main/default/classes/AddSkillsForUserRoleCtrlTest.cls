@@ -8,6 +8,7 @@
 public class AddSkillsForUserRoleCtrlTest {
 	@TestSetup
 	static void makeData() {
+		skipTrigger(true);
 		User_Role__c objUserRole = newUserRole();
 
 		TestUtility.createSkillCriteriaSetupRecord();
@@ -42,7 +43,6 @@ public class AddSkillsForUserRoleCtrlTest {
 
 		Role__c objBenefitsDesignerRole = new TestDataFactory.RoleBuilder().setName('Benefits Designer').setSkillType('Core').build();
 		list_Roles.add(objBenefitsDesignerRole);
-
 		insert (list_Roles);
 
 		List<Skill__c> list_Skills = new List<Skill__c>();
@@ -74,11 +74,9 @@ public class AddSkillsForUserRoleCtrlTest {
 			.setRoleId(objPTFacilitatorRole.Id)
 			.setComplexityLevel('Level 1')
 			.setBenefitCount('0')
-			.setState('AK; AL; AR; AZ; CA; CT; DC; FL; GA; HI; IA; ID; IL; KS; LA; MD; ME; MN; MS; MT; NC; ND; NE; NH; NM; NV; OK; PA; RI; SC; SD; TN; TX; UT; VA; VT; WI; WV; WY')
+			.setState('AK; AL; AZ; AR; ID; IN; NY')
 			.setStatesCount('0-1')
-			.setPreviousPayrollProvider(
-				'ADP Run; ADP Resource; ADP Total Source; BenefitMall; Bank of America; Heartland Payroll; Intuit Online Payroll; iSolved; JustWorks; Namely; Other; Patriot Software; Paychex; Paychex Preview; Paylocity; PEO / Full Service Backend Provider; QuickBooks Desktop; QuickBooks Online; Sage; Square; SurePayroll; Thomson Reuters; Trinet; Zenefits; BambooHR; Toast; Rippling'
-			)
+			.setPreviousPayrollProvider('ADP Run; ADP Resource; ADP Total Source')
 			.build();
 		list_Skills.add(objComplexityLevel1Skill);
 
@@ -86,13 +84,9 @@ public class AddSkillsForUserRoleCtrlTest {
 			.setRoleId(objPTFacilitatorRole.Id)
 			.setComplexityLevel('Level 2')
 			.setBenefitCount('0; 1-4')
-			.setState(
-				'AK; AL; AR; AZ; CA; CO; CT; DC; DE; FL; GA; HI; IA; ID; IL; IN; KS; KY; LA; MA; MD; ME; MI; MN; MO; MS; MT; NC; ND; NE; NH; NJ; NM; NV; NY; OK; OR; RI; SC; SD; TN; TX; UT; VA; VT; WA; WI; WV; WY'
-			)
+			.setState('AK; AL; AZ; AR; ID; IN; NY')
 			.setStatesCount('0-1; 1-4')
-			.setPreviousPayrollProvider(
-				'ADP Run; ADP Resource; ADP Total Source; ADP Workforce Now; BenefitMall; Bank of America; Heartland Payroll; Intuit Online Payroll; iSolved; JustWorks; Namely; Other; Patriot Software; Paychex; Paychex Preview; Paylocity; PEO / Full Service Backend Provider; QuickBooks Desktop; QuickBooks Online; Sage; Square; SurePayroll; Thomson Reuters; Trinet; Zenefits; BambooHR; Toast; Rippling'
-			)
+			.setPreviousPayrollProvider('ADP Run; ADP Resource; ADP Total Source')
 			.build();
 		list_Skills.add(objComplexityLevel2Skill);
 
@@ -100,16 +94,11 @@ public class AddSkillsForUserRoleCtrlTest {
 			.setRoleId(objPTFacilitatorRole.Id)
 			.setComplexityLevel('Level 3')
 			.setBenefitCount('0; 1-4; 4+')
-			.setState(
-				'AK; AL; AR; AZ; CA; CO; CT; DC; DE; FL; GA; HI; IA; ID; IL; IN; KS; KY; LA; MA; MD; ME; MI; MN; MO; MS; MT; NC; ND; NE; NH; NJ; NM; NV; NY; OH; OK; OR; PA; RI; SC; SD; TN; TX; UT; VA; VT; WA; WI; WV; WY'
-			)
+			.setState('AK; AL; AZ; AR; ID; IN; NY')
 			.setStatesCount('0-1; 1-4; 4+')
-			.setPreviousPayrollProvider(
-				'ADP Run; ADP Resource; ADP Total Source; ADP Workforce Now; BenefitMall; Bank of America; Heartland Payroll; Intuit Online Payroll; iSolved; JustWorks; Namely; Other; Offline (manual); Offline (downloaded reports); Patriot Software; Paychex; Paychex Preview; Paylocity; PEO / Full Service Backend Provider; QuickBooks Desktop; QuickBooks Online; Sage; Square; SurePayroll; Thomson Reuters; Trinet; Zenefits; BambooHR; Toast; Rippling'
-			)
+			.setPreviousPayrollProvider('ADP Run; ADP Resource; ADP Total Source')
 			.build();
 		list_Skills.add(objComplexityLevel3Skill);
-
 		insert list_Skills;
 
 		State__c objState = new TestDataFactory.StateBuilder().setName('Arizona').setAbbreviation('AZ').build();
@@ -135,13 +124,12 @@ public class AddSkillsForUserRoleCtrlTest {
 			list_PODMapping.add(new TestDataFactory.RegionPODMappingBuilder().setCarrier(list_Carriers[counterM].Id).setRegionPOD(objPod.Id).setState(list_Carriers[counterM].State__c).build());
 		}
 		insert list_PODMapping;
+		skipTrigger(false);
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  This method is used to create skills for Implementation Advocate
-	 * @param        null
-	 * @return       null
 	 **/
 	static void createImplementationCoreSkill() {
 		User userObj = new User(Id = UserInfo.getUserId());
@@ -161,8 +149,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	/**
 	 * @author       Deepika Saini
 	 * @description  This method is used to create User Role
-	 * @param        null
-	 * @return       null
 	 **/
 	static User_Role__c newUserRole() {
 		User_Role__c objUserRole = new TestDataFactory.UserRoleBuilder().setUserId(UserInfo.getUserId()).setUserTeam('Implementation Advocate').setUserSkillType('Core').build();
@@ -175,8 +161,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, user role creation for Payroll Transfer Advocate
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	static void testPTAdvocateUserSkillPositive() {
@@ -192,7 +176,8 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.SaveSkill();
 		objAddSkillsCtrl.redirectToFBOS();
 		Test.stopTest();
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c = 'Payroll Transfer Advocate'] > 0, true);
+
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c = 'Payroll Transfer Advocate'], 'PTA Skills should exist');
 	}
 
 	//Complexity Level check for PT Facilitator Save Skill
@@ -243,8 +228,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Benefit Transfer user skill creation for user role - positive
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	public static void testBenefitTransferPositive() {
@@ -266,14 +249,13 @@ public class AddSkillsForUserRoleCtrlTest {
 
 		objAddSkillsCtrl.SaveSkill();
 		Test.stopTest();
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c LIKE 'Benefit Transfer%'] > 0, true);
+
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c LIKE 'Benefit Transfer%'], 'Benefit Transfer Skills should exist');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Benefit Transfer user skill creation for user role - positive
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	public static void testBenefitTransferPos() {
@@ -300,17 +282,18 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.blnIsBuildPlan = true;
 		objAddSkillsCtrl.SaveSkill();
 		Test.stopTest();
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c LIKE 'Benefit Transfer%'] > 0, true);
+
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c LIKE 'Benefit Transfer%'], 'Benefit Transfer Skills should exist');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Implementation Advocate user skill creation for user role - positive
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	public static void testIAUserSkillsPositive() {
+		createImplementationCoreSkill();
+
 		Test.startTest();
 		User_Role__c objUserRole = [SELECT Id FROM User_Role__c LIMIT 1];
 		PageReference objPageRef = Page.AddSkillsForUserRolePage;
@@ -337,8 +320,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	/**
 	 * @author      : Neha Dabas
 	 * @description : Test Method to check, Validate that conflicting Advisor and Renewal Specialist Roles are not selected
-	 * @param        : null
-	 * @return      : null
 	 **/
 	@isTest
 	public static void testAdvisorRoleSkillValidation() {
@@ -359,17 +340,14 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_RENEWAL_SPECIALIST).blnSelected = true;
 		objAddSkillsCtrl.strOrderAllocRoleType = FWManageRoleUtil.ROLE_ADVISOR;
 		objAddSkillsCtrl.onRoleSelect();
-
 		Test.stopTest();
 
-		System.assertEquals(objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_RENEWAL_SPECIALIST).blnSelected, false);
+		System.assertEquals(false, objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_RENEWAL_SPECIALIST).blnSelected, 'Role Renewal Specialist should not be selected');
 	}
 
 	/**
 	 * @author      : Neha Dabas
 	 * @description : Test Method to check, Advisor Role Skill Creation
-	 * @param        : null
-	 * @return      : null
 	 **/
 	@isTest
 	public static void testAdvisorRoleSkillCreationPositive() {
@@ -411,19 +389,15 @@ public class AddSkillsForUserRoleCtrlTest {
 		}
 
 		objAddSkillsCtrl.SaveSkill();
-
 		objAddSkillsCtrl = new AddSkillsForUserRoleCtrl();
-
 		Test.stopTest();
 
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_ADVISOR] > 0, true);
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_ADVISOR], 'Advisor Skills should exist');
 	}
 
 	/**
 	 * @author      : Neha Dabas
 	 * @description : Test Method to check, Benefits Designer Role Skill Creation Validations
-	 * @param        : null
-	 * @return      : null
 	 **/
 	@isTest
 	public static void testBenefitsDesignerRoleSkillCreationNegative() {
@@ -442,17 +416,14 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.strOrderAllocRoleType = FWManageRoleUtil.ROLE_BENEFITS_DESIGNER;
 		objAddSkillsCtrl.onRoleSelect();
 		objAddSkillsCtrl.SaveSkill();
-
 		Test.stopTest();
 
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 0);
+		System.assertEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 'Benefit Designer Skills should exist');
 	}
 
 	/**
 	 * @author      : Neha Dabas
 	 * @description : Test Method to check, Benefits Designer Role Skill Creation
-	 * @param        : null
-	 * @return      : null
 	 **/
 	@isTest
 	public static void testBenefitsDesignerRoleSkillCreationPositive() {
@@ -473,7 +444,6 @@ public class AddSkillsForUserRoleCtrlTest {
 		if (objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_BENEFITS_DESIGNER).list_SelectedCoverageType != null) {
 			objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_BENEFITS_DESIGNER).list_SelectedCoverageType.add(new SelectOption('Medical', 'Medical'));
 			objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_BENEFITS_DESIGNER).list_SelectedCoverageType.add(new SelectOption('Life', 'Life'));
-
 			objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_BENEFITS_DESIGNER).list_SelectedState.add(new SelectOption('Arizona', 'Arizona'));
 		}
 
@@ -486,17 +456,14 @@ public class AddSkillsForUserRoleCtrlTest {
 
 		objAddSkillsCtrl.strRoleData = FWManageRoleUtil.TEAM_ADVISING;
 		objAddSkillsCtrl.ShowTeamSkillType();
-
 		Test.stopTest();
 
-		System.assert([SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER] > 0);
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 'Benefit Designer Skills should exist');
 	}
 
 	/**
 	 * @author      : Anand Singh
 	 * @description : Test Method to check, Account Specialist Role Skill Creation
-	 * @param        : null
-	 * @return      : null
 	 **/
 	@isTest
 	public static void testTaxResAccountSpecialistRoleSkillCreationPositive() {
@@ -534,15 +501,14 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.SaveSkill();
 		List<User_Role__c> list_UserRole = [SELECT Assigned_POD__c FROM User_Role__c];
 		Test.stopTest();
-		System.assertEquals(list_UserRole[0].Assigned_POD__c, 'Test AS Region');
-		System.assert([SELECT COUNT() FROM User_Skill__c WHERE User_Skill_Role_Name__c = :AddSkillsForUserRoleCtrl.TAX_RES_ACCOUNT_SPECIALIST] > 0);
+
+		System.assertEquals('Test AS Region', list_UserRole[0].Assigned_POD__c, 'Assigned POD should be Test AS Region');
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Skill_Role_Name__c = :AddSkillsForUserRoleCtrl.TAX_RES_ACCOUNT_SPECIALIST], 'Account Specialist Skills should exist');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, user role creation with carrier IO
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	public static void testCarrierIOCreation() {
@@ -559,17 +525,15 @@ public class AddSkillsForUserRoleCtrlTest {
 		Test.stopTest();
 
 		User_Role__c objUserRoleTemp = [SELECT Id, User_Skill_Team__c FROM User_Role__c WHERE Id = :objUserRole.Id];
-		System.assertEquals('Carrier IO', objUserRoleTemp.User_Skill_Team__c);
+		System.assertEquals('Carrier IO', objUserRoleTemp.User_Skill_Team__c, 'Skill Team should be Carrier IO');
 	}
 
 	/**
 	 * @Author      : Swati Arya
 	 * @Description : Test Method to check existing cases for Account Specialist before changing Skill
-	 * @Parm        : null
-	 * @Return      : null
 	 **/
 	@isTest
-	public static void testTaxResAccountSpecialistExistingCasesScenario() {
+	static void testTaxResAccountSpecialistExistingCasesScenario() {
 		Account objCompAccount = new TestDataFactory.AccountBuilder().setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID).setName('Company Account Test Builder').setZPCompanyId('2222222222').build();
 		insert objCompAccount;
 
@@ -588,10 +552,8 @@ public class AddSkillsForUserRoleCtrlTest {
 		insert objCase;
 
 		Test.startTest();
-
 		List<Case> list_CaseRecs = [SELECT Id, Status FROM Case WHERE Id = :objCase.Id];
 		list_CaseRecs[0].Status = 'Research in progress';
-
 		update list_CaseRecs;
 
 		UserRoleTriggerHelper.skipTrigger = true;
@@ -600,13 +562,14 @@ public class AddSkillsForUserRoleCtrlTest {
 		objUserRole.Tax_Res_Skill_Type__c = 'All Cases';
 		update objUserRole;
 		UserRoleTriggerHelper.skipTrigger = false;
+		Test.stopTest();
+
+		System.assertEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Skill_Role_Name__c = :AddSkillsForUserRoleCtrl.TAX_RES_ACCOUNT_SPECIALIST], 'Account Specialist Skills should not exist');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, allocation of Benefit Order
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	static void testBOAllocationPositive() {
@@ -628,15 +591,14 @@ public class AddSkillsForUserRoleCtrlTest {
 		objSkillsCtrl.list_ManageBOWrappers[0].objBO.Max_BO__c = 10;
 		objSkillsCtrl.SaveSkill();
 		Test.stopTest();
+
 		List<Benefit_Order_Allocation__c> objBO = [SELECT Id, User__c FROM Benefit_Order_Allocation__c];
-		System.assert(objBO.size() > 0);
+		System.assertNotEquals(0, objBO.size(), 'Benefit Order Allocation should be done');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, deletion of allocated of Benefit Order
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	static void testBOAllocationDelete() {
@@ -665,15 +627,14 @@ public class AddSkillsForUserRoleCtrlTest {
 		objSkillsCtrl.deleteBOAllocation();
 		objSkillsCtrl.SaveSkill();
 		Test.stopTest();
+
 		List<Benefit_Order_Allocation__c> objBO = [SELECT Id, User__c FROM Benefit_Order_Allocation__c];
-		System.assert(objBO.size() == 0);
+		System.assertEquals(0, objBO.size(), 'Benefit Order Allocation should not exist');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Missing fields for Implementation Advocate
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	public static void missingIATestCase() {
@@ -708,8 +669,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Missing fields for Payroll Transfer Facilitator
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	static void missingPTFacTestCase() {
@@ -723,6 +682,7 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.ShowTeamSkillType();
 		objAddSkillsCtrl.SaveSkill();
 		Test.stopTest();
+
 		ApexPages.Message[] objPageMessages = ApexPages.getMessages();
 		System.assert(objPageMessages.size() > 0);
 		Boolean blnMessageFound = false;
@@ -734,15 +694,12 @@ public class AddSkillsForUserRoleCtrlTest {
 				blnMessageFound = true;
 			}
 		}
-
-		System.assert(blnMessageFound);
+		System.assert(blnMessageFound, 'Required Fields(Payroll transfer Skills, Complexity Score, Previous Payroll Provider Type, Payroll Sales Team) should be displayed');
 	}
 
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Create the user skills for Benefit Transfer Advocate and then change to Advising
-	 * @param        null
-	 * @return       null
 	 **/
 	@isTest
 	static void positiveBTAdvocateTestCase() {
@@ -761,7 +718,7 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.list_ManageBOWrappers[0].objBO.Max_BO__c = 10;
 		objAddSkillsCtrl.SaveSkill();
 
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c LIKE 'Benefit Transfer%'] > 0, true);
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c LIKE 'Benefit Transfer%'], 'Benefit Designer Skills should exist');
 
 		PageReference pageRef1 = Page.AddSkillsForUserRolePage;
 		test.setCurrentPageReference(objPageRef);
@@ -780,9 +737,23 @@ public class AddSkillsForUserRoleCtrlTest {
 
 			objAddSkillsCtrl.map_UserSkillWrapper.get(FWManageRoleUtil.ROLE_BENEFITS_DESIGNER).list_SelectedState.add(new SelectOption('Arizona', 'Arizona'));
 		}
-
 		objAddSkillsCtrl.SaveSkill();
 		Test.stopTest();
-		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER] > 0, true);
+
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 'Benefit Designer Skills should exist');
+	}
+
+	static void skipTrigger(Boolean blnFlag) {
+		UserRoleTriggerHelper.skipTrigger = blnFlag;
+		CarrierTriggerHelper.skipTrigger = blnFlag;
+		RegionPODMappingTriggerHelper.blnSkipTrigger = blnFlag;
+		AccountTriggerHelper.skipTrigger = blnFlag;
+		UR_ResearchProjectDetailTriggerHelper.skipTrigger = blnFlag;
+
+		if (blnFlag) {
+			TriggerHandler.bypass('RegionPODMappingTriggerHandler');
+		} else {
+			TriggerHandler.clearBypass('RegionPODMappingTriggerHandler');
+		}
 	}
 }
