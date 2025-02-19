@@ -405,6 +405,7 @@ public without sharing class ZPCompanyTriggerHelper {
 		objAcct.Product_Interest__c = objAccountHaveProductInterest.Product_Interest__c;
 		objAcct.Product_Interest_Countries__c = objAccountHaveProductInterest.Product_Interest_Countries__c;
 		objAcct.Confirmed_MRB__c = companyInfo.Confirmed_MRB__c;
+		objAcct.Last_Payroll_Run_Date__c = companyInfo.Last_Payroll_Run_Date__c;
 
 		String strHelpJourneyRouting = '';
 		if (acc.Id != null) {
@@ -492,10 +493,8 @@ public without sharing class ZPCompanyTriggerHelper {
 		if (String.isNotBlank(strAccountName) && strAccountName.length() > 100) {
 			strAccountName = strAccountName.substring(0, 100);
 		}
-		opp.RecordTypeId = companyInfo.Embedded_Payroll_Company__c == true
-			? Cache.getRecordTypeId('Opportunity', 'Embedded Company Opportunity')
-			: Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
-		opp.Name = companyInfo.Embedded_Payroll_Company__c == true ? strAccountName + ' Embedded Company' : strAccountName + ' Payroll';
+		opp.RecordTypeId = companyInfo.Embedded_Payroll_Company__c == true ? Cache.getRecordTypeId('Opportunity', 'Embedded Company Opportunity') : Cache.getRecordTypeId('Opportunity', 'Acquisition');
+		opp.Name = companyInfo.Embedded_Payroll_Company__c == true ? strAccountName + ' Embedded Company' : strAccountName + ' - New Business';
 
 		// set default stage on embedded opps to MQL
 		if (companyInfo.Embedded_Payroll_Company__c) {
@@ -504,9 +503,13 @@ public without sharing class ZPCompanyTriggerHelper {
 
 		opp.AccountId = acc.Id;
 		opp.ZP_Company_ID__c = companyInfo.ID__c;
-		opp.Source_Id__c = companyInfo.Embedded_Payroll_Company__c ? companyInfo.ID__c + '-embedded' : companyInfo.ID__c;
 		if (companyInfo.Anchor_Pay_Date__c != null) {
 			opp.Anchor_Pay_Date__c = companyInfo.Anchor_Pay_Date__c;
+		}
+		if (oppty != null && oppty.Id != null && String.isNotBlank(oppty.Source_Id__c)) {
+			opp.Source_Id__c = companyInfo.Id__c + '-newbusiness' + '-' + System.today().month() + '-' + System.today().day() + '-' + System.today().year();
+		} else {
+			opp.Source_Id__c = companyInfo.Id__c + '-newbusiness' + '-' + System.today().month() + '-' + System.today().day() + '-' + System.today().year();
 		}
 		opp.ZP_First_Contractor_Payment_Date__c = companyInfo.First_Contractor_Payment_Date__c;
 		opp.ZP_First_Payroll_Date__c = companyInfo.First_Payroll_Date__c;
@@ -529,15 +532,6 @@ public without sharing class ZPCompanyTriggerHelper {
 			opp.Number_of_Contractors__c = companyInfo.Number_of_Active_Contractors__c;
 		}
 
-		if (oppty.id != null && acc.Pricing__c != null && acc.Pricing__c != '' && prodMap.containsKey(acc.Pricing__c)) {
-			String currentStep = '';
-			if (oppty.ZP_Company_Setup_Step__c != null) {
-				currentStep = opp.ZP_Company_Setup_Step__c;
-			}
-			if (!oppty.IsClosed && currentStep != 'Ran Payroll' && opp.Pricebook2Id != prodMap.get(acc.Pricing__c).id) {
-				opp.Pricebook2Id = prodMap.get(acc.Pricing__c).id;
-			}
-		}
 		// Set Referral Information (Referral Type and Referred By)
 		if (String.isNotBlank(companyInfo.Referral_Type__c) && companyInfo.Referral_Type__c.equalsIgnoreCase(LeadUtil.REFERRAL_TYPE_UR)) {
 			opp.Referral_Type__c = companyInfo.Referral_Type__c;
@@ -600,6 +594,8 @@ public without sharing class ZPCompanyTriggerHelper {
 		opp.Selected_Add_On__c = companyInfo.Selected_Add_On__c;
 		opp.Selected_Benefits__c = companyInfo.Selected_Benefits__c;
 		opp.Selected_Plan__c = companyInfo.Selected_Plan__c;
+		opp.CloseDate = Date.today(); // Remove this change after acquisition code is merged to dev - THIS CODE SHOULD ONLY BE IN DEV BRANCH
+		opp.StageName = 'MQL';
 		return opp;
 	}
 
@@ -1108,7 +1104,7 @@ public without sharing class ZPCompanyTriggerHelper {
 						blnIsAccUpdated = true;
 
 						// Set Opportunity Qualification Status to Unqualified
-						if (opp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+						if (opp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || opp.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) {
 							opp.StageName = OpportunityUtil.CLOSED_LOST_STAGE;
 							opp.Stage_Detail__c = OpportunityUtil.BENEFITS_BYOB_STAGE_DETAIL;
 							opp.Additional_Reasons_Lost__c = OpportunityUtil.ADDITIONAL_REASONS_LOST_DUPLICATE_TEST_ACCOUNT;
@@ -1340,7 +1336,7 @@ public without sharing class ZPCompanyTriggerHelper {
 			for (Opportunity opp : [SELECT Id, Source_id__c, ZP_Company_ID__c, ZP_Company_Setup_Step__c FROM Opportunity WHERE id IN :oppIdSet]) {
 				if (opportunityMap.containsKey(opp.Id) && (opp.Source_ID__c == null || opp.Source_ID__c == '')) {
 					opp.ZP_Company_ID__c = opportunityMap.get(opp.Id);
-					opp.Source_ID__c = opportunityMap.get(opp.Id);
+					// opp.Source_ID__c = opportunityMap.get(opp.Id);
 					oppList.add(opp);
 				}
 			}
@@ -1402,8 +1398,13 @@ public without sharing class ZPCompanyTriggerHelper {
 
 	private map<String, Opportunity> getOpportunityMap(Set<String> zpCompanyIdSet) {
 		map<String, Opportunity> oppMap = new Map<String, Opportunity>();
-		for (Opportunity opp : [SELECT Id, Source_id__c, ZP_Company_ID__c, Pricebook2Id, ZP_Company_Setup_Step__c, NumberOfEmployees__c FROM Opportunity WHERE Source_id__c IN :zpCompanyIdSet]) {
-			oppMap.put(opp.Source_ID__c, opp);
+		for (Opportunity opp : [
+			SELECT Id, Source_id__c, ZP_Company_ID__c, Pricebook2Id, ZP_Company_Setup_Step__c, NumberOfEmployees__c
+			FROM Opportunity
+			WHERE ZP_Company_Id__c IN :zpCompanyIdSet
+			ORDER BY CreatedDate ASC
+		]) {
+			oppMap.put(opp.ZP_Company_Id__c, opp);
 		}
 		return oppMap;
 	}
@@ -1629,6 +1630,7 @@ public without sharing class ZPCompanyTriggerHelper {
 	private Map<String, Opportunity> getOpportunitys(Set<String> companyIdSet) {
 		Map<String, Opportunity> oppMap = new Map<String, Opportunity>();
 		Id idCompanyOpptyRecType = Cache.getRecordTypeId('Opportunity', 'Company Opportunity');
+		Id idAcquisitionOppRecType = Cache.getRecordTypeId('Opportunity', 'Acquisition');
 		Id idEmbeddedCompanyRecType = Cache.getRecordTypeId('Opportunity', 'Embedded Company Opportunity');
 		for (Opportunity opp : [
 			SELECT
@@ -1649,7 +1651,12 @@ public without sharing class ZPCompanyTriggerHelper {
 				ZP_Company_Setup_Step__c,
 				Payment_Invoice__c
 			FROM Opportunity
-			WHERE Source_Id__c IN :companyIdSet AND (RecordTypeId = :idCompanyOpptyRecType OR RecordTypeId = :idEmbeddedCompanyRecType)
+			WHERE
+				ZP_Company_ID__c IN :companyIdSet
+				AND (RecordTypeId = :idCompanyOpptyRecType
+				OR RecordTypeId = :idEmbeddedCompanyRecType
+				OR (RecordTypeId = :idAcquisitionOppRecType
+				AND Type = 'New Business'))
 			ORDER BY CreatedDate ASC
 		]) {
 			oppMap.put('' + opp.ZP_Company_ID__c, opp);
@@ -1962,7 +1969,7 @@ public without sharing class ZPCompanyTriggerHelper {
 			for (Opportunity op : [
 				SELECT Id, ZP_Company_ID__c, OwnerId
 				FROM Opportunity
-				WHERE ZP_Company_ID__c IN :set_compIdSet AND RecordTypeId = :RecordTypes.getRecordTypeIdFromDeveloperName('Opportunity', 'Company_Opportunity')
+				WHERE ZP_Company_ID__c IN :set_compIdSet AND RecordTypeId = :RecordTypes.getRecordTypeIdFromDeveloperName('Opportunity', 'Acquisition')
 			]) {
 				map_compIdToOpp.put(op.ZP_Company_ID__c, op);
 			}
