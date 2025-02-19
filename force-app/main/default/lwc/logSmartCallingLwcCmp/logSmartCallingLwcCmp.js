@@ -1226,7 +1226,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 	}
 
 	handlePayrollOpportunityCloseDateChange(event) {
-		this.objParameters.strPayrollOpportunityCloseDate = event.detail.value;
+		this.objParameters.strAcquisitionOpportunityCloseDate = event.detail.value;
 	}
 
 	handleHIOptyCloseDateChange(event) {

@@ -50,6 +50,7 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 	 */
 	public override void beforeDelete() {
 		handleGrowthExpansionDeletion(list_oldRecords);
+		System.debug('UserInfo.getSessionId(): ' + UserInfo.getSessionId());	
 	}
 
 	/* @description Prevents deletion of Growth/Expansion OpportunityLineItems if there is only one OLI on the Opportunity

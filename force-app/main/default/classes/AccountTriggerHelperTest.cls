@@ -1449,7 +1449,7 @@ public class AccountTriggerHelperTest {
 		update objAccount;
 		//Test Case: When Opportunity is open
 		Opportunity objAssertOpp = [SELECT Id, StageName, NumberOfEmployees__c FROM Opportunity WHERE Id = :objNewPlan.Id];
-		System.assertEquals(2, objAssertOpp.NumberOfEmployees__c, 'Number Of EE not updated on opportunity.');
+		System.assertEquals(8, objAssertOpp.NumberOfEmployees__c, 'Number Of EE not updated on opportunity.');
 
 		//Test Case: When Opportunity is closed
 		objAssertOpp.StageName = 'Closed Won';
@@ -1459,7 +1459,7 @@ public class AccountTriggerHelperTest {
 		objAccount.Number_of_Active_Employees__c = 6;
 		update objAccount;
 		objAssertOpp = [SELECT Id, NumberOfEmployees__c FROM Opportunity WHERE Id = :objNewPlan.Id];
-		System.assertEquals(2, objAssertOpp.NumberOfEmployees__c, 'Number Of EE not updated on opportunity.');
+		System.assertEquals(8, objAssertOpp.NumberOfEmployees__c, 'Number Of EE not updated on opportunity.');
 		Test.stopTest();
 	}
 

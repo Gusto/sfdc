@@ -34,6 +34,12 @@ public class OpportunityHelperTest {
                 IsActive = TRUE,
                 ExternalId = 'premium'
         ));
+
+        testProducts.add(new Product2(
+                Name = 'HR Services',
+                IsActive = TRUE,
+                ExternalId = 'HR Services'
+        ));
         insert testProducts;
 
         List<PricebookEntry> testPricebookEntries1 = new List<PricebookEntry>();
@@ -62,9 +68,13 @@ public class OpportunityHelperTest {
         List<Account> accounts = [SELECT Id, Name, ZP_Company_ID__c, Tier__c,Number_of_Active_Employees__c,Number_of_Active_Contractors__c,International_Employees__c,International_Contractors__c,Additional_Services__c,NumberOfEmployees,NumberOfEmployees_Lead__c FROM Account LIMIT 5];
         Map<Id, Account> map_Account = new Map<Id, Account>(accounts);
         OpportunityHelper.createCollections();
+
+        accounts[0].Tier__c = 'Plus';
+        update accounts;
+
         //OpportunityHelper.createUpdateAcquisitionOpportunity(accounts, map_Account);
         Test.startTest();
-        accounts[0].Tier__c = 'Plus';
+        accounts[0].Tier__c = 'Premium';
         update accounts;
         Test.stopTest();
 
@@ -76,11 +86,14 @@ public class OpportunityHelperTest {
     @isTest
     static void testCreateOpportunityLineItems() {
         // Create test opportunity
-        Account testAccount = [SELECT Id,Tier__c,Additional_Services__c FROM Account LIMIT 1];
+        Account testAccount = [SELECT Id,Tier__c,Additional_Services__c,NumberOfEmployees,NumberOfEmployees_Lead__c FROM Account LIMIT 1];
         testAccount.Number_of_Active_Employees__c = 10;
         testAccount.Number_of_Active_Contractors__c = 5;
         testAccount.International_Employees__c = 2;
         testAccount.International_Contractors__c = 1;
+        testAccount.Additional_Services__c = 'HR Services';
+        testAccount.NumberOfEmployees = 10;
+        testAccount.NumberOfEmployees_Lead__c = 10;
 
         Opportunity testOpportunity = new Opportunity(
             Name = 'Test Opportunity',
@@ -91,13 +104,15 @@ public class OpportunityHelperTest {
             Current_Tier__c = 'Simple',
             PriceBook2Id = [SELECT Id FROM Pricebook2 WHERE Name = 'Payroll Product Catalog' LIMIT 1].Id,
             NumberOfEmployees__c = 10,
-            Number_of_Contractors__c = 5
+            Number_of_Contractors__c = 5,
+            Additional_Opportunity_Services__c = 'HR Services'
         );
         insert testOpportunity;
 
         Account oldAccount = new Account(
             Id = testAccount.Id,
-            Tier__c = 'Plus'
+            Tier__c = 'Plus',
+            NumberOfEmployees = 10
         );
 
         oldAccount.Number_of_Active_Employees__c = 1;
@@ -105,14 +120,17 @@ public class OpportunityHelperTest {
         oldAccount.International_Employees__c = 3;
         oldAccount.International_Contractors__c = 4;
         oldAccount.Additional_Services__c = '';
+        oldAccount.NumberOfEmployees = 10;
+        oldAccount.NumberOfEmployees_Lead__c = 10;
 
         Test.startTest();
         OpportunityHelper.createCollections();
-        //OpportunityHelper.createOpportunityLineItems(new List<Opportunity>{testOpportunity});
+        OpportunityHelper.createOpportunityLineItems(new List<Opportunity>{testOpportunity}, null);
         List<OpportunityLineItem> lineItems = [SELECT Id, OpportunityId, Quantity, TotalPrice FROM OpportunityLineItem WHERE OpportunityId = :testOpportunity.Id];
         OpportunityHelper.updateExistingOpportunity (testAccount, oldAccount, testOpportunity);
         Test.stopTest();
 
+        OpportunityHelper.syncPaymentInvoiceValuesToOppty(new Set<Id> {testOpportunity.Id});
         // Verify that OpportunityLineItems were created
         //List<OpportunityLineItem> lineItems = [SELECT Id, OpportunityId, Quantity, TotalPrice FROM OpportunityLineItem WHERE OpportunityId = :testOpportunity.Id];
         //System.assertEquals(1, lineItems.size(), 'One OpportunityLineItem should be created.');

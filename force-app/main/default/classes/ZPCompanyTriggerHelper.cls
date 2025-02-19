@@ -405,6 +405,7 @@ public without sharing class ZPCompanyTriggerHelper {
 		objAcct.Product_Interest__c = objAccountHaveProductInterest.Product_Interest__c;
 		objAcct.Product_Interest_Countries__c = objAccountHaveProductInterest.Product_Interest_Countries__c;
 		objAcct.Confirmed_MRB__c = companyInfo.Confirmed_MRB__c;
+		objAcct.Last_Payroll_Run_Date__c = companyInfo.Last_Payroll_Run_Date__c;
 
 		String strHelpJourneyRouting = '';
 		if (acc.Id != null) {

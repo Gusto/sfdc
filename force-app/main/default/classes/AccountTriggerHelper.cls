@@ -3398,13 +3398,13 @@ public without sharing class AccountTriggerHelper {
 							blnICPOppClosedWon = true;
 						}
 
-						// cross-sell and upsell is closed won for the Customer Success
+						// cross-sell and upsell is closed lost except if its from Log a Call
 						if (
 							objOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE &&
 							objOppty.Upsell_Tier__c != null &&
 							objOppty.Upsell_Tier__c.containsIgnoreCase(AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT)
 						) {
-							if (objOppty.Product_Interest__c != null) {
+							if (objOppty.Product_Interest__c != null && objOppty.Product_Interest__c != AccountUtil.ICP_LOGACALL_PI) {
 								set_ClosedLostICPProdInterest.addAll(objOppty.Product_Interest__c.split(';'));
 							}
 						}

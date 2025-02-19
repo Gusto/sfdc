@@ -99,6 +99,8 @@ public class OmniOwnerRoutingTest {
             .setStatus(CaseUtils.STATUS_OPEN)
             .setSuppliedEmail('testagatha@gusto.com')
             .setDescription('Test agatha prediction 1')
+            .setSolveProcessedFlag('No')
+            .setInternalAIProcessedFlag('No')
             .build();
         list_Cases.add(objCase1);
         
@@ -111,6 +113,8 @@ public class OmniOwnerRoutingTest {
             .setStatus(CaseUtils.STATUS_OPEN)
             .setSuppliedEmail('testagatha2@gusto.com')
             .setDescription('Test agatha prediction 2')
+            .setSolveProcessedFlag('No')
+            .setInternalAIProcessedFlag('No')
             .build();
         list_Cases.add(objCase2);
         
@@ -299,7 +303,7 @@ public class OmniOwnerRoutingTest {
         Assert.isTrue((String.valueOf(objCase.OwnerId).startswith('005')) );
         Assert.isTrue(!list_PSR.isEmpty());
         Assert.isTrue(list_PSR[0].RoutingPriority == 0);
-         List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
+        List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
         Assert.isTrue(list_Skills.isEmpty());
     }
     

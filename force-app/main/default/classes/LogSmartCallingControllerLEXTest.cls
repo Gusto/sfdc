@@ -510,6 +510,7 @@ public class LogSmartCallingControllerLEXTest {
 		objComponentParameters.strHIOpportunityNotes = 'Test strHIOpportunityNotes';
 		objComponentParameters.strPhoneNumber = '1234567890';
 		objComponentParameters.blnHIOpportunityLiveTransfer = true;
+		objComponentParameters.strAcquisitionOpportunityCloseDate = String.valueOf(Date.today().addDays(30));
 
 		Test.startTest();
 		LogSmartCallingControllerLEX.createFollowTask(objComponentParameters);

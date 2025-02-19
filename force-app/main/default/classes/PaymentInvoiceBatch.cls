@@ -181,7 +181,9 @@ global class PaymentInvoiceBatch implements Database.Batchable<sObject>, Schedul
 								objInvoice.Account__r.Id,
 								new Account(Id = objInvoice.Account__c, ZP_Company_Id__c = objInvoice.Account__r.ZP_Company_Id__c, First_Month_Invoice_Generated__c = true)
 							);
-						} else if (!map_AcquisitionOpptyAccounts.isEmpty()) {
+						}
+						
+						if (!map_AcquisitionOpptyAccounts.isEmpty()) {
 							
 							if (map_AcquisitionOpptyAccounts.containsKey(objInvoice.Account__c)) {
 								Boolean blnIsOpenWinBack = false;

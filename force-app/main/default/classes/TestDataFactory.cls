@@ -277,6 +277,8 @@ public class TestDataFactory {
 		private String strSource = '';
 		private Boolean blnEscalated = false;
 		private String strReason = '';
+		private String strSolveProcessed = '';
+		private String strInternalAIProcessed = '';
 
 		// Set Methods
 		public CaseBuilder setRecordTypeId(String strValue) {
@@ -742,6 +744,15 @@ public class TestDataFactory {
 			this.strReason = strValue;
 			return this;
 		}
+		public CaseBuilder setSolveProcessedFlag( String strValue) {
+			this.strSolveProcessed = strValue;
+			return this;
+		}
+
+		public CaseBuilder setInternalAIProcessedFlag(String strValue) {
+			this.strInternalAIProcessed = strValue;
+			return this;
+		}
 
 		// Build Method
 		public Case build() {
@@ -839,6 +850,8 @@ public class TestDataFactory {
 			objCase.IsEscalated = this.blnEscalated;
 			objCase.Source__c = this.strSource;
 			objCase.Reason = this.strReason;
+			objCase.Solve_Processed__c = this.strSolveProcessed;
+			objCase.Internal_AI_Processed__c = this.strInternalAIProcessed;
 
 			if (String.isNotBlank(this.strSourceId)) {
 				objCase.SourceId = this.strSourceId;
@@ -4119,6 +4132,7 @@ public class TestDataFactory {
 		private Date dateAnchorPayDate;
 		private Date dtJoinedDate;
 		private Date dateUpdatedAtDate;
+		private Date dateLastPayrollRunDate;
 
 		private DateTime dateAccountCreatedDate;
 		private Datetime dtmDeletedAt;
@@ -4439,6 +4453,11 @@ public class TestDataFactory {
 			return this;
 		}
 
+		public ZPCompanyBuilder setLastPayrollRunDate(Date dateValue) {
+			this.dateLastPayrollRunDate = dateValue;
+			return this;
+		}
+
 		public ZP_Company__c build() {
 			ZP_Company__c objZPCompany = new ZP_Company__c(
 				Id__c = this.strZPCompanyId,
@@ -4500,7 +4519,8 @@ public class TestDataFactory {
 				Interested_in_offering_HI_to_employees__c = this.strInterestedInOfferingHIToEmp,
 				Open_to_Switching_Broker__c = this.strOpenToSwitchingBroker,
 				Workers_Comp_Status__c = this.strWorkersCompStatus,
-				Provider_401K__c = this.str401KProvider
+				Provider_401K__c = this.str401KProvider,
+				Last_Payroll_Run_Date__c = this.dateLastPayrollRunDate
 			);
 
 			return objZPCompany;

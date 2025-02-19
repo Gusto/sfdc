@@ -2572,4 +2572,52 @@ public class ZPCompanyTriggerHelperTest {
 		);
 		System.assertEquals(objOpportunityAssert.Open_to_Switching_Broker__c, objZPCompany.Open_to_Switching_Broker__c, 'Open_to_Switching_Broker__c was not updated');
 	}
+
+	/**
+	 * @author       Debasmita Rawooth
+	 * @description  Test if Last Payroll Run date is mapped from ZP Company to Account on Insert
+	 **/
+	@isTest
+	static void testLastPayrollRunDateInsert() {
+		Test.startTest();
+		ZP_Company__c objZPCompany = new TestDataFactory.ZPCompanyBuilder()
+			.setZPCompanyId('12344321544')
+			.setName('Test ZP 12344321544')
+			.setProcessingState(IntegrationUtils.QUEUED_STATE)
+			.setCreatedAtDate(System.today())
+			.setNumberOfActiveEEs(4)
+			.setLastPayrollRunDate(System.today() - 2)
+			.build();
+		insert objZPCompany;
+		Test.stopTest();
+
+		Account objAccountAssert = [SELECT Id, Name, Last_Payroll_Run_Date__c FROM Account WHERE ZP_Company_ID__c = '12344321544'];
+		System.assertEquals(objAccountAssert.Last_Payroll_Run_Date__c, objZPCompany.Last_Payroll_Run_Date__c, 'Last_Payroll_Run_Date__c was not updated on Account.');
+	}
+
+	/**
+	 * @author       Debasmita Rawooth
+	 * @description  Test if Last Payroll Run date is mapped from ZP Company to Account on Update
+	 **/
+	@isTest
+	static void testLastPayrollRunDateUpdate() {
+		
+		ZP_Company__c objZPCompany = new TestDataFactory.ZPCompanyBuilder()
+			.setZPCompanyId('12344321545')
+			.setName('Test ZP 12344321545')
+			.setProcessingState(IntegrationUtils.QUEUED_STATE)
+			.setCreatedAtDate(System.today())
+			.setNumberOfActiveEEs(4)
+			.setLastPayrollRunDate(System.today() - 2)
+			.build();
+		insert objZPCompany;
+
+		Test.startTest();
+		objZPCompany.Last_Payroll_Run_Date__c  = System.today() - 5;
+		update objZPCompany;
+		Test.stopTest();
+
+		Account objAccountAssert = [SELECT Id, Name, Last_Payroll_Run_Date__c FROM Account WHERE ZP_Company_ID__c = '12344321545'];
+		System.assertEquals(objAccountAssert.Last_Payroll_Run_Date__c, objZPCompany.Last_Payroll_Run_Date__c, 'Last_Payroll_Run_Date__c was not updated on Account.');
+	}
 }

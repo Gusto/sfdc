@@ -998,6 +998,7 @@ public with sharing class PolicyHelper extends TriggerHandler {
 						coName = carrierMap.get(pl.Carrier__c).Name + ' ' + 'Order';
 						coName = coName.left(80);
 					}
+					System.debug(bo.Id + ' pl.Carrier__c' +  pl.Carrier__c + ' strUniqueIdField' +  strUniqueIdField+ 'coRT ' +  coRT+ 'coName ' +  coName+ ' pl.Group_Number__c' +  pl.Group_Number__c + ' Label.Carrier_Implementation_Queue' + Label.Carrier_Implementation_Queue);
 					Carrier_Order__c objCO = new Carrier_Order__c(
 						Benefit_Order__c = bo.Id,
 						Carrier__c = pl.Carrier__c,

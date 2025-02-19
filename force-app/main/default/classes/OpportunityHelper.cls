@@ -196,6 +196,7 @@ public class OpportunityHelper {
 			Integer intNoOfDays = Integer.valueOf(map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c);
 			objOppToInsert.CloseDate = map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c != null ? Date.today().addDays(intNoOfDays) : Date.today().addDays(30);
 		} else if (objOppToInsert.Type == 'Winback' && (objOppToInsert.CloseDate == null || objAccount.Converted_Lead_Id__c != null)) {
+		//else if (objOppToInsert.Type == 'Winback' && (objOppToInsert.CloseDate == null || (objAccount.Converted_Lead_Id__c != null && UserUtils.isIntgUser(UserInfo.getUserId())))) {
 			Integer intNoOfDays = Integer.valueOf(map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c);
 			objOppToInsert.CloseDate = map_OpportunityConfigData.get('Acquisition-Winback').No_Of_Closed_Days__c != null ? Date.today().addDays(intNoOfDays) : Date.today().addDays(90);
 		}
@@ -240,6 +241,12 @@ public class OpportunityHelper {
 			existingOpportunity.Additional_Opportunity_Services__c = newAccount.Additional_Services__c;
 		}
 
+		System.debug('newAccount.Number_of_Active_Employees__c: ' + newAccount.Number_of_Active_Employees__c);
+		System.debug('oldAccount.Number_of_Active_Employees__c: ' + oldAccount.Number_of_Active_Employees__c);
+		System.debug('newAccount.NumberOfEmployees: ' + newAccount.NumberOfEmployees);
+		System.debug('oldAccount.NumberOfEmployees: ' + oldAccount.NumberOfEmployees);
+		System.debug('newAccount.NumberOfEmployees_Lead__c: ' + newAccount.NumberOfEmployees_Lead__c);
+		System.debug('oldAccount.NumberOfEmployees_Lead__c: ' + oldAccount.NumberOfEmployees_Lead__c);
 		if (newAccount.Number_of_Active_Employees__c != oldAccount.Number_of_Active_Employees__c) {
 			existingOpportunity.NumberOfEmployees__c = newAccount.Number_of_Active_Employees__c;
 		} else if (newAccount.NumberOfEmployees != oldAccount.NumberOfEmployees) {
@@ -446,9 +453,11 @@ public class OpportunityHelper {
 	private static Map<String, PriceBookEntry> preparePriceBookEntryData(List<PriceBookEntry> list_PriceBookEntry) {
 		System.debug('list_PriceBookEntry: ' + list_PriceBookEntry);
 		Map<String, PriceBookEntry> map_ProductIdAndPriceBookEntry = new Map<String, PriceBookEntry>();
-		for (PriceBookEntry objPriceBookEntry : list_PriceBookEntry) {
-			if (objPriceBookEntry.Product2 != null && objPriceBookEntry.Product2.ExternalID != null) {
-				map_ProductIdAndPriceBookEntry.put(objPriceBookEntry.Product2.ExternalID.toLowerCase(), objPriceBookEntry);
+		if (list_PriceBookEntry != null && !list_PriceBookEntry.isEmpty()) {
+			for (PriceBookEntry objPriceBookEntry : list_PriceBookEntry) {
+				if (objPriceBookEntry.Product2 != null && objPriceBookEntry.Product2.ExternalID != null) {
+					map_ProductIdAndPriceBookEntry.put(objPriceBookEntry.Product2.ExternalID.toLowerCase(), objPriceBookEntry);
+				}
 			}
 		}
 		return map_ProductIdAndPriceBookEntry;
@@ -586,6 +595,10 @@ public class OpportunityHelper {
 				if (objOpportunity.NumberOfEmployees__c != null && objOpportunity.NumberOfEmployees__c > 0) {
 					decQuantity = objOpportunity.NumberOfEmployees__c;
 					totalEmpPrice = decQuantity * priceBookEntry.UnitPrice;
+				} else if (objAccount.NumberOfEmployees_Lead__c != null && objAccount.NumberOfEmployees_Lead__c > 0) {
+					decQuantity = objAccount.NumberOfEmployees_Lead__c;
+					totalEmpPrice = decQuantity * priceBookEntry.UnitPrice;
+
 				} else {
 					decQuantity = 1;
 					totalEmpPrice = 0;

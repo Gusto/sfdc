@@ -302,8 +302,8 @@ public with sharing class AccountUtil {
 	// Premium Tier product interest
 	public static final String PREMIUM_TIER_LOGACALL = 'premium_tier_logacall';
 
-	// ICP Log A Call product interest
-	public static final String ICP_LOGACALL = 'international_contractor_payment_logacall';
+	// ICP Log a Call product interest
+	public static final String ICP_LOGACALL_PI = 'international_contractor_payment_logacall';
 
 	// Cross sell type
 	public static final String CROSS_SELL = 'Cross Sell';
