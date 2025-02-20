@@ -228,23 +228,36 @@
 				</lightning-layout>
 			</div>
 
-			<lightning-layout multiple-rows if:true={blnShowPartnerSalesType}>
-					
+			<!--<div if:true={blnShowTaskTypeSection} class="slds-p-vertical_x-small slds-p-horizontal_medium">-->
+				<lightning-layout multiple-rows if:true={blnShowPartnerSalesType}>
+					<!--<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+						<lightning-combobox
+							name="Type"
+							label="Source"
+							data-name="type"
+							placeholder="Select Type"
+							options={list_TaskTypeOptionsByProfile}
+							value={objParameters.strTaskType}
+							onchange={handleTaskTypeChange}
+						>
+						</lightning-combobox>
+					</lightning-layout-item>-->
 
-				<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
-					<lightning-combobox
-						name="partnerSalesType"
-						label="Partner Sales Task Type"
-						data-name="partnerSalesType"
-						placeholder="Partner Sales Task Type"
-						value={objParameters.strPartnerSalesTaskType}
-						options={list_PartnerSalesTypeOptions}
-						onchange={handlePartnerSalesTypeChange}
-						disabled={blnDisablePartnerSalesType}
-					>
-					</lightning-combobox>
-				</lightning-layout-item>
-			</lightning-layout>
+					<lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12" class="slds-p-horizontal_xx-small">
+						<lightning-combobox
+							name="partnerSalesType"
+							label="Partner Sales Task Type"
+							data-name="partnerSalesType"
+							placeholder="Partner Sales Task Type"
+							value={objParameters.strPartnerSalesTaskType}
+							options={list_PartnerSalesTypeOptions}
+							onchange={handlePartnerSalesTypeChange}
+							disabled={blnDisablePartnerSalesType}
+						>
+						</lightning-combobox>
+					</lightning-layout-item>
+				</lightning-layout>
+			<!--</div>-->
 
 			<lightning-layout multiple-rows>
 				<lightning-layout-item if:true={objAllSmartCalling.Show_Subject__c} size="12" class="slds-p-vertical_x-small slds-p-horizontal_medium">

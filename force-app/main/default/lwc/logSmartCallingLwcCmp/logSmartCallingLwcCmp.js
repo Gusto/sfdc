@@ -215,6 +215,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 	}
 
 	get list_FeatureRequestTypeOptions() {
+		console.log("FRT===>", util.list_FeatureRequestTypeOptions);
 		return util.list_FeatureRequestTypeOptions;
 	}
 	get blnIsCXUser() {
@@ -1018,7 +1019,6 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 					let list_LeadPassOptionsAdditional = [];
 					list_SelectedProductInterestCountries.forEach((country) => {
 						let countryLabel = this.map_AllCountries[country];
-						//list_LeadPassOptions.push(util.PicklistOption.setLabelAndValue(countryLabel));
 						list_LeadPassOptions.push(new util.PicklistOption(countryLabel, country));
 						if (!this.list_CountriesSentToRemoteToDisplay.includes(countryLabel) && !this.supportedCountries.includes(country)) {
 							list_LeadPassOptionsSelected.push(country);
@@ -1032,7 +1032,6 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 					list_ProductInterestCountryOptions.forEach((country) => {
 						let countryLabel = this.map_AllCountries[country];
 						if (!list_SelectedProductInterestCountries.includes(country) && !this.list_LeadPassOptionsSelected.includes(country) && !this.supportedCountries.includes(country)) {
-							//list_LeadPassOptionsAdditional.push(util.PicklistOption.setLabelAndValue(countryLabel));
 							list_LeadPassOptionsAdditional.push(new util.PicklistOption(countryLabel, country));
 						}
 					});
@@ -1175,7 +1174,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 				this.objAllSmartCalling?.Secondary_POC_Exclude_Roles__c?.split(",")?.forEach((role) => list_SecPOCExcludeRoles.push(role));
 				if((this.blnIsOpportunity || this.blnIsAccount) && this.objAllSmartCalling?.Show_Secondary_POC__c && !list_SecPOCExcludeRoles?.includes(this.userRoleName) && this.list_AccountContacts.length > 1){
 					this.blnShowSecondaryContact = true;
-			}
+				}
 			}
 
 		}

@@ -1,0 +1,46 @@
+<template>
+    <div class="slds-timeline__item_expandable slds-timeline__item_event slds-is-open custom-timeline-item">
+        <span class="slds-assistive-text">Event Details</span>
+        <div class="slds-media">
+            <div class="slds-media__figure">
+                <lightning-button-icon icon-name={iconName} variant="bare" alternative-text="Toggle details" class="slds-timeline__details-action-icon"
+                                       onclick={handleToggleDetails} aria-controls="event-item-expanded-{objActivity.Id}" aria-expanded={blnIsExpanded} title="Toggle details"></lightning-button-icon>
+                <div class="slds-icon_container slds-icon-standard-event slds-timeline__icon" title="event">
+                    <lightning-icon icon-name="standard:event" alternative-text="Event icon" size="small"></lightning-icon>
+                </div>
+            </div>
+            <div class="slds-media__body">
+                <div class="slds-grid slds-grid_align-spread slds-timeline__trigger">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                        <h3 class="slds-truncate" title={objActivity.Subject}>
+                            <a href="#" onclick={handleNavigateToActivityRecordPage}>
+                                <strong>{objActivity.Subject}</strong>
+                            </a>
+                        </h3>
+                    </div>                                  
+                    <p class="slds-timeline__date"><lightning-formatted-date-time 
+                        value={objActivity.ActivityDateTime}
+                        hour="numeric"
+                        minute="numeric"
+                        time-zone="America/Los_Angeles">
+                    </lightning-formatted-date-time>
+                    <span> | </span>
+                    <lightning-formatted-date-time 
+                        value={objActivity.ActivityDateTime}
+                        day="numeric"
+                        month="short"
+                        year="numeric"
+                        time-zone="America/Los_Angeles">
+                    </lightning-formatted-date-time>
+                    </p>
+                </div>
+                <article class="slds-box slds-timeline__item_details slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium" id="event-item-expanded-{objActivity.Id}" if:true={blnIsExpanded}>
+                    <div>
+                        <span class="slds-text-title">Description</span>
+                        <p class="slds-p-top_x-small"><lightning-formatted-text value={objActivity.Description}></lightning-formatted-text></p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</template>

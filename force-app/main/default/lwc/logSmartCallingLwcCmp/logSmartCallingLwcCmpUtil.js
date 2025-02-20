@@ -85,7 +85,7 @@ const ERROR_MSGS = {
 	PRODUCT_INTEREST_COUNTRIES_REQUIRED: "Product Interest Countries are required if add product interest is checked.",
 	LEAD_PASS_FIELDS_REQUIRED: "Please select at least one country in the Product Interest Countries or Additional Countries to Save this Lead Pass.",
 	LEAD_PASS_NOT_AVAILABLE: "This action is not available for your user role and profile. Please contact your PE if you feel this is an error.",
-	CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS: "Cross Sell Opportunity for International Contractor Payment Already exists in Open / Closed Won Status.",
+	CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS: "An ICP Opportunity cannot be created because this Account already has an existing ICP Opportunity.",
 	WORKERS_COMP_INTEREST_REQUIRED: "Please select a value in Workers Comp Interest before saving.",
 	CONTACT_EMAIL_REQUIRED_FOR_NEXT: "The selected Contact is missing an email address. Please ensure an email is added to proceed.",
 	UPSELL_OPPORTUNITY_FOR_EMPLOYER_ALREADY_EXISTS: "UpSell Opportunity for Employer of record Already exists in Open / Closed Won Status."

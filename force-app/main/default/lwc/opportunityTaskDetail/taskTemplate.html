@@ -9,7 +9,7 @@
 					alternative-text="Toggle details"
 					class="slds-timeline__details-action-icon"
 					onclick={handleToggleDetails}
-					aria-controls="task-item-expanded-{objTask.Id}"
+					aria-controls="task-item-expanded-{objActivity.Id}"
 					aria-expanded={blnIsExpanded}
 					title="Toggle details"
 				></lightning-button-icon>
@@ -20,12 +20,12 @@
 			<div class="slds-media__body">
 				<div class="slds-grid slds-grid_align-spread slds-timeline__trigger">
 					<div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
-						<h3 class="slds-truncate" title={objTask.Subject}>
-							<a href="#" onclick={handleNavigateToTaskRecordPage}>
-								<strong>{objTask.Subject}</strong>
+						<h3 class="slds-truncate" title={objActivity.Subject}>
+							<a href="#" onclick={handleNavigateToActivityRecordPage}>
+								<strong>{objActivity.Subject}</strong>
 							</a>
 						</h3>
-						<lightning-icon if:true={blnIsHighPriority} icon-name="utility:priority" size="x-small" class="slds-m-left_x-small priority-icon"></lightning-icon>
+						<lightning-icon if:true={blnIsHighPriority} icon-name="utility:priority" size="x-small" class="slds-m-left_x-small priority-icon"></lightning-icon> 
 						<lightning-icon
 							if:true={strRecordTypeIconName}
 							icon-name={strRecordTypeIconName}
@@ -34,12 +34,12 @@
 							class="slds-m-left_x-small"
 						></lightning-icon>
 					</div>
-					<p class="slds-timeline__date"><lightning-formatted-date-time value={objTask.ActivityDate}> </lightning-formatted-date-time></p>
+					<p class="slds-timeline__date"><lightning-formatted-date-time value={objActivity.ActivityDate}> </lightning-formatted-date-time></p>
 				</div>
-				<article class="slds-box slds-timeline__item_details slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium" id="task-item-expanded-{objTask.Id}" if:true={blnIsExpanded}>
+				<article class="slds-box slds-timeline__item_details slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium" id="task-item-expanded-{objActivity.Id}" if:true={blnIsExpanded}>
 					<div>
 						<span class="slds-text-title">Description</span>
-						<p class="slds-p-top_x-small"><lightning-formatted-text value={objTask.Description}></lightning-formatted-text></p>
+						<p class="slds-p-top_x-small"><lightning-formatted-text value={objActivity.Description}></lightning-formatted-text></p>
 					</div>
 				</article>
 			</div>

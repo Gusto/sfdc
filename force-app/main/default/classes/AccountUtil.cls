@@ -216,6 +216,7 @@ public with sharing class AccountUtil {
 	public final static String PARTNER_ROLE = 'partner';
 	public final static String SBIZ_ROLE = 'sb';
 	public final static String MDR_ROLE = 'mdr';
+	public final static String DEDICATED_CSM_ROLE = 'Dedicated CSM';
 
 	//User Roles Full Name
 	public final static String SALES_PARTNER_MANAGER_ROLE = 'sales_partner_xx_xx_mgr';
@@ -303,6 +304,9 @@ public with sharing class AccountUtil {
 
 	// Premium Tier product interest
 	public static final String PREMIUM_TIER_LOGACALL = 'premium_tier_logacall';
+
+	// ICP Log a Call product interest
+	public static final String ICP_LOGACALL_PI = 'international_contractor_payment_logacall';
 
 	// Cross sell type
 	public static final String CROSS_SELL = 'Cross Sell';

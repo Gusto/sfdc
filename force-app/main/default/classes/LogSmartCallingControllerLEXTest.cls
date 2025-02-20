@@ -1287,7 +1287,7 @@ public class LogSmartCallingControllerLEXTest {
 		String strMetadata = objResponseWrapper.strMetadataProperties;
 		String strDataInJson = JSON.serialize(objComponentParameters);
 		String result = LogSmartCallingControllerLEX.saveRecords(strDataInJson, strMetadata, true, '');
-		System.assertNotEquals(LogSmartCallingUtil.CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS, result, 'The error message should indicate that a cross-sell opportunity already exists.');
+		System.assertEquals(LogSmartCallingUtil.CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS, result, 'The error message should indicate that a cross-sell opportunity already exists.');
 		Test.stopTest();
 	}
 

@@ -134,6 +134,8 @@ public without sharing class AccountTriggerHelper {
 			//for each new account, update subscription preferences
 			setSubscriptionPreferencesOnAccount(objAccount, null, true);
 		}
+
+		populateGEPAccounts(list_Accounts, null);
 	}
 
 	/**
@@ -245,6 +247,8 @@ public without sharing class AccountTriggerHelper {
 				objDeductionTriggerHelper.setAccountValues(objAccount, objDeduction);
 			}
 		}
+
+		populateGEPAccounts(map_Accounts.values(), map_OldAccounts);
 	}
 
 	/**
@@ -281,6 +285,7 @@ public without sharing class AccountTriggerHelper {
 		map_AllUsers = new Map<Id, User>();
 		Set<Id> set_AccountIdForRecordTypeChange = new Set<Id>();
 		list_OpptysToInsert = new List<Opportunity>();
+		List<Account> list_AccountsToForAcquisition = new List<Account>();
 
 		for (Account objAccount : map_Accounts.values()) {
 			if (objAccount.OwnerId != null) {
@@ -302,7 +307,9 @@ public without sharing class AccountTriggerHelper {
 			if (
 				(objOldAccount.RecordTypeId != objAccount.RecordTypeId) &&
 				(objAccount.RecordTypeId == AccountUtil.EMBEDDED_COMPANY_ACCOUNT_RT_ID ||
-				objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID)
+				objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID ||
+				objAccount.RecordTypeId == AccountUtil.RESELLER_ACCOUNT_RT_ID ||
+				objAccount.RecordTypeId == AccountUtil.PARTNER_RT_ID)
 			) {
 				set_AccountIdForRecordTypeChange.add(objAccount.Id);
 			}
@@ -345,6 +352,17 @@ public without sharing class AccountTriggerHelper {
 			//update First Client Add date for reseller accounts
 			setFirstClientAddDateOnReseller(objAccount, objOldAccount);
 			checkOpportunitiesForRouting(objAccount, objOldAccount);
+			
+
+			if ((objAccount.Tier__c != objOldAccount.Tier__c || 
+			objAccount.Additional_Services__c != objOldAccount.Additional_Services__c)) {
+				list_AccountsToForAcquisition.add(objAccount);
+			}
+		}
+
+		if (!list_AccountsToForAcquisition.isEmpty()) {
+			System.debug('list_AccountsToForAcquisition: ' + list_AccountsToForAcquisition);
+			//OpportunityHelper.createUpdateAcquisitionOpportunity(list_AccountsToForAcquisition);
 		}
 
 		//update company and reseller opportunities
@@ -451,7 +469,9 @@ public without sharing class AccountTriggerHelper {
 		}
 		if (!list_OpptysToInsert.isEmpty()) {
 			AccountTriggerHelper.skipTrigger = true;
+			System.debug('list_OpptysToInsert2222: ' + list_OpptysToInsert);
 			insert list_OpptysToInsert;
+			AccountTriggerHelper.skipTrigger = false;
 
 			// Send in-app notification about new cross-sell and upsell opportunity with Employer of Record
 			for (Opportunity objOppty : list_OpptysToInsert) {
@@ -760,6 +780,10 @@ public without sharing class AccountTriggerHelper {
 
 			if (objAccount.HI_Owner__c != null) {
 				set_UserIds.add(objAccount.HI_Owner__c);
+			}
+            
+			if (objAccount.CSM_Owner__c != null) {
+				set_UserIds.add(objAccount.CSM_Owner__c);
 			}
 
 			if (objAccount.Id != null) {
@@ -2199,6 +2223,7 @@ public without sharing class AccountTriggerHelper {
 
 	/**** do account routing ****/
 	public void doAccountRouting(Account objAccount, Account objOldAccount) {
+		System.debug('doAccountRouting1:');
 		Set<String> set_RoleCreatedByUser = new Set<String>{
 			'sales_mm_pr_xx',
 			'sales_partner_ae_xx',
@@ -2211,14 +2236,21 @@ public without sharing class AccountTriggerHelper {
 			'sales_sdr_mm_mgr_xx'
 		};
 		String strUserInfoRole = map_Users?.get(UserInfo.getUserId())?.UserRole?.Name;
-
+		System.debug('strUserInfoRole:' + strUserInfoRole);
 		if (objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID || objAccount.RecordTypeId == AccountUtil.RESELLER_ACCOUNT_RT_ID) {
+			System.debug('objOldAccount111:' + objOldAccount);
 			if (objOldAccount == null) {
 				// account insert
 
 				if (String.isBlank(objAccount.Converted_Lead_Id__c) && (String.isNotBlank(strUserInfoRole) && !set_RoleCreatedByUser.contains(strUserInfoRole))) {
 					// upon creation if account does not have converted lead & account has sold by or referred by or parent id, send account to routing
-					if (objAccount.Original_Firm__c != null || (objAccount.Referred_By__c != null && objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID) || objAccount.ParentId != null) {
+					if (
+						objAccount.Original_Firm__c != null ||
+						objAccount.Sold_By__c != null ||
+						(objAccount.Referred_By__c != null &&
+						objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID) ||
+						objAccount.ParentId != null
+					) {
 						objAccount.Account_Route_Count__c = (objAccount.Account_Route_Count__c == null || objAccount.Account_Route_Count__c == 0) ? 1 : objAccount.Account_Route_Count__c + 1;
 						objAccount.UniqueEntry__RingLead_App_Field__c = PENDING_ROUTING;
 						return;
@@ -2238,7 +2270,8 @@ public without sharing class AccountTriggerHelper {
 						objLead.OwnerId != null &&
 						!AccountUtil.set_PartnerRoles.contains(objLead?.Owner.UserRole?.Name) &&
 						(objAccount.Original_Firm__c != null ||
-						objAccount.Referred_By__c != null) &&
+						objAccount.Referred_By__c != null ||
+						objAccount.Sold_By__c != null) &&
 						objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID
 					) {
 						objAccount.Account_Route_Count__c = (objAccount.Account_Route_Count__c == null || objAccount.Account_Route_Count__c == 0) ? 1 : objAccount.Account_Route_Count__c + 1;
@@ -2261,6 +2294,7 @@ public without sharing class AccountTriggerHelper {
 					objAccount.UniqueEntry__RingLead_App_Field__c = PENDING_ROUTING;
 				}
 			} else {
+				Boolean blnRouting = false;
 				Boolean blnAccountRouting = false;
 				Integer intSDRPercentage = Integer.valueOf(System.Label.SDR_to_MMPR_Percent);
 				String strCreatedByRole = map_Users.get(objAccount.CreatedById)?.UserRole?.Name;
@@ -2281,6 +2315,7 @@ public without sharing class AccountTriggerHelper {
 					Account objAcc = map_AllAccountMap.get(objAccount.Id);
 
 					for (Opportunity objOppty : objAcc.Opportunities) {
+						System.debug('objOppty.False_Sold_By__c:' + objOppty.False_Sold_By__c);
 						if (objOppty.False_Sold_By__c == true && objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
 							return;
 						}
@@ -2322,10 +2357,11 @@ public without sharing class AccountTriggerHelper {
 					objAccount.UniqueEntry__RingLead_App_Field__c = PENDING_ROUTING;
 					blnAccountRouting = true;
 				}
-				// if account is owned by admin or integration user, send it for routing
-				if (String.isNotBlank(objAccount.Converted_Lead_Id__c) && map_ConvertedLeads.containsKey(objAccount.Converted_Lead_Id__c) && blnAccountRouting == false) {
+
+				if (String.isNotBlank(objAccount.Converted_Lead_Id__c) && map_ConvertedLeads.containsKey(objAccount.Converted_Lead_Id__c) && blnRouting == false) {
 					// check if account is created via lead conversion and get converted lead
 					Lead objConvertedLead = map_ConvertedLeads.get(objAccount.Converted_Lead_Id__c);
+
 					if (objConvertedLead.OwnerId != null && AccountUtil.INTEGRATION_USERS.contains(objAccount.OwnerId) && !AccountUtil.INTEGRATION_USERS.contains(objConvertedLead.OwnerId)) {
 						// if account is owned by admin or integration user, change owner to lead owner
 						objAccount.OwnerId = objConvertedLead.OwnerId;
@@ -2358,6 +2394,8 @@ public without sharing class AccountTriggerHelper {
 		Boolean blnTierTrigger;
 		Boolean blnAnchorPayTrigger;
 		Boolean blnOverallStatusTrigger;
+		Boolean doRouting = false;
+		String strCSMOwnerRole = objAccount.CSM_Owner__c != null ? map_Users?.get(objAccount.CSM_Owner__c)?.UserRole?.Name : null;
 		//If CSM owner is not set and Tier is not blank check for CSM routing triggers
 		if (objAccount.CSM_Owner__c == null && objOldAccount.Tier__c != null && objAccount.Tier__c != null) {
 			//Set if Tier is changing to Premium and Anchor pay date is filled and Overall status is not suspended
@@ -2379,9 +2417,16 @@ public without sharing class AccountTriggerHelper {
 				objAccount.Tier__c.containsIgnoreCase(AccountUtil.PREMIUM_TIER) &&
 				objAccount.Anchor_Pay_Date__c != null;
 			//If any of the triggers are true, return true
-			return blnTierTrigger || blnAnchorPayTrigger || blnOverallStatusTrigger;
+			doRouting = blnTierTrigger || blnAnchorPayTrigger || blnOverallStatusTrigger;
 		}
-		return false;
+		//If Tier is changing to Premium and CSM owner is not set or not a dedicated CSM, return true
+		if (objAccount.Tier__c != objOldAccount.Tier__c &&
+			objAccount.Tier__c.containsIgnoreCase(AccountUtil.PREMIUM_TIER)) {
+			if (strCSMOwnerRole == null || !strCSMOwnerRole.containsIgnoreCase(AccountUtil.DEDICATED_CSM_ROLE)) {
+				doRouting = true;
+			}
+		}
+		return doRouting;
 	}
 
 	/**
@@ -2983,11 +3028,15 @@ public without sharing class AccountTriggerHelper {
 	public static void updateContactRecordType(Set<Id> set_AccountIdForRecordTypeChange) {
 		List<Contact> lst_ContactsToUpdate = new List<Contact>();
 
-		for (Contact objContact : [SELECT Id, RecordTypeId, AccountId, Account.RecordTypeId FROM Contact WHERE AccountId IN :set_AccountIdForRecordTypeChange]) {
+		for (Contact objContact : [SELECT Id, RecordTypeId, AccountId, Account.RecordTypeId, Account.Type FROM Contact WHERE AccountId IN :set_AccountIdForRecordTypeChange]) {
 			if (objContact.Account.RecordTypeId == AccountUtil.EMBEDDED_COMPANY_ACCOUNT_RT_ID) {
 				objContact.RecordTypeId = ContactUtil.EMBEDDED_COMPANY_CONTACT_RT_ID;
 			} else if (objContact.Account.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID) {
 				objContact.RecordTypeId = ContactUtil.COMPANY_CONTACT_RT_ID;
+			} else if (objContact.Account.RecordTypeId == AccountUtil.RESELLER_ACCOUNT_RT_ID && objContact.Account.Type == AccountUtil.EMBEDDED_PARTNER_TYPE) {
+				objContact.RecordTypeId = ContactUtil.EMBEDDED_COMPANY_CONTACT_RT_ID;
+			} else if (objContact.Account.RecordTypeId == AccountUtil.PARTNER_RT_ID && objContact.Account.Type == AccountUtil.EMBEDDED_PARTNER_TYPE) {
+				objContact.RecordTypeId = ContactUtil.EMBEDDED_COMPANY_CONTACT_RT_ID;
 			}
 			lst_ContactsToUpdate.add(objContact);
 		}
@@ -3315,13 +3364,13 @@ public without sharing class AccountTriggerHelper {
 							blnICPOppClosedWon = true;
 						}
 
-						// cross-sell and upsell is closed won for the Customer Success
+						// cross-sell and upsell is closed lost except if its from Log a Call
 						if (
 							objOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE &&
 							objOppty.Upsell_Tier__c != null &&
 							objOppty.Upsell_Tier__c.containsIgnoreCase(AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT)
 						) {
-							if (objOppty.Product_Interest__c != null) {
+							if (objOppty.Product_Interest__c != null && objOppty.Product_Interest__c != AccountUtil.ICP_LOGACALL_PI) {
 								set_ClosedLostICPProdInterest.addAll(objOppty.Product_Interest__c.split(';'));
 							}
 						}
@@ -3427,10 +3476,6 @@ public without sharing class AccountTriggerHelper {
 				Opportunity objTierUpsellOpp = null;
 				Opportunity objIntlPayrollTierUpsellOpp = null;
 
-				if (objNewAccount.Product_Interest_Countries__c != objOldAccount.Product_Interest_Countries__c) {
-					blnNewCountryAdded = true;
-				}
-
 				if (String.isNotBlank(objNewAccount.Product_Interest__c)) {
 					for (String strEORProdInterest : AccountUtil.EOR_PRODUCT_INTEREST) {
 						if (
@@ -3441,6 +3486,10 @@ public without sharing class AccountTriggerHelper {
 							blnNewEORAdded = true;
 						}
 					}
+				}
+
+				if (objNewAccount.Product_Interest_Countries__c != objOldAccount.Product_Interest_Countries__c) {
+					blnNewCountryAdded = true;
 				}
 
 				if (String.isNotBlank(objOldAccount.Product_Interest__c)) {
@@ -4089,6 +4138,50 @@ public without sharing class AccountTriggerHelper {
 	/**
 	 * @description	Applies special rules to cross-sell and upsell when upsell tier contains Employer of Record and Priority Support
 	 * @param objOpportunity - cross-sell and upsell opportunity
+	 * @description	Populate Related GEP Account If Embedded Partner Account.
+	 * @author Ajay Krishna P U
+	 * @param list_NewAccounts New version of Accounts
+	 * @param map_OldAccounts  Old Verison Of Accounts
+	 */
+	private void populateGEPAccounts(List<Account> list_NewAccounts, Map<Id, Account> map_OldAccounts) {
+		List<Account> list_AccountsToProcess = new List<Account>();
+		List<GEP_Accounts__c> list_GEPAccounts = new List<GEP_Accounts__c>();
+		Boolean blnIsInsert = map_OldAccounts == null;
+
+		//Identify Accounts to be processed
+		for (Account objAccount : list_NewAccounts) {
+			if (
+				objAccount.GEP_Account__c == null &&
+				objAccount.RecordTypeId == AccountUtil.PARTNER_RT_ID &&
+				objAccount.Type == AccountUtil.EMBEDDED_PARTNER_TYPE &&
+				(blnIsInsert ||
+				map_OldAccounts.get(objAccount.Id).Type != objAccount.Type ||
+				map_OldAccounts.get(objAccount.Id).RecordTypeId != objAccount.RecordTypeId)
+			) {
+				list_AccountsToProcess.add(objAccount);
+				list_GEPAccounts.add(new GEP_Accounts__c(Name = objAccount.Name));
+			}
+		}
+		if (list_AccountsToProcess.isEmpty()) {
+			return;
+		}
+
+		try {
+			//Create related GEP Account
+			insert list_GEPAccounts;
+
+			//Link GEP Accounts with Partner Accounts
+			for (Integer intIndex = 0; intIndex < list_AccountsToProcess.size(); intIndex++) {
+				list_AccountsToProcess[intIndex].GEP_Account__c = list_GEPAccounts[intIndex].Id;
+			}
+		} catch (Exception objEx) {
+			ExceptionLogUtil.logException('AccountTriggerHelper', 'populateGEPAccounts', objEx);
+		}
+	}
+
+	/**
+	 * @description	Applies special rules to cross-sell and upsell when upsell tier contains Employer of Record and Priority Support
+	 * @param objOpportunity - cross-sell and upsell opportunity
 	 * @param objAccount  Company Account
 	 */
 	public Opportunity applySpecialRulesForTierUpsell(Opportunity objOpportunity, Account objAccount) {
@@ -4189,11 +4282,30 @@ public without sharing class AccountTriggerHelper {
 		if (list_NewAccounts != null) {
 			List<Account> list_AccountToProcessForProductUpsell = new List<Account>();
 			Map<String, List<Contact>> map_AccountIdAndContacts = new Map<String, List<Contact>>();
+			Map<String, Contact> map_ZPUserIdAndContact = new Map<String, Contact>();
 			Set<Id> set_AccountIds = new Set<Id>();
+			Set<String> set_CompanyIds = new Set<String>();
+
+			Map<String, String> map_AccIdAndCompId = new Map<String, String>();
+			Map<String, String> map_CompIdAndUserId = new Map<String, String>();
+			Map<String, ZP_Company__c> map_CompIdAndZPCompany = new Map<String, ZP_Company__c>();
 
 			//preparing set of account Ids to query contacts
 			for (Account objAccount : list_NewAccounts) {
 				set_AccountIds.add(objAccount.Id);
+				set_CompanyIds.add(objAccount.ZP_Company_ID__c);
+				map_AccIdAndCompId.put(objAccount.Id, objAccount.ZP_Company_ID__c);
+			}
+
+			if (!set_CompanyIds.isEmpty()) {
+				for (ZP_Company__c objZPCompany : [SELECT Id, Product_Interest__c, Product_Interest_Countries__c, Id__c FROM ZP_Company__c WHERE Id__c IN :set_CompanyIds]) {
+					if (String.isNotBlank(objZPCompany.Product_Interest__c) && objZPCompany.Product_Interest__c.contains('international_payroll_landing_page_consent')) {
+						if (objZPCompany.Product_Interest__c.split('international_payroll_landing_page_consent_').size() > 1) {
+							map_CompIdAndUserId.put(objZPCompany.Id__c, objZPCompany.Product_Interest__c.split('international_payroll_landing_page_consent_')[1].remove(';'));
+						}
+					}
+					map_CompIdAndZPCompany.put(objZPCompany.ID__c, objZPCompany);
+				}
 			}
 
 			// fetching contact where roles belong to LIST_ADMIN_ROLES
@@ -4204,6 +4316,9 @@ public without sharing class AccountTriggerHelper {
 				}
 				list_ContactsFromMap.add(objContact);
 				map_AccountIdAndContacts.put(objContact.AccountId, list_ContactsFromMap);
+				if (String.isNotBlank(objContact.ZP_User_Id__c)) {
+					map_ZPUserIdAndContact.put(objContact.ZP_User_Id__c, objContact);
+				}
 			}
 
 			//iterating over the list of accounts
@@ -4353,12 +4468,14 @@ public without sharing class AccountTriggerHelper {
 							// product upsell details to create the record
 							Partnership_Interest__c objProductUpsell = new Partnership_Interest__c();
 							// by default value would be a picklist
-							objProductUpsell.Product_Interest__c = 'International Payroll';
+							objProductUpsell.Product_Interest__c = AccountUtil.EMPLOYER_OF_RECORD;
 							// adding countries to the Product upsell
 							objProductUpsell.Product_Interest_Countries__c = String.join(list_EligibleCountriesForProductUpsell, ';');
 							// assign contact from ZP User role.
 
-							if (!map_AccountIdAndContacts.isEmpty()) {
+							if (map_CompIdAndUserId.containsKey(objAccount.ZP_Company_ID__c) && map_ZPUserIdAndContact.containsKey(map_CompIdAndUserId.get(objAccount.ZP_Company_ID__c))) {
+								objProductUpsell.Contact__c = map_ZPUserIdAndContact.get(map_CompIdAndUserId.get(objAccount.ZP_Company_ID__c)).Id;
+							} else if (!map_AccountIdAndContacts.isEmpty()) {
 								for (Contact objContact : map_AccountIdAndContacts.get(objAccount.Id)) {
 									if (objContact.ZP_User_Role__c.contains(ZPUserRoleUtil.PRIMARY_PAYROLL_ADMIN)) {
 										objProductUpsell.Contact__c = objContact.Id;

@@ -403,7 +403,7 @@ public without sharing class LogSmartCallingControllerLEX {
 				if ((objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_CONTRACTOR_PAYMENT_LOGACALL) || (objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL)) {
 					String strUpsellTier = objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_CONTRACTOR_PAYMENT_LOGACALL ? '%' + AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT + '%' : null;
 					strUpsellTier = objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL ? '%' + AccountUtil.EMPLOYER_OF_RECORD + '%' : strUpsellTier;
-					List<Opportunity> opportunitiesRelatedToAccount = [
+					List<Opportunity> opportunitiesRelatedToAccountUpsell = [
 						SELECT Id, StageName
 						FROM Opportunity
 						WHERE
@@ -412,10 +412,21 @@ public without sharing class LogSmartCallingControllerLEX {
 							AND Upsell_Tier__c LIKE :strUpsellTier
 							AND IsWon = TRUE AND IsClosed = TRUE
 					];
-					if (!opportunitiesRelatedToAccount.isEmpty()) {
+					List<Opportunity> opportunitiesRelatedToAccountICP = [
+						SELECT Id, StageName
+						FROM Opportunity
+						WHERE
+							AccountId = :objData.productInterestAccountId
+							AND RecordTypeId = :OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID
+							AND Upsell_Tier__c LIKE :strUpsellTier
+							AND ((IsWon = TRUE AND IsClosed = TRUE) OR (IsClosed = FALSE))
+					];
+					if (!opportunitiesRelatedToAccountICP.isEmpty()) {
 						if(objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_CONTRACTOR_PAYMENT_LOGACALL) {
 							return LogSmartCallingUtil.CROSS_SELL_OPPORTUNITY_FOR_ICP_ALREADY_EXISTS;
 						}
+					}
+					if (!opportunitiesRelatedToAccountUpsell.isEmpty()) {
 						if(objData.strProductInterest == LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL) {
 							return LogSmartCallingUtil.UPSELL_OPPORTUNITY_FOR_EMPLOYER_ALREADY_EXISTS;
 						}
