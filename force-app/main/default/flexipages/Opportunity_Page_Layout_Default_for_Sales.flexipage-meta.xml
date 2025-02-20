@@ -245,6 +245,10 @@
                 <identifier>force_relatedListContainer</identifier>
             </componentInstance>
         </itemInstances>
+        <name>Facet-71508ace-cd0c-49ea-99df-3276319a04ff</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -257,7 +261,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>relatedListComponentOverride</name>
-                    <value>NONE</value>
+                    <value>ADVGRID</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>rowsToDisplay</name>
@@ -269,16 +273,6 @@
                 </componentInstanceProperties>
                 <componentName>force:relatedListSingleContainer</componentName>
                 <identifier>force_relatedListSingleContainer2</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-71508ace-cd0c-49ea-99df-3276319a04ff</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>customOpportunityProducts</componentName>
-                <identifier>c_customOpportunityProducts2</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-98d95abb-10a2-4b11-9d56-92b48faf1b8e</name>
@@ -449,8 +443,28 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>customOpportunityProducts</componentName>
-                <identifier>c_customOpportunityProducts</identifier>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Opportunity.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>OpportunityLineItems</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer4</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -560,6 +574,27 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>activityHeading</name>
+                    <value>Ticket Activities</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>strTaskRecordTypeToIconName</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>strTaskRecordTypes</name>
+                    <value>Event</value>
+                </componentInstanceProperties>
+                <componentName>opportunityTasks</componentName>
+                <identifier>c_opportunityTasks</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-672663b0-e853-47d4-bb3b-c58c87d399a9</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
                 </componentInstanceProperties>
@@ -615,6 +650,20 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab12</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-672663b0-e853-47d4-bb3b-c58c87d399a9</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Ticket Activities</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab13</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-7a2f3229-23d0-4203-8793-6ebb45ee99b3</name>

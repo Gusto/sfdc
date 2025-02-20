@@ -6,7 +6,7 @@
         <name>Initialize_Fault_Path_Details</name>
         <label>Initialize Fault Path Details</label>
         <locationX>314</locationX>
-        <locationY>539</locationY>
+        <locationY>887</locationY>
         <assignmentItems>
             <assignToReference>objExceptionLogEvent.Message__c</assignToReference>
             <operator>Assign</operator>
@@ -43,7 +43,7 @@
         <name>Is_Mark_Case_As_Action_Required</name>
         <label>Is Mark Case As Action Required</label>
         <locationX>314</locationX>
-        <locationY>323</locationY>
+        <locationY>671</locationY>
         <defaultConnector>
             <targetReference>Is_Vitals_Risk_Out_of_Office_Assignment</targetReference>
         </defaultConnector>
@@ -121,10 +121,84 @@
         </rules>
     </decisions>
     <decisions>
+        <name>Is_Update_Case_To_Email_address</name>
+        <label>Is Update Case To Email address</label>
+        <locationX>314</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Is_Mark_Case_As_Action_Required</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Is_Update_Case_To_Email_address</name>
+            <conditionLogic>8 AND 1 AND 2 AND 4 AND (3 OR ((5 OR 7) AND 6))</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Parent.Termination_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Incoming</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ThreadIdentifier</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$User.Data_Migration_Validation__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ToAddress</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>renewalcarriercomms@gusto.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.ThreadIdentifier</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.CcAddress</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>renewalcarriercomms@gusto.com</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>NEW_RECORD</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Case_To_Email_Address</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Is_Vitals_Risk_Out_of_Office_Assignment</name>
         <label>Is Vitals Risk Out of Office Assignment</label>
         <locationX>314</locationX>
-        <locationY>971</locationY>
+        <locationY>1319</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Yes</name>
@@ -187,6 +261,11 @@
         <expression>ISNEW()</expression>
     </formulas>
     <formulas>
+        <name>toAddress</name>
+        <dataType>String</dataType>
+        <expression>LEFT({!$Record.ToAddress}, 255)</expression>
+    </formulas>
+    <formulas>
         <name>TODAY</name>
         <dataType>Date</dataType>
         <expression>TODAY()</expression>
@@ -217,14 +296,14 @@
         <name>Exception_Log_Event</name>
         <label>Exception Log Event</label>
         <locationX>314</locationX>
-        <locationY>647</locationY>
+        <locationY>995</locationY>
         <inputReference>objExceptionLogEvent</inputReference>
     </recordCreates>
     <recordLookups>
         <name>Get_Assurance_Queue</name>
         <label>Get Assurance Queue</label>
         <locationX>50</locationX>
-        <locationY>1079</locationY>
+        <locationY>1427</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_OOO_to_Queue</targetReference>
@@ -246,7 +325,7 @@
         <name>Assign_OOO_to_Queue</name>
         <label>Assign OOO to Queue</label>
         <locationX>50</locationX>
-        <locationY>1187</locationY>
+        <locationY>1535</locationY>
         <faultConnector>
             <isGoTo>true</isGoTo>
             <targetReference>Initialize_Fault_Path_Details</targetReference>
@@ -263,7 +342,7 @@
         <name>Update_Case_Record</name>
         <label>Update Case Record</label>
         <locationX>50</locationX>
-        <locationY>431</locationY>
+        <locationY>779</locationY>
         <connector>
             <targetReference>Is_Vitals_Risk_Out_of_Office_Assignment</targetReference>
         </connector>
@@ -290,11 +369,31 @@
         </inputAssignments>
         <inputReference>$Record.Parent</inputReference>
     </recordUpdates>
+    <recordUpdates>
+        <name>Update_Case_To_Email_Address</name>
+        <label>Update Case To Email Address</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Is_Mark_Case_As_Action_Required</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Initialize_Fault_Path_Details</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>To_Email_Address__c</field>
+            <value>
+                <elementReference>toAddress</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record.Parent</inputReference>
+    </recordUpdates>
     <start>
         <locationX>188</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Is_Mark_Case_As_Action_Required</targetReference>
+            <targetReference>Is_Update_Case_To_Email_address</targetReference>
         </connector>
         <object>EmailMessage</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>

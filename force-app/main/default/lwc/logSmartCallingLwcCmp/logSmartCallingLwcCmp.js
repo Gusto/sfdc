@@ -51,7 +51,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 		strFollowUpSubject: util.TASK_SUBJECT.FOLLOW_UP_CALL,
 		blnCreatePayrollOpportunity: false,
 		strPayrollOpportunityName: "",
-		strPayrollOpportunityStage: "",
+		strPayrollOpportunityStage: "Prospecting",
 		strPayrollOpportunityCloseDate: "",
 		blnCreateHIOpportunity: false,
 		blnCreateArdiusOpportunity: false,
@@ -350,6 +350,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 			this.FIELD_API.GUSTO_RETENTION_NOTES = GUSTO_RETENTION_NOTES.fieldApiName;
 		}
 		this.selectedTaxYear = util.labels.TAX_YEAR_LABEL;
+		this.objParameters.strAcquisitionType = "New Business";
 	}
 
 	renderedCallback() {
@@ -1486,6 +1487,7 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 						util.displayToast(this, result, "", util.TOAST_PARAMS.TYPE.ERROR, util.TOAST_PARAMS.TYPE.STICKY);
 						return;
 					}
+
 					util.displayToast(this, util.TOAST_PARAMS.MESSAGE.SUCCESS, util.SUCCESS_MSGS.RECORDS_UPDATED, util.TOAST_PARAMS.TYPE.SUCCESS, "");
 					this.refreshComponent();
 					var t1 = performance.now();
@@ -1493,6 +1495,15 @@ export default class LogSmartCallingLwcCmp extends LightningElement {
 				})
 				.catch((error) => {
 					let strErrMsg = error.body?.message || error.message;
+					console.log('Error: ' + strErrMsg);
+					if (strErrMsg.includes('FIELD_CUSTOM_VALIDATION_EXCEPTION')) {
+
+						const extractedMessage = strErrMsg.split('FIELD_CUSTOM_VALIDATION_EXCEPTION, ')[1]?.split(': []')[0];
+						console.log('extractedMessage : ' + extractedMessage);
+						util.displayToast(this, extractedMessage, "", util.TOAST_PARAMS.TYPE.ERROR, util.TOAST_PARAMS.TYPE.STICKY);
+						return;
+					}
+
 					console.error(strErrMsg);
 					util.displayToast(this, strErrMsg, "", util.TOAST_PARAMS.TYPE.ERROR, util.TOAST_PARAMS.TYPE.STICKY);
 				})

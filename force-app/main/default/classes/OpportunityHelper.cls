@@ -747,7 +747,7 @@ public class OpportunityHelper {
 	public static void updateEmployeeCounts(Opportunity objOppty, Opportunity objOldOppty, Account objAccount) {
 		//Account objAccount = map_Accounts.get(objOppty.AccountId);
 
-		if (objOppty.RecordTypeId == ACQUISITION_OPPTY_RT_ID) {
+		if (objOppty.RecordTypeId == ACQUISITION_OPPTY_RT_ID && objOppty.StageName != OpportunityUtil.CLOSED_WON_STAGE) {
 			if (objOldOppty == null) {
 				if (objAccount.Number_of_Active_Employees__c != null && objAccount.Number_of_Active_Employees__c > 0) {
 					objOppty.NumberOfEmployees__c = objAccount.Number_of_Active_Employees__c;

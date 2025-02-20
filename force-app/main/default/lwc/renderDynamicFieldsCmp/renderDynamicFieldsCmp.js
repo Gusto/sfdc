@@ -55,6 +55,7 @@ export default class RenderDynamicFieldsCmp extends LightningElement {
                     list_arrFieldList.forEach(objEachField => {
                         objEachField.size = objEachField.size ? objEachField.size : '6';
                         objEachField.label = objEachField.overrideLabel ? objEachField.overrideLabel : objEachField.label;
+                        objEachField.customStyle = objEachField.api === 'RecordTypeId' ? 'pointer-events: none;' : ''; // If the record type ID is present, make it non-clickable because record types do not have a detail page.
                     });
                     /* set list of fields names */
                     this.lst_fieldNames = list_arrFieldList;

@@ -3312,8 +3312,13 @@ public class CaseTriggerHelperTest {
 	 **/
 	@isTest
 	static void testCaseUpdatePartnerAccountForGEPCX() {
-		Account objAccount = [SELECT Id FROM Account WHERE Name = 'TEST RESELLER ACCOUNT' LIMIT 1];
-		objAccount.Type = AccountUtil.EMBEDDED_COMPANY_TYPE;
+        AccountTriggerHelper.skipTrigger = true;
+		List<Account> list_Accounts = [SELECT Id FROM Account WHERE Name IN('TEST RESELLER ACCOUNT', 'TEST ACCOUNT') LIMIT 2];
+		
+        Account objAccount = list_Accounts[0];
+        Account objAccountRef = list_Accounts[1];
+        objAccount.Type = AccountUtil.EMBEDDED_COMPANY_TYPE;
+        objAccount.Referred_By__c = objAccountRef.Id;
 		update objAccount;
 		Contact objContact = [SELECT Id FROM Contact WHERE Email = 'test.contact.@gusto.com.reseller'];
 		Test.startTest();
@@ -3331,11 +3336,11 @@ public class CaseTriggerHelperTest {
 
 		insert objCase;
 		Case updatedCase = [SELECT Id, Partner_Account__c FROM Case WHERE id = :objCase.Id];
-		System.assertEquals(updatedCase.Partner_Account__c, objAccount.Id, 'Incorrect Result');
-		updatedCase.Partner_Account__c=null;
+		System.assertEquals(updatedCase.Partner_Account__c, objAccountRef.Id, 'Incorrect Result');
+		updatedCase.Partner_Account__c = null;
 		update updatedCase;
 		updatedCase = [SELECT Id, Partner_Account__c FROM Case WHERE id = :objCase.Id];
-		System.assertEquals(updatedCase.Partner_Account__c, objAccount.Id, 'Incorrect Result');
+		System.assertEquals(updatedCase.Partner_Account__c, objAccountRef.Id, 'Incorrect Result');
 		Test.stopTest();
 	}
 

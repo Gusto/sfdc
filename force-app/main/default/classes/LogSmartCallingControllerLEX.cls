@@ -865,6 +865,14 @@ public without sharing class LogSmartCallingControllerLEX {
 				updateLead(objData, objTheLead, objTask, objMetadata, objUserDetails);
 			}
 
+			if (objData.strObjectName == LogSmartCallingUtil.SOBJECT_API_NAME_ACCOUNT) {
+				Account objTheAccount = queryAccount(objData.strRecordId);
+				
+				if (objData.blnCreatePayrollOpportunity && objMetadata.Payroll_Opportunity__c) {
+					createPayrollOpportunity(objData, objTheAccount);
+				}
+			}
+
 			logSmartCallingFuture(strDataInJson, objTask.Id, strMetadata, JSON.serialize(objUserDetails), strNiceInteraction, blnCreateSCT, blnIsSaveWOCall);
 
 			if (!list_InsertFeedItems.isEmpty()) {
@@ -1752,7 +1760,7 @@ public without sharing class LogSmartCallingControllerLEX {
 					}
 
 					if (objData.blnCreatePayrollOpportunity && objMetadata.Payroll_Opportunity__c) {
-						createPayrollOpportunity(objData, objTheAccount);
+						//createPayrollOpportunity(objData, objTheAccount);
 					}
 					if (objMetadata.Close_Previous_Tasks__c && objTask != null) {
 						closePreviousOpenTasks(objData, objTask);

@@ -525,13 +525,15 @@ public with sharing class ZPProductLineTriggerHelper {
 				// updating Additional Services and Priority Support checkbox on the Account
 				if (map_CompanyIdToAddonProdLines.containsKey(strCompanyId)) {
 					List<String> list_AdditionalServices = new List<String>();
+					Set<String> set_AdditionalServices = new Set<String>();
 					// updating additional services
 					for (ZP_Product_Line__c objAddOnProductLine : map_CompanyIdToAddonProdLines.get(strCompanyId)) {
 						// if add-on is active
 						if (ZPProductLineUtil.STATUS_ACTIVE.equalsIgnoreCase(objAddOnProductLine.Status__c)) {
 							if (map_ProdPricingIdToPBE.containsKey(objAddOnProductLine.Product_Line_ID__c + '#' + objAddOnProductLine.Pricing_Plan_ID__c)) {
 								PriceBookEntry objPriceBookEntry = map_ProdPricingIdToPBE.get(objAddOnProductLine.Product_Line_ID__c + '#' + objAddOnProductLine.Pricing_Plan_ID__c);
-								list_AdditionalServices.add(objPriceBookEntry.Product2.Product_Category__c);
+								//list_AdditionalServices.add(objPriceBookEntry.Product2.Product_Category__c);
+								set_AdditionalServices.add(objPriceBookEntry.Product2.Product_Category__c);
 								objAddOnProductLine.Processing_State__c = IntegrationUtils.PROCESSED_STATE;
 								objAddOnProductLine.Message__c = ZPProductLineUtil.SUCCESS_MESSAGE;
 								map_IDToProdLinesWithFinalMessage.put(objAddOnProductLine.Id, objAddOnProductLine);
@@ -545,7 +547,8 @@ public with sharing class ZPProductLineTriggerHelper {
 								if (strAddOn == null) {
 									strAddOn = objAddOnProductLine.Product_Name__c;
 								}
-								list_AdditionalServices.add(strAddOn);
+								//list_AdditionalServices.add(strAddOn);
+								set_AdditionalServices.add(strAddOn);
 								objAddOnProductLine.Processing_State__c = IntegrationUtils.PROCESSED_STATE;
 								objAddOnProductLine.Message__c = ZPProductLineUtil.SUCCESS_MESSAGE;
 								map_IDToProdLinesWithFinalMessage.put(objAddOnProductLine.Id, objAddOnProductLine);
@@ -555,6 +558,10 @@ public with sharing class ZPProductLineTriggerHelper {
 								map_CompanyIdAndTimeKioskQauntity.put(strCompanyId, objAddOnProductLine.Assigned_Quantity__c);
 							}
 						}
+					}
+					
+					if (set_AdditionalServices != null && !set_AdditionalServices.isEmpty()) {
+						list_AdditionalServices = new List<String>(set_AdditionalServices);
 					}
 					System.debug('list_AdditionalServices1211:' + list_AdditionalServices);
 					String strAdditionalServices = !list_AdditionalServices.isEmpty() ? String.join(list_AdditionalServices, ';') : '';

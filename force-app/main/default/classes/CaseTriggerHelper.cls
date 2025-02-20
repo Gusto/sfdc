@@ -1644,7 +1644,7 @@ public class CaseTriggerHelper {
 			if (map_OCRProcessedCasesToOwnerUpdate != null && !map_OCRProcessedCasesToOwnerUpdate.isEmpty()) {
 					CaseUtils.taxResCaseOwnerUpdate(map_OCRProcessedCasesToOwnerUpdate, null);
 			}
-			updatePartnerAccountBeforeUpdate(newCaseMap.values());
+			updatePartnerAccountBeforeUpdate(newCaseMap.values(), oldCaseMap);
 	}
 
 	public void processAfterUpdate(Map<ID, Case> oldCaseMap, Map<ID, Case> newCaseMap) {
@@ -2470,48 +2470,57 @@ Desc: Update Case Owner information with User Details
 	}
 
 	/*
-Author: Atul Hinge
-Date: 03/20/2024
-Desc: Update Partner Account field on Case with Reseller Account or If Account is Embedded Company then populate  Sold By
-*/
-	public void updatePartnerAccountBeforeUpdate(List<Case> list_Cases) {
-			for (Case objCase : list_Cases) {
-					Account objAccount = map_Accounts.get(objCase.AccountId);
-					if (objCase.RecordTypeId == CaseUtils.RECTYPE_GEP_CX && objAccount != null && objCase.Partner_Account__c == null) {
-							if (objAccount.RecordTypeID == AccountUtil.EMBEDDED_COMPANY_ACCOUNT_RT_ID && objAccount.Date_of_GEP_Live__c != null && Date.Today() >= objAccount.Date_of_GEP_Live__c) {
-									objCase.Partner_Account__c = objAccount.Sold_By__c;
-							} else if (
-									(objAccount.RecordTypeID == AccountUtil.RESELLER_ACCOUNT_RT_ID || objAccount.RecordTypeID == AccountUtil.PARTNER_RT_ID) &&
-									(objAccount.Type == AccountUtil.EMBEDDED_COMPANY_TYPE ||
-									objAccount.Type == AccountUtil.EMBEDDED_PARTNER_TYPE)
-							) {
-									objCase.Partner_Account__c = objAccount.Id;
-							}
-					}
+	Author: Atul Hinge
+	Date: 03/20/2024
+	Desc: Update Partner Account field on Case with Reseller Account or If Account is Embedded Company then populate  Sold By
+	*/
+	public void updatePartnerAccountBeforeUpdate(List<Case> list_Cases, Map<Id, Case> map_Oldcase) {
+		for (Case objCase : list_Cases) {
+			Case objOldcase = map_Oldcase.get(objCase.Id);
+			if (
+				objCase.RecordTypeId == CaseUtils.RECTYPE_GEP_CX && (objCase.RecordTypeId != objOldCase.RecordTypeId || objCase.AccountId != objOldCase.AccountId || objCase.Partner_Account__c == null)
+			) {
+				Id idEmbeddedPartner = getEmbeddedPartnerId(objCase);
+				if (idEmbeddedPartner != null) {
+					objCase.Partner_Account__c = idEmbeddedPartner;
+				}
 			}
+		}
+	}
+
+	/**
+	 * @description   Identify Embedded Parter
+	 * @param objCase New verion of Case
+	 * @return		`Id`
+	 */
+	private Id getEmbeddedPartnerId(Case objCase) {
+		Account objAccount = map_Accounts.get(objCase.AccountId);
+		if (objAccount == null) {
+			return null;
+		}
+
+		if (objAccount.Date_of_GEP_Live__c == null || objAccount.Date_of_GEP_Live__c <= Date.today()) {
+			return objAccount.Sold_By__c ?? objAccount.Referred_By__c;
+		}
+
+		return null;
 	}
 
 	/*
-Author: Atul Hinge
-Date: 03/20/2024
-Desc: Update Partner Account field on Case with Reseller Account or If Account is Embedded Company then populate  Sold By
-*/
+	Author: Atul Hinge
+	Date: 03/20/2024
+	Desc: Update Partner Account field on Case with Reseller Account or If Account is Embedded Company then populate  Sold By
+	*/
 	public void updatePartnerAccount(List<Case> list_Cases) {
-			List<Case> list_partnerAccountCases = new List<Case>();
-			for (Case objCase : list_Cases) {
-					Account objAccount = map_Accounts.get(objCase.AccountId);
-					if (objCase.RecordTypeId == CaseUtils.RECTYPE_GEP_CX && objAccount != null && objCase.Partner_Account__c == null) {
-							if (objAccount.RecordTypeID == AccountUtil.EMBEDDED_COMPANY_ACCOUNT_RT_ID && objAccount.Date_of_GEP_Live__c != null && Date.Today() >= objAccount.Date_of_GEP_Live__c) {
-									list_partnerAccountCases.add(new Case(Id = objCase.Id, Partner_Account__c = objAccount.Sold_By__c));
-							} else if (
-									(objAccount.RecordTypeID == AccountUtil.RESELLER_ACCOUNT_RT_ID || objAccount.RecordTypeID == AccountUtil.PARTNER_RT_ID) &&
-									(objAccount.Type == AccountUtil.EMBEDDED_COMPANY_TYPE ||
-									objAccount.Type == AccountUtil.EMBEDDED_PARTNER_TYPE)
-							) {
-									list_partnerAccountCases.add(new Case(Id = objCase.Id, Partner_Account__c = objAccount.Id));
-							}
-					}
+		List<Case> list_partnerAccountCases = new List<Case>();
+		for (Case objCase : list_Cases) {
+			if (objCase.RecordTypeId == CaseUtils.RECTYPE_GEP_CX) {
+				Id idEmbeddedPartner = getEmbeddedPartnerId(objCase);
+				if (idEmbeddedPartner != null) {
+					list_partnerAccountCases.add(new Case(Id = objCase.Id, Partner_Account__c = idEmbeddedPartner));
+				}
 			}
+		}
 			if (list_partnerAccountCases.size() > 0) {
 					Boolean skipTrigger = CaseTriggerHelper.skipTrigger;
 					CaseTriggerHelper.skipTrigger = true;
