@@ -24,7 +24,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -54,7 +53,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -78,7 +76,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -114,7 +111,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -150,7 +146,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -186,7 +181,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -222,7 +216,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -258,7 +251,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -294,7 +286,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -330,7 +321,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -366,7 +356,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -402,7 +391,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -438,7 +426,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -474,7 +461,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -510,7 +496,6 @@
             </value>
         </inputParameters>
         <nameSegment>addSkillRequirements</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>AggregatedSkillRequirement</assignToReference>
             <name>skillRequirements</name>
@@ -603,7 +588,6 @@
             </value>
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <description>Allowing Case Trigger</description>
@@ -624,7 +608,6 @@
             </value>
         </inputParameters>
         <nameSegment>CaseTriggerHelper</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <description>Skipping Case Trigger</description>
@@ -645,7 +628,6 @@
             </value>
         </inputParameters>
         <nameSegment>CaseTriggerHelper</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <assignments>
@@ -1472,8 +1454,7 @@
             <label>Is Support Level Skill</label>
         </rules>
     </decisions>
-    <description>- Engagement: Omni Routing/Skill flow for Messaging Sessions
-- Mapping of hidden pre-chat fields</description>
+    <description>Engagement: Omni Routing/Skill flow for Messaging Sessions</description>
     <environments>Default</environments>
     <formulas>
         <name>bln_GustoGlobal</name>
@@ -1571,15 +1552,9 @@
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Re_Route_Count__c</field>
-            <value>
-                <numberValue>1.0</numberValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
             <field>RecordTypeId</field>
             <value>
-                <stringValue>0128Y000001Z0NjQAK</stringValue>
+                <elementReference>input_RecordTypeId</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>

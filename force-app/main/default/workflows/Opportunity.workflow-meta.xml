@@ -25,7 +25,10 @@
         <fullName>O_Alert_for_Unapproved_Large_Deal_Closed</fullName>
         <description>O: Alert for Unapproved Large Deal Closed</description>
         <protected>false</protected>
-        
+        <recipients>
+            <recipient>danijela.byers@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
         <senderType>CurrentUser</senderType>
         <template>Notifications/O_unapproved_large_deal</template>
     </alerts>
@@ -44,31 +47,8 @@
         <description>O: ROE Email Notification - HI</description>
         <protected>false</protected>
         <recipients>
-            <type>owner</type>
-        </recipients>
-        <recipients>
-            <recipient>sales_mm_b4_xx_mgr</recipient>
-            <type>role</type>
-        </recipients>
-        <recipients>
-            <recipient>sales_mm_br_xx_mgr</recipient>
-            <type>role</type>
-        </recipients>
-        <recipients>
-            <recipient>sales_mm_fs_xx_mgr</recipient>
-            <type>role</type>
-        </recipients>
-        <recipients>
-            <recipient>sales_mm_np_xx_mgr</recipient>
-            <type>role</type>
-        </recipients>
-        <recipients>
-            <recipient>sales_sb_br_xx_mgr</recipient>
-            <type>role</type>
-        </recipients>
-        <recipients>
-            <recipient>sales_sb_np_xx_mgr</recipient>
-            <type>role</type>
+            <recipient>danijela.byers@gusto.com</recipient>
+            <type>user</type>
         </recipients>
         <senderType>CurrentUser</senderType>
         <template>Notifications/O_HI_ROE_to_Managers</template>
@@ -77,7 +57,10 @@
         <fullName>O_ROE_Email_Notification_PR</fullName>
         <description>O: ROE Email Notification - PR</description>
         <protected>false</protected>
-        
+        <recipients>
+            <recipient>danijela.byers@gusto.com</recipient>
+            <type>user</type>
+        </recipients>
         <senderType>CurrentUser</senderType>
         <template>Notifications/O_HI_ROE_to_Managers</template>
     </alerts>

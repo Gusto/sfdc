@@ -190,13 +190,13 @@ public class OpportunityHelper {
 			objOppToInsert.StageName = 'Prospecting';
 		}
 		//objOppToInsert.StageName = 'New';
-		
+
 		System.debug('objOppToInsert before update:' + objOppToInsert);
 		if (objOppToInsert.Type == 'New Business' && (objOppToInsert.CloseDate == null || objAccount.Converted_Lead_Id__c != null)) {
 			Integer intNoOfDays = Integer.valueOf(map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c);
 			objOppToInsert.CloseDate = map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c != null ? Date.today().addDays(intNoOfDays) : Date.today().addDays(30);
 		} else if (objOppToInsert.Type == 'Winback' && (objOppToInsert.CloseDate == null || objAccount.Converted_Lead_Id__c != null)) {
-		//else if (objOppToInsert.Type == 'Winback' && (objOppToInsert.CloseDate == null || (objAccount.Converted_Lead_Id__c != null && UserUtils.isIntgUser(UserInfo.getUserId())))) {
+			//else if (objOppToInsert.Type == 'Winback' && (objOppToInsert.CloseDate == null || (objAccount.Converted_Lead_Id__c != null && UserUtils.isIntgUser(UserInfo.getUserId())))) {
 			Integer intNoOfDays = Integer.valueOf(map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c);
 			objOppToInsert.CloseDate = map_OpportunityConfigData.get('Acquisition-Winback').No_Of_Closed_Days__c != null ? Date.today().addDays(intNoOfDays) : Date.today().addDays(90);
 		}
@@ -232,7 +232,7 @@ public class OpportunityHelper {
 	}
 
 	public static Opportunity updateExistingOpportunity(Account newAccount, Account oldAccount, Opportunity existingOpportunity) {
-		existingOpportunity.NumberOfEmployees__c  = 0;
+		existingOpportunity.NumberOfEmployees__c = 0;
 		if (newAccount.Tier__c != oldAccount.Tier__c) {
 			existingOpportunity.Current_Tier__c = newAccount.Tier__c;
 		}
@@ -598,7 +598,6 @@ public class OpportunityHelper {
 				} else if (objAccount.NumberOfEmployees_Lead__c != null && objAccount.NumberOfEmployees_Lead__c > 0) {
 					decQuantity = objAccount.NumberOfEmployees_Lead__c;
 					totalEmpPrice = decQuantity * priceBookEntry.UnitPrice;
-
 				} else {
 					decQuantity = 1;
 					totalEmpPrice = 0;
@@ -616,7 +615,7 @@ public class OpportunityHelper {
 				decQuantity = 1;
 				totalEmpPrice = 0;
 			}
-	
+
 			if (objOpportunity.Number_of_Contractors__c > 0 && !blnContractorOnly) {
 				decQuantity += objOpportunity.Number_of_Contractors__c;
 				totalContPrice = objOpportunity.Number_of_Contractors__c * priceBookEntry.UnitPrice;
@@ -630,7 +629,6 @@ public class OpportunityHelper {
 				totalContPrice = 0;
 			}
 		}
-		
 
 		/**if (objOpportunity.NumberOfEmployees__c > 0 && !blnContractorOnly) {
 			objOpportunityLineItem.Quantity = objOpportunity.NumberOfEmployees__c;
@@ -651,7 +649,6 @@ public class OpportunityHelper {
 			totalContPrice = 0;
 		} **/
 
-		
 		objOpportunityLineItem.Quantity = decQuantity;
 		objOpportunityLineItem.Base_Price__c = basePrice;
 		objOpportunityLineItem.Unit_Price__c = priceBookEntry.UnitPrice;
@@ -817,7 +814,7 @@ public class OpportunityHelper {
 				International_Contractors__c,
 				Converted_Lead_Id__c,
 				(
-					SELECT ID, AccountId, StageName, Type, Additional_Opportunity_Services__c, Current_Tier__c, Number_of_Contractors__c, NumberOfEmployees__c, Account.ZP_Company_ID__c
+					SELECT ID, AccountId, StageName, Type, Additional_Opportunity_Services__c, Current_Tier__c, Number_of_Contractors__c, NumberOfEmployees__c, Account.ZP_Company_ID__c,LeadSource,Name
 					FROM Opportunities
 					WHERE RecordTypeId = :ACQUISITION_OPPTY_RT_ID
 					ORDER BY CreatedDate DESC
@@ -872,8 +869,24 @@ public class OpportunityHelper {
 				Account objAccount = map_IdAndAccount.get(objNewOpportunity.AccountId);
 				Map<Id, Opportunity> map_IdAndUpdatedOpportunity = new Map<Id, Opportunity>();
 
-				if (blnClosedLostNewBiz && !blnClosedWonNewBiz) {
-					//objNewOpportunity = objExistingNewBizOpportunity.clone(false, false, false, false);
+				if (blnClosedLostNewBiz && !blnClosedWonNewBiz && blnInsert && Trigger.isBefore) {
+					System.debug('objNewOpportunity2111:' + objNewOpportunity);
+					Opportunity objClonedOpportunity = objExistingNewBizOpportunity.clone(false, true, false, false);
+					System.debug('objNewOpportunity3111:' + objNewOpportunity);
+					// Copy values from cloned object to the new one
+					objNewOpportunity.Name = objClonedOpportunity.Name;
+					if (objNewOpportunity.StageName == '') {
+						objNewOpportunity.StageName = 'Prospecting';
+					}
+					//objNewOpportunity.StageName = 'Prospecting';
+					objNewOpportunity.Type = objClonedOpportunity.Type;
+					for (String fieldName : objClonedOpportunity.getPopulatedFieldsAsMap().keySet()) {
+						System.debug('fieldName11111: ' + fieldName);
+						if (fieldName != 'Id' && fieldName != 'CreatedDate' && fieldName != 'LastModifiedDate' && fieldName != 'LastModifiedById' && fieldName != 'OwnerId' && fieldName != 'IsClosed' && fieldName != 'IsWon' && fieldName != 'IsDeleted' && fieldName != 'StageName' && fieldName != 'Type' && fieldName != 'Name' && fieldName != 'CloseDate' && fieldName != 'Amount' ) {
+							objNewOpportunity.put(fieldName, objClonedOpportunity.get(fieldName));
+						}
+					}
+					//lostOpp.clone(false, true, false, false);
 					/**Opportunity objNewOpportunityForClone = new Opportunity();
 					Opportunity objClonedOpp = objExistingNewBizOpportunity.clone(false, false, false, false);
 
@@ -959,7 +972,7 @@ public class OpportunityHelper {
 				Payment_Invoice__r.International_Employees__c,
 				Payment_Invoice__r.Priority_Support__c,
 				Current_Tier__c,
-				(SELECT Id, Quantity, Discount, Product2.Name, OpportunityId, PricebookEntry.Pricebook2Id, PricebookEntryId,Product2.ExternalId FROM OpportunityLineItems)
+				(SELECT Id, Quantity, Discount, Product2.Name, OpportunityId, PricebookEntry.Pricebook2Id, PricebookEntryId, Product2.ExternalId FROM OpportunityLineItems)
 			FROM Opportunity
 			WHERE Id IN :set_OppIds
 		]) {
@@ -975,7 +988,7 @@ public class OpportunityHelper {
 				map_IDANDOpportunityLineItems.put(objOpportunityLineItem.OpportunityId, tempMap);
 			}
 		}
-		
+
 		if (map_OpportunityConfigData != null && !map_OpportunityConfigData.isEmpty()) {
 			for (String opportunityConfigName : map_OpportunityConfigData.keySet()) {
 				if (opportunityConfigName.contains('Acquisition')) {
@@ -999,7 +1012,6 @@ public class OpportunityHelper {
 		System.debug('map_ProductNameAndOppLineItem: ' + map_ProductNameAndOppLineItem);
 
 		for (Opportunity objOpp : list_Opportunities) {
-			
 			// sync additional services between payment invoice and opportunity
 			if (objOpp.Additional_Opportunity_Services__c != objOpp.Payment_Invoice__r.Additional_Invoiced_Services__c) {
 				objOpp.Additional_Opportunity_Services__c = objOpp.Payment_Invoice__r.Additional_Invoiced_Services__c;
@@ -1145,5 +1157,4 @@ public class OpportunityHelper {
 			update list_OpportunityLineItemsToUpdate;
 		}
 	}
-
 }

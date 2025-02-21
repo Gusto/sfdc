@@ -2,6 +2,12 @@
     <template lwc:if={showRecord}>
         <lightning-button label="New Ticket"  onclick={newTicket} class="slds-m-left_x-small"></lightning-button>
         <lightning-button label="New QC Error"  onclick={newQCError} class="slds-m-left_x-small"></lightning-button>
-        <lightning-button label="New Task"  onclick={newTask} class="slds-m-left_x-small"></lightning-button>
+        <template lwc:if={isCO}>
+            <lightning-button 
+                label="New Task"  
+                onclick={newTask} 
+                class="slds-m-left_x-small">
+            </lightning-button>
+        </template>
 	</template>
 </template>

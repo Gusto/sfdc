@@ -130,7 +130,6 @@ public without sharing class EmailMessageTriggerHelper {
 		if (list_EmailMessages.size() == 1) {
 			EmailMessage objEmailMessage = list_EmailMessages[0];
 			CaseTriggerHelper.context = objEmailMessage.FromAddress;
-            system.debug('objEmailMessage on before insert ***** '+objEmailMessage);
 		}
 	}
 
@@ -140,7 +139,6 @@ public without sharing class EmailMessageTriggerHelper {
 	 * @param:          map_NewEmailMessages - Map of new Email Message records
 	 */
 	public void OnAfterInsert(Map<Id, EmailMessage> map_NewEmailMessages) {
-        system.debug('objEmailMessage on after insert ***** ');
 		intCounter++;
 		map_RecordTypeIdByName = RecordTypes.getRecordTypeNameIdMap('Case');
 		map_RecordTypeNameById = Cache.getAllRecordTypeMap('Case');
@@ -385,8 +383,6 @@ public without sharing class EmailMessageTriggerHelper {
 				}
 
 				// In case of emails sent from in-app it is incoming to SFDC but 'Sent' to customer
-				system.debug('processCaseInfo **** objEmailMessage.Incoming'+objEmailMessage.Incoming);
-                system.debug('processCaseInfo **** objCase.Id'+objCase);
 				if (objCase.RecordTypeId == CaseUtils.RECTYPE_TAXRES) {
 					if (objEmailMessage.Incoming == false && (objEmailMessage.Status == '3' || objEmailMessage.Status == '2')) {
 						objCase.Email_Status__c = 'Awaiting response';
@@ -408,7 +404,7 @@ public without sharing class EmailMessageTriggerHelper {
 						}
 					}
 				}
-				system.debug('processCaseInfo **** objCase.Status'+objCase.Status);
+
 				if (
 					!EmailMessageUtil.ADVISING_EMAIL_TEMPLATE_SET.contains(objEmailMessage.Email_Template_Name__c) &&
 					set_AwaitingCustomerResponseRecTypes.contains(objCase.RecordTypeId) &&
@@ -525,7 +521,7 @@ public without sharing class EmailMessageTriggerHelper {
 							// BY:PR: Date: 2/14/19 Desc: introduced the "set_ClosedCaseIdUponCreation" filter to stop recursion due to CaseTriggerHelper logic
 							map_OldCaseEmail.put(objCase.Id, objEmailMessage);
 							Case objNewCase = objCase.clone();
-							system.debug('objNewCase ******** '+objNewCase);
+
 							Date dtCloseDate = objCase.ClosedDate.date();
 							Integer inNumberDaysDue = dtCloseDate.daysBetween(dtCurrentDate);
 
@@ -607,6 +603,8 @@ public without sharing class EmailMessageTriggerHelper {
 									objNewCase.AccountId = objCase.AccountId;
 									objNewCase.ContactId = objCase.ContactId;
 									objNewCase.Answer_IQ_Eligible__c = true;
+									objNewCase.Internal_AI_Processed__c = CaseUtils.INTERNAL_SOLVE_PROCESSED_NO;
+									objNewCase.Solve_Processed__c = CaseUtils.SOLVE_PROCESSED_NO;// Added for BTE-4572
 									objNewCase.setOptions(objDMLOptions); // Added for BTE-3251
 								}
 								objNewCase.Specialization__c = objCase.Specialization__c;
@@ -621,8 +619,6 @@ public without sharing class EmailMessageTriggerHelper {
 							objNewCase.Account_Specialist_Escalation_Notes__c = null;
 							objNewCase.Account_Specialist_Out_Of_Office_Notes__c = null;
 							if (set_ClosedCaseNewRecordTypes.contains(objCase.RecordTypeId)) {
-                                system.debug('objNewCase.Related_Case__c ***** '+objNewCase.Related_Case__c);
-                                system.debug('objCase.Id ***** '+objCase.Id);
 								objNewCase.Related_Case__c = objCase.Id;
 								mapCaseRecordType(objNewCase);
 
@@ -651,8 +647,7 @@ public without sharing class EmailMessageTriggerHelper {
 									objNewCase.ParentId = objCase.Id;
 									objNewCase.Related_Case__c = null;
 								}
-								system.debug('objNewCase.Related_Case__c 2 ***** '+objNewCase.Related_Case__c);
-                                system.debug('objCase.Id 2 ***** '+objCase.Id);
+
 								if (
 									map_RecordTypeIdByName.get(EmailMessageUtil.CASE_RT_PAYROLLOPS_AUDIT_READ_ONLY) == objCase.RecordTypeId ||
 									objCase.RecordTypeId == CaseUtils.RECTYPE_PAYROLLOPS_AUDIT
@@ -685,9 +680,6 @@ public without sharing class EmailMessageTriggerHelper {
 									objNewCase.Solve_Processed__c = CaseUtils.SOLVE_PROCESSED_NO;
 									objNewCase.Related_Case__c = null;
 									objNewCase.Origin = CaseUtils.ORIGIN_EMAIL;
-                                    system.debug('objNewCase.Related_Case__c 3 ***** '+objNewCase.Related_Case__c);
-                                    system.debug('objNewCase.ParentId 3 ***** '+objNewCase.ParentId);
-                                	system.debug('objCase.Id 3 ***** '+objCase.Id);
 								}
 							} else {
 								// Request from Ash to create a new case for Fulfilment. Reparing of email will take place in above block
@@ -1615,7 +1607,6 @@ public without sharing class EmailMessageTriggerHelper {
 		}
 
 		for (EmailMessage objEmailMessage : list_EmailMessages) {
-            system.debug('objEmailMessage create collections email parent ***** '+objEmailMessage.ParentId);
 			if (objEmailMessage.ParentId != null && String.valueOf(objEmailMessage.ParentId).indexOf('500') == 0) {
 				set_CaseIds.add(objEmailMessage.ParentId);
 				map_EmailMessageByCaseId.put(objEmailMessage.ParentId, objEmailMessage);
@@ -1623,11 +1614,9 @@ public without sharing class EmailMessageTriggerHelper {
 				if (objAuditLog != null) {
 					list_CaseAuditLogs.add(objAuditLog);
 				}
-				system.debug('objEmailMessage create collections email FromAddress ***** '+objEmailMessage.FromAddress);
-                system.debug('objEmailMessage create collections email ToAddress ***** '+objEmailMessage.ToAddress);
+
 				set_InsertedEmailAddresses.add(objEmailMessage.FromAddress);
 				String strThreadId = String.isNotBlank(objEmailMessage.TextBody) ? objEmailMessage.TextBody.substringBetween('id::{{', '}}') : null;
-                system.debug('objEmailMessage create collections strThreadId ***** '+strThreadId);
 				if (objEmailMessage.ToAddress == EmailMessageUtil.GUSTO_SUPPORT_EMAIL && String.isNotBlank(strThreadId)) {
 					map_ThreadIdToEmail.put(strThreadId, objEmailMessage);
 				}
@@ -1782,12 +1771,11 @@ public without sharing class EmailMessageTriggerHelper {
 				WHERE Id IN :set_CaseIds
 			]
 		);
-		
+
 		for (Group objQueue : GlobalQueryHelper.getGroupsByType('Queue')) {
 			map_QueuesByName.put(objQueue.DeveloperName, objQueue);
 		}
-		system.debug('objEmailMessage create collections map_CasesById ***** '+map_CasesById);
-        
+
 		for (Case_Reason_Classification__c objCaseReason : GlobalQueryHelper.getAllCaseReasonClassification()) {
 			map_CaseReasonByName.put(objCaseReason.Name, objCaseReason);
 		}
@@ -1819,7 +1807,7 @@ public without sharing class EmailMessageTriggerHelper {
 						map_ClosedCaseWithOpenParent.put(objCase.Id, objCase.ParentId);
 					}
 				}
-				system.debug('objEmailMessage create collections objcase rec type ***** '+objCase.RecordTypeId);
+
 				if (objCase.RecordTypeId == CaseUtils.RECTYPE_TAXRES) {
 					list_TaxResCases.add(objCase);
 				}
@@ -1842,8 +1830,7 @@ public without sharing class EmailMessageTriggerHelper {
 					} else {
 						objLatestLogRecord = objLog;
 					}
-					system.debug('case log ***** '+ objLog);
-                    system.debug('case objLatestLogRecord ***** '+ objLatestLogRecord);
+
 					map_CaseIdAuditLogRecord.put(objLog.Case__c, objLatestLogRecord);
 				}
 			}
@@ -1898,7 +1885,6 @@ public without sharing class EmailMessageTriggerHelper {
 
 		for (EmailMessage objEmailMessage : map_NewEmailMessages.values()) {
 			EmailMessage objOldEmailMessage = map_OldEmailMessages.get(objEmailMessage.Id);
-            system.debug('createCollectionsAfterUpdate objEmailMessage.ParentID****** '+objEmailMessage.ParentId);
 			if (String.valueOf(objEmailMessage.ParentId)?.indexOf('500') == 0) {
 				map_NewEmailMessageByCaseId.put(objEmailMessage.ParentId, objEmailMessage);
 				if (objOldEmailMessage.Status == '5' && objEmailMessage.Incoming == false && (objEmailMessage.Status == '2' || objEmailMessage.Status == '3')) {
