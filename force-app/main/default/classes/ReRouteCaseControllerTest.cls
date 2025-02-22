@@ -87,7 +87,6 @@ public class ReRouteCaseControllerTest {
             .setReasonCode('test_payroll_pillar')
             .setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
             .setType('Engagement')
-            .setRoutingTeam('Internal')
             .setSupportLevel(CaseUtils.TIER_1)
             .build();
         insert objCaseReason;
@@ -133,7 +132,6 @@ public class ReRouteCaseControllerTest {
                                  Sub_Pillar__c,
                                  Type,
                                  Support_Level__c,
-                                 Routing_Team__c,
                                  Specialization__c 
                                  FROM Case 
                                  WHERE Subject = 'Test Case 1 Subject'

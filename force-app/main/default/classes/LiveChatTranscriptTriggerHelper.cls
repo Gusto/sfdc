@@ -406,10 +406,6 @@ public class LiveChatTranscriptTriggerHelper {
 							if (!list_NoActionCaseReasons.isEmpty()) {
 								objCase.Confirm_Case_Reason_Classification__c = list_NoActionCaseReasons[0].Id;
 							}
-							if(map_ChatEventByChatId.get(objChat.Id).Type == Utils.CHAT_EVENT_TYPE_DURATION_TIME_OUT){
-								objCase.Status = CaseUtils.STATUS_OPEN;
-								objCase.OwnerId = strVisitorCancelChatOwnerId;
-							}
 						}
 
 						objCase.Status = CaseUtils.STATUS_CLOSED;
@@ -686,12 +682,11 @@ public class LiveChatTranscriptTriggerHelper {
 	 **/
 	public Map<String, LiveChatTranscriptEvent> queryChatEvents(Set<Id> set_ChatIds) {
 		Map<String, LiveChatTranscriptEvent> map_ChatEventByChatId = new Map<String, LiveChatTranscriptEvent>();
-		Set<String> liveChatTranscripteventTypes = new Set<String>{Utils.CHAT_EVENT_TYPE_DURATION_TIME_OUT,Utils.CHAT_EVENT_TYPE_CANCELNOAGENT,Utils.CHAT_EVENT_TYPE_CANCELVISITOR};
 		if (!set_ChatIds.isEmpty()) {
 			for (LiveChatTranscriptEvent objEvent : [
 				SELECT Id, Type, LiveChatTranscriptId
 				FROM LiveChatTranscriptEvent
-				WHERE LiveChatTranscriptId IN :set_ChatIds AND Type IN :liveChatTranscripteventTypes
+				WHERE LiveChatTranscriptId IN :set_ChatIds AND (Type = :Utils.CHAT_EVENT_TYPE_CANCELNOAGENT OR Type = :Utils.CHAT_EVENT_TYPE_CANCELVISITOR)
 			]) {
 				map_ChatEventByChatId.put(objEvent.LiveChatTranscriptId, objEvent);
 			}
@@ -800,7 +795,6 @@ public class LiveChatTranscriptTriggerHelper {
 					eachChatRec.Routing_Case_Reason_Classification__c = objReason.Id;
 					eachChatRec.Request_Type__c = objReason.Case_Type_Pillar__c;
 					eachChatRec.Support_Level__c = objReason.Support_Level__c;
-					eachChatRec.Team__c = objReason.Routing_Team__c;
 				}
 
 				String strKey = CaseUtils.ORIGIN_CHAT;
@@ -864,7 +858,6 @@ public class LiveChatTranscriptTriggerHelper {
 				Generic_Routing_Reason__c,
 				Default_Type__c,
 				Case_Type_Pillar__c,
-				Routing_Team__c,
 				Support_Level__c,
 				Specialization__c
 			FROM Case_Reason_Classification__c

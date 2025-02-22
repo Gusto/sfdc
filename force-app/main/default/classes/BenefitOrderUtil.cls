@@ -21,6 +21,23 @@ public class BenefitOrderUtil {
 	public static final String ORDER_TYPE_TERMINATED_ORDER = 'Terminated Order';
 	public static final String BO_STAGE_DETAIL_READY_FOR_TADA_SETUP = 'Ready for TAdA Setup';
 	public static final String STATUS_PENDING_ER_SIGNATURE = 'Pending ER Signature';
+	public static final String Email_New_Plans = 'newplans@gusto.com';
+	public static final String Email_Renewals = 'renewals@gusto.com';
+	public static final String Template_OE_Confirmation_Email_Default = 'OE_Confirmation_Email_Default';
+	public static final String With_Carrier = 'WithCarrier';
+	public static final String WithOut_Carrier = 'WithoutCarrier';
+	public static final String With_TAdA = 'WithTAdA';
+	public static final String Email_Body = 'EmailBody';
+	public static final String Macro_Attachments = 'MacroAttachments';
+	public static final String ERR_Accessible_From_Benefit_Order = 'This action is accessible only from Benefit Order.';
+	public static final String ERR_BO_NotApproved_Or_Not_AvaiableToYou = 'Benefit Order is either not approved or this action is not avaiable to you.';
+	public static final String ERR_Carrier_Order_EE_Audit = 'Carrier_Order must be either Approved/Closed Admin/Closed Lost/Canceled/Approved Pending EE Audit.';
+	public static final String ERR_CLOSE_OPEN_TICKET_FIRST = 'CLOSE OPEN TICKET FIRST';
+	public static final String ERR_ORDER_TERMINATION_COMPLETE = 'ORDER SHOULD BE TERMINATION COMPLETE';
+	public static final String ERR_No_Customer_Case_Associated_BO = 'No Customer case associated with this Benefit Order.';
+	public static final String ERR_Integeration_Format_Customer_Case = 'Integeration Id is not in desired format on the Customer Case.';
+	public static final String ERR_Contact_Not_Present_Customer_Case = 'Contact is not present on the Customer Case.';
+	public static final String ERR_Email_Template_Not_Present = 'Email template not present.';
 
 	public static final String OPPTY_BENEFITS_SETUP_AWAIT_OFFERINGS_STEP = 'Awaiting Offerings';
 	public static final List<String> COMPLETED_ORDER_STATUSES = new List<String>{

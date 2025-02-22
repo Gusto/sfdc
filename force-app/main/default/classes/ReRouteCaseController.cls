@@ -65,7 +65,7 @@ public class ReRouteCaseController {
             // Update the case pillar
             objCase = CaseTriggerHelper.updateCasePillar(objCase, objOldCase);
             // Check if the updated case pillar and old case pillar are same
-            if (objCase.Sub_Pillar__c == objOldCase.Sub_Pillar__c && objCase.Routing_Team__c == objOldCase.Routing_Team__c) {
+            if (objCase.Sub_Pillar__c == objOldCase.Sub_Pillar__c) {
                 blnIsSkillMatched = true;
             }
         } catch (Exception ex) {

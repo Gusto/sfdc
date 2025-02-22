@@ -21,7 +21,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -72,54 +72,6 @@
         </assignmentItems>
     </assignments>
     <assignments>
-        <name>Assign_Routing_team_external</name>
-        <label>Assign Routing team external</label>
-        <locationX>710</locationX>
-        <locationY>950</locationY>
-        <assignmentItems>
-            <assignToReference>objCase.Routing_Team__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>External</stringValue>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Support_Level_NULL</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Assign_Routing_team_external_micro</name>
-        <label>Assign Routing team external</label>
-        <locationX>446</locationX>
-        <locationY>950</locationY>
-        <assignmentItems>
-            <assignToReference>objCase.Routing_Team__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>External</stringValue>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Support_Level_NULL</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Assign_Routing_Team_Internal</name>
-        <label>Assign Routing Team Internal</label>
-        <locationX>974</locationX>
-        <locationY>950</locationY>
-        <assignmentItems>
-            <assignToReference>objCase.Routing_Team__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>Internal</stringValue>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Support_Level_NULL</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <description>Assign Tier 1 to Support Level if NULL</description>
         <name>Assign_Tier1</name>
         <label>Assign Tier1</label>
@@ -149,7 +101,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -173,7 +125,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -189,7 +141,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -205,7 +157,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -228,7 +180,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -244,7 +196,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -260,7 +212,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Default_Routing_Team</targetReference>
+            <targetReference>Support_Level_NULL</targetReference>
         </connector>
     </assignments>
     <decisions>
@@ -398,80 +350,6 @@ If Case Type is not one of the restricted picklist values for Engagement, Payrol
         </rules>
     </decisions>
     <decisions>
-        <description>Set Default Routing team based on persona, company size, Routing Case Reason, and Team value on case</description>
-        <name>Default_Routing_Team</name>
-        <label>Default Routing Team</label>
-        <locationX>974</locationX>
-        <locationY>734</locationY>
-        <defaultConnector>
-            <targetReference>Support_Level_NULL</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Routing Team Populated</defaultConnectorLabel>
-        <rules>
-            <name>Routing_Team_NOT_Populated</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>triggeringCase.Routing_Team__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Default_Team</targetReference>
-            </connector>
-            <label>Routing Team NOT Populated</label>
-        </rules>
-    </decisions>
-    <decisions>
-        <description>What default value should be set based on Persona and Company Size.</description>
-        <name>Default_Team</name>
-        <label>Default Team</label>
-        <locationX>710</locationX>
-        <locationY>842</locationY>
-        <defaultConnector>
-            <targetReference>Assign_Routing_Team_Internal</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default</defaultConnectorLabel>
-        <rules>
-            <name>Admin_Micro</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>objCase.Persona__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Admin</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>objCase.Company_Size__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Micro 0-4</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_Routing_team_external_micro</targetReference>
-            </connector>
-            <label>Admin Micro</label>
-        </rules>
-        <rules>
-            <name>Member_0</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>objCase.Persona__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Member</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_Routing_team_external</targetReference>
-            </connector>
-            <label>Member</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Persona_Assignment</name>
         <label>Persona Assignment</label>
         <locationX>974</locationX>
@@ -589,7 +467,8 @@ If Case Type is not one of the restricted picklist values for Engagement, Payrol
             <label>Support Level NOT Populated</label>
         </rules>
     </decisions>
-    <description>This Sub Flow is invoked from Record Trigger : Case Engagement Omni Flow. 
+    <description>- BTE-4447 - Deprecate Team Skill
+- Initial Version - This Sub Flow is invoked from Record Trigger : Case Engagement Omni Flow. 
 Contains logic to set default values to Type, Company Size, Persona and Support Level fields</description>
     <environments>Default</environments>
     <interviewLabel>Sub Flow : Case Engagement Set Highlight Panel Fields {!$Flow.CurrentDateTime}</interviewLabel>

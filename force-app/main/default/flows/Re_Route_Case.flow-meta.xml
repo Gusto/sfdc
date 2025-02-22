@@ -24,7 +24,6 @@
             </value>
         </inputParameters>
         <nameSegment>ReRouteCaseController</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>blnSkillsAreSame</assignToReference>
             <name>output</name>
@@ -128,13 +127,6 @@
             <operator>Assign</operator>
             <value>
                 <booleanValue>true</booleanValue>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
-            <assignToReference>objCase.Routing_Team__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>fmlaRoutingTeam</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -594,7 +586,8 @@
 - Trigger Validation error if Specialization TAM is selected
 - Changed Visibility condition for Team field from field Vendor to Custom Permission Re-Route Team Option
 - Apex Action to check if the Skills selected are different from the Case Routed Skills
-- BTE-4146: Prevent Internal Care Re-Route v2</description>
+- BTE-4146: Prevent Internal Care Re-Route v2
+- BTE-4447 - Deprecate Team Skill</description>
     <dynamicChoiceSets>
         <description>This will contain all Specializations from Case</description>
         <name>picklistCaseSpecialization</name>
@@ -648,13 +641,6 @@
         <name>ChangeToggle</name>
         <dataType>Boolean</dataType>
         <expression>IF({!objCase.Toggle__c} == TRUE, FALSE,TRUE)</expression>
-    </formulas>
-    <formulas>
-        <description>Default Routing Team value if null</description>
-        <name>fmlaRoutingTeam</name>
-        <dataType>String</dataType>
-        <expression>IF( NOT(ISBLANK({!RoutingTeam})), {!RoutingTeam}, 
-IF( ISPICKVAL({!objCase.Persona__c}, &apos;Member&apos;) || ISPICKVAL( {!objCase.Company_Size__c}, &apos;Micro 0-4&apos;), &apos;External&apos;,&apos;Internal&apos;))</expression>
     </formulas>
     <formulas>
         <name>isCareReRoute_Eligible</name>
@@ -765,7 +751,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
         <outputReference>objCase</outputReference>
         <queriedFields>Persona__c</queriedFields>
         <queriedFields>Company_Size__c</queriedFields>
-        <queriedFields>Routing_Team__c</queriedFields>
         <queriedFields>Origin</queriedFields>
         <queriedFields>Channel__c</queriedFields>
         <queriedFields>Re_Route_Count__c</queriedFields>
@@ -870,7 +855,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
             <dataType>String</dataType>
             <fieldText>Do you want to route this case to Engagement?</fieldText>
             <fieldType>DropdownBox</fieldType>
-            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
         </fields>
         <fields>
@@ -886,7 +870,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Are you routing this case to a specialization team?</fieldText>
                     <fieldType>DropdownBox</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                 </fields>
                 <fields>
@@ -924,7 +907,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Specialization</fieldText>
                     <fieldType>DropdownBox</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>and</conditionLogic>
@@ -965,7 +947,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Team</fieldText>
                     <fieldType>DropdownBox</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
                         <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
@@ -1019,20 +1000,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                                 <booleanValue>false</booleanValue>
                             </rightValue>
                         </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
                     </visibilityRule>
                 </fields>
                 <fields>
@@ -1041,10 +1008,9 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Case Type</fieldText>
                     <fieldType>DropdownBox</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
-                        <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
+                        <conditionLogic>1 AND 2</conditionLogic>
                         <conditions>
                             <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
                             <operator>EqualTo</operator>
@@ -1057,20 +1023,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                             <operator>EqualTo</operator>
                             <rightValue>
                                 <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Internal</stringValue>
                             </rightValue>
                         </conditions>
                     </visibilityRule>
@@ -1081,10 +1033,9 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <dataType>String</dataType>
                     <fieldText>Support Level</fieldText>
                     <fieldType>DropdownBox</fieldType>
-                    <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>true</isRequired>
                     <visibilityRule>
-                        <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
+                        <conditionLogic>1 AND 2</conditionLogic>
                         <conditions>
                             <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
                             <operator>EqualTo</operator>
@@ -1097,20 +1048,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                             <operator>EqualTo</operator>
                             <rightValue>
                                 <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Internal</stringValue>
                             </rightValue>
                         </conditions>
                     </visibilityRule>
@@ -1120,7 +1057,7 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                     <fieldText>&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;﻿You can reference our &lt;/span&gt;&lt;a href=&quot;https://docs.google.com/spreadsheets/d/1FDIwP_s9Fg3bfwVaWdQmtDbdRPUZuR8thSYcfC8iBN0/edit#gid=1051148928&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Payroll and Benefits Case Reason&lt;/a&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt; resource for guidance on which &quot;Case Type&quot; and &quot;Support Level&quot; to select based on the customer&apos;s inquiry and case reason. To determine the case reason, refer to the &quot;Use for&quot; and &quot;Do not use for&quot; columns.&lt;/span&gt;&lt;/p&gt;</fieldText>
                     <fieldType>DisplayText</fieldType>
                     <visibilityRule>
-                        <conditionLogic>1 AND (2 OR (3 AND 4))</conditionLogic>
+                        <conditionLogic>1 AND 2</conditionLogic>
                         <conditions>
                             <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
                             <operator>EqualTo</operator>
@@ -1133,20 +1070,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                             <operator>EqualTo</operator>
                             <rightValue>
                                 <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>RoutingTeam</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>Internal</stringValue>
                             </rightValue>
                         </conditions>
                     </visibilityRule>

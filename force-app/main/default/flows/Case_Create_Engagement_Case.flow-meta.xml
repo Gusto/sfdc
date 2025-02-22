@@ -63,17 +63,10 @@
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>caseToCreate.Routing_Team__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>TeamValue</elementReference>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
             <assignToReference>caseToCreate.Support_Level__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Tier 1</stringValue>
+                <elementReference>supportValue</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -112,7 +105,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Create_Case</targetReference>
+            <targetReference>Check_for_case_creation_reason</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -129,6 +122,22 @@
         </assignmentItems>
         <connector>
             <targetReference>Create_Engagement_Case</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>if_Benefit_Reversal</name>
+        <label>if Benefit Reversal</label>
+        <locationX>50</locationX>
+        <locationY>974</locationY>
+        <assignmentItems>
+            <assignToReference>caseToCreate.Support_Level__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Tier 2</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Case</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -158,7 +167,7 @@
         <name>Set_New_Case_Id</name>
         <label>Set New Case Id</label>
         <locationX>182</locationX>
-        <locationY>1082</locationY>
+        <locationY>1382</locationY>
         <assignmentItems>
             <assignToReference>newCaseId</assignToReference>
             <operator>Assign</operator>
@@ -198,6 +207,31 @@
         </value>
     </constants>
     <decisions>
+        <name>Check_for_case_creation_reason</name>
+        <label>Check for case creation reason</label>
+        <locationX>182</locationX>
+        <locationY>866</locationY>
+        <defaultConnector>
+            <targetReference>Create_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>If case Creation Reason Other</defaultConnectorLabel>
+        <rules>
+            <name>if_case_creation_reason_Benefit_Reversal</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Case_Purpose_1</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Benefits_Reversal</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>if_Benefit_Reversal</targetReference>
+            </connector>
+            <label>if case creation reason Benefit Reversal</label>
+        </rules>
+    </decisions>
+    <decisions>
         <description>Validates if the flow will run from Case or Ticket context</description>
         <name>Validate_From_Option</name>
         <label>Validate From Option</label>
@@ -223,7 +257,8 @@
             <label>Is Case Context</label>
         </rules>
     </decisions>
-    <description>-BBO-1997: Create engagement case</description>
+    <description>-BBO-1997: Create engagement case
+- BTE-4447 - Deprecate Team Skill</description>
     <environments>Default</environments>
     <formulas>
         <name>answerIQ</name>
@@ -261,9 +296,9 @@
         <expression>IF( {!Case_Purpose_1} = {!Benefits_Reversal}, {!reversalSubject}, &apos;&apos; )</expression>
     </formulas>
     <formulas>
-        <name>TeamValue</name>
+        <name>supportValue</name>
         <dataType>String</dataType>
-        <expression>IF( {!Case_Purpose_1} = {!Benefits_Reversal}, &apos;Internal&apos;, &apos;External&apos; )</expression>
+        <expression>IF( {!Case_Purpose_1} = {!Benefits_Reversal}, &apos;Tier 2&apos;, &apos;Tier 1&apos; )</expression>
     </formulas>
     <interviewLabel>Case :: Create En {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Case :: Create Engagement Case</label>
@@ -290,7 +325,7 @@
         <name>Create_Case</name>
         <label>Create Case</label>
         <locationX>182</locationX>
-        <locationY>866</locationY>
+        <locationY>1166</locationY>
         <connector>
             <targetReference>Get_Created_Case</targetReference>
         </connector>
@@ -347,7 +382,7 @@
         <name>Get_Created_Case</name>
         <label>Get Created Case</label>
         <locationX>182</locationX>
-        <locationY>974</locationY>
+        <locationY>1274</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Set_New_Case_Id</targetReference>

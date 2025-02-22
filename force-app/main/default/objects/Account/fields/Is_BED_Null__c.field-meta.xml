@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_BED_Null__c</fullName>
+    <description>Temporary field created as a workaround to use in territory model.
+Territory models don&apos;t work as expected when using date fields because of a Salesforce bug (Review Salesforce Case #469796396 for reference)</description>
+    <formula>ISBLANK(Benefits_Effective_Date__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Is BED Null</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

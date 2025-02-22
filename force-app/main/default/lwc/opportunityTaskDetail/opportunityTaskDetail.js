@@ -6,13 +6,14 @@ import { NavigationMixin } from "lightning/navigation";
 import taskTemplate from './taskTemplate.html';
 import eventTemplate from './eventTemplate.html';
 
+const SET_EVENT_TYPES = new Set(["Event", "AE_Demo", "DemoEvent"]);
 export default class OpportunityTaskDetail extends NavigationMixin(LightningElement) {
 	@api objActivity = [];
 	@api mapTaskRecordTypeToIcon = new Map();
 	blnIsExpanded = true;
 
 	render() {
-		return this.objActivity?.RecordType?.DeveloperName === 'Event' ? eventTemplate : taskTemplate;
+		return SET_EVENT_TYPES.has(this.objActivity?.RecordType?.DeveloperName) ? eventTemplate : taskTemplate;
     }
 
 	@api doExpandCollapse(blnIsExpanded) {

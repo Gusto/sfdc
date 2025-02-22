@@ -55,9 +55,11 @@ public with sharing class TaxNoticeOCRUpdateBatch implements Database.Batchable<
                    objCase.Status = CaseUtils.CASE_STATUS_READY_FOR_DATA_CAPTURE;
                    System.debug('CaseUtils.ID_TAX_RES_DATA_CAPTURE_QUEUE  '+CaseUtils.ID_TAX_RES_DATA_CAPTURE_QUEUE);
                    objCase.OwnerId = CaseUtils.ID_TAX_RES_DATA_CAPTURE_QUEUE;
-                   if(objCase.casenumber == '32066001' || objCase.casenumber == '32067315'){
+                   if(objCase.casenumber == '32090361'){
+                       System.debug('Final Criteria : '+objCase.casenumber);
                        objCase.Agency_Information__c = 'a4kTH0000000GeHYAU';
-                   }
+                       objCase.Confirm_Case_Reason_Classification__c = null;
+                   } 
                    list_CasesToUpdate.add(objCase);
                } 
         }

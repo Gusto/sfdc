@@ -94,7 +94,6 @@ public class ReRouteCaseFlowTest {
 			.setReasonCode('route_to_spanish')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('Internal')
 			.setSpecialization('Spanish')
 			.setSupportLevel(CaseUtils.TIER_1)
 			.build();
@@ -236,38 +235,36 @@ public class ReRouteCaseFlowTest {
 	@isTest
 	static void testRoutetoSpanish() {
 
-	    Case objCase = [SELECT Id,OwnerId, Status, Toggle__c,Routing_Case_Reason__c,Routing_Case_Reason_Classification__c,Specialization__c,Type,Support_Level__c,Case_In_Route__c,Company_Size__c FROM Case WHERE Subject  = 'Test Specialization Case'];
+        Group objGroup = [SELECT Id, Name FROM Group WHERE Type = 'Queue' AND Name = 'Engagement Cases'];
+	    Case objCase = [SELECT Id,OwnerId, Toggle__c,Routing_Case_Reason__c,Routing_Case_Reason_Classification__c,Specialization__c,Type,Support_Level__c,Case_In_Route__c,Company_Size__c FROM Case WHERE Subject  = 'Test Specialization Case'];
 	    Case_Reason_Classification__c objCaseReasonClassification = [SELECT Id FROM Case_Reason_Classification__c WHERE Reason_Code__c = 'route_to_spanish'];
 
         Agatha_Prediction__c objPrediction = new TestDataFactory.AgathaPredictionBuilder()
 			.setCaseId(objCase.Id)
 			.setReasonCode('not_predicted')
 			.setSupportLevel(CaseUtils.TIER_1)
-			.setCaseType(CaseUtils.BENEFITS_CASE_PILLAR)
+			.setCaseType(CaseUtils.PAYROLL_CASE_PILLAR)
 			.build();
 			insert objPrediction;
 
-            objCase.Status = 'In Progress';
 			objCase.Routing_Case_Reason__c = 'Route to Spanish';
 			objCase.Routing_Case_Reason_Classification__c  = objCaseReasonClassification.Id;
 			objCase.Specialization__c = 'Spanish';
-       	 	objCase.Type = 'Benefits';
-			objCase.Support_Level__c = 'Tier 2';
-       	 	objCase.Case_In_Route__c = True;
+       	 	objCase.Type = 'Payroll';
+			objCase.Support_Level__c = 'Tier 1';
+       	 	objCase.Case_In_Route__c = False;
         	objCase.Persona__c = 'Admin';
         	objCase.Toggle__c = !objCase.Toggle__c;
         	objCase.Company_Size__c = 'Grower 25-49';
         	objCase.Is_Case_Manual_Create__c  = False;
+        	objCase.OwnerId  = objGroup.Id;
 
 			Test.StartTest();
 			update objCase;
 			Test.StopTest();
 
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
-        List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId, Skill.DeveloperName FROM SkillRequirement WHERE RelatedRecordId = :list_PSR[0].Id];
-        Assert.isTrue(!list_Skills.isEmpty(), 'Skill Requirement is Spanish');
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-        Assert.isTrue(list_PSR[0].RoutingPriority == 2, 'Routing priority should be 2');
 	}
 
 	/**

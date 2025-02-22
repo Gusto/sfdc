@@ -18,6 +18,22 @@
                         <valueListItems>
                             <value>CustomButton.Benefit_Order__c.Company_Panda_Button</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Benefit_Order__c.Send_Final_Email_and_Fulfill</value>
+                            <visibilityRule>
+                                <booleanFilter>1 AND 2</booleanFilter>
+                                <criteria>
+                                    <leftValue>{!$Permission.CustomPermission.OA_Fulfill_Benefit_Order_Button}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>true</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.Order_Status__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Approved</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -217,16 +233,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.QA_Sheet__c</fieldItem>
                 <identifier>RecordQA_Sheet_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.All_Cancellation_Steps_in_Hippo_Complete__c</fieldItem>
-                <identifier>RecordAll_Cancellation_Steps_in_Hippo_Complete__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-0c1b7455-0fd0-4959-8b95-00c438febac1</name>

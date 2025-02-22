@@ -321,7 +321,6 @@ public class OmniOwnerRoutingTest {
         
         //Case Update
         objCase.Status = 'Awaiting Response';
-        objCase.Routing_Team__c = 'External';
         objCase.Type = 'Payroll';
         update  objCase;
         

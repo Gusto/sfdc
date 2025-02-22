@@ -156,6 +156,7 @@ public with sharing class AgathaPredictionTriggerHelper {
 			if (objCase.RecordTypeId == CaseUtils.RECTYPE_ENGAGEMENT) {
 				objCase.Status = CaseUtils.STATUS_IN_PROGRESS;
 			}
+
 			if (objAgathaPrediction.Case_Reason_Code__c != null && objAgathaPrediction.Case_Reason_Code__c != '') {
 				if (set_CaseRecordTypes.contains(objCase.RecordTypeId)) {
 					if (classificationMap.containsKey(objAgathaPrediction.Case_Reason_Code__c.toLowerCase())) {
@@ -216,7 +217,6 @@ public with sharing class AgathaPredictionTriggerHelper {
 					if (!classification.Generic_Routing_Reason__c) {
 						objCase.Confirm_Case_Reason__c = classification.Name;
 						objCase.Confirm_Case_Reason_Classification__c = classification.Id;
-						objCase.Routing_Team__c = classification.Routing_Team__c;
 					}
 					// this if part should not run if agatha prediction type value is not Null.
 					if (classification.Type__c != null && objCase.RecordType.Name.indexOf('Risk Assurance') < 0) {
@@ -245,7 +245,7 @@ public with sharing class AgathaPredictionTriggerHelper {
 						String strEmailDomain = '';
 						if (String.isNotBlank(objCase.SuppliedEmail)) {
 							List<String> list_EmailSplits = objCase.SuppliedEmail.split('@');
-							if (!list_EmailSplits.isEmpty() && list_EmailSplits.size() > 1) {
+							if (!list_EmailSplits.isEmpty()) {
 								strEmailDomain = list_EmailSplits[1];
 							}
 						}
@@ -277,10 +277,12 @@ public with sharing class AgathaPredictionTriggerHelper {
 
 					blnRoutingReasonPopulated = true;
 				}
+
 				objCase.Answer_IQ_Processed__c = 'Yes';
+
 				objCase.setOptions(dmoNoRule);
 				/* (If owner is a group OR owner is an integration user) AND Auto Send Email is false
-				AND blnRoutingReasonPopulated is true, use DML Options */
+				 AND blnRoutingReasonPopulated is true, use DML Options */
 				if (
 					(strOwnerId.indexOf('00G') == 0 ||
 					objCase.Case_Owner_Role__c == 'Integration Users') &&
@@ -363,7 +365,6 @@ public with sharing class AgathaPredictionTriggerHelper {
 				Generic_Routing_Reason__c,
 				Default_Type__c,
 				Case_Type_Pillar__c,
-				Routing_Team__c,
 				Support_Level__c,
 				Specialization__c
 			FROM Case_Reason_Classification__c
@@ -414,9 +415,7 @@ public with sharing class AgathaPredictionTriggerHelper {
 					Owner.Name,
 					Case_Owner_Role__c,
 					Auto_Response_Email_Content__c,
-					SuppliedEmail,
-					Routing_Team__c,
-					Has_A_Valid_Recommendation__c 
+					SuppliedEmail
 				FROM Case
 				WHERE Id IN :caseidSet
 			]

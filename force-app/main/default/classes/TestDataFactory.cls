@@ -3609,7 +3609,6 @@ public class TestDataFactory {
 		private String strRequiredFields = '';
 		private String strReasonCode = '';
 		private String strCaseTypePillar = '';
-		private String strRoutingTeam = '';
 		private String strSpecialization = '';
 		private String strSupportLevel = '';
 		private String strQueueOverride = '';
@@ -3674,11 +3673,6 @@ public class TestDataFactory {
 			return this;
 		}
 
-		public CaseReasonClassificationBuilder setRoutingTeam(String strValue) {
-			this.strRoutingTeam = strValue;
-			return this;
-		}
-
 		public CaseReasonClassificationBuilder setSpecialization(String strValue) {
 			this.strSpecialization = strValue;
 			return this;
@@ -3712,7 +3706,6 @@ public class TestDataFactory {
 				Survey_Eligible__c = this.blnSurveyEligible,
 				Reason_Code__c = this.strReasonCode,
 				Case_Type_Pillar__c = this.strCaseTypePillar,
-				Routing_Team__c = this.strRoutingTeam,
 				Specialization__c = this.strSpecialization,
 				Support_Level__c = this.strSupportLevel,
 				Generic_Routing_Reason__c = this.blnGenericReason,

@@ -655,8 +655,7 @@ public without sharing class GlobalQueryHelper {
 					Override_Email_Signature__c,
 					Case_Type_Pillar__c,
 					Support_Level__c,
-					Specialization__c,
-					Routing_Team__c
+					Specialization__c
 				FROM Case_Reason_Classification__c
 				ORDER BY Type__c ASC
 			];

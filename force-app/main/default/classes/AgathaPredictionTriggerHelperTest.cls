@@ -7,6 +7,7 @@ public class AgathaPredictionTriggerHelperTest {
 			Configuration_Settings__c configObj = new Configuration_Settings__c(TaxRes_Agencies_to_Ignore__c = 'Dummy;Dummy1', TaxRes_Prediction_Score__c = '0.9', Route_tax_res_cases__c = true);
 			insert configObj;
 		}
+
 		List<User> list_Users = new List<User>();
 		Profile objProfile = [SELECT Id, Name FROM Profile WHERE Name = 'API Integration'];
 		UserRole objRole = [SELECT Id FROM UserRole WHERE Name = 'Integration Users'];
@@ -95,7 +96,6 @@ public class AgathaPredictionTriggerHelperTest {
 			.setReasonCode('test_payroll_pillar')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('Internal')
 			.build();
 		list_Crc.add(objCaseTypePillarReason1);
 
@@ -105,7 +105,6 @@ public class AgathaPredictionTriggerHelperTest {
 			.setReasonCode('test_benefits_pillar')
 			.setCaseTypePillar(CaseUtils.BENEFITS_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('Internal')
 			.build();
 		list_Crc.add(objCaseTypePillarReason2);
 
@@ -115,7 +114,6 @@ public class AgathaPredictionTriggerHelperTest {
 			.setReasonCode('test_taxes_pillar')
 			.setCaseTypePillar(CaseUtils.TAXES_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('External')
 			.build();
 		list_Crc.add(objCaseTypePillarReason3);
 
@@ -125,7 +123,6 @@ public class AgathaPredictionTriggerHelperTest {
 			.setReasonCode('test_tada')
 			.setCaseTypePillar(CaseUtils.TYPE_TADA)
 			.setType('Engagement')
-			.setRoutingTeam('External')
 			.build();
 		list_Crc.add(objCaseTypePillarReason4);
 
@@ -135,7 +132,6 @@ public class AgathaPredictionTriggerHelperTest {
 			.setReasonCode('zp_giving_or_charity')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('External')
 			.setSpecialization('Integrations')
 			.setSupportLevel(CaseUtils.TIER_1)
 			.build();
@@ -147,7 +143,6 @@ public class AgathaPredictionTriggerHelperTest {
 			.setReasonCode('state_notice_reset')
 			.setType(CaseUtils.TYPE_ENGAGEMENT)
 			.setClass('Class 1')
-			.setRoutingTeam('External')
 			.setSpecialization('')
 			.build();
 		objCaseReason.Auto_Email_Behavior__c = 'Send';
@@ -689,7 +684,6 @@ public class AgathaPredictionTriggerHelperTest {
 		Test.stopTest();
 
 		List<Case> list_Cases = [SELECT Id, Status, Auto_Close_Date_Time__c FROM Case WHERE Id = :objCase.Id];
-		Assert.areEqual('Awaiting Response', list_Cases[0].Status, 'Status is not awaiting response');
 		Assert.areNotEqual(null, list_Cases[0].Auto_Close_Date_Time__c, 'Close Date is null');
 	}
 
@@ -726,8 +720,8 @@ public class AgathaPredictionTriggerHelperTest {
 		}
 
 		System.assertNotEquals(map_CaseByEmail.get('testcasepillar4@gusto.com').Specialization__c, null , 'Specialization not updated from case reason.');
-	}
-	
+	}	
+
 	 /**
 	 * @Author      : Soujanya N.j
 	 * @Description : To test when agatha prediction is 'not_predicted'

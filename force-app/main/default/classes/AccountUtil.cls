@@ -561,32 +561,7 @@ public with sharing class AccountUtil {
 	public static Id getWorkatoIntegrationUserId() {
 		return [SELECT Id, UserName FROM User WHERE Username LIKE 'workato.integration@gusto.com%' LIMIT 1].Id;
 	}
-
-	/**
-	 * @Description : Queueable method to send account for HI Owner Routing
-	 * @Param       : Id - Id of the account to route HI Owner
-	 **/
-	public static void sendAccountForHIOwnerRouting(Id idAccount) {
-		if (Limits.getQueueableJobs() < Limits.getLimitQueueableJobs()) {
-			System.enqueueJob(new HIRoutingQueueable(idAccount));
-		} else {
-			sendAccountForHIOwnerRoutingFuture(idAccount);
-		}
-	}
-
-	/**
-	 * @Description : Future method to send account for HI Owner Routing
-	 * @Param       : Id - Id of the account to route HI Owner
-	 **/
-	@future(callout=true)
-	public static void sendAccountForHIOwnerRoutingFuture(Id idAccount) {
-		// create parameter and set account id
-		Map<String, Object> map_Params = new Map<String, Object>();
-		map_Params.put('Account_Id', idAccount);
-		// start the flow
-		new Flow.Interview.Send_Account_For_HI_Owner_Routing(map_Params).start();
-	}
-
+	
 	/**
 	 * @author         Praveen Sethu
 	 * @description    Query Account Teams on User record (Used for HI Sales Routing)

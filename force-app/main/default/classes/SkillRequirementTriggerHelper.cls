@@ -42,9 +42,6 @@ public class SkillRequirementTriggerHelper {
 							when 'Support_Level' {		  
 								objCase.Support_Level__c = objSkill.MasterLabel;
 							}
-							when 'Team' {		  
-								objCase.Routing_Team__c = objSkill.MasterLabel;
-							}
 							when 'Engagement_Alert' {		  
 								objCase.Engagement_Alert__c = objSkill.MasterLabel;
 							}

@@ -12,11 +12,17 @@ public without sharing class UpdateAccountControllerTest {
 	static void testUpdateAccountPositive() {
 		// create test account
 		AccountTriggerHelper.skipTrigger = true;
-		Account objAcc = new TestDataFactory.AccountBuilder().setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID).setName('Company Account 1').setZPCompanyId('86896897').build();
+		Account objAcc = new TestDataFactory.AccountBuilder()
+			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
+			.setName('Company Account 1')
+			.setZPCompanyId('86896897')
+			.setBillingCountry('United States')
+			.setBillingState('Colorado')
+			.build();
 		insert objAcc;
 
 		Test.startTest();
-		UpdateAccountController.UpdateAccountResponse objResponse = UpdateAccountController.updateAccount(objAcc);
+		UpdateAccountController.UpdateAccountResponse objResponse = UpdateAccountController.updateAccount(objAcc, 'BMM');
 		Test.stopTest();
 
 		System.assertEquals(true, objResponse.blnSuccess, 'Account was not updated');
@@ -33,7 +39,7 @@ public without sharing class UpdateAccountControllerTest {
 
 		// start test and update account without inserting it
 		Test.startTest();
-		UpdateAccountController.UpdateAccountResponse objResponse = UpdateAccountController.updateAccount(objAcc);
+		UpdateAccountController.UpdateAccountResponse objResponse = UpdateAccountController.updateAccount(objAcc, 'BMM');
 		Test.stopTest();
 
 		System.assertEquals(false, objResponse.blnSuccess, 'Account was updated successfully');

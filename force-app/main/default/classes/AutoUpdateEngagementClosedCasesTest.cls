@@ -39,7 +39,6 @@ public class AutoUpdateEngagementClosedCasesTest {
 			.setReasonCode('no_action_or_wrong_email')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('External')
 			.setSupportLevel(CaseUtils.TIER_1)
 			.build();
 	list_InsertCaseReasonClassifications.add(objCaseReasonClassification);

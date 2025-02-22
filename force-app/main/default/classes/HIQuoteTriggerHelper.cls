@@ -116,19 +116,6 @@ public class HIQuoteTriggerHelper {
 				}
 			}
 		}
-
-		if (!set_UserIds.isEmpty()) {
-			// Build a map of user Id and list of user account team members (used in HI Sales Routing)
-			for (UserAccountTeamMember objAccTeamMember : AccountUtil.queryUserAccountTeamMembers(set_UserIds)) {
-				List<UserAccountTeamMember> list_UserAccTeamMembers = new List<UserAccountTeamMember>();
-				if (map_UserAccountTeamMembers.containsKey(objAccTeamMember.OwnerId)) {
-					list_UserAccTeamMembers = map_UserAccountTeamMembers.get(objAccTeamMember.OwnerId);
-				}
-
-				list_UserAccTeamMembers.add(objAccTeamMember);
-				map_UserAccountTeamMembers.put(objAccTeamMember.OwnerId, list_UserAccTeamMembers);
-			}
-		}
 	}
 
 	/**
@@ -200,7 +187,8 @@ public class HIQuoteTriggerHelper {
 				AccountId IN :set_AccountIds
 				AND (RecordTypeId = :OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID
 				OR RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
-				OR (RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID AND Type = :OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS))
+				OR (RecordTypeId = :OpportunityUtil.ACQUISITION_OPPTY_RT_ID
+				AND Type = :OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS))
 				AND StageName NOT IN :OpportunityUtil.set_ClosedOpportunityStage
 			ORDER BY CreatedDate ASC
 		];
@@ -233,128 +221,24 @@ public class HIQuoteTriggerHelper {
 		objInsuranceQuote.Quote_Link__c = objHIQuote.HI_Quote_Link__c;
 		// assume status is not assigned
 		objInsuranceQuote.Status__c = STATUS_NOT_ASSIGNED;
-		Boolean blnHIOwnerActive = false;
-		Boolean blnROEExceptionFound = false;
-		Boolean blnSkipRouting = false;
 		Opportunity objLatestOppty = null;
 
 		if (checkIfSalesforceIdIsAccount(objHIQuote)) {
 			String strSalesforceId = String.valueOf(objHIQuote.Salesforce_ID__c).substring(0, 15);
 			objInsuranceQuote.Account__c = strSalesforceId;
+
+			if (map_SalesforceIdToAccount.containsKey(strSalesforceId)) {
+				objAcc = map_SalesforceIdToAccount.get(strSalesforceId);
+			}
+
 			if (map_AccountIdToHIOpportunity.containsKey(strSalesforceId)) {
 				objInsuranceQuote.Opportunity__c = map_AccountIdToHIOpportunity.get(strSalesforceId).Id;
 			} else if (map_AccountIdToPayrollOpportunity.containsKey(strSalesforceId)) {
 				objInsuranceQuote.Opportunity__c = map_AccountIdToPayrollOpportunity.get(strSalesforceId).Id;
 			}
-
-			if (map_SalesforceIdToAccount.containsKey(strSalesforceId)) {
-				// assign sales rep only when account hi owner is not null, active user and role is from benefits roles label
-				objAcc = map_SalesforceIdToAccount.get(strSalesforceId);
-
-				if (objAcc.HI_Owner__c != null) {
-					String strHIOwnerRole = objAcc.HI_Owner__r?.UserRole?.Name;
-					// check if hi owner role is from benefits role custom label, then set sales rep on insurance quote and set status as assigned
-					if (objAcc.HI_Owner__r.IsActive == true && String.isNotBlank(strHIOwnerRole) && HI_SALES_ALL_ROLES.containsIgnoreCase(strHIOwnerRole)) {
-						blnHIOwnerActive = true;
-					}
-				}
-
-				//Check if there is a benefit oppty created in last 90 days which is closed won. If yes, do not route HI Owner
-				if (!objAcc.Opportunities.isEmpty()) {
-					objLatestOppty = objAcc.Opportunities.get(0);
-					for (Opportunity objOppty : objAcc.Opportunities) {
-						if (OpportunityUtil.set_BenefitRTChangeEmployees.contains(objOppty.RecordTypeId)) {
-							if (objOppty.CloseDate != null && objOppty.CloseDate > System.today().addDays(-90) && objOppty.IsWon) {
-								blnClosedWonBenefitOpptyFound = true;
-								break;
-							}
-							// If open benefits opportunity is found, do not re-route HI owner
-							if (!objOppty.IsClosed) {
-								blnOpenBenefitsOpptyFound = true;
-							}
-
-							// Check if ROE Exception is not blank on benefits opportunity
-							if ((objOppty.ROE_Exception__c == AccountUtil.ROE_EXCEPTION_REQUESTED || objOppty.ROE_Exception__c == AccountUtil.ROE_EXCEPTION_APPROVED)) {
-								blnROEExceptionFound = true;
-							}
-						}
-					}
-				}
-			}
 		}
 
-		if (blnOpenBenefitsOpptyFound && blnHIOwnerActive) {
-			blnSkipRouting = true;
-		} else if (objAcc?.ZP_Company_Overall_Status__c == AccountUtil.ACCOUNT_OVERALL_STATUS_SUSPENDED) {
-			blnSkipRouting = true;
-		} else if (blnClosedWonBenefitOpptyFound) {
-			blnSkipRouting = true;
-		} else if ((objLatestOppty != null && objAcc.HI_Active_Benefits__c && objLatestOppty.RecordTypeId == OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID) || objAcc.Big_Desk_Pilot_Customer__c) {
-			blnSkipRouting = true;
-		}
-
-		// trigger routing only for company accounts
-		if (objAcc != null && blnSkipRouting == false && objAcc.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID) {
-			// Get lower and uppper threshold values from custom labels
-			String strNewPlanThreshold = System.Label.New_Plan_Threshold;
-
-			Integer intNewPlanLowerThreshold = Integer.valueOf(strNewPlanThreshold.split('/')[0]);
-			Integer intNewPlanHigherThreshold = Integer.valueOf(strNewPlanThreshold.split('/')[1]);
-
-			Boolean blnAlignedRepFound = false;
-			Boolean blnSendForRouting = false;
-
-			if (objAcc.ZP_Company_Overall_Status__c == AccountUtil.ACCOUNT_OVERALL_STATUS_NEW) {
-				if (blnHIOwnerActive) {
-					objInsuranceQuote.Sales_Rep__c = objAcc.HI_Owner__c;
-					objInsuranceQuote.Status__c = STATUS_ASSIGNED;
-				} else {
-					// get hi owner from aligned rep
-					if (map_UserAccountTeamMembers.containsKey(objAcc.OwnerId)) {
-						// Iterate over account team members
-						for (UserAccountTeamMember objAccTeamMember : map_UserAccountTeamMembers.get(objAcc.OwnerId)) {
-							// Assign HI Owner based on Number of Employees and Role Names
-							if (objAccTeamMember.TeamMemberRole == AccountUtil.HI_NEW_PLAN_REP) {
-								// update hi routing reason based on current value of HI Owner field
-								if (objAcc.HI_Owner__c == null) {
-									objAcc.HI_Routing_Reason__c = 'New Plan - Insurance Quote - HI Owner null value updated to aligned ' + objAccTeamMember.TeamMemberRole;
-								} else if (objAcc.HI_Owner__c != objAccTeamMember.UserId) {
-									objAcc.HI_Routing_Reason__c = 'New Plan - Insurance Quote - HI Owner replaced and updated to aligned ' + objAccTeamMember.TeamMemberRole;
-								}
-								objInsuranceQuote.Sales_Rep__c = objAccTeamMember.UserId;
-								objAcc.HI_Owner__c = objAccTeamMember.UserId;
-								objInsuranceQuote.Status__c = STATUS_ASSIGNED;
-								blnAlignedRepFound = true;
-							}
-						}
-					}
-
-					// If aligned rep not found, send to ringlead for routing
-					if (!blnAlignedRepFound) {
-						blnSendForRouting = true;
-					}
-				}
-			} else if (objAcc.ZP_Company_Overall_Status__c == AccountUtil.ACCOUNT_OVERALL_STATUS_ACTIVE) {
-				// If overall status is active - do not check for alignment and send for routing before checking few conditions
-				if (objAcc.Medical_Deductions__c || objAcc.Benefits_Effective_Date__c != null || HI_Oppty_Router_State__mdt.getInstance(objAcc.BillingStateCode) != null) {
-					blnSendForRouting = true;
-				}
-			}
-
-			if (objInsuranceQuote.Sales_Rep__c == null && blnSendForRouting) {
-				// If no aligned rep is found, send account to ringlead and update hi routing reason
-				if (objAcc.HI_Owner__c == null) {
-					objAcc.HI_Routing_Reason__c = 'New Plan - Insurance Quote - HI Owner null value and send to Routing Tool';
-				} else {
-					objAcc.HI_Routing_Reason__c = 'New Plan - Insurance Quote - HI Owner replaced and send to Routing Tool';
-				}
-				blnHIOwnerRouting = true;
-				AccountUtil.sendAccountForHIOwnerRouting(objAcc.Id);
-			}
-			map_AccountsToUpdate.put(objAcc.Id, objAcc);
-		}
-
-		if (blnHIOwnerActive && objAcc.HI_Owner__c != null && objInsuranceQuote.Sales_Rep__c == null) {
+		if (objAcc != null && objAcc.HI_Owner__c != null && objInsuranceQuote.Sales_Rep__c == null) {
 			objInsuranceQuote.Sales_Rep__c = objAcc.HI_Owner__c;
 			objInsuranceQuote.Status__c = STATUS_ASSIGNED;
 		}

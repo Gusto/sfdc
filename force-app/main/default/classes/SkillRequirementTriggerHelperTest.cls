@@ -137,12 +137,11 @@ public class SkillRequirementTriggerHelperTest {
 		insert list_SkillRequirements;
 		Test.stopTest();
 		
-		objCase = [SELECT Id, Type, Persona__c, Support_Level__c, Company_Size__c, Routing_Team__c FROM Case WHERE Id = :objCase.Id];
+		objCase = [SELECT Id, Type, Persona__c, Support_Level__c, Company_Size__c FROM Case WHERE Id = :objCase.Id];
 		Assert.areEqual('Payroll', objCase.Type, 'Type was not updated correctly');
 		Assert.areEqual('Admin', objCase.Persona__c, 'Persona was not updated correctly');
 		Assert.areEqual('Tier 1', objCase.Support_Level__c, 'Support Level was not updated correctly');
 		Assert.areEqual('Standard 5-24', objCase.Company_Size__c, 'Company Size was not updated correctly');
-		Assert.areEqual('Internal', objCase.Routing_Team__c, 'Team was not updated correctly');
 	}
 	
 	/**

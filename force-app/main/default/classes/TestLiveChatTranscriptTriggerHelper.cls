@@ -275,7 +275,6 @@ public class TestLiveChatTranscriptTriggerHelper {
 			.setReasonCode('zp_giving_or_charity')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('Internal')
 			.setSupportLevel(CaseUtils.TIER_1)
 			.build();
 		list_CaseReasons.add(objCaseReason1);
@@ -1184,58 +1183,5 @@ public class TestLiveChatTranscriptTriggerHelper {
 		objCase = [SELECT Id, WFM_Queue_Tag__c FROM Case WHERE Id = :objCase.Id];
 		Assert.areEqual('Cancel WFM Queue', objNewChat.WFM_Queue_Tag__c, 'WFM Queue Tag was not updated on Chat');
 		Assert.areEqual('Cancel WFM Queue', objCase.WFM_Queue_Tag__c, 'WFM Queue Tag was not updated on Case');
-	}
-    
-    /**
-	 * @author      Aslam Juneid
-	 * @description Test Chat with Connection Timeout event.
-	 **/
-	@isTest
-	public static void testConnectionTimeoutEvet() {
-		Account objAccount = [SELECT Id FROM Account WHERE Name = 'Company Account 1' LIMIT 1];
-		Contact objContact = [SELECT Id FROM Contact WHERE Email = 'newmember1@campaign.com' LIMIT 1];
-
-		Test.startTest();
-		LiveChatVisitor objVisitor = new LiveChatVisitor();
-		insert objVisitor;
-
-		LiveChatTranscript objLiveChatTranscript = new TestDataFactory.LiveChatTranscriptBuilder()
-			.setCompanyId('1111111111')
-			.setCompanyUUID('e512de89-9639-474b-aebf-0cf26b3075ea')
-			.setVisitorEmailAddress('newmember@campaign.com')
-			.setVisitorFirstName('Vernetta')
-			.setVisitorLastName('Stiedemann')
-			.setCompanyName('Company Account 1')
-			.setRecordTypeId('External')
-			.setQuestion('Test cancel skill')
-			.setChatVisitor(objVisitor.Id)
-			.setPersona('Admin')
-			.setCompanySize('Standard 5-24')
-			.setORCASpecialization('Cancel')
-			.build();
-		insert objLiveChatTranscript;
-        LiveChatTranscriptEvent leWarn = new LiveChatTranscriptEvent(Type = Utils.CHAT_EVENT_TYPE_DURATION_TIME_OUT, Time = System.now(), LiveChatTranscriptId = objLiveChatTranscript.Id);
-		insert leWarn;
-		Case objCase = new TestDataFactory.CaseBuilder()
-			.setAccountId(objAccount.Id)
-			.setContactId(objContact.Id)
-			.setRecordTypeId('Engagement')
-			.setType('Payroll')
-			.setSubject('Test Cancel Chat Case')
-			.setOrigin('Chat')
-			.setStatus('Open')
-			.setSuppliedEmail('newmember1@campaign.com')
-			.setDescription('Test Cancel Chat Case')
-			.build();
-		insert objCase;
-       
-		LiveChatTranscript objNewChat = [SELECT Id, WFM_Queue_Tag__c FROM LiveChatTranscript WHERE Id = :objLiveChatTranscript.Id];
-
-		objLiveChatTranscript.CaseId = objCase.Id;
-        objLiveChatTranscript.status= 'Missed';
-		update objLiveChatTranscript;
-		Test.stopTest();
-		
-
 	}
 }

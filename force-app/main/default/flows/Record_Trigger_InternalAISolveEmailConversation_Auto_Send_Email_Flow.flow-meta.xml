@@ -42,7 +42,7 @@
         <inputParameters>
             <name>emailBody</name>
             <value>
-                <elementReference>$Record.Response__c</elementReference>
+                <elementReference>$Record.HTML_Response__c</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -341,6 +341,13 @@
             <operator>EqualTo</operator>
             <value>
                 <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Valid_Request__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>valid_request</stringValue>
             </value>
         </filters>
         <object>InternalAISolveEmailConversation__c</object>

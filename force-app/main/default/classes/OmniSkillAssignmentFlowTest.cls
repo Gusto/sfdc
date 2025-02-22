@@ -194,7 +194,6 @@ public class OmniSkillAssignmentFlowTest {
 			.setReasonCode('zp_giving_or_charity')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('External')
 			.setSpecialization('Integrations')
 			.setSupportLevel(CaseUtils.TIER_1)
 			.build();
@@ -206,7 +205,6 @@ public class OmniSkillAssignmentFlowTest {
 			.setReasonCode('test_payroll_pillar')
 			.setCaseTypePillar(CaseUtils.PAYROLL_CASE_PILLAR)
 			.setType('Engagement')
-			.setRoutingTeam('Internal')
 			.setSupportLevel(CaseUtils.TIER_2)
 			.build();
 		list_CaseReasons.add(objCaseReason2);

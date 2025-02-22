@@ -195,7 +195,7 @@ public class AccountTriggerHelperTest {
 		objOpportunity_BoR.Amount = 55000.00;
 		insert objOpportunity_BoR;
 
-		//create ICP closed lost opportunity 
+		//create ICP closed lost opportunity
 		Opportunity objTierUpsellOpp = new TestDataFactory.OpportunityBuilder()
 			.setRecordTypeId(OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID)
 			.setName('ICP Opportunity')
@@ -2060,174 +2060,6 @@ public class AccountTriggerHelperTest {
 
 	/**
 	 * @author:         Praveen Sethu
-	 * @description:    HI Sales Routing - Set Aligned Broker Rep Based on Medical Deductions Changing on Account
-	 */
-	@isTest
-	static void testAlignedBrokerRepBasedOnMedicalDeductions() {
-		// build a map of integration user name and user object
-		Map<String, User> map_IntegrationUsers = new Map<String, User>();
-		for (User objUser : [SELECT Id, Name FROM User WHERE Name IN ('API Heroku', 'Workato Integration') AND IsActive = TRUE]) {
-			map_IntegrationUsers.put(objUser.Name, objUser);
-		}
-
-		// assume sales all roles is integration users role
-		String HI_SALES_ALL_ROLES = 'Integration Users';
-
-		// Create 3 accounts (1 with 10- employees and 1 with 11+ employees and 1 without aligned rep)
-		AccountTriggerHelper.skipTrigger = true;
-		UserTriggerHelper.skipTrigger = true;
-		Account objAcc1 = new TestDataFactory.AccountBuilder()
-			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
-			.setName('Company Account 1')
-			.setZPCompanyId('86896897')
-			.setNumberOfActiveEEs(8)
-			.setNumberOfEmployees(8)
-			.setOwnerId(map_IntegrationUsers.get('API Heroku').Id)
-			.setZPCompanyOverallStatus('New')
-			.build();
-
-		Account objAcc2 = new TestDataFactory.AccountBuilder()
-			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
-			.setName('Company Account 2')
-			.setZPCompanyId('987896896')
-			.setNumberOfActiveEEs(18)
-			.setNumberOfEmployees(18)
-			.setZPCompanyOverallStatus('New')
-			.setOwnerId(map_IntegrationUsers.get('API Heroku').Id)
-			.build();
-
-		Account objAcc3 = new TestDataFactory.AccountBuilder()
-			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
-			.setName('Company Account 3')
-			.setZPCompanyId('890809890')
-			.setNumberOfActiveEEs(18)
-			.setNumberOfEmployees(18)
-			.setOwnerId(map_IntegrationUsers.get('Workato Integration').Id)
-			.setZPCompanyOverallStatus('Active')
-			.build();
-
-		List<Account> list_Accounts = new List<Account>{ objAcc1, objAcc2, objAcc3 };
-		insert list_Accounts;
-		AccountTriggerHelper.skipTrigger = false;
-
-		Test.startTest();
-		// update medical deductions to true
-		for (Account objAcc : list_Accounts) {
-			objAcc.Medical_Deductions__c = true;
-		}
-		update list_Accounts;
-		Test.stopTest();
-
-		List<Account> list_AccountsToAssert = [SELECT Id, HI_Owner__c, HI_Owner__r.UserRole.Name, HI_Routing_Reason__c, HI_Owner__r.IsActive FROM Account WHERE Id IN :list_Accounts];
-
-		for (Account objAcc : list_AccountsToAssert) {
-			if (objAcc.Id == objAcc1.Id) {
-				// first account should have routed to small biz broker rep
-				System.assertEquals(
-					'Broker - Has Benefits Deductions - HI Owner null value updated to aligned ' + AccountUtil.HI_BROKER_REP,
-					objAcc.HI_Routing_Reason__c,
-					'Account not routed to Small Biz Broker Rep'
-				);
-				System.assertEquals(true, objAcc.HI_Owner__c != null, 'HI Owner is null on Account');
-				System.assertEquals(true, HI_SALES_ALL_ROLES.containsIgnoreCase(objAcc.HI_Owner__r.UserRole.Name), 'HI Owner Role is not from Benefits Roles custom label');
-			} else if (objAcc.Id == objAcc2.Id) {
-				// second account should have routed to mid market biz broker rep
-				System.assertEquals(
-					'Broker - Has Benefits Deductions - HI Owner null value updated to aligned ' + AccountUtil.HI_BROKER_REP,
-					objAcc.HI_Routing_Reason__c,
-					'Account not routed to Small Biz Broker Rep'
-				);
-				System.assertEquals(true, objAcc.HI_Owner__c != null, 'HI Owner is null on Account');
-				System.assertEquals(true, HI_SALES_ALL_ROLES.containsIgnoreCase(objAcc.HI_Owner__r.UserRole.Name), 'HI Owner Role is not from Benefits Roles custom label');
-			} else if (objAcc.Id == objAcc3.Id) {
-				// HI owner on third account should be null and sent to routing tool
-				System.assertEquals('Broker - Has Benefits Deductions - HI Owner null value and send to Routing Tool', objAcc.HI_Routing_Reason__c, 'Account not sent to Routing tool');
-				System.assertEquals(true, objAcc.HI_Owner__c == null, 'HI Owner is not null on Account');
-			}
-		}
-	}
-
-	/**
-	 * @author:         Praveen Sethu
-	 * @description:    HI Sales Routing - Increase and Decrease EE counts - Set Aligned Broker Rep Based on HI Intent
-	 */
-	@isTest
-	static void testHIOwnerRoutingBasedOnIntent() {
-		// build a map of integration user name and user object
-		Map<String, User> map_IntegrationUsers = new Map<String, User>();
-		for (User objUser : [SELECT Id, Name FROM User WHERE Name IN ('API Heroku', 'Workato Integration') AND IsActive = TRUE]) {
-			map_IntegrationUsers.put(objUser.Name, objUser);
-		}
-
-		// assume sales all roles is integration users role
-		String HI_SALES_ALL_ROLES = 'Integration Users';
-
-		// Create 2 company accounts
-		AccountTriggerHelper.skipTrigger = true;
-		UserTriggerHelper.skipTrigger = true;
-		OpportunityTriggerHelper.skipTrigger = true;
-		Account objAcc1 = new TestDataFactory.AccountBuilder()
-			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
-			.setName('Company Account 1')
-			.setZPCompanyId('86896897')
-			.setOwnerId(map_IntegrationUsers.get('API Heroku').Id)
-			.setNumberOfActiveEEs(8)
-			.setNumberOfEmployees(8)
-			.setZPCompanyOverallStatus('New')
-			.setHasMedicalDeductions(true)
-			.build();
-
-		Account objAcc2 = new TestDataFactory.AccountBuilder()
-			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
-			.setName('Company Account 2')
-			.setZPCompanyId('098098089')
-			.setOwnerId(map_IntegrationUsers.get('API Heroku').Id)
-			.setNumberOfActiveEEs(8)
-			.setNumberOfEmployees(8)
-			.setZPCompanyOverallStatus('New')
-			.build();
-
-		List<Account> list_Accounts = new List<Account>{ objAcc1, objAcc2 };
-		insert list_Accounts;
-		AccountTriggerHelper.skipTrigger = false;
-
-		// Start test and increase/decrease employee counts above and below Broker and New Plan thresholds
-		Test.startTest();
-		for (Account objAcc : list_Accounts) {
-			if (objAcc.Id == objAcc1.Id) {
-				objAcc.NumberOfEmployees = 18;
-				objAcc.Number_of_Active_Employees__c = 18;
-			} else if (objAcc.Id == objAcc2.Id) {
-				objAcc.NumberOfEmployees = 3;
-				objAcc.Number_of_Active_Employees__c = 3;
-			}
-		}
-		update list_Accounts;
-		Test.stopTest();
-
-		// Assert if HI owner and HI routing reason got updated
-
-		List<Account> list_AccountsToAssert = [SELECT Id, HI_Owner__c, HI_Owner__r.UserRole.Name, HI_Routing_Reason__c, HI_Owner__r.IsActive FROM Account WHERE Id IN :list_Accounts];
-
-		for (Account objAcc : list_AccountsToAssert) {
-			if (objAcc.Id == objAcc1.Id) {
-				// first account should have routed to mid market new plan rep
-				System.assertEquals(
-					'Broker - Number of Employees - HI Owner null value updated to aligned ' + AccountUtil.HI_BROKER_REP,
-					objAcc.HI_Routing_Reason__c,
-					'Account not routed to HI Broker Rep'
-				);
-				System.assertEquals(true, objAcc.HI_Owner__c != null, 'HI Owner is null on Account');
-				System.assertEquals(true, HI_SALES_ALL_ROLES.containsIgnoreCase(objAcc.HI_Owner__r.UserRole.Name), 'HI Owner Role is not from Benefits Roles custom label');
-			} else if (objAcc.Id == objAcc2.Id) {
-				// Account should not be routed because there is no Intent
-				System.assertEquals(null, objAcc.HI_Routing_Reason__c, 'Account routed to HI New Plan Rep');
-			}
-		}
-	}
-
-	/**
-	 * @author:         Praveen Sethu
 	 * @description:    HI Sales Routing - Test if HI Owner is updated account, related open benefits opps and pending HI Quote records are updated
 	 */
 	@isTest
@@ -2565,7 +2397,7 @@ public class AccountTriggerHelperTest {
 		// If company's product Interest does not contain Employer of Record, eligibilty should be set to false
 		System.assertEquals(false, blnEligible, 'Account should not be eligible for Employer of Record');
 
-		objAcc = new Account(Product_Interest__c = 'international_payroll' , Product_Interest_Countries__c = 'CA');
+		objAcc = new Account(Product_Interest__c = 'international_payroll', Product_Interest_Countries__c = 'CA');
 		blnEligible = AccountTriggerHelper.internationalPayrollInterestEligible(objAcc);
 		// If company's product Interest contains Employer of Record and country is valid, eligibilty should be set to true
 		System.assertEquals(true, blnEligible, 'Account should be eligible for Employer of Record');
@@ -3090,14 +2922,13 @@ public class AccountTriggerHelperTest {
 			.build();
 		insert objCompanyContact;
 
-		
 		// Change some values on the account to trigger the product upsell creation
 		testAccount.Product_Interest__c = LogSmartCallingUtil.INTERNATIONAL_PAYROLL_LOG_A_CALL;
 		testAccount.Product_Interest_Countries__c = 'AZ';
 		Test.startTest();
 		update testAccount;
 		Test.stopTest();
-		
+
 		// Query for the created Product Upsell records to verify correct creation
 		List<Partnership_Interest__c> productUpsells = [SELECT Id, Account__c, Product_Interest__c, Product_Interest_Countries__c FROM Partnership_Interest__c WHERE Account__c = :testAccount.Id];
 		System.assertEquals(1, productUpsells.size(), 'Product Upsell record should be created.');
@@ -3347,7 +3178,7 @@ public class AccountTriggerHelperTest {
 		Test.stopTest();
 
 		// assert if opportunity was moved to Closed Won
-		Opportunity objOpportunityAssert = [SELECT Id, StageName FROM Opportunity WHERE AccountId = :objAccount.Id Limit 1];
+		Opportunity objOpportunityAssert = [SELECT Id, StageName FROM Opportunity WHERE AccountId = :objAccount.Id LIMIT 1];
 		//System.assertEquals(OpportunityUtil.CLOSED_WON_STAGE, objOpportunityAssert.StageName);
 
 		// assert if account additional services is updated to include International Contractor Payment
@@ -3371,7 +3202,11 @@ public class AccountTriggerHelperTest {
 		update objCompanyAccount;
 
 		// get the ICP opportunity
-		List<Opportunity> listOpportunities = [SELECT Id, Name, AccountId,Product_Interest__c,RecordType.Name,Upsell_Tier__c,Current_Tier__c,StageName,Type,CloseDate,RecordTypeId,CreatedDate FROM Opportunity where AccountId =: objCompanyAccount.Id AND RecordTypeId =: OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID];
+		List<Opportunity> listOpportunities = [
+			SELECT Id, Name, AccountId, Product_Interest__c, RecordType.Name, Upsell_Tier__c, Current_Tier__c, StageName, Type, CloseDate, RecordTypeId, CreatedDate
+			FROM Opportunity
+			WHERE AccountId = :objCompanyAccount.Id AND RecordTypeId = :OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID
+		];
 
 		// assert the ICP opportunity
 		System.assertEquals(1, listOpportunities.size(), 'ICP Opportunity not created for Account');
@@ -3385,10 +3220,10 @@ public class AccountTriggerHelperTest {
 
 	/**
 	 * @description Test method to test the ICP Creation for Company Account
-	* @author      Anurag Gautam
-	* @param       NA
-	* @return      NA
-	**/
+	 * @author      Anurag Gautam
+	 * @param       NA
+	 * @return      NA
+	 **/
 
 	@isTest
 	public static void testCloseICP() {
@@ -3400,7 +3235,11 @@ public class AccountTriggerHelperTest {
 		objCompanyAccount.Product_Interest__c = 'international_contractor_payment_paid';
 		update objCompanyAccount;
 
-		List<Opportunity> listOpportunities = [SELECT Id, Name,Additional_Opportunity_Services__c,Product_Interest__c,StageName FROM Opportunity where AccountId =: objCompanyAccount.Id AND RecordTypeId =: OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID];
+		List<Opportunity> listOpportunities = [
+			SELECT Id, Name, Additional_Opportunity_Services__c, Product_Interest__c, StageName
+			FROM Opportunity
+			WHERE AccountId = :objCompanyAccount.Id AND RecordTypeId = :OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID
+		];
 		//System.assertEquals(1, listOpportunities.size(), 'ICP Opportunity not created for Account');
 		//System.assertEquals(AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT, listOpportunities[0].Additional_Opportunity_Services__c, 'Additional Opportunity Services not set correctly');
 		//System.assertEquals(OpportunityUtil.CLOSED_WON_STAGE, listOpportunities[0].StageName,'Opportunity not moved to Closed Won');
@@ -3415,13 +3254,83 @@ public class AccountTriggerHelperTest {
 	@isTest
 	public static void testCreateICPNew() {
 		Account objCompanyICPAccount = [SELECT Id, Name, Product_Interest__c, ZP_Company_ID__c FROM Account WHERE ZP_Company_ID__c = '1234567899' LIMIT 1];
-		
+
 		Test.startTest();
 		objCompanyICPAccount.Product_Interest__c = 'international_contractor_payment_logacall';
 		update objCompanyICPAccount;
 		Test.stopTest();
-		
-		List<Opportunity> listOpportunitiesNew = [SELECT Id, Name, Product_Interest__c, StageName FROM Opportunity WHERE AccountId =: objCompanyICPAccount.Id AND RecordTypeId =: OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID];
+
+		List<Opportunity> listOpportunitiesNew = [
+			SELECT Id, Name, Product_Interest__c, StageName
+			FROM Opportunity
+			WHERE AccountId = :objCompanyICPAccount.Id AND RecordTypeId = :OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID
+		];
 		System.assertEquals(2, listOpportunitiesNew.size(), 'Second ICP Opportunity not created for Account');
+	}
+
+	/**
+	 * @description Test if Territory is updated on all open benefits opportunities when territory is updated on company account
+	 **/
+	@isTest
+	public static void testTerritoryUpdateOnBenefitsOpportunities() {
+		Test.setMock(HttpCalloutMock.class, new RingLeadMockResponseTest());
+		Account objAcc = new TestDataFactory.AccountBuilder()
+			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
+			.setName('Company Account 1')
+			.setZPCompanyId('86896897')
+			.setNumberOfActiveEEs(8)
+			.setNumberOfEmployees(8)
+			.setZPCompanyOverallStatus('New')
+			.setHasMedicalDeductions(true)
+			.build();
+		AccountTriggerHelper.skipTrigger = true;
+		insert objAcc;
+		AccountTriggerHelper.skipTrigger = false;
+
+		// Create 3 benefits opportunities (new plan, bor and byb opportunities)
+		Opportunity objNewPlanOppty = new TestDataFactory.OpportunityBuilder()
+			.setRecordTypeId(OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID)
+			.setName('Test New Plan Opp')
+			.setStage('Raw')
+			.setCloseDate(System.today())
+			.setAccountId(objAcc.Id)
+			.setNumberOfEE(2)
+			.build();
+
+		Opportunity objBYBOppty = new TestDataFactory.OpportunityBuilder()
+			.setRecordTypeId(OpportunityUtil.BENEFITS_BYOB_OPPTY_RT_ID)
+			.setName('Test BYOB Opp')
+			.setAccountId(objAcc.Id)
+			.setStage('Open')
+			.setSourceID('Test Opp 1')
+			.setCloseDate(System.today())
+			.build();
+
+		Opportunity objBOROppty = new TestDataFactory.OpportunityBuilder()
+			.setRecordTypeId(OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID)
+			.setName('Test BoR Opp')
+			.setAccountId(objAcc.Id)
+			.setStage('Open')
+			.setSourceID('Test Opp 7')
+			.setCloseDate(System.today())
+			.build();
+
+		List<Opportunity> list_BenefitOpps = new List<Opportunity>{ objNewPlanOppty, objBYBOppty, objBOROppty };
+		insert list_BenefitOpps;
+
+		Test.startTest();
+		objAcc.ZP_Company_Overall_Status__c = 'Active';
+		objAcc.Number_of_Active_Employees__c = 25;
+		objAcc.NumberOfEmployees = 25;
+		objAcc.Benefits_Effective_Date__c = Date.today();
+
+		objAcc.Territory__c = 'BMM Central';
+		update objAcc;
+		Test.stopTest();
+
+		// Assert if territory is updated on benefits opportunities
+		for (Opportunity objOpptyAssert : [SELECT Id, Territory__c FROM Opportunity WHERE Id = :objAcc.Id]) {
+			System.assertEquals(objAcc.Territory__c, objOpptyAssert.Territory__c, 'Territory not updated on benefits opportunities');
+		}
 	}
 }

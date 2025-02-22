@@ -331,6 +331,7 @@ public without sharing class EmailMessageTriggerHelper {
 	 * @description:    Process updates on Case
 	 */
 	private void processCaseInfo() {
+        System.debug('Inside after insert processCaseInfo::');
 		Map<Id, EmailMessage> map_PublishToZendesk = new Map<Id, EmailMessage>();
 		Map<String, String> map_EmailAddressToCaseRecordType = new Map<String, String>();
 		Group objPayrollOpsAuditQueue = new Group();
@@ -918,7 +919,6 @@ public without sharing class EmailMessageTriggerHelper {
 									objCase.Routing_Case_Reason_Classification__c = map_CaseReasonByName.get(CaseUtils.MIDDESK_REGISTRATION).Id;
 									objCase.Type = map_CaseReasonByName.get(CaseUtils.MIDDESK_REGISTRATION).Case_Type_Pillar__c;
 									objCase.Support_Level__c = map_CaseReasonByName.get(CaseUtils.MIDDESK_REGISTRATION).Support_Level__c;
-									objCase.Routing_Team__c = map_CaseReasonByName.get(CaseUtils.MIDDESK_REGISTRATION).Routing_Team__c;
 								}
 							}
 
@@ -1052,14 +1052,6 @@ public without sharing class EmailMessageTriggerHelper {
 					}
 					if (String.isBlank(objCase.Support_Level__c)) {
 						objCase.Support_Level__c = CaseUtils.TIER_1;
-					}
-
-					if (String.isBlank(objCase.Routing_Team__c)) {
-						if ((objCase.Persona__c == CaseUtils.ADMIN_PERSONA && objCase.Company_Size__c == CaseUtils.COMPANY_SIZE_MICRO) || objCase.Persona__c == CaseUtils.MEMBER_PERSONA) {
-							objCase.Routing_Team__c = CaseUtils.EXTERNAL_TEAM;
-						} else {
-							objCase.Routing_Team__c = CaseUtils.INTERNAL_TEAM;
-						}
 					}
 
 					intClosingDays = (Label.EngagementAutoCloseDays != null) ? Integer.valueOf(Label.EngagementAutoCloseDays) : 2;
@@ -1607,8 +1599,10 @@ public without sharing class EmailMessageTriggerHelper {
 		}
 
 		for (EmailMessage objEmailMessage : list_EmailMessages) {
+            System.debug('Inside createCollections::'+objEmailMessage);
 			if (objEmailMessage.ParentId != null && String.valueOf(objEmailMessage.ParentId).indexOf('500') == 0) {
 				set_CaseIds.add(objEmailMessage.ParentId);
+                System.debug('Case Ids::'+set_CaseIds);
 				map_EmailMessageByCaseId.put(objEmailMessage.ParentId, objEmailMessage);
 				Case_Audit_Log__c objAuditLog = getNewCaseAuditLog(objEmailMessage);
 				if (objAuditLog != null) {
@@ -1754,7 +1748,6 @@ public without sharing class EmailMessageTriggerHelper {
 					Auto_Close_Date_Time__c,
 					Submit_AI_Feedback__c,
 					Support_Level__c,
-					Routing_Team__c,
 					Company_Size__c,
 					Persona__c,
 					Answer_IQ_Processed__c,
@@ -1927,7 +1920,6 @@ public without sharing class EmailMessageTriggerHelper {
 						Auto_Close_Date_Time__c,
 						Type,
 						Support_Level__c,
-						Routing_Team__c,
 						Company_Size__c,
 						Persona__c,
 						Partner_Case_Type__c,
@@ -2271,14 +2263,6 @@ public without sharing class EmailMessageTriggerHelper {
 						}
 						if (String.isBlank(objCase.Support_Level__c)) {
 							objCase.Support_Level__c = CaseUtils.TIER_1;
-						}
-
-						if (String.isBlank(objCase.Routing_Team__c)) {
-							if ((objCase.Persona__c == CaseUtils.ADMIN_PERSONA && objCase.Company_Size__c == CaseUtils.COMPANY_SIZE_MICRO) || objCase.Persona__c == CaseUtils.MEMBER_PERSONA) {
-								objCase.Routing_Team__c = CaseUtils.EXTERNAL_TEAM;
-							} else {
-								objCase.Routing_Team__c = CaseUtils.INTERNAL_TEAM;
-							}
 						}
 
 						intClosingDays = (Label.EngagementAutoCloseDays != null) ? Integer.valueOf(Label.EngagementAutoCloseDays) : 2;

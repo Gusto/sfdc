@@ -340,4 +340,76 @@ public class TransitionToNotesOnBODetailExt_test {
 		BenefitOrderHelper.skipTrigger = blnFlag;
 		CarrierOrderTriggerHelper.skipTrigger = blnFlag;
 	}
+
+	/**
+    * @Author      : Deepika Saini
+    * @Description : Send Final Email.
+	**/
+	@isTest
+	static void testSendLWCFinalEmail() {
+		List<Benefit_Order__c> list_BO = [SELECT Id, Opportunity__c, Opportunity__r.AccountId FROM Benefit_Order__c WHERE Opportunity__r.Name = 'Test New Plan Opportunity'];
+		List<Contact> list_Contact = [SELECT Id, AccountId FROM Contact LIMIT 1];
+
+		//Update BO order status
+		TransitionToNotesOnBODetailExt_test.skipTrigger(true);
+
+		list_BO[0].Order_Status__c = BenefitOrderUtil.STATUS_APPROVED;
+		update list_BO[0];
+
+		//Update CO
+		List<Carrier_Order__c> list_CO = [SELECT Id, Implementation_Stage__c FROM Carrier_Order__c WHERE Benefit_Order__c = :list_BO[0].Id];
+		for (Carrier_Order__c objCO : list_CO) {
+			objCO.Implementation_Stage__c = BenefitOrderUtil.STATUS_APPROVED;
+		}
+		update list_CO;
+		TransitionToNotesOnBODetailExt_test.skipTrigger(false);
+
+		//Create new case record having record type as : Benefits Renewal Case
+		Id idRenewal = CaseUtils.RECTYPE_RENEWAL;
+		Case objCase = new Case(
+			Subject = 'Test Case 1',
+			ContactId = list_Contact[0].Id,
+			AccountId = list_Contact[0].AccountId,
+			RecordTypeId = idRenewal,
+			Priority = 'Medium',
+			Direction__c = 'Inbound',
+			Origin = 'Email',
+			Benefit_Order__c = list_BO[0].Id,
+			Integration_Id__c = 'hippo-Benefits_New_Plan-' + list_BO[0].Opportunity__c,
+			Opportunity__c = list_BO[0].Opportunity__c
+		);
+
+		insert objCase;
+
+		objCase.Carrier_Order__c = null;
+		update objCase;
+
+		List<Case> list_Case = [SELECT Id, Renewal_Survey_URL__c, NP_Survey_URL__c FROM Case WHERE Id = :objCase.Id];
+		if(OrganizationUtilities.canSendEmails()){
+			System.assert(list_Case.size() > 0);
+		}
+
+		PageReference pageRef = Page.TransitionToNotesOnBODetail;
+		pageRef.getParameters().put('id', String.valueOf(list_BO[0].Id));
+		Test.setCurrentPage(pageRef);
+
+		test.startTest();
+		OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
+		List<Benefit_Order__c> list_BO1 = [SELECT Id, Order_Status__c FROM Benefit_Order__c WHERE ID = :list_BO[0].Id];
+		System.assertEquals(list_BO1[0].Order_Status__c, 'Fulfilled');
+
+		Id idRenewalRecord = BenefitOrderUtil.RENEWAL_BENEFIT_ORDER_RT_ID;
+		list_BO[0].RecordTypeId = idRenewalRecord;
+		list_BO[0].Order_Status__c = BenefitOrderUtil.STATUS_APPROVED;
+		update list_BO[0];
+
+		OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
+		List<Benefit_Order__c> list_BO2 = [SELECT Id, Order_Status__c FROM Benefit_Order__c WHERE ID = :list_BO[0].Id];
+		System.assertEquals(list_BO2[0].Order_Status__c, 'Fulfilled');
+
+		Id idBO = null;
+		OEEmailAutomationHelper.sendConfirmationEmailLWC(idBO);
+
+		test.stopTest();
+	}
 }
