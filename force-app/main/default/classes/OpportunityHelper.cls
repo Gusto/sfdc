@@ -22,9 +22,15 @@ public class OpportunityHelper {
 		'Priority Support' => 'Priority support',
 		'Priority Support and HR Services' => 'Priority Support and HR Services',
 		'Time And Project Tracking' => 'Time and project tracking',
-		'Wholesale' => 'wholesale'
+		'Wholesale' => 'wholesale',
+		'Core' => 'core',
+		'Complete' => 'complete',
+		'Core (S-Corp)' => 'core_s_corp',
+		'GustoHR Pro' => 'GustoHRPro'
 	};
 
+	public static Set<String> excludedFields = new Set<String>();
+  
 	public OpportunityHelper() {
 		//createCollections();
 	}
@@ -101,6 +107,8 @@ public class OpportunityHelper {
 				Boolean blnClosedLostWinback = false;
 				Boolean blnClosedWonNewBiz = false;
 				Boolean blnClosedWonWinback = false;
+				Boolean blnOpenNewBiz = false;
+				Boolean blnOpenWinback = false;
 				Opportunity objExistingNewBizOpportunity = null;
 				Opportunity objExistingWinbackOpportunity = null;
 
@@ -119,11 +127,13 @@ public class OpportunityHelper {
 					} else if (objOpp.StageName == 'Closed Lost' && objOpp.Type == 'Winback') {
 						blnClosedLostWinback = true;
 						objExistingWinbackOpportunity = objOpp;
-					}
+					} 
 
 					if (objOpp.StageName != 'Closed Lost' && objOpp.StageName != 'Closed Won' && objOpp.Type == 'New Business') {
+						blnOpenNewBiz = true;
 						objExistingNewBizOpportunity = objOpp;
 					} else if (objOpp.StageName != 'Closed Lost' && objOpp.StageName != 'Closed Won' && objOpp.Type == 'Winback') {
+						blnOpenWinback = true;
 						objExistingWinbackOpportunity = objOpp;
 					}
 				}
@@ -134,16 +144,16 @@ public class OpportunityHelper {
 				System.debug('blnClosedWonWinback: ' + blnClosedWonWinback);
 				System.debug('objExistingNewBizOpportunity: ' + objExistingNewBizOpportunity);
 				System.debug('objExistingWinbackOpportunity: ' + objExistingWinbackOpportunity);
-				if (blnClosedLostNewBiz && !blnClosedWonNewBiz) {
+				if (blnClosedLostNewBiz && !blnClosedWonNewBiz && !blnOpenNewBiz && !blnOpenWinback) {
 					list_AcquisitionOpportunitiesToInsert.add(mapOpportunityFields(objAccount, objPriceBook, objExistingNewBizOpportunity, objOppToInsert));
-				} else if (blnClosedLostWinback && !blnClosedWonWinback && blnClosedWonNewBiz) {
+				} else if (blnClosedLostWinback && !blnClosedWonWinback && blnClosedWonNewBiz && !blnOpenNewBiz && !blnOpenWinback) {
 					list_AcquisitionOpportunitiesToInsert.add(mapOpportunityFields(objAccount, objPriceBook, objExistingWinbackOpportunity, objOppToInsert));
-				} else if (!blnClosedLostNewBiz && !blnClosedWonNewBiz && !blnClosedLostWinback && !blnClosedWonWinback) {
+				} else if (blnOpenNewBiz) {
 					//update existing new business opportunity
 					if (map_OldAccounts != null && objExistingNewBizOpportunity != null) {
 						list_AcquisitionOpportunitiesToUpdate.add(updateExistingOpportunity(objAccount, map_OldAccounts.get(objAccount.Id), objExistingNewBizOpportunity));
 					}
-				} else if (blnClosedWonNewBiz && !blnClosedLostWinback && !blnClosedWonWinback) {
+				} else if (blnOpenWinback) {
 					//update existing winback opportunity
 					if (map_OldAccounts != null && objExistingWinbackOpportunity != null) {
 						list_AcquisitionOpportunitiesToUpdate.add(updateExistingOpportunity(objAccount, map_OldAccounts.get(objAccount.Id), objExistingWinbackOpportunity));
@@ -812,19 +822,14 @@ public class OpportunityHelper {
 				Number_of_Active_Contractors__c,
 				International_Employees__c,
 				International_Contractors__c,
-				Converted_Lead_Id__c,
-				(
-					SELECT ID, AccountId, StageName, Type, Additional_Opportunity_Services__c, Current_Tier__c, Number_of_Contractors__c, NumberOfEmployees__c, Account.ZP_Company_ID__c,LeadSource,Name
-					FROM Opportunities
-					WHERE RecordTypeId = :ACQUISITION_OPPTY_RT_ID
-					ORDER BY CreatedDate DESC
-				)
+				Converted_Lead_Id__c
 			FROM Account
 			WHERE Id IN :set_AccountId
 		]) {
-			map_AccountIdANDOpportunities.put(objAccount.Id, objAccount.Opportunities);
 			map_IdAndAccount.put(objAccount.Id, objAccount);
 		}
+		map_AccountIdANDOpportunities = queryAllOpportunityDataForCloning(set_AccountId);
+
 		for (Opportunity objNewOpportunity : list_NewOpportunity) {
 			if (objNewOpportunity.RecordTypeId == ACQUISITION_OPPTY_RT_ID) {
 				Boolean blnFirstNewBiz = false;
@@ -882,28 +887,10 @@ public class OpportunityHelper {
 					objNewOpportunity.Type = objClonedOpportunity.Type;
 					for (String fieldName : objClonedOpportunity.getPopulatedFieldsAsMap().keySet()) {
 						System.debug('fieldName11111: ' + fieldName);
-						if (fieldName != 'Id' && fieldName != 'CreatedDate' && fieldName != 'LastModifiedDate' && fieldName != 'LastModifiedById' && fieldName != 'OwnerId' && fieldName != 'IsClosed' && fieldName != 'IsWon' && fieldName != 'IsDeleted' && fieldName != 'StageName' && fieldName != 'Type' && fieldName != 'Name' && fieldName != 'CloseDate' && fieldName != 'Amount' ) {
+						if (!excludedFields.contains(fieldName) && fieldName != 'StageName' && fieldName != 'Id') {
 							objNewOpportunity.put(fieldName, objClonedOpportunity.get(fieldName));
 						}
 					}
-					//lostOpp.clone(false, true, false, false);
-					/**Opportunity objNewOpportunityForClone = new Opportunity();
-					Opportunity objClonedOpp = objExistingNewBizOpportunity.clone(false, false, false, false);
-
-					Map<String, Schema.SObjectField> fieldMap = Opportunity.SObjectType.getDescribe().fields.getMap();
-
-					for (String fieldName : fieldMap.keySet()) {
-						  // Get value dynamically
-						if (fieldName == 'Id') {
-							continue;
-						}
-
-						Object fieldValue = objClonedOpp.get(fieldName);
-						if (fieldValue != null) {
-							objNewOpportunityForClone.put(fieldName, fieldValue);  // Set value dynamically
-						}
-					} **/
-					//System.debug('objNewOpportunityForClone:' + objNewOpportunityForClone);
 				}
 				System.debug('objNewOpportunity11:' + objNewOpportunity);
 				if (blnClosedLostWinback && !blnClosedWonWinback) {
@@ -931,6 +918,36 @@ public class OpportunityHelper {
 				}
 			}
 		}
+	}
+
+	public static Map<Id, List<Opportunity>> queryAllOpportunityDataForCloning(Set<String> set_AccountIds) {
+		// Get all fields of Opportunity
+		Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get('Opportunity').getDescribe().fields.getMap();
+		Map<Id, List<Opportunity>> map_AccountIdANDOpportunities = new Map<Id, List<Opportunity>>();
+		// Define system-generated fields to exclude
+
+		// Collect all field names except system fields
+		List<String> fieldNames = new List<String>();
+		for (String fieldName : fieldMap.keySet()) {
+			Schema.DescribeFieldResult fieldDescribe = fieldMap.get(fieldName).getDescribe();
+			if (fieldDescribe.isUpdateable()) {
+				fieldNames.add(fieldName);
+			} else {
+				excludedFields.add(fieldName);
+			}
+		}
+
+		// Build and execute SOQL query
+		String query = 'SELECT ' + String.join(fieldNames, ', ') + ' FROM Opportunity WHERE Accountid IN :set_AccountIds AND RecordTypeId = :ACQUISITION_OPPTY_RT_ID';
+		System.debug('SOQL Query: ' + query);
+
+		for (Opportunity objOppty : Database.query(query)) {
+			if (!map_AccountIdANDOpportunities.containsKey(objOppty.AccountId)) {
+				map_AccountIdANDOpportunities.put(objOppty.AccountId, new List<Opportunity>());
+			}
+			map_AccountIdANDOpportunities.get(objOppty.AccountId).add(objOppty);
+		}
+		return map_AccountIdANDOpportunities;
 	}
 
 	public static void updateCloseDateToMatchAPD(Opportunity objNewOppty, Opportunity objOldOppty) {

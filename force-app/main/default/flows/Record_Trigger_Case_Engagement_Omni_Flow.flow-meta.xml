@@ -122,6 +122,13 @@
             </value>
         </assignmentItems>
         <assignmentItems>
+            <assignToReference>objUpdateableCase.Routing_Team__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Routing_Team__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
             <assignToReference>objUpdateableCase.Support_Level__c</assignToReference>
             <operator>Assign</operator>
             <value>
@@ -537,6 +544,13 @@
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>objUpdateableCase.Routing_Team__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
             <connector>
                 <targetReference>Assign_CaseInRoute_and_Status_Fields</targetReference>
             </connector>
@@ -566,16 +580,15 @@
             <label>Routed to TAM</label>
         </rules>
     </decisions>
-    <description>- Initial version: Omni Channel Flow that contains routing logic for Engagement Cases
-- Included the Fault paths for exception handling
-- BTE-4447 - Deprecate Team Skill
-- BTE-4480: Auto-Solve Auto-Send Automation</description>
+    <description>Initial version: Omni Channel Flow that contains routing logic for Engagement Cases
+Included the Fault paths for exception handling
+- Offline/Online Bug Fix</description>
     <environments>Default</environments>
     <formulas>
         <description>This field holds the formula to check if Agatha is predicted on case, which is determined by status change from Open to In- Progress.</description>
         <name>blnAgathaFlagChanged</name>
         <dataType>Boolean</dataType>
-        <expression>ISPICKVAL({!$Record__Prior.Status},&apos;Open&apos;) &amp;&amp; ISPICKVAL({!$Record.Status},&apos;In Progress&apos;)</expression>
+        <expression>ISPICKVAL({!$Record__Prior.Status},&apos;Open&apos;) &amp;&amp; ISPICKVAL({!$Record.Status},&apos;In Progress&apos;) &amp;&amp; ISPICKVAL({!$Record__Prior.Answer_IQ_Processed__c}, &apos;&apos;) &amp;&amp; ISPICKVAL({!$Record.Answer_IQ_Processed__c}, &apos;Yes&apos;)</expression>
     </formulas>
     <formulas>
         <description>Check if any of the solve flags have changed (Answer_IQ_Processed__c/ Solve_Processed__c/ Internal_AI_Processed__c)</description>
@@ -602,8 +615,7 @@ NOT(ISPICKVAL({!$Record.Internal_AI_Processed__c}, &apos;&apos;))</expression>
         <expression>( 
     ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Response&apos;) &amp;&amp; 
     ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; 
-    NOT(ISCHANGED({!$Record.Re_Route_Count__c})) &amp;&amp;
-   NOT({!$Record.Trigger_Omni_Flow__c})
+    NOT(ISCHANGED({!$Record.Re_Route_Count__c})) 
 ) ||
 ( 
     ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp;
@@ -864,6 +876,7 @@ CASESAFEID({!$Record.OwnerId}) == {!$Setup.Engagement_Flow_Configuration__c.Enga
         <queriedFields>Support_Level__c</queriedFields>
         <queriedFields>Company_Size__c</queriedFields>
         <queriedFields>Specialization__c</queriedFields>
+        <queriedFields>Routing_Team__c</queriedFields>
         <queriedFields>Engagement_Alert__c</queriedFields>
         <queriedFields>AccountId</queriedFields>
         <queriedFields>ContactId</queriedFields>
@@ -903,7 +916,7 @@ NOT(CONTAINS({!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channel
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <subflows>
         <name>Call_Omni_Subflow</name>
         <label>Call Omni Subflow</label>

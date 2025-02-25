@@ -208,34 +208,6 @@
             <componentInstance>
                 <componentName>forceChatter:recordFeedContainer</componentName>
                 <identifier>forceChatter_recordFeedContainer</identifier>
-                <visibilityRule>
-                    <booleanFilter>1 OR (2 AND (3 OR 4)) OR 5</booleanFilter>
-                    <criteria>
-                        <leftValue>{!Record.Auto_Solve_Status__c}</leftValue>
-                        <operator>NE</operator>
-                        <rightValue>Eligible</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!Record.Auto_Solve_Status__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Eligible</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!Record.QA_Status__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Approved</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!Record.QA_Status__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Rejected</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!$Permission.CustomPermission.CX_Labs_Custom_Permission}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>false</rightValue>
-                    </criteria>
-                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>Facet-144f6fa1-bf1d-45d6-9c89-4adced67bb2f</name>

@@ -4,7 +4,7 @@
         <name>Check_Agents_Availability</name>
         <label>Check Agents Availability</label>
         <locationX>182</locationX>
-        <locationY>242</locationY>
+        <locationY>542</locationY>
         <actionName>checkAvailabilityForRouting</actionName>
         <actionType>checkAvailabilityForRouting</actionType>
         <connector>
@@ -63,12 +63,13 @@
             <name>selectedOutputs</name>
         </inputParameters>
         <nameSegment>checkAvailabilityForRouting</nameSegment>
+        <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <actionCalls>
         <name>Route_to_Bot</name>
         <label>Route to Bot</label>
-        <locationX>578</locationX>
+        <locationX>138</locationX>
         <locationY>242</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
@@ -152,13 +153,14 @@
             <name>copilotLabel</name>
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
+        <offset>0</offset>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
     <decisions>
         <name>Agents_Available</name>
         <label>Agents Available?</label>
         <locationX>182</locationX>
-        <locationY>350</locationY>
+        <locationY>650</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Yes_Available</name>
@@ -179,8 +181,11 @@
     <decisions>
         <name>Source</name>
         <label>Source</label>
-        <locationX>512</locationX>
+        <locationX>182</locationX>
         <locationY>134</locationY>
+        <defaultConnector>
+            <targetReference>Check_Agents_Availability</targetReference>
+        </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>WEB</name>
@@ -236,23 +241,29 @@
     </processMetadataValues>
     <processType>RoutingFlow</processType>
     <start>
-        <locationX>386</locationX>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Source</targetReference>
         </connector>
     </start>
-    <status>InvalidDraft</status>
+    <status>Active</status>
     <subflows>
         <name>Omni_Web_Routing</name>
         <label>Omni Web Routing</label>
         <locationX>50</locationX>
-        <locationY>458</locationY>
+        <locationY>758</locationY>
         <flowName>Omni_Engagement_Messaging_Session</flowName>
         <inputAssignments>
             <name>input_CompanyId</name>
             <value>
                 <elementReference>input_CompanyId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_CustomerIntent</name>
+            <value>
+                <elementReference>input_CustomerIntent</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -274,9 +285,21 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <name>input_FirstName</name>
+            <value>
+                <elementReference>input_FirstName</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <name>input_HasGustoGlobal</name>
             <value>
                 <elementReference>input_HasGustoGlobal</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_LastName</name>
+            <value>
+                <elementReference>input_LastName</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -286,9 +309,51 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <name>input_ORCAPredictedCaseReasonConfidence</name>
+            <value>
+                <elementReference>input_ORCAPredictedCaseReasonConfidence</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_ORCAPredictedSpecialization</name>
+            <value>
+                <elementReference>input_ORCAPredictedSpecialization</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_ORCAPredictedSupportLevel</name>
+            <value>
+                <elementReference>input_ORCAPredictedSupportLevel</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <name>input_ORCAPredictedType</name>
             <value>
                 <elementReference>input_ORCAPredictedType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_ORCAPredictedTypeConfidence</name>
+            <value>
+                <elementReference>input_ORCAPredictedTypeConfidence</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_ORCASpecializationConfidence</name>
+            <value>
+                <elementReference>input_ORCASpecializationConfidence</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_ORCASupportLevelConfidence</name>
+            <value>
+                <elementReference>input_ORCASupportLevelConfidence</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_Origin</name>
+            <value>
+                <elementReference>input_Origin</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -301,6 +366,12 @@
             <name>input_record</name>
             <value>
                 <elementReference>input_record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_RecordTypeId</name>
+            <value>
+                <elementReference>input_RecordTypeId</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -322,9 +393,27 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <name>input_UserRoleId</name>
+            <value>
+                <elementReference>input_UserRoleId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <name>input_VisitorEmailAddress</name>
             <value>
                 <elementReference>input_VisitorEmailAddress</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>input_ZPUserId</name>
+            <value>
+                <elementReference>input_ZPUserId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>prechatInfo</name>
+            <value>
+                <elementReference>prechatInfo</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -336,6 +425,14 @@
     </subflows>
     <variables>
         <description>MIAW Pre-chat form details</description>
+        <name>input_Channel</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
         <name>input_CompanyId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
@@ -345,6 +442,14 @@
     <variables>
         <description>MIAW Pre-chat form details</description>
         <name>input_CustomerIntent</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
+        <name>input_DigitalIVRSubject</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
@@ -392,6 +497,14 @@
     </variables>
     <variables>
         <description>MIAW Pre-chat form details</description>
+        <name>input_IVRJourney</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
         <name>input_LastName</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
@@ -424,23 +537,7 @@
     </variables>
     <variables>
         <description>MIAW Pre-chat form details</description>
-        <name>input_ORCAPredictedSpecializationConfidence</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <description>MIAW Pre-chat form details</description>
         <name>input_ORCAPredictedSupportLevel</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <description>MIAW Pre-chat form details</description>
-        <name>input_ORCAPredictedSupportLevelConfidence</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
@@ -457,6 +554,22 @@
     <variables>
         <description>MIAW Pre-chat form details</description>
         <name>input_ORCAPredictedTypeConfidence</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
+        <name>input_ORCASpecializationConfidence</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
+        <name>input_ORCASupportLevelConfidence</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
@@ -504,6 +617,13 @@
         <isOutput>false</isOutput>
     </variables>
     <variables>
+        <name>input_Source</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
         <description>MIAW Pre-chat form details</description>
         <name>input_ThirdLevel</name>
         <dataType>String</dataType>
@@ -542,6 +662,15 @@
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Conversation Context Entry object(s) that will provide information from Pre-Chat fields.</description>
+        <name>prechatInfo</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>ConversationContextEntry</objectType>
     </variables>
     <variables>
         <description>The ID of the record being inputted into the flow. Necessary for the flow to run.</description>

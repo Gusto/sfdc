@@ -180,6 +180,7 @@ public without sharing class NBAUserInterfaceController {
 					Id,
 					Rule_Name__c,
 					Hold_Out_Percentage__c,
+					NBA_Rule_Set_Configuration__r.Exclude_Served_Other_Rules__c, 
 					(SELECT Id, Current_Criteria__c, Base_Object__c, Talking_Points__c, Previous_Criteria__c, Performance__c FROM NBA_Rule_Criteria__r),
 					Rule_Frequency_Minutes__c
 				FROM NBA_Rule_Set__c

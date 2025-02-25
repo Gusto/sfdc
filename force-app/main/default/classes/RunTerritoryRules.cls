@@ -111,19 +111,19 @@ public class RunTerritoryRules implements Queueable, Database.AllowsCallouts {
 			}
 		}
 
+		// Add DML statements after routing callout
+		update map_AccountsToRoute.values();
+
+		Set<Id> set_AccountIdsToRoute = new Set<Id>();
 		// Send account to Ringlead for routing
 		for (Account objAcc : map_AccountsToRoute.values()) {
-			// create parameter and set account id
-			Map<String, Object> map_Params = new Map<String, Object>();
-			map_Params.put('Account_Id', objAcc.Id);
-			// start the flow
-			// Not sending a callout from test class - this is causing several tests to fail
-			if (String.isNotBlank(objAcc.Territory__c) && !Test.isRunningTest()) {
-				new Flow.Interview.Send_Account_For_HI_Owner_Routing(map_Params).start();
+			if (String.isNotBlank(objAcc.Territory__c)) {
+				set_AccountIdsToRoute.add(objAcc.Id);
 			}
 		}
 
-		// Add DML statements after routing callout
-		update map_AccountsToRoute.values();
+		if (!set_AccountIdsToRoute.isEmpty() && !Test.isRunningTest()) {
+			AccountUtil.sendAccountForHIOwnerRoutingFuture(set_AccountIdsToRoute);
+		}
 	}
 }

@@ -449,13 +449,12 @@ public class OmniSkillAssignmentFlowTest {
 			'Tier 1',
 			'Payroll',
 			'Micro 0-4',
-			'Admin',
-			'External'
+			'Admin'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.MasterLabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
 	/**
@@ -478,13 +477,12 @@ public class OmniSkillAssignmentFlowTest {
 			'Tier 1',
 			'Payroll',
 			'Micro 0-4',
-			'Admin',
-			'External'
+			'Admin'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.MasterLabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
-		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
 	/**
@@ -508,14 +506,13 @@ public class OmniSkillAssignmentFlowTest {
 		Set<String> set_SkillNames = new Set<String> {
 			'Tier 1',
 			'Taxes',
-			'Accountant',
-			'Internal'
+			'Accountant'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
 		Assert.isTrue(list_PSR[0].RoutingPriority == 4, 'Routing priority should be 4');
-		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 3, 'Skill requirements are not correct');
 	}
 
 	/**
@@ -540,14 +537,13 @@ public class OmniSkillAssignmentFlowTest {
 			'Tier 1',
 			'Payroll',
 			'Admin',
-			'Internal',
 			'Standard 5-24'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
 		Assert.isTrue(list_PSR[0].RoutingPriority == 5, 'Routing priority should be 5');
-		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
 	/**
@@ -571,14 +567,13 @@ public class OmniSkillAssignmentFlowTest {
 		Set<String> set_SkillNames = new Set<String> {
 			'Tier 1',
 			'Payroll',
-			'Accountant',
-			'Internal'
+			'Accountant'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
 		Assert.isTrue(list_PSR[0].RoutingPriority == 6, 'Routing priority should be 6');
-		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 3, 'Skill requirements are not correct');
 	}
 
 	/**
@@ -603,14 +598,13 @@ public class OmniSkillAssignmentFlowTest {
 			'Tier 1',
 			'Payroll',
 			'Admin',
-			'Internal',
 			'Grower 25-49'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
 		List<SkillRequirement> list_Skills = [SELECT Id, RelatedRecordId, SkillId FROM SkillRequirement WHERE Skill.Masterlabel IN :set_SkillNames AND RelatedRecordId = :list_PSR[0].Id];
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
 		Assert.isTrue(list_PSR[0].RoutingPriority == 2, 'Routing priority should be 2');
-		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
 	/**
@@ -635,7 +629,6 @@ public class OmniSkillAssignmentFlowTest {
 			'Tier 1',
 			'Benefits',
 			'Admin',
-			'External',
 			'Micro 0-4'
 		};
 		List<PendingServiceRouting> list_PSR = [SELECT Id, WorkItemId, RoutingPriority FROM PendingServiceRouting WHERE WorkItemId = :objCase.Id];
@@ -643,7 +636,7 @@ public class OmniSkillAssignmentFlowTest {
 		Assert.isTrue(!list_PSR.isEmpty(), 'PSR was not created');
 		Assert.isTrue(list_PSR[0].RoutingPriority == 8, 'Routing priority should be 8');
 		Assert.isTrue(!list_Skills.isEmpty());
-		Assert.isTrue(list_Skills.size() == 5, 'Skill requirements are not correct');
+		Assert.isTrue(list_Skills.size() == 4, 'Skill requirements are not correct');
 	}
 
 	/**

@@ -73,8 +73,8 @@ public without sharing class AddSkillsForUserRoleCtrl {
 	public Map<String, Skill__c> map_ComplexityLevelToSkillRecord;
 	public List<SelectOption> list_PTFacilitatorComplexityLevelOptions { get; set; }
 	public String strSelectedPTFacilitatorComplexityLevel { get; set; }
-	//BSS-1030	
-	public List<SelectOption> list_unselectedPTPartnerTierValues { get; set; }	
+	//BSS-1030
+	public List<SelectOption> list_unselectedPTPartnerTierValues { get; set; }
 	public List<SelectOption> list_selectedPTPartnerTierValues { get; set; }
 
 	//@Neha to incorporate BOA Record type change
@@ -91,7 +91,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 	public String strUserRoleId { get; set; }
 	//Current user role object.
 	public User_Role__c objUserRole { get; set; }
-	
+
 	public map<String, Skill_Criteria_Setup__c> map_SkillSetupCriteria;
 	//map of active state.
 	public static final Map<String, String> map_ActiveStates = UtilitiesFactory.getActiveState();
@@ -111,6 +111,9 @@ public without sharing class AddSkillsForUserRoleCtrl {
 	public Boolean blnShowTADASection { get; set; }
 	public Boolean blnShowTADARadioBox { get; set; }
 	public Boolean blnShowCarrierPODSection { get; set; }
+	//BBO-2204
+	public Boolean blnShowDeleteCheckbox { get; set; }
+	public Boolean blnShowDeleteBtn { get; set; }
 
 	//Which Role user have selected on UI.
 	public String strRoleData { get; set; }
@@ -156,7 +159,6 @@ public without sharing class AddSkillsForUserRoleCtrl {
 	public Boolean blnShowAutomationStatus { get; set; }
 	public Boolean blnShowTerminatedOrder { get; set; }
 	public Boolean blnSelectedAutomationStatus { get; set; }
-	
 
 	public Map<String, SkillWrapper> map_UserSkillWrapper { get; set; }
 	public Integer intOrderAllocRowCount { get; set; }
@@ -240,10 +242,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		ResetSection();
 		map_SkillSetupCriteria = FWManageRoleUtil.retriveAllSetupCriteria();
 
-		if (
-			String.isNotBlank(objUserRole.User_Skill_Team__c) &&
-			String.isNotBlank(objUserRole.User_Skill_Type__c) 
-		) {
+		if (String.isNotBlank(objUserRole.User_Skill_Team__c) && String.isNotBlank(objUserRole.User_Skill_Type__c)) {
 			strRoleData = objUserRole.User_Skill_Team__c;
 			strPrevRoleTeam = objUserRole.User_Skill_Team__c;
 			ShowTeamSkillType();
@@ -272,7 +271,6 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		String strMissingField = CheckReqiuredFields();
 		PageReference pageRef = new PageReference('/' + strUserRoleId);
 
-		
 		if (String.isNotBlank(strMissingField)) {
 			ApexPages.getMessages().clear();
 			ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.INFO, strMissingField);
@@ -401,7 +399,6 @@ public without sharing class AddSkillsForUserRoleCtrl {
 
 		return strQuery;
 	}
-
 
 	/*
 		Check the Required Fields to create User Skills
@@ -616,8 +613,8 @@ public without sharing class AddSkillsForUserRoleCtrl {
 			list_selectedPTPrevProvider = new List<SelectOption>();
 			list_unselectedPTSalesTeam = new List<SelectOption>();
 			list_selectedPTSalesTeam = new List<SelectOption>();
-			//BSS-1030	
-			list_unselectedPTPartnerTierValues = new List<SelectOption>();	
+			//BSS-1030
+			list_unselectedPTPartnerTierValues = new List<SelectOption>();
 			list_selectedPTPartnerTierValues = new List<SelectOption>();
 
 			list_PTFacilitatorComplexityLevelOptions = new List<SelectOption>();
@@ -628,7 +625,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 			//Commenting this as for now only Gold Skill is going live
 			//List<SelectOption> list_PTPartnerTier = Cache.getFieldPickListValues(OBJECT_SKILL, FIELD_PARTNER);
 			List<SelectOption> list_PTPartnerTier = new List<SelectOption>();
-			list_PTPartnerTier.add(new SelectOption('Gold','Gold'));
+			list_PTPartnerTier.add(new SelectOption('Gold', 'Gold'));
 
 			for (User_Skill__c objUserSkill : [
 				SELECT
@@ -668,7 +665,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 			if (null != list_UserSkill && list_UserSkill.size() > 0) {
 				for (User_Skill__c objUSkl : list_UserSkill) {
 					set_ExistingSkl.add(objUSkl.Skill__r.Payroll_Transfer_Skills__c);
-					//For Partner Tier	
+					//For Partner Tier
 					set_ExistingPTPartnerTier.add(objUSkl.Skill__r?.Partner__c);
 					//If user role is Payroll facilitator
 					//Added by AKS Dated 23rd Oct 2020
@@ -697,11 +694,11 @@ public without sharing class AddSkillsForUserRoleCtrl {
 					list_selectedPTSkillValues.add(so);
 				}
 			}
-			//BSS-1030 Populate unselected Partner Tier	
-			for (SelectOption so : list_PTPartnerTier) {	
-				if (!set_ExistingPTPartnerTier.contains(so.getValue())) {	
-					list_unselectedPTPartnerTierValues.add(so);	
-				} else {	
+			//BSS-1030 Populate unselected Partner Tier
+			for (SelectOption so : list_PTPartnerTier) {
+				if (!set_ExistingPTPartnerTier.contains(so.getValue())) {
+					list_unselectedPTPartnerTierValues.add(so);
+				} else {
 					list_selectedPTPartnerTierValues.add(so);
 				}
 			}
@@ -1129,50 +1126,70 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		blnShowMaestro = false;
 		blnShowAutomationStatus = false;
 		blnShowTerminatedOrder = false;
+		blnShowDeleteCheckbox = false;
+		blnShowDeleteBtn = false;
+	}
+	/* BBO-2204 This method will delete the related User Role and User Skills */
+	public PageReference deleteUserRole() {
+		Savepoint objSavePoint = Database.setSavepoint();
+		try {
+			delete [SELECT ID FROM User_Skill__c WHERE User_Role__c = :strUserRoleId];
+			delete [SELECT ID FROM USER_Role__c WHERE ID = :strUserRoleId];
+		} catch (Exception objEx) {
+			Database.RollBack(objSavePoint);
+			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, objEx.getMessage()));
+		}
+		return null;
 	}
 
 	//On change of team this method will called and show "Skill Type" on UI.
 	public PageReference ShowTeamSkillType() {
-		 
-			clearPopup();
-			strSkillType = null;
-			list_SkillType = new List<System.SelectOption>();
-			list_SkillType.add(new SelectOption('', '--None--'));
+		clearPopup();
+		strSkillType = null;
+		list_SkillType = new List<System.SelectOption>();
+		list_SkillType.add(new SelectOption('', '--None--'));
 
-			if (strRoleData != null) {
-				for (Skill_Criteria_Setup__c objSkillSetup : [SELECT Name, Team__c, Filter_Criteria__c, Skill_Type__c FROM Skill_Criteria_Setup__c WHERE Team__c = :strRoleData]) {
-					list_SkillType.add(new SelectOption(objSkillSetup.Skill_Type__c, objSkillSetup.Skill_Type__c));
-				}
+		if (strRoleData != null) {
+			for (Skill_Criteria_Setup__c objSkillSetup : [SELECT Name, Team__c, Filter_Criteria__c, Skill_Type__c FROM Skill_Criteria_Setup__c WHERE Team__c = :strRoleData]) {
+				list_SkillType.add(new SelectOption(objSkillSetup.Skill_Type__c, objSkillSetup.Skill_Type__c));
+			}
+			blnShowDeleteCheckbox = false;
+		} else { //BBO-2204
+			ApexPages.getMessages().clear();
+			ApexPages.Message myMsg = new ApexPages.Message(
+				ApexPages.Severity.WARNING,
+				'If you Select Role as "None", this will delete all skills for the IC and delete their User Role. This should only be done if the IC is transferring teams. Please confirm you want to delete all skills and the role by selecting the below checkbox to enable the Delete Button, then select delete.'
+			);
+			ApexPages.addMessage(myMsg);
+			blnShowDeleteCheckbox = true;
+			return null;
+		}
+		if (strRoleData == FWManageRoleUtil.ROLE_CARRIER_IO) {
+			strSkillType = FWManageRoleUtil.SKILL_TYPE_CORE;
+		}
+
+		if (strRoleData == FWManageRoleUtil.TEAM_ADVISING) {
+			onTeamChange();
+		}
+		//BBO-2204
+		if (strRoleData != FWManageRoleUtil.ROLE_IMPLEMENTATION) {
+			strSkillType = FWManageRoleUtil.SKILL_TYPE_CORE;
+			if (strRoleData != FWManageRoleUtil.TEAM_ADVISING) {
+				ManageBOAllocation();
 			}
 
-			if (strRoleData == FWManageRoleUtil.ROLE_CARRIER_IO) {
-				strSkillType = FWManageRoleUtil.SKILL_TYPE_CORE;
-			}
+			DisplayCriteriaSection();
+			selectRole();
+		}
 
-			if (strRoleData == FWManageRoleUtil.TEAM_ADVISING) {
-				onTeamChange();
-			}
-			if (
-				!strRoleData.equalsIgnoreCase(FWManageRoleUtil.ROLE_IMPLEMENTATION)
-			) {
-				strSkillType = FWManageRoleUtil.SKILL_TYPE_CORE;
-				if (strRoleData != FWManageRoleUtil.TEAM_ADVISING) {
-					ManageBOAllocation();
-				}
-
-				DisplayCriteriaSection();
-				selectRole();
-			}
-		
 		return null;
 	}
-
-	
 
 	//On change of skill type. This method will execute and show, existing role or create new role option.
 	public PageReference DisplayCriteriaSection() {
 		clearPopup();
-		if (strRoleData.equalsIgnoreCase(FWManageRoleUtil.ROLE_IMPLEMENTATION)) {
+		//BBO-2204
+		if (strRoleData == FWManageRoleUtil.ROLE_IMPLEMENTATION) {
 			if (FWManageRoleUtil.SKILL_TYPE_CORE.equalsIgnoreCase(strSkillType)) {
 				ManageBOAllocation();
 			} else {
@@ -1181,10 +1198,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		}
 
 		ResetSection();
-		if (
-			String.isNotBlank(strSkillType) &&
-			FWManageRoleUtil.SKILL_TYPE_CORE.equalsIgnoreCase(strSkillType)
-		) {
+		if (String.isNotBlank(strSkillType) && FWManageRoleUtil.SKILL_TYPE_CORE.equalsIgnoreCase(strSkillType)) {
 			String strkey = strRoleData + '-' + strSkillType;
 			String strCriteria = '';
 
@@ -1234,7 +1248,6 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		return null;
 	}
 
-
 	//This method fetch value of [State, Order Type, Tier, Partner, TADA] multi-select picklist.
 	private void PopulateData(String strRoleNameTemp) {
 		Map<String, Map<String, Set<String>>> map_UserExistingSkills;
@@ -1247,24 +1260,23 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		//Populate State
 
 		if (blnShowStateSection || blnShowRegionSection) {
-				list_UnSelectedState = new List<System.SelectOption>();
-				list_SelectedState = new List<System.SelectOption>();
-				RetriveRegionPOD();
-				if (
-					!map_UserExistingSkills.isEmpty() &&
-					map_UserExistingSkills.containsKey(strRoleNameTemp) &&
-					map_UserExistingSkills.get(strRoleNameTemp) != null &&
-					map_UserExistingSkills.get(strRoleNameTemp).containsKey(FIELD_STATE_GROUP)
-				) {
-					list_UnSelectedState = getSelectOptionValues(map_ActiveStates, map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_STATE_GROUP), new Set<String>(), new Set<String>());
+			list_UnSelectedState = new List<System.SelectOption>();
+			list_SelectedState = new List<System.SelectOption>();
+			RetriveRegionPOD();
+			if (
+				!map_UserExistingSkills.isEmpty() &&
+				map_UserExistingSkills.containsKey(strRoleNameTemp) &&
+				map_UserExistingSkills.get(strRoleNameTemp) != null &&
+				map_UserExistingSkills.get(strRoleNameTemp).containsKey(FIELD_STATE_GROUP)
+			) {
+				list_UnSelectedState = getSelectOptionValues(map_ActiveStates, map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_STATE_GROUP), new Set<String>(), new Set<String>());
 
-					if (strPrevRoleTeam == strRoleData) {
-						list_SelectedState = getSelectOptionValues(map_ActiveStates, new Set<String>(), map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_STATE_GROUP), new Set<String>());
-					}
-				} else {
-					list_UnSelectedState = getSelectOptionValues(map_ActiveStates, new Set<String>(), new Set<String>(), new Set<String>());
+				if (strPrevRoleTeam == strRoleData) {
+					list_SelectedState = getSelectOptionValues(map_ActiveStates, new Set<String>(), map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_STATE_GROUP), new Set<String>());
 				}
-			
+			} else {
+				list_UnSelectedState = getSelectOptionValues(map_ActiveStates, new Set<String>(), new Set<String>(), new Set<String>());
+			}
 		}
 
 		//get Order Type
@@ -1292,17 +1304,16 @@ public without sharing class AddSkillsForUserRoleCtrl {
 
 		//get partner
 		if (blnShowSPartnerSection) {
-				list_UnSelectedPartner = new List<System.SelectOption>();
-				list_SelectedPartner = new List<System.SelectOption>();
-				Set<String> set_RemoveValuesForSelection = new Set<String>();
-				if (!map_UserExistingSkills.isEmpty() && map_UserExistingSkills.get(strRoleNameTemp).containsKey(FIELD_PARTNER) && strPrevRoleTeam == strRoleData) {
-					set_RemoveValuesForSelection = map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_PARTNER);
-					list_SelectedPartner = addSelectedValuesToSelectOption(map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_PARTNER), list_SelectedPartner);
-				}
+			list_UnSelectedPartner = new List<System.SelectOption>();
+			list_SelectedPartner = new List<System.SelectOption>();
+			Set<String> set_RemoveValuesForSelection = new Set<String>();
+			if (!map_UserExistingSkills.isEmpty() && map_UserExistingSkills.get(strRoleNameTemp).containsKey(FIELD_PARTNER) && strPrevRoleTeam == strRoleData) {
+				set_RemoveValuesForSelection = map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_PARTNER);
+				list_SelectedPartner = addSelectedValuesToSelectOption(map_UserExistingSkills.get(strRoleNameTemp).get(FIELD_PARTNER), list_SelectedPartner);
+			}
 
-				set_RemoveValuesForSelection.addAll(set_ExcludeOrderType);
-				list_UnSelectedPartner = UtilitiesFactory.getPickListValues(OBJECT_SKILL, FIELD_PARTNER, set_RemoveValuesForSelection);
-			
+			set_RemoveValuesForSelection.addAll(set_ExcludeOrderType);
+			list_UnSelectedPartner = UtilitiesFactory.getPickListValues(OBJECT_SKILL, FIELD_PARTNER, set_RemoveValuesForSelection);
 		}
 		//get TAdA
 		if (blnShowTADASection && blnShowTADARadioBox) {
@@ -1327,7 +1338,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 
 			if (!map_UserExistingSkills.isEmpty() && map_UserExistingSkills.containsKey(strRoleData) && map_UserExistingSkills.get(strRoleData).containsKey(FIELD_Maestro)) {
 				Set<String> set_Maestro = map_UserExistingSkills.get(strRoleData).get(FIELD_Maestro);
-					blnSelectedMaestro = set_Maestro.contains(TRUE_VALUE);
+				blnSelectedMaestro = set_Maestro.contains(TRUE_VALUE);
 			}
 		}
 	}
@@ -1350,8 +1361,8 @@ public without sharing class AddSkillsForUserRoleCtrl {
 	private List<System.SelectOption> addSelectedValuesToSelectOption(Set<String> set_SkillValues, List<System.SelectOption> list_SelectOption) {
 		if (!set_SkillValues.isEmpty()) {
 			for (String s : set_SkillValues) {
-				if(s != null){
-				list_SelectOption.add(new System.SelectOption(s, s));
+				if (s != null) {
+					list_SelectOption.add(new System.SelectOption(s, s));
 				}
 			}
 		}
@@ -1474,7 +1485,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		}
 
 		if (objUserRole.Selected_Regions_Id__c != null) {
-			set_SelectedRegion.addAll((List<String>)objUserRole.Selected_Regions_Id__c.split(','));
+			set_SelectedRegion.addAll((List<String>) objUserRole.Selected_Regions_Id__c.split(','));
 		}
 
 		if (objUserRole.Selected_Regions_Name__c != null) {
@@ -1488,7 +1499,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 				String strStates = String.join(list_State, ', ');
 				Boolean blnIsChecked = false;
 
-				if (set_SelectedRegion.contains(''+objRegionId) && strPrevRoleTeam == strRoleData) {
+				if (set_SelectedRegion.contains('' + objRegionId) && strPrevRoleTeam == strRoleData) {
 					blnIsChecked = true;
 				}
 
@@ -1562,13 +1573,7 @@ public without sharing class AddSkillsForUserRoleCtrl {
 
 		Boolean blnRoleNameCheck;
 
-		
-
-		if (
-			String.isNotBlank(strRoleData) &&		
-			String.isNotBlank(strSkillType) &&
-			FWManageRoleUtil.SKILL_TYPE_CORE.equalsIgnoreCase(strSkillType)
-		) {
+		if (String.isNotBlank(strRoleData) && String.isNotBlank(strSkillType) && FWManageRoleUtil.SKILL_TYPE_CORE.equalsIgnoreCase(strSkillType)) {
 			strQueryToGetSkills += ' AND Role__r.Name= :strRoleData';
 		} else if (String.isNotBlank(strRoleData) && String.isNotBlank(strSkillTypeToCheck)) {
 			if (blnRoleNameCheck) {
@@ -1625,14 +1630,13 @@ public without sharing class AddSkillsForUserRoleCtrl {
 		List<User_Skill__c> list_ExistingUserCoreSkill = new List<User_Skill__c>();
 		List<User_Skill__c> list_ExistingUserOtherSkill = new List<User_Skill__c>();
 
-		for (User_Skill__c objUserSkill : [SELECT id, Active__c, User_Skill_Role_Name__c, Skill_Type__c FROM User_Skill__c WHERE Id IN :set_UserSkillId]) {			
+		for (User_Skill__c objUserSkill : [SELECT id, Active__c, User_Skill_Role_Name__c, Skill_Type__c FROM User_Skill__c WHERE Id IN :set_UserSkillId]) {
 			if (String.isBlank(objUserSkill.Skill_Type__c) || objUserSkill.Skill_Type__c == FWManageRoleUtil.SKILL_TYPE_CORE) {
 				objUserSkill.Active__c = false;
 				list_ExistingUserCoreSkill.add(objUserSkill);
 			} else {
 				list_ExistingUserOtherSkill.add(objUserSkill);
 			}
-			
 		}
 
 		if (list_ExistingUserOtherSkill != null && list_ExistingUserOtherSkill.size() > 0) {
@@ -1800,8 +1804,8 @@ public without sharing class AddSkillsForUserRoleCtrl {
 			for (SelectOption so : list_selectedPTSkillValues) {
 				setSelectedPTSkill.add(so.getValue());
 			}
-			for (SelectOption so : list_selectedPTPartnerTierValues) {	
-				set_SelectedPTPartnerTier.add(so.getValue());	
+			for (SelectOption so : list_selectedPTPartnerTierValues) {
+				set_SelectedPTPartnerTier.add(so.getValue());
 			}
 			//If User Role is Facilitator
 			//Added by AKS dated 23rd Oct 2020
@@ -1821,12 +1825,12 @@ public without sharing class AddSkillsForUserRoleCtrl {
 			strQuery += ' WHERE Role__r.Name =: strRoleData ';
 			String strFilters = ' Payroll_Transfer_Skills__c != null AND Payroll_Transfer_Skills__c IN: setSelectedPTSkill ';
 
-			if (set_SelectedPTPartnerTier.size() > 0) {	
-				strFilters += ' AND Partner__c != null AND Partner__c IN: set_SelectedPTPartnerTier ';	
-			} else {	
-				strFilters += ' AND Partner__c = null ';	
+			if (set_SelectedPTPartnerTier.size() > 0) {
+				strFilters += ' AND Partner__c != null AND Partner__c IN: set_SelectedPTPartnerTier ';
+			} else {
+				strFilters += ' AND Partner__c = null ';
 			}
-      
+
 			//In case of facilitator
 			if (FWManageRoleUtil.ROLE_PAYROLL_TRANSFER_FAC.equalsIgnoreCase(strRoleData)) {
 				/*if(blnPTExceptionRequest){

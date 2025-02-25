@@ -561,7 +561,7 @@ public with sharing class AccountUtil {
 	public static Id getWorkatoIntegrationUserId() {
 		return [SELECT Id, UserName FROM User WHERE Username LIKE 'workato.integration@gusto.com%' LIMIT 1].Id;
 	}
-	
+
 	/**
 	 * @author         Praveen Sethu
 	 * @description    Query Account Teams on User record (Used for HI Sales Routing)
@@ -582,5 +582,20 @@ public with sharing class AccountUtil {
 	 */
 	public static List<AccountTeamMember> queryAccountTeamMembers(Set<Id> set_AccountIds) {
 		return [SELECT Id, AccountId, TeamMemberRole, UserId, User.UserRole.Name FROM AccountTeamMember WHERE AccountId IN :set_AccountIds AND TeamMemberRole = :ACCOUNT_TEAM_MEMBER_CSM_ROLE];
+	}
+
+	/**
+	 * @Description : Future method to send account for HI Owner Routing
+	 * @Param       : Id - Id of the account to route HI Owner
+	 **/
+	@future(callout=true)
+	public static void sendAccountForHIOwnerRoutingFuture(Set<Id> set_AccountIds) {
+		// create parameter and set account id
+		for (Id idAccount : set_AccountIds) {
+			Map<String, Object> map_Params = new Map<String, Object>();
+			map_Params.put('Account_Id', idAccount);
+			// start the flow
+			new Flow.Interview.Send_Account_For_HI_Owner_Routing(map_Params).start();
+		}
 	}
 }

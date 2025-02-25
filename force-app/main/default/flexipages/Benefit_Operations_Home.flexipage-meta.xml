@@ -935,46 +935,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>entityNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>Benefit_Order__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Case</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Ticket__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Account</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Transition_to_Fulfillment__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Opportunity</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>maxRecords</name>
-                    <value>3</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:recentItems</componentName>
-                <identifier>flexipage_recentItems</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-706d8926-ddc6-4ed9-9683-bd969567bc7a</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
                 </componentInstanceProperties>
@@ -990,20 +950,6 @@
                 <identifier>flexipage_tab4</identifier>
             </componentInstance>
         </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-706d8926-ddc6-4ed9-9683-bd969567bc7a</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Recent Items</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>flexipage_tab5</identifier>
-            </componentInstance>
-        </itemInstances>
         <name>Facet-686f84b7-a791-4ed5-9d26-5c96b2902083</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -1012,13 +958,6 @@
             <componentInstance>
                 <componentName>openTabAura</componentName>
                 <identifier>c_openTabAura</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!$Permission.CustomPermission.Benefits_Fulfillment_Team}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>

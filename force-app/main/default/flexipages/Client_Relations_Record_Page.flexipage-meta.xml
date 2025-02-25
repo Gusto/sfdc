@@ -111,36 +111,6 @@
                 <identifier>RecordChannel_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Confirm_Case_Reason_Classification__c</fieldItem>
-                <identifier>RecordConfirm_Case_Reason_Classification_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Confirm_Sub_Case_Reason_Classification__c</fieldItem>
-                <identifier>RecordConfirm_Sub_Case_Reason_Classification_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Audience__c</fieldItem>
-                <identifier>RecordAudience_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
         <name>Facet-8deb3566-5bb6-4648-8f24-794d342bcc72</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -220,6 +190,98 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-2c03e6e5-215f-40e6-803f-a39e6e19692e</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Confirm_Case_Reason_Classification__c</fieldItem>
+                <identifier>RecordConfirm_Case_Reason_Classification_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Confirm_Sub_Case_Reason_Classification__c</fieldItem>
+                <identifier>RecordConfirm_Sub_Case_Reason_Classification_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Reason_For_Escalation__c</fieldItem>
+                <identifier>RecordWhat_was_the_reason_for_the_escalation_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-b51652d2-4f27-4ef7-8044-7118c473b7cb</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.State__c</fieldItem>
+                <identifier>RecordState_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Audience__c</fieldItem>
+                <identifier>RecordAudience_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Preventative_Action__c</fieldItem>
+                <identifier>RecordWhat_action_was_taken_to_prevent_future_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-d5640625-6ea7-4a30-9798-2ea69ccea980</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-b51652d2-4f27-4ef7-8044-7118c473b7cb</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-d5640625-6ea7-4a30-9798-2ea69ccea980</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column6</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-513a63cf-6cbe-4562-a8f0-90d1f4490a88</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -387,26 +449,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Reason_For_Escalation__c</fieldItem>
-                <identifier>RecordWhat_was_the_reason_for_the_escalation_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Preventative_Action__c</fieldItem>
-                <identifier>RecordWhat_action_was_taken_to_prevent_future_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.Recommended_Actions__c</fieldItem>
                 <identifier>RecordRecommended_Actions_cField</identifier>
             </fieldInstance>
@@ -526,6 +568,24 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection21</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>Facet-513a63cf-6cbe-4562-a8f0-90d1f4490a88</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Close Case Fields</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection4</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

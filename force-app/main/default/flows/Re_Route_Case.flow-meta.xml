@@ -615,21 +615,7 @@
         <picklistField>Support_Level__c</picklistField>
         <picklistObject>Case_Reason_Classification__c</picklistObject>
     </dynamicChoiceSets>
-    <dynamicChoiceSets>
-        <description>Case Team Picklist values.</description>
-        <name>picklistTeam</name>
-        <dataType>Picklist</dataType>
-        <displayField xsi:nil="true" />
-        <object xsi:nil="true" />
-        <picklistField>Routing_Team__c</picklistField>
-        <picklistObject>Case</picklistObject>
-    </dynamicChoiceSets>
     <environments>Default</environments>
-    <formulas>
-        <name>blnIsVendor</name>
-        <dataType>Boolean</dataType>
-        <expression>{!$Permission.Vendor_Permission}</expression>
-    </formulas>
     <formulas>
         <description>To track how many times a case has been re-routed within the care using Re-Route Case component</description>
         <name>CareReRouteCount</name>
@@ -937,45 +923,6 @@ IF( {!blnSkillsAreSame} , {!objCase.Re_Route_Count__c}, {!objCase.Re_Route_Count
                             <operator>EqualTo</operator>
                             <rightValue>
                                 <stringValue>TAM Premier</stringValue>
-                            </rightValue>
-                        </conditions>
-                    </visibilityRule>
-                </fields>
-                <fields>
-                    <name>RoutingTeam</name>
-                    <choiceReferences>picklistTeam</choiceReferences>
-                    <dataType>String</dataType>
-                    <fieldText>Team</fieldText>
-                    <fieldType>DropdownBox</fieldType>
-                    <isRequired>true</isRequired>
-                    <visibilityRule>
-                        <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
-                        <conditions>
-                            <leftValueReference>Are_you_routing_this_case_to_a_specialization_team</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <elementReference>No</elementReference>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>blnIsVendor</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>isCareReRoute_Eligible</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <booleanValue>true</booleanValue>
-                            </rightValue>
-                        </conditions>
-                        <conditions>
-                            <leftValueReference>objCase.Routing_Team__c</leftValueReference>
-                            <operator>EqualTo</operator>
-                            <rightValue>
-                                <stringValue>External</stringValue>
                             </rightValue>
                         </conditions>
                     </visibilityRule>

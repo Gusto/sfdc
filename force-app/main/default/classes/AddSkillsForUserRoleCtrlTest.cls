@@ -47,7 +47,9 @@ public class AddSkillsForUserRoleCtrlTest {
 
 		List<Skill__c> list_Skills = new List<Skill__c>();
 		list_Skills.add(new TestDataFactory.SkillBuilder().setRoleId(objIARole.Id).setOrderType('New To Gusto').setPartnerTier('Gold').setStateGroup('Arizona').setTADA(true).setBigDesk(true).build());
-		list_Skills.add(new TestDataFactory.SkillBuilder().setRoleId(objIARole.Id).setOrderType('New To Gusto').setPartnerTier('Gold').setStateGroup('Arizona').setTADA(true).setBigDesk(false).build());
+		list_Skills.add(
+			new TestDataFactory.SkillBuilder().setRoleId(objIARole.Id).setOrderType('New To Gusto').setPartnerTier('Gold').setStateGroup('Arizona').setTADA(true).setBigDesk(false).build()
+		);
 		list_Skills.add(new TestDataFactory.SkillBuilder().setRoleId(objPTAdvocateRole.Id).setPTSkills('Bulk Order').build());
 		list_Skills.add(new TestDataFactory.SkillBuilder().setRoleId(objPTAdvocateRole.Id).setPTSkills('Direct Order').build());
 		list_Skills.add(new TestDataFactory.SkillBuilder().setRoleId(objPTFacilitatorRole.Id).setPTSkills('Bulk Order').build());
@@ -156,8 +158,6 @@ public class AddSkillsForUserRoleCtrlTest {
 		return objUserRole;
 	}
 
-	
-
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, user role creation for Payroll Transfer Advocate
@@ -224,7 +224,6 @@ public class AddSkillsForUserRoleCtrlTest {
 		System.assert(list_userSkills.size() > 0);
 	}
 
-	
 	/**
 	 * @author       Deepika Saini
 	 * @description  Test Method to check, Benefit Transfer user skill creation for user role - positive
@@ -315,7 +314,6 @@ public class AddSkillsForUserRoleCtrlTest {
 
 		System.assertEquals([SELECT COUNT() FROM User_Skill__c WHERE Skill_Role_Name__c LIKE 'Implementation Advocate'] == 0, true);
 	}
-
 
 	/**
 	 * @author      : Neha Dabas
@@ -418,7 +416,11 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.SaveSkill();
 		Test.stopTest();
 
-		System.assertEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 'Benefit Designer Skills should exist');
+		System.assertEquals(
+			0,
+			[SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER],
+			'Benefit Designer Skills should exist'
+		);
 	}
 
 	/**
@@ -458,7 +460,11 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.ShowTeamSkillType();
 		Test.stopTest();
 
-		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 'Benefit Designer Skills should exist');
+		System.assertNotEquals(
+			0,
+			[SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER],
+			'Benefit Designer Skills should exist'
+		);
 	}
 
 	/**
@@ -573,7 +579,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	 **/
 	@isTest
 	static void testBOAllocationPositive() {
-
 		Test.startTest();
 		User_Role__c objUserRole = [SELECT Id FROM User_Role__c LIMIT 1];
 		PageReference objPageRef = Page.AddSkillsForUserRolePage;
@@ -602,7 +607,6 @@ public class AddSkillsForUserRoleCtrlTest {
 	 **/
 	@isTest
 	static void testBOAllocationDelete() {
-
 		Test.startTest();
 		User_Role__c objUserRole = [SELECT Id FROM User_Role__c LIMIT 1];
 		PageReference objPage1 = Page.AddSkillsForUserRolePage;
@@ -664,7 +668,6 @@ public class AddSkillsForUserRoleCtrlTest {
 		}
 		System.assert(blnMessageFound, 'Required Fields(Order Type, State, Partner Tier) should be displayed');
 	}
-
 
 	/**
 	 * @author       Deepika Saini
@@ -740,7 +743,46 @@ public class AddSkillsForUserRoleCtrlTest {
 		objAddSkillsCtrl.SaveSkill();
 		Test.stopTest();
 
-		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER], 'Benefit Designer Skills should exist');
+		System.assertNotEquals(
+			0,
+			[SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id AND Skill_Role_Name__c = :FWManageRoleUtil.ROLE_BENEFITS_DESIGNER],
+			'Benefit Designer Skills should exist'
+		);
+	}
+
+	/**
+	 * @author       Omar Benitez
+	 * @description  Test Method to check Delete User Role
+	 **/
+	@isTest
+	static void testDeleteUserRole() {
+		Test.startTest();
+		User_Role__c objUserRole = [SELECT Id FROM User_Role__c LIMIT 1];
+		PageReference objPageRef = Page.AddSkillsForUserRolePage;
+		test.setCurrentPageReference(objPageRef);
+		objPageRef.getParameters().put('id', objUserRole.id);
+		AddSkillsForUserRoleCtrl objAddSkillsCtrl = new AddSkillsForUserRoleCtrl();
+		objAddSkillsCtrl.strRoleData = 'Benefit Transfer';
+		objAddSkillsCtrl.ShowTeamSkillType();
+		objAddSkillsCtrl.selectRole();
+		objAddSkillsCtrl.map_BTDefineSkills.put('Advocate', true);
+		objAddSkillsCtrl.ManageBOAllocation();
+		objAddSkillsCtrl.blnIsTada = true;
+		objAddSkillsCtrl.list_ManageBOWrappers[0].objBO.Max_BO__c = 10;
+		objAddSkillsCtrl.SaveSkill();
+
+		System.assertNotEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id], 'User skill should exists');
+
+		PageReference pageRef1 = Page.AddSkillsForUserRolePage;
+		test.setCurrentPageReference(objPageRef);
+		objPageRef.getParameters().put('id', objUserRole.Id);
+		objAddSkillsCtrl = new AddSkillsForUserRoleCtrl();
+
+		objAddSkillsCtrl.deleteUserRole();
+		Test.stopTest();
+
+		System.assertEquals(0, [SELECT COUNT() FROM User_Skill__c WHERE User_Role__c = :objUserRole.Id], 'User Skills should be deleted');
+		System.assertEquals(0, [SELECT COUNT() FROM User_Role__c WHERE Id = :objUserRole.Id], 'User role should be deleted');
 	}
 
 	static void skipTrigger(Boolean blnFlag) {

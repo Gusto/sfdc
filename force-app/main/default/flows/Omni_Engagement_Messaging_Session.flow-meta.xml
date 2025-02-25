@@ -1719,7 +1719,7 @@
         <inputAssignments>
             <field>ORCA_Predicted_Specialization_Confidence__c</field>
             <value>
-                <elementReference>input_ORCAPredictedSpecializationConfidence</elementReference>
+                <elementReference>input_ORCASpecializationConfidence</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -1731,7 +1731,7 @@
         <inputAssignments>
             <field>ORCA_Predicted_Support_Level_Confidence__c</field>
             <value>
-                <elementReference>input_ORCAPredictedSupportLevelConfidence</elementReference>
+                <elementReference>input_ORCASupportLevelConfidence</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -1904,23 +1904,7 @@
     </variables>
     <variables>
         <description>MIAW Pre-chat form details</description>
-        <name>input_ORCAPredictedSpecializationConfidence</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <description>MIAW Pre-chat form details</description>
         <name>input_ORCAPredictedSupportLevel</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <description>MIAW Pre-chat form details</description>
-        <name>input_ORCAPredictedSupportLevelConfidence</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
@@ -1937,6 +1921,22 @@
     <variables>
         <description>MIAW Pre-chat form details</description>
         <name>input_ORCAPredictedTypeConfidence</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
+        <name>input_ORCASpecializationConfidence</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>MIAW Pre-chat form details</description>
+        <name>input_ORCASupportLevelConfidence</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>

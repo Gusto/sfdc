@@ -79,6 +79,19 @@
             }
         }
 
+    function closeTab() {
+        if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function (enclosingResult) {
+                sforce.console.getEnclosingPrimaryTabId(function (primaryResult) {
+                    console.log('primaryResult',primaryResult);
+                    sforce.console.closeTab(primaryResult.id);
+                    let redirectUrl = 'lightning/o/User_Role__c/home';
+                    sforce.console.openPrimaryTab(undefined, redirectUrl, false, null);
+                });
+            })
+        }
+    }
+
     </script>
     <div class="slds-scope">
         <apex:sectionHeader title="User Role" subtitle="Add Skills for {!objUserRole.User__r.Name}" />
@@ -114,9 +127,15 @@
                     </apex:pageBlockSectionItem>
                 </apex:pageBlockSection>
                 <apex:pageMessages id="showmsg" escape="false"/>
-        
+                <apex:pageBlockSection columns="1" rendered="{!blnShowDeleteCheckbox}"  id="selectionBlockDeleteUserRole">
+                     <apex:pageBlockSectionItem >
+                        <apex:outputlabel >Confirm</apex:outputlabel>
+                         <apex:inputCheckbox value="{!blnShowDeleteBtn}" label="Confirm" >
+                             <apex:actionSupport event="onchange" reRender="selectionBlockDeleteUserRole,ButtonSection" status="actStatusId" />
+                         </apex:inputCheckbox>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
                 <apex:pageBlockSection columns="1" title="Assign Skills " id="selectionBlock" rendered="{!strSkillType != null && strRoleData== 'Implementation Advocate'}">
-            
                     <apex:pageBlockSectionItem rendered="{!blnShowRegionSection}">
                         <apex:outputlabel >Select Region </apex:outputlabel>
                         <apex:pageBlockTable value="{!list_RegionPODWrapper}" var="rp" cellpadding="5">
@@ -493,6 +512,8 @@
                 <apex:pageblockSection id="ButtonSection" columns="1">
                     <apex:pageBlockSectionItem dataStyle="text-align:center">
                         <apex:outputPanel >
+                            <apex:commandButton style="margin-right: 10px;" action="{!deleteUserRole}" oncomplete="closeTab()" value="Delete User Role" status="actStatusId" rendered="{!(strRoleData == NULL && blnShowDeleteBtn)}"
+                                reRender="frmId" />
                             <apex:commandButton style="margin-right: 10px;" action="{!SaveSkill}" value="Save Skills" status="actStatusId" rendered="{! (strRoleData!= NULL &&  (((strRoleData != 'Benefit Transfer') && strSkillType != NULL) || (strRoleData == 'Benefit Transfer' && (map_BTDefineSkills['Qualifier'] || map_BTDefineSkills['Advocate'] || map_BTDefineSkills['Facilitator 2'] || map_BTDefineSkills['Facilitator 1']))))}"
                                 reRender="frmId" />
                             <apex:commandButton style="margin-right: 10px;" action="{!redirectToFBOS}" value="Save Skills and Assign Cap" status="actStatusId"
