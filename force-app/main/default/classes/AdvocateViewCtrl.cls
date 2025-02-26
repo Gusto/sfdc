@@ -9,6 +9,7 @@ public without sharing class AdvocateViewCtrl {
 	public List<OrderWrapper> lstInternalCommunication { get; set; }
 	public List<OrderWrapper> List_AssigntoAdvocateWrapper { get; set; }
 	public List<OrderWrapper> lstOrderCohortView { get; set; }
+    
 
 	public Order objOrderTemp { get; set; }
 	public List<OrderStatWarpper> lstOrderStatsWrapper { get; set; }
@@ -29,6 +30,9 @@ public without sharing class AdvocateViewCtrl {
 	private Set<String> setExcludeStatus = new Set<String>{ 'Closed: Canceled', 'Closed: Payroll Run', 'Activated' };
 	private set<String> set_ExcludedOrdersStatuses = new Set<String>{ 'Closed: Canceled', 'Closed: Payroll Run', 'Closed: Duplicate' };
 	private set<String> setOrderStats;
+    
+    private Set<Id> pastDateOrders = new Set<Id>();
+     private  Set<Id> futureDateOrders = new Set<Id>();
 
 	/* Dynamic Column Changes */
 	// to show all the available column/fields for user to see Key=ObjectName Value = List of selectOption(fieldAPINAme,FieldLabel)
@@ -821,7 +825,8 @@ public without sharing class AdvocateViewCtrl {
 		if (comType == 'internal') {
 			//get All related Facilitator
 			String strQuery = 'SELECT Id,Order__c,Order__r.Account.Name,Order__r.Account.ZP_Company_ID__c,Order__r.Communication_Required__c,Order__r.Communication_Required_Fac__c,Order__r.ownerId,Order__r.Data_Entry_Assist__c FROM Order_Facilitator_CheckList__c ';
-			strQuery = strQuery + ' WHERE Order__r.Status NOT IN :set_ExcludedOrdersStatuses AND Order__r.RecordType.DeveloperName=\'Company_Migration\' ';
+			strQuery = strQuery + ' WHERE  Order__r.RecordType.DeveloperName=\'Company_Migration\' ';
+            strQuery = strQuery + getOrderDateFilter();
 
 			ID idLoggedInUser = (ID) strCurrentUserId;
 			//@Neha 8th April 2020, Add Communication Required field based on whether logged in user is Facilitator or Advocate
@@ -845,8 +850,8 @@ public without sharing class AdvocateViewCtrl {
 		if (comType == 'sales') {
 			//get All related Facilitator
 			String strQuery = 'SELECT Id,ownerId,Data_Entry_Assist__c FROM Order  ';
-			strQuery = strQuery + ' WHERE Status NOT IN :set_ExcludedOrdersStatuses AND RecordType.DeveloperName=\'Company_Migration\'';
-
+			strQuery = strQuery + ' WHERE  RecordType.DeveloperName=\'Company_Migration\'';
+			strQuery = strQuery + getOrderDateFilterOrderQuery();
 			if (!IsFacilitator) {
 				strQuery = strQuery + ' AND OwnerId=:strCurrentUserId';
 			} else {
@@ -983,6 +988,29 @@ public without sharing class AdvocateViewCtrl {
 	//***Start Account in Final Stages ***//
 	private void RetriveOrderData(String tableType) {
 		try {
+            
+        /*String strOrderQuery = 'SELECT Id, First_Check_Date__c FROM Order WHERE Id IN (SELECT Order__c FROM Case WHERE RecordType.DeveloperName=\'Payroll_Transfer_Case\')';
+        Map<Id, Date> orderDateMap = new Map<Id, Date>();
+
+        for (Order ord : Database.query(strOrderQuery)) {
+            orderDateMap.put(ord.Id, ord.First_Check_Date__c);
+        }
+
+        Set<Id> pastDateOrders = new Set<Id>();
+        Set<Id> futureDateOrders = new Set<Id>();
+        Date today = Date.today();
+
+        for (Id orderId : orderDateMap.keySet()) {
+            Date firstCheckDate = orderDateMap.get(orderId);
+            system.debug('firstCheckDate' + firstCheckDate);
+            if (firstCheckDate != null && firstCheckDate > today) {
+                system.debug('1002');
+                futureDateOrders.add(orderId); 
+            } else {
+                pastDateOrders.add(orderId);
+            }
+        }*/
+            
 			String strQuery = 'SELECT Id,CheckList_Completed__c,Last_Assigned_to_Advocate__c,CheckList_Status__c,';
 			strQuery = strQuery + ' OwnerId,Owner.Name,AccountId,Transition_to_Fulfillment__c,Account.name,Account.ZP_Company_ID__c,Type,Status,OrderNumber,Name,Follow_Up_Date__c,';
 			strQuery = strQuery + ' Follow_Up_Notes__c,Facilitator_Follow_Up_Date__c, Facilitator_Follow_Up_Notes__c,Case__c,Case__r.CaseNumber,Bulk_Migration__c,Bulk_Migration__r.Name,';
@@ -1003,18 +1031,18 @@ public without sharing class AdvocateViewCtrl {
 				strQuery = strQuery + '  AND ( Status=\'Onboarding Steps 8 - 9\' or Status=\'Onboarding Step 10\') AND Days_in_steps_8_to_10__c<=3';
 			}
 			if (tableType == 'exRequest') {
-				strQuery = strQuery + '  AND (Status NOT IN :set_ExcludedOrdersStatuses )';
+				strQuery = strQuery + getOrderDateFilterOrderQuery();
 				strQuery = strQuery + '  AND Transition_to_Fulfillment__r.RecordType.DeveloperName=\'Payroll_Transfer\'';
 				strQuery = strQuery + '   AND Transition_to_Fulfillment__r.TTF_Status__c=\'PT Approved\' AND ';
 				//strQuery = strQuery + '   Transition_to_Fulfillment__r.Exception_Request__c=\'Yes\'';
 				strQuery = strQuery + '   Exception_Request__c=true';
 			}
 			if (tableType == 'blockedCheckList') {
-				strQuery = strQuery + '  AND Status NOT IN :set_ExcludedOrdersStatuses ';
+				strQuery = strQuery + getOrderDateFilterOrderQuery();
 				strQuery = strQuery + '  AND ID in (SELECT Order__c FROM Order_Facilitator_CheckList__c WHERE Is_Blocked__c=true)';
 			}
 			if (tableType == 'assignToAdvocate') {
-				strQuery = strQuery + '  AND Status NOT IN :set_ExcludedOrdersStatuses ';
+				strQuery = strQuery + getOrderDateFilterOrderQuery();
 				strQuery = strQuery + '  AND Assign_to_Advocate__c=true AND CheckList_Completed__c=false';
 			}
 
@@ -1077,23 +1105,109 @@ public without sharing class AdvocateViewCtrl {
 	//***End Account in Final Stages ***//
 
 	//**Customer Communication Start***//
-	public PageReference RetriveCustomerCommunication() {
-		try {
-			lstCustomerCommWrapper = new List<CustomerCommWrapper>();
-			String strQuery = 'SELECT Id,CaseNumber,ContactId,Requires_Action__c,Contact.Name,AccountId,Account.Name,Account.ZP_Company_ID__c,';
-			strQuery = strQuery + ' Order__c,Order__r.OrderNumber,Order__r.Status,Order__r.Facilitator_Due_Date__c,Order__r.Payroll_Run_Date__c,Order__r.Bulk_Migration__c,';
-			strQuery = strQuery + ' Order__r.Bulk_Migration__r.Name,Incoming_Email_Received_Date__c,Incoming_Email_Received__c FROM Case WHERE ';
-			strQuery = strQuery + ' RecordType.DeveloperName=\'Payroll_Transfer_Case\' AND Type!=\'Document Mapping\' ';
-			strQuery = strQuery + '  AND ContactId!=null AND  Requires_Action__c=true ';
-			strQuery = strQuery + '  AND ownerId=:strCurrentUserId AND Order__r.Status NOT IN :set_ExcludedOrdersStatuses ';
-			strQuery = strQuery + '   ORDER BY Incoming_Email_Received_Date__c ASC LIMIT 1000';
+	/*public PageReference RetriveCustomerCommunication() {
+    try {
+        lstCustomerCommWrapper = new List<CustomerCommWrapper>();
+        
+        // Fetch Orders to check First_Check_Date__c
+        String strOrderQuery = 'SELECT Id, First_Check_Date__c FROM Order WHERE Id IN (SELECT Order__c FROM Case WHERE RecordType.DeveloperName=\'Payroll_Transfer_Case\')';
+        Map<Id, Date> orderDateMap = new Map<Id, Date>();
 
-			lstCustomerCommWrapper.addAll(PopulateCommunicationWrapper(Database.Query(strQuery)));
-		} catch (Exception e) {
-			ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error, e.getMessage()));
-		}
-		return null;
-	}
+        for (Order ord : Database.query(strOrderQuery)) {
+            orderDateMap.put(ord.Id, ord.First_Check_Date__c);
+        }
+
+        // Build query dynamically
+        String strQuery = 'SELECT Id, CaseNumber, ContactId, Requires_Action__c, Contact.Name, AccountId, Account.Name, Account.ZP_Company_ID__c,';
+        strQuery += ' Order__c, Order__r.OrderNumber, Order__r.Status, Order__r.Facilitator_Due_Date__c, Order__r.Payroll_Run_Date__c, Order__r.Bulk_Migration__c,';
+        strQuery += ' Order__r.Bulk_Migration__r.Name, Incoming_Email_Received_Date__c, Incoming_Email_Received__c FROM Case WHERE ';
+        strQuery += ' RecordType.DeveloperName=\'Payroll_Transfer_Case\' AND Type!=\'Document Mapping\' ';
+        strQuery += ' AND ContactId!=null AND Requires_Action__c=true ';
+        strQuery += ' AND ownerId=:strCurrentUserId';
+
+        // Prepare list of order Ids whose First_Check_Date__c is in the past
+        Set<Id> pastDateOrders = new Set<Id>();
+        Date today = Date.today();
+
+        for (Id orderId : orderDateMap.keySet()) {
+            if (orderDateMap.get(orderId) != null && orderDateMap.get(orderId) <= today) {
+                pastDateOrders.add(orderId);
+            }
+        }
+
+        // Apply status check only for past-date orders
+        if (!pastDateOrders.isEmpty()) {
+            strQuery += ' AND (Order__r.First_Check_Date__c = NULL OR Order__c IN :pastDateOrders)';
+            strQuery += ' AND Order__r.Status NOT IN :set_ExcludedOrdersStatuses';
+        }
+
+        strQuery += ' ORDER BY Incoming_Email_Received_Date__c ASC LIMIT 1000';
+
+        lstCustomerCommWrapper.addAll(PopulateCommunicationWrapper(Database.Query(strQuery)));
+
+    } catch (Exception e) {
+        ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error, e.getMessage()));
+    }
+    return null;
+}*/
+     public PageReference RetriveCustomerCommunication() {
+    try {
+        lstCustomerCommWrapper = new List<CustomerCommWrapper>();
+		/*String strOrderQuery = 'SELECT Id, First_Check_Date__c FROM Order WHERE Id IN (SELECT Order__c FROM Case WHERE RecordType.DeveloperName=\'Payroll_Transfer_Case\')';
+        Map<Id, Date> orderDateMap = new Map<Id, Date>();
+
+        for (Order ord : Database.query(strOrderQuery)) {
+            orderDateMap.put(ord.Id, ord.First_Check_Date__c);
+        }
+
+        Set<Id> pastDateOrders = new Set<Id>();
+        Set<Id> futureDateOrders = new Set<Id>();
+        Date today = Date.today();
+
+        for (Id orderId : orderDateMap.keySet()) {
+            Date firstCheckDate = orderDateMap.get(orderId);
+            system.debug('firstCheckDate' + firstCheckDate);
+            if (firstCheckDate != null && firstCheckDate > today) {
+                system.debug('1117');
+                futureDateOrders.add(orderId); 
+            } else {
+                pastDateOrders.add(orderId);
+            }
+        }*/
+
+        String strQuery = 'SELECT Id, CaseNumber, ContactId, Requires_Action__c, Contact.Name, AccountId, Account.Name, Account.ZP_Company_ID__c,';
+        strQuery += ' Order__c, Order__r.OrderNumber, Order__r.Status, Order__r.First_Check_Date__c, Order__r.Facilitator_Due_Date__c,';
+        strQuery += ' Order__r.Payroll_Run_Date__c, Order__r.Bulk_Migration__c, Order__r.Bulk_Migration__r.Name,';
+        strQuery += ' Incoming_Email_Received_Date__c, Incoming_Email_Received__c FROM Case WHERE ';
+        strQuery += ' RecordType.DeveloperName=\'Payroll_Transfer_Case\' AND Type!=\'Document Mapping\' ';
+        strQuery += ' AND ContactId!=null AND Requires_Action__c=true ';
+        strQuery += ' AND ownerId=:strCurrentUserId';
+		strQuery += getOrderDateFilter();
+        /*if (!pastDateOrders.isEmpty() && !futureDateOrders.isEmpty()) {
+            strQuery += ' AND ( Order__c IN :futureDateOrders ';
+            strQuery += ' OR (Order__c IN :pastDateOrders AND Order__r.Status NOT IN :set_ExcludedOrdersStatuses) )';
+        }
+        
+        else if (!pastDateOrders.isEmpty()) {
+            system.debug('1139');
+            strQuery += ' AND Order__c IN :pastDateOrders AND Order__r.Status NOT IN :set_ExcludedOrdersStatuses';
+        }else if (!futureDateOrders.isEmpty()) {
+            system.debug('1141');
+            strQuery += ' AND Order__c IN :futureDateOrders';
+        }*/
+
+        strQuery += ' ORDER BY Incoming_Email_Received_Date__c ASC LIMIT 1000';
+
+        System.debug('Final Query: ' + strQuery);
+        lstCustomerCommWrapper.addAll(PopulateCommunicationWrapper(Database.Query(strQuery)));
+		system.debug('lstCustomerCommWrapper' +  lstCustomerCommWrapper);
+    } catch (Exception e) {
+        ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error, e.getMessage()));
+        System.debug('Error: ' + e.getMessage());
+    }
+    return null;
+}
+
 	private List<CustomerCommWrapper> PopulateCommunicationWrapper(List<Case> lstCase) {
 		List<CustomerCommWrapper> tempWrap = new List<CustomerCommWrapper>();
 		for (Case objCase : lstCase) {
@@ -1252,4 +1366,75 @@ public without sharing class AdvocateViewCtrl {
 			}
 		}
 	}
+     private String getOrderDateFilter() {
+    	String filter = '';
+        String strOrderQuery = 'SELECT Id, First_Check_Date__c, Status,Case__c FROM Order WHERE Case__c IN (SELECT id FROM Case WHERE RecordType.DeveloperName=\'Payroll_Transfer_Case\')';
+        Map<Id, Date> orderDateMap = new Map<Id, Date>();
+
+        for (Order ord : Database.query(strOrderQuery)) {
+            orderDateMap.put(ord.Id, ord.First_Check_Date__c);
+        }
+
+        //Set<Id> pastDateOrders = new Set<Id>();
+        //Set<Id> futureDateOrders = new Set<Id>();
+        Date today = Date.today();
+
+        for (Id orderId : orderDateMap.keySet()) {
+            Date firstCheckDate = orderDateMap.get(orderId);
+            system.debug('firstCheckDate' + firstCheckDate);
+            if (firstCheckDate != null && firstCheckDate > today) {
+                system.debug('1117');
+                futureDateOrders.add(orderId); 
+            } else {
+                pastDateOrders.add(orderId);
+            }
+        }
+
+    if (!pastDateOrders.isEmpty() && !futureDateOrders.isEmpty()) {
+        filter += ' AND (Order__c IN :futureDateOrders ';
+        filter += ' OR (Order__c IN :pastDateOrders AND Order__r.Status NOT IN :set_ExcludedOrdersStatuses) )';
+    } else if (!pastDateOrders.isEmpty()) {
+        filter += ' AND Order__c IN :pastDateOrders AND Order__r.Status NOT IN :set_ExcludedOrdersStatuses';
+    } else if (!futureDateOrders.isEmpty()) {
+        filter += ' AND Order__c IN :futureDateOrders';
+    }
+	system.debug('filter' + filter);
+    return filter;
+}
+    
+    private String getOrderDateFilterOrderQuery() {
+    String filter = '';
+        String strOrderQuery = 'SELECT Id, First_Check_Date__c, Status,Case__c FROM Order WHERE Case__c IN (SELECT id FROM Case WHERE RecordType.DeveloperName=\'Payroll_Transfer_Case\')';
+        Map<Id, Date> orderDateMap = new Map<Id, Date>();
+
+        for (Order ord : Database.query(strOrderQuery)) {
+            orderDateMap.put(ord.Id, ord.First_Check_Date__c);
+        }
+
+        //Set<Id> pastDateOrders = new Set<Id>();
+        //Set<Id> futureDateOrders = new Set<Id>();
+        Date today = Date.today();
+
+        for (Id orderId : orderDateMap.keySet()) {
+            Date firstCheckDate = orderDateMap.get(orderId);
+            system.debug('firstCheckDate' + firstCheckDate);
+            if (firstCheckDate != null && firstCheckDate > today) {
+                system.debug('1117');
+                futureDateOrders.add(orderId); 
+            } else {
+                pastDateOrders.add(orderId);
+            }
+        }
+
+    if (!pastDateOrders.isEmpty() && !futureDateOrders.isEmpty()) {
+        filter += ' AND (Id IN :futureDateOrders ';
+        filter += ' OR (Id IN :pastDateOrders AND Status NOT IN :set_ExcludedOrdersStatuses) )';
+    } else if (!pastDateOrders.isEmpty()) {
+        filter += ' AND Id IN :pastDateOrders AND Status NOT IN :set_ExcludedOrdersStatuses';
+    } else if (!futureDateOrders.isEmpty()) {
+        filter += ' AND Id IN :futureDateOrders';
+    }
+	system.debug('filter' + filter);
+    return filter;
+}
 }

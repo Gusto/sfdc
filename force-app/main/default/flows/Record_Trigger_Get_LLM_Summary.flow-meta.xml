@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Get_LLM_Summary</name>
+        <label>Get LLM Summary</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>RecordSummary</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>recordIdList</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>RecordSummary</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
     <apiVersion>63.0</apiVersion>
     <environments>Default</environments>
     <interviewLabel>Get LLM Summary {!$Flow.CurrentDateTime}</interviewLabel>
@@ -26,6 +43,9 @@
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_LLM_Summary</targetReference>
+        </connector>
         <filterLogic>and</filterLogic>
         <filters>
             <field>HtmlBody</field>
@@ -38,5 +58,5 @@
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>InvalidDraft</status>
+    <status>Draft</status>
 </Flow>

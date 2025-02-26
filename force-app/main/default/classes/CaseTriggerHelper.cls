@@ -1951,7 +1951,9 @@ Get the related compliance records for a given case records
 									Resource_Link__c,
 									Customer_Count__c,
 									Classification_Type__c,
-									Compliance_Team_POC__c
+									Compliance_Team_POC__c,
+                        			Eng_Size_Estimate__c,
+                       				Eng_Estimated_Launch_Date__c
 							FROM Tax_Compliance__c
 							WHERE Case__c IN :set_CaseIds
 					]

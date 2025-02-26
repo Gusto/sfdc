@@ -95,6 +95,7 @@ public class TaxResCaseHelper {
 					Client_Name__r.AM_Tier__c,
 					Client_Name_Match__c,
 					Agency_Information__c,
+					Agency_Information__r.Name,
 					Attachment_Name__c,
 					Attachment_Names__c,
 					No_Notice_Attached__c,

@@ -131,7 +131,6 @@ public class MessagingSessionTriggerHelper {
         List<Case> list_Cases = new List<Case>();
         List<Lead> list_Leads = new List<Lead>();
         List<Case_Audit_Log__c> list_CaseAuditLogs = new List<Case_Audit_Log__c>();
-        List<MessagingSession> list_MessagingSessionsToUpdate = new List<MessagingSession>();
         Map<Id, AgentWork> map_AgentWorkByMessageId = new Map<Id, AgentWork>();
         
         for (MessagingSession objMessage : map_MessagingSessionById.values()) {
@@ -276,7 +275,7 @@ public class MessagingSessionTriggerHelper {
                     }
 */
                 if (map_AgentWorkByMessageId.containsKey(objMessage.Id) &&
-                    (objMessage.Status != objOldMessage.Status || (objMessage.CaseId != null && objOldMessage.CaseId == null))) {
+                    (objMessage.Status != objOldMessage.Status)) {
                         AgentWork objAgentWork = map_AgentWorkByMessageId.get(objMessage.Id);
                         
                         Case_Audit_Log__c objAuditLog = new Case_Audit_Log__c();
@@ -305,13 +304,14 @@ public class MessagingSessionTriggerHelper {
                                 objAuditLog.Live_Channel_Wait_Time_In_Seconds__c = milliSeconds / 1000;
                             }
                         }
-
+/*
                         if (objMessage.Status == MessagingSessionUtils.STATUS_ENDED) {
+                            objMessage.Case_Number__c = objMessage.Case.CaseNumber;
                             objMessage.Active_Time__c = objAgentWork.Activetime;
                             objMessage.Tab_Close_Time__c = objAgentWork.CloseDateTime;
-                            list_MessagingSessionsToUpdate.add(objMessage);
+                            list_ChatTranscriptsToUpdate.add(objMessage);
                         }
-
+*/
                         list_CaseAuditLogs.add(objAuditLog);
                     }
                 
@@ -332,12 +332,6 @@ public class MessagingSessionTriggerHelper {
             
             if (!list_CaseAuditLogs.isEmpty()) {
                 insert list_CaseAuditLogs;
-            }
-
-            if (!list_MessagingSessionsToUpdate.isEmpty()) {
-                MessagingSessionTriggerHelper.skipTrigger = true;
-                update list_MessagingSessionsToUpdate;
-                MessagingSessionTriggerHelper.skipTrigger = false;
             }
         } catch (Exception objException) {
             ExceptionLogUtil.logException('MessagingSessionTriggerHelper', 'OnAfterUpdate', objException.getMessage(), objException.getStackTraceString());

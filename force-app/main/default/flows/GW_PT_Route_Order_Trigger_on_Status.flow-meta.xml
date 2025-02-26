@@ -4,7 +4,7 @@
         <name>Assign_Order_to_User</name>
         <label>Assign Order to User</label>
         <locationX>50</locationX>
-        <locationY>2435</locationY>
+        <locationY>2219</locationY>
         <actionName>GradientWorks__DirectAssignSingleItemAction</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -42,13 +42,14 @@
             </value>
         </inputParameters>
         <nameSegment>GradientWorks__DirectAssignSingleItemAction</nameSegment>
+        <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <actionCalls>
         <name>Log_No_Assignment_No_Team</name>
         <label>Log No Assignment - No Team</label>
         <locationX>402</locationX>
-        <locationY>1727</locationY>
+        <locationY>1511</locationY>
         <actionName>GradientWorks__LogAction</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -71,13 +72,14 @@
             </value>
         </inputParameters>
         <nameSegment>GradientWorks__LogAction</nameSegment>
+        <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <actionCalls>
         <name>Log_No_Assignment_No_Users</name>
         <label>Log No Assignment - No Users</label>
         <locationX>314</locationX>
-        <locationY>2327</locationY>
+        <locationY>2111</locationY>
         <actionName>GradientWorks__LogAction</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -100,13 +102,14 @@
             </value>
         </inputParameters>
         <nameSegment>GradientWorks__LogAction</nameSegment>
+        <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <actionCalls>
         <name>Log_No_Assignment_Queue</name>
         <label>Log No Assignment - Queue</label>
         <locationX>666</locationX>
-        <locationY>1403</locationY>
+        <locationY>1187</locationY>
         <actionName>GradientWorks__LogAction</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -129,6 +132,7 @@
             </value>
         </inputParameters>
         <nameSegment>GradientWorks__LogAction</nameSegment>
+        <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <apiVersion>61.0</apiVersion>
@@ -136,7 +140,7 @@
         <name>Copy_1_of_Set_Error_Message</name>
         <label>Set Error Message</label>
         <locationX>666</locationX>
-        <locationY>1295</locationY>
+        <locationY>1079</locationY>
         <assignmentItems>
             <assignToReference>Error_Message</assignToReference>
             <operator>Assign</operator>
@@ -152,7 +156,7 @@
         <name>Increment_User_s_Used_Capacity</name>
         <label>Increment User&apos;s Used Capacity</label>
         <locationX>50</locationX>
-        <locationY>2543</locationY>
+        <locationY>2327</locationY>
         <assignmentItems>
             <assignToReference>Next_Up_Queue_User.GradientWorks__Used_Capacity__c</assignToReference>
             <operator>Add</operator>
@@ -175,7 +179,7 @@
         <name>Set_Error_Message</name>
         <label>Set Error Message</label>
         <locationX>402</locationX>
-        <locationY>1619</locationY>
+        <locationY>1403</locationY>
         <assignmentItems>
             <assignToReference>Error_Message</assignToReference>
             <operator>Assign</operator>
@@ -191,12 +195,12 @@
         <name>Set_Order</name>
         <label>Set Order</label>
         <locationX>424</locationX>
-        <locationY>755</locationY>
+        <locationY>539</locationY>
         <assignmentItems>
             <assignToReference>Order</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Query_Order</elementReference>
+                <elementReference>UpdateOpportunity.orderRecord</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -207,7 +211,7 @@
         <name>Set_Queue</name>
         <label>Set Queue</label>
         <locationX>424</locationX>
-        <locationY>1079</locationY>
+        <locationY>863</locationY>
         <assignmentItems>
             <assignToReference>Queue</assignToReference>
             <operator>Assign</operator>
@@ -220,38 +224,16 @@
         </connector>
     </assignments>
     <decisions>
-        <name>Check_Closed_Owner_Division</name>
-        <label>Check Closed Owner Division</label>
-        <locationX>935</locationX>
-        <locationY>323</locationY>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Closed_Owner_Division_is_Blank</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Closed_Owner_Division__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Update_Opportunity</targetReference>
-            </connector>
-            <label>Closed Owner Division is Blank</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Check_Order_Closed_Owner_Division</name>
         <label>Check Order Closed Owner Division</label>
         <locationX>677</locationX>
-        <locationY>647</locationY>
+        <locationY>431</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>If_Closed_Owner_Division_is_Filled</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Query_Order.Closed_Owner_Division__c</leftValueReference>
+                <leftValueReference>UpdateOpportunity.orderRecord.Closed_Owner_Division__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -267,7 +249,7 @@
         <name>Has_Eligible_User_to_Assign</name>
         <label>Has Eligible User to Assign?</label>
         <locationX>182</locationX>
-        <locationY>2219</locationY>
+        <locationY>2003</locationY>
         <defaultConnector>
             <targetReference>Log_No_Assignment_No_Users</targetReference>
         </defaultConnector>
@@ -292,7 +274,7 @@
         <name>Has_Reserve_Hours</name>
         <label>Has Reserve Hours?</label>
         <locationX>314</locationX>
-        <locationY>1511</locationY>
+        <locationY>1295</locationY>
         <defaultConnector>
             <targetReference>Set_Error_Message</targetReference>
         </defaultConnector>
@@ -317,7 +299,7 @@
         <name>Queue_Has_Capacity</name>
         <label>Queue Has Capacity?</label>
         <locationX>424</locationX>
-        <locationY>1187</locationY>
+        <locationY>971</locationY>
         <defaultConnector>
             <targetReference>Copy_1_of_Set_Error_Message</targetReference>
         </defaultConnector>
@@ -342,7 +324,7 @@
         <name>Team_Has_Available_Capacity</name>
         <label>Team Has Available Capacity?</label>
         <locationX>182</locationX>
-        <locationY>1403</locationY>
+        <locationY>1187</locationY>
         <defaultConnector>
             <targetReference>Has_Reserve_Hours</targetReference>
         </defaultConnector>
@@ -410,7 +392,7 @@ removed all custom errors</description>
         <name>Get_Queue_Post_Calculation</name>
         <label>Get Queue Post Calculation</label>
         <locationX>424</locationX>
-        <locationY>971</locationY>
+        <locationY>755</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Set_Queue</targetReference>
@@ -431,7 +413,7 @@ removed all custom errors</description>
         <name>Get_User_s_Team_Capacity</name>
         <label>Get User&apos;s Team Capacity</label>
         <locationX>182</locationX>
-        <locationY>1295</locationY>
+        <locationY>1079</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Team_Has_Available_Capacity</targetReference>
@@ -462,49 +444,11 @@ removed all custom errors</description>
         <object>PT_Order_Team_Capacity__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
-    <recordLookups>
-        <name>Query_Order</name>
-        <label>Query Order</label>
-        <locationX>677</locationX>
-        <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Check_Order_Closed_Owner_Division</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Order</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordUpdates>
-        <description>Update Opportunity in case of Closed Owner Division field being blank on Order.</description>
-        <name>Update_Opportunity</name>
-        <label>Update Opportunity</label>
-        <locationX>677</locationX>
-        <locationY>431</locationY>
-        <connector>
-            <targetReference>Query_Order</targetReference>
-        </connector>
-        <inputAssignments>
-            <field>ID__c</field>
-            <value>
-                <elementReference>$Record.OpportunityId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputReference>$Record.Opportunity</inputReference>
-    </recordUpdates>
     <recordUpdates>
         <name>Update_Queue</name>
         <label>Update Queue</label>
         <locationX>50</locationX>
-        <locationY>2327</locationY>
+        <locationY>2111</locationY>
         <connector>
             <targetReference>Assign_Order_to_User</targetReference>
         </connector>
@@ -514,17 +458,17 @@ removed all custom errors</description>
         <name>Update_Queue_User</name>
         <label>Update Queue User</label>
         <locationX>50</locationX>
-        <locationY>2651</locationY>
+        <locationY>2435</locationY>
         <connector>
             <targetReference>Intro_Email_Subflow_Call</targetReference>
         </connector>
         <inputReference>Next_Up_Queue_User</inputReference>
     </recordUpdates>
     <start>
-        <locationX>809</locationX>
+        <locationX>551</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Check_Closed_Owner_Division</targetReference>
+            <targetReference>UpdateOpportunity</targetReference>
         </connector>
         <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
         <filterLogic>and</filterLogic>
@@ -557,12 +501,12 @@ removed all custom errors</description>
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Draft</status>
     <subflows>
         <name>Get_User_for_Assignment</name>
         <label>Get User for Assignment</label>
         <locationX>182</locationX>
-        <locationY>2111</locationY>
+        <locationY>1895</locationY>
         <connector>
             <targetReference>Has_Eligible_User_to_Assign</targetReference>
         </connector>
@@ -593,7 +537,7 @@ removed all custom errors</description>
         <name>Intro_Email_Subflow_Call</name>
         <label>Intro Email Subflow Call</label>
         <locationX>50</locationX>
-        <locationY>2759</locationY>
+        <locationY>2543</locationY>
         <flowName>SubFlow_PT_SingleOrder_Intro_Email</flowName>
         <inputAssignments>
             <name>OrderRec</name>
@@ -607,7 +551,7 @@ removed all custom errors</description>
         <name>Refresh_Rep_Capacities_for_Week_of_Order</name>
         <label>Refresh Rep Capacities for Week of Order Start</label>
         <locationX>424</locationX>
-        <locationY>863</locationY>
+        <locationY>647</locationY>
         <connector>
             <targetReference>Get_Queue_Post_Calculation</targetReference>
         </connector>
@@ -622,6 +566,23 @@ removed all custom errors</description>
             <assignToReference>Queue</assignToReference>
             <name>Queue</name>
         </outputAssignments>
+    </subflows>
+    <subflows>
+        <name>UpdateOpportunity</name>
+        <label>UpdateOpportunity</label>
+        <locationX>677</locationX>
+        <locationY>323</locationY>
+        <connector>
+            <targetReference>Check_Order_Closed_Owner_Division</targetReference>
+        </connector>
+        <flowName>OpportunityUpdate</flowName>
+        <inputAssignments>
+            <name>triggeringOrderRecord</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
     </subflows>
     <variables>
         <name>Available_Team_Capacity</name>

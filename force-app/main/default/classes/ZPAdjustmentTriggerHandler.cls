@@ -58,15 +58,21 @@ public without sharing class ZPAdjustmentTriggerHandler extends TriggerHandler {
 		// Building a map of Payer Pricing Plan Id to ZP Adjustments
 		Map<String, List<ZP_Adjustments__c>> map_PayerPricingPlanIdToZPAdjustments = new Map<String, List<ZP_Adjustments__c>>();
 
+		System.debug('list_newZPAs: ' + list_newZPAs);
+		System.debug('set_EligibleDiscountType: ' + set_EligibleDiscountType);
 		for (ZP_Adjustments__c objZPAdj : list_newZPAs) {
 			set_payerPricingPlanIDs.add(objZPAdj.Payer_Pricing_Plan_Id__c);
 		}
+
+		System.debug('set_payerPricingPlanIDs: ' + set_payerPricingPlanIDs);
 
 		for (ZP_Payer_Pricing_Plan__c objZPppp : [SELECT Id, Id__c, Payer_Id__c FROM ZP_Payer_Pricing_Plan__c WHERE Id__c IN :set_payerPricingPlanIDs]) {
 			map_ZPPayerPricingPlans.put(objZPppp.Id__c, objZPppp);
 			set_zpCompanyIDs.add(objZPppp.Payer_Id__c);
 		}
 
+		System.debug('set_zpCompanyIDs: ' + set_zpCompanyIDs);
+		System.debug('map_ZPPayerPricingPlans: ' + map_ZPPayerPricingPlans);
 		for (Account objAcct : [
 			SELECT
 				Id,
@@ -76,7 +82,7 @@ public without sharing class ZPAdjustmentTriggerHandler extends TriggerHandler {
 				(
 					SELECT Id, RecordType.Name, IsClosed, IsWon, Is_Invoiced__c, CloseDate, Payment_Invoice__c
 					FROM Opportunities
-					WHERE RecordTypeId = :RecordTypes.getRecordTypeIdFromDeveloperName('Opportunity', 'Company_Opportunity') AND Payment_Invoice__c = NULL
+					WHERE RecordTypeId = :OpportunityHelper.ACQUISITION_OPPTY_RT_ID AND Payment_Invoice__c = NULL
 				)
 			FROM Account
 			WHERE ZP_Company_ID__c IN :set_zpCompanyIDs
@@ -84,6 +90,7 @@ public without sharing class ZPAdjustmentTriggerHandler extends TriggerHandler {
 			map_ZPCompanyIdToAccount.put(objAcct.ZP_Company_ID__c, objAcct);
 		}
 
+		System.debug('map_ZPCompanyIdToAccount: ' + map_ZPCompanyIdToAccount);
 		// Query existing zp adjustments based on eligible discount types and build a map of payer pricing plan Id and zp adjustments
 		for (ZP_Adjustments__c objAdjustment : [
 			SELECT Id, Adjustment_Type__c, Percentage__c, Period_Start__c, Period_End__c, Payer_Pricing_Plan_Id__c
@@ -97,15 +104,21 @@ public without sharing class ZPAdjustmentTriggerHandler extends TriggerHandler {
 			map_PayerPricingPlanIdToZPAdjustments.get(objAdjustment.Payer_Pricing_Plan_Id__c).add(objAdjustment);
 		}
 
+		System.debug('map_PayerPricingPlanIdToZPAdjustments: ' + map_PayerPricingPlanIdToZPAdjustments);
 		for (ZP_Adjustments__c objZPAdj : list_newZPAs) {
+
 			if (map_ZPPayerPricingPlans.containsKey(objZPAdj.Payer_Pricing_Plan_Id__c)) {
+				System.debug('objZPAdj.Payer_Pricing_Plan_Id__c: ' + objZPAdj.Payer_Pricing_Plan_Id__c);
 				ZP_Payer_Pricing_Plan__c objZPPPP = map_ZPPayerPricingPlans.get(objZPAdj.Payer_Pricing_Plan_Id__c);
 				String strZPCompanyId = objZPPPP.Payer_Id__c;
 
 				if (map_ZPCompanyIdToAccount.containsKey(strZPCompanyId)) {
+					System.debug('strZPCompanyId: ' + strZPCompanyId);
 					Account objcustomerAccount = map_ZPCompanyIdToAccount.get(strZPCompanyId);
 					List<Opportunity> list_NonInvoicedOpps = objcustomerAccount.Opportunities;
 
+					System.debug('objcustomerAccount: ' + objcustomerAccount);
+					System.debug('list_NonInvoicedOpps: ' + list_NonInvoicedOpps);
 					// check if map of payer pricing plan Id and zp adjustments contains key
 					if (map_PayerPricingPlanIdToZPAdjustments.containsKey(objZPAdj.Payer_Pricing_Plan_Id__c)) {
 						Decimal decPremiumTierDiscount = 0;
@@ -195,7 +208,7 @@ public without sharing class ZPAdjustmentTriggerHandler extends TriggerHandler {
 		for (Product_Discount__c objExistingPD : [SELECT Id, UniqueId__c, ZP_Adjustment_Id__c FROM Product_Discount__c WHERE UniqueID__c IN :set_proposedPDUniqueIDs]) {
 			map_ProductDiscountUniqueIDtoZPAdjustmentID.put(objExistingPD.UniqueID__c, objExistingPD.ZP_Adjustment_Id__c);
 		}
-
+		System.debug('map_ProductDiscountUniqueIDtoZPAdjustmentID: ' + map_ProductDiscountUniqueIDtoZPAdjustmentID);
 		for (Product_Discount__c objPD : map_ProposedPDsToUpsertByUniqueId.values()) {
 			if (!map_ProductDiscountUniqueIDtoZPAdjustmentID.containsKey(objPD.UniqueID__c)) {
 				map_ProductDiscountsToUpsert.put(objPD.UniqueID__c, objPD);
@@ -208,7 +221,7 @@ public without sharing class ZPAdjustmentTriggerHandler extends TriggerHandler {
 				}
 			}
 		}
-
+		System.debug('map_ProductDiscountsToUpsert: ' + map_ProductDiscountsToUpsert);
 		upsert map_ProductDiscountsToUpsert.values() UniqueID__c;
 
 		if (!map_AccountsToUpdate.isEmpty()) {

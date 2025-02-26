@@ -150,17 +150,8 @@ public without sharing class AccountTriggerHelper {
 		setDataCollections(map_Accounts.values(), null);
 
 		for (Account objAccount : map_Accounts.values()) {
-			//create entitlement records for all company accounts
-			Entitlement objEntitlement = getEntitlementInfo(objAccount);
-			if (objEntitlement != null) {
-				list_Entitlements.add(objEntitlement);
-			}
 			//update First Client Add date for reseller accounts
 			setFirstClientAddDateOnReseller(objAccount, null);
-		}
-
-		if (!list_Entitlements.isEmpty()) {
-			insert list_Entitlements;
 		}
 
 		if (!map_AccountsToUpdate.isEmpty()) {
@@ -168,7 +159,7 @@ public without sharing class AccountTriggerHelper {
 			update map_AccountsToUpdate.values();
 			AccountTriggerHelper.skipTrigger = false;
 		}
-
+		//OpportunityHelper.createUpdateAcquisitionOpportunity(map_Accounts.values(), null);
 		// reset static variables to free up heap storage - PLEASE PLACE THIS ALWAYS IN THE END
 		resetStaticVariables();
 	}
@@ -357,15 +348,24 @@ public without sharing class AccountTriggerHelper {
 			setFirstClientAddDateOnReseller(objAccount, objOldAccount);
 			checkOpportunitiesForRouting(objAccount, objOldAccount);
 
-			if ((objAccount.Tier__c != objOldAccount.Tier__c || 
-			objAccount.Additional_Services__c != objOldAccount.Additional_Services__c)) {
-				//list_AccountsToForAcquisition.add(objAccount);
+			if (
+				objAccount.Tier__c != objOldAccount.Tier__c ||
+				objAccount.Additional_Services__c != objOldAccount.Additional_Services__c ||
+				objAccount.Number_of_Active_Contractors__c != objOldAccount.Number_of_Active_Contractors__c ||
+				objAccount.Number_of_Active_Employees__c != objOldAccount.Number_of_Active_Employees__c ||
+				objAccount.NumberOfEmployees_Lead__c != objOldAccount.NumberOfEmployees_Lead__c ||
+				objAccount.NumberOfEmployees != objOldAccount.NumberOfEmployees
+			) {
+				list_AccountsToForAcquisition.add(objAccount);
 			}
 		}
 
+		if (set_UserIds != null) {
+			map_AllUsers = getUserMap(set_UserIds);
+		}
+
 		if (!list_AccountsToForAcquisition.isEmpty()) {
-			System.debug('list_AccountsToForAcquisition: ' + list_AccountsToForAcquisition);
-			//OpportunityHelper.createUpdateAcquisitionOpportunity(list_AccountsToForAcquisition);
+			//OpportunityHelper.createUpdateAcquisitionOpportunity(list_AccountsToForAcquisition, map_OldAccounts);
 		}
 
 		//update company and reseller opportunities
@@ -393,9 +393,6 @@ public without sharing class AccountTriggerHelper {
 			AccountRelatedTrackingTriggerHelper.skipTrigger = true;
 			upsert list_AccountRelatedtracking Unique_Account_Id__c;
 			AccountRelatedTrackingTriggerHelper.skipTrigger = false;
-		}
-		if (set_UserIds != null) {
-			map_AllUsers = getUserMap(set_UserIds);
 		}
 
 		//update child partner company accounts for reseller accounts
@@ -451,6 +448,7 @@ public without sharing class AccountTriggerHelper {
 
 		if (!map_OpptysToUpdate.isEmpty()) {
 			// do not skip opportunity trigger here as we have logic in opp trigger that neeeds to run
+			System.debug('map_OpptysToUpdate2222: ' + map_OpptysToUpdate);
 			update map_OpptysToUpdate.values();
 		}
 
@@ -783,10 +781,6 @@ public without sharing class AccountTriggerHelper {
 
 			if (objAccount.HI_Owner__c != null) {
 				set_UserIds.add(objAccount.HI_Owner__c);
-			}
-
-			if (objAccount.CSM_Owner__c != null) {
-				set_UserIds.add(objAccount.CSM_Owner__c);
 			}
 
 			if (objAccount.Id != null) {
@@ -1132,10 +1126,11 @@ public without sharing class AccountTriggerHelper {
 				}
 
 				if (map_Account.containsKey(objOpportunity.AccountId)) {
+					Boolean blnAcquisitionNewBusiness = (objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOpportunity.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 					//BSS-65
 					if (
 						objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID &&
-						objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+						(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 						String.isNotBlank(objAccount.Offers_Health_Insurance__c) &&
 						objAccount.Offers_Health_Insurance__c != objOldAccount.Offers_Health_Insurance__c
 					) {
@@ -1167,7 +1162,7 @@ public without sharing class AccountTriggerHelper {
 						}
 
 						if (
-							objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+							(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 							AccountUtil.PAYROLL_PROCESSING_STATES.contains(objAccount.Payroll_Processing_Status__c) &&
 							objOpportunity.Payroll_Processed_Date__c == null &&
 							objAccount.Payroll_Processing_Last_Modified__c != null
@@ -1177,7 +1172,7 @@ public without sharing class AccountTriggerHelper {
 						}
 
 						if (
-							objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+							(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 							objOpportunity.Previous_Payroll_Provider__c == null &&
 							objAccount.Previous_Payroll_Provider__c != null
 						) {
@@ -1186,17 +1181,21 @@ public without sharing class AccountTriggerHelper {
 						}
 
 						// sync company opportunity owner with account owner
-						if (objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && objOpportunity.OwnerId != objAccount.OwnerId && UserUtils.isAdminIntgUser(objOpportunity.OwnerId)) {
+						if (
+							(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
+							objOpportunity.OwnerId != objAccount.OwnerId &&
+							UserUtils.isAdminIntgUser(objOpportunity.OwnerId)
+						) {
 							objOpportunity.OwnerId = objAccount.OwnerId;
 							blnUpdateOpportunity = true;
 						}
 
-						if (objOpportunity.Sold_By__c == null && objOpportunity.Referred_By__c == null) {
-							Boolean blnOpportunityLeadSournceUpdate = setOpportunityLeadSource(objOpportunity, objAccount);
-							if (blnOpportunityLeadSournceUpdate) {
-								blnUpdateOpportunity = true;
-							}
-						}
+						// if (objOpportunity.Sold_By__c == null && objOpportunity.Referred_By__c == null) {
+						// 	Boolean blnOpportunityLeadSournceUpdate = setOpportunityLeadSource(objOpportunity, objAccount);
+						// 	if (blnOpportunityLeadSournceUpdate) {
+						// 		blnUpdateOpportunity = true;
+						// 	}
+						// }
 
 						if (OpportunityUtil.set_ArdiusRecordTypeIds.contains(objOpportunity.RecordTypeId) && objAccount?.Tier__c != objOldAccount?.Tier__c) {
 							Id idExpectedPriceBook = OpportunityUtil.getTierPricebookId(objOpportunity.RecordTypeId, objAccount?.Tier__c, true);
@@ -1209,36 +1208,51 @@ public without sharing class AccountTriggerHelper {
 						}
 					}
 
+					// if (
+					// 	objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID &&
+					// 	objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+					// 	objAccount.Additional_Services__c != objOpportunity.Additional_Opportunity_Services__c &&
+					// 	objOldAccount != null &&
+					// 	objAccount.Additional_Services__c != objOldAccount.Additional_Services__c &&
+					// 	objOpportunity.Payment_Invoice__c == null
+					// ) {
+					// 	// if upsell tier is Employer of Record then append the Employer of Record to additional services
+					// 	if (
+					// 		internationalPayrollInterestEligible(objAccount) &&
+					// 		String.isNotBlank(objOpportunity.Upsell_Tier__c) &&
+					// 		objOpportunity.Upsell_Tier__c.containsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD) &&
+					// 		(String.isBlank(strInternationalPayrollOnboardingTeam) ||
+					// 		(String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.equalsIgnoreCase('Sales')))
+					// 	) {
+					// 		if (String.isBlank(objOpportunity.Additional_Opportunity_Services__c)) {
+					// 			objOpportunity.Additional_Opportunity_Services__c = AccountUtil.EMPLOYER_OF_RECORD;
+					// 			blnUpdateOpportunity = true;
+					// 		} else if (!objOpportunity.Additional_Opportunity_Services__c.contains(AccountUtil.EMPLOYER_OF_RECORD)) {
+					// 			objOpportunity.Additional_Opportunity_Services__c += ';' + AccountUtil.EMPLOYER_OF_RECORD;
+					// 			blnUpdateOpportunity = true;
+					// 		}
+					// 	} else {
+					// 		Set<String> set_AdditionalServices = String.isBlank(objAccount.Additional_Services__c) ? new Set<String>() : new Set<String>(objAccount.Additional_Services__c.split(';'));
+					// 		set_AdditionalServices.remove(AccountUtil.EMPLOYER_OF_RECORD);
+					// 		set_AdditionalServices.remove(AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT);
+					// 		objOpportunity.Additional_Opportunity_Services__c = String.join(new List<String>(set_AdditionalServices), ';');
+					// 		blnUpdateOpportunity = true;
+					// 	}
+					// }
+
 					if (
 						objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID &&
-						objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+						objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
 						objAccount.Additional_Services__c != objOpportunity.Additional_Opportunity_Services__c &&
 						objOldAccount != null &&
 						objAccount.Additional_Services__c != objOldAccount.Additional_Services__c &&
 						objOpportunity.Payment_Invoice__c == null
 					) {
-						// if upsell tier is Employer of Record then append the Employer of Record to additional services
-						if (
-							internationalPayrollInterestEligible(objAccount) &&
-							String.isNotBlank(objOpportunity.Upsell_Tier__c) &&
-							objOpportunity.Upsell_Tier__c.containsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD) &&
-							(String.isBlank(strInternationalPayrollOnboardingTeam) ||
-							(String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.equalsIgnoreCase('Sales')))
-						) {
-							if (String.isBlank(objOpportunity.Additional_Opportunity_Services__c)) {
-								objOpportunity.Additional_Opportunity_Services__c = AccountUtil.EMPLOYER_OF_RECORD;
-								blnUpdateOpportunity = true;
-							} else if (!objOpportunity.Additional_Opportunity_Services__c.contains(AccountUtil.EMPLOYER_OF_RECORD)) {
-								objOpportunity.Additional_Opportunity_Services__c += ';' + AccountUtil.EMPLOYER_OF_RECORD;
-								blnUpdateOpportunity = true;
-							}
-						} else {
-							Set<String> set_AdditionalServices = String.isBlank(objAccount.Additional_Services__c) ? new Set<String>() : new Set<String>(objAccount.Additional_Services__c.split(';'));
-							set_AdditionalServices.remove(AccountUtil.EMPLOYER_OF_RECORD);
-							set_AdditionalServices.remove(AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT);
-							objOpportunity.Additional_Opportunity_Services__c = String.join(new List<String>(set_AdditionalServices), ';');
-							blnUpdateOpportunity = true;
-						}
+						Set<String> set_AdditionalServices = String.isBlank(objAccount.Additional_Services__c) ? new Set<String>() : new Set<String>(objAccount.Additional_Services__c.split(';'));
+						set_AdditionalServices.remove(AccountUtil.EMPLOYER_OF_RECORD);
+						set_AdditionalServices.remove(AccountUtil.INTERNATIONAL_CONTRACTOR_PAYMENT);
+						objOpportunity.Additional_Opportunity_Services__c = String.join(new List<String>(set_AdditionalServices), ';');
+						blnUpdateOpportunity = true;
 					}
 
 					//cross-sell and upsell opp criteria
@@ -1337,7 +1351,7 @@ public without sharing class AccountTriggerHelper {
 								!objOpportunity.Upsell_Tier__c.equalsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD)
 							) {
 								// update upsell tier to add Employer of Record
-								objOpportunity.Upsell_Tier__c = appendInternationalPayrollToUpsellTier(objOpportunity.Upsell_Tier__c, objOpportunity.Additional_Opportunity_Services__c);
+								// objOpportunity.Upsell_Tier__c = appendInternationalPayrollToUpsellTier(objOpportunity.Upsell_Tier__c, objOpportunity.Additional_Opportunity_Services__c);
 								Decimal decQuantity = objAccount.International_Employees__c != null && objAccount.International_Employees__c > 0 ? objAccount.International_Employees__c : 1;
 								objOpportunity.International_Employees__c = decQuantity;
 
@@ -1400,9 +1414,9 @@ public without sharing class AccountTriggerHelper {
 					Boolean blnOwnerUpdate = setClosedOwnerDetails(objOpportunity, objOldAccount, objAccount);
 					Boolean blnJoindDateUpdate = setOpportunityJoinDateInfo(objOpportunity, objOldAccount, objAccount);
 					Boolean blnEmployeeInfoUpdate = setOpportunityEmployeeInfo(objOpportunity, objOldAccount, objAccount);
-					Boolean blnPricingInfoUpdates = setOpportunityPricingInfo(objOpportunity, objOldAccount, objAccount);
+					// Boolean blnPricingInfoUpdates = setOpportunityPricingInfo(objOpportunity, objOldAccount, objAccount);
 
-					if (blnJoindDateUpdate || blnEmployeeInfoUpdate || blnPricingInfoUpdates || blnOwnerUpdate) {
+					if (blnJoindDateUpdate || blnEmployeeInfoUpdate || blnOwnerUpdate) {
 						blnUpdateOpportunity = true;
 					}
 
@@ -1486,7 +1500,13 @@ public without sharing class AccountTriggerHelper {
 	 */
 	private Boolean setClosedOwnerDetails(Opportunity objOpportunity, Account objOldAccount, Account objAccount) {
 		if (objOldAccount != null && objOldAccount.OwnerId != objAccount.OwnerId && objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID) {
-			if (objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && !objOpportunity.IsClosed && !objOpportunity.False_Sold_By__c) {
+			if (
+				(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+				(objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+				objOpportunity.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)) &&
+				!objOpportunity.IsClosed &&
+				!objOpportunity.False_Sold_By__c
+			) {
 				objOpportunity.OwnerId = objAccount.OwnerId;
 				User objOwner = map_AllUsers.containsKey(objAccount.OwnerId) ? map_AllUsers.get(objAccount.OwnerId) : null;
 				if (objOwner != null) {
@@ -1525,6 +1545,7 @@ public without sharing class AccountTriggerHelper {
 				if (objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOpportunity.Type == 'New Business') {
 					objOpportunity.CloseDate = objAccount.Joined_Date_Panda__c;
 				}
+				//objOpportunity.CloseDate = objAccount.Joined_Date_Panda__c;
 				return true;
 			}
 			if (objAccount.Joined_Date_Panda__c != null && objOpportunity.RecordType.Name.contains('Benefit') && objOpportunity.StageName == 'Pending PR') {
@@ -1547,7 +1568,12 @@ public without sharing class AccountTriggerHelper {
 			(objAccount.Joined_Date_Panda__c != null &&
 			objOldAccount.Joined_Date_Panda__c == null)
 		) {
-			if (objOpportunity.RecordTypeId != OpportunityUtil.COMPANY_OPPTY_RT_ID && objOpportunity.RecordTypeId != OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID && !objOpportunity.IsClosed) {
+			if (
+				objOpportunity.RecordTypeId != OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+				objOpportunity.RecordTypeId != OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID &&
+				objOpportunity.RecordTypeId != OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+				!objOpportunity.IsClosed
+			) {
 				objOpportunity.NumberOfEmployees__c = objAccount.Number_Of_Active_Employees__c;
 				objOpportunity.Number_of_Contractors__c = objAccount.Number_of_Active_Contractors__c;
 				return true;
@@ -1565,7 +1591,8 @@ public without sharing class AccountTriggerHelper {
 			// Set the employee and contract count for company opportunity
 			if (
 				(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
-				objOpportunity.RecordTypeId == OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID) &&
+				objOpportunity.RecordTypeId == OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID ||
+				objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) &&
 				objOpportunity.Payment_Invoice__c == null &&
 				objOpportunity.StageName != OpportunityUtil.CLOSED_LOST_STAGE &&
 				objOpportunity.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE &&
@@ -1581,22 +1608,22 @@ public without sharing class AccountTriggerHelper {
 					((objAccount.International_Employees__c != null && objAccount.International_Employees__c != 0) &&
 					objOpportunity.International_Employees__c != objAccount.International_Employees__c))
 				) {
-					objOpportunity.NumberOfEmployees__c = (objAccount.Number_Of_Active_Employees__c != null &&
-						objAccount.Number_Of_Active_Employees__c != 0)
-						? objAccount.Number_Of_Active_Employees__c
-						: 0;
-					objOpportunity.Number_of_Contractors__c = objAccount.Number_of_Active_Contractors__c != null ? objAccount.Number_of_Active_Contractors__c : 0;
-					objOpportunity.International_Contractors__c = objAccount.International_Contractors__c != null ? objAccount.International_Contractors__c : 0;
-					objOpportunity.International_Employees__c = objAccount.International_Employees__c != null ? objAccount.International_Employees__c : 0;
+					// objOpportunity.NumberOfEmployees__c = (objAccount.Number_Of_Active_Employees__c != null &&
+					// 	objAccount.Number_Of_Active_Employees__c != 0)
+					// 	? objAccount.Number_Of_Active_Employees__c
+					// 	: 0;
+					// objOpportunity.Number_of_Contractors__c = objAccount.Number_of_Active_Contractors__c != null ? objAccount.Number_of_Active_Contractors__c : 0;
+					// objOpportunity.International_Contractors__c = objAccount.International_Contractors__c != null ? objAccount.International_Contractors__c : 0;
+					// objOpportunity.International_Employees__c = objAccount.International_Employees__c != null ? objAccount.International_Employees__c : 0;
 
-					if (objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
-						if (String.isNotBlank(objAccount.Product_Interest__c) && objAccount.Product_Interest__c.containsIgnoreCase(AccountUtil.PROD_INTEREST_INTERNATIONAL_PAYROLL)) {
-							objOpportunity.International_Employees__c = objAccount.International_Employees__c != null &&
-								objAccount.International_Employees__c > 0
-								? objAccount.International_Employees__c
-								: 1;
-						}
-					}
+					// if (objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+					// 	if (String.isNotBlank(objAccount.Product_Interest__c) && objAccount.Product_Interest__c.containsIgnoreCase(AccountUtil.PROD_INTEREST_INTERNATIONAL_PAYROLL)) {
+					// 		objOpportunity.International_Employees__c = objAccount.International_Employees__c != null &&
+					// 			objAccount.International_Employees__c > 0
+					// 			? objAccount.International_Employees__c
+					// 			: 1;
+					// 	}
+					// }
 
 					if (objOpportunity.RecordTypeId == OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID) {
 						// Get accountant discount from sold by reseller account
@@ -1656,48 +1683,48 @@ public without sharing class AccountTriggerHelper {
 	}
 
 	/**** set opportunity pricing info if pricing changes ****/
-	private Boolean setOpportunityPricingInfo(Opportunity objOpportunity, Account objOldAccount, Account objAccount) {
-		if (map_ActivePriceBook == null || map_ActivePriceBook.isEmpty()) {
-			map_ActivePriceBook = PricebookQueryHelper.getActivePricebooksMap();
-		}
-		if (
-			objAccount.Pricing__c != null &&
-			objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
-			map_ActivePriceBook.containsKey(objAccount.Pricing__c) &&
-			objOpportunity.Payment_Invoice__c == null &&
-			objOpportunity.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE
-		) {
-			if (
-				(objAccount.Pricing__c != objOldAccount.Pricing__c || objAccount.Joined_Date_Panda__c != objOldAccount.Joined_Date_Panda__c) &&
-				objOpportunity.Pricebook2Id != map_ActivePriceBook.get(objAccount.Pricing__c).Id
-			) {
-				objOpportunity.Pricebook2Id = map_ActivePriceBook.get(objAccount.Pricing__c).Id;
-				if (objOpportunity.OpportunityLineItems != null) {
-					for (OpportunityLineItem objOppLineItem : objOpportunity.OpportunityLineItems) {
-						list_OpportunityLineItemsForDelete.add(objOppLineItem);
-					}
-				}
-				return true;
-			}
-		}
-		return false;
-	}
+	// private Boolean setOpportunityPricingInfo(Opportunity objOpportunity, Account objOldAccount, Account objAccount) {
+	// 	if (map_ActivePriceBook == null || map_ActivePriceBook.isEmpty()) {
+	// 		map_ActivePriceBook = PricebookQueryHelper.getActivePricebooksMap();
+	// 	}
+	// 	if (
+	// 		objAccount.Pricing__c != null &&
+	// 		objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+	// 		map_ActivePriceBook.containsKey(objAccount.Pricing__c) &&
+	// 		objOpportunity.Payment_Invoice__c == null &&
+	// 		objOpportunity.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE
+	// 	) {
+	// 		if (
+	// 			(objAccount.Pricing__c != objOldAccount.Pricing__c || objAccount.Joined_Date_Panda__c != objOldAccount.Joined_Date_Panda__c) &&
+	// 			objOpportunity.Pricebook2Id != map_ActivePriceBook.get(objAccount.Pricing__c).Id
+	// 		) {
+	// 			objOpportunity.Pricebook2Id = map_ActivePriceBook.get(objAccount.Pricing__c).Id;
+	// 			if (objOpportunity.OpportunityLineItems != null) {
+	// 				for (OpportunityLineItem objOppLineItem : objOpportunity.OpportunityLineItems) {
+	// 					list_OpportunityLineItemsForDelete.add(objOppLineItem);
+	// 				}
+	// 			}
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
 	/**** Set company opportunity information for update ****/
-	private Boolean setOpportunityLeadSource(Opportunity objOpportunity, Account objAccount) {
-		//If account lead source is bencch set the opportunity lead source to bench
-		if (
-			!objOpportunity.IsClosed &&
-			objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
-			!String.isBlank(objAccount.Lead_Source__c) &&
-			objOpportunity.LeadSource != objAccount.Lead_Source__c &&
-			objAccount.Lead_Source__c.containsIgnoreCase('bench')
-		) {
-			objOpportunity.LeadSource = objAccount.Lead_Source__c;
-			return true;
-		}
-		return false;
-	}
+	// private Boolean setOpportunityLeadSource(Opportunity objOpportunity, Account objAccount) {
+	// 	//If account lead source is bencch set the opportunity lead source to bench
+	// 	if (
+	// 		!objOpportunity.IsClosed &&
+	// 		(objOpportunity.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || objOpportunity.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID ) &&
+	// 		!String.isBlank(objAccount.Lead_Source__c) &&
+	// 		objOpportunity.LeadSource != objAccount.Lead_Source__c &&
+	// 		objAccount.Lead_Source__c.containsIgnoreCase('bench')
+	// 	) {
+	// 		objOpportunity.LeadSource = objAccount.Lead_Source__c;
+	// 		return true;
+	// 	}
+	// 	return false;
+	// }
 
 	/**** Sets default values when creating a new Account ****/
 	private void setDefaultsOnCreate(Account objAccount) {
@@ -2226,24 +2253,6 @@ public without sharing class AccountTriggerHelper {
 		}
 	}
 
-	/**** Set EntitlementInformation for Company account ****/
-	private Entitlement getEntitlementInfo(Account objAccount) {
-		Entitlement objEntitlement = new Entitlement();
-		if (objAccount.RecordTypeId != AccountUtil.COMPANY_ACCOUNT_RT_ID) {
-			return null;
-		}
-
-		if (String.isNotBlank(objConfigSettings?.AccountEntitlementId__c)) {
-			objEntitlement.AccountId = objAccount.Id;
-			objEntitlement.Name = 'MF Submission-' + objAccount.Name.left(49);
-			objEntitlement.SlaProcessId = objConfigSettings.AccountEntitlementId__c;
-			objEntitlement.StartDate = System.today();
-			objEntitlement.EndDate = Date.newInstance(2099, 1, 1);
-			objEntitlement.Type = 'MF Submission';
-		}
-		return objEntitlement;
-	}
-
 	/**** get Tax Audit Case information ****/
 	private Case getTaxAuditCaseInformation(String strRequestType, Account objOldAccount, Account objAccount) {
 		if (objAccount.Taxable_as_Scorp__c != objOldAccount.Taxable_as_Scorp__c && objAccount.Has_Benefits__c) {
@@ -2366,8 +2375,7 @@ public without sharing class AccountTriggerHelper {
 					Account objAcc = map_AllAccountMap.get(objAccount.Id);
 
 					for (Opportunity objOppty : objAcc.Opportunities) {
-						System.debug('objOppty.False_Sold_By__c:' + objOppty.False_Sold_By__c);
-						if (objOppty.False_Sold_By__c == true && objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+						if (objOppty.False_Sold_By__c == true && (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID)) {
 							return;
 						}
 					}
@@ -2446,7 +2454,6 @@ public without sharing class AccountTriggerHelper {
 		Boolean blnAnchorPayTrigger;
 		Boolean blnOverallStatusTrigger;
 		Boolean doRouting = false;
-		String strCSMOwnerRole = objAccount.CSM_Owner__c != null ? map_Users?.get(objAccount.CSM_Owner__c)?.UserRole?.Name : null;
 		//If CSM owner is not set and Tier is not blank check for CSM routing triggers
 		if (objAccount.CSM_Owner__c == null && objOldAccount.Tier__c != null && objAccount.Tier__c != null) {
 			//Set if Tier is changing to Premium and Anchor pay date is filled and Overall status is not suspended
@@ -2470,11 +2477,9 @@ public without sharing class AccountTriggerHelper {
 			//If any of the triggers are true, return true
 			doRouting = blnTierTrigger || blnAnchorPayTrigger || blnOverallStatusTrigger;
 		}
-		//If Tier is changing to Premium and CSM owner is not set or not a dedicated CSM, return true
+		//If Tier is changing to Premium
 		if (objAccount.Tier__c != objOldAccount.Tier__c && objAccount.Tier__c.containsIgnoreCase(AccountUtil.PREMIUM_TIER)) {
-			if (strCSMOwnerRole == null || !strCSMOwnerRole.containsIgnoreCase(AccountUtil.DEDICATED_CSM_ROLE)) {
-				doRouting = true;
-			}
+			doRouting = true;
 		}
 		return doRouting;
 	}
@@ -3556,20 +3561,7 @@ public without sharing class AccountTriggerHelper {
 
 				for (Opportunity objOppty : objAccount.Opportunities) {
 					// cross-sell and upsell is opened for the sales
-					if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Sales')) {
-						// if open non-invoiced company opportunity is found, append International payoll to existing company opportunity
-						if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && objOppty.Payment_Invoice__c == null) {
-							objCompanyOppty = objOppty;
-						} else if (
-							objOppty.RecordTypeId == OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID &&
-							objOppty.StageName != OpportunityUtil.CLOSED_WON_STAGE &&
-							objOppty.StageName != OpportunityUtil.CLOSED_LOST_STAGE &&
-							objOppty.Payment_Invoice__c == null
-						) {
-							// if open non-invoiced cross-sell and upsell opportunity is found, append Employer of Record to existing cross-sell and upsell opportunity
-							objTierUpsellOpp = objOppty;
-						}
-					} else if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Customer Success')) {
+					if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Customer Success')) {
 						// cross-sell and upsell is opened for the Customer Success
 						if (
 							objOppty.RecordTypeId == OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID &&
@@ -3588,119 +3580,7 @@ public without sharing class AccountTriggerHelper {
 				// Set quantity based on Account International Employees. If account value is null, set default value as 1
 				Decimal decQuantity = objAccount.International_Employees__c != null && objAccount.International_Employees__c > 0 ? objAccount.International_Employees__c : 1;
 				// cross-sell and upsell is opened for the sales
-				if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Sales')) {
-					if (objCompanyOppty != null) {
-						String strOpptyAdditionalService = objCompanyOppty.Additional_Opportunity_Services__c;
-						Boolean blnClosedLost = false;
-						if (objCompanyOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE) {
-							// opportunity stage is closed lost  - reopen the opportunity and refresh merchandising data
-							objCompanyOppty.StageName = OpportunityUtil.MQL_STAGE;
-							objCompanyOppty.Stage_Detail__c = null;
-							objCompanyOppty.Stage_Detail_2__c = null;
-							objCompanyOppty.NumberOfEmployees__c = objAccount.Number_of_Active_Employees__c;
-							objCompanyOppty.Number_of_Contractors__c = objAccount.Number_of_Active_Contractors__c;
-							objCompanyOppty.International_Contractors__c = objAccount.International_Contractors__c;
-
-							objCompanyOppty.Additional_Opportunity_Services__c = objAccount.Additional_Services__c;
-							objCompanyOppty.Sold_By__c = objAccount.Sold_By__c;
-							//  re-trigger discount calculation
-							set_DiscountAccountIds.add(objAccount.Id);
-							sendCustomNotification(
-								objCompanyOppty.Name + ' was reopened from Closed Lost',
-								'Opportunity has been updated because because there is Employer of Record interest',
-								objCompanyOppty.OwnerId,
-								objInternationalPayrollNotify.Id,
-								objCompanyOppty.Id
-							);
-							blnClosedLost = true;
-						}
-
-						objCompanyOppty.International_Employees__c = decQuantity;
-						// Append Employer of Record to Additional Opportunity Services
-						if (String.isBlank(objCompanyOppty.Additional_Opportunity_Services__c)) {
-							objCompanyOppty.Additional_Opportunity_Services__c = AccountUtil.EMPLOYER_OF_RECORD;
-						} else if (!objCompanyOppty.Additional_Opportunity_Services__c.contains(AccountUtil.EMPLOYER_OF_RECORD)) {
-							objCompanyOppty.Additional_Opportunity_Services__c += ';' + AccountUtil.EMPLOYER_OF_RECORD;
-						}
-
-						// send notification when including Employer of Record to open payroll opportunity
-						if (!blnClosedLost && (String.isBlank(strOpptyAdditionalService) || !strOpptyAdditionalService.containsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD))) {
-							sendCustomNotification(
-								objCompanyOppty.Name + ' was updated to include Employer of Record',
-								'Opportunity has been updated because because there is Employer of Record interest',
-								objCompanyOppty.OwnerId,
-								objInternationalPayrollNotify.Id,
-								objCompanyOppty.Id
-							);
-						}
-						map_OpptysToUpdate.put(objCompanyOppty.Id, objCompanyOppty);
-					} else if (objTierUpsellOpp != null) {
-						// if open cross-sell and upsell opportunity exists, calculate new MRR and update the amount
-						// update cross-sell and upsell only if upsell tier does not contain Employer of Record
-						if (String.isNotBlank(objTierUpsellOpp.Upsell_Tier__c) && !objTierUpsellOpp.Upsell_Tier__c.containsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD)) {
-							objTierUpsellOpp.Additional_Opportunity_Services__c = objAccount.Additional_Services__c;
-							objTierUpsellOpp.Upsell_Tier__c = appendInternationalPayrollToUpsellTier(objTierUpsellOpp.Upsell_Tier__c, objAccount.Additional_Services__c);
-
-							objTierUpsellOpp.International_Employees__c = decQuantity;
-							// Append Employer of Record to Additional Opportunity Services
-							if (String.isBlank(objTierUpsellOpp.Additional_Opportunity_Services__c)) {
-								objTierUpsellOpp.Additional_Opportunity_Services__c = AccountUtil.EMPLOYER_OF_RECORD;
-							} else if (!objTierUpsellOpp.Additional_Opportunity_Services__c.contains(AccountUtil.EMPLOYER_OF_RECORD)) {
-								objTierUpsellOpp.Additional_Opportunity_Services__c += ';' + AccountUtil.EMPLOYER_OF_RECORD;
-							}
-
-							// Get Accountant Discount if account is reward eligible
-							Decimal decAccountantDiscount = 0;
-
-							if (objAccount.Sold_By__c != null && objAccount.Reward_Eligible__c && map_AllAccountMap.containsKey(objAccount.Sold_By__c)) {
-								decAccountantDiscount = map_AllAccountMap.get(objAccount.Sold_By__c).Discount__c;
-							}
-
-							// if upsell tier is Employer of Record then use upsell tier for the amount calculation or else use Additional_Opportunity_Services__c
-							String strAdditionalServicesToCalculateAmount = '';
-							if (objTierUpsellOpp.Upsell_Tier__c.equalsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD)) {
-								strAdditionalServicesToCalculateAmount = AccountUtil.EMPLOYER_OF_RECORD;
-							} else {
-								strAdditionalServicesToCalculateAmount = objTierUpsellOpp.Additional_Opportunity_Services__c;
-							}
-							// Calculate New MRR
-							Decimal decSalesPrice = OpportunityUtil.calculateMRROppNew(
-								objTierUpsellOpp.NumberOfEmployees__c,
-								objTierUpsellOpp.Number_of_Contractors__c,
-								objTierUpsellOpp.International_Employees__c,
-								objTierUpsellOpp.International_Contractors__c,
-								strAdditionalServicesToCalculateAmount,
-								decAccountantDiscount,
-								objAccount.Premium_Tier_Discount__c,
-								objTierUpsellOpp.Pricebook2?.Name
-							);
-							// Re-calculate Amount based on new MRR and add to map of opportunities to update
-							objTierUpsellOpp.Amount = decSalesPrice - (objTierUpsellOpp.MRR__c != null ? objTierUpsellOpp.MRR__c : 0);
-
-							sendCustomNotification(
-								objTierUpsellOpp.Name + ' was updated to include Employer of Record',
-								'Opportunity has been updated because because there is Employer of Record interest',
-								objTierUpsellOpp.OwnerId,
-								objInternationalPayrollNotify.Id,
-								objTierUpsellOpp.Id
-							);
-
-							map_OpptysToUpdate.put(objTierUpsellOpp.Id, objTierUpsellOpp);
-						}
-					} else {
-						// if no eligible company opp/cross-sell and upsell opp is found, create a new cross-sell and upsell opportunity
-						list_OpptysToInsert.add(
-							new Opportunity(
-								AccountId = objAccount.Id,
-								RecordTypeId = OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID,
-								Upsell_Tier__c = appendInternationalPayrollToUpsellTier(objAccount.Tier__c, objAccount.Additional_Services__c),
-								Current_Tier__c = objAccount.Tier__c,
-								StageName = OpportunityUtil.QUALIFIED_STAGE,
-								Name = objAccount.Name + TIER_UPSELL_OPP_SUFFIX
-							)
-						);
-					}
-				} else if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Customer Success') && (blnNewEORAdded || blnNewCountryAdded)) {
+				if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Customer Success') && (blnNewEORAdded || blnNewCountryAdded)) {
 					// cross-sell and upsell is opened for the Customer Success
 					if (objIntlPayrollTierUpsellOpp == null) {
 						//if there is no existing Open cross-sell and upsell Opportunity with Upsell Tier = Employer of Record
@@ -3737,21 +3617,21 @@ public without sharing class AccountTriggerHelper {
 	 * @Param       : Additional Services from Account or Opportunity
 	 * @Return      : Returns new upsell tier with priority support and Employer of Record
 	 **/
-	public static String appendInternationalPayrollToUpsellTier(String strUpsellTier, String strAdditionalServices) {
-		String strNewUpsellTier = strUpsellTier;
-		if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Sales')) {
-			strNewUpsellTier = strUpsellTier + ' and ' + AccountUtil.EMPLOYER_OF_RECORD;
-			if (
-				strUpsellTier == AccountUtil.PLUS_TIER &&
-				String.isNotBlank(strAdditionalServices) &&
-				strAdditionalServices.contains(AccountUtil.ADD_SERVICES_PRIORITY_SUPPORT) &&
-				!strNewUpsellTier.contains(AccountUtil.PRIORITY_SUPPORT)
-			) {
-				strNewUpsellTier = strUpsellTier + ' with ' + AccountUtil.PRIORITY_SUPPORT + ' and ' + AccountUtil.EMPLOYER_OF_RECORD;
-			}
-		}
-		return strNewUpsellTier;
-	}
+	// public static String appendInternationalPayrollToUpsellTier(String strUpsellTier, String strAdditionalServices) {
+	// 	String strNewUpsellTier = strUpsellTier;
+	// 	if (String.isNotBlank(strInternationalPayrollOnboardingTeam) && strInternationalPayrollOnboardingTeam.contains('Sales')) {
+	// 		strNewUpsellTier = strUpsellTier + ' and ' + AccountUtil.EMPLOYER_OF_RECORD;
+	// 		if (
+	// 			strUpsellTier == AccountUtil.PLUS_TIER &&
+	// 			String.isNotBlank(strAdditionalServices) &&
+	// 			strAdditionalServices.contains(AccountUtil.ADD_SERVICES_PRIORITY_SUPPORT) &&
+	// 			!strNewUpsellTier.contains(AccountUtil.PRIORITY_SUPPORT)
+	// 		) {
+	// 			strNewUpsellTier = strUpsellTier + ' with ' + AccountUtil.PRIORITY_SUPPORT + ' and ' + AccountUtil.EMPLOYER_OF_RECORD;
+	// 		}
+	// 	}
+	// 	return strNewUpsellTier;
+	// }
 
 	/**
 	 * @Description : Deciding whether Product Interest and Countries field are populated and checks with validity of selected countries
@@ -3904,7 +3784,6 @@ public without sharing class AccountTriggerHelper {
 		// filing state changing
 		Boolean blnFilingStateChange = objOldAccount != null && objNewAccount.BillingStateCode != objOldAccount.BillingStateCode;
 		Boolean blnBEDChange = objOldAccount != null && objNewAccount.Benefits_Effective_Date__c != objOldAccount.Benefits_Effective_Date__c;
-		Boolean blnOverallStatusChange = objOldAccount != null && objNewAccount.ZP_Company_Overall_Status__c != objOldAccount.ZP_Company_Overall_Status__c;
 		Boolean blnExclusionChange = objOldAccount != null && objNewAccount.IsExcludedFromRealign != objOldAccount.IsExcludedFromRealign;
 		// Setting HI Owner based on Aligned Rep
 		if (
@@ -3914,7 +3793,6 @@ public without sharing class AccountTriggerHelper {
 			blnEmployeeDecrease ||
 			blnFilingStateChange ||
 			blnDeductionsChange ||
-			blnOverallStatusChange ||
 			blnExclusionChange
 		) {
 			Boolean blnActiveHIOwner = false;
@@ -3953,12 +3831,12 @@ public without sharing class AccountTriggerHelper {
 			// If HI Owner is inactive, kick off routing
 			if (blnActiveHIOwner) {
 				// If open HI found, do not route
-				if (!blnOpenHIOpp) {
+				if (blnOpenHIOpp) {
 					return;
 				}
 
 				String strType;
-				if (objNewAccount.Benefits_Effective_Date__c != null && objNewAccount.Medical_Deductions__c) {
+				if (objNewAccount.Benefits_Effective_Date__c != null || objNewAccount.Medical_Deductions__c) {
 					strType = 'Broker';
 				} else if (objNewAccount.Benefits_Effective_Date__c == null && !objNewAccount.Medical_Deductions__c) {
 					strType = 'New Plan';
@@ -4267,7 +4145,11 @@ public without sharing class AccountTriggerHelper {
 							//check for the open opportunity
 							for (Opportunity objOppty : map_AllAccountMap.get(objAccount.Id).Opportunities) {
 								// if open non-invoiced company opportunity is found, don't create the product upsell
-								if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && objOppty.Payment_Invoice__c == null) {
+								if (
+									(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+									(objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+									objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS)) && objOppty.Payment_Invoice__c == null
+								) {
 									blnOpenOpptyFound = true;
 									break;
 								} else if (

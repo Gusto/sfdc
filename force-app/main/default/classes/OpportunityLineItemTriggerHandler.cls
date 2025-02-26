@@ -40,6 +40,11 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 	 * @author David Schach
 	 */
 	public override void beforeUpdate() {
+		//&& !UserUtils.isAdminUser(UserInfo.getUserId())
+		if (!UserUtils.isIntgUser(UserInfo.getUserId()) && !UserUtils.isAdminUser(UserInfo.getUserId())) {
+			System.debug('OpportunityLineItemTriggerHandler.beforeUpdate: User is not an Integration User:');
+			validateAcquisitionOpportunityProducts(list_newRecords, map_oldRecordsMap);
+		}
 		applyProductDiscounts(list_newRecords);
 		validateProductDiscounts(this.list_newRecords, this.map_oldRecordsMap);
 	}
@@ -50,7 +55,73 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 	 */
 	public override void beforeDelete() {
 		handleGrowthExpansionDeletion(list_oldRecords);
-		System.debug('UserInfo.getSessionId(): ' + UserInfo.getSessionId());	
+		//
+		if (!UserUtils.isIntgUser(UserInfo.getUserId()) && !UserUtils.isAdminUser(UserInfo.getUserId()) ) {
+			System.debug('OpportunityLineItemTriggerHandler.beforeUpdate: User is not an Integration User:');
+			preventAcquisitionOpportunityProdToDelete(list_oldRecords);
+		}
+	}
+
+	public void preventAcquisitionOpportunityProdToDelete(List<OpportunityLineItem> list_oldRecords) {
+		// Variables declaration
+		Set<Id> set_OpptyIds = new Set<Id>();
+		Map<Id, Opportunity> map_Opportunities = new Map<Id, Opportunity>();
+
+		// Collect opportunity Ids from Trigger.Old context
+		for (OpportunityLineItem objOLI : list_oldRecords) {
+			if (objOLI.OpportunityId != null) {
+				set_OpptyIds.add(objOLI.OpportunityId);
+			}
+		}
+
+		// Query opportunity from set of opportunity Ids
+		if (!set_OpptyIds.isEmpty()) {
+			// Build a map of Opportunity Id and Opportunity Id
+			for (Opportunity objOppty : [SELECT Id, RecordTypeId FROM Opportunity WHERE Id IN :set_OpptyIds]) {
+				map_Opportunities.put(objOppty.Id, objOppty);
+			}
+
+			for (OpportunityLineItem objOLI : list_oldRecords) {
+				// Get the opportunity from the map
+				if (map_Opportunities.containsKey(objOLI.OpportunityId)) {
+					Opportunity objOppty = map_Opportunities.get(objOLI.OpportunityId);
+					if (objOppty.RecordTypeId == OpportunityHelper.ACQUISITION_OPPTY_RT_ID) {
+						objOLI.addError('Products on a New Business Acquisition Opportunities cannot be deleted.');
+					}
+				}
+			}
+		}
+	}
+
+	public void validateAcquisitionOpportunityProducts(List<OpportunityLineItem> list_newOLIS, Map<Id, OpportunityLineItem> map_OldOLIS) {
+		// Variables declaration
+		Set<Id> set_OpptyIds = new Set<Id>();
+		Map<Id, Opportunity> map_Opportunities = new Map<Id, Opportunity>();
+
+		// Collect opportunity Ids from Trigger.Old context
+		for (OpportunityLineItem objOLI : list_newOLIS) {
+			if (objOLI.OpportunityId != null) {
+				set_OpptyIds.add(objOLI.OpportunityId);
+			}
+		}
+
+		// Query opportunity from set of opportunity Ids
+		if (!set_OpptyIds.isEmpty()) {
+			// Build a map of Opportunity Id and Opportunity Id
+			for (Opportunity objOppty : [SELECT Id, RecordTypeId FROM Opportunity WHERE Id IN :set_OpptyIds]) {
+				map_Opportunities.put(objOppty.Id, objOppty);
+			}
+
+			for (OpportunityLineItem objOLI : list_newOLIS) {
+				// Get the opportunity from the map
+				if (map_Opportunities.containsKey(objOLI.OpportunityId)) {
+					Opportunity objOppty = map_Opportunities.get(objOLI.OpportunityId);
+					if (objOppty.RecordTypeId == OpportunityHelper.ACQUISITION_OPPTY_RT_ID && objOLI.Quantity  != map_OldOLIS.get(objOLI.Id).Quantity) {
+						objOLI.addError('Products on a New Business Acquisition Opportunities cannot be edited.');
+					}
+				}
+			}
+		}
 	}
 
 	/* @description Prevents deletion of Growth/Expansion OpportunityLineItems if there is only one OLI on the Opportunity
@@ -109,11 +180,11 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 			set_opportunityIDs.add(objOLI.OpportunityId);
 			set_pbeIDs.add(objOLI.PricebookEntryId);
 		}
-
+		System.debug('set_pbeIDs:' + set_pbeIDs);
 		for (PricebookEntry objPBE : [SELECT Id, Product2.ExternalId, Pricebook2.Product_Tier__c, Product2.Name, Product2.Discounts_Available__c FROM PricebookEntry WHERE Id IN :set_pbeIDs]) {
 			map_PricebookEntryToProductPricebook.put(objPBE.Id, objPBE);
 		}
-
+		System.debug('map_PricebookEntryToProductPricebook:' + map_PricebookEntryToProductPricebook);
 		Map<Id, Opportunity> map_Opportunities = new Map<Id, Opportunity>(
 			[
 				SELECT Id, IsClosed, IsWon, CloseDate, Account.Tier__c, Payment_Invoice__c, Joined_Date_Panda__c, Discount__c, Calculation_Fee_Discount__c, RecordTypeId
@@ -122,10 +193,11 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 			]
 		);
 
+		System.debug('map_Opportunities:' + map_Opportunities);
 		for (Product_Discount__c objPD : [
 			SELECT Id, ZP_Product_Id__c, Discount_Amount__c, Discount_Percent__c, Discount_Type__c, Date_End__c, Date_Start__c, Opportunity__c, Active__c, Opportunity__r.RecordTypeId
 			FROM Product_Discount__c
-			WHERE Opportunity__c IN :set_opportunityIDs AND Opportunity__r.RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID
+			WHERE Opportunity__c IN :set_opportunityIDs AND Opportunity__r.RecordTypeId = :OpportunityHelper.ACQUISITION_OPPTY_RT_ID
 		]) {
 			List<Product_Discount__c> list_existingPDs = map_PDsByOppId.get(objPD.Opportunity__c);
 			if (list_existingPDs == null) {
@@ -135,6 +207,7 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 			map_PDsByOppId.put(objPD.Opportunity__c, list_existingPDs);
 		}
 
+		System.debug('map_PDsByOppId:' + map_PDsByOppId);
 		for (OpportunityLineItem objOLI : list_triggerRecords) {
 			// We want to calculate on all opps
 			// If we edited Product Discount records, we recalculate based on thoe
@@ -155,15 +228,16 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 				for (Product_Discount__c objPD : map_PDsByOppId.get(objOLI.OpportunityId)) {
 					String strDiscountType = objPD.Discount_Type__c.toLowerCase();
 					PricebookEntry objPBE = map_PricebookEntryToProductPricebook.get(objOLI.PricebookEntryId);
+					System.debug('objPBE:' + objPBE);
 					String strAvailableProductDiscount = objPBE.Product2.Discounts_Available__c;
-
+					System.debug('strAvailableProductDiscount:' + strAvailableProductDiscount);
 					//if inactive product discount then we will consider for the discounting process
 					if (!objPD.Active__c) {
 						continue;
 					}
 
 					// checking if current prodcut is eligible the discount. Discount type is being matched from product discount type.
-					if (String.isNotBlank(strDiscountType) && String.isNotBlank(strAvailableProductDiscount) && strAvailableProductDiscount.contains(strDiscountType)) {
+					if (String.isNotBlank(strDiscountType) && ((String.isNotBlank(strAvailableProductDiscount) && strAvailableProductDiscount.contains(strDiscountType)) || strDiscountType.equalsIgnoreCase('select_tier_discount'))) {
 						// check for the accountant
 						if (strDiscountType.equalsIgnoreCase(DISCOUNT_TYPE_ACCOUNTANT)) {
 							if (String.isBlank(objPD.ZP_Product_Id__c) && ProductDiscountHelper.SET_VALID_GLOBAL_DISCOUNTS.contains(objPD.Discount_Type__c)) {
@@ -195,6 +269,7 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 				}
 			}
 		}
+		System.debug('list_triggerRecords:' + list_triggerRecords);
 		return list_triggerRecords;
 	}
 

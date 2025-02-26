@@ -331,7 +331,6 @@ public without sharing class EmailMessageTriggerHelper {
 	 * @description:    Process updates on Case
 	 */
 	private void processCaseInfo() {
-        System.debug('Inside after insert processCaseInfo::');
 		Map<Id, EmailMessage> map_PublishToZendesk = new Map<Id, EmailMessage>();
 		Map<String, String> map_EmailAddressToCaseRecordType = new Map<String, String>();
 		Group objPayrollOpsAuditQueue = new Group();
@@ -579,9 +578,7 @@ public without sharing class EmailMessageTriggerHelper {
 									? CaseUtils.TIER_1
 									: objNewCase.Support_Level__c;
 								objNewCase.Answer_IQ_Eligible__c = false;
-
-								
-								objNewCase.Answer_IQ_Processed__c = validateTAMrecord(objCase); // CaseUtils.ANSWER_IQ_PROCESSED_YES; //Juneid
+								objNewCase.Answer_IQ_Processed__c = CaseUtils.ANSWER_IQ_PROCESSED_YES;
 								objNewCase.Internal_AI_Processed__c = CaseUtils.INTERNAL_SOLVE_PROCESSED_NO;
 								objNewCase.Solve_Processed__c = CaseUtils.SOLVE_PROCESSED_NO;
 								objNewCase.ClosedDate = null;
@@ -1601,10 +1598,8 @@ public without sharing class EmailMessageTriggerHelper {
 		}
 
 		for (EmailMessage objEmailMessage : list_EmailMessages) {
-            System.debug('Inside createCollections::'+objEmailMessage);
 			if (objEmailMessage.ParentId != null && String.valueOf(objEmailMessage.ParentId).indexOf('500') == 0) {
 				set_CaseIds.add(objEmailMessage.ParentId);
-                System.debug('Case Ids::'+set_CaseIds);
 				map_EmailMessageByCaseId.put(objEmailMessage.ParentId, objEmailMessage);
 				Case_Audit_Log__c objAuditLog = getNewCaseAuditLog(objEmailMessage);
 				if (objAuditLog != null) {
@@ -1760,9 +1755,6 @@ public without sharing class EmailMessageTriggerHelper {
 					CaseNumber,
 					Closed_Reason__c,
 					Auto_Solve_Status__c, 
-					Account.RecordType.Name,
-					Account.Technical_Account_Manager__c,
-					Account.CX_Experiment__c,
 					(SELECT Id, Status, Closed_Payroll_Run__c FROM Orders__r),
 					(SELECT Id FROM EmailMessages WHERE Incoming = TRUE ORDER BY CreatedDate LIMIT 1)
 				FROM Case
@@ -2375,37 +2367,4 @@ public without sharing class EmailMessageTriggerHelper {
 			ExceptionLogUtil.logException('EmailMessageTriggerHelper', 'evaluatePartnerRedirects', objException.getMessage(), objException.getStackTraceString());
 		}
 	}
-	//Juneid
-	public static Boolean isAccountantResellerWithTAM(Case record) {
-        return record.Persona__c == 'Accountant' && 
-               record.Account.RecordType.Name == 'Reseller' && 
-               record.Account.Technical_Account_Manager__c != null;
-    }
-
-	public static Boolean isAdminCompanyWithSpecificSize(Case record) {
-        return record.Account.RecordType.Name == 'Company' && 
-               record.Account.Technical_Account_Manager__c != null && 
-               record.Persona__c == 'Admin' && 
-               (record.Company_Size__c == 'Grower 25-49' || record.Company_Size__c == 'Grower 50');
-    }
-
-	public static Boolean isProjectGHRAdminWithTAM(Case record) {
-        return record.Account.CX_Experiment__c == 'Project-GHR' && 
-               record.Persona__c == 'Admin' && 
-               record.Account.Technical_Account_Manager__c != null;
-    }
-
-	public static String validateTAMrecord(Case record) {
-		// Check if the conditions are satisfied
-		if (isAccountantResellerWithTAM(record) || 
-			isAdminCompanyWithSpecificSize(record) || 
-			isProjectGHRAdminWithTAM(record)) {
-			// If any condition is true, return 'No'
-			return 'No';
-		} else {
-			// If none of the conditions are true, return 'Yes'
-			return CaseUtils.ANSWER_IQ_PROCESSED_YES;
-		}
-	}
-	
 }

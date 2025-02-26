@@ -1124,8 +1124,10 @@ public without sharing class ZPCompanyTriggerHelper {
 
 		Map<String, String> dmlOpportunityUpsertErrorsMap = new Map<String, String>();
 		if (opportunityList.size() > 0) {
+			//OpportunityTriggerHelper.skipTrigger = true;
 			List<Database.UpsertResult> saveResult = Database.upsert(opportunityList, Opportunity.Fields.Source_Id__c, false);
 			dmlOpportunityUpsertErrorsMap = Utils.processUpsertResult(saveResult, opportunityList, 'Source_Id__c', true, 'ZPCompanyTriggerHepler-processInformation');
+			//OpportunityTriggerHelper.skipTrigger = false;
 		}
 
 		Map<String, String> map_dmlAccountUpdateErrors = new Map<String, String>();

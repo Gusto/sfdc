@@ -13,6 +13,7 @@ public without sharing class UserUtils {
 	public final static String LABEL_WORKATO = 'Workato';
 	public final static String LABEL_PGUSTO = 'Penny at Gusto';
 	public final static String LABEL_APIHEROKU = 'API Heroku';
+	public final static String LABEL_APIINTEGRATION = 'BizTech Integrations';
 	public final static String LABEL_RPA_AUTOMATION = 'RPA Automation';
 	public final static String OT_CARRIER_SWITCH = 'Carrier switch';
 	public static String STATUS_CLOSED = 'Closed';
@@ -250,7 +251,7 @@ public without sharing class UserUtils {
 			if (setIntegrationUsers == null) {
 				Set<String> set_Result = new Set<String>();
 				for (User us : map_UserIdToUserMap.values()) {
-					if (String.isNotBlank(us.Name) && (us.Name.containsIgnoreCase(LABEL_WORKATO) || us.Name.containsIgnoreCase(LABEL_PGUSTO) || us.Name.containsIgnoreCase(LABEL_APIHEROKU))) {
+					if (String.isNotBlank(us.Name) && (us.Name.containsIgnoreCase(LABEL_WORKATO) || us.Name.containsIgnoreCase(LABEL_PGUSTO) || us.Name.containsIgnoreCase(LABEL_APIHEROKU) || us.Name.containsIgnoreCase(LABEL_APIINTEGRATION))) {
 						set_Result.add(us.Id);
 					}
 				}
@@ -269,6 +270,38 @@ public without sharing class UserUtils {
 	 **/
 	public static Boolean isIntgUser(Id idUser) {
 		if (setIntegrationUsers.contains(idUser)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @description Get specific Admin users into a set
+	 * @return      `Set<String>`
+	 **/
+	public static Set<String> setAdminUsers {
+		get {
+			if (setAdminUsers == null) {
+				Set<String> set_Result = new Set<String>();
+				for (User us : map_UserIdToUserMap.values()) {
+					if (us.ProfileId != null && us.Profile.Name != null && (us.Profile.Name.containsIgnoreCase(LABEL_INTEGRATION) || us.Profile.Name.containsIgnoreCase(LABEL_ADMIN))) {
+						set_Result.add(us.Id);
+					}
+				}
+				setAdminUsers = set_Result;
+			}
+			return setAdminUsers;
+		}
+		set;
+	}
+
+	/**
+	 * @description Check if the user in the Specific Admins
+	 * @parm        `idUser` user record Id
+	 * @return      `Boolean` true or false
+	 **/
+	public static Boolean isAdminUser(Id idUser) {
+		if (setAdminUsers.contains(idUser)) {
 			return true;
 		}
 		return false;

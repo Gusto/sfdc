@@ -85,7 +85,7 @@ public with sharing class TaxNoticeIndexOCRUtilTest {
 			.setCaseId(objCase.Id)
 			.setRecordTypeId(OCR_RECORD_TYPE_ID)
 			.setAgencyInformation(objAgency.Id)
-			.setCompanyName('Test Company')
+			.setCompanyName('Test Company LLC')
 			.build();
 		list_TNDC.add(objTaxNotice);
 

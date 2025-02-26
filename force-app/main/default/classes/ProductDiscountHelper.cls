@@ -14,8 +14,8 @@
  * @group       Product Discount
  */
 public without sharing class ProductDiscountHelper {
-	public static final Set<String> SET_VALID_GLOBAL_DISCOUNTS = new Set<String>{ 'accountant','wholesale_partner_discount'};
-	public static final String WHOLESALE_PARTNER_DISCOUNT = 'wholesale_partner_discount';
+	public static final Set<String> SET_VALID_GLOBAL_DISCOUNTS = new Set<String>{ 'accountant' };
+	public static final String WHOLESALE_PARTNER_DISCOUNT = 'wholesale_partner';
 
 	/**
 	 * Unified place to generate the unique identifier for ProductDiscount (OpportunityId + Discount Type + ProductID [if present])
@@ -38,15 +38,17 @@ public without sharing class ProductDiscountHelper {
 	 * @return                   The OpportunityLineItem records that have been updated or will be updated
 	 */
 	public List<OpportunityLineItem> applyDiscountsToOLIs(Set<Id> setOpportunityIDs) {
+		System.debug('setOpportunityIDs1111: ' + setOpportunityIDs);
 		List<Opportunity> list_Opportunities = [
 			SELECT Id, Sold_By__c, Sold_By__r.Discount__c, Account.Reward_Eligible__c, RecordTypeId, (SELECT Id, Discount, Product2Id, Product2.ExternalId FROM OpportunityLineItems)
 			FROM Opportunity
-			WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID AND Id IN :setOpportunityIDs
+			WHERE RecordTypeId = :OpportunityHelper.ACQUISITION_OPPTY_RT_ID AND Id IN :setOpportunityIDs
 		];
 		List<OpportunityLineItem> list_olisToUpdate = new List<OpportunityLineItem>();
 		for (Opportunity objOpp : list_Opportunities) {
 			list_olisToUpdate.addAll(objOpp.OpportunityLineItems);
 		}
+		System.debug('list_olisToUpdate: ' + list_olisToUpdate);
 		TriggerHandler.bypass('OpportunityTriggerHandler');
 		TriggerHandler.bypass('AccountTriggerHandler');
 		update list_olisToUpdate;
@@ -67,7 +69,7 @@ public without sharing class ProductDiscountHelper {
 		// Only opps with Sold-by populated and are Payroll opops are eligible
 		if (objOppToEval.Sold_By__c == null || (Trigger.isExecuting && Trigger.isDelete)) {
 			return false;
-		} else if (objOppToEval.RecordTypeId != OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID && objOppToEval.RecordTypeId != OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+		} else if (objOppToEval.RecordTypeId != OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID && objOppToEval.RecordTypeId != OpportunityHelper.ACQUISITION_OPPTY_RT_ID) {
 			return false;
 		} else if (objOppToEval.Account?.Reward_Eligible__c == false) {
 			return false;
@@ -92,7 +94,7 @@ public without sharing class ProductDiscountHelper {
 		List<Product_Discount__c> list_ProductDiscountToDelete = new List<Product_Discount__c>();
 		Map<Id, Account> map_Accounts = new Map<Id, Account>();
 		Set<Id> set_OpportunityIDs = new Set<Id>();
-		Set<Id> set_OpportunityRecordTypeIDs = new Set<Id>{ OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID, OpportunityUtil.COMPANY_OPPTY_RT_ID };
+		Set<Id> set_OpportunityRecordTypeIDs = new Set<Id>{ OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID, OpportunityHelper.ACQUISITION_OPPTY_RT_ID };
 		Decimal decSalesPrice = 0;
 		List<Opportunity> list_Opportunity = new List<Opportunity>();
 
@@ -134,12 +136,9 @@ public without sharing class ProductDiscountHelper {
 				AND Is_Invoiced__c = FALSE
 				AND StageName != :OpportunityUtil.CLOSED_LOST_STAGE
 		]) {
-			System.debug('objOpp.Product_Discounts__r: ' + objOpp.Product_Discounts__r);
 			map_Opportunities.put(objOpp.Id, objOpp);
 		}
 
-		System.debug('map_Opportunities: ' + map_Opportunities);
-		
 		for (Opportunity objOpp : map_Opportunities.values()) {
 			Decimal decPremiumTierDiscount = 0;
 			Decimal decInternationalEmployeesForUpsell = objOpp.Account.International_Employees__c;
@@ -171,7 +170,7 @@ public without sharing class ProductDiscountHelper {
 				map_Accounts.put(objAccount.Id, objAccount);
 			}
 			if (accountantDiscountEligible(objOpp) && !set_DeletedAccountIDs.contains(objOpp.Sold_By__c)) {
-				if (objOpp.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+				if (objOpp.RecordTypeId == OpportunityHelper.ACQUISITION_OPPTY_RT_ID) {
 					Product_Discount__c objPD = new Product_Discount__c();
 					objPD.Discount_Percent__c = objOpp.Sold_By__r.Discount__c;
 					objPD.Discount_Type__c = 'accountant';
@@ -278,7 +277,7 @@ public without sharing class ProductDiscountHelper {
 		Set<Id> set_OpportunityIDs = new Set<Id>();
 
 		for (Opportunity objOpp : list_Opportunities) {
-			if (objOpp.RecordTypeId != OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+			if (objOpp.RecordTypeId != OpportunityHelper.ACQUISITION_OPPTY_RT_ID) {
 				continue;
 			}
 			if ((map_OldOpportunities == null && objOpp.Sold_By__c != null) || (map_OldOpportunities != null && objOpp.Sold_By__c != map_OldOpportunities.get(objOpp.Id).Sold_By__c)) {
@@ -293,37 +292,12 @@ public without sharing class ProductDiscountHelper {
 				set_OpportunityIDs.add(objOpp.Id);
 			}
 		}
-		System.debug('set_AccountIDs: ' + set_AccountIDs);
+
 		if (!set_AccountIDs.isEmpty()) {
 			new ProductDiscountHelper().handleAccountantProductDiscounts(set_AccountIDs, new Set<Id>());
 		}
-		System.debug('set_OpportunityIDs: ' + set_OpportunityIDs);
 		if (!set_OpportunityIDs.isEmpty()) {
 			new ProductDiscountHelper().applyDiscountsToOLIs(set_OpportunityIDs);
 		}
-	}
-	
-	/**
-	 * @description  Method to apply wholesale discount to all the OpportunityLineItems            
-	 *
-	 * @param set_OpportunityIds 
-	 */
-	public void applyWholeSaleDiscount(Set<String> set_OpportunityIds) {
-
-		
-		List<Opportunity> list_Opportunities = [
-			SELECT Id, Sold_By__c, Sold_By__r.Discount__c, Account.Reward_Eligible__c, RecordTypeId, (SELECT Id, Discount, Product2Id, Product2.ExternalId FROM OpportunityLineItems)
-			FROM Opportunity
-			WHERE RecordTypeId = :OpportunityUtil.COMPANY_OPPTY_RT_ID AND Id IN :set_OpportunityIds
-		];
-		List<OpportunityLineItem> list_olisToUpdate = new List<OpportunityLineItem>();
-		for (Opportunity objOpp : list_Opportunities) {
-			list_olisToUpdate.addAll(objOpp.OpportunityLineItems);
-		}
-		TriggerHandler.bypass('OpportunityTriggerHandler');
-		TriggerHandler.bypass('AccountTriggerHandler');
-		update list_olisToUpdate;
-		TriggerHandler.clearBypass('OpportunityTriggerHandler');
-		TriggerHandler.clearBypass('AccountTriggerHandler');
 	}
 }

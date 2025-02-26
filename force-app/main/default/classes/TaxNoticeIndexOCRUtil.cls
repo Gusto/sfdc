@@ -31,6 +31,8 @@ public with sharing class TaxNoticeIndexOCRUtil {
 	public static final String STR_NON_ACTIONABLE_NOTICE_MESSAGE = 'Note: There is a non actionable TNDC available on the case';
 	public static Tax_Res_Play_Mode_Configuration__mdt paperMailExclusionsSettings = Tax_Res_Play_Mode_Configuration__mdt.getInstance('Paper_Mail_Exclusions');
 
+	public static List<String> list_RAFAgencies = (System.Label.TaxRes_Agencies_For_RAF_Indicator)?.split(',');
+
 	//Case related variables
 	Map<Id, Case> map_CaseRecords = new Map<Id, Case>();
 	public static Map<Id, Case> map_TriggeredCaseRecords = new Map<Id, Case>();
@@ -223,10 +225,21 @@ public with sharing class TaxNoticeIndexOCRUtil {
 				objNewIndex.Tier__c = null;
 			}
 
+			//If Case Origin is "Electronic Notice" and Agency is IRS, then set RAF Indicator to Yes, Else No
+			if (objParentCase?.Id != null && objParentCase.Origin == CaseUtils.ORIGIN_ELECTRONIC_NOTICE) {
+				if (list_RAFAgencies != null && list_RAFAgencies.contains(objNewIndex?.Agency_Information__r.Name)) {
+					objNewIndex.RAF_Indicator__c = 'Y';
+				} else {
+					objNewIndex.RAF_Indicator__c = 'N';
+				}
+			}
+
+			/*
 			//for "Electronic Notice" Origin cases RAF indicator should be true by default
 			if (objParentCase?.Id != null && objParentCase.Origin == CaseUtils.ORIGIN_ELECTRONIC_NOTICE) {
 				objNewIndex.RAF_Indicator__c = 'Y';
 			}
+			*/
 
 			//Assign Confidence Score values
 			objNewIndex.Client_Tax_ID_Conf_Score__c = objIndex.Client_Tax_ID_Conf_Score__c;

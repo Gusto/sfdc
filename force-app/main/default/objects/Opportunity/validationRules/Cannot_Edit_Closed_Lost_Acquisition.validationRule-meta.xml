@@ -7,7 +7,9 @@
     ISPICKVAL(StageName, &quot;Closed Lost&quot;),
     NOT(ISCHANGED(StageName)),
     RecordType.Name = &apos;Acquisition&apos; ,
-    NOT($User.Exempt_from_Validation_Rules__c)
+    NOT($User.Exempt_from_Validation_Rules__c),
+ NOT(ISNEW())
+
 )</errorConditionFormula>
     <errorMessage>Cannot update fields: No changes can be made to a Closed Lost Opportunity. Please reach out to Sales Ops for support.</errorMessage>
 </ValidationRule>

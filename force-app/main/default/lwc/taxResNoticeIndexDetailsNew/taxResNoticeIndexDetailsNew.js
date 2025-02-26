@@ -12,6 +12,7 @@ import getTaxRatesValuesTNDC from "@salesforce/apex/TaxResNoticeIndexDetailsCont
 import SystemModstamp from "@salesforce/schema/Account.SystemModstamp";
 import TNDC_Form_Number from "@salesforce/label/c.TNDC_Form_Number";
 import Federal_Agencies from "@salesforce/label/c.Federal_Agencies";
+import RAF_AGENCIES from "@salesforce/label/c.TaxRes_Agencies_For_RAF_Indicator";
 import getTaxNoticeTypes from "@salesforce/apex/TaxResNoticeIndexDetailsController.getTaxNoticeTypes";
 import getConfidenceScore from "@salesforce/apex/TaxResIDPNoticeController.getTNDCConfidenceScoreSetting";
 import MRR_Reasons_TNDC from '@salesforce/label/c.MRR_Reasons_TNDC';
@@ -36,6 +37,9 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 	@track strAccountTier;
 	@track strAccountId;
 	strAccountSegment = "";
+	strAgencyName = "";
+	list_RAFAgencyNames = RAF_AGENCIES?.split(",");
+
 	blnCompletedCase = false;
 	blnBlankTaxRateValue = false;
 	strRequiredFields = "";
@@ -809,7 +813,7 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 	handleRAFAutomation() {
 		if (Federal_Agencies.indexOf(this.strCaseAgencyInfo) > -1 && this.blnGustoAddressee) {
 			this.strRAFVal = "Y";
-		} else if (!this.idNoticeIndexRecord && this.blnElectronicNotice) {
+		} else if (!this.idNoticeIndexRecord && this.blnElectronicNotice && this.list_RAFAgencyNames.indexOf(this.strAgencyName) > -1) {
 			this.strRAFVal = "Y";
 		} else {
 			this.strRAFVal = "N";

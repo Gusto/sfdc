@@ -533,6 +533,7 @@ public without sharing class OpportunityTriggerHelper {
 			populateCompanyInfoCompleteDT(objOppty, null);
 			handleGrowthExpansionValidation(objOppty, null);
 			routeTaxCreditsOpportunity(objOppty, null);
+			populateOnboardingCompleteDT(objOppty, null);
 			OpportunityHelper.updateCloseDateToMatchAPD(objOppty, null);
 			setTerritory(objOppty);
 		}
@@ -744,6 +745,7 @@ public without sharing class OpportunityTriggerHelper {
 			resetBenefitsFundingType(objOppty, objOldOppty);
 			populateCompanyInfoCompleteDT(objOppty, objOldOppty);
 			routeTaxCreditsOpportunity(objOppty, objOldOppty);
+			populateOnboardingCompleteDT(objOppty, objOldOppty);
 			OpportunityHelper.updateCloseDateToMatchAPD(objOppty, objOldOppty);
 		}
 
@@ -1261,7 +1263,11 @@ public without sharing class OpportunityTriggerHelper {
 					}
 				}
 
-				if (objOppty.RecordTypeId != OpportunityUtil.COMPANY_OPPTY_RT_ID && objOppty.RecordTypeId != OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID) {
+				if (
+					objOppty.RecordTypeId != OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+					objOppty.RecordTypeId != OpportunityUtil.TIER_UPSELL_OPPTY_RT_ID &&
+					objOppty.RecordTypeId != OpportunityUtil.ACQUISITION_OPPTY_RT_ID
+				) {
 					if (objOppty.NumberOfEmployees__c != objOldOppty.NumberOfEmployees__c && (objOldOppty.NumberOfEmployees__c == null || objOldOppty.NumberOfEmployees__c == 0)) {
 						set_OpptyIdPolicies.add(objOppty.Id);
 					}
@@ -1999,91 +2005,91 @@ public without sharing class OpportunityTriggerHelper {
 	public void syncLineItems(Opportunity objOppty, Opportunity objOldOppty) {
 		Boolean blnSkipLineItemCreation = false;
 		/*** Deletes Line Items when Pricing on Oppty does not match with Pricing on Account (runs after update) ****/
-		if (
-			objOldOppty != null &&
-			objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
-			(objOldOppty.StageName != objOppty.StageName &&
-			objOppty.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE) &&
-			!objOppty.Is_Invoiced__c &&
-			map_Accounts.containsKey(objOppty.AccountId)
-		) {
-			Account objAccnt = map_Accounts.get(objOppty.AccountId);
-			PriceBook2 objAccntPriceBook = OpportunityUtil.getPriceBookByName(objAccnt.Pricing__c);
+		// if (
+		// 	objOldOppty != null &&
+		// 	objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+		// 	(objOldOppty.StageName != objOppty.StageName &&
+		// 	objOppty.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE) &&
+		// 	!objOppty.Is_Invoiced__c &&
+		// 	map_Accounts.containsKey(objOppty.AccountId)
+		// ) {
+		// 	Account objAccnt = map_Accounts.get(objOppty.AccountId);
+		// 	PriceBook2 objAccntPriceBook = OpportunityUtil.getPriceBookByName(objAccnt.Pricing__c);
 
-			if (objAccntPriceBook != null && objOppty.PriceBook2Id != objAccntPriceBook.Id && map_OpptyIdToMapofLineItem.containsKey(objOppty.Id)) {
-				blnSkipLineItemCreation = true;
-				Opportunity objOpptyClone = objOppty.clone(true, true, false, false);
-				objOpptyClone.PriceBook2Id = objAccntPriceBook.Id;
-				map_OppsToBeUpdated.put(objOppty.Id, objOpptyClone);
-				for (OpportunityLineItem objLineItem : map_OpptyIdToMapofLineItem.get(objOppty.Id).values()) {
-					list_OLIToBeDeleted.add(objLineItem);
-				}
-			}
-		}
+		// 	if (objAccntPriceBook != null && objOppty.PriceBook2Id != objAccntPriceBook.Id && map_OpptyIdToMapofLineItem.containsKey(objOppty.Id)) {
+		// 		blnSkipLineItemCreation = true;
+		// 		Opportunity objOpptyClone = objOppty.clone(true, true, false, false);
+		// 		objOpptyClone.PriceBook2Id = objAccntPriceBook.Id;
+		// 		map_OppsToBeUpdated.put(objOppty.Id, objOpptyClone);
+		// 		for (OpportunityLineItem objLineItem : map_OpptyIdToMapofLineItem.get(objOppty.Id).values()) {
+		// 			list_OLIToBeDeleted.add(objLineItem);
+		// 		}
+		// 	}
+		// }
 
-		if (
-			!blnSkipLineItemCreation &&
-			objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
-			objOppty.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE &&
-			objOppty.Pricebook2Id != null &&
-			!objOppty.Locked__c &&
-			map_PBIdToMapOfProdNameToPBE.containsKey(objOppty.Pricebook2Id)
-		) {
-			// get opportunity pricebook
-			Pricebook2 objPriceBook = OpportunityUtil.getPriceBookById(objOppty.Pricebook2Id);
-			// create list of additional services
-			String strAdditionalOpportunityServices = String.isBlank(objOppty.Additional_Opportunity_Services__c) ? '' : objOppty.Additional_Opportunity_Services__c;
-			List<String> list_AdditionalServices = strAdditionalOpportunityServices.split(';');
+		// if (
+		// 	!blnSkipLineItemCreation &&
+		// 	objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+		// 	objOppty.StageName != OpportunityUtil.CLOSED_ADMIN_STAGE &&
+		// 	objOppty.Pricebook2Id != null &&
+		// 	!objOppty.Locked__c &&
+		// 	map_PBIdToMapOfProdNameToPBE.containsKey(objOppty.Pricebook2Id)
+		// ) {
+		// 	// get opportunity pricebook
+		// 	Pricebook2 objPriceBook = OpportunityUtil.getPriceBookById(objOppty.Pricebook2Id);
+		// 	// create list of additional services
+		// 	String strAdditionalOpportunityServices = String.isBlank(objOppty.Additional_Opportunity_Services__c) ? '' : objOppty.Additional_Opportunity_Services__c;
+		// 	List<String> list_AdditionalServices = strAdditionalOpportunityServices.split(';');
 
-			// if pricing changes, create a new entry to map of opportunity and opportunity line items
-			if (objOldOppty != null && objOppty.PriceBook2Id != objOldOppty.Pricebook2Id && !map_OpptyIdToMapofLineItem.containsKey(objOppty.Id)) {
-				map_OpptyIdToMapofLineItem.put(objOppty.Id, new Map<String, OpportunityLineItem>{});
-			}
+		// 	// if pricing changes, create a new entry to map of opportunity and opportunity line items
+		// 	if (objOldOppty != null && objOppty.PriceBook2Id != objOldOppty.Pricebook2Id && !map_OpptyIdToMapofLineItem.containsKey(objOppty.Id)) {
+		// 		map_OpptyIdToMapofLineItem.put(objOppty.Id, new Map<String, OpportunityLineItem>{});
+		// 	}
 
-			for (PricebookEntry objPBE : objPriceBook.PriceBookEntries) {
-				// get each product
-				String strProdName = objPBE.Product2?.Name;
-				String strProductType = objPBE.Product2?.Product_Type__c;
-				String strProductCategory = objPBE.Product2?.Product_Category__c;
+		// 	for (PricebookEntry objPBE : objPriceBook.PriceBookEntries) {
+		// 		// get each product
+		// 		String strProdName = objPBE.Product2?.Name;
+		// 		String strProductType = objPBE.Product2?.Product_Type__c;
+		// 		String strProductCategory = objPBE.Product2?.Product_Category__c;
 
-				// product name and product category are required
-				if (String.isNotBlank(strProdName) && String.isNotBlank(strProductType)) {
-					// Decide quantity based on product type
-					Decimal decQuantity = 0;
-					if (strProductType == OpportunityUtil.PRODUCT_TYPE_MONTHLY) {
-						decQuantity = 1;
-					} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_EMPLOYEES) {
-						decQuantity = objOppty.NumberOfEmployees__c != null && objOppty.NumberOfEmployees__c > 0 ? objOppty.NumberOfEmployees__c : 0;
-					} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_CONTRACTORS) {
-						decQuantity = objOppty.Number_of_Contractors__c != null && objOppty.Number_of_Contractors__c > 0 ? objOppty.Number_of_Contractors__c : 0;
-					} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_INTERNATIONAL_CONTRACTORS) {
-						decQuantity = objOppty.International_Contractors__c != null && objOppty.International_Contractors__c > 0 ? objOppty.International_Contractors__c : 0;
-					} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_INTERNATIONAL_EMPLOYESS) {
-						decQuantity = objOppty.International_Employees__c != null && objOppty.International_Employees__c > 0 ? objOppty.International_Employees__c : 0;
-					}
+		// 		// product name and product category are required
+		// 		if (String.isNotBlank(strProdName) && String.isNotBlank(strProductType)) {
+		// 			// Decide quantity based on product type
+		// 			Decimal decQuantity = 0;
+		// 			if (strProductType == OpportunityUtil.PRODUCT_TYPE_MONTHLY) {
+		// 				decQuantity = 1;
+		// 			} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_EMPLOYEES) {
+		// 				decQuantity = objOppty.NumberOfEmployees__c != null && objOppty.NumberOfEmployees__c > 0 ? objOppty.NumberOfEmployees__c : 0;
+		// 			} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_CONTRACTORS) {
+		// 				decQuantity = objOppty.Number_of_Contractors__c != null && objOppty.Number_of_Contractors__c > 0 ? objOppty.Number_of_Contractors__c : 0;
+		// 			} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_INTERNATIONAL_CONTRACTORS) {
+		// 				decQuantity = objOppty.International_Contractors__c != null && objOppty.International_Contractors__c > 0 ? objOppty.International_Contractors__c : 0;
+		// 			} else if (strProductType == OpportunityUtil.PRODUCT_TYPE_INTERNATIONAL_EMPLOYESS) {
+		// 				decQuantity = objOppty.International_Employees__c != null && objOppty.International_Employees__c > 0 ? objOppty.International_Employees__c : 0;
+		// 			}
 
-					// Company Opportunity Product
-					if (strProductCategory == OpportunityUtil.PRODUCT_CATEGORY_PAYROLL) {
-						if (strProductType == OpportunityUtil.PRODUCT_TYPE_MONTHLY) {
-							// Monthly Base Fee
-							if (objOldOppty == null || (map_OpptyIdToMapofLineItem.containsKey(objOppty.Id) && !map_OpptyIdToMapofLineItem.get(objOppty.Id).containsKey(strProdName))) {
-								list_OLIToBeUpserted.add(new OpportunityLineItem(OpportunityId = objOppty.Id, PriceBookEntryId = objPBE.Id, UnitPrice = objPBE.UnitPrice, Quantity = decQuantity));
-							}
-						} else {
-							createOrUpdateLineItems(objOppty, objOldOppty, strProdName, decQuantity);
-						}
-					} else if (String.isNotBlank(strProductCategory)) {
-						// Additional Services Opportunity Product
-						if (list_AdditionalServices.contains(strProductCategory)) {
-							createOrUpdateLineItems(objOppty, objOldOppty, strProdName, decQuantity);
-						} else if (map_OpptyIdToMapofLineItem.containsKey(objOppty.Id) && map_OpptyIdToMapofLineItem.get(objOppty.Id).containsKey(strProdName)) {
-							OpportunityLineItem objLineItem = map_OpptyIdToMapofLineItem.get(objOppty.Id).get(strProdName);
-							list_OLIToBeDeleted.add(objLineItem);
-						}
-					}
-				}
-			}
-		}
+		// 			// Company Opportunity Product
+		// 			if (strProductCategory == OpportunityUtil.PRODUCT_CATEGORY_PAYROLL) {
+		// 				if (strProductType == OpportunityUtil.PRODUCT_TYPE_MONTHLY) {
+		// 					// Monthly Base Fee
+		// 					if (objOldOppty == null || (map_OpptyIdToMapofLineItem.containsKey(objOppty.Id) && !map_OpptyIdToMapofLineItem.get(objOppty.Id).containsKey(strProdName))) {
+		// 						list_OLIToBeUpserted.add(new OpportunityLineItem(OpportunityId = objOppty.Id, PriceBookEntryId = objPBE.Id, UnitPrice = objPBE.UnitPrice, Quantity = decQuantity));
+		// 					}
+		// 				} else {
+		// 					createOrUpdateLineItems(objOppty, objOldOppty, strProdName, decQuantity);
+		// 				}
+		// 			} else if (String.isNotBlank(strProductCategory)) {
+		// 				// Additional Services Opportunity Product
+		// 				if (list_AdditionalServices.contains(strProductCategory)) {
+		// 					createOrUpdateLineItems(objOppty, objOldOppty, strProdName, decQuantity);
+		// 				} else if (map_OpptyIdToMapofLineItem.containsKey(objOppty.Id) && map_OpptyIdToMapofLineItem.get(objOppty.Id).containsKey(strProdName)) {
+		// 					OpportunityLineItem objLineItem = map_OpptyIdToMapofLineItem.get(objOppty.Id).get(strProdName);
+		// 					list_OLIToBeDeleted.add(objLineItem);
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 
 	/**
@@ -2186,6 +2192,7 @@ public without sharing class OpportunityTriggerHelper {
 
 	/**** Roll-Up values from Opportunity level to Account level for accounts tied to the Opportunity ****/
 	public void rollUpValuesToAccounts(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		User objOwner = map_AllUsers.get(objOppty.OwnerId);
 		// upsert account related tracking
 		if (objOppty.Sold_By__c != null || objOppty.Referred_By__c != null) {
@@ -2210,7 +2217,7 @@ public without sharing class OpportunityTriggerHelper {
 
 		if (objOldOppty == null) {
 			// Update Partner Status (for Company Opportunity that is Closed Won)
-			if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE) {
+			if ((objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) && objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE) {
 				if (objOppty.Sold_By__c != null && map_Accounts.containsKey(objOppty.Sold_By__c)) {
 					Account objAccnt = map_Accounts.get(objOppty.Sold_By__c);
 					objAccnt.Partner_Status__c = 'Active Partner';
@@ -2284,7 +2291,7 @@ public without sharing class OpportunityTriggerHelper {
 			// Update the most recent Payroll Oppty owner at the account level for Distribution Engine (Insert or when owner is changed)
 			if (
 				objOwner != null &&
-				objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+				(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 				objOwner.UserRoleId != null &&
 				!UserUtils.isAdminIntgUser(objOppty.OwnerId) &&
 				(objAccnt.Payroll_Opp_Owner__c != objOwner.Name ||
@@ -2536,8 +2543,9 @@ public without sharing class OpportunityTriggerHelper {
 
 	/**** Process Lead Source to update Sold By/BizDev Partner fields ****/
 	public void processLeadSource(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		// Company Opportunity
-		if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && String.isNotBlank(objOppty.LeadSource)) {
+		if ((objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) && String.isNotBlank(objOppty.LeadSource)) {
 			// Populate Sold By
 			if (objOppty.Sold_By__c == null) {
 				if (objOppty.LeadSource.containsIgnoreCase('bench')) {
@@ -2877,33 +2885,34 @@ public without sharing class OpportunityTriggerHelper {
 		}
 
 		// Company Opportunity : Copying Payment Invoice info to Opportunity
-		if (
-			objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
-			objOppty.Payment_Invoice__c != null &&
-			map_PaymentInvoices.containsKey(objOppty.Payment_Invoice__c) &&
-			String.isNotBlank(objOppty.Source_ID__c) &&
-			(objOldOppty == null ||
-			objOppty.Payment_Invoice__c != objOldOppty.Payment_Invoice__c)
-		) {
-			Payment_Invoice__c objInvoice = map_PaymentInvoices.get(objOppty.Payment_Invoice__c);
-			objOppty.EE_Active_Count_At_Win__c = objInvoice.Employee_Count__c;
-			objOppty.NumberOfEmployees__c = objInvoice.Employee_Count__c;
-			objOppty.Number_of_Contractors__c = objInvoice.Contractor_Count__c;
-		}
+		// if (
+		// 	(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID ||
+		// 	objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) &&
+		// 	objOppty.Payment_Invoice__c != null &&
+		// 	map_PaymentInvoices.containsKey(objOppty.Payment_Invoice__c) &&
+		// 	String.isNotBlank(objOppty.Source_ID__c) &&
+		// 	(objOldOppty == null ||
+		// 	objOppty.Payment_Invoice__c != objOldOppty.Payment_Invoice__c)
+		// ) {
+		// 	Payment_Invoice__c objInvoice = map_PaymentInvoices.get(objOppty.Payment_Invoice__c);
+		// 	objOppty.EE_Active_Count_At_Win__c = objInvoice.Employee_Count__c;
+		// 	objOppty.NumberOfEmployees__c = objInvoice.Employee_Count__c;
+		// 	objOppty.Number_of_Contractors__c = objInvoice.Contractor_Count__c;
+		// }
 
 		if (objOppty.AccountId != null) {
 			Account objAccnt = map_Accounts.get(objOppty.AccountId);
 
 			// Sync Number of Employees, Number of Contractors and Pricing when opportunity is updated from Closed Lost to Closed Won
-			if (
-				objOldOppty != null &&
-				objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
-				objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE &&
-				objOldOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE
-			) {
-				objOppty.NumberOfEmployees__c = objAccnt.Number_of_Active_Employees__c;
-				objOppty.Number_of_Contractors__c = objAccnt.Number_of_Active_Contractors__c;
-			}
+			// if (
+			// 	objOldOppty != null &&
+			// 	objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+			// 	objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE &&
+			// 	objOldOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE
+			// ) {
+			// 	objOppty.NumberOfEmployees__c = objAccnt.Number_of_Active_Employees__c;
+			// 	objOppty.Number_of_Contractors__c = objAccnt.Number_of_Active_Contractors__c;
+			// }
 
 			// Benefits BoR Flow is Completed for Pending PR
 			if (
@@ -3036,7 +3045,7 @@ public without sharing class OpportunityTriggerHelper {
 			}
 
 			// Insert or if owner has changed
-			if (objOldOppty == null || (objOppty.OwnerId != objOldOppty.OwnerId) || (objOppty.StageName != objOldOppty.StageName && objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE)) {
+			if (objOldOppty == null || !objOppty.isClosed || (objOppty.StageName != objOldOppty.StageName && objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE)) {
 				// If Owner has a UserRole
 				if (objOwner.UserRoleId != null) {
 					objOppty.Owner_Role__c = objOwner.UserRole.Name;
@@ -3067,6 +3076,7 @@ public without sharing class OpportunityTriggerHelper {
 
 	/**** Set some additional fields ****/
 	public void setMiscellaneous(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		if (objOppty.Set_Up_Steps_Completed__c != null && (objOldOppty == null || (objOldOppty != null && objOppty.Set_Up_Steps_Completed__c != objOldOppty.Set_Up_Steps_Completed__c))) {
 			objOppty.Setup_Steps_Completed_HT__c = objOppty.Set_Up_Steps_Completed__c;
 		}
@@ -3080,7 +3090,7 @@ public without sharing class OpportunityTriggerHelper {
 		}
 
 		// Company Opportunity
-		if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+		if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) {
 			// Sold By and/or Referred By populated
 			if (
 				objOppty.Joined_Date_Panda__c != null &&
@@ -3137,6 +3147,7 @@ public without sharing class OpportunityTriggerHelper {
 
 	/**** Setting Stage Name ****/
 	public void setStage(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		// To keep track of present value of Stage
 		String strStage = objOppty.StageName;
 		// Insert
@@ -3149,6 +3160,9 @@ public without sharing class OpportunityTriggerHelper {
 				} else if (objOppty.RecordTypeId == OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID || objOppty.RecordTypeId == OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID) {
 					// Raw
 					objOppty.StageName = OpportunityUtil.DEFAULT_HI_SALES_STAGE;
+				} else if (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID) {
+					// SAL
+					objOppty.StageName = OpportunityUtil.NEW_STAGE;
 				}
 			}
 
@@ -3178,7 +3192,12 @@ public without sharing class OpportunityTriggerHelper {
 			}
 		} else {
 			// Update
-			if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID && !objOppty.IsClosed && objOppty.ZP_Company_Suspended__c && !objOldOppty.ZP_Company_Suspended__c) {
+			if (
+				(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
+				!objOppty.IsClosed &&
+				objOppty.ZP_Company_Suspended__c &&
+				!objOldOppty.ZP_Company_Suspended__c
+			) {
 				objOppty.StageName = OpportunityUtil.CLOSED_LOST_STAGE;
 				objOppty.Stage_Detail__c = OpportunityUtil.UNQUALIFIED_STAGE_DETAIL;
 			}
@@ -3273,8 +3292,9 @@ public without sharing class OpportunityTriggerHelper {
 
 	/**** Setting sandler field ****/
 	public void setSandlerBusinessProcess(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		if (
-			objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+			(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 			String.isNotBlank(objOppty.StageName) &&
 			objOppty.StageName != objOldOppty.StageName &&
 			OpportunityUtil.map_StageSandlerMapping.containsKey(objOppty.StageName)
@@ -3286,6 +3306,7 @@ public without sharing class OpportunityTriggerHelper {
 	/**** Setting Close date ****/
 	public void setCloseDateInfo(Opportunity objOppty, Opportunity objOldOppty) {
 		Account objAccnt = objOppty.AccountId != null ? map_Accounts.get(objOppty.AccountId) : new Account();
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 
 		// Insert
 		if (objOldOppty == null) {
@@ -3328,9 +3349,13 @@ public without sharing class OpportunityTriggerHelper {
 				Integer intNumberOfDays = Date.daysInMonth(dtToday.year(), dtToday.month());
 				objOppty.CloseDate = Date.newInstance(dtToday.year(), dtToday.month(), intNumberOfDays);
 			}
+
+			if (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == 'Winback') {
+				objOppty.CloseDate = Date.today().addDays(90);
+			}
 		} else {
 			// Update
-			if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+			if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) {
 				// If Account Join Date > opportunity Close Date then update the Close Date to match Account Join Date
 				if (
 					objOppty.StageName == OpportunityUtil.CLOSED_WON_STAGE &&
@@ -3344,6 +3369,10 @@ public without sharing class OpportunityTriggerHelper {
 				if (!objOppty.IsClosed && objOppty.ZP_Company_Suspended__c && !objOldOppty.ZP_Company_Suspended__c) {
 					objOppty.CloseDate = Date.today();
 				}
+			}
+
+			if (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == 'Winback' && objOppty.CloseDate != objOppty.CreatedDate.addDays(90)) {
+				objOppty.CloseDate = objOppty.CreatedDate.addDays(90).date();
 			}
 
 			if (
@@ -3417,7 +3446,7 @@ public without sharing class OpportunityTriggerHelper {
 
 		// Opportunity Stage is Closed Lost
 		if (
-			objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+			(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 			objOppty.StageName == OpportunityUtil.CLOSED_LOST_STAGE &&
 			(objOldOppty == null ||
 			objOppty.StageName != objOldOppty.StageName)
@@ -3525,16 +3554,17 @@ public without sharing class OpportunityTriggerHelper {
 	public void setPricebook(Opportunity objOppty) {
 		if (objOppty.PriceBook2Id == null) {
 			// Company Opportunity
-			if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
-				Account objAccount = map_Accounts.get(objOppty.AccountId);
-				// Pricebook set based on Pricing field on related Account
-				if (objAccount != null && objAccount.Pricing__c != null && OpportunityUtil.getPriceBookByName(objAccount.Pricing__c) != null) {
-					objOppty.PriceBook2Id = OpportunityUtil.getPriceBookByName(objAccount.Pricing__c).Id;
-				} else if (OpportunityUtil.getPriceBookByName(objTierConfig.New_Price_1__c) != null) {
-					// Setting Default pricebook if applicable
-					objOppty.PriceBook2Id = OpportunityUtil.getPriceBookByName(objTierConfig.New_Price_1__c).Id;
-				}
-			} else if (OpportunityUtil.set_ArdiusRecordTypeIds.contains(objOppty.RecordTypeId)) {
+			// if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+			// 	Account objAccount = map_Accounts.get(objOppty.AccountId);
+			// 	// Pricebook set based on Pricing field on related Account
+			// 	if (objAccount != null && objAccount.Pricing__c != null && OpportunityUtil.getPriceBookByName(objAccount.Pricing__c) != null) {
+			// 		objOppty.PriceBook2Id = OpportunityUtil.getPriceBookByName(objAccount.Pricing__c).Id;
+			// 	} else if (OpportunityUtil.getPriceBookByName(objTierConfig.New_Price_1__c) != null) {
+			// 		// Setting Default pricebook if applicable
+			// 		objOppty.PriceBook2Id = OpportunityUtil.getPriceBookByName(objTierConfig.New_Price_1__c).Id;
+			// 	}
+			// } else
+			if (OpportunityUtil.set_ArdiusRecordTypeIds.contains(objOppty.RecordTypeId)) {
 				// Pricebook set based on Tier field on related Account
 				Account objAccount = map_Accounts.get(objOppty.AccountId);
 				objOppty.PriceBook2Id = OpportunityUtil.getTierPricebookId(objOppty.RecordTypeId, objAccount?.Tier__c, true);
@@ -4051,9 +4081,10 @@ public without sharing class OpportunityTriggerHelper {
 	 * @param        Trigger new Opportunity
 	 **/
 	public void sendSlackNotifications(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		// check if owner changes and slack notification hasn't been posted
 		// send slack notifications only for company opportuniites
-		if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID) {
+		if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) {
 			if ((objOldOppty == null || (objOppty.OwnerId != objOldOppty.OwnerId)) && objOppty.Slack_Notification_Posted__c == false && map_Users.containsKey(objOppty.OwnerId)) {
 				String strOwnerRole = map_Users.get(objOppty.OwnerId)?.UserRole?.Name;
 
@@ -4168,9 +4199,15 @@ public without sharing class OpportunityTriggerHelper {
 	 **/
 	public void createBenefitsOpportunity(Id idAccount, Id idRecordType, Opportunity objOppty, String strLeadSource) {
 		Boolean blnOpptyPresent = false;
-
+		Decimal decEmployees = 0;
 		if (idAccount != null && map_Accounts.containsKey(idAccount)) {
 			Account objAcc = map_Accounts.get(idAccount);
+			// Set Number of Employees to either Active Employees or Lead employees whichever is greater than 2
+			if (objAcc.Number_of_Active_Employees__c != null && objAcc.Number_of_Active_Employees__c > 2) {
+				decEmployees = objAcc.Number_of_Active_Employees__c;
+			} else if (objAcc.NumberOfEmployees != null && objAcc.NumberOfEmployees > 2) {
+				decEmployees = objAcc.NumberOfEmployees;
+			}
 			for (Opportunity objOpp : objAcc.Opportunities) {
 				if (objOpp.RecordTypeId == idRecordType && !objOpp.IsClosed) {
 					blnOpptyPresent = true;
@@ -4179,8 +4216,8 @@ public without sharing class OpportunityTriggerHelper {
 			}
 		}
 
-		// Create Benefits  Opportunity ONLY if existing opportunity is not present
-		if (!blnOpptyPresent) {
+		// Create Benefits  Opportunity ONLY if existing opportunity is not present & if employees is greater than 2
+		if (!blnOpptyPresent && decEmployees > 2) {
 			list_OpptysToInsert.add(
 				new Opportunity(
 					RecordTypeId = idRecordType,
@@ -4194,7 +4231,10 @@ public without sharing class OpportunityTriggerHelper {
 					Currently_Offer_Health_Benefits__c = objOppty.Currently_Offer_Health_Benefits__c,
 					Want_to_switch_brokers__c = objOppty.Want_to_switch_brokers__c,
 					Existing_Health_Benefits_Renewal_Date__c = objOppty.Existing_Health_Benefits_Renewal_Date__c,
-					Open_to_Switching_Broker__c = objOppty.Open_to_Switching_Broker__c
+					Open_to_Switching_Broker__c = objOppty.Open_to_Switching_Broker__c,
+					NumberofEmployees__c = decEmployees,
+					Contribution_to_EE_Health_Coverage_cost__c = objOppty.Contribution_to_EE_Health_Coverage_cost__c,
+					Interest_in_adding_benefits_to_Gusto__c = objOppty.Interest_in_adding_benefits_to_Gusto__c
 				)
 			);
 		}
@@ -4553,11 +4593,12 @@ public without sharing class OpportunityTriggerHelper {
 	 * @param objOldOppty old instance before change
 	 */
 	public void updateBenefitOptOutFields(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		if (
 			(objOldOppty == null ||
 			objOppty.Sold_By__c != objOldOppty.Sold_By__c) &&
 			objOppty.Sold_By__c != null &&
-			objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+			(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 			map_Accounts.containsKey(objOppty.Sold_By__c)
 		) {
 			Account objAcc = map_Accounts.get(objOppty.Sold_By__c);
@@ -4784,11 +4825,12 @@ public without sharing class OpportunityTriggerHelper {
 	 * @param       objOldOppty Old Opportunity
 	 **/
 	public void updateOffersHealthInsurance(Opportunity objOppty, Opportunity objOldOppty) {
+		Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID && objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS);
 		if (objOppty.AccountId != null) {
 			Account objAccnt = map_Accounts.get(objOppty.AccountId);
 
 			if (
-				objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID &&
+				(objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) &&
 				objOldOppty != null &&
 				String.isNotBlank(objOppty.Offers_Health_Insurance__c) &&
 				objOldOppty.Offers_Health_Insurance__c != objOppty.Offers_Health_Insurance__c

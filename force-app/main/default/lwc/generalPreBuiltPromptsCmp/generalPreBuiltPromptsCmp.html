@@ -1,0 +1,78 @@
+<template>
+	<section role="log" class="slds-chat" style="background-color: white; border-style: solid; border-color: #00000042; border-radius: 5px; border-width: 1px">
+		<ul class="slds-chat-list">
+			<li class="slds-chat-listitem slds-chat-listitem_bookend">
+				<div class="slds-chat-bookend">
+					<p>Chat started by <b>{userName}</b></p>
+				</div>
+			</li>
+			<div style="max-height: 350px; overflow: scroll" data-id="redDiv">
+				<template if:true={conversation}>
+					<template for:each={conversation} for:item="conv">
+						<li key={conv.time} class={conv.class}>
+							<div class="slds-chat-message">
+								<div class="slds-chat-message__body">
+									<div class={conv.class2}>
+                                        <lightning-formatted-rich-text value={conv.message}>
+                                        </lightning-formatted-rich-text>
+									</div>
+									<div class="slds-chat-message__meta" aria-label="said Amber Cann at 5:23 PM">{conv.user_name} • {conv.time}</div>
+								</div>
+							</div>
+						</li>
+					</template>
+				</template>
+                <div style="height: 120px">
+
+                </div>
+			</div>
+
+			<template if:true={showThinking}>
+				<li class="slds-chat-listitem slds-chat-listitem_inbound">
+					<div class="slds-chat-message">
+						<div class="slds-chat-message__body">
+							<div class="slds-chat-message__text slds-chat-message__text_inbound">
+								<span class="slds-icon-typing slds-is-animated" title="Customer is typing">
+									<span class="slds-icon-typing__dot"></span>
+									<span class="slds-icon-typing__dot"></span>
+									<span class="slds-icon-typing__dot"></span>
+									<span class="slds-assistive-text">Customer is typing</span>
+								</span>
+							</div>
+						</div>
+					</div>
+				</li>
+			</template>
+			<li class="slds-chat-listitem slds-chat-listitem_inbound">
+				<div class="slds-chat-message">
+					<div class="slds-chat-message__body">
+						<div class="slds-chat-message__text">
+							<template if:true={actions}>
+								<template for:each={actions} for:item="acc">
+									<lightning-button
+										variant="brand"
+                                        disabled={disableButtons}
+										label={acc.Action_Name__c}
+										title="Download action with brand variant"
+										data-name={acc.Action_Name__c}
+                                        data-id={acc.Id}
+										onclick={handleAction}
+										key={acc.Action_Name__c}
+										class="slds-m-left_x-small"
+									></lightning-button>
+								</template>
+							</template>
+						</div>
+					</div>
+				</div>
+			</li>
+
+			<li class="slds-chat-listitem slds-chat-listitem_bookend">
+				<div class="slds-chat-bookend slds-chat-bookend_stop">
+					<lightning-icon icon-name="utility:engage" alternative-text="Warning!" title="Warning" size="x-small"></lightning-icon>
+					<p>  Please select an action to start the interaction.</p>
+				</div>
+			</li>
+		</ul>
+	</section>
+</template>

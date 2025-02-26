@@ -23,7 +23,6 @@
             </value>
         </inputParameters>
         <nameSegment>CaseUtils</nameSegment>
-        <offset>0</offset>
         <outputParameters>
             <assignToReference>objUpdateableCase</assignToReference>
             <name>output</name>
@@ -119,13 +118,6 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>$Record.Company_Size__c</elementReference>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
-            <assignToReference>objUpdateableCase.Routing_Team__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>$Record.Routing_Team__c</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -298,7 +290,7 @@
             <name>Eligible_On_Insert</name>
             <conditionLogic>or</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Type</leftValueReference>
+                <leftValueReference>$Record.Specialization__c</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Gusto Global</stringValue>
@@ -544,13 +536,6 @@
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>objUpdateableCase.Routing_Team__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>Assign_CaseInRoute_and_Status_Fields</targetReference>
             </connector>
@@ -580,9 +565,12 @@
             <label>Routed to TAM</label>
         </rules>
     </decisions>
-    <description>Initial version: Omni Channel Flow that contains routing logic for Engagement Cases
-Included the Fault paths for exception handling
-- Offline/Online Bug Fix</description>
+    <description>- Initial version: Omni Channel Flow that contains routing logic for Engagement Cases
+- Included the Fault paths for exception handling
+- BTE-4447 - Deprecate Team Skill
+- BTE-4480: Auto-Solve Auto-Send Automation
+- Offline/Online Bug Fix
+- BTE-4392 - Move Gusto Global to Specialization Skill Category</description>
     <environments>Default</environments>
     <formulas>
         <description>This field holds the formula to check if Agatha is predicted on case, which is determined by status change from Open to In- Progress.</description>
@@ -615,7 +603,8 @@ NOT(ISPICKVAL({!$Record.Internal_AI_Processed__c}, &apos;&apos;))</expression>
         <expression>( 
     ISPICKVAL({!$Record__Prior.Status}, &apos;Awaiting Response&apos;) &amp;&amp; 
     ISPICKVAL({!$Record.Status}, &apos;In Progress&apos;) &amp;&amp; 
-    NOT(ISCHANGED({!$Record.Re_Route_Count__c})) 
+    NOT(ISCHANGED({!$Record.Re_Route_Count__c})) &amp;&amp;
+   NOT({!$Record.Trigger_Omni_Flow__c})
 ) ||
 ( 
     ISPICKVAL({!$Record__Prior.Status}, &apos;In Progress&apos;) &amp;&amp;
@@ -876,7 +865,6 @@ CASESAFEID({!$Record.OwnerId}) == {!$Setup.Engagement_Flow_Configuration__c.Enga
         <queriedFields>Support_Level__c</queriedFields>
         <queriedFields>Company_Size__c</queriedFields>
         <queriedFields>Specialization__c</queriedFields>
-        <queriedFields>Routing_Team__c</queriedFields>
         <queriedFields>Engagement_Alert__c</queriedFields>
         <queriedFields>AccountId</queriedFields>
         <queriedFields>ContactId</queriedFields>
@@ -916,7 +904,7 @@ NOT(CONTAINS({!$Setup.Engagement_Flow_Configuration__c.ineligible_Origin_Channel
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <subflows>
         <name>Call_Omni_Subflow</name>
         <label>Call Omni Subflow</label>

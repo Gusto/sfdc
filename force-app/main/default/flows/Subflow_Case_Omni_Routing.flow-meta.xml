@@ -998,8 +998,8 @@
         <nameSegment>routeWork</nameSegment>
     </actionCalls>
     <actionCalls>
-        <name>Skills_and_Member_level_10</name>
-        <label>Skills and Member level 10</label>
+        <name>Skills_and_Member_level_1</name>
+        <label>Skills and Member level 1</label>
         <locationX>1370</locationX>
         <locationY>2432</locationY>
         <actionName>addSkillRequirements</actionName>
@@ -1011,7 +1011,7 @@
         <inputParameters>
             <name>skillRequirement</name>
             <value>
-                <stringValue>[{&quot;id&quot;:&quot;3a3610f0&quot;,&quot;skillId&quot;:&quot;{!PersonaSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;10&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false},{&quot;id&quot;:&quot;4c58fef4&quot;,&quot;skillId&quot;:&quot;{!SupportLevelSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false}]</stringValue>
+                <stringValue>[{&quot;id&quot;:&quot;3a3610f0&quot;,&quot;skillId&quot;:&quot;{!PersonaSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false},{&quot;id&quot;:&quot;4c58fef4&quot;,&quot;skillId&quot;:&quot;{!SupportLevelSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false}]</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -1033,8 +1033,8 @@
         </outputParameters>
     </actionCalls>
     <actionCalls>
-        <name>Skills_and_Micro_level_10</name>
-        <label>Skills and Micro level 10</label>
+        <name>Skills_and_Micro_level_1</name>
+        <label>Skills and Micro level 1</label>
         <locationX>2162</locationX>
         <locationY>2432</locationY>
         <actionName>addSkillRequirements</actionName>
@@ -1047,41 +1047,6 @@
             <name>skillRequirement</name>
             <value>
                 <stringValue>[{&quot;id&quot;:&quot;3a3610f0&quot;,&quot;skillId&quot;:&quot;{!PersonaSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false},{&quot;id&quot;:&quot;4c58fef4&quot;,&quot;skillId&quot;:&quot;{!SupportLevelSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false},{&quot;id&quot;:&quot;0e524766&quot;,&quot;skillId&quot;:&quot;{!CompanySizeSkill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false}]</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>skillRequirementsResourceItem</name>
-            <value>
-                <elementReference>AggregatedSkillRequirement</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>skillInputType</name>
-            <value>
-                <stringValue>variable</stringValue>
-            </value>
-        </inputParameters>
-        <nameSegment>addSkillRequirements</nameSegment>
-        <outputParameters>
-            <assignToReference>AggregatedSkillRequirement</assignToReference>
-            <name>skillRequirements</name>
-        </outputParameters>
-    </actionCalls>
-    <actionCalls>
-        <name>Skills_for_Gusto_Global_Routing</name>
-        <label>Skills for Gusto Global Routing</label>
-        <locationX>1106</locationX>
-        <locationY>1058</locationY>
-        <actionName>addSkillRequirements</actionName>
-        <actionType>addSkillRequirements</actionType>
-        <connector>
-            <targetReference>Route_to_High_skilled_person</targetReference>
-        </connector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>skillRequirement</name>
-            <value>
-                <stringValue>[{&quot;id&quot;:&quot;0406ce33&quot;,&quot;skillId&quot;:&quot;{!Get_Gusto_Global_Skill.Id}&quot;,&quot;skillLabel&quot;:&quot;&quot;,&quot;skillLevel&quot;:&quot;1&quot;,&quot;skillPriority&quot;:&quot;0&quot;,&quot;isAdditionalSkill&quot;:false}]</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -1568,21 +1533,6 @@
             </connector>
             <label>Engagement Alert Present?</label>
         </rules>
-        <rules>
-            <name>Is_Case_Type_Gusto_Global</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>CaseRecord.Type</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Gusto Global</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_Gusto_Global_Skill</targetReference>
-            </connector>
-            <label>Is Case Type Gusto Global?</label>
-        </rules>
     </decisions>
     <decisions>
         <name>Check_Tier</name>
@@ -1826,7 +1776,7 @@
             <name>Gusto_Global</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>CaseRecord.Type</leftValueReference>
+                <leftValueReference>CaseRecord.Specialization__c</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Gusto Global</stringValue>
@@ -1968,7 +1918,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Skills_and_Member_level_10</targetReference>
+                <targetReference>Skills_and_Member_level_1</targetReference>
             </connector>
             <label>Member</label>
         </rules>
@@ -1983,7 +1933,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Skills_and_Micro_level_10</targetReference>
+                <targetReference>Skills_and_Micro_level_1</targetReference>
             </connector>
             <label>Micro</label>
         </rules>
@@ -2336,7 +2286,8 @@
             <label>Skill Company Size</label>
         </rules>
     </decisions>
-    <description>- BTE-4447 - Deprecate Team Skill</description>
+    <description>- BTE-4447 - Deprecate Team Skill
+- BTE-4392 - Move Gusto Global to Specialization Skill Category</description>
     <environments>Default</environments>
     <formulas>
         <description>Determines if Account.Additional_Services__c contains &apos;Priority Support&apos;</description>
@@ -2428,28 +2379,6 @@
             <operator>EqualTo</operator>
             <value>
                 <elementReference>CaseRecord.Engagement_Alert__c</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Skill</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <description>This will get only the Case&apos;s Gusto Global skill</description>
-        <name>Get_Gusto_Global_Skill</name>
-        <label>Get Gusto Global Skill</label>
-        <locationX>1106</locationX>
-        <locationY>950</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Skills_for_Gusto_Global_Routing</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>MasterLabel</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>CaseRecord.Type</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>

@@ -42,7 +42,7 @@
         <inputParameters>
             <name>emailBody</name>
             <value>
-                <elementReference>$Record.HTML_Response__c</elementReference>
+                <elementReference>TextEmailBody</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -56,6 +56,9 @@
             <value>
                 <elementReference>CaseRecord.Id</elementReference>
             </value>
+        </inputParameters>
+        <inputParameters>
+            <name>logEmailOnSend</name>
         </inputParameters>
         <nameSegment>emailSimple</nameSegment>
         <offset>0</offset>
@@ -71,6 +74,13 @@
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_Parent_Case</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>TextEmailBody</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.HTML_Response__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -100,7 +110,7 @@
             <assignToReference>CaseRecord.Auto_Solve_Status__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Solved</stringValue>
+                <stringValue>Attempted</stringValue>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -247,7 +257,7 @@
         <inputAssignments>
             <field>HtmlBody</field>
             <value>
-                <elementReference>$Record.Response__c</elementReference>
+                <elementReference>TextEmailBody</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -354,7 +364,7 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <textTemplates>
         <description>Exception Log Message containing flow details in a fault path.</description>
         <name>strExceptionLogMessage</name>
@@ -376,5 +386,12 @@
         <isInput>false</isInput>
         <isOutput>true</isOutput>
         <objectType>Exception_Log_Event__e</objectType>
+    </variables>
+    <variables>
+        <name>TextEmailBody</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
 </Flow>

@@ -33,12 +33,16 @@ public with sharing class RecordSummary {
         request.setHeader('Content-Type', 'application/json');
         request.setHeader('client_id', '{!$Credential.Open_AI_External_Credential.client_id}');
         request.setHeader('client_secret', '{!$Credential.Open_AI_External_Credential.client_secret}');
+        
+        system.debug('requestBody***'+ this.requestBody);
+
         request.setBody(this.requestBody);
         HttpResponse response;     
         try {
             response = http.send(request);
             if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
                 this.responseBody = response.getBody();
+                system.debug('responseBody88'+ this.responseBody);
                 postResponseToSummaryField();
                 System.debug('done');
             }else{

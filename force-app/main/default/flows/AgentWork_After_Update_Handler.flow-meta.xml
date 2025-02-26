@@ -5,7 +5,7 @@
         <name>Assign_new_case_owner</name>
         <label>Assign new case owner</label>
         <locationX>50</locationX>
-        <locationY>539</locationY>
+        <locationY>755</locationY>
         <assignmentItems>
             <assignToReference>updatableCase.Id</assignToReference>
             <operator>Assign</operator>
@@ -32,10 +32,61 @@
         </connector>
     </assignments>
     <decisions>
+        <name>Chat_Transcript_Or_Messaging_Session</name>
+        <label>Chat Transcript Or Messaging Session?</label>
+        <locationX>842</locationX>
+        <locationY>539</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Chat_Transcript</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Chat_Transcript_Record</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Opened</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Checking_Related_Case</targetReference>
+            </connector>
+            <label>Chat Transcript</label>
+        </rules>
+        <rules>
+            <name>Messaging_Session</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Messaging_Session_Record</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Messaging_Session</targetReference>
+            </connector>
+            <label>Messaging Session</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Checking_Related_Case</name>
         <label>Checking Related Case</label>
-        <locationX>182</locationX>
-        <locationY>431</locationY>
+        <locationX>314</locationX>
+        <locationY>647</locationY>
         <defaultConnectorLabel>Case Not Found</defaultConnectorLabel>
         <rules>
             <name>Case_Found</name>
@@ -76,7 +127,8 @@
     </decisions>
     <description>PLEASE make changes on top of this version going forward
 
-- Updating the case Owner after chat was transferred to a new agent</description>
+- Updating the case Owner after chat was transferred to a new agent
+- BTE-4496: Messaging Session Tab Close and Active Time field updates</description>
     <environments>Default</environments>
     <formulas>
         <name>changeToggle</name>
@@ -107,11 +159,11 @@
     <recordLookups>
         <name>Get_Chat_Transcript_Record</name>
         <label>Get Chat Transcript Record</label>
-        <locationX>182</locationX>
+        <locationX>842</locationX>
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Checking_Related_Case</targetReference>
+            <targetReference>Get_Messaging_Session_Record</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -125,35 +177,68 @@
         <object>LiveChatTranscript</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordLookups>
+        <name>Get_Messaging_Session_Record</name>
+        <label>Get Messaging Session Record</label>
+        <locationX>842</locationX>
+        <locationY>431</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Chat_Transcript_Or_Messaging_Session</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.WorkItemId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>MessagingSession</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <recordUpdates>
         <name>Update_case_with_new_owner</name>
         <label>Update case with new owner</label>
         <locationX>50</locationX>
-        <locationY>647</locationY>
+        <locationY>863</locationY>
         <inputReference>updatableCase</inputReference>
     </recordUpdates>
+    <recordUpdates>
+        <name>Update_Messaging_Session</name>
+        <label>Update Messaging Session</label>
+        <locationX>842</locationX>
+        <locationY>647</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Messaging_Session_Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Active_Time__c</field>
+            <value>
+                <elementReference>$Record.ActiveTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Tab_Close_Time__c</field>
+            <value>
+                <elementReference>$Record.CloseDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <object>MessagingSession</object>
+    </recordUpdates>
     <start>
-        <locationX>56</locationX>
+        <locationX>716</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Chat_Transcript_Record</targetReference>
         </connector>
-        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Status</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Opened</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>WorkItemId</field>
-            <operator>StartsWith</operator>
-            <value>
-                <stringValue>570</stringValue>
-            </value>
-        </filters>
         <object>AgentWork</object>
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>

@@ -166,8 +166,10 @@ public class OpportunityHelper {
 
 		if (!list_AcquisitionOpportunitiesToInsert.isEmpty()) {
 			blnLineItemUpdated = true;
+			OpportunityTriggerHelper.skipTrigger = true;
 			insert list_AcquisitionOpportunitiesToInsert;
 			createOpportunityLineItems(list_AcquisitionOpportunitiesToInsert, list_NewAccounts);
+			OpportunityTriggerHelper.skipTrigger = false;
 		}
 		System.debug('list_AcquisitionOpportunitiesToUpdate: ' + list_AcquisitionOpportunitiesToUpdate);
 		if (!list_AcquisitionOpportunitiesToUpdate.isEmpty()) {
@@ -202,7 +204,9 @@ public class OpportunityHelper {
 		//objOppToInsert.StageName = 'New';
 
 		System.debug('objOppToInsert before update:' + objOppToInsert);
-		if (objOppToInsert.Type == 'New Business' && (objOppToInsert.CloseDate == null || objAccount.Converted_Lead_Id__c != null)) {
+		System.debug('objAccount before update:' + objAccount);
+
+		if (objOppToInsert.Type == 'New Business' && (objOppToInsert.CloseDate == null || (UserUtils.isIntgUser(UserInfo.getUserId()) && objAccount.Converted_Lead_Id__c != null))) {
 			Integer intNoOfDays = Integer.valueOf(map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c);
 			objOppToInsert.CloseDate = map_OpportunityConfigData.get('Acquisition-New Business').No_Of_Closed_Days__c != null ? Date.today().addDays(intNoOfDays) : Date.today().addDays(30);
 		} else if (objOppToInsert.Type == 'Winback' && (objOppToInsert.CloseDate == null || objAccount.Converted_Lead_Id__c != null)) {
@@ -887,7 +891,7 @@ public class OpportunityHelper {
 					objNewOpportunity.Type = objClonedOpportunity.Type;
 					for (String fieldName : objClonedOpportunity.getPopulatedFieldsAsMap().keySet()) {
 						System.debug('fieldName11111: ' + fieldName);
-						if (!excludedFields.contains(fieldName) && fieldName != 'StageName' && fieldName != 'Id') {
+						if (!excludedFields.contains(fieldName) && fieldName != 'StageName' && fieldName != 'Id' && fieldName != 'CloseDate' && fieldName != 'Stage_Detail__c' && fieldName != 'Stage_Detail_2__c' && fieldName != 'Is_Fraud__c') {
 							objNewOpportunity.put(fieldName, objClonedOpportunity.get(fieldName));
 						}
 					}
