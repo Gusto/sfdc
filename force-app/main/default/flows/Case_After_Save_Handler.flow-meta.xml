@@ -16,7 +16,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Outbound_message_to_Forethought</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>OB_Message_for_Forethought_Engagement</name>
@@ -34,7 +33,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Outbound_message_to_Forethought</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>OB_Message_for_Forethought_Payroll</name>
@@ -52,7 +50,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Outbound_message_to_Forethought</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>OB_to_Forethought_Modern_Bank</name>
@@ -70,7 +67,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Outbound_message_to_Forethought</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Outbound_message_to_Forethought</name>
@@ -81,7 +77,6 @@
         <actionType>outboundMessage</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Outbound_message_to_Forethought</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Outbound_message_to_Forethought_Tax_Res</name>
@@ -99,7 +94,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Outbound_message_to_Forethought</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Publish_Case_info_to_APIntego</name>
@@ -117,7 +111,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Publish_Case_info_to_APIntego</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Publish_Case_info_to_APIntego1</name>
@@ -135,7 +128,6 @@
         </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Publish_Case_info_to_APIntego</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Publish_Case_info_to_APIntego_Engagement</name>
@@ -149,7 +141,6 @@
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Publish_Case_info_to_APIntego</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <actionCalls>
         <name>Publish_Case_Info_To_Kafka</name>
@@ -160,7 +151,6 @@
         <actionType>outboundMessage</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>Case.Publish_Case_Info_To_Kafka</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <apiVersion>56.0</apiVersion>
     <decisions>
@@ -508,7 +498,7 @@
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record.Type</leftValueReference>
+                <leftValueReference>$Record.Specialization__c</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
                     <stringValue>Gusto Global</stringValue>
@@ -1693,7 +1683,7 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <subflows>
         <description>Pass Payroll Care - Read Only  record to Case Payroll Care - Read Only SubFlow Helper.</description>
         <name>Case_Benefits_Care_Read_Only_SubFlow_Helper</name>

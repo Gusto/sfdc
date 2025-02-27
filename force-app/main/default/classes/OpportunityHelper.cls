@@ -16,16 +16,20 @@ public class OpportunityHelper {
 		'contractor_only' => 'contractor_only',
 		'Advanced Time-Off' => 'Advanced time-off',
 		'HR Services' => 'HR services',
+		'HR Resources' => 'HR services',
 		'Advanced Time-Off Premium' => 'Advanced time-off premium',
 		'Next-Day Direct Deposit' => 'Next-day direct deposit',
 		'Performance And Engagement' => 'Performance & engagement',
+		'Performance' => 'Performance & engagement',
 		'Priority Support' => 'Priority support',
 		'Priority Support and HR Services' => 'Priority Support and HR Services',
 		'Time And Project Tracking' => 'Time and project tracking',
+		'Time Tracking' => 'Time and project tracking',
 		'Wholesale' => 'wholesale',
 		'Core' => 'core',
 		'Complete' => 'complete',
 		'Core (S-Corp)' => 'core_s_corp',
+		'Core (owner-only s-corp)' => 'core_s_corp',
 		'GustoHR Pro' => 'GustoHRPro'
 	};
 
@@ -1032,19 +1036,26 @@ public class OpportunityHelper {
 
 		System.debug('map_ProductNameAndOppLineItem: ' + map_ProductNameAndOppLineItem);
 
+		System.debug('list_Opportunities: ' + list_Opportunities);
 		for (Opportunity objOpp : list_Opportunities) {
 			// sync additional services between payment invoice and opportunity
+			System.debug('objOpp.Additional_Opportunity_Services__c: ' + objOpp.Additional_Opportunity_Services__c);
+			System.debug('objOpp.Payment_Invoice__r.Additional_Invoiced_Services__c: ' + objOpp.Payment_Invoice__r.Additional_Invoiced_Services__c);
 			if (objOpp.Additional_Opportunity_Services__c != objOpp.Payment_Invoice__r.Additional_Invoiced_Services__c) {
 				objOpp.Additional_Opportunity_Services__c = objOpp.Payment_Invoice__r.Additional_Invoiced_Services__c;
 				map_OpptysToUpdate.put(objOpp.Id, objOpp);
 			}
 
+			System.debug('objOpp.International_Contractors__c: ' + objOpp.International_Contractors__c);
+			System.debug('objOpp.Payment_Invoice__r.International_Contractors__c: ' + objOpp.Payment_Invoice__r.International_Contractors__c);
 			// sync number of international contractors between invoice and opportunity
 			if (objOpp.International_Contractors__c != objOpp.Payment_Invoice__r.International_Contractors__c) {
 				objOpp.International_Contractors__c = objOpp.Payment_Invoice__r.International_Contractors__c;
 				map_OpptysToUpdate.put(objOpp.Id, objOpp);
 			}
 
+			System.debug('objOpp.International_Employees__c: ' + objOpp.International_Employees__c);
+			System.debug('objOpp.Payment_Invoice__r.International_Employees__c: ' + objOpp.Payment_Invoice__r.International_Employees__c);
 			// sync number of international employees between invoice and opportunity
 			if (objOpp.International_Employees__c != objOpp.Payment_Invoice__r.International_Employees__c) {
 				objOpp.International_Employees__c = objOpp.Payment_Invoice__r.International_Employees__c;
@@ -1052,11 +1063,15 @@ public class OpportunityHelper {
 			}
 
 			// sync number of employees between invoice and opportunity
+			System.debug('objOpp.NumberOfEmployees__c: ' + objOpp.NumberOfEmployees__c);
+			System.debug('objOpp.Payment_Invoice__r.Employee_Count__c: ' + objOpp.Payment_Invoice__r.Employee_Count__c);
 			if (objOpp.NumberOfEmployees__c != objOpp.Payment_Invoice__r.Employee_Count__c) {
 				objOpp.NumberOfEmployees__c = objOpp.Payment_Invoice__r.Employee_Count__c;
 				map_OpptysToUpdate.put(objOpp.Id, objOpp);
 			}
 
+			System.debug('objOpp.Number_of_Contractors__c: ' + objOpp.Number_of_Contractors__c);
+			System.debug('objOpp.Payment_Invoice__r.Contractor_Count__c: ' + objOpp.Payment_Invoice__r.Contractor_Count__c);
 			// sync number of contracrors between invoice and opportunity
 			if (objOpp.Number_of_Contractors__c != objOpp.Payment_Invoice__r.Contractor_Count__c) {
 				objOpp.Number_of_Contractors__c = objOpp.Payment_Invoice__r.Contractor_Count__c;
@@ -1064,7 +1079,7 @@ public class OpportunityHelper {
 			}
 		}
 
-		for (Opportunity objOpportunity : map_OpptysToUpdate.values()) {
+		for (Opportunity objOpportunity : list_Opportunities) {
 			String strCurrentTier = objOpportunity.Current_Tier__c != null ? objOpportunity.Current_Tier__c : 'simple';
 			Set<String> set_ProductNameToCheck = new Set<String>();
 

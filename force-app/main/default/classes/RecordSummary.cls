@@ -18,12 +18,12 @@ public with sharing class RecordSummary {
 
     @InvocableMethod(label='Get LLM Summary' description='Makes a request to LLM for Work Item Summary' category='Case')
     public static void getRecordSummaryInvocable(List<String> recordIdList) {
+
         RecordSummary thisRecordSummaryRequest = new RecordSummary(recordIdList);
         thisRecordSummaryRequest.getRecordSummary();
     }
 
     public void getRecordSummary() {
-
         // create request 
         String methodName = 'getRecordSummary';
         Http http = new Http();
@@ -34,7 +34,6 @@ public with sharing class RecordSummary {
         request.setHeader('client_id', '{!$Credential.Open_AI_External_Credential.client_id}');
         request.setHeader('client_secret', '{!$Credential.Open_AI_External_Credential.client_secret}');
         
-        system.debug('requestBody***'+ this.requestBody);
 
         request.setBody(this.requestBody);
         HttpResponse response;     
@@ -134,13 +133,13 @@ public with sharing class RecordSummary {
     // response to be posted to corresponding record 
     private void postResponseToSummaryField(){
         String methodName = 'postResponseToSummaryField';
-
         for(sObject thisRecord : this.recordList){
             Map<String, Object> deserializedResponse = (Map<String, Object>) JSON.deserializeUntyped(this.responseBody);
             String fieldValue = ((String) deserializedResponse.get(this.RESPONSE_SUMMARY_KEY)).unescapeHtml4();
             thisRecord.put(this.recordSummaryObject.Summary_Field_API_Name__c,fieldValue);
         }
         try{
+           
             update(this.recordList);
         }catch(Exception dmlException){
             System.debug(dmlException.getMessage());

@@ -3,8 +3,8 @@
     <actionCalls>
         <name>Get_LLM_Summary</name>
         <label>Get LLM Summary</label>
-        <locationX>176</locationX>
-        <locationY>323</locationY>
+        <locationX>308</locationX>
+        <locationY>276</locationY>
         <actionName>RecordSummary</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -56,9 +56,6 @@
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
-        <connector>
-            <targetReference>Get_LLM_Summary</targetReference>
-        </connector>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Record_Type_Name__c</field>
@@ -111,9 +108,15 @@
         </filters>
         <object>LiveChatTranscript</object>
         <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_LLM_Summary</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <textTemplates>
         <name>EmailBody</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>

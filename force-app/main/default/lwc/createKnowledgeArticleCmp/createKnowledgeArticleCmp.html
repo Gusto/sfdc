@@ -1,0 +1,8 @@
+<template>
+    <lightning-card title="Knowledge Article">
+        <div class="slds-p-around_medium">
+            <!-- Render the AI Summary using dangerouslySetInnerHTML -->
+            <div lwc:dom="manual" class="ai-summary" inner-html={articleContent}></div>
+        </div>
+    </lightning-card>
+</template>

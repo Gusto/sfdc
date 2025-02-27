@@ -44,16 +44,13 @@ public without sharing class NBACategoryAlignment {
 	public static NBACategoryAlignmentResponse getServedCategories(Id recordId) {
 		List<NBA_Rule_Set__c> list_RuleSets = new List<NBA_Rule_Set__c>();
 		String strObjectType = recordId.getSObjectType().getDescribe().getName();
-		String strServedOtherRules = '';
 		String strServedUpRule = '';
 		String strRuleAbbreviation = '';
 		Map<String, String> map_TalkingPoints = new Map<String, String>();
 
 		try {
 			SObject objRecord = Database.query('SELECT Id, Served_Other_Rules__c, Served_Up_Rule__c FROM ' + strObjectType + ' WHERE Id = :recordId');
-			strServedOtherRules = (String) objRecord.get('Served_Other_Rules__c');
 			strServedUpRule = (String) objRecord.get('Served_Up_Rule__c');
-
 			if (String.isNotBlank(strServedUpRule) && strServedUpRule.contains('-')) {
 				strRuleAbbreviation = strServedUpRule.substringAfter('-').trim();
 			}
@@ -68,25 +65,23 @@ public without sharing class NBACategoryAlignment {
 				FROM NBA_Rule_Set__c
 				WHERE Is_Active__c = TRUE AND NBA_Rule_Set_Configuration__r.Abbreviation__c = :strRuleAbbreviation
 				ORDER BY Priority__c ASC
-			]) {
-				String strRuleNameWithSuffix = objRuleSet.Rule_Name__c + ' - ' + strRuleAbbreviation;
-				if (String.isNotBlank(strServedOtherRules) && strServedOtherRules.contains(strRuleNameWithSuffix)) {
-					// add primary hashtag to the rule name, if rule name matches with the Served Up Rule on the record
-					if (String.isNotBlank(strServedUpRule) && strRuleNameWithSuffix == strServedUpRule) {
-						objRuleSet.Rule_Name__c = objRuleSet.Rule_Name__c + '#Primary';
-					}
-					// add the rule to the list of rules that are applicable to the given record
-					for (NBA_Rule_Criteria__c objRuleCriteria : objRuleSet.NBA_Rule_Criteria__r) {
-						if (String.isNotBlank(objRuleCriteria.Current_Criteria__c) && String.isNotBlank(objRuleCriteria.Talking_Points__c)) {
-							NBARequestWrapper objRequest = (NBARequestWrapper) System.JSON.deserialize(objRuleCriteria.Current_Criteria__c, NBARequestWrapper.class);
-							if (objRequest.servingObject == strObjectType) {
-								map_TalkingPoints.put(objRuleSet.Id, objRuleCriteria.Talking_Points__c);
-							}
-						}
-					}
-					list_RuleSets.add(objRuleSet);
-				}
-			}
+            ]) {
+                String strRuleNameWithSuffix = objRuleSet.Rule_Name__c + ' - ' + strRuleAbbreviation;
+                // add primary hashtag to the rule name, if rule name matches with the Served Up Rule on the record
+                if (String.isNotBlank(strServedUpRule) && strRuleNameWithSuffix == strServedUpRule) {
+                    objRuleSet.Rule_Name__c = objRuleSet.Rule_Name__c + '#Primary';
+                }
+                // add the rule to the list of rules that are applicable to the given record
+                for (NBA_Rule_Criteria__c objRuleCriteria : objRuleSet.NBA_Rule_Criteria__r) {
+                    if (String.isNotBlank(objRuleCriteria.Current_Criteria__c) && String.isNotBlank(objRuleCriteria.Talking_Points__c)) {
+                        NBARequestWrapper objRequest = (NBARequestWrapper) System.JSON.deserialize(objRuleCriteria.Current_Criteria__c, NBARequestWrapper.class);
+                        if (objRequest.servingObject == strObjectType) {
+                            map_TalkingPoints.put(objRuleSet.Id, objRuleCriteria.Talking_Points__c);
+                        }
+                    }
+                }
+                list_RuleSets.add(objRuleSet);
+            }
 			// if no errors, return success response along with list of rule sets
 			return new NBACategoryAlignmentResponse(true, 'Success', list_RuleSets, map_TalkingPoints);
 		} catch (Exception ex) {

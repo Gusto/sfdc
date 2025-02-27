@@ -59,7 +59,7 @@ global class PaymentInvoiceBatch implements Database.Batchable<sObject>, Schedul
 		//AND Period_Start_Date__c = :dtPeriodStart AND Period_End_Date__c = :dtPeriodEnd
 		this.strQuery =
 			'SELECT Id, Account__c, Account__r.Id, Account__r.ZP_Company_Id__c, Account__r.First_Month_Invoice_Generated__c, Account__r.Upsell_Opp_Open__c, Employee_Count__c, Contractor_Count__c, Amount__c, First_Day_of_Invoice_Month__c, Account__r.Joined_Date_Panda__c, ' +
-			'Priority_Support__c, toLabel(Additional_Invoiced_Services__c), Processing_State__c, Message__c, Company_Id__c, Pricing__c, Is_First_Payment_Invoice__c, International_Employees__c, International_Contractors__c FROM Payment_Invoice__c ' +
+			'Priority_Support__c, toLabel(Additional_Invoiced_Services__c), Processing_State__c, Message__c, Company_Id__c, Pricing__c, Is_First_Payment_Invoice__c, International_Employees__c, International_Contractors__c,Payment_Plan__c FROM Payment_Invoice__c ' +
 			+'WHERE Processing_State__c IN :set_ProcessingStates AND Workflow_Run_Number__c = :strWorkflowRunNumber';
 	}
 
@@ -372,6 +372,7 @@ global class PaymentInvoiceBatch implements Database.Batchable<sObject>, Schedul
 		objOppty.International_Contractors__c = objInvoice.International_Contractors__c;
 		objOppty.ZP_First_Payment_Invoice_Amount__c = objInvoice.Amount__c;
 		objOppty.ZP_First_Payment_Invoice_For_Month__c = objInvoice.First_Day_of_Invoice_Month__c;
+		objOppty.Current_Tier__c = objInvoice.Payment_Plan__c;
 		return objOppty;
 	}
 }

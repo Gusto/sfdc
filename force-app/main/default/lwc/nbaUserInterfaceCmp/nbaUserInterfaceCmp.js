@@ -1148,8 +1148,10 @@ export default class NbaUserInterfaceCmp extends LightningElement {
 		}
 
 		let servedOtherRulesField = result.map_AllFields["served_other_rules__c"];
-		if (this.objRuleSet.NBA_Rule_Set_Configuration__r.Exclude_Served_Other_Rules__c == false && (!servedOtherRulesField || servedOtherRulesField.strFieldType != "MULTIPICKLIST")) {
-			list_missingFields.push("Served Other Rules");
+		if (this.objRuleSet.NBA_Rule_Set_Configuration__r.Exclude_Served_Other_Rules__c == false) {
+			if (!servedOtherRulesField || servedOtherRulesField.strFieldType != "MULTIPICKLIST") {
+				list_missingFields.push("Served Other Rules");
+			}
 		}
 
 		// check for hold out only when hold out percentage is greater than 0

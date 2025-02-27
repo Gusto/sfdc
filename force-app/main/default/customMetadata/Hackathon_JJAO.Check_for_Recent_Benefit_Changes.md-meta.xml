@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Check for Recent Benefit Changes</label>
+    <protected>false</protected>
+    <values>
+        <field>Action_Name__c</field>
+        <value xsi:type="xsd:string">Check for Recent Benefit Changes</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">What changes has the group made to their plans and plan details?</value>
+    </values>
+    <values>
+        <field>Object__c</field>
+        <value xsi:type="xsd:string">Case</value>
+    </values>
+    <values>
+        <field>Parent_Action_Name__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Prompt__c</field>
+        <value xsi:type="xsd:string">Look at Opportunity and Ticket data associated to the account, has the group requested any changes to their benefits? Search for opportunities with the record type Benefits Change and Benefits BYOB, as well as tickets requesting changes to a waiting period, contribution scheme, or other plan details. Pay special attention to tickets that were ever owned by Advising Fulfillment. Exclude requests for employee level changes. Please provide a description of the issues including specific carrier, document, and plan names if available, and the record IDs where these issues were surfaced. The response should be brief but detailed</value>
+    </values>
+    <values>
+        <field>Record_Type_Name__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>

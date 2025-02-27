@@ -181,7 +181,7 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 			set_pbeIDs.add(objOLI.PricebookEntryId);
 		}
 		System.debug('set_pbeIDs:' + set_pbeIDs);
-		for (PricebookEntry objPBE : [SELECT Id, Product2.ExternalId, Pricebook2.Product_Tier__c, Product2.Name, Product2.Discounts_Available__c FROM PricebookEntry WHERE Id IN :set_pbeIDs]) {
+		for (PricebookEntry objPBE : [SELECT Id, Product2.ExternalId,Product2.Product_Line_Id__c, Pricebook2.Product_Tier__c, Product2.Name, Product2.Discounts_Available__c FROM PricebookEntry WHERE Id IN :set_pbeIDs]) {
 			map_PricebookEntryToProductPricebook.put(objPBE.Id, objPBE);
 		}
 		System.debug('map_PricebookEntryToProductPricebook:' + map_PricebookEntryToProductPricebook);
@@ -245,17 +245,21 @@ public without sharing class OpportunityLineItemTriggerHandler extends TriggerHa
 							}
 						} else {
 							// check for the other discount types
+							System.debug('objPBE:' + objPBE);
+							System.debug('objPBE.Pricebook2.Product_Tier__c:' + objPBE.Pricebook2.Product_Tier__c);
 							String strProductTier = objPBE.Pricebook2.Product_Tier__c;
 							String strProductExternalId = objPBE.Product2.ExternalId;
+							String strProductLineId = objPBE.Product2.Product_Line_Id__c;
 
+							
 							if (objPBE != null) {
 								if (String.isNotBlank(strProductTier) && objPD.Date_Start__c == null) {
 									continue;
 								}
 
 								if (
-									String.isNotBlank(strProductExternalId) &&
-									strProductExternalId.equalsIgnoreCase(objPD.ZP_Product_Id__c) &&
+									String.isNotBlank(strProductLineId) &&
+									strProductLineId.equalsIgnoreCase(objPD.ZP_Product_Id__c) &&
 									objPD.Date_Start__c <= dtOppCloseDate &&
 									(objPD.Date_End__c == null || (objPD.Date_End__c != null && objPD.Date_End__c >= dtOppCloseDate))
 								) {

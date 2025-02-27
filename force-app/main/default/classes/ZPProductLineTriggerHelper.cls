@@ -393,9 +393,10 @@ public with sharing class ZPProductLineTriggerHelper {
 			set_CompanyIdsToProcess.add(objProductLine.Company_Id__c);
 		}
 
+		System.debug('set_CompanyIdsToProcess: ' + set_CompanyIdsToProcess);
 		// querying ZP Proudct line based on company Ids
 		List<ZP_Product_Line__c> list_ZPProductLineRecords = ZPProductLineUtil.queryZPProductLine(set_CompanyIdsToProcess);
-
+		System.debug('list_ZPProductLineRecords: ' + list_ZPProductLineRecords);
 		// building a map of company Id and most recent effective base product line record
 		for (ZP_Product_Line__c objProductLine : list_ZPProductLineRecords) {
 			// taking most recent base products which are having active status and start date is not in future.
@@ -413,6 +414,7 @@ public with sharing class ZPProductLineTriggerHelper {
 			}
 		}
 
+		System.debug('map_CompanyIdToBaseProdLine: ' + map_CompanyIdToBaseProdLine);
 		// building a map of company Id & list of their add-on product lines based on latest base product line
 		for (ZP_Product_Line__c objProductLine : list_ZPProductLineRecords) {
 			if (String.isNotBlank(objProductLine.Parent_ID__c) && ZPProductLineUtil.TYPE_ADD_ON.equalsIgnoreCase(objProductLine.Type__c)) {
@@ -436,15 +438,18 @@ public with sharing class ZPProductLineTriggerHelper {
 				}
 			}
 		}
-
+		System.debug('map_CompanyIdToAddonProdLines: ' + map_CompanyIdToAddonProdLines);
 		for (PriceBook2 objPaymentPlan : ZPProductLineUtil.queryPaymentPlans()) {
 			Map<String, PriceBookEntry> map_Temp = new Map<String, PriceBookEntry>();
 			// populating payment plan map based on company Ids to assign tier and price value
+			System.debug('objPaymentPlan: ' + objPaymentPlan);
 			if (objPaymentPlan.Product_Line_ID__c == null || objPaymentPlan.Pricing_Plan_ID__c == null) {
 				map_PaymentPlanNameToPaymentPlan.put(objPaymentPlan.Name, objPaymentPlan);
 			} else {
 				map_ProdPricingIdToPaymentPlan.put(objPaymentPlan.Product_Line_ID__c + '#' + objPaymentPlan.Pricing_Plan_ID__c, objPaymentPlan);
 			}
+			System.debug('map_ProdPricingIdToPaymentPlan: ' + map_ProdPricingIdToPaymentPlan);
+			System.debug('map_PaymentPlanNameToPaymentPlan: ' + map_PaymentPlanNameToPaymentPlan);
 			// populating pricebook entries map based on company Ids to assign additional services values
 			for (PriceBookEntry objPriceBookEntry : objPaymentPlan.PriceBookEntries) {
 				if (objPriceBookEntry.Product2.Product_Line_ID__c == null || objPriceBookEntry.Product2.Pricing_Plan_ID__c == null) {
@@ -457,7 +462,9 @@ public with sharing class ZPProductLineTriggerHelper {
 
 			map_PBIdToMapOfProdNameToPBE.put(objPaymentPlan.Id, map_Temp);
 		}
-
+		System.debug('map_ProdPricingIdToPBE: ' + map_ProdPricingIdToPBE);
+		System.debug('map_PBENameToPBE: ' + map_PBENameToPBE);
+		System.debug('map_PBIdToMapOfProdNameToPBE: ' + map_PBIdToMapOfProdNameToPBE);
 		for (String strCompanyId : set_CompanyIdsToProcess) {
 			boolean blnAccountToUpdate = false;
 			if (map_CompanyIdToAccount.containsKey(strCompanyId)) {
@@ -467,11 +474,17 @@ public with sharing class ZPProductLineTriggerHelper {
 				if (map_CompanyIdToBaseProdLine.containsKey(strCompanyId)) {
 					ZP_Product_Line__c objBaseProductLine = map_CompanyIdToBaseProdLine.get(strCompanyId);
 					// updating tier and pricing values
+					System.debug('objBaseProductLine: ' + objBaseProductLine);
 					if (map_ProdPricingIdToPaymentPlan.containsKey(objBaseProductLine.Product_Line_ID__c + '#' + objBaseProductLine.Pricing_Plan_ID__c)) {
 						PriceBook2 paymentPlanRecord = map_ProdPricingIdToPaymentPlan.get(objBaseProductLine.Product_Line_ID__c + '#' + objBaseProductLine.Pricing_Plan_ID__c);
+						System.debug('paymentPlanRecord11:' + paymentPlanRecord);
+						PriceBookEntry objPriceBookEntry = map_ProdPricingIdToPBE.get(objBaseProductLine.Product_Line_ID__c + '#' + objBaseProductLine.Pricing_Plan_ID__c);
+						System.debug('objPriceBookEntry11:' + objPriceBookEntry);
+						
 						// checking if account doesn't have the same Tier value
-						if (objAccToUpdate.Tier__c != paymentPlanRecord.Product_Tier__c) {
-							objAccToUpdate.Tier__c = paymentPlanRecord.Product_Tier__c;
+						if (objAccToUpdate.Tier__c != objPriceBookEntry.Product2.Name) {
+							objAccToUpdate.Tier__c = objPriceBookEntry.Product2.Name;
+							//objAccToUpdate.Tier__c = paymentPlanRecord.Product_Tier__c;
 							objBaseProductLine.Processing_State__c = IntegrationUtils.PROCESSED_STATE;
 							objBaseProductLine.Message__c = ZPProductLineUtil.SUCCESS_MESSAGE;
 							map_IDToProdLinesWithFinalMessage.put(objBaseProductLine.Id, objBaseProductLine);
@@ -479,8 +492,9 @@ public with sharing class ZPProductLineTriggerHelper {
 						}
 
 						// checking if account doesn't have the same Pricing value
-						if (objAccToUpdate.Pricing__c != paymentPlanRecord.Name) {
-							objAccToUpdate.Pricing__c = paymentPlanRecord.Name;
+						if (objAccToUpdate.Pricing__c != objPriceBookEntry.PriceBook2.Name) {
+							objAccToUpdate.Pricing__c = objPriceBookEntry.PriceBook2.Name;
+							//objAccToUpdate.Pricing__c = paymentPlanRecord.Name;
 
 							objBaseProductLine.Processing_State__c = IntegrationUtils.PROCESSED_STATE;
 							objBaseProductLine.Message__c = ZPProductLineUtil.SUCCESS_MESSAGE;
@@ -494,9 +508,10 @@ public with sharing class ZPProductLineTriggerHelper {
 						}
 					}
 
+					System.debug('objAccToUpdate after first update: ' + objAccToUpdate);
 					if (map_PBENameToPBE.containsKey(objBaseProductLine.Product_Name__c)) {
 						PriceBookEntry objPriceBookEntry = map_PBENameToPBE.get(objBaseProductLine.Product_Name__c);
-						
+						System.debug('objPriceBookEntry22:' + objPriceBookEntry);
 						if (objAccToUpdate.Tier__c != objPriceBookEntry.Product2.Name) {
 							objAccToUpdate.Tier__c = objPriceBookEntry.Product2.Name;
 							objBaseProductLine.Processing_State__c = IntegrationUtils.PROCESSED_STATE;
@@ -520,6 +535,7 @@ public with sharing class ZPProductLineTriggerHelper {
 							blnAccountToUpdate = true;
 						}
 					}
+					System.debug('objAccToUpdate after second update: ' + objAccToUpdate);
 				}
 
 				// updating Additional Services and Priority Support checkbox on the Account
@@ -530,8 +546,10 @@ public with sharing class ZPProductLineTriggerHelper {
 					for (ZP_Product_Line__c objAddOnProductLine : map_CompanyIdToAddonProdLines.get(strCompanyId)) {
 						// if add-on is active
 						if (ZPProductLineUtil.STATUS_ACTIVE.equalsIgnoreCase(objAddOnProductLine.Status__c)) {
+							System.debug('objAddOnProductLine:' + objAddOnProductLine);
 							if (map_ProdPricingIdToPBE.containsKey(objAddOnProductLine.Product_Line_ID__c + '#' + objAddOnProductLine.Pricing_Plan_ID__c)) {
 								PriceBookEntry objPriceBookEntry = map_ProdPricingIdToPBE.get(objAddOnProductLine.Product_Line_ID__c + '#' + objAddOnProductLine.Pricing_Plan_ID__c);
+								System.debug('objPriceBookEntry33:' + objPriceBookEntry);
 								//list_AdditionalServices.add(objPriceBookEntry.Product2.Product_Category__c);
 								set_AdditionalServices.add(objPriceBookEntry.Product2.Product_Category__c);
 								objAddOnProductLine.Processing_State__c = IntegrationUtils.PROCESSED_STATE;

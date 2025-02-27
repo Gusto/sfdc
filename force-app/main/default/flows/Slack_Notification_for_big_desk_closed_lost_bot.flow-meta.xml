@@ -5,7 +5,7 @@
         <name>Post_Message_to_big_closed_lost_bot_0</name>
         <label>Post Message to big-closed-lost-bot</label>
         <locationX>242</locationX>
-        <locationY>528</locationY>
+        <locationY>492</locationY>
         <actionName>slackv2__invokePostMessage</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -28,6 +28,7 @@
             </value>
         </inputParameters>
         <nameSegment>slackv2__invokePostMessage</nameSegment>
+        <offset>0</offset>
     </actionCalls>
     <apiVersion>53.0</apiVersion>
     <decisions>
@@ -35,11 +36,11 @@
         <name>Check_Secondary_Criteria_0</name>
         <label>Check Secondary Criteria</label>
         <locationX>374</locationX>
-        <locationY>408</locationY>
+        <locationY>384</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Meets_Secondary_Criteria</name>
-            <conditionLogic>1 AND 5 AND NOT 8 AND 7  AND 6 AND ( 3 OR 4 OR 2)</conditionLogic>
+            <conditionLogic>1 AND 5 AND NOT 8 AND 7 AND 6 AND 9 AND ( 3 OR 4 OR 2)</conditionLogic>
             <conditions>
                 <leftValueReference>Get_Account_Info.RecordType.DeveloperName</leftValueReference>
                 <operator>EqualTo</operator>
@@ -96,6 +97,13 @@
                     <stringValue>partner</stringValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New Business</stringValue>
+                </rightValue>
+            </conditions>
             <connector>
                 <targetReference>Post_Message_to_big_closed_lost_bot_0</targetReference>
             </connector>
@@ -137,7 +145,7 @@
         <name>Get_Account_Info</name>
         <label>Get Account Info</label>
         <locationX>374</locationX>
-        <locationY>288</locationY>
+        <locationY>276</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Check_Secondary_Criteria_0</targetReference>

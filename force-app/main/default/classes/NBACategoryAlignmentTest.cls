@@ -75,6 +75,8 @@ public class NBACategoryAlignmentTest {
 			.setStatus(LeadUtil.LEAD_STATUS_AQL)
 			.build();
 		insert objLead;
+		String objWrapper = NBAServeRecord.serveNextRecord(null);
+
 		Test.startTest();
 		NBACategoryAlignment.NBACategoryAlignmentResponse objResponse = NBACategoryAlignment.getServedCategories(objLead.Id);
 		Test.stopTest();
@@ -132,6 +134,8 @@ public class NBACategoryAlignmentTest {
 			.setCloseDate(System.today())
 			.build();
 		insert objOppty;
+		String objWrapper = NBAServeRecord.serveNextRecord(null);
+
 		Test.startTest();
 		NBACategoryAlignment.NBACategoryAlignmentResponse objResponse = NBACategoryAlignment.getServedCategories(objOppty.Id);
 		Test.stopTest();
