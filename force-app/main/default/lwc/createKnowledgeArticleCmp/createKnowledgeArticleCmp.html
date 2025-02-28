@@ -1,8 +1,9 @@
 <template>
     <lightning-card title="Knowledge Article">
+        <lightning-spinner if:true={isShowSpinnner}></lightning-spinner>
         <div class="slds-p-around_medium">
             <!-- Render the AI Summary using dangerouslySetInnerHTML -->
-            <div lwc:dom="manual" class="ai-summary" inner-html={articleContent}></div>
+            <div lwc:dom="manual" data-id="aisummary" class="ai-summary"></div>
         </div>
     </lightning-card>
 </template>

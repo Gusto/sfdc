@@ -373,6 +373,7 @@ global class PaymentInvoiceBatch implements Database.Batchable<sObject>, Schedul
 		objOppty.ZP_First_Payment_Invoice_Amount__c = objInvoice.Amount__c;
 		objOppty.ZP_First_Payment_Invoice_For_Month__c = objInvoice.First_Day_of_Invoice_Month__c;
 		objOppty.Current_Tier__c = objInvoice.Payment_Plan__c;
+		objOppty.EE_Active_Count_At_Win__c = objInvoice.Employee_Count__c;
 		return objOppty;
 	}
 }

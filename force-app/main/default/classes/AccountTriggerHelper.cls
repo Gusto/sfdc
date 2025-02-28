@@ -448,7 +448,6 @@ public without sharing class AccountTriggerHelper {
 
 		if (!map_OpptysToUpdate.isEmpty()) {
 			// do not skip opportunity trigger here as we have logic in opp trigger that neeeds to run
-			System.debug('map_OpptysToUpdate2222: ' + map_OpptysToUpdate);
 			update map_OpptysToUpdate.values();
 		}
 
@@ -3786,15 +3785,7 @@ public without sharing class AccountTriggerHelper {
 		Boolean blnBEDChange = objOldAccount != null && objNewAccount.Benefits_Effective_Date__c != objOldAccount.Benefits_Effective_Date__c;
 		Boolean blnExclusionChange = objOldAccount != null && objNewAccount.IsExcludedFromRealign != objOldAccount.IsExcludedFromRealign;
 		// Setting HI Owner based on Aligned Rep
-		if (
-			blnActiveEmployeeIncrease ||
-			blnActiveEmployeeDecrease ||
-			blnEmployeeIncrease ||
-			blnEmployeeDecrease ||
-			blnFilingStateChange ||
-			blnDeductionsChange ||
-			blnExclusionChange
-		) {
+		if (blnActiveEmployeeIncrease || blnActiveEmployeeDecrease || blnEmployeeIncrease || blnEmployeeDecrease || blnFilingStateChange || blnDeductionsChange || blnExclusionChange || blnBEDChange) {
 			Boolean blnActiveHIOwner = false;
 
 			if (objNewAccount.HI_Owner__c != null && map_Users?.containsKey(objNewAccount.HI_Owner__c)) {

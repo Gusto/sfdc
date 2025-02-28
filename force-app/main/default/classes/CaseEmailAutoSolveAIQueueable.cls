@@ -150,7 +150,8 @@ public class CaseEmailAutoSolveAIQueueable implements Queueable, Database.Allows
                     'original_instructions' => 'Original_Instructions__c',
                     'missing_context' => 'Missing_Context__c',
                     'auto_send' => 'Auto_Send___c',
-                    'quality_score' => 'Quality_Score__c'
+                    'quality_score' => 'Quality_Score__c',
+                    'html_response' => 'HTML_Response__c'
             };
 
             return fieldMapping;

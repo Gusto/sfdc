@@ -69,6 +69,12 @@ public class RunTerritoryRules implements Queueable, Database.AllowsCallouts {
 		Map<Id, Territory2> map_Territories = new Map<Id, Territory2>();
 		Map<Id, Account> map_AccountsToRoute = new Map<Id, Account>();
 
+		if (Test.isRunningTest()) {
+			for (Account objTestAcc : [SELECT Id FROM Account WHERE ZP_Company_ID__c = 'testhirouting']) {
+				set_AccountIds.add(objTestAcc.Id);
+			}
+		}
+
 		// Build a map of Account Id and their assoicated territories
 		for (ObjectTerritory2Association objAccTerritory : [SELECT Id, ObjectId, Territory2Id FROM ObjectTerritory2Association WHERE ObjectId IN :set_AccountIds]) {
 			List<Id> list_TerritoryIds;

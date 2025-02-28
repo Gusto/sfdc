@@ -100,13 +100,13 @@
         <description>Post New Lead info to Slack</description>
         <name>PostNewLeadtoSlack</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>&gt;New Freshbooks Lead Alert!
-Lead Name: {!$Record.Name}
+        <text>New Freshbooks Lead Alert!
+Lead Name: {!$Record.FirstName} {!$Record.LastName}
 Email: {!$Record.Email}
 Company: {!$Record.Company}
 Phone: {!$Record.Phone}
 Number of Employees: {!$Record.NumberOfEmployees}
 
-@{!$Record.Owner:User.Slack_Id__c} - This lead is owned by you!&lt;/p&gt;</text>
+@{!$Record.Owner:User.Slack_Id__c} - This lead is owned by you!</text>
     </textTemplates>
 </Flow>

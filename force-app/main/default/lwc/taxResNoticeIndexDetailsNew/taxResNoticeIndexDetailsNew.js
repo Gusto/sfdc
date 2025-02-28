@@ -166,6 +166,7 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 					}
 
 					if (!this.idNoticeIndexRecord) {
+						this.strAgencyName = result?.Agency_Information__r?.Name;
 						this.strCaseAgencyInfo = result.Agency_Information__c;
 						this.strAccountSegment = result.AccountId ? result.Account.RecordType.Name : "";
 						this.strAccountId = result.AccountId;
@@ -179,6 +180,7 @@ export default class TaxResNoticeIndexDetailsNew extends LightningElement {
 							this.blnIsCompany = false;
 						}
 					} else {
+						this.strAgencyName = result?.Tax_Notice_Indexs__r[0]?.Agency_Information__c?.Name;
 						this.strCaseAgencyInfo = result.Tax_Notice_Indexs__r[0]?.Agency_Information__c;
 						this.strAccountId = result.Tax_Notice_Indexs__r[0].Client_Name__c;
 						agencySuiFormNumbers = result.Tax_Notice_Indexs__r[0].Agency_Information__r?.SUI_Rate_Form_Numbers__c;

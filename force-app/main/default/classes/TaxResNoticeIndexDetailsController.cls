@@ -110,6 +110,7 @@ public with sharing class TaxResNoticeIndexDetailsController {
 					LastModifiedDate,
 					Account.RecordType.Name,
 					Agency_Information__c,
+					Agency_Information__r.Name,
 					Agency_Information__r.SUI_Rate_Form_Numbers__c,
 					AccountId,
 					Account.Tier__c,
@@ -123,6 +124,7 @@ public with sharing class TaxResNoticeIndexDetailsController {
 						SELECT
 							Id,
 							Agency_Information__c,
+							Agency_Information__r.Name,
 							Agency_Information__r.SUI_Rate_Form_Numbers__c,
                         	Agency_Information__r.OCR_Enabled__c,
 							Client_Name__c,
