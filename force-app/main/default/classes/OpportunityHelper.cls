@@ -964,6 +964,27 @@ public class OpportunityHelper {
 		return map_AccountIdANDOpportunities;
 	}
 
+	public static Opportunity cloneOpportunity(Opportunity objExistingNewBizOpportunity) {
+		Opportunity objClonedOpportunity = objExistingNewBizOpportunity.clone(false, true, false, false);
+		Opportunity objNewOpportunity = new Opportunity();
+		System.debug('objNewOpportunity3111:' + objNewOpportunity);
+		// Copy values from cloned object to the new one
+		objNewOpportunity.Name = objClonedOpportunity.Name;
+		if (objNewOpportunity.StageName == '') {
+			objNewOpportunity.StageName = 'Prospecting';
+		}
+		//objNewOpportunity.StageName = 'Prospecting';
+		objNewOpportunity.Type = objClonedOpportunity.Type;
+		for (String fieldName : objClonedOpportunity.getPopulatedFieldsAsMap().keySet()) {
+			System.debug('fieldName11111: ' + fieldName);
+			if (!excludedFields.contains(fieldName) && fieldName != 'StageName' && fieldName != 'Id' && fieldName != 'CloseDate' && fieldName != 'Stage_Detail__c' && fieldName != 'Stage_Detail_2__c' && fieldName != 'Is_Fraud__c') {
+				objNewOpportunity.put(fieldName, objClonedOpportunity.get(fieldName));
+			}
+		}
+
+		return objNewOpportunity;
+	}
+
 	public static void updateCloseDateToMatchAPD(Opportunity objNewOppty, Opportunity objOldOppty) {
 		if (objOldOppty == null && objNewOppty.Anchor_Pay_Date__c != null && !objNewOppty.IsClosed) {
 			objNewOppty.CloseDate = objNewOppty.Anchor_Pay_Date__c;
@@ -1197,6 +1218,111 @@ public class OpportunityHelper {
 
 		if (!list_OpportunityLineItemsToUpdate.isEmpty()) {
 			update list_OpportunityLineItemsToUpdate;
+		}
+	}
+
+	public static void createAcquisitionOppBasedOnJoinDateChange(List<Account> list_NewAccounts, Map<Id, Account> map_OldAccounts, Map<Id, List<Opportunity>> map_AccountIdANDOpportunities) {
+		System.debug('list_NewAccounts: ' + list_NewAccounts);
+		Set<String> set_CompanyIds = new Set<String>();
+		List<Opportunity> list_AcquisitionOpportunitiesToInsert = new List<Opportunity>();
+		List<Opportunity> list_AcquisitionOpportunitiesToUpdate = new List<Opportunity>();
+		PriceBook2 objPriceBook = new PriceBook2();
+		Opportunity objOppToInsert = new Opportunity();
+		Set<String> set_AccountIds = new Set<String>();
+		for (Account objAcc : list_NewAccounts) {
+			System.debug('objAcc.ZP_Company_ID__c: ' + objAcc.ZP_Company_ID__c);
+			System.debug('objAcc.id: ' + objAcc.id);
+			if (String.isNotBlank(objAcc.ZP_Company_ID__c)) {
+				set_CompanyIds.add(objAcc.ZP_Company_ID__c);
+				set_AccountIds.add(objAcc.Id);
+			}
+		}
+
+		map_AccountIdANDOpportunities = queryAllOpportunityDataForCloning(set_AccountIds);
+		System.debug('set_CompanyIds: ' + set_CompanyIds);
+		System.debug('ACQUISITION_OPPTY_RT_ID: ' + ACQUISITION_OPPTY_RT_ID);
+
+		createCollections();
+		System.debug('map_OpportunityConfigData: ' + map_OpportunityConfigData);
+		System.debug('map_PaymentPlanNameAndPriceBookEntry: ' + map_PaymentPlanNameAndPriceBookEntry);
+		System.debug('map_NameAndPaymentPlan: ' + map_NameAndPaymentPlan);
+
+		for (String opportunityConfigName : map_OpportunityConfigData.keySet()) {
+			if (opportunityConfigName.contains('Acquisition')) {
+				Opportunity_Config__mdt objOpportunityConfig = map_OpportunityConfigData.get(opportunityConfigName);
+				System.debug('objOpportunityConfig: ' + objOpportunityConfig);
+				if (objOpportunityConfig != null && String.isNotBlank(objOpportunityConfig.Payment_Plan_Name__c)) {
+					objPriceBook = map_NameAndPaymentPlan.get(objOpportunityConfig.Payment_Plan_Name__c);
+					System.debug('objPriceBook: ' + objPriceBook);
+					break;
+				}
+			}
+		}
+
+		System.debug('map_AccountIdANDOpportunities: ' + map_AccountIdANDOpportunities);
+		for (Account objAccount : list_NewAccounts) {
+			List<Opportunity> list_RelatedOpps = map_AccountIdANDOpportunities.get(objAccount.Id);
+			System.debug('list_RelatedOpps: ' + list_RelatedOpps);
+			
+			Boolean blnClosedLostNewBiz = false;
+			Boolean blnClosedLostWinback = false;
+			Boolean blnClosedWonNewBiz = false;
+			Boolean blnClosedWonWinback = false;
+			Boolean blnOpenNewBiz = false;
+			Boolean blnOpenWinback = false;
+			Opportunity objExistingNewBizOpportunity = null;
+			Opportunity objExistingWinbackOpportunity = null;
+
+			for (Opportunity objOpp : list_RelatedOpps) {
+				System.debug('objOpp.StageName: ' + objOpp.StageName);
+				System.debug('objOpp.Type: ' + objOpp.Type);
+				if (objOpp.StageName == 'Closed Won' && objOpp.Type == 'New Business') {
+					blnClosedWonNewBiz = true;
+					objExistingNewBizOpportunity = objOpp;
+				} else if (objOpp.StageName == 'Closed Won' && objOpp.Type == 'Winback') {
+					blnClosedWonWinback = true;
+					objExistingWinbackOpportunity = objOpp;
+				} else if (objOpp.StageName == 'Closed Lost' && objOpp.Type == 'New Business') {
+					blnClosedLostNewBiz = true;
+					objExistingNewBizOpportunity = objOpp;
+				} else if (objOpp.StageName == 'Closed Lost' && objOpp.Type == 'Winback') {
+					blnClosedLostWinback = true;
+					objExistingWinbackOpportunity = objOpp;
+				} 
+
+				if (objOpp.StageName != 'Closed Lost' && objOpp.StageName != 'Closed Won' && objOpp.Type == 'New Business') {
+					blnOpenNewBiz = true;
+					objExistingNewBizOpportunity = objOpp;
+				} else if (objOpp.StageName != 'Closed Lost' && objOpp.StageName != 'Closed Won' && objOpp.Type == 'Winback') {
+					blnOpenWinback = true;
+					objExistingWinbackOpportunity = objOpp;
+				}
+			}
+
+			System.debug('blnClosedLostNewBiz: ' + blnClosedLostNewBiz);
+			System.debug('blnClosedLostWinback: ' + blnClosedLostWinback);
+			System.debug('blnClosedWonNewBiz: ' + blnClosedWonNewBiz);
+			System.debug('blnClosedWonWinback: ' + blnClosedWonWinback);
+			System.debug('objExistingNewBizOpportunity: ' + objExistingNewBizOpportunity);
+			System.debug('objExistingWinbackOpportunity: ' + objExistingWinbackOpportunity);
+			if (blnClosedLostNewBiz && !blnClosedWonNewBiz && !blnOpenNewBiz && !blnOpenWinback) {
+				objOppToInsert = cloneOpportunity(objExistingNewBizOpportunity);
+				list_AcquisitionOpportunitiesToInsert.add(mapOpportunityFields(objAccount, objPriceBook, null, objOppToInsert));
+			} else if (blnClosedLostWinback && !blnClosedWonWinback && blnClosedWonNewBiz && !blnOpenNewBiz && !blnOpenWinback) {
+				list_AcquisitionOpportunitiesToInsert.add(mapOpportunityFields(objAccount, objPriceBook, objExistingWinbackOpportunity, objOppToInsert));
+			}
+		}
+
+		System.debug('list_AcquisitionOpportunitiesToInsert: ' + list_AcquisitionOpportunitiesToInsert);
+
+		if (!list_AcquisitionOpportunitiesToInsert.isEmpty()) {
+			blnLineItemUpdated = true;
+			//AccountTriggerHelper.skipTrigger = true;
+			OpportunityTriggerHelper.skipTrigger = true;
+			insert list_AcquisitionOpportunitiesToInsert;
+			createOpportunityLineItems(list_AcquisitionOpportunitiesToInsert, list_NewAccounts);
+			OpportunityTriggerHelper.skipTrigger = false;
+			//AccountTriggerHelper.skipTrigger = false;
 		}
 	}
 }

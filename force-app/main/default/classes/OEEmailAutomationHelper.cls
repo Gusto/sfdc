@@ -17,22 +17,25 @@ public with sharing class OEEmailAutomationHelper {
 	public static final String MSQ_ORDER_SHOULD_BE_TERMINATION_COMPLETE = 'terminated carrier order status should be termination complete';
 	public static Map<Id, Set<String>> map_CaseTeamMemberEmails = new Map<Id, Set<String>>();
 	public static final String CONTACT_ID_PREFIX = '003';
-	public static final String FULFILLED =  'Fulfilled';
-	public static final String strTAdA =  'TAdA';
+	public static final String FULFILLED = 'Fulfilled';
+	public static final String strTAdA = 'TAdA';
 	public static Set<Id> set_TAdACarrierIds = Utils.set_TAdACarrierIds;
+
 	/*
 	 * Send Confirmation Email
 	 */
-	public static void sendConfirmationEmail(Id idBO) {
+	@AuraEnabled
+	public static CreateFinalEmailResponseWrapper sendConfirmationEmailLWC(Id idBO) {
 		try {
 			if (String.isBlank(idBO)) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'This action is accessible only from Benefit Order.'));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Accessible_From_Benefit_Order, null);
 			}
-			Set<String> set_COValidStages = new Set<String>{ 'Approved', 'Approved Pending EE Audit'};
+
+			Set<String> set_COValidStages = new Set<String>{ BenefitOrderUtil.STATUS_APPROVED, BenefitOrderUtil.STATUS_APPROVED_PENDING_EE_AUDIT };
 			Case objCustomerCase;
 			Benefit_Order__c objBO = [
 				SELECT
+					Name,
 					Order_Status__c,
 					OwnerId,
 					Opportunity__r.RecordType.DeveloperName,
@@ -43,7 +46,7 @@ public with sharing class OEEmailAutomationHelper {
 					(
 						SELECT Carrier__c, Order_Type__c, Benefit_Types__c, Group_Number__c, Order_Assignment__c, Carrier__r.Carrier_Unique_Name__c
 						FROM Carrier_Orders__r
-						WHERE (Implementation_Stage__c IN :set_COValidStages OR (Order_Assignment__c = 'Terminated Order')) AND Carrier__c != NULL
+						WHERE (Implementation_Stage__c IN :set_COValidStages OR Order_Assignment__c = 'Terminated Order') AND Carrier__c != NULL
 					),
 					(
 						SELECT
@@ -70,8 +73,7 @@ public with sharing class OEEmailAutomationHelper {
 			];
 
 			if (objBO == null) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Benefit Order is either not approved or this action is not avaiable to you.'));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_BO_NotApproved_Or_Not_AvaiableToYou, null);
 			}
 
 			List<Benefit_Order__c> list_BenefitOrdersToBeUpdated = new List<Benefit_Order__c>();
@@ -88,14 +90,25 @@ public with sharing class OEEmailAutomationHelper {
 					AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_APPROVED_PENDING_EE_AUDIT
 			];
 			if (list_CarrierOrders.size() > 0) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, MSQ_ALL_ORDERS_SHOULD_BE_APPROVED));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Carrier_Order_EE_Audit, null);
 			} else {
+				if (objBO.Carrier_Orders__r != null && !objBO.Carrier_Orders__r.isEmpty()) {
+					for (Carrier_Order__c objCO : objBO.Carrier_Orders__r) {
+						if (
+							(objCO.Order_Assignment__c.containsIgnoreCase(CarrierOrderUtil.ORDER_TYPE_NEW_TO_GUSTO) ||
+							objCO.Order_Assignment__c.containsIgnoreCase(CarrierOrderUtil.ORDER_TYPE_NEW_LINE_OF_COVERAGE) ||
+							objCO.Order_Assignment__c.containsIgnoreCase(CarrierOrderUtil.ORDER_TYPE_CARRIER_SWITCH)) && String.isBlank(objCO.Group_Number__c)
+						) {
+							return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_GN_Missing_Send_Email_Manually, null);
+						}
+					}
+				}
+
 				Map<Id, Ticket__c> map_OpenTicketsWithBO = BenefitOrderUtil.fetchOpenTicketsRelatedToBO(new Set<Id>{ idBO });
 				if (!map_OpenTicketsWithBO.isEmpty()) {
-					ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, BenefitOrderUtil.MSQ_CLOSE_OPEN_TICKET_FIRST));
-					return;
+					return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_CLOSE_OPEN_TICKET_FIRST, null);
 				}
+
 				if (objBO.RecordTypeId == BenefitOrderHelper.BO_REC_TYPE_ID_RENEWAL || objBO.RecordTypeId == BenefitOrderHelper.BO_REC_TYPE_ID_CHANGE) {
 					List<Carrier_Order__c> list_COsTerminatedOrder = [
 						SELECT Id, name, Implementation_Stage__c, Benefit_Order__r.Order_Status__c
@@ -109,7 +122,7 @@ public with sharing class OEEmailAutomationHelper {
 					];
 
 					if (list_COsTerminatedOrder.size() > 0) {
-						ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, MSQ_ORDER_SHOULD_BE_TERMINATION_COMPLETE));
+						return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_ORDER_TERMINATION_COMPLETE, null);
 					} else {
 						Benefit_Order__c objBOToUpdate = new Benefit_Order__c(Id = idBO, Order_Status__c = BenefitOrderUtil.STATUS_FULFILLED);
 						list_BenefitOrdersToBeUpdated.add(objBOToUpdate);
@@ -124,8 +137,16 @@ public with sharing class OEEmailAutomationHelper {
 			}
 
 			if (objBO.Cases__r == null || objBO.Cases__r.isEmpty()) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'No Customer case associated with this Benefit Order.'));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_No_Customer_Case_Associated_BO, null);
+			}
+
+			Map<Id, Integer> map_ExistingEmailCount = OEEmailAutomationHelper.fetchSentEmailCountForCases(
+				new Set<Id>{ objBO.Cases__r[0].Id },
+				new Set<String>{ BenefitOrderUtil.Template_OE_Confirmation_Email_Default }
+			);
+
+			if (map_ExistingEmailCount != null && map_ExistingEmailCount.containsKey(objBO.Cases__r[0].Id) && map_ExistingEmailCount.get(objBO.Cases__r[0].Id) > 0) {
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Coverage_Confirmation_Email_Sent, null);
 			}
 			String strIntegrationKey = 'hippo-' + objBO.Opportunity__r.RecordType.DeveloperName + '-' + objBO.Opportunity__c;
 
@@ -136,12 +157,10 @@ public with sharing class OEEmailAutomationHelper {
 				}
 			}
 			if (objCustomerCase == null) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Integeration Id is not in desired format on the Customer Case.'));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Integeration_Format_Customer_Case, null);
 			}
 			if (objCustomerCase.ContactId == null) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Contact is not present on the Customer Case.'));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Contact_Not_Present_Customer_Case, null);
 			}
 			// update benefit order
 			if (list_BenefitOrdersToBeUpdated != null) {
@@ -150,13 +169,13 @@ public with sharing class OEEmailAutomationHelper {
 				update list_BenefitOrdersToBeUpdated;
 				BenefitOrderHelper.skipTrigger = blnSkipTrigger;
 			}
-			map_orgWideAddress = getOrgWideAddresses(new Set<String>{ 'newplans@gusto.com', 'renewals@gusto.com' });
-			String strEmailTemplateName = 'OE_Confirmation_Email_Default';
+
+			map_orgWideAddress = getOrgWideAddresses(new Set<String>{ BenefitOrderUtil.Email_New_Plans, BenefitOrderUtil.Email_Renewals });
+			String strEmailTemplateName = BenefitOrderUtil.Template_OE_Confirmation_Email_Default;
 			EmailTemplate objEmailTemplate = [SELECT Subject, DeveloperName, HtmlValue FROM EmailTemplate WHERE DeveloperName = :strEmailTemplateName LIMIT 1];
 
 			if (objEmailTemplate == null) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Email template not present.'));
-				return;
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Email_Template_Not_Present, null);
 			}
 			Map<Id, Map<String, Email_Macro__c>> map_CarrierEmailMacros;
 
@@ -167,7 +186,7 @@ public with sharing class OEEmailAutomationHelper {
 				for (Carrier_Order__c objCO : objBO.Carrier_Orders__r) {
 					if (objCO.Carrier__c != null) {
 						set_CarrierIds.add(objCO.Carrier__c);
-					}			
+					}
 				}
 
 				//fetch Email macros
@@ -176,14 +195,14 @@ public with sharing class OEEmailAutomationHelper {
 				Map<String, Email_Macro__c> map_MacroWithoutCarrier;
 				Map<String, Map<String, Email_Macro__c>> map_MacrosWithTAdA = new Map<String, Map<String, Email_Macro__c>>();
 				if (map_Response != null) {
-					if (map_Response.containsKey('WithCarrier')) {
-						map_CarrierEmailMacros = (Map<Id, Map<String, Email_Macro__c>>) map_Response.get('WithCarrier');
+					if (map_Response.containsKey(BenefitOrderUtil.With_Carrier)) {
+						map_CarrierEmailMacros = (Map<Id, Map<String, Email_Macro__c>>) map_Response.get(BenefitOrderUtil.With_Carrier);
 					}
-					if (map_Response.containsKey('WithoutCarrier')) {
-						map_MacroWithoutCarrier = (Map<String, Email_Macro__c>) map_Response.get('WithoutCarrier');
+					if (map_Response.containsKey(BenefitOrderUtil.WithOut_Carrier)) {
+						map_MacroWithoutCarrier = (Map<String, Email_Macro__c>) map_Response.get(BenefitOrderUtil.WithOut_Carrier);
 					}
-					if (map_Response.containsKey('WithTAdA')) {
-						map_MacrosWithTAdA = (Map<String, Map<String, Email_Macro__c>>) map_Response.get('WithTAdA');
+					if (map_Response.containsKey(BenefitOrderUtil.With_TAdA)) {
+						map_MacrosWithTAdA = (Map<String, Map<String, Email_Macro__c>>) map_Response.get(BenefitOrderUtil.With_TAdA);
 					}
 				}
 				String strBody = '';
@@ -197,8 +216,8 @@ public with sharing class OEEmailAutomationHelper {
 					map_MacroWithoutCarrier,
 					map_MacrosWithTAdA
 				);
-				if (map_Results.containsKey('EmailBody')) {
-					strBody = (String) map_Results.get('EmailBody');
+				if (map_Results.containsKey(BenefitOrderUtil.Email_Body)) {
+					strBody = (String) map_Results.get(BenefitOrderUtil.Email_Body);
 				}
 
 				String strformattedDate = '';
@@ -224,11 +243,11 @@ public with sharing class OEEmailAutomationHelper {
 				}
 
 				List<Messaging.EmailFileAttachment> list_EmailAttchments = new List<Messaging.EmailFileAttachment>();
-				if (map_Results.containsKey('MacroAttachments')) {
+				if (map_Results.containsKey(BenefitOrderUtil.Macro_Attachments)) {
 					if (list_Attachments == null) {
 						list_Attachments = new List<Attachment>();
 					}
-					list_Attachments.addAll((List<Attachment>) map_Results.get('MacroAttachments'));
+					list_Attachments.addAll((List<Attachment>) map_Results.get(BenefitOrderUtil.Macro_Attachments));
 				}
 				if (list_Attachments != null && !list_Attachments.isEmpty()) {
 					for (Attachment objAtt : list_Attachments) {
@@ -241,10 +260,12 @@ public with sharing class OEEmailAutomationHelper {
 				if (!list_EmailAttchments.isEmpty()) {
 					objMail.setFileAttachments(list_EmailAttchments);
 				}
+
 				Messaging.SendEmailResult[] results = Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ objMail });
 
 				if (results[0].success) {
 					insert objMsg;
+
 					if (list_Attachments != null && !list_Attachments.isEmpty()) {
 						List<Attachment> list_AttachmentsToAddToEmailMessage = new List<Attachment>();
 						for (Attachment objAtt : list_Attachments) {
@@ -253,250 +274,15 @@ public with sharing class OEEmailAutomationHelper {
 						insert list_AttachmentsToAddToEmailMessage;
 					}
 				}
+				CreateFinalEmailResponseWrapper objWrapper = new CreateFinalEmailResponseWrapper(true, null, objBO);
+				return objWrapper;
+			} else {
+				return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Carrier_Order_EE_Audit, null);
 			}
 		} catch (Exception objExcep) {
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, objExcep.getMessage() + '  ' + objExcep.getStackTraceString()));
+			return new CreateFinalEmailResponseWrapper(false, objExcep.getMessage(), null);
 		}
 	}
-
-    @AuraEnabled
-    public static CreateFinalEmailResponseWrapper sendConfirmationEmailLWC(Id idBO) {
-        try {
-            if (String.isBlank(idBO)) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Accessible_From_Benefit_Order, null);
-            }
-			
-            Set<String> set_COValidStages = new Set<String>{BenefitOrderUtil.STATUS_APPROVED, BenefitOrderUtil.STATUS_APPROVED_PENDING_EE_AUDIT};
-            Case objCustomerCase;
-            Benefit_Order__c objBO = [
-                SELECT
-                    Name,
-                    Order_Status__c,
-                    OwnerId,
-                    Opportunity__r.RecordType.DeveloperName,
-                    RecordTypeId,
-                    RecordType.DeveloperName,
-                    Opportunity__c,
-                    Coverage_Effective_Date__c,
-                    (
-                        SELECT Carrier__c, Order_Type__c, Benefit_Types__c, Group_Number__c, Order_Assignment__c, Carrier__r.Carrier_Unique_Name__c
-                        FROM Carrier_Orders__r
-                        WHERE (Implementation_Stage__c IN :set_COValidStages OR (Order_Assignment__c = 'Terminated Order')) AND Carrier__c != NULL
-                    ),
-                    (
-                        SELECT
-                            ContactId,
-                            Contact.Name,
-                            Contact.FirstName,
-                            Contact.LastName,
-                            Contact.Email,
-                            Integration_Id__c,
-                            Case_Reference__c,
-                            Benefit_Order__r.OwnerId,
-                            AccountId,
-                            Account.Name,
-                            RecordTypeId,
-                            RecordType.Name,
-                            NP_Survey_URL__c,
-                            Renewal_Survey_URL__c,
-                            Opportunity__c
-                        FROM Cases__r
-                        WHERE Integration_Id__c != NULL AND Integration_Id__c LIKE 'hippo-%' AND Benefit_Order__c != NULL AND Carrier_Order__c = NULL AND AccountId != NULL
-                    )
-                FROM Benefit_Order__c
-                WHERE Id = :idBO AND Order_Status__c = 'Approved' AND Opportunity__c != NULL
-            ];
-
-            if (objBO == null) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_BO_NotApproved_Or_Not_AvaiableToYou, null);
-            }
-
-            List<Benefit_Order__c> list_BenefitOrdersToBeUpdated = new List<Benefit_Order__c>();
-
-            List<Carrier_Order__c> list_CarrierOrders = [
-                SELECT Id, Name, Implementation_Stage__c, Benefit_Order__r.Order_Status__c
-                FROM Carrier_Order__c
-                WHERE
-                    Benefit_Order__c = :idBO
-                    AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_APPROVED
-                    AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_CLOSED_ADMIN
-                    AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_CLOSED_LOST
-                    AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_CANCELLED
-                    AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_APPROVED_PENDING_EE_AUDIT
-            ];
-            if (list_CarrierOrders.size() > 0) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Carrier_Order_EE_Audit, null);
-            } else {
-                Map<Id, Ticket__c> map_OpenTicketsWithBO = BenefitOrderUtil.fetchOpenTicketsRelatedToBO(new Set<Id>{ idBO });
-                if (!map_OpenTicketsWithBO.isEmpty()) {
-                    return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_CLOSE_OPEN_TICKET_FIRST, null);
-                }
-
-                if (objBO.RecordTypeId == BenefitOrderHelper.BO_REC_TYPE_ID_RENEWAL || objBO.RecordTypeId == BenefitOrderHelper.BO_REC_TYPE_ID_CHANGE) {
-                    List<Carrier_Order__c> list_COsTerminatedOrder = [
-                        SELECT Id, name, Implementation_Stage__c, Benefit_Order__r.Order_Status__c
-                        FROM Carrier_Order__c
-                        WHERE
-                            Benefit_Order__c = :idBO
-                            AND Order_Type__c = :BenefitOrderUtil.ORDER_TYPE_TERMINATED_ORDER
-                            AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_CLOSED_LOST
-                            AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_CANCELLED
-                            AND Implementation_Stage__c != :BenefitOrderUtil.STATUS_CLOSED_ADMIN
-                    ];
-
-                    if (list_COsTerminatedOrder.size() > 0) {
-                        return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_ORDER_TERMINATION_COMPLETE, null);
-                    } else {
-                        Benefit_Order__c objBOToUpdate = new Benefit_Order__c(Id = idBO, Order_Status__c = BenefitOrderUtil.STATUS_FULFILLED);
-                        list_BenefitOrdersToBeUpdated.add(objBOToUpdate);
-                        updateChildBenefitOrderStatus(idBO);
-                    }
-                } else {
-                    //if it is new plan then directly benefit order gets updated.
-                    Benefit_Order__c objBOToUpdate = new Benefit_Order__c(Id = idBO, Order_Status__c = BenefitOrderUtil.STATUS_FULFILLED);
-                    list_BenefitOrdersToBeUpdated.add(objBOToUpdate);
-                    updateChildBenefitOrderStatus(idBO);
-                }
-            }
-
-            if (objBO.Cases__r == null || objBO.Cases__r.isEmpty()) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_No_Customer_Case_Associated_BO, null);
-            }
-            String strIntegrationKey = 'hippo-' + objBO.Opportunity__r.RecordType.DeveloperName + '-' + objBO.Opportunity__c;
-
-            for (Case objCase : objBO.Cases__r) {
-                if (strIntegrationKey.equalsIgnoreCase(objCase.Integration_Id__c)) {
-                    objCustomerCase = objCase;
-                    break;
-                }
-            }
-            if (objCustomerCase == null) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Integeration_Format_Customer_Case, null);
-            }
-            if (objCustomerCase.ContactId == null) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Contact_Not_Present_Customer_Case, null);
-            }
-            // update benefit order
-            if (list_BenefitOrdersToBeUpdated != null) {
-                Boolean blnSkipTrigger = BenefitOrderHelper.skipTrigger;
-                BenefitOrderHelper.skipTrigger = false;
-                update list_BenefitOrdersToBeUpdated;
-                BenefitOrderHelper.skipTrigger = blnSkipTrigger;
-            }
-
-            map_orgWideAddress = getOrgWideAddresses(new Set<String>{BenefitOrderUtil.Email_New_Plans, BenefitOrderUtil.Email_Renewals});
-            String strEmailTemplateName = BenefitOrderUtil.Template_OE_Confirmation_Email_Default;
-            EmailTemplate objEmailTemplate = [SELECT Subject, DeveloperName, HtmlValue FROM EmailTemplate WHERE DeveloperName = :strEmailTemplateName LIMIT 1];
-
-            if (objEmailTemplate == null) {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Email_Template_Not_Present, null);
-            }
-            Map<Id, Map<String, Email_Macro__c>> map_CarrierEmailMacros;
-
-            Map<Id, String> map_UserSignature = OEEmailAutomationHelper.fetchUserSignature(new Set<Id>{ objBO.OwnerId });
-            List<Attachment> list_Attachments = [SELECT Name, Body, ContentType FROM Attachment WHERE ParentId = :objEmailTemplate.Id];
-            if (objBO.Carrier_Orders__r != null && !objBO.Carrier_Orders__r.isEmpty()) {
-                Set<Id> set_CarrierIds = new Set<Id>();
-                for (Carrier_Order__c objCO : objBO.Carrier_Orders__r) {
-                    if (objCO.Carrier__c != null) {
-                        set_CarrierIds.add(objCO.Carrier__c);
-                    }           
-                }
-
-                //fetch Email macros
-                List<Email_Macro__c> list_EmailMacro = fetchEmailMacros(set_CarrierIds);
-                Map<String, Object> map_Response = segregateEmailMacros(list_EmailMacro);
-                Map<String, Email_Macro__c> map_MacroWithoutCarrier;
-                Map<String, Map<String, Email_Macro__c>> map_MacrosWithTAdA = new Map<String, Map<String, Email_Macro__c>>();
-                if (map_Response != null) {
-                    if (map_Response.containsKey(BenefitOrderUtil.With_Carrier)) {
-                        map_CarrierEmailMacros = (Map<Id, Map<String, Email_Macro__c>>) map_Response.get(BenefitOrderUtil.With_Carrier);
-                    }
-                    if (map_Response.containsKey(BenefitOrderUtil.WithOut_Carrier)) {
-                        map_MacroWithoutCarrier = (Map<String, Email_Macro__c>) map_Response.get(BenefitOrderUtil.WithOut_Carrier);
-                    }
-                    if (map_Response.containsKey(BenefitOrderUtil.With_TAdA)) {
-                        map_MacrosWithTAdA = (Map<String, Map<String, Email_Macro__c>>) map_Response.get(BenefitOrderUtil.With_TAdA);
-                    }
-                }
-                String strBody = '';
-                Messaging.EmailFileAttachment objTAdAAttachment;
-                Map<String, Object> map_Results = mergeDynamicContentInEmail(
-                    objBO.Carrier_Orders__r,
-                    map_CarrierEmailMacros,
-                    objEmailTemplate.HtmlValue,
-                    map_UserSignature,
-                    objCustomerCase,
-                    map_MacroWithoutCarrier,
-                    map_MacrosWithTAdA
-                );
-                if (map_Results.containsKey(BenefitOrderUtil.Email_Body)) {
-                    strBody = (String) map_Results.get(BenefitOrderUtil.Email_Body);
-                }
-
-                String strformattedDate = '';
-                if (objBO.Coverage_Effective_Date__c != null) {
-                    strformattedDate = '' + objBO.Coverage_Effective_Date__c.month() + '/' + objBO.Coverage_Effective_Date__c.day() + '/' + objBO.Coverage_Effective_Date__c.year();
-                }
-
-                strBody = strBody.replace('[EFFECTIVE DATE]', strformattedDate);
-                strBody = strBody.replace('[Effective DATE]', strformattedDate);
-                strBody = strBody.replace('[Effective Date]', strformattedDate);
-
-                if (objCustomerCase != null && objCustomerCase.Id != null) {
-                    OEEmailAutomationHelper.fetchCaseTeamMember(new Set<Id>{ objCustomerCase.Id });
-                }
-
-                Messaging.SingleEmailMessage objMail = OEEmailAutomationHelper.createEmailRecord(objEmailTemplate.Subject, objCustomerCase, strBody);
-                EmailMessage objMsg = OEEmailAutomationHelper.createEmailMessageRecord(strBody, objCustomerCase, objEmailTemplate.Subject, objEmailTemplate.DeveloperName);
-
-                //set from addresses
-                if (map_orgWideAddress != null && map_orgWideAddress.containsKey(objBO.RecordType.DeveloperName)) {
-                    objMsg.fromAddress = map_orgWideAddress.get(objBO.RecordType.DeveloperName).Address;
-                    objMail.setOrgWideEmailAddressId(map_orgWideAddress.get(objBO.RecordType.DeveloperName).Id);
-                }
-
-                List<Messaging.EmailFileAttachment> list_EmailAttchments = new List<Messaging.EmailFileAttachment>();
-                if (map_Results.containsKey(BenefitOrderUtil.Macro_Attachments)) {
-                    if (list_Attachments == null) {
-                        list_Attachments = new List<Attachment>();
-                    }
-                    list_Attachments.addAll((List<Attachment>) map_Results.get(BenefitOrderUtil.Macro_Attachments));
-                }
-                if (list_Attachments != null && !list_Attachments.isEmpty()) {
-                    for (Attachment objAtt : list_Attachments) {
-                        Messaging.EmailFileAttachment objAttachment = new Messaging.EmailFileAttachment();
-                        objAttachment.setFileName(objAtt.Name);
-                        objAttachment.setBody(objAtt.Body);
-                        list_EmailAttchments.add(objAttachment);
-                    }
-                }
-                if (!list_EmailAttchments.isEmpty()) {
-                    objMail.setFileAttachments(list_EmailAttchments);
-                }
-
-                Messaging.SendEmailResult[] results = Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ objMail });
-
-                if (results[0].success) {
-                    insert objMsg;
-					
-                    if (list_Attachments != null && !list_Attachments.isEmpty()) {
-                        List<Attachment> list_AttachmentsToAddToEmailMessage = new List<Attachment>();
-                        for (Attachment objAtt : list_Attachments) {
-                            list_AttachmentsToAddToEmailMessage.add(new Attachment(Body = objAtt.Body, ParentId = objMsg.Id, ContentType = objAtt.ContentType, Name = objAtt.Name));
-                        }
-                        insert list_AttachmentsToAddToEmailMessage;
-                    }
-                }
-                CreateFinalEmailResponseWrapper objWrapper = new CreateFinalEmailResponseWrapper(true, null, objBO);
-                return objWrapper;
-            } else {
-                return new CreateFinalEmailResponseWrapper(false, BenefitOrderUtil.ERR_Carrier_Order_EE_Audit, null);
-            }
-        } catch (Exception objExcep) {
-            return new CreateFinalEmailResponseWrapper(false, objExcep.getMessage(), null);
-        }
-    }
 
 	/*
 	 * Fetch Attachments for Email Macros
@@ -574,17 +360,10 @@ public with sharing class OEEmailAutomationHelper {
 				(String.isNotBlank(objCO.Order_Assignment__c) &&
 				(objCO.Order_Assignment__c.containsIgnoreCase('New to Gusto') ||
 				objCO.Order_Assignment__c.containsIgnoreCase('new line of coverage') ||
-				objCO.Order_Assignment__c.containsIgnoreCase('Carrier switch'))) ||
-				(String.isNotBlank(objCO.Carrier__c) &&
-				set_TAdACarrierIds.contains(objCO.Carrier__c))
+				objCO.Order_Assignment__c.containsIgnoreCase('Carrier switch'))) || (String.isNotBlank(objCO.Carrier__c) && set_TAdACarrierIds.contains(objCO.Carrier__c))
 			) {
 				if (map_CarrierEmailMacros.containsKey(objCO.Carrier__c) || set_TAdACarrierIds.contains(objCO.Carrier__c)) {
-					if (
-						!blnNonTAdAMacroIncluded &&
-						!set_TAdACarrierIds.contains(objCO.Carrier__c) &&
-						map_MacroWithoutCarrier != null &&
-						map_MacroWithoutCarrier.containsKey('Premium Payments')
-					) {
+					if (!blnNonTAdAMacroIncluded && !set_TAdACarrierIds.contains(objCO.Carrier__c) && map_MacroWithoutCarrier != null && map_MacroWithoutCarrier.containsKey('Premium Payments')) {
 						blnNonTAdAMacroIncluded = true;
 						strCarrierSpecificEmailContents += map_MacroWithoutCarrier.get('Premium Payments').Body__c;
 					}
@@ -651,7 +430,7 @@ public with sharing class OEEmailAutomationHelper {
 					if (map_MacrosWithTAdA.containsKey(strTAdA)) {
 						map_BenefitTypeMacro = map_MacrosWithTAdA.get(strTAdA);
 					}
-					
+
 					List<String> list_BenefitsTypes = objMacro.Benefit_Type__c.split(';');
 					for (String strBenefitType : list_BenefitsTypes) {
 						if (String.isNotBlank(strBenefitType) && !map_BenefitTypeMacro.containsKey(strBenefitType)) {
@@ -660,9 +439,8 @@ public with sharing class OEEmailAutomationHelper {
 					}
 
 					map_MacrosWithTAdA.put(strTAdA, map_BenefitTypeMacro);
-
 				}
-				
+
 				if (String.isNotBlank(objMacro.Macro_Identifier__c)) {
 					map_MacrosWithoutCarrier.put(objMacro.Macro_Identifier__c, objMacro);
 				}
@@ -941,12 +719,8 @@ public with sharing class OEEmailAutomationHelper {
 			if (!objExcep.getMessage().contains(Utils.BOUNCE_EMAIL_ERROR)) {
 				ExceptionLogUtil.logException(
 					'OEEmailAutomationHelper',
-					'sendPartialApprovalEmail for Case(' +
-					idCaseBeingProcessed +
-					')',
-					objExcep.getMessage() +
-					'  ' +
-					objExcep.getStackTraceString(),
+					'sendPartialApprovalEmail for Case(' + idCaseBeingProcessed + ')',
+					objExcep.getMessage() + '  ' + objExcep.getStackTraceString(),
 					'high'
 				);
 			}
@@ -1146,31 +920,30 @@ public with sharing class OEEmailAutomationHelper {
 		}
 	}
 
-    /**
-     * @name         : CreateFinalEmailResponseWrapper
-     * @author       : Deepika Saini
-     * @date         : 02/19/2025
-     * @description  : Wrapper class to share data between Apex and LWC
-     * @test classes : 
-     **/
-    public class CreateFinalEmailResponseWrapper {
+	/**
+	 * @name         : CreateFinalEmailResponseWrapper
+	 * @author       : Deepika Saini
+	 * @date         : 02/19/2025
+	 * @description  : Wrapper class to share data between Apex and LWC
+	 * @test classes :
+	 **/
+	public class CreateFinalEmailResponseWrapper {
+		/* Success flag */
+		@AuraEnabled
+		public Boolean blnIsSuccess;
 
-        /* Success flag */
-        @AuraEnabled
-        public Boolean blnIsSuccess;
+		/* Message */
+		@AuraEnabled
+		public String strMessage;
 
-        /* Message */
-        @AuraEnabled
-        public String strMessage;
+		/* Benefit_Order__c record */
+		@AuraEnabled
+		public Benefit_Order__c objBenefitOrder;
 
-        /* Benefit_Order__c record */
-        @AuraEnabled
-        public Benefit_Order__c objBenefitOrder;
-
-        public CreateFinalEmailResponseWrapper(Boolean blnIsSuccess, String strMessage, Benefit_Order__c objBenefitOrder) {
-            this.blnIsSuccess = blnIsSuccess;
-            this.strMessage = strMessage;
-            this.objBenefitOrder = objBenefitOrder;
-        }
-    }
+		public CreateFinalEmailResponseWrapper(Boolean blnIsSuccess, String strMessage, Benefit_Order__c objBenefitOrder) {
+			this.blnIsSuccess = blnIsSuccess;
+			this.strMessage = strMessage;
+			this.objBenefitOrder = objBenefitOrder;
+		}
+	}
 }

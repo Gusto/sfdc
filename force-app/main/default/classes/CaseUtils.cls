@@ -238,6 +238,7 @@ public without sharing class CaseUtils {
 	//Case Specialization Values
 	public static final String COBRA_SPECIALIZATION = 'COBRA';
 	public static final String SPANISH_SPECIALIZATION = 'Spanish';
+	public static final String GUSTO_GLOBAL_SPECIALIZATION = 'Gusto Global';
 
 	public static Id ID_ENGAGEMENT_CASES_QUEUE = GlobalQueryHelper.getQueueIdByDevName(QUEUE_NAME_ENGAGEMENT_CASES);
 

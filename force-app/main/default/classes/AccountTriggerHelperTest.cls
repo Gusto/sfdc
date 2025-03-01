@@ -3333,4 +3333,92 @@ public class AccountTriggerHelperTest {
 			System.assertEquals(objAcc.Territory__c, objOpptyAssert.Territory__c, 'Territory not updated on benefits opportunities');
 		}
 	}
+
+	/**
+	 * @author      Praveen Sethu
+	 * @description Test if Client BDO Opportunity updates create new benefits opportunities
+	 **/
+	@isTest
+	static void testClientBDOOpportunityCreation() {
+		Test.setMock(HttpCalloutMock.class, new RingLeadMockResponseTest());
+		Account objCompanyAccnt = new TestDataFactory.AccountBuilder()
+			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
+			.setName('Company Account 1')
+			.setZPCompanyId('8656544577')
+			.setBillingCountry('United States')
+			.setBillingState('California')
+			.build();
+		AccountTriggerHelper.skipTrigger = true;
+		insert objCompanyAccnt;
+		AccountTriggerHelper.skipTrigger = false;
+
+		Opportunity objOppty = TestUtils.createOpportunity(OpportunityUtil.ACQUISITION_OPPTY_RT_ID, objCompanyAccnt.Id, Date.today().addDays(10), 'Opp Name', 'MQL', false);
+		objOppty.Type = 'New Business';
+		objOppty.Initiated_by_Accountant__c = 'True';
+		objOppty.Contribution_to_EE_Health_Coverage_cost__c = 'COMPANY_SPONSORED_HEALTH_INSURANCE';
+		objOppty.Want_to_switch_brokers__c = true;
+		objOppty.Open_to_Switching_Broker__c = 'MANUALLY_ADD';
+		objOppty.Currently_Offer_Health_Benefits__c = 'Yes';
+		objOppty.Which_Gusto_benefits_interested_in__c = 'HEALTH_INSURANCE';
+		insert objOppty;
+
+		Test.startTest();
+		objCompanyAccnt.Number_Of_Active_Employees__c = 5;
+		update objCompanyAccnt;
+		Test.stopTest();
+
+		// Assert if new plan opportunities got created
+		Integer intNewPlanCount = [
+			SELECT COUNT()
+			FROM Opportunity
+			WHERE RecordTypeId = :OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID AND AccountId = :objCompanyAccnt.Id AND LeadSource = :OpportunityUtil.CLIENT_BDO
+		];
+		System.assertEquals(1, intNewPlanCount, 'New plan opportunity not created');
+
+		// Assert if BoR opportunities got created
+		Integer intBoRCount = [
+			SELECT COUNT()
+			FROM Opportunity
+			WHERE RecordTypeId = :OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID AND AccountId = :objCompanyAccnt.Id AND LeadSource = :OpportunityUtil.CLIENT_BDO
+		];
+		System.assertEquals(1, intBoRCount, 'BoR opportunity not created');
+	}
+
+	/**
+	 * @author      Praveen Sethu
+	 * @description Test if Employer BDO Opportunity updates create new benefits opportunities
+	 **/
+	@isTest
+	static void testEmployerBDOOpportunityCreation() {
+		Test.setMock(HttpCalloutMock.class, new RingLeadMockResponseTest());
+		Account objCompanyAccnt = new TestDataFactory.AccountBuilder()
+			.setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID)
+			.setName('Company Account 1')
+			.setZPCompanyId('34354364576')
+			.setBillingCountry('United States')
+			.setBillingState('California')
+			.build();
+		AccountTriggerHelper.skipTrigger = true;
+		insert objCompanyAccnt;
+		AccountTriggerHelper.skipTrigger = false;
+
+		Opportunity objOppty = TestUtils.createOpportunity(OpportunityUtil.ACQUISITION_OPPTY_RT_ID, objCompanyAccnt.Id, Date.today().addDays(10), 'Opp Name', 'MQL', false);
+		objOppty.Type = 'New Business';
+		objOppty.Interest_in_adding_benefits_to_Gusto__c = 'LEARNING_MORE';
+		objOppty.Currently_Offer_Health_Benefits__c = 'False';
+		insert objOppty;
+
+		Test.startTest();
+		objCompanyAccnt.Number_Of_Active_Employees__c = 5;
+		update objCompanyAccnt;
+		Test.stopTest();
+
+		// Assert if new plan opportunities got created
+		Integer intNewPlanCount = [
+			SELECT COUNT()
+			FROM Opportunity
+			WHERE RecordTypeId = :OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID AND AccountId = :objCompanyAccnt.Id AND LeadSource = :OpportunityUtil.EMPLOYER_BDO
+		];
+		System.assertEquals(1, intNewPlanCount, 'New plan opportunity not created');
+	}
 }

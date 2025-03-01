@@ -95,7 +95,7 @@ private class GlobalQueryHelperTest {
 		Set<String> set_QueueNames = new Set<String>{ 'Assurance_Class_1', 'Assurance_Class_2' };
 		GlobalQueryHelper.getNameQueueMap(set_QueueNames);
 		GlobalQueryHelper.getFiscalYearStartMonth();
-		GlobalQueryHelper.getGroupsByName('Care Payroll Class 1');
+		GlobalQueryHelper.getGroupsByName('Payroll Compliance Queue');
 		GlobalQueryHelper.getAllRegularGroupsMap();
 		GlobalQueryHelper.getAllGroupQueueMap();
 		GlobalQueryHelper.getAllPermissionSetsMap();

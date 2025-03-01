@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Subscription_Center_UX_Research__c</fullName>
+    <description>Used to send field to Great Question to filter. GQ cannot handle filtering on multi select Subscription Preferences field. This field was created to have a True/False field that can be filtered for Opt In/Opt Out data checking in GQ.</description>
+    <formula>INCLUDES( Customer_Subscriptions__c , &quot;UX Research&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Used to send field to Great Question to filter. GQ cannot handle filtering on multi select Subscription Preferences field. This field was created to have a True/False field that can be filtered for Opt In/Opt Out data checking in GQ.</inlineHelpText>
+    <label>Subscription Center - UX Research</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

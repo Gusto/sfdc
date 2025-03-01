@@ -41,10 +41,18 @@ public without sharing class UpdateAccountController {
 	@AuraEnabled
 	public static UpdateAccountResponse updateAccount(Account objAccount, String strTypeOfHI) {
 		try {
-			Account objAccQuery = [SELECT Id, RecordTypeId, BillingState FROM Account WHERE Id = :objAccount.Id];
+			Account objAccQuery = [SELECT Id, RecordTypeId, BillingState, IsExcludedFromRealign FROM Account WHERE Id = :objAccount.Id];
 			// HI owner can be set only on Company Accounts
 			if (objAccQuery.RecordTypeId != AccountUtil.COMPANY_ACCOUNT_RT_ID) {
 				return new UpdateAccountResponse('Only company accounts are eligible for routing HI Owner', false);
+			}
+
+			if (String.isBlank(objAccQuery.BillingState)) {
+				return new UpdateAccountResponse('Filing State is blank. Please update filing state and retry again', false);
+			}
+
+			if (objAccQuery.IsExcludedFromRealign) {
+				return new UpdateAccountResponse('This account is excluded from routing. Please uncheck exclusion field and retry again', false);
 			}
 
 			// HI owner cannot be re-routed if there is a closed won opportunity in the last 90 days
@@ -76,11 +84,7 @@ public without sharing class UpdateAccountController {
 				objAccount.Territory__c = strTypeOfHI + ' ' + strRegion;
 				update objAccount;
 
-				// create parameter and set account id
-				Map<String, Object> map_Params = new Map<String, Object>();
-				map_Params.put('Account_Id', objAccount.Id);
-				// start the flow
-				new Flow.Interview.Send_Account_For_HI_Owner_Routing(map_Params).start();
+				AccountUtil.sendAccountForHIOwnerRoutingFuture(new Set<Id>{ objAccount.Id });
 			}
 			return new UpdateAccountResponse('Account updated successfully', true);
 		} catch (Exception objEx) {

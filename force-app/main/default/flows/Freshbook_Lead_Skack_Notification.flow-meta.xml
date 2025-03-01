@@ -4,8 +4,8 @@
         <description>Send notification Freshbook lead is created</description>
         <name>New_Lead_Freshbooksales_Notification</name>
         <label>New Lead Freshbooksales Notification</label>
-        <locationX>176</locationX>
-        <locationY>431</locationY>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
         <actionName>slackv2__invokePostMessage</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -31,6 +31,28 @@
         <offset>0</offset>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
+    <decisions>
+        <name>Slack_Channel_Exists</name>
+        <label>Slack Channel Exists ?</label>
+        <locationX>182</locationX>
+        <locationY>431</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Channel_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Slack_Channel_Destination</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>New_Lead_Freshbooksales_Notification</targetReference>
+            </connector>
+            <label>Channel Exists</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <interviewLabel>Freshbook Lead Skack {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Freshbook Lead Skack Notification</label>
@@ -57,11 +79,11 @@
         <description>Slack Channel Destination where all the notifications will be sent</description>
         <name>Slack_Channel_Destination</name>
         <label>Slack Channel Destination</label>
-        <locationX>176</locationX>
+        <locationX>182</locationX>
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>New_Lead_Freshbooksales_Notification</targetReference>
+            <targetReference>Slack_Channel_Exists</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -77,7 +99,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>50</locationX>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Slack_Channel_Destination</targetReference>
@@ -107,6 +129,6 @@ Company: {!$Record.Company}
 Phone: {!$Record.Phone}
 Number of Employees: {!$Record.NumberOfEmployees}
 
-@{!$Record.Owner:User.Slack_Id__c} - This lead is owned by you!</text>
+&lt;@{!$Record.Owner_Slack_Id__c}&gt; - This lead is owned by you!</text>
     </textTemplates>
 </Flow>

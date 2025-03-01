@@ -3,7 +3,7 @@
  * @author
  * @date
  * @description  Controller for TransitionToNotesOnBODetail page to show links to Transition Notes.
- * @test class   TransitionToNotesOnBODetailExtTest
+ * @test class   TransitionToNotesOnBODetailExt_test
  * @revisions    September 8,2020  ------------ Neha Dabas ------------ Add Confitmation Coverage Email Button for BO Owner(OE Email Automation)
  */
 public class TransitionToNotesOnBODetailExt {
@@ -130,116 +130,6 @@ public class TransitionToNotesOnBODetailExt {
 		 */
 		if (blnTTIAUpdateBySFDC) {
 			strHippoURL = '';
-		}
-
-		checkQATTIAValidations();
-
-		checkSendConfirmationEmailVisibility();
-	}
-	/*
-	 * @Neha Dabas, To check if Logged in User is authorised to view Confirmation Email Button.
-	 */
-	private void checkSendConfirmationEmailVisibility() {
-		blnShowConfirmationEmailBtn = false;
-		Set<String> set_ValidBORecTypes = new Set<String>{ 'Renewal', 'Change', 'New_Plan' };
-		Set<String> set_OrderStatusToExclude = new Set<String>{ 'Canceled', 'Closed Admin' };
-		Set<String> set_CarriersToExclude = new Set<String>{ CarrierOrderUtil.Name_BASIC};
-		Benefit_Order__c objBO;
-		List<Benefit_Order__c> list_BO = new List<Benefit_Order__c>();
-		list_BO = [
-			SELECT
-				RecordType.DeveloperName,
-				OwnerId,
-				Order_Status__c,
-				OE_Complete__c,
-				(
-					SELECT Id
-					FROM Cases__r
-					WHERE Integration_Id__c != NULL AND Carrier_Order__c = NULL
-					LIMIT 1
-				),
-				(
-					SELECT Order_Assignment__c, Carrier__r.Carrier_Unique_Name__c, Group_Number__c
-					FROM Carrier_Orders__r
-					WHERE
-						Order_Assignment__c != NULL
-						AND Carrier__c != NULL
-						AND Implementation_Stage__c NOT IN :set_OrderStatusToExclude
-						AND Carrier__r.Carrier_Unique_Name__c NOT IN :set_CarriersToExclude
-						AND Carrier__r.Partner_Type__c != :CarrierOrderUtil.PARTNER_TYPE_TADA
-				)
-			FROM Benefit_Order__c
-			WHERE Id = :currentRecordId
-		];
-		if (list_BO != null && !list_BO.isEmpty()) {
-			objBO = list_BO[0];
-		}
-		if (objBO != null && set_ValidBORecTypes.contains(objBO.RecordType.DeveloperName) && objBO.Order_Status__c == 'Approved') {
-			if (objBO.Cases__r == null || objBO.Cases__r.isEmpty()) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'No Customer case associated with this Benefit Order.'));
-				return;
-			}
-
-			Map<Id, Integer> map_ExistingEmailCount = OEEmailAutomationHelper.fetchSentEmailCountForCases(new Set<Id>{ objBO.Cases__r[0].Id }, new Set<String>{ 'OE_Confirmation_Email_Default' });
-
-			if (map_ExistingEmailCount != null && map_ExistingEmailCount.containsKey(objBO.Cases__r[0].Id) && map_ExistingEmailCount.get(objBO.Cases__r[0].Id) > 0) {
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Coverage Confirmation Email has been sent for this Benefit Order.'));
-				return;
-			}
-			if (objBO.Carrier_Orders__r != null && !objBO.Carrier_Orders__r.isEmpty()) {
-				for (Carrier_Order__c objCO : objBO.Carrier_Orders__r) {
-					if (
-						(objCO.Order_Assignment__c.containsIgnoreCase('New to Gusto') ||
-						objCO.Order_Assignment__c.containsIgnoreCase('new line of coverage') ||
-						objCO.Order_Assignment__c.containsIgnoreCase('Carrier switch')) && String.isBlank(objCO.Group_Number__c)
-					) {
-						ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Group number is missing from either Hippo or salesforce, send email manually'));
-						return;
-					}
-				}
-			}
-			blnShowConfirmationEmailBtn = true;
-		}
-	}
-	/*
-	 * @Neha Dabas, Call SendConfirmationEmail function.
-	 */
-	public void invokeConfirmationEmail() {
-		OEEmailAutomationHelper.sendConfirmationEmail((Id) currentRecordId);
-	}
-
-	//BY:PR, Date: Sep-17-2020, Desc: Show error on BO detail page for user convenience
-	public void checkQATTIAValidations() {
-		Set<String> set_QACoveragesRequiredFieldsName = new Set<String>{ 'Participation_Requirements__c' };
-		//controller.getRequiredFieldsAsPerOrderType();
-		//controller.checkRequiredFields();
-
-		if (QAObj.Benefit_Order__c != null && QAObj.Benefit_Order__r.Submission_Deadline__c == null && QAObj.Benefit_Order__r.Type__c == null) {
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Please review the benefit order and confirm order has an order type/submission deadline'));
-		} else if (QAObj.Benefit_Order__c != null && QAObj.Benefit_Order__r.Submission_Deadline__c == null) {
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Please review the benefit orders and confirm order has a submission deadline'));
-		} else if (QAObj.Benefit_Order__c != null && QAObj.Benefit_Order__r.Type__c == null) {
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Please review the benefit orders and confirm order has an order type'));
-		}
-
-		String strCarrierNames = '';
-		if (String.isNotBlank(QAObj.Benefit_Order__c)) {
-			for (Carrier_Order__c ObjCarrierOrder : [
-				SELECT Id, Name, Order_Type__c, Submission_Deadline_Date__c
-				FROM Carrier_Order__c
-				WHERE Benefit_Order__c = :QAObj.Benefit_Order__c AND (Order_Type__c = NULL OR Submission_Deadline_Date__c = NULL)
-			]) {
-				if (ObjCarrierOrder.Order_Type__c == null || ObjCarrierOrder.Submission_Deadline_Date__c == null) {
-					strCarrierNames += ObjCarrierOrder.Name + ', ';
-				}
-			}
-		}
-
-		if (String.isNotBlank(strCarrierNames)) {
-			strCarrierNames = strCarrierNames.removeEnd(', ');
-			String strErrorMessage = 'Review carrier orders - ';
-			strErrorMessage += strCarrierNames + ' missing order type/submission deadline';
-			ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, strErrorMessage));
 		}
 	}
 }

@@ -40,6 +40,7 @@ public class CarrierOrderUtil {
 	public static final String ORDER_TYPE_NEW_TO_GUSTO = 'New to Gusto';
 	public static final String ORDER_TYPE_CARRIER_SWITCH = 'Carrier Switch';	
 	public static final String ORDER_TYPE_TERMINATED_ORDER = 'Terminated Order';
+	public static final String ORDER_TYPE_NEW_LINE_OF_COVERAGE = 'New line of Coverage';
 	public static final String ORDER_TYPE_SAME_CARRIER_PLAN_GROUP_LEVEL_CHANGES = 'Same carrier, plan/group level changes';
 	public static final String ORDER_TYPE_SAME_CARRIER_NO_PLAN_GROUP_LEVEL_CHANGES = 'Same carrier, NO plan/group level changes';
 

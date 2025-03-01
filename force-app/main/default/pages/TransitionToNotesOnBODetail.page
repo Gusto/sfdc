@@ -124,13 +124,6 @@
                     </tr>
                 </table> 
            </apex:pageBlockSection>
-           <apex:commandButton id="coverageEmailBtn" rerender="pageMsgs,coverageEmailBtn" 
-                                value="Send Final Email and Fulfill" action="{!invokeConfirmationEmail}" 
-                                rendered="{!blnShowConfirmationEmailBtn && $Permission.Button_Access_Send_Final_Email_and_Fulfill_Button}" oncomplete="refreshPrimaryTab();"
-                                status="actStatusId"/>
-            <apex:pageBlockSection title="Warnings" columns="1">
-                <apex:pageMessages id="pageMsgs"></apex:pageMessages>
-            </apex:pageBlockSection>
         </apex:pageBlock>
         
     </apex:form>

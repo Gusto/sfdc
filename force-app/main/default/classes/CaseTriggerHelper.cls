@@ -1951,9 +1951,7 @@ Get the related compliance records for a given case records
 									Resource_Link__c,
 									Customer_Count__c,
 									Classification_Type__c,
-									Compliance_Team_POC__c,
-                        			Eng_Size_Estimate__c,
-                       				Eng_Estimated_Launch_Date__c
+									Compliance_Team_POC__c
 							FROM Tax_Compliance__c
 							WHERE Case__c IN :set_CaseIds
 					]
@@ -6553,6 +6551,7 @@ Description: set Case Confirm_Sub_Case_Reason_Classification__c field based on C
 	* Desc: Map Case Pillar and Sub Pillar based on Case fields
 	**/
 	public static Case updateCasePillar(Case objCase, Case oldCase) {
+        Set<String> set_Specializations = new Set<String> { CaseUtils.COBRA_SPECIALIZATION, CaseUtils.GUSTO_GLOBAL_SPECIALIZATION };
 		if (map_PillarMappingByKey == null) {
 			getPillarMapping();
 		}
@@ -6571,7 +6570,7 @@ Description: set Case Confirm_Sub_Case_Reason_Classification__c field based on C
 
 		if (
 			String.isNotBlank(objCase.Specialization__c) &&
-			((oldCase != null && objCase.Specialization__c != oldCase.Specialization__c) || oldCase == null)
+			((oldCase != null && objCase.Specialization__c != oldCase.Specialization__c) || oldCase == null || set_Specializations.contains(objCase.Specialization__c))
 		) {
 			strKey = strCaseOrigin + '' + objCase.Specialization__c;
 			if (list_Specializations.contains(objCase.Specialization__c)) {

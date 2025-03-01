@@ -1,0 +1,45 @@
+<template>
+    <template lwc:if={blnIsWarning}>
+        <article class="slds-card slds-card_boundary">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate"
+                    style="margin-top: 7px;margin-bottom: 7px;">
+                    <div class="slds-media__figure">
+                        <lightning-icon class="blue-icon" style="--sds-c-icon-color-foreground: #439aec;"
+                            icon-name='utility:warning' alternative-text='warning' variant='inverse' size='small'
+                            title='warning'></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <span>Warnings</span>
+                        </h2>
+                    </div>
+                </header>
+            </div>
+            <div class="slds-card__body">
+                <div class="slds-card slds-theme_shade">
+                    <div class="slds-card__header slds-grid">
+                        <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+                            <span class="slds-assistive-text">warning</span>
+                            <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small"
+                                title="Description of icon when needed">
+                                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                                </svg>
+                            </span>
+                            <h2>
+                                <ul class="slds-m-around_medium slds-list_dotted"
+                                    style="padding-left:10px;padding-top:0px;margin:0px">
+                                    <template for:each={set_WarningMessages} for:item="message">
+                                        <li key={message.Id} style="padding-top:5px;font-weight: bold;"><lightning-formatted-text
+                                                value={message}></lightning-formatted-text></li>
+                                    </template>
+                                </ul>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </template>
+</template>

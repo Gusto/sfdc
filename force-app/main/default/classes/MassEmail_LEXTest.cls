@@ -5,7 +5,7 @@ public class MassEmail_LEXTest {
         Group groupObj = [SELECT Id, Name, DeveloperName, Email, Type 
                           FROM Group 
                           WHERE Type = 'Queue' 
-                          AND Name = 'Care Payroll Class 1' 
+                          AND Name = 'Care Question Queue' 
                           LIMIT 1];
         String queueName = groupObj.Name;
         String caseReason;
@@ -42,7 +42,7 @@ public class MassEmail_LEXTest {
         Group groupObj = [SELECT Id, Name, DeveloperName, Email, Type 
                           FROM Group 
                           WHERE Type ='Queue' 
-                          AND Name = 'Care Payroll Class 1' 
+                          AND Name = 'Care Question Queue' 
                           LIMIT 1];
         String queueName = groupObj.Name;
         

@@ -44,4 +44,22 @@ public without sharing class UpdateAccountControllerTest {
 
 		System.assertEquals(false, objResponse.blnSuccess, 'Account was updated successfully');
 	}
+
+	/**
+	 * @description Negative test case to test accounts without billing state are not updated successfully
+	 * @author      Praveen Sethu
+	 **/
+	@isTest
+	static void testAccountWithoutBillingState() {
+		// create test account and do not insert it
+		Account objAcc = new TestDataFactory.AccountBuilder().setRecordTypeId(AccountUtil.COMPANY_ACCOUNT_RT_ID).setName('Company Account 1').setZPCompanyId('86896897').build();
+		insert objAcc;
+
+		// start test and update account without inserting it
+		Test.startTest();
+		UpdateAccountController.UpdateAccountResponse objResponse = UpdateAccountController.updateAccount(objAcc, 'BMM');
+		Test.stopTest();
+
+		System.assertEquals(false, objResponse.blnSuccess, 'Account was updated successfully');
+	}
 }

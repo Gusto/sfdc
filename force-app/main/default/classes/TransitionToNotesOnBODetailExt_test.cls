@@ -1,7 +1,7 @@
 @isTest
 public class TransitionToNotesOnBODetailExt_test {
-	public static final String strHSAEmailMacroBody = 'HSA - Email Macro'; 
-	public static final String strFSAEmailMacroBody = 'FSA - Email Macro'; 
+	public static final String strHSAEmailMacroBody = 'HSA - Email Macro';
+	public static final String strFSAEmailMacroBody = 'FSA - Email Macro';
 	@testSetup
 	static void setup() {
 		TransitionToNotesOnBODetailExt_test.skipTrigger(true);
@@ -102,14 +102,13 @@ public class TransitionToNotesOnBODetailExt_test {
 		pageRef.getParameters().put('id', String.valueOf(list_BO[0].Id));
 		test.setCurrentPage(pageRef);
 
-		ApexPages.StandardController sc = new ApexPages.StandardController(list_BO[0]);
-		TransitionToNotesOnBODetailExt extension = new TransitionToNotesOnBODetailExt(sc);
-		System.assert(extension.blnShowConfirmationEmailBtn == true);
+		OEEmailAutomationHelper.CreateFinalEmailResponseWrapper objWrapper = OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
+		List<Benefit_Order__c> list_BO1 = [SELECT Id, Order_Status__c FROM Benefit_Order__c WHERE ID = :list_BO[0].Id];
+		System.assertEquals(list_BO1[0].Order_Status__c, 'Fulfilled', 'Benefit Order must be Approved.');
 
-		extension.invokeConfirmationEmail();
-			//Validate cc address added or not in the send email.
+		//Validate cc address added or not in the send email.
 		List<EmailMessage> list_EmailMessage = [SELECT Id, CcAddress, HtmlBody FROM EmailMessage WHERE ParentId = :objCase.Id AND Email_Template_Name__c = 'OE_Confirmation_Email_Default'];
-		if(OrganizationUtilities.canSendEmails()){	
+		if (OrganizationUtilities.canSendEmails()) {
 			System.assert(list_EmailMessage.size() > 0);
 			String strCCAddress = list_EmailMessage[0].CcAddress;
 			System.assert(strCCAddress.contains('testuser01@gusto.com'));
@@ -164,7 +163,7 @@ public class TransitionToNotesOnBODetailExt_test {
 		insert objCase;
 
 		List<Case> list_Case = [SELECT Id, Renewal_Survey_URL__c, NP_Survey_URL__c FROM Case WHERE Id = :objCase.Id];
-		if(OrganizationUtilities.canSendEmails()){
+		if (OrganizationUtilities.canSendEmails()) {
 			System.assert(list_Case.size() > 0);
 		}
 
@@ -173,12 +172,12 @@ public class TransitionToNotesOnBODetailExt_test {
 		Test.setCurrentPage(pageRef);
 
 		test.startTest();
-		ApexPages.StandardController sc = new ApexPages.StandardController(list_BO[0]);
-		TransitionToNotesOnBODetailExt extension = new TransitionToNotesOnBODetailExt(sc);
-		System.assert(extension.blnShowConfirmationEmailBtn == true);
 
-		extension.invokeConfirmationEmail();
-		if(OrganizationUtilities.canSendEmails()){
+		OEEmailAutomationHelper.CreateFinalEmailResponseWrapper objWrapper = OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
+		List<Benefit_Order__c> list_BO1 = [SELECT Id, Order_Status__c FROM Benefit_Order__c WHERE ID = :list_BO[0].Id];
+		System.assertEquals(list_BO1[0].Order_Status__c, 'Fulfilled', 'Benefit Order must be Approved.');
+
+		if (OrganizationUtilities.canSendEmails()) {
 			List<EmailMessage> list_EmailMessage = [SELECT Id, HtmlBody FROM EmailMessage WHERE ParentId = :objCase.Id];
 			System.assert(list_EmailMessage.size() > 0);
 
@@ -222,13 +221,7 @@ public class TransitionToNotesOnBODetailExt_test {
 
 		//Create QA Sheet Test records
 		Id idQASheetRecordType = cache.getRecordTypeId('QA_Sheet__c', 'Benefit New Plan');
-		QA_Sheet__c objQASheet = new QA_Sheet__c(
-			RecordTypeId = idQASheetRecordType,
-			Benefit_Order__c = objBO.id,
-			SIC_Code__c = 'test',
-			BAA_Signed_by__c = 'test',
-			BSA_Signed__c = 'Yes'
-		);
+		QA_Sheet__c objQASheet = new QA_Sheet__c(RecordTypeId = idQASheetRecordType, Benefit_Order__c = objBO.id, SIC_Code__c = 'test', BAA_Signed_by__c = 'test', BSA_Signed__c = 'Yes');
 		insert objQASheet;
 
 		//Create QA Lines Of Coverage Test records
@@ -342,9 +335,11 @@ public class TransitionToNotesOnBODetailExt_test {
 	}
 
 	/**
-    * @Author      : Deepika Saini
-    * @Description : Send Final Email.
-	**/
+	 * @Author      : Deepika Saini
+	 * @Description : Send Final Benefis Order Confitmation Coverage Email Messages.
+	 * @Parm        : null
+	 * @Return      : null
+	 **/
 	@isTest
 	static void testSendLWCFinalEmail() {
 		List<Benefit_Order__c> list_BO = [SELECT Id, Opportunity__c, Opportunity__r.AccountId FROM Benefit_Order__c WHERE Opportunity__r.Name = 'Test New Plan Opportunity'];
@@ -385,7 +380,7 @@ public class TransitionToNotesOnBODetailExt_test {
 		update objCase;
 
 		List<Case> list_Case = [SELECT Id, Renewal_Survey_URL__c, NP_Survey_URL__c FROM Case WHERE Id = :objCase.Id];
-		if(OrganizationUtilities.canSendEmails()){
+		if (OrganizationUtilities.canSendEmails()) {
 			System.assert(list_Case.size() > 0);
 		}
 
@@ -394,22 +389,21 @@ public class TransitionToNotesOnBODetailExt_test {
 		Test.setCurrentPage(pageRef);
 
 		test.startTest();
-		OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
+		OEEmailAutomationHelper.CreateFinalEmailResponseWrapper objWrapper = OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
 		List<Benefit_Order__c> list_BO1 = [SELECT Id, Order_Status__c FROM Benefit_Order__c WHERE ID = :list_BO[0].Id];
-		System.assertEquals(list_BO1[0].Order_Status__c, 'Fulfilled');
+		System.assertEquals(list_BO1[0].Order_Status__c, 'Fulfilled', 'Benefit Order must be Approved.');
+		System.assertEquals(objWrapper.blnIsSuccess, true, 'Carrier Order Implementation Stage must be ApprovedApproved Pending EE Audit.');
 
 		Id idRenewalRecord = BenefitOrderUtil.RENEWAL_BENEFIT_ORDER_RT_ID;
 		list_BO[0].RecordTypeId = idRenewalRecord;
-		list_BO[0].Order_Status__c = BenefitOrderUtil.STATUS_APPROVED;
 		update list_BO[0];
 
-		OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
-		List<Benefit_Order__c> list_BO2 = [SELECT Id, Order_Status__c FROM Benefit_Order__c WHERE ID = :list_BO[0].Id];
-		System.assertEquals(list_BO2[0].Order_Status__c, 'Fulfilled');
+		OEEmailAutomationHelper.CreateFinalEmailResponseWrapper objWrapper1 = OEEmailAutomationHelper.sendConfirmationEmailLWC(list_BO[0].Id);
+		System.assertEquals(objWrapper1.blnIsSuccess, false, 'Benefit Order must be Approved.');
 
 		Id idBO = null;
-		OEEmailAutomationHelper.sendConfirmationEmailLWC(idBO);
-
+		OEEmailAutomationHelper.CreateFinalEmailResponseWrapper objWrapper2 = OEEmailAutomationHelper.sendConfirmationEmailLWC(idBO);
+		System.assertEquals(objWrapper2.blnIsSuccess, false, 'Benefit Order must be Null.');
 		test.stopTest();
 	}
 }

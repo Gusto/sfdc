@@ -816,8 +816,6 @@ public without sharing class OpportunityTriggerHelper {
 
 			updateBenefitOrders(objOppty, objOldOppty);
 			updateLastClientAddDate(objOppty, objOldOppty);
-			// Create BDO Benefits Opportunities
-			createBDOOpportunities(objOppty, objOldOppty);
 
 			//If Opportunity Owner is changed after Opp goes CW then perform this logic
 			if (map_OppToOwnerId.containsKey(objOppty.Id)) {
@@ -4140,103 +4138,6 @@ public without sharing class OpportunityTriggerHelper {
 			} else if (objOppty.Upsell_Tier__c != null && !objOppty.Upsell_Tier__c.containsIgnoreCase(AccountUtil.EMPLOYER_OF_RECORD)) {
 				objOppty.CloseDate = objOppty.CreatedDate.date().addDays(45);
 			}
-		}
-	}
-
-	/**
-	 * @author      Praveen Sethu
-	 * @description Create Employer and Client BDO Benefifts Opportunities based on Onboarding data
-	 * @param       Trigger new Opportunity
-	 * @param       Trigger old Opportunity
-	 **/
-	public void createBDOOpportunities(Opportunity objOppty, Opportunity objOldOppty) {
-		// Create Client BDO opportunity only when Initiated by Accountant flag has a value
-		// Client BDO - Benefits New Plan Opportunity
-		if (
-			(objOppty.Currently_Offer_Health_Benefits__c != objOldOppty.Currently_Offer_Health_Benefits__c && objOppty.Currently_Offer_Health_Benefits__c == 'NOT_YET') ||
-			(objOppty.Contribution_to_EE_Health_Coverage_cost__c != objOldOppty.Contribution_to_EE_Health_Coverage_cost__c &&
-			objOppty.Contribution_to_EE_Health_Coverage_cost__c == 'COMPANY_SPONSORED_HEALTH_INSURANCE') && String.isNotBlank(objOppty.Initiated_by_Accountant__c)
-		) {
-			// Check for open opportuniiy and create Benefits New Plan Opportunity
-
-			if (String.isNotBlank(objOppty.Which_Gusto_benefits_interested_in__c) && objOppty.Which_Gusto_benefits_interested_in__c.contains('HEALTH_INSURANCE')) {
-				createBenefitsOpportunity(objOppty.AccountId, OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID, objOppty, OpportunityUtil.CLIENT_BDO);
-			}
-		}
-
-		// Employer BDO - Benefits New PlanOpportunity
-		if (
-			objOppty.Interest_in_adding_benefits_to_Gusto__c != objOldOppty.Interest_in_adding_benefits_to_Gusto__c &&
-			(objOppty.Currently_Offer_Health_Benefits__c != 'Yes' ||
-			objOppty.Currently_Offer_Health_Benefits__c != 'True') &&
-			(objOppty.Interest_in_adding_benefits_to_Gusto__c == 'SMALL_GROUP_HEALTH_INSURANCE' ||
-			objOppty.Interest_in_adding_benefits_to_Gusto__c == 'LEARNING_MORE') &&
-			String.isBlank(objOppty.Initiated_by_Accountant__c)
-		) {
-			createBenefitsOpportunity(objOppty.AccountId, OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID, objOppty, OpportunityUtil.EMPLOYER_BDO);
-		}
-
-		// Employer BDO and Client BDO - Benefits BoR Opportunity
-		if (
-			(objOppty.Currently_Offer_Health_Benefits__c != objOldOppty.Currently_Offer_Health_Benefits__c &&
-			String.isNotBlank(objOppty.Currently_Offer_Health_Benefits__c) &&
-			(objOppty.Currently_Offer_Health_Benefits__c == 'Yes' ||
-			objOppty.Currently_Offer_Health_Benefits__c == 'True'))
-		) {
-			// Check for open opportuniiy and create Benefits BoR Opportunity
-			// Set Lead Source based on Initiated by Accountant flag
-			String strLeadSource = String.isNotBlank(objOppty.Initiated_by_Accountant__c) ? OpportunityUtil.CLIENT_BDO : OpportunityUtil.EMPLOYER_BDO;
-			createBenefitsOpportunity(objOppty.AccountId, OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID, objOppty, strLeadSource);
-		}
-	}
-
-	/**
-	 * @author      Praveen Sethu
-	 * @description Checks if open benefits opportunity is created for the account of a specific record type and Create new opportunity if not present
-	 * @param       Id Account Id
-	 * @param       Id Record Type Id of the Benefits opportunity
-	 * @param		objOppty - Opportunity trigger context
-	 **/
-	public void createBenefitsOpportunity(Id idAccount, Id idRecordType, Opportunity objOppty, String strLeadSource) {
-		Boolean blnOpptyPresent = false;
-		Decimal decEmployees = 0;
-		if (idAccount != null && map_Accounts.containsKey(idAccount)) {
-			Account objAcc = map_Accounts.get(idAccount);
-			// Set Number of Employees to either Active Employees or Lead employees whichever is greater than 2
-			if (objAcc.Number_of_Active_Employees__c != null && objAcc.Number_of_Active_Employees__c > 2) {
-				decEmployees = objAcc.Number_of_Active_Employees__c;
-			} else if (objAcc.NumberOfEmployees != null && objAcc.NumberOfEmployees > 2) {
-				decEmployees = objAcc.NumberOfEmployees;
-			}
-			for (Opportunity objOpp : objAcc.Opportunities) {
-				if (objOpp.RecordTypeId == idRecordType && !objOpp.IsClosed) {
-					blnOpptyPresent = true;
-					break;
-				}
-			}
-		}
-
-		// Create Benefits  Opportunity ONLY if existing opportunity is not present & if employees is greater than 2
-		if (!blnOpptyPresent && decEmployees > 2) {
-			list_OpptysToInsert.add(
-				new Opportunity(
-					RecordTypeId = idRecordType,
-					AccountId = idAccount,
-					StageName = OpportunityUtil.DEFAULT_HI_SALES_STAGE,
-					LeadSource = strLeadSource,
-					Which_Gusto_benefits_interested_in__c = objOppty.Which_Gusto_benefits_interested_in__c,
-					When_to_start_offering_benefits__c = objOppty.When_to_start_offering_benefits__c,
-					Who_to_contact__c = objOppty.Who_to_contact__c,
-					Initiated_by_Accountant__c = objOppty.Initiated_by_Accountant__c,
-					Currently_Offer_Health_Benefits__c = objOppty.Currently_Offer_Health_Benefits__c,
-					Want_to_switch_brokers__c = objOppty.Want_to_switch_brokers__c,
-					Existing_Health_Benefits_Renewal_Date__c = objOppty.Existing_Health_Benefits_Renewal_Date__c,
-					Open_to_Switching_Broker__c = objOppty.Open_to_Switching_Broker__c,
-					NumberofEmployees__c = decEmployees,
-					Contribution_to_EE_Health_Coverage_cost__c = objOppty.Contribution_to_EE_Health_Coverage_cost__c,
-					Interest_in_adding_benefits_to_Gusto__c = objOppty.Interest_in_adding_benefits_to_Gusto__c
-				)
-			);
 		}
 	}
 

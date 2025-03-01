@@ -49,14 +49,6 @@ export default class ReRouteHIOwnerCmp extends LightningElement {
 		if (bValid == false) {
 			return bValid;
 		}
-
-		if (this.blnIsExcluded) {
-			displayToast(this, "This account is excluded from routing. Please uncheck exclusion field and retry again", "", "warning", "");
-			bValid = false;
-		} else if (!this.strFilingState) {
-			displayToast(this, "Filing State is blank. Please update filing state and retry again", "", "warning", "");
-			bValid = false;
-		}
 		return bValid;
 	}
 

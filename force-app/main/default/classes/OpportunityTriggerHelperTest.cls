@@ -4229,7 +4229,7 @@ private class OpportunityTriggerHelperTest {
 		System.assertEquals(OpportunityUtil.CLOSED_LOST_STAGE, objUpdatedTicket.Benefit_Order__r.Order_Status__c, 'Benefit Order are not closed');
 		System.assertEquals(OpportunityUtil.DISMISSED_STAGE_DETAIL, objUpdatedTicket.Benefit_Order__r.Status_Detail__c, 'Benefit Order stage details is not changed');
 	}
-	
+
 	/**
 	 * @description Test if closed date is same as joined date when company opportunity set to closed won.
 	 * @author      Anurag Gautam
@@ -5086,74 +5086,6 @@ private class OpportunityTriggerHelperTest {
 		// assert if opportunity got updated
 		Opportunity objOpportunityAssert = [SELECT Id, Name FROM Opportunity WHERE Id = :objInternationalPayrollOppty.Id];
 		System.assertEquals('Opportunity Routed Successfully', objOpportunityAssert.Name);
-	}
-
-	/**
-	 * @author      Praveen Sethu
-	 * @description Test if Client BDO Opportunity updates create new benefits opportunities
-	 **/
-	@isTest
-	static void testClientBDOOpportunityCreation() {
-		Account objCompanyAccnt = [SELECT Id FROM Account WHERE RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID LIMIT 1];
-		objCompanyAccnt.Number_Of_Active_Employees__c = 5;
-		AccountTriggerHelper.skipTrigger = true;
-		update objCompanyAccnt;
-		AccountTriggerHelper.skipTrigger = false;
-		Opportunity objOppty = TestUtils.createOpportunity(OpportunityUtil.ACQUISITION_OPPTY_RT_ID, objCompanyAccnt.Id, Date.today().addDays(10), 'Opp Name', 'MQL', true);
-
-		Test.startTest();
-		objOppty.Initiated_by_Accountant__c = 'True';
-		objOppty.Contribution_to_EE_Health_Coverage_cost__c = 'COMPANY_SPONSORED_HEALTH_INSURANCE';
-		objOppty.Want_to_switch_brokers__c = true;
-		objOppty.Open_to_Switching_Broker__c = 'MANUALLY_ADD';
-		objOppty.Currently_Offer_Health_Benefits__c = 'Yes';
-		objOppty.Which_Gusto_benefits_interested_in__c = 'HEALTH_INSURANCE';
-		update objOppty;
-		Test.stopTest();
-
-		// Assert if new plan opportunities got created
-		Integer intNewPlanCount = [
-			SELECT COUNT()
-			FROM Opportunity
-			WHERE RecordTypeId = :OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID AND AccountId = :objCompanyAccnt.Id AND LeadSource = :OpportunityUtil.CLIENT_BDO
-		];
-		System.assertEquals(1, intNewPlanCount, 'New plan opportunity not created');
-
-		// Assert if BoR opportunities got created
-		Integer intBoRCount = [
-			SELECT COUNT()
-			FROM Opportunity
-			WHERE RecordTypeId = :OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID AND AccountId = :objCompanyAccnt.Id AND LeadSource = :OpportunityUtil.CLIENT_BDO
-		];
-		System.assertEquals(1, intBoRCount, 'BoR opportunity not created');
-	}
-
-	/**
-	 * @author      Praveen Sethu
-	 * @description Test if Employer BDO Opportunity updates create new benefits opportunities
-	 **/
-	@isTest
-	static void testEmployerBDOOpportunityCreation() {
-		Account objCompanyAccnt = [SELECT Id FROM Account WHERE RecordTypeId = :AccountUtil.COMPANY_ACCOUNT_RT_ID LIMIT 1];
-		objCompanyAccnt.Number_Of_Active_Employees__c = 5;
-		AccountTriggerHelper.skipTrigger = true;
-		update objCompanyAccnt;
-		AccountTriggerHelper.skipTrigger = false;
-		Opportunity objOppty = TestUtils.createOpportunity(OpportunityUtil.ACQUISITION_OPPTY_RT_ID, objCompanyAccnt.Id, Date.today().addDays(10), 'Opp Name', 'MQL', true);
-
-		Test.startTest();
-		objOppty.Interest_in_adding_benefits_to_Gusto__c = 'LEARNING_MORE';
-		objOppty.Currently_Offer_Health_Benefits__c = 'False';
-		update objOppty;
-		Test.stopTest();
-
-		// Assert if new plan opportunities got created
-		Integer intNewPlanCount = [
-			SELECT COUNT()
-			FROM Opportunity
-			WHERE RecordTypeId = :OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID AND AccountId = :objCompanyAccnt.Id AND LeadSource = :OpportunityUtil.EMPLOYER_BDO
-		];
-		System.assertEquals(1, intNewPlanCount, 'New plan opportunity not created');
 	}
 
 	/**

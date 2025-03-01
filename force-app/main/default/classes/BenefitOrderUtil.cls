@@ -38,6 +38,13 @@ public class BenefitOrderUtil {
 	public static final String ERR_Integeration_Format_Customer_Case = 'Integeration Id is not in desired format on the Customer Case.';
 	public static final String ERR_Contact_Not_Present_Customer_Case = 'Contact is not present on the Customer Case.';
 	public static final String ERR_Email_Template_Not_Present = 'Email template not present.';
+	public static final String ERR_Coverage_Confirmation_Email_Sent = 'Coverage Confirmation Email has been sent for this Benefit Order.';
+	public static final String ERR_GN_Missing_Send_Email_Manually = 'Group number is missing from either Hippo or salesforce, send email manually.';
+	public static final String ERR_ORDER_TYPE_AND_SUBMISSION_DATE_IS_BLANK = 'Please review the benefit order and confirm order has an order type/submission deadline';
+	public static final String ERR_SUBMISSION_DATE_IS_BLANK = 'Please review the benefit orders and confirm order has a submission deadline';
+	public static final String ERR_ORDER_TYPE_IS_BLANK = 'Please review the benefit orders and confirm order has an order type';
+	public static final String ERR_ORDER_TYPE_AND_SUBMISSION_DATE_IS_BLANK_ON_CO = 'Review carrier orders - [CARRIERNAMES] missing order type/submission deadline';
+	public static final String Benefit_Order= 'Benefit_Order__c';
 
 	public static final String OPPTY_BENEFITS_SETUP_AWAIT_OFFERINGS_STEP = 'Awaiting Offerings';
 	public static final List<String> COMPLETED_ORDER_STATUSES = new List<String>{
@@ -86,6 +93,7 @@ public class BenefitOrderUtil {
 	public static final String CHANGE_QA_SHEET_RT_NAME = 'Benefit_Change';
 
 	public static final String BENEFIT_ORDER_RT_NEW_PLAN = 'New Plan';
+	public static final String BENEFIT_ORDER_RT_NEW_PLAN_DN = 'New_Plan';	
 	public static final String BENEFIT_ORDER_RT_RENEWAL = 'Renewal';
 	public static final String BENEFIT_ORDER_RT_CHANGE = 'Change';
 	public static final String BENEFIT_ORDER_RT_BENEFITS_BOR = 'Benefits BoR';

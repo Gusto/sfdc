@@ -358,6 +358,19 @@ public without sharing class AccountTriggerHelper {
 			) {
 				list_AccountsToForAcquisition.add(objAccount);
 			}
+
+			if (
+				objAccount.Number_of_Active_Employees__c != null &&
+				objAccount.Number_of_Active_Employees__c >= 2 &&
+				objAccount.Number_of_Active_Employees__c != objOldAccount.Number_of_Active_Employees__c &&
+				objAccount.RecordTypeId == AccountUtil.COMPANY_ACCOUNT_RT_ID &&
+				(String.isNotBlank(objAccount.BillingState) ||
+				String.isNotBlank(objAccount.BillingStateCode) ||
+				Test.isRunningTest())
+			) {
+				// Check BDO Opportunity Creation Logic
+				checkBDOOpportunityCreation(objAccount);
+			}
 		}
 
 		if (set_UserIds != null) {
@@ -469,20 +482,7 @@ public without sharing class AccountTriggerHelper {
 		}
 		if (!list_OpptysToInsert.isEmpty()) {
 			AccountTriggerHelper.skipTrigger = true;
-			System.debug('list_OpptysToInsert2222: ' + list_OpptysToInsert);
 			insert list_OpptysToInsert;
-			AccountTriggerHelper.skipTrigger = false;
-
-			// Send in-app notification about new cross-sell and upsell opportunity with Employer of Record
-			for (Opportunity objOppty : list_OpptysToInsert) {
-				sendCustomNotification(
-					objOppty.Name + ' created',
-					'Opportunity was created because there is Employer of Record Interest',
-					UserInfo.getUserId(),
-					objInternationalPayrollNotify.Id,
-					objOppty.Id
-				);
-			}
 			AccountTriggerHelper.skipTrigger = false;
 		}
 
@@ -2590,7 +2590,17 @@ public without sharing class AccountTriggerHelper {
 							Owner.UserRole.Name,
 							Product_Interest__c,
 							Product_Interest_Countries__c,
-							Type
+							Type,
+							Which_Gusto_benefits_interested_in__c,
+							When_to_start_offering_benefits__c,
+							Who_to_contact__c,
+							Initiated_by_Accountant__c,
+							Currently_Offer_Health_Benefits__c,
+							Want_to_switch_brokers__c,
+							Existing_Health_Benefits_Renewal_Date__c,
+							Open_to_Switching_Broker__c,
+							Contribution_to_EE_Health_Coverage_cost__c,
+							Interest_in_adding_benefits_to_Gusto__c
 						FROM Opportunities
 						ORDER BY CreatedDate DESC
 					),
@@ -3239,6 +3249,93 @@ public without sharing class AccountTriggerHelper {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @Description : If active employees is increased to more than 2 - check and create BDO opportunities
+	 * @Param       : Account - Trigger.New
+	 * @Return      : void
+	 **/
+	public void checkBDOOpportunityCreation(Account objNewAccount) {
+		Account objAccount = map_AllAccountMap.get(objNewAccount.Id);
+		Opportunity objPayrollOppty = null;
+		Boolean blnNewPlanOppExists = false;
+		Boolean blnBOROppExists = false;
+
+		for (Opportunity objOppty : objAccount.Opportunities) {
+			Boolean blnAcquisitionNewBusiness = (objOppty.RecordTypeId == OpportunityUtil.ACQUISITION_OPPTY_RT_ID &&
+			objOppty.Type == OpportunityUtil.OPPTY_TYPE_NEW_BUSINESS &&
+			objOppty.IsClosed == false);
+
+			if (objOppty.RecordTypeId == OpportunityUtil.COMPANY_OPPTY_RT_ID || blnAcquisitionNewBusiness) {
+				objPayrollOppty = objOppty;
+			}
+
+			if (objOppty.RecordTypeId == OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID) {
+				blnNewPlanOppExists = true;
+			}
+
+			if (objOppty.RecordTypeId == OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID) {
+				blnBOROppExists = true;
+			}
+		}
+
+		if (objPayrollOppty != null) {
+			if (objPayrollOppty.Currently_Offer_Health_Benefits__c == 'NOT_YET' || objPayrollOppty.Contribution_to_EE_Health_Coverage_cost__c == 'COMPANY_SPONSORED_HEALTH_INSURANCE') {
+				if (
+					String.isNotBlank(objPayrollOppty.Initiated_by_Accountant__c) &&
+					String.isNotBlank(objPayrollOppty.Which_Gusto_benefits_interested_in__c) &&
+					objPayrollOppty.Which_Gusto_benefits_interested_in__c.contains('HEALTH_INSURANCE') &&
+					!blnNewPlanOppExists
+				) {
+					createBenefitsOpportunity(objNewAccount, OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID, objPayrollOppty, OpportunityUtil.CLIENT_BDO);
+				}
+			}
+
+			if (
+				(objPayrollOppty.Interest_in_adding_benefits_to_Gusto__c == 'SMALL_GROUP_HEALTH_INSURANCE' ||
+				objPayrollOppty.Interest_in_adding_benefits_to_Gusto__c == 'LEARNING_MORE') &&
+				objPayrollOppty.Currently_Offer_Health_Benefits__c != 'Yes' &&
+				objPayrollOppty.Currently_Offer_Health_Benefits__c != 'True' &&
+				String.isBlank(objPayrollOppty.Initiated_by_Accountant__c) &&
+				!blnNewPlanOppExists
+			) {
+				createBenefitsOpportunity(objNewAccount, OpportunityUtil.BENEFITS_NEW_PLAN_OPPTY_RT_ID, objPayrollOppty, OpportunityUtil.EMPLOYER_BDO);
+			}
+
+			if (objPayrollOppty.Currently_Offer_Health_Benefits__c == 'Yes' || objPayrollOppty.Currently_Offer_Health_Benefits__c == 'True' && !blnBOROppExists) {
+				// Set Lead Source based on Initiated by Accountant flag
+				String strLeadSource = String.isNotBlank(objPayrollOppty.Initiated_by_Accountant__c) ? OpportunityUtil.CLIENT_BDO : OpportunityUtil.EMPLOYER_BDO;
+				createBenefitsOpportunity(objNewAccount, OpportunityUtil.BENEFITS_BOR_OPPTY_RT_ID, objPayrollOppty, strLeadSource);
+			}
+		}
+	}
+
+	/**
+	 * @Description : Adds new benefits opportunity to list to insert
+	 * @Param       : Account - Trigger.New
+	 * @Return      : void
+	 **/
+	public void createBenefitsOpportunity(Account objNewAccount, Id idRecordType, Opportunity objOppty, String strLeadSource) {
+		list_OpptysToInsert.add(
+			new Opportunity(
+				RecordTypeId = idRecordType,
+				AccountId = objNewAccount.Id,
+				StageName = OpportunityUtil.DEFAULT_HI_SALES_STAGE,
+				LeadSource = strLeadSource,
+				Which_Gusto_benefits_interested_in__c = objOppty.Which_Gusto_benefits_interested_in__c,
+				When_to_start_offering_benefits__c = objOppty.When_to_start_offering_benefits__c,
+				Who_to_contact__c = objOppty.Who_to_contact__c,
+				Initiated_by_Accountant__c = objOppty.Initiated_by_Accountant__c,
+				Currently_Offer_Health_Benefits__c = objOppty.Currently_Offer_Health_Benefits__c,
+				Want_to_switch_brokers__c = objOppty.Want_to_switch_brokers__c,
+				Existing_Health_Benefits_Renewal_Date__c = objOppty.Existing_Health_Benefits_Renewal_Date__c,
+				Open_to_Switching_Broker__c = objOppty.Open_to_Switching_Broker__c,
+				NumberofEmployees__c = objNewAccount.Number_Of_Active_Employees__c,
+				Contribution_to_EE_Health_Coverage_cost__c = objOppty.Contribution_to_EE_Health_Coverage_cost__c,
+				Interest_in_adding_benefits_to_Gusto__c = objOppty.Interest_in_adding_benefits_to_Gusto__c
+			)
+		);
 	}
 
 	/**
@@ -3958,27 +4055,6 @@ public without sharing class AccountTriggerHelper {
 			}
 		}
 		return objOpportunity;
-	}
-
-	/**
-	 * @description	Utility method used to send in-app notifications
-	 * @param objOpportunity - cross-sell and upsell opportunity
-	 * @param strBody  Notification body
-	 * @param strTitle Notification title
-	 * @param idNotifier  Id of the user to be notified
-	 * @param idNotification  Custom notification Id
-	 * @param idTarget  Id of the user who will receive the notification
-	 */
-	public static void sendCustomNotification(String strTitle, String strBody, Id idNotifier, Id idNotification, Id idTarget) {
-		if (!UserUtils.isAdminIntgUser(idNotifier) || Test.isRunningTest()) {
-			Messaging.CustomNotification objCustomNotify = new Messaging.CustomNotification();
-			objCustomNotify.setBody(strBody);
-			objCustomNotify.setTitle(strTitle);
-			objCustomNotify.setSenderId(UserInfo.getUserId());
-			objCustomNotify.setNotificationTypeId(idNotification);
-			objCustomNotify.setTargetId(idTarget);
-			//objCustomNotify.send(new Set<String>{ idNotifier });
-		}
 	}
 
 	/**

@@ -228,6 +228,11 @@ global class PaymentInvoiceBatch implements Database.Batchable<sObject>, Schedul
 									map_OpptysToUpdate.put(objOpenAcquisitionOppty.Id, objOpenAcquisitionOppty);
 								}
 							}
+							
+							map_AccountsToUpdate.put(
+								objInvoice.Account__r.Id,
+								new Account(Id = objInvoice.Account__c, ZP_Company_Id__c = objInvoice.Account__r.ZP_Company_Id__c, First_Month_Invoice_Generated__c = true)
+							);
 						} else {
 							// if closed-won company opportunity does not exist, check if Account has joined date
 							if (objInvoice.Account__r.Joined_Date_Panda__c == null) {

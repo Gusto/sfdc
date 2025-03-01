@@ -4,7 +4,7 @@ private class PlayModeCaseListControllerTest {
     @testSetup static void testData() {
         Account acc = TestUtility.CompanyAccount();
         
-        Group objGroup = [SELECT Id, Name from Group WHERE Type='Queue' AND Name = 'Care Payroll Class 1'];
+        Group objGroup = [SELECT Id, Name from Group WHERE Type='Queue' AND Name = 'Payroll Compliance Queue'];
         
         Test.startTest();
         List<Case> caseList = new List<Case>();
@@ -32,7 +32,7 @@ private class PlayModeCaseListControllerTest {
         insert caseList;
         
         User objUser = [SELECT Id,Individual_Queues__c FROM User WHERE Id = :UserInfo.getUserId()];
-        objUser.Individual_Queues__c = 'Care Payroll Class 1';
+        objUser.Individual_Queues__c = 'Payroll Compliance Queue';
         update objUser;
         Test.stopTest();
     }
